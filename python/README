@@ -1,0 +1,34 @@
+Website: www.pubnub.com
+
+===============================================================================
+INTRO
+===============================================================================
+www.pubnub.com
+
+PubNub + Python + Twisted:
+
+===============================================================================
+REQUIRED LIBRARY
+===============================================================================
+Twisted 10.0.0+
+Download Twisted Here: http://twistedmatrix.com/trac/
+
+tar xvfj Twisted-10.0.0.tar.bz2
+cd Twisted-10.0.0
+sudo python setup.py install
+
+===============================================================================
+EXAMPLES
+===============================================================================
+Open pubnub-example.py for examples.
+
+There are three functions:
+    1) Publish     - Push a message.
+    2) Subscribe   - Listen for messages.
+    3) UnSubscribe - Stop Listening. (optional)
+
+
+===============================================================================
+Extra Information about Twisted
+===============================================================================
+http://mypythonnotes.wordpress.com/2009/03/30/twisted-clients/
