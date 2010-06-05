@@ -1,13 +1,13 @@
+## www.pubnub.com - Pubnub is a client-to-client push service in the cloud. 
+##
 ## USAGE PHP EXAMPLE:
 ## ==================
 ## More examples in the example folder.
-
 
 ## -----------------------------------------
 ## Create Pubnub Client API (INITIALIZATION)
 ## -----------------------------------------
 $pubnub = new Pubnub( 'YOUR-PUBLISH-KEY', 'YOUR-SUBSCRIBE-KEY' );
-
 
 ## ----------------------
 ## Send Message (PUBLISH)
@@ -16,8 +16,9 @@ $info = $pubnub->publish(array(
     'channel' => 'hello_world', ## REQUIRED Channel to Send
     'message' => 'Hey World!'   ## REQUIRED Message String/Array
 ));
-var_dump($info);
 
+## Print Publish Response
+var_dump($info);
 
 ## --------------------------
 ## Request Messages (HISTORY)
@@ -27,8 +28,9 @@ $response = $pubnub->history(array(
     'limit'   => 100,           ## OPTIONAL Limit Number of Messages
     'age'     => 500            ## OPTIONAL Age Limit in Seconds
 ));
-var_dump($response['history']); ## Prints array of messages.
 
+## Print History
+var_dump($response);
 
 ## ----------------------------------
 ## Receive Message (SUBSCRIBE)
@@ -42,7 +44,20 @@ var_dump($response['history']); ## Prints array of messages.
 $pubnub->subscribe(array(
     'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
     'callback' => function($response) { ## REQUIRED Callback With Response
-        var_dump($response); ## Print Response
+        var_dump($response); ## Print Response with Messages
         return true;         ## Keep listening (return false to stop)
     }
+));
+
+## ----------------------------------
+## Receive Message (SUBSCRIBE)
+## PHP 5.2.0 ONLY. THIS WILL BLOCK!!!
+## THIS WILL BLOCK. PHP 5.2.0
+## ----------------------------------
+$pubnub->subscribe(array(
+    'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
+    'callback' => create_function(      ## PHP 5.2.0 Method
+        '$response',
+        'var_dump($response); return true;'
+    )
 ));
