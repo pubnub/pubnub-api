@@ -187,10 +187,10 @@ class Pubnub {
      * Load history from a channel.
      *
      * Messages remain in history for up to 30 days.
-     * Up to 1000 messages are stored.
-     * Response is order by most recent first.
+     * Up to 1000 messages returnable.
+     * Messages order by most recent first.
      *
-     * @param array $args with channel and limit.
+     * @param array $args with 'channel' and 'limit'.
      * @return mixed false on fail, array on success.
      */
     function history($args) {
@@ -214,6 +214,8 @@ class Pubnub {
     }
 
     /**
+     * Request URL
+     *
      * @param string $request url.
      * @param array $args of key/vals.
      * @return object from response.
