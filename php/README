@@ -2,7 +2,7 @@
 ##
 ## USAGE PHP EXAMPLE:
 ## ==================
-## More examples in the example folder.
+## More examples in the ./examples/ folder.
 
 ## -----------------------------------------
 ## Create Pubnub Client API (INITIALIZATION)
@@ -56,7 +56,7 @@ $pubnub->subscribe(array(
 ## ----------------------------------
 $pubnub->subscribe(array(
     'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
-    'callback' => create_function(      ## PHP 5.2.0 Method
+    'callback' => create_function(      ## REQUIRED PHP 5.2.0 Method
         '$response',
         'var_dump($response); return true;'
     )
