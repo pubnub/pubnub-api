@@ -1,0 +1,48 @@
+## USAGE PHP EXAMPLE:
+## ==================
+## More examples in the example folder.
+
+
+## -----------------------------------------
+## Create Pubnub Client API (INITIALIZATION)
+## -----------------------------------------
+$pubnub = new Pubnub( 'YOUR-PUBLISH-KEY', 'YOUR-SUBSCRIBE-KEY' );
+
+
+## ----------------------
+## Send Message (PUBLISH)
+## ----------------------
+$info = $pubnub->publish(array(
+    'channel' => 'hello_world', ## REQUIRED Channel to Send
+    'message' => 'Hey World!'   ## REQUIRED Message String/Array
+));
+var_dump($info);
+
+
+## --------------------------
+## Request Messages (HISTORY)
+## --------------------------
+$response = $pubnub->history(array(
+    'channel' => 'hello_world', ## REQUIRED Channel to Send
+    'limit'   => 100,           ## OPTIONAL Limit Number of Messages
+    'age'     => 500            ## OPTIONAL Age Limit in Seconds
+));
+var_dump($response['history']); ## Prints array of messages.
+
+
+## ----------------------------------
+## Receive Message (SUBSCRIBE)
+## PHP 5.3.0 ONLY. THIS WILL BLOCK!!!
+## THIS WILL BLOCK. PHP 5.3.0 ONLY!!!
+##
+## PHP 5.2.0 --> use CREATE_FUNCTION
+##               for 'callback'
+##
+## ----------------------------------
+$pubnub->subscribe(array(
+    'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
+    'callback' => function($response) { ## REQUIRED Callback With Response
+        var_dump($response); ## Print Response
+        return true;         ## Keep listening (return false to stop)
+    }
+));
