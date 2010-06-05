@@ -2,8 +2,9 @@
 /**
  * Pubnub Client API
  *
- * PHP 5.3.0+ REQUIRED
- * For earlier of PHP versions, use CREATE_FUNCTION for the callback.
+ * PHP 5.2.0+ REQUIRED
+ * PHP 5.3.0+ RECOMMENDED
+ * For earlier of PHP versions, use CREATE_FUNCTION for callbacks.
  *
  * Client API for interfacing with Pubnub.
  * Publish/Subscribe and History APIs.
@@ -20,7 +21,6 @@
     ## -----------------------------------------
     $pubnub = new Pubnub( 'YOUR-PUBLISH-KEY', 'YOUR-SUBSCRIBE-KEY' );
 
-
     ## ----------------------
     ## Send Message (PUBLISH)
     ## ----------------------
@@ -30,7 +30,6 @@
     ));
     echo($info['status']);          ## 200 if successful.
 
-
     ## --------------------------
     ## Request Messages (HISTORY)
     ## --------------------------
@@ -39,7 +38,6 @@
         'limit'   => 100            ## OPTIONAL Limit Number of Messages
     ));
     var_dump($response['history']); ## Prints array of messages.
-
 
     ## ----------------------------------
     ## Receive Message (SUBSCRIBE)
@@ -52,6 +50,19 @@
             var_dump($response); ## Print Response
             return true;         ## Keep listening (return false to stop)
         }
+    ));
+
+    ## ----------------------------------
+    ## Receive Message (SUBSCRIBE)
+    ## PHP 5.2.0 ONLY. THIS WILL BLOCK!!!
+    ## THIS WILL BLOCK. PHP 5.2.0
+    ## ----------------------------------
+    $pubnub->subscribe(array(
+        'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
+        'callback' => create_function(      ## REQUIRED PHP 5.2.0 Method
+            '$response',
+            'var_dump($response); return true;'
+        )
     ));
 
  * More Examples in the examples folder.
