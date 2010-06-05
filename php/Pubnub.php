@@ -135,28 +135,40 @@ class Pubnub {
         )) return false;
 
         ## Capture User Input
-        $channel  = self::$SUBSCRIBE_KEY . '/' . $args['channel'];
-        $callback = $args['callback'];
+        $channel   = self::$SUBSCRIBE_KEY . '/' . $args['channel'];
+        $callback  = $args['callback'];
+        $timetoken = isset($args['timetoken']) ? $args['timetoken'] : '0';
+        $server    = isset($args['server'])    ? $args['server']    : false;
 
         ## Find Server
-        $server = $this->_request( self::$ORIGIN . '/pubnub-subscribe', array(
-            'channel' => $channel
-        ) );
+        if (!$server) {
+            $resp_for_server = $this->_request(
+                self::$ORIGIN . '/pubnub-subscribe', array(
+                    'channel' => $channel
+                )
+            );
+            $server = $resp_for_server['server'];
+            $args['server'] = $server;
+        }
 
-        ## Wait for Message
-        $response = $this->_request( 'http://' . $server['server'], array(
-            'channel'   => $channel,
-            'timetoken' => '0'
-        ) );
-
-        ## Run user Callback and Reconnect if user permits.
         try {
+            ## Wait for Message
+            $response = $this->_request( 'http://' . $server, array(
+                'channel'   => $channel,
+                'timetoken' => $timetoken
+            ) );
+
+            ## Run user Callback and Reconnect if user permits.
             if (
                 $response['messages'][0] == 'xdr.timeout' ||
                 $callback($response)
-            ) return $this->subscribe($args);
+            ) {
+                $args['timetoken'] = $response['timetoken'];
+                return $this->subscribe($args);
+            }
         }
         catch (Exception $error) {
+            unset($args['server']);
             return $this->subscribe($args);
         }
 
