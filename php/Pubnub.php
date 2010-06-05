@@ -61,7 +61,8 @@
  */
 
 class Pubnub {
-    private static $ORIGIN        = 'http://pubnub-prod.appspot.com';
+    private static $ORIGIN        = 'http://localhost';
+    #private static $ORIGIN        = 'http://pubnub-prod.appspot.com';
     private static $LIMIT         = 1700;
     private static $PUBLISH_KEY   = '';
     private static $SUBSCRIBE_KEY = '';
@@ -156,6 +157,12 @@ class Pubnub {
                 'channel'   => $channel,
                 'timetoken' => $timetoken
             ) );
+
+            ## If we lost a server connection.
+            if (!isset($response['messages'][0])) {
+                unset($args['server']);
+                return $this->subscribe($args);
+            }
 
             ## Run user Callback and Reconnect if user permits.
             if (
