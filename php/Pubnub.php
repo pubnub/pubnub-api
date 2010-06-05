@@ -144,14 +144,24 @@ class Pubnub {
         ) );
 
         ## Wait for Message
-        $response = $this->_request( $server['server'], array(
+        $response = $this->_request( 'http://' . $server['server'], array(
             'channel'   => $channel,
             'timetoken' => '0'
         ) );
 
         ## Run user Callback and Reconnect if user permits.
-        if ($callback($response))
+        try {
+            if (
+                $response['messages'][0] == 'xdr.timeout' ||
+                $callback($response)
+            ) return $this->subscribe($args);
+        }
+        catch (Exception $error) {
             return $this->subscribe($args);
+        }
+
+        ## Done listening.
+        return true;
     }
 
     /**
