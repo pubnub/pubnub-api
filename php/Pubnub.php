@@ -36,8 +36,7 @@
     ## --------------------------
     $response = $pubnub->history(array(
         'channel' => 'hello_world', ## REQUIRED Channel to Send
-        'limit'   => 100,           ## OPTIONAL Limit Number of Messages
-        'age'     => 500            ## OPTIONAL Age Limit in Seconds
+        'limit'   => 100            ## OPTIONAL Limit Number of Messages
     ));
     var_dump($response['history']); ## Prints array of messages.
 
