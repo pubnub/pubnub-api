@@ -35,6 +35,9 @@ var P    = PUBNUB
 
         // Button Text
         chat.button.innerHTML = 'Send';
+        
+        // Capture Channel
+        var channel = P.attr( node, 'channel' );
 
         // Add Styles
         P.attr( chat.chatbox, 'id', P.attr( node, 'simple-chat-chatbox' ) );
@@ -49,7 +52,7 @@ var P    = PUBNUB
 
         // Send Sign-on Message
         P.publish({
-            channel : node_name,
+            channel : channel,
             message : 'Someone Joined the Chat.'
         });
 
