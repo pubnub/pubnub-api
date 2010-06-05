@@ -3,7 +3,7 @@
  * Pubnub Client API
  *
  * PHP 5.3.0+ REQUIRED
- * For earlier of PHP versions, REMOVE the SUBSCRIBE function.
+ * For earlier of PHP versions, use CREATE_FUNCTION for the callback.
  *
  * Client API for interfacing with Pubnub.
  * Publish/Subscribe and History APIs.
