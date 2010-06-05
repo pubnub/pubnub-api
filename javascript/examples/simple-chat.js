@@ -12,7 +12,7 @@
 -->
 
 <style>
-    #simple-chat-self {padding:0;background-color:#c41952}
+    #simple-chat {padding:0;background-color:#c41952}
     #simple-chat-chatbox {height:60px;overflow:scroll;overflow-x:hidden;border:1px solid #ccc;padding:10px;background-color:#fff}
     #simple-chat-textbox {width:320px;margin:9px;font-size:18px}
     #simple-chat-button {width:70px;cursor:pointer;margin:9px;font-size:18px}
@@ -23,7 +23,7 @@
 */
 var P    = PUBNUB
 ,   chat = {
-    init : function( node_name, disable_css ) {
+    init : function( node_name ) {
         var node = P.$(node_name);
 
         chat.node_name = node_name;
@@ -37,10 +37,9 @@ var P    = PUBNUB
         chat.button.innerHTML = 'Send';
 
         // Add Styles
-        P.attr( node, 'style', P.attr( node, 'style-self' ) );
-        P.attr( chat.chatbox, 'style', P.attr( node, 'style-chatbox' ) );
-        P.attr( chat.textbox, 'style', P.attr( node, 'style-textbox' ) );
-        P.attr( chat.button, 'style', P.attr( node, 'style-button' ) );
+        P.attr( chat.chatbox, 'id', P.attr( node, 'simple-chat-chatbox' ) );
+        P.attr( chat.textbox, 'id', P.attr( node, 'simple-chat-textbox' ) );
+        P.attr( chat.button, 'id', P.attr( node, 'simple-chat-button' ) );
 
         // Display Nodes
         node.innerHTML = '';
@@ -77,9 +76,6 @@ var P    = PUBNUB
 
         // Register Listener
         P.subscribe({ channel : node_name, history : true }, chat.subscribe );
-
-        // Stop here if no CSS is desired.
-        if (disable_css) return;
     },
 
     subscribe : function(response) {
