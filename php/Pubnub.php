@@ -198,7 +198,7 @@ class Pubnub {
      * Load history from a channel.
      *
      * Messages remain in history for up to 30 days.
-     * Up to 1000 messages returnable.
+     * Up to 100 messages returnable.
      * Messages order by most recent first.
      *
      * @param array $args with 'channel' and 'limit'.
