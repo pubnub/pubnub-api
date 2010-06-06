@@ -1,0 +1,8 @@
+www.pubnub.com - pubnub - realtime push service in the cloud
+
+To start the PHP Chat Client:
+-----------------------------
+    php ./chat-command-line.php PUBLISH-KEY SUBSCRIBE-KEY
+
+Review code in each file to see examples of the PHP Pubnub Client API.
+Publish, Subscribe and History functions are available in the Pubnub PHP Class.
