@@ -26,9 +26,9 @@ echo("
     echo("Creating new Pubnub Client API\n");
     $pubnub = new Pubnub( $publish_key, $subscribe_key );
 
-    ## ----------------------
-    ## Send Message (PUBLISH)
-    ## ----------------------
+    ## ------------------------------
+    ## Listen for Message (SUBSCRIBE)
+    ## ------------------------------
     echo("Listening for Messages (Press ^C to stop)\n");
     $pubnub->subscribe(array(
         'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
