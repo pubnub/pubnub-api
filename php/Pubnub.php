@@ -34,10 +34,10 @@
     ## Request Messages (HISTORY)
     ## --------------------------
     $response = $pubnub->history(array(
-        'channel' => 'hello_world', ## REQUIRED Channel to Send
-        'limit'   => 100            ## OPTIONAL Limit Number of Messages
+        'channel' => 'hello_world',  ## REQUIRED Channel to Send
+        'limit'   => 100             ## OPTIONAL Limit Number of Messages
     ));
-    var_dump($response['history']); ## Prints array of messages.
+    var_dump($response['messages']); ## Prints array of messages.
 
     ## ----------------------------------
     ## Receive Message (SUBSCRIBE)
