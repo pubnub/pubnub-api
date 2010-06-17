@@ -32,12 +32,11 @@ echo("
     echo("Listening for Messages (Press ^C to stop)\n");
     $pubnub->subscribe(array(
         'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
-        'callback' => function($response) { ## REQUIRED Callback With Response
-            var_dump($response); ## Print Response
+        'callback' => function($message) {  ## REQUIRED Callback With Response
+            var_dump($message);  ## Print Message
             return true;         ## Keep listening (return false to stop)
         }
     ));
-
 
 ?>
 

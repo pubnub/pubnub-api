@@ -16,34 +16,26 @@ $info = $pubnub->publish(array(
     'channel' => 'hello_world', ## REQUIRED Channel to Send
     'message' => 'Hey World!'   ## REQUIRED Message String/Array
 ));
-
-## Print Publish Response
-var_dump($info);
+echo($info['status']);          ## 200 if successful.
 
 ## --------------------------
 ## Request Messages (HISTORY)
 ## --------------------------
-$response = $pubnub->history(array(
-    'channel' => 'hello_world', ## REQUIRED Channel to Send
-    'limit'   => 100            ## OPTIONAL Limit Number of Messages
+$messages = $pubnub->history(array(
+    'channel' => 'hello_world',  ## REQUIRED Channel to Send
+    'limit'   => 100             ## OPTIONAL Limit Number of Messages
 ));
-
-## Print History
-var_dump($response);
+var_dump($messages);             ## Prints array of messages.
 
 ## ----------------------------------
 ## Receive Message (SUBSCRIBE)
 ## PHP 5.3.0 ONLY. THIS WILL BLOCK!!!
 ## THIS WILL BLOCK. PHP 5.3.0 ONLY!!!
-##
-## PHP 5.2.0 --> use CREATE_FUNCTION
-##               for 'callback'
-##
 ## ----------------------------------
 $pubnub->subscribe(array(
     'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
-    'callback' => function($response) { ## REQUIRED Callback With Response
-        var_dump($response); ## Print Response with Messages
+    'callback' => function($message) {  ## REQUIRED Callback With Response
+        var_dump($message);  ## Print Message
         return true;         ## Keep listening (return false to stop)
     }
 ));
@@ -56,7 +48,7 @@ $pubnub->subscribe(array(
 $pubnub->subscribe(array(
     'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
     'callback' => create_function(      ## REQUIRED PHP 5.2.0 Method
-        '$response',
-        'var_dump($response); return true;'
+        '$message',
+        'var_dump($message); return true;'
     )
 ));

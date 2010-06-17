@@ -17,10 +17,7 @@
     ## ----------------------
     $pubnub->subscribe(array(
         'channel'  => 'php_chat',           ## REQUIRED Channel to Listen
-        'callback' => function($response) { ## REQUIRED Callback With Response
-            ## Capture Message Data
-            $message = $response['messages'][0];
-
+        'callback' => function($message) {  ## REQUIRED Callback With Response
             ## Print Message
             echo(
                 "["              .

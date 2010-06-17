@@ -4,11 +4,12 @@
 <!--
     Simple Chat
     ===========
-    <style> inside <head>
-    <div> where Simple Chat will appear.
-    <script> at BOTTOM of Page
+    <STYLE> inside <head>
+    <DIV> where Simple Chat will appear.
+    <SCRIPT> at BOTTOM of Page
 
-    To change the conversation channel, update the channel attribute inside the div.
+    To change the conversation channel,
+    change the channel attribute inside the div.
 -->
 
 <style>
@@ -78,13 +79,12 @@ var P    = PUBNUB
         P.bind( 'blur', chat.textbox, send );
 
         // Register Listener
-        P.subscribe({ channel : node_name, history : true }, chat.subscribe );
+        P.subscribe({ channel : node_name }, chat.subscribe );
     },
 
-    subscribe : function(response) {
-        var br       = '<br/>'
-        ,   messages = response.messages.reverse().join(br);
-        chat.chatbox.innerHTML = messages + br + chat.chatbox.innerHTML;
+    subscribe : function(message) {
+        var br       = '<br/>';
+        chat.chatbox.innerHTML = message + br + chat.chatbox.innerHTML;
     }
 
 };

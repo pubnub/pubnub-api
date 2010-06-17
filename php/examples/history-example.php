@@ -28,11 +28,11 @@ echo("
 
     ## Get History
     echo("Requesting History...\n");
-    $response = $pubnub->history(array(
+    $messages = $pubnub->history(array(
         'channel' => 'hello_world', ## REQUIRED Channel to Send
         'limit'   => 100            ## OPTIONAL Limit Number of Messages
     ));
-    var_dump($response); ## Prints response with history.
+    var_dump($messages);            ## Prints Published Messages.
 
 ?>
 

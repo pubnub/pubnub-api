@@ -33,11 +33,11 @@
     ## --------------------------
     ## Request Messages (HISTORY)
     ## --------------------------
-    $response = $pubnub->history(array(
+    $messages = $pubnub->history(array(
         'channel' => 'hello_world',  ## REQUIRED Channel to Send
         'limit'   => 100             ## OPTIONAL Limit Number of Messages
     ));
-    var_dump($response['messages']); ## Prints array of messages.
+    var_dump($messages);             ## Prints array of messages.
 
     ## ----------------------------------
     ## Receive Message (SUBSCRIBE)
@@ -46,8 +46,8 @@
     ## ----------------------------------
     $pubnub->subscribe(array(
         'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
-        'callback' => function($response) { ## REQUIRED Callback With Response
-            var_dump($response); ## Print Response
+        'callback' => function($message) {  ## REQUIRED Callback With Response
+            var_dump($message);  ## Print Message
             return true;         ## Keep listening (return false to stop)
         }
     ));
@@ -60,8 +60,8 @@
     $pubnub->subscribe(array(
         'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
         'callback' => create_function(      ## REQUIRED PHP 5.2.0 Method
-            '$response',
-            'var_dump($response); return true;'
+            '$message',
+            'var_dump($message); return true;'
         )
     ));
 
@@ -149,6 +149,7 @@ class Pubnub {
         $callback  = $args['callback'];
         $timetoken = isset($args['timetoken']) ? $args['timetoken'] : '0';
         $server    = isset($args['server'])    ? $args['server']    : false;
+        $continue  = true;
 
         ## Find Server
         if (!$server) {
@@ -174,11 +175,19 @@ class Pubnub {
                 return $this->subscribe($args);
             }
 
+            ## If it was a timeout
+            if ($response['messages'][0] == 'xdr.timeout') {
+                $args['timetoken'] = $response['timetoken'];
+                return $this->subscribe($args);
+            }
+
             ## Run user Callback and Reconnect if user permits.
-            if (
-                $response['messages'][0] == 'xdr.timeout' ||
-                $callback($response)
-            ) {
+            foreach ($response['messages'] as $message) {
+                $continue = $continue && $callback($message);
+            }
+
+            ## If okay to keep listening.
+            if ($continue) {
                 $args['timetoken'] = $response['timetoken'];
                 return $this->subscribe($args);
             }
@@ -221,7 +230,7 @@ class Pubnub {
             'limit'   => $limit
         ) );
 
-        return $response;
+        return $response['messages'];
     }
 
     /**
