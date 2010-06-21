@@ -1,7 +1,6 @@
 require 'open-uri'
 require 'uri'
 require 'json'
-#require 'net/http'
 
 $ORIGIN = 'http://pubnub-prod.appspot.com'
 $LIMIT  = 1700
@@ -66,6 +65,10 @@ class Pubnub
     end
 
 
+    # messages = pubnub.history({
+    #     'channel' => 'hello_world',
+    #     'limit'   => 10
+    # })
     def history(args)
         ## Fail if Missing Channel
         if !args['channel']
