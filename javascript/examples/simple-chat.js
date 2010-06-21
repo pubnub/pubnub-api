@@ -4,6 +4,10 @@
 <!--
     Simple Chat
     ===========
+
+    View source code on GitHub:
+    http://github.com/pubnub/pubnub-api/blob/master/javascript/examples/simple-chat.js
+
     <STYLE> inside <head>
     <DIV> where Simple Chat will appear.
     <SCRIPT> at BOTTOM of Page
@@ -41,9 +45,9 @@ var P    = PUBNUB
         var channel = P.attr( node, 'channel' );
 
         // Add Styles
-        P.attr( chat.chatbox, 'id', P.attr( node, 'simple-chat-chatbox' ) );
-        P.attr( chat.textbox, 'id', P.attr( node, 'simple-chat-textbox' ) );
-        P.attr( chat.button, 'id', P.attr( node, 'simple-chat-button' ) );
+        P.attr( chat.chatbox, 'id', 'simple-chat-chatbox' );
+        P.attr( chat.textbox, 'id', 'simple-chat-textbox' );
+        P.attr( chat.button, 'id', 'simple-chat-button' );
 
         // Display Nodes
         node.innerHTML = '';
