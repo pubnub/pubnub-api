@@ -5,7 +5,7 @@
     $subscribe_key = isset($argv[2]) ? $argv[2] : false;
     $message       = isset($argv[3]) ? $argv[3] : false;
 
-    # Print usage if missing info.
+    ## Print usage if missing info.
     if (!($publish_key && $subscribe_key && $message)) {
 echo("
     ==============
