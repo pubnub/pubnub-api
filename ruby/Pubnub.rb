@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'uri'
 require 'json'
+require 'pp'
 
 $ORIGIN = 'http://pubnub-prod.appspot.com'
 $LIMIT  = 1700
@@ -11,9 +12,13 @@ class Pubnub
         @subscribe_key = subscribe_key
     end
 
+    # -------
+    # PUBLISH
+    # -------
+    # Send Message
     # info = pubnub.publish({
-    #     "channel" => 'hello_world',
-    #     "message" => { 'text' => 'some text data' }
+    #     'channel' => 'hello_world',
+    #     'message' => { 'text' => 'some text data' }
     # })
     def publish(args)
         ## Fail if not enough information
@@ -42,11 +47,16 @@ class Pubnub
         return response
     end
 
-
-    ## TODO This function isn't done yet.
+    # ---------
+    # SUBSCRIBE
+    # ---------
+    # Listen for Messages *BLOCKING*
     # pubnub.subscribe({
-    #     "channel"  => 'hello_world',
-    #     "callback" => proc
+    #     'channel'  => 'hello_world',
+    #     'callback' => lambda do |message|
+    #         pp(message) ## print message
+    #         return true ## keep listening?
+    #     end
     # })
     def subscribe(args)
         ## Fail if missing channel
@@ -55,16 +65,75 @@ class Pubnub
             return false
         end
 
-        ## Fail if missing channel
+        ## Fail if missing callback
         if !args['callback']
             puts('Missing Callback.')
             return false
         end
 
-        return 'this function is not finished...'
+        ## Capture User Input
+        channel   = @subscribe_key + '/' + args['channel']
+        callback  = args['callback']
+        timetoken = args['timetoken'] || '0'
+        server    = args['server']    || false
+        continue  = true
+
+        ## Find Server
+        if !server
+            resp_for_server = self._request( $ORIGIN + '/pubnub-subscribe', {
+                'channel' => channel
+            })
+
+            server = resp_for_server['server']
+            args['server'] = server
+
+            if !server
+                pp(args)
+                puts('Incorrect API Keys *OR* Out of PubNub Credits')
+                puts('Account API Keys http://www.pubnub.com/account')
+                puts('Buy Credits http://www.pubnub.com/account-buy-credit')
+                return false
+            end
+        end
+
+        ## Wait for Message
+        response = self._request( 'http://' + server, {
+            'channel'   => channel,
+            'timetoken' => timetoken
+        } );
+
+        ## If we lost a server connection.
+        if !response['messages'][0]
+            args['server'] = false
+            return self.subscribe(args);
+        end
+
+        ## If it was a timeout
+        if response['messages'][0] == 'xdr.timeout'
+            args['timetoken'] = response['timetoken']
+            return self.subscribe(args)
+        end
+
+        ## Run user Callback and Reconnect if user permits.
+        response['messages'].each do |message|
+            continue = continue && callback.call(message);
+        end
+
+        ## If okay to keep listening.
+        if continue
+            args['timetoken'] = response['timetoken'];
+            return self.subscribe(args);
+        end
+
+        ## Done Listening
+        return true
     end
 
 
+    # -------
+    # HISTORY
+    # -------
+    # Load Previously Published Messages
     # messages = pubnub.history({
     #     'channel' => 'hello_world',
     #     'limit'   => 10
@@ -84,13 +153,16 @@ class Pubnub
             'limit'   => limit
         } )
 
-        return response['messages'];
+        return response['messages']
     end
 
-
+    # response = self._request( $ORIGIN + '/pubnub-history', {
+    #     'channel' => channel,
+    #     'limit'   => limit
+    # } )
     def _request( request, args )
         ## Expecting JSONP
-        args['unique'] = Time.new.to_f.to_s.gsub!( /\./, '' );
+        args['unique'] = Time.new.to_f.to_s.gsub!( /\./, '' )
 
         ## Format URL Params
         params = []
@@ -108,8 +180,7 @@ class Pubnub
             response.gsub!( /^this\[[^\]]+\]\((.+?)\)$/, '\1' )
         end
 
-        return JSON.parse(response);
+        return JSON.parse(response)
     end
 end
-
 
