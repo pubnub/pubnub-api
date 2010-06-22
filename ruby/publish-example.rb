@@ -1,4 +1,3 @@
-$:.unshift '/opt/pubnub/github/ruby'
 require 'Pubnub'
 require 'pp'
 
@@ -9,14 +8,15 @@ message       = ARGV[2]
 
 ## Print usage if missing info.
 if !(publish_key && subscribe_key && message)
-    puts("
+    puts('
+    Get API Keys at http://www.pubnub.com/account
     ==============
     EXAMPLE USAGE:
     ==============
     ruby publish.rb PUBLISH-KEY SUBSCRIBE-KEY 'ANY MESSAGE HERE'
     ruby publish.rb PUBLISH-KEY SUBSCRIBE-KEY 'Hey what is up?'
 
-    ")
+    ')
     exit()
 end
 
@@ -31,10 +31,10 @@ pubnub = Pubnub.new( publish_key, subscribe_key )
 ## ----------------------
 ## Send Message (PUBLISH)
 ## ----------------------
-puts('Sending a message with Publish Function')
+puts('Sending a message with publish() Function')
 info = pubnub.publish({
-    "channel" => 'hello_world',
-    "message" => message
+    'channel' => 'hello_world',
+    'message' => message
 })
 
 ## Print Pretty

@@ -1,4 +1,3 @@
-$:.unshift '/opt/pubnub/github/ruby'
 require 'Pubnub'
 require 'pp'
 
@@ -9,6 +8,7 @@ subscribe_key = ARGV[1]
 ## Print usage if missing info.
 if !(publish_key && subscribe_key)
     puts("
+    Get API Keys at http://www.pubnub.com/account
     ==============
     EXAMPLE USAGE:
     ==============
@@ -28,7 +28,7 @@ pubnub = Pubnub.new( publish_key, subscribe_key )
 ## --------------------------------
 ## Request Past Publishes (HISTORY)
 ## --------------------------------
-puts('Requesting History...')
+puts('Requesting History with history() Function')
 messages = pubnub.history({
     'channel' => 'hello_world',
     'limit'   => 10
