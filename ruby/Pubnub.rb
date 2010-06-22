@@ -1,3 +1,10 @@
+## www.pubnub.com - PubNub realtime push service in the cloud. 
+## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog 
+
+## -------------
+## Ruby Push API
+## -------------
+
 require 'open-uri'
 require 'uri'
 require 'json'
