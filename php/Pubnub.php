@@ -138,11 +138,17 @@ class Pubnub {
      * @return mixed false on fail, array on success.
      */
     function subscribe($args) {
-        ## Fail if bad input.
-        if (!(
-            $args['channel'] &&
-            $args['callback']
-        )) return false;
+        ## Fail if missing channel
+        if (!$args['channel']) {
+            echo("Missing Channel.\n");
+            return false;
+        }
+
+        ## Fail if missing callback
+        if (!$args['callback']) {
+            echo("Missing Callback.\n");
+            return false;
+        }
 
         ## Capture User Input
         $channel   = self::$SUBSCRIBE_KEY . '/' . $args['channel'];
@@ -158,6 +164,15 @@ class Pubnub {
                     'channel' => $channel
                 )
             );
+
+            if (!isset($resp_for_server['server'])) {
+                print_r($args);
+                echo("Incorrect API Keys *OR* Out of PubNub Credits\n");
+                echo("Account API Keys http://www.pubnub.com/account\n");
+                echo("Buy Credits http://www.pubnub.com/account-buy-credit\n");
+                return false;
+            }
+
             $server = $resp_for_server['server'];
             $args['server'] = $server;
         }
