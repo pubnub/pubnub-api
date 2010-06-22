@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+    <title>PubNub - Mouse Speak</title>
+    <style>
+    </style>
+</head>
+<body>
+
+Start Typing to Talk with other Mice<br/>
+Don't put this script on a page where User Input is requred.
+<ol>
+    <li> Channel: <pre>mouse-speak</pre>
+    <li> Message: <pre>{ uuid : uuid, pos: [x,y], txt: "hello" }</pre>
+    <li> Events: <pre>mousemove, touchmove, touchstart, keyup</pre>
+    <li> Wait State to prevent network bashing.
+    <li> Send what has changed (mouse, text).
+</ol>
+
+</body>
+</html>
+
+
+<!-- It's at the bottom! -->
+<!-- pub-key and sub-key works with localhost -->
+<script src=http://192.168.1.5/js-api?pub-key=demo&sub-key=demo></script>
+<script src=mouse-speak.js></script>
