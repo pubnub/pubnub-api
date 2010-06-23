@@ -1,5 +1,24 @@
 (function(){
 
+/*
+    PubNub Real Time Push APIs and Notifications Framework
+    Copyright (c) 2010 Stephen Blum
+    http://www.google.com/profiles/blum.stephen
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 var PUB      = PUBNUB
 ,   bind     = PUB.bind
 ,   css      = PUB.css
@@ -13,7 +32,7 @@ var PUB      = PUBNUB
 ,   lasttxt  = ''   // Last Sent Text
 ,   sentcnt  = 0    // Number of Messages Sent
 ,   uuid     = ''   // User Identification
-,   wait     = 200  // Publish Limit Delay
+,   wait     = 100  // Publish Limit Delay
 ,   maxmsg   = 100  // Max Message Length
 ,   moffset  = 20   // Offset of Mouse Position
 ,   timed    = 0    // Timeout for Publish Limiter
@@ -438,6 +457,7 @@ bind( 'keyup', document, keystroke );
 PUB.each( search('input'), function(input) {
     bind( 'focus', input, focused );
     bind( 'blur', input, sevenofnine );
+    bind( 'click', document, sevenofnine );
 } );
 
 })()

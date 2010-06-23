@@ -1,6 +1,20 @@
 ## www.pubnub.com - PubNub realtime push service in the cloud. 
 ## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog 
 
+## PubNub Real Time Push APIs and Notifications Framework
+## Copyright (c) 2010 Stephen Blum
+## http://www.pubnub.com/
+## 
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+## 
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+
 ## -------------
 ## Ruby Push API
 ## -------------
