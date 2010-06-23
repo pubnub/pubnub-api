@@ -1,5 +1,15 @@
 
 /*
+    WAIT! - This file depends on instructions from the PUBNUB Server.
+    It is recommended that you load this file from a <script> include tag.
+
+    Get your JS Include <script> include tag here:
+    http://www.pubnub.com/account-javascript-api-include
+
+    Make sure to use that link if you want to use PubNub Comet.
+*/
+
+/*
     PubNub Real Time Push APIs and Notifications Framework
     Copyright (c) 2010 Stephen Blum
     http://www.google.com/profiles/blum.stephen
