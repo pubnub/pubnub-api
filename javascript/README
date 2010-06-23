@@ -1,21 +1,18 @@
-// www.pubnub.com - Pubnub realtime push service in the cloud. 
+// www.pubnub.com - PubNub realtime push service in the cloud. 
 
-// The Pubnub JavaScript API is hosted at www.pubnub.com website.
-// You must have a Pubnub account to use the JavaScript API.
-// Click on www.pubnub.com/account to view your JavaScript Include.
-// Your API Keys are listed on the Account page as well.
-
+// The PubNub JavaScript API is hosted at www.pubnub.com website.
+// You must have a PubNub account to use the JavaScript API.
+// Click on http://www.pubnub.com/account-javascript-api-include
 
 // There are two simple API calls.
 // Publish() and Subscribe().
 
-// The Punbub JavaScript global is PUBNUB.
+// The PubNub JavaScript global is PUBNUB.
 
 // PUBNUB.publish() Example:
 // This function will send messages to the channel of your choice.
 // You may pass any type of object or array as a message.
 PUBNUB.publish({ channel : 'my_channel', message : 'Hello World!' });
-
 
 // PUBNUB.subscribe() Example:
 // This function will listen for messages.
@@ -25,7 +22,5 @@ PUBNUB.subscribe({ channel : 'my_channel' }, function(response) {
     console.log(response);
 } );
 
-
-// That's it!  Nothing more complex is needed to pass messages.
-// Accept no substitutes.
+// That's it! Nothing more complex is needed to pass messages.
 // Visit www.pubnub.com and sign up for an account!
