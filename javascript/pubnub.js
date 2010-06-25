@@ -783,7 +783,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         });
     */
     'publish' : function( args, callback ) {
-        callback = callback || function(){};
+        callback = callback || function(){} || args['callback'];
         var message = args['message'];
 
         // Make sure we have a Message
@@ -853,6 +853,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         if (!args['channel']) return log('Must Specify a Channel');
 
         // Make sure we have a Callback
+        callback = callback || args['callback'];
         if (!callback) return log('Must Specify a Callback');
 
         // Make sure we have a Channel
