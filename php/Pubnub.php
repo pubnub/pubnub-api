@@ -1,6 +1,8 @@
 <?php
 
 /*
+    www.pubnub.com - PubNub realtime push service in the cloud. 
+
     PubNub Real Time Push APIs and Notifications Framework
     Copyright (c) 2010 Stephen Blum
     http://www.google.com/profiles/blum.stephen
