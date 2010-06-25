@@ -7,8 +7,12 @@
 </head>
 <body>
 
+<!--
+Safe To Type (will not send): 
+<input>
+-->
+<br>
 Start Typing to Talk with other Mice<br/>
-Don't put this script on a page where User Input is requred.
 <ol>
     <li> Channel: <pre>mouse-speak</pre>
     <li> Message: <pre>{ uuid : uuid, pos: [x,y], txt: "hello" }</pre>
@@ -24,5 +28,5 @@ Don't put this script on a page where User Input is requred.
 <!-- It's at the bottom! -->
 <!-- pub-key and sub-key works with localhost -->
 <!--Paste this at the bottom of your HTML Page-->
-<script src="http://pubnub-prod.appspot.com/js-api?pub-key=demo&sub-key=demo"></script>
+<script src="http://pubnub-prod.appspot.com/js-api?pub-key=demo&sub-key=demo&devmode=1"></script>
 <script src=mouse-speak.js></script>

@@ -1,6 +1,9 @@
 (function(){
 
 /*
+    www.pubnub.com - PubNub realtime push service in the cloud. 
+    http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog 
+
     PubNub Real Time Push APIs and Notifications Framework
     Copyright (c) 2010 Stephen Blum
     http://www.google.com/profiles/blum.stephen
@@ -19,25 +22,39 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var PUB      = PUBNUB
-,   bind     = PUB.bind
-,   css      = PUB.css
-,   body     = PUB.search('body')[0]
-,   now      = function(){return+new Date}
-,   mice     = {}
-,   channel  = 'mouse-speak'
-,   textbox  = PUBNUB.create('input')
-,   focused  = 0    // Focused on Textbox?
-,   lastpos  = []   // Last Sent Position
-,   lasttxt  = ''   // Last Sent Text
-,   sentcnt  = 0    // Number of Messages Sent
-,   uuid     = ''   // User Identification
-,   wait     = 100  // Publish Limit Delay
-,   maxmsg   = 100  // Max Message Length
-,   moffset  = 20   // Offset of Mouse Position
-,   timed    = 0    // Timeout for Publish Limiter
-,   lastsent = 0    // Last Sent Timestamp
-,   nohtml   = /[<>]/g;
+var cookie = {
+    get : function(key) {
+        if (document.cookie.indexOf(key) == -1) return null;
+        return ((document.cookie||'').match(
+            RegExp(key+'=([^;]+)')
+        )||[])[1] || null;
+    },
+    set : function( key, value ) {
+        document.cookie = key + '=' + value;
+    }
+};
+
+var bind      = PUBNUB.bind
+,   css       = PUBNUB.css
+,   body      = PUBNUB.search('body')[0]
+,   doc       = document.documentElement
+,   now       = function(){return+new Date}
+,   mice      = {}
+,   channel   = 'mouse-speak'
+,   mousefade = 9000 // Time before use is considered Inactive
+,   textbox   = PUBNUB.create('input')
+,   focused   = 0    // Focused on Textbox?
+,   lastpos   = []   // Last Sent Position
+,   lasttxt   = ''   // Last Sent Text
+,   sentcnt   = 0    // Number of Messages Sent
+,   uuid      = null //cookie.get('uuid') // User Identification
+,   wait      = 200  // Publish Rate Limit (Time Between Data Push)
+,   maxmsg    = 30   // Max Message Length
+,   moffset   = -40  // Offset of Mouse Position
+,   timed     = 0    // Timeout for Publish Limiter
+,   lastsent  = 0    // Last Sent Timestamp
+,   nohtml    = /[<>]/g;
+
 
 var Sprite = {
     /**
@@ -71,7 +88,7 @@ var Sprite = {
         return sprite;
     },
 
-    ground : body,
+    ground : PUBNUB.search('body')[0],
     append : function(node) {
         Sprite.ground.appendChild(node);
     },
@@ -125,6 +142,7 @@ var Sprite = {
      * sprite.animate( [ [left, top, duration, [animate] ], []...] )
      * sprite.animate( [[], [], []] )
      * sprite.animate( [[10, 10, .2, [ANIMATEPARAMS], loopanimate ], ... )
+     * sprite.animate( [[10, 10, .2, [[frame,dur], ...], loopanimate ], ... )
      */
     movie : function( sprite, pattern, loop, callback, position ) {
         // Clear Any Other Animation
@@ -149,7 +167,7 @@ var Sprite = {
             pattern[position][3] || 0
         );
 
-    // [{top:0,opacity:.5}, 500, 0, 0],
+        // [{top:0,opacity:.5}, 500, 0, 0],
         // Update Mover
         Sprite.move(
             sprite,
@@ -166,6 +184,8 @@ var Sprite = {
      */
     move : function( sprite, properties, duration, callback ) {
         var start_time   = now();
+
+        Sprite.stop_all(sprite);
 
         PUBNUB.each( properties, function( property, value ) {
             var current_time = start_time
@@ -220,12 +240,6 @@ var Sprite = {
      */
     stop_animate : function(sprite) {
         clearTimeout(sprite.intervals.animate);
-    },
-
-    /**
-     * 
-     */
-    somefunction : function(  ) {
     }
 };
 
@@ -243,27 +257,34 @@ function get_pos(e) {
 
     if (!e) return [0,0];
 
-    var touch = e['touches'] && e.touches[0];
+    var tch  = e.touches && e.touches[0]
+    ,   tchp = 0;
 
-    if (touch) {
-        posx = touch.pageX;
-        posy = touch.pageY;
+    if (tch) {
+        PUBNUB.each( e.touches, function(touch) {
+            posx = touch.pageX;
+            posy = touch.pageY;
+
+            // Send Normal Touch on First Touch
+            if (!tchp) return;
+
+            // Must be more touches!
+            // send({ 'pageX' : posx, 'pageY' : posy, 'uuid' : uuid+tchp++ });
+        } );
     }
     else if (e.pageX || e.pageY) {
         posx = e.pageX;
         posy = e.pageY;
     }
     else if (e.clientX || e.clientY) {
-        posx = e.clientX + body.scrollLeft
-            + document.documentElement.scrollLeft;
-        posy = e.clientY + body.scrollTop
-            + document.documentElement.scrollTop;
+        posx = e.clientX + body.scrollLeft + doc.scrollLeft;
+        posy = e.clientY + body.scrollTop  + doc.scrollTop;
     }
 
-    posx += moffset;
+    posx += moffset*2;
     posy += moffset;
 
-    if (posx <= moffset) posx = 0;
+    if (posx <= moffset*2) posx = 0;
     if (posy <= moffset) posy = 0;
 
     return [posx, posy];
@@ -280,9 +301,6 @@ function send(e) {
     // Leave if no UUID yet.
     if (!uuid) return;
 
-    // If this is yourself, then Update UI RIGHT NOW!
-    // TODO
-
     // Get Local Timestamp
     var right_now = now();
 
@@ -292,16 +310,17 @@ function send(e) {
         clearTimeout(timed);
         timed = setTimeout( function() {send(e)}, wait );
 
-        return 0;
+        return 1;
     }
 
     // Set Last Sent to Right Now.
     lastsent = right_now;
 
     // Capture User Input
-    var pos = get_pos(e)
-    ,   txt = get_txt()
-    ,   msg = { uuid : uuid };
+    var pos   = get_pos(e)
+    ,   txt   = get_txt()
+    //,   xuuid = e['uuid']
+    ,   msg   = { uuid : /*xuuid ||*/ uuid };
 
     // Don't send if no change in Position.
     if (!(
@@ -320,26 +339,21 @@ function send(e) {
     if (lasttxt != txt || !(sentcnt % 3)) {
         lasttxt    = txt;
         msg['txt'] = txt || ' ';
+        cookie.set( 'mtxt', msg['txt'] );
     }
 
     // No point sending nothing.
-    if (!(msg['txt'] || msg['pos'])) return 0;
+    if (!(msg['txt'] || msg['pos'])) return 1;
 
-    /*
-    console.log(JSON.stringify({
-        channel : channel,
-        message : msg
-    }));
-    */
+    // Set so we won't get jittery mice.
+    msg['c'] = sentcnt++;
 
-    sentcnt++;
-
-    PUB.publish({
+    PUBNUB.publish({
         channel : channel,
         message : msg
     });
 
-    return 0;
+    return 1;
 }
 
 // User Joined
@@ -347,9 +361,9 @@ function user_joined(message) {
     var pos   = message['pos'] || [100,100]
     ,   mouse = Sprite.create({
         image : {
-            url : 'mouse.png',
-            width : 180,
-            height : 100,
+            url : 'http://www.pubnub.com/ju883jkslae83K8jfjvn/mouse.png',
+            width : 350,
+            height : 30,
             offset : {
                 top : 0,
                 left : 0
@@ -365,18 +379,36 @@ function user_joined(message) {
         framerate : 24
     });
 
-    // Set Class
-    // attr( mouse.node, 'class', 'mouse-div' );
+    // Do something when you mouseover.
+    bind( 'mouseover', mouse.node, function() {
+        // Don't kill yourself
+        if (uuid == message['uuid']) return 1;
+
+        PUBNUB.css( mouse.node, {
+            'textShadow' : '#00ff00 0 0 18px',
+            'color'      : '#990099'
+        } );
+
+        Sprite.move( mouse, {
+            'opacity' : 0.5,
+            'top'     : 1,
+            'left'    : 1
+        }, wait );
+    } );
 
     // Set Prettier Text
-    PUB.css( mouse.node, {
-        'padding' : '20px',
-        'fontSize' : '12px',
-        'textShadow' : '#000 1px 1px 4px'
+    PUBNUB.css( mouse.node, {
+        'fontWeight' : 'bold',
+        'padding'    : '0 0 0 20px',
+        'fontSize'   : '14px',
+        'textShadow' : '#888 1px 1px 2px',
+        'opacity'    : 0.0,
+        // 'backgroundColor' : 'red',
+        'color'      : '#000'
     } );
 
     // Save UUID
-    PUB.attr( mouse.node, 'uuid', message['uuid'] );
+    PUBNUB.attr( mouse.node, 'uuid', message['uuid'] );
 
     // Save User
     mice[message['uuid']] = mouse;
@@ -389,26 +421,42 @@ function user_joined(message) {
 function user_updated(message) {
     var pos   = message['pos']
     ,   txt   = message['txt']
+    ,   last  = message['c']
     ,   mouse = mice[message['uuid']];
 
-    /*if (pos) PUB.css( mouse.node, {
-        'top'  : pos[1],
-        'left' : pos[0]
-    } );*/
+    // Prevent Jitter from Early Publish
+    if (mouse.last && last && mouse.last >= last) return;
+
+    // Set last for the future.
+    mouse.last = last;
+
+    // Set Delay to Fade User Out on No Activity.
+    mouse.timerfade && clearTimeout(mouse.timerfade);
+    mouse.timerfade = setTimeout( function() {
+        PUBNUB.css( mouse.node, { 'opacity' : 0.4 } );
+        clearTimeout(mouse.timerfade);
+        mouse.timerfade = setTimeout( function() {
+            PUBNUB.css( mouse.node, { 'display' : 'none' } );
+        }, mousefade );
+    }, mousefade );
+
+    // Reshow if hidden.
+    PUBNUB.css( mouse.node, {
+        'display' : 'block',
+        'opacity' : 1.0
+    } );
+
     // Sprite.move( Player.sprite, {left:40, top:30,opacity:.2}, 400,
     if (pos) Sprite.move( mouse, {
-        'top'  : pos[1],
-        'left' : pos[0]
+        'top'     : pos[1],
+        'left'    : pos[0]
     }, wait );
 
     if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
 }
 
 // Receive Mice Friends
-PUB.subscribe( { channel : channel }, function(message) {
-    //TODO Remove this!!!!
-    console.log(JSON.stringify(message));
-
+PUBNUB.subscribe( { channel : channel }, function(message) {
     // Get User
     var theuuid = message['uuid'];
 
@@ -424,40 +472,53 @@ function keystroke(e) {setTimeout(function(){
     if (e.keyCode==13) textbox.value = ' ';
     send(e);
 },20);return 1}
-function focused() {focused = 1;return 1}
-function sevenofnine() {focused = 0;return 1}
-function monopuff() {if (!focused){textbox.focus();focused = 1}return 1}
-function get_txt() {return (textbox.value||'').slice( 0, maxmsg )}
+
+function focusize() {focused = 1;return 1}
+function bluralize() {focused = 0;return 1}
+function monopuff(e) {if (!focused){textbox.focus()/*;focused = 1*/}keystroke(e);return 1}
+function get_txt() {
+    var val = (textbox.value||'');
+
+    if (val.length > maxmsg) {
+        textbox.value = val = '...' + val.slice( -maxmsg );
+    }
+
+    return val;
+}
 
 // Load UUID and Send First Message
-PUB.uuid(function(id){
+/*if (!uuid) */PUBNUB.uuid(function(id){
     // Get UUID
     uuid = id;
 
+    // Save your UUID
+    cookie.set( 'uuid', uuid );
+
     // User Landed on Page (First Message)
-    setTimeout( send, wait );
+    setTimeout( function(){send({})}, wait );
 });
 
 // Add Input Textbox
-PUB.css( textbox, {
+PUBNUB.css( textbox, {
     'position' : 'absolute',
     'top'      : -10000,
     'left'     : 0
 } );
+textbox.value = cookie.get('mtxt') || 'Press ENTER, TYPE!!!';
 body.appendChild(textbox);
 
 // Setup Events
-bind( 'mousemove', document, send );
-bind( 'touchmove', document, send );
+bind( 'mousemove',  document, send );
+bind( 'touchmove',  document, send );
 bind( 'touchstart', document, send );
-bind( 'keydown', document, monopuff );
-bind( 'keyup', document, keystroke );
+bind( 'touchend',   document, send );
+bind( 'keydown',    document, monopuff );
+bind( 'mousedown',  document, bluralize );
 
 // Setup For Any Input Event.
-PUB.each( search('input'), function(input) {
-    bind( 'focus', input, focused );
-    bind( 'blur', input, sevenofnine );
-    bind( 'click', document, sevenofnine );
+PUBNUB.each( PUBNUB.search('input'), function(input) {
+    bind( 'focus', input, focusize );
+    bind( 'blur',  input, bluralize );
 } );
 
 })()
