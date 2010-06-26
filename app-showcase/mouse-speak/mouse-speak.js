@@ -385,7 +385,7 @@ function user_joined(message) {
         left : pos[1],
         top : pos[0],
 
-        framerate : 24
+        framerate : 34
     });
 
     // Do something when you mouseover.
