@@ -23,6 +23,7 @@
 */
 
 if (window.location.href.indexOf('account') != -1) return;
+if (window.location.href.indexOf('app-showcase') != -1) return;
 
 var cookie = {
     get : function(key) {
@@ -95,7 +96,13 @@ var Sprite = {
         Sprite.ground.appendChild(node);
     },
 
-    setframe : function( sprite, cell ) {
+    setframe : function( sprite, cell, offset ) {
+        var offset = offset || {};
+        if (typeof offset.top == 'number')
+            sprite.image.offset.top = offset.top;
+        if (typeof offset.left == 'number')
+            sprite.image.offset.left = offset.left;
+
         PUBNUB.css( sprite.node, {
             backgroundPosition : '-' +
                 (sprite.cell.size * cell + sprite.image.offset.left) +
@@ -363,11 +370,11 @@ function user_joined(message) {
     var pos   = message['pos'] || [100,100]
     ,   mouse = Sprite.create({
         image : {
-            url : 'http://www.pubnub.com/ju883jkslae83K8jfjvn/mouse.png',
+            url : 'http://www.pubnub.com/static/mouse.png',
             width : 350,
             height : 30,
             offset : {
-                top : 0,
+                top : 36,
                 left : 0
             }
         },
@@ -405,7 +412,7 @@ function user_joined(message) {
         'fontSize'   : '14px',
         'textShadow' : '#888 1px 1px 2px',
         'opacity'    : 0.0,
-        // 'backgroundColor' : 'red',
+        //'backgroundColor' : 'red',
         'color'      : '#000'
     } );
 
@@ -449,10 +456,18 @@ function user_updated(message) {
     } );
 
     // Sprite.move( Player.sprite, {left:40, top:30,opacity:.2}, 400,
-    if (pos) Sprite.move( mouse, {
-        'top'     : pos[1],
-        'left'    : pos[0]
-    }, wait );
+    if (pos) {
+        Sprite.move( mouse, {
+            'top'     : pos[1],
+            'left'    : pos[0]
+        }, wait );
+
+        // Change Direction
+        if (pos[0] > mouse.left)
+            Sprite.setframe( mouse, 0, { top : 36 } );
+        else
+            Sprite.setframe( mouse, 0, { top : 1 } );
+    }
 
     if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
 }
