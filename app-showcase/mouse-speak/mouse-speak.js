@@ -22,6 +22,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+if (window.location.href.indexOf('account') != -1) return;
+
 var cookie = {
     get : function(key) {
         if (document.cookie.indexOf(key) == -1) return null;
@@ -30,7 +32,7 @@ var cookie = {
         )||[])[1] || null;
     },
     set : function( key, value ) {
-        document.cookie = key + '=' + value;
+        document.cookie = key + '=' + value + '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
     }
 };
 
@@ -47,10 +49,10 @@ var bind      = PUBNUB.bind
 ,   lastpos   = []   // Last Sent Position
 ,   lasttxt   = ''   // Last Sent Text
 ,   sentcnt   = 0    // Number of Messages Sent
-,   uuid      = null //cookie.get('uuid') // User Identification
+,   uuid      = cookie.get('uuid') // User Identification
 ,   wait      = 200  // Publish Rate Limit (Time Between Data Push)
 ,   maxmsg    = 30   // Max Message Length
-,   moffset   = -40  // Offset of Mouse Position
+,   moffset   = 20  // Offset of Mouse Position
 ,   timed     = 0    // Timeout for Publish Limiter
 ,   lastsent  = 0    // Last Sent Timestamp
 ,   nohtml    = /[<>]/g;
@@ -487,9 +489,11 @@ function get_txt() {
 }
 
 // Load UUID and Send First Message
-/*if (!uuid) */PUBNUB.uuid(function(id){
+if (!uuid) PUBNUB.uuid(function(id){
     // Get UUID
     uuid = id;
+
+    console.log(uuid);
 
     // Save your UUID
     cookie.set( 'uuid', uuid );
