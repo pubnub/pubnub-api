@@ -429,9 +429,13 @@ function user_joined(message) {
 // User has Moved Mouse or Typed
 function user_updated(message) {
     var pos   = message['pos']
+    ,   click = message['click']
     ,   txt   = message['txt']
     ,   last  = message['c']
     ,   mouse = mice[message['uuid']];
+
+    // Is this a click message?
+    if (click) return user_click(pos); 
 
     // Prevent Jitter from Early Publish
     if (mouse.last && last && mouse.last >= last) return;
@@ -472,6 +476,41 @@ function user_updated(message) {
     if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
 }
 
+function send_click(e) {
+    var pos = get_pos(e);
+
+    if (!(pos[1] && pos[0])) return 1;
+
+    PUBNUB.publish({
+        channel : channel,
+        message : {
+            'pos'   : pos,
+            'click' : 1
+        }
+    });
+}
+
+function user_click(pos) {
+    var click = PUBNUB.create('div');
+
+    if (!(pos[1] && pos[0])) return 1;
+
+    // Create Click
+    PUBNUB.css( click, {
+        'position' : 'absolute',
+        'background' : 'transparent url(http://www.pubnub.com/static/mouse-click.png) no-repeat',
+        'top' : pos[1],
+        'left' : pos[0],
+        'width' : 13,
+        'height' : 13
+    } );
+
+    // Append Click
+    body.appendChild(click);
+
+    return 1;
+}
+
 // Receive Mice Friends
 PUBNUB.subscribe( { channel : channel }, function(message) {
     // Get User
@@ -491,7 +530,7 @@ function keystroke(e) {setTimeout(function(){
 },20);return 1}
 
 function focusize() {focused = 1;return 1}
-function bluralize() {focused = 0;return 1}
+function bluralize(e) {focused = 0; send_click(e); return 1}
 function monopuff(e) {if (!focused){textbox.focus()/*;focused = 1*/}keystroke(e);return 1}
 function get_txt() {
     var val = (textbox.value||'');
@@ -533,6 +572,7 @@ bind( 'touchstart', document, send );
 bind( 'touchend',   document, send );
 bind( 'keydown',    document, monopuff );
 bind( 'mousedown',  document, bluralize );
+bind( 'click',      document, bluralize );
 
 // Setup For Any Input Event.
 PUBNUB.each( PUBNUB.search('input'), function(input) {
