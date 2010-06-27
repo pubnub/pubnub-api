@@ -52,8 +52,8 @@ var bind      = PUBNUB.bind
 ,   sentcnt   = 0    // Number of Messages Sent
 ,   uuid      = cookie.get('uuid') // User Identification
 ,   wait      = 200  // Publish Rate Limit (Time Between Data Push)
-,   maxmsg    = 30   // Max Message Length
-,   moffset   = 20  // Offset of Mouse Position
+,   maxmsg    = 34   // Max Message Length
+,   moffset   = 20   // Offset of Mouse Position
 ,   timed     = 0    // Timeout for Publish Limiter
 ,   lastsent  = 0    // Last Sent Timestamp
 ,   nohtml    = /[<>]/g;
@@ -394,8 +394,8 @@ function user_joined(message) {
         if (uuid == message['uuid']) return 1;
 
         PUBNUB.css( mouse.node, {
-            'textShadow' : '#00ff00 0 0 18px',
-            'color'      : '#990099'
+            'textShadow' : '#00ff00 0 0 18px'//,
+            //'color'      : '#990099'
         } );
 
         Sprite.move( mouse, {
@@ -410,11 +410,13 @@ function user_joined(message) {
         'fontWeight' : 'bold',
         'padding'    : '0 0 0 20px',
         'fontSize'   : '14px',
-        'textShadow' : '#888 1px 1px 2px',
+        'textShadow' : '#000 1px 1px 2px',
         'opacity'    : 0.0,
         //'backgroundColor' : 'red',
-        'color'      : '#000'
+        'color'      : '#'+(message['uuid']||'000000').slice(-6)//'#000'
     } );
+
+    console.log('#'+(message['uuid']||'000000').slice(-6));
 
     // Save UUID
     PUBNUB.attr( mouse.node, 'uuid', message['uuid'] );
@@ -525,7 +527,8 @@ PUBNUB.subscribe( { channel : channel }, function(message) {
 
 // Capture Text Journey
 function keystroke(e) {setTimeout(function(){
-    if (e.keyCode==13) textbox.value = ' ';
+    var key = e.keyCode;
+    if (key==13||key==27) textbox.value = ' ';
     send(e);
 },20);return 1}
 
