@@ -22,8 +22,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-if (window.location.href.indexOf('account') != -1) return;
-if (window.location.href.indexOf('app-showcase') != -1) return;
+var hrf = window.location.href;
+if (hrf.indexOf('account') != -1) return;
+if (hrf.indexOf('app-showcase') != -1) return;
+if (hrf.indexOf('contact') != -1) return;
 
 var cookie = {
     get : function(key) {
@@ -528,13 +530,27 @@ PUBNUB.subscribe( { channel : channel }, function(message) {
 // Capture Text Journey
 function keystroke(e) {setTimeout(function(){
     var key = e.keyCode;
-    if (key==13||key==27) textbox.value = ' ';
+
+    if ([13,27].indexOf(key) !== -1) textbox.value = ' ';
+
     send(e);
 },20);return 1}
 
+var ignore_keys = [18,37,38,39,40,20,17,35,36,33,34,16,9,91];
 function focusize() {focused = 1;return 1}
 function bluralize(e) {focused = 0; send_click(e); return 1}
-function monopuff(e) {if (!focused){textbox.focus()/*;focused = 1*/}keystroke(e);return 1}
+function monopuff(e) {
+    var key = e.keyCode;
+
+    if (ignore_keys.indexOf(key) !== -1)
+        return 1;
+
+    if (!focused)
+        textbox.focus();
+
+    keystroke(e);
+    return 1
+}
 function get_txt() {
     var val = (textbox.value||'');
 
