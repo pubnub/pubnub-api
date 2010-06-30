@@ -633,7 +633,7 @@ var now = function() {
  *     }
  * });
  */
-}
+},  ASYNC = 'async'
 ,   xdr = function( setup ) {
     var script    = create('script')
     ,   unique    = now()
@@ -663,7 +663,7 @@ var now = function() {
             try {head().removeChild(script);} catch(error) {}
         };
 
-    script['async'] = true;
+    script[ASYNC] = ASYNC;
 
     this[unique] = function(response) {
         // Stop if there isn't a response.
