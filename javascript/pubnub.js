@@ -513,6 +513,7 @@ var now = function() {
  */
 },  bind = function( type, el, fun ) {
     var rapfun = function(e) {
+        if (!e) var e = window.event;
         if (!fun(e)) {
             e.cancelBubble = true;
             e.returnValue  = false;
@@ -574,9 +575,9 @@ var now = function() {
  */
 },  css = function( element, styles ) {
     for (var style in styles) if (styles.hasOwnProperty(style))
-        element.style[style] = styles[style] + (
+        try {element.style[style] = styles[style] + (
             '|width|height|top|left|'.indexOf(style) > 0 ? 'px' : ''
-        );
+        )}catch(e){}
 
 /**
  * CREATE
