@@ -357,7 +357,9 @@ function send(e) {
     // Set so we won't get jittery mice.
     msg['c'] = sentcnt++;
 
-    PUBNUB.publish( {
+    user_updated(msg);
+
+    PUBNUB.publish({
         channel : channel,
         message : msg
     });
@@ -400,8 +402,8 @@ function user_joined(message) {
 
         Sprite.move( mouse, {
             'opacity' : 0.5,
-            'top'     : 5,
-            'left'    : 5
+            'top'     : Math.ceil(Math.random()*150),
+            'left'    : Math.ceil(Math.random()*150)
         }, wait - 30 );
     } );
 
@@ -411,9 +413,11 @@ function user_joined(message) {
         'padding'    : '5px 0 0 20px',
         'fontSize'   : '15px',
         'textShadow' : 'rgba(0,0,0,0.9) 1px 1px 2px',
-        '-moz-box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
+        // 'box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
+        // 'border-radius' : '5px',
+        // '-moz-box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
+        // '-moz-border-radius' : '5px',
         '-webkit-box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
-        '-moz-border-radius' : '5px',
         '-webkit-border-radius' : '5px',
         'opacity'    : 0.0,
         'backgroundColor' : 'rgba(255,255,255,0.6)',
@@ -436,10 +440,15 @@ function user_updated(message) {
     ,   click = message['click']
     ,   txt   = message['txt']
     ,   last  = message['c']
-    ,   mouse = mice[message['uuid']];
+    ,   tuuid = message['uuid']
+    ,   mouse = mice[tuuid];
+
+    if (!mouse) return user_joined(message);
 
     // Is this a click message?
     if (click) return user_click(pos); 
+
+    if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
 
     // Prevent Jitter from Early Publish
     if (mouse.last && last && mouse.last >= last) return;
@@ -463,16 +472,12 @@ function user_updated(message) {
         'opacity' : 1.0
     } );
 
-    // Sprite.move( Player.sprite, {left:40, top:30,opacity:.2}, 400,
+    // Move Player.
     if (pos) {
         Sprite.move( mouse, {
-            'top'     : pos[1],
-            'left'    : pos[0]
+            'top'  : pos[1],
+            'left' : pos[0]
         }, wait );
-        /*PUBNUB.css( mouse.node, {
-            'top'     : pos[1],
-            'left'    : pos[0]
-        } );*/
 
         // Change Direction
         if (pos[0] > mouse.left)
@@ -480,21 +485,22 @@ function user_updated(message) {
         else
             Sprite.setframe( mouse, 0, { top : 1 } );
     }
-
-    if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
 }
 
 function send_click(e) {
-    var pos = get_pos(e);
+    var pos = get_pos(e)
+    ,   msg = {
+            'pos'   : pos,
+            'click' : 1
+        };
 
     if (!(pos[1] && pos[0])) return 1;
 
+    user_updated(msg);
+
     PUBNUB.publish({
         channel : channel,
-        message : {
-            'pos'   : pos,
-            'click' : 1
-        }
+        message : msg
     });
 }
 
@@ -527,23 +533,26 @@ PUBNUB.subscribe( { channel : channel }, function(message) {
     // New User?
     if (!mice[theuuid]) return user_joined(message);
 
+    // Is this yourself?
+    if (theuuid == uuid) return 1;
+
     // Update Existing User
     user_updated(message);
 } );
 
 // Capture Text Journey
 function keystroke( e, key ) {setTimeout(function(){
-    if ('13,27'.indexOf(key) !== -1) textbox.value = ' ';
+    if (',13,27,'.indexOf(','+key+',') !== -1) textbox.value = ' ';
     send(e);
 },20);return 1}
 
-var ignore_keys = '18,37,38,39,40,20,17,35,36,33,34,16,9,91';
+var ignore_keys = ',18,37,38,39,40,20,17,35,36,33,34,16,9,91,';
 function focusize() {focused = 1;return 1}
 function bluralize(e) {focused = 0; send_click(e); return 1}
 function monopuff(e) {
     var key = e.keyCode;
 
-    if (ignore_keys.indexOf(key) !== -1)
+    if (ignore_keys.indexOf(','+key+',') !== -1)
         return 1;
 
     if (!focused)
