@@ -39,26 +39,26 @@ var cookie = {
     }
 };
 
-var bind      = PUBNUB.bind
-,   css       = PUBNUB.css
-,   body      = PUBNUB.search('body')[0]
-,   doc       = document.documentElement
-,   now       = function(){return+new Date}
-,   mice      = {}
-,   channel   = 'mouse-speak'
-,   mousefade = 9000 // Time before use is considered Inactive
-,   textbox   = PUBNUB.create('input')
-,   focused   = 0    // Focused on Textbox?
-,   lastpos   = []   // Last Sent Position
-,   lasttxt   = ''   // Last Sent Text
-,   sentcnt   = 0    // Number of Messages Sent
-,   uuid      = cookie.get('uuid') // User Identification
-,   wait      = 200  // Publish Rate Limit (Time Between Data Push)
-,   maxmsg    = 34   // Max Message Length
-,   moffset   = 20   // Offset of Mouse Position
-,   timed     = 0    // Timeout for Publish Limiter
-,   lastsent  = 0    // Last Sent Timestamp
-,   nohtml    = /[<>]/g;
+var bind        = PUBNUB.bind
+,   css         = PUBNUB.css
+,   body        = PUBNUB.search('body')[0]
+,   doc         = document.documentElement
+,   now         = function(){return+new Date}
+,   mice        = {}
+,   channel     = 'mouse-speak'
+,   mousefade   = 9000 // Time before use is considered Inactive
+,   textbox     = PUBNUB.create('input')
+,   focused     = 0    // Focused on Textbox?
+,   lastpos     = []   // Last Sent Position
+,   lasttxt     = ''   // Last Sent Text
+,   sentcnt     = 0    // Number of Messages Sent
+,   uuid        = cookie.get('uuid') // User Identification
+,   wait        = 90   // Publish Rate Limit (Time Between Data Push)
+,   maxmsg      = 34   // Max Message Length
+,   moffset     = 10   // Offset of Mouse Position
+,   timed       = 0    // Timeout for Publish Limiter
+,   lastsent    = 0    // Last Sent Timestamp
+,   nohtml      = /[<>]/g;
 
 
 var Sprite = {
@@ -264,8 +264,6 @@ function get_pos(e) {
     var posx = 0
     ,   posy = 0;
 
-    if (!e) var e = window.event;
-
     if (!e) return [0,0];
 
     var tch  = e.touches && e.touches[0]
@@ -283,14 +281,14 @@ function get_pos(e) {
             // send({ 'pageX' : posx, 'pageY' : posy, 'uuid' : uuid+tchp++ });
         } );
     }
-    else if (e.pageX || e.pageY) {
+    else if (e.pageX) {
         posx = e.pageX;
         posy = e.pageY;
     }
-    else if (e.clientX || e.clientY) {
+    else {try{
         posx = e.clientX + body.scrollLeft + doc.scrollLeft;
         posy = e.clientY + body.scrollTop  + doc.scrollTop;
-    }
+    }catch(e){}}
 
     posx += moffset*2;
     posy += moffset;
@@ -359,7 +357,7 @@ function send(e) {
     // Set so we won't get jittery mice.
     msg['c'] = sentcnt++;
 
-    PUBNUB.publish({
+    PUBNUB.publish( {
         channel : channel,
         message : msg
     });
@@ -387,7 +385,7 @@ function user_joined(message) {
         left : pos[1],
         top : pos[0],
 
-        framerate : 34
+        framerate : 50
     });
 
     // Do something when you mouseover.
@@ -402,23 +400,25 @@ function user_joined(message) {
 
         Sprite.move( mouse, {
             'opacity' : 0.5,
-            'top'     : 1,
-            'left'    : 1
-        }, wait );
+            'top'     : 5,
+            'left'    : 5
+        }, wait - 30 );
     } );
 
     // Set Prettier Text
     PUBNUB.css( mouse.node, {
         'fontWeight' : 'bold',
-        'padding'    : '0 0 0 20px',
-        'fontSize'   : '14px',
-        'textShadow' : '#000 1px 1px 2px',
+        'padding'    : '5px 0 0 20px',
+        'fontSize'   : '15px',
+        'textShadow' : 'rgba(0,0,0,0.9) 1px 1px 2px',
+        '-moz-box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
+        '-webkit-box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
+        '-moz-border-radius' : '5px',
+        '-webkit-border-radius' : '5px',
         'opacity'    : 0.0,
-        //'backgroundColor' : 'red',
+        'backgroundColor' : 'rgba(255,255,255,0.6)',
         'color'      : '#'+(message['uuid']||'000000').slice(-6)//'#000'
     } );
-
-    console.log('#'+(message['uuid']||'000000').slice(-6));
 
     // Save UUID
     PUBNUB.attr( mouse.node, 'uuid', message['uuid'] );
@@ -469,6 +469,10 @@ function user_updated(message) {
             'top'     : pos[1],
             'left'    : pos[0]
         }, wait );
+        /*PUBNUB.css( mouse.node, {
+            'top'     : pos[1],
+            'left'    : pos[0]
+        } );*/
 
         // Change Direction
         if (pos[0] > mouse.left)
@@ -528,15 +532,12 @@ PUBNUB.subscribe( { channel : channel }, function(message) {
 } );
 
 // Capture Text Journey
-function keystroke(e) {setTimeout(function(){
-    var key = e.keyCode;
-
-    if ([13,27].indexOf(key) !== -1) textbox.value = ' ';
-
+function keystroke( e, key ) {setTimeout(function(){
+    if ('13,27'.indexOf(key) !== -1) textbox.value = ' ';
     send(e);
 },20);return 1}
 
-var ignore_keys = [18,37,38,39,40,20,17,35,36,33,34,16,9,91];
+var ignore_keys = '18,37,38,39,40,20,17,35,36,33,34,16,9,91';
 function focusize() {focused = 1;return 1}
 function bluralize(e) {focused = 0; send_click(e); return 1}
 function monopuff(e) {
@@ -548,7 +549,7 @@ function monopuff(e) {
     if (!focused)
         textbox.focus();
 
-    keystroke(e);
+    keystroke( e, key );
     return 1
 }
 function get_txt() {
@@ -565,8 +566,6 @@ function get_txt() {
 if (!uuid) PUBNUB.uuid(function(id){
     // Get UUID
     uuid = id;
-
-    console.log(uuid);
 
     // Save your UUID
     cookie.set( 'uuid', uuid );
