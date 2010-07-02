@@ -860,7 +860,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         // Make sure we have a Channel
         if (!PUBNUB.subscribe_key) return log('Missing Subscribe Key');
 
-        var timetoken = 1
+        var timetoken = 0
         ,   waitlimit = 100
         ,   channel   =
             args['channel'] = PUBNUB.subscribe_key + '/' + args['channel'];
