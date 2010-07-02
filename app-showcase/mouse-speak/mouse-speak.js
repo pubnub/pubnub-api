@@ -35,7 +35,8 @@ var cookie = {
         )||[])[1] || null;
     },
     set : function( key, value ) {
-        document.cookie = key + '=' + value + '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
+        document.cookie = key + '=' + value +
+            '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
     }
 };
 
@@ -52,7 +53,7 @@ var bind        = PUBNUB.bind
 ,   lastpos     = []   // Last Sent Position
 ,   lasttxt     = ''   // Last Sent Text
 ,   sentcnt     = 0    // Number of Messages Sent
-,   uuid        = cookie.get('uuid') // User Identification
+,   uuid        = cookie.get('uuid') || 0 // User Identification
 ,   wait        = 90   // Publish Rate Limit (Time Between Data Push)
 ,   maxmsg      = 34   // Max Message Length
 ,   moffset     = 10   // Offset of Mouse Position
@@ -329,7 +330,7 @@ function send(e) {
     var pos   = get_pos(e)
     ,   txt   = get_txt()
     //,   xuuid = e['uuid']
-    ,   msg   = { uuid : /*xuuid ||*/ uuid };
+    ,   msg   = { 'uuid' : /*xuuid ||*/ uuid };
 
     // Don't send if no change in Position.
     if (!(
@@ -391,10 +392,7 @@ function user_joined(message) {
     });
 
     // Do something when you mouseover.
-    bind( 'mouseover', mouse.node, function() {
-        // Don't kill yourself
-        if (uuid == message['uuid']) return 1;
-
+    if (uuid != message['uuid']) bind( 'mouseover', mouse.node, function() {
         PUBNUB.css( mouse.node, {
             'textShadow' : '#00ff00 0 0 18px'//,
             //'color'      : '#990099'
@@ -404,7 +402,7 @@ function user_joined(message) {
             'opacity' : 0.5,
             'top'     : Math.ceil(Math.random()*150),
             'left'    : Math.ceil(Math.random()*150)
-        }, wait - 30 );
+        }, wait );
     } );
 
     // Set Prettier Text
@@ -448,13 +446,14 @@ function user_updated(message) {
     // Is this a click message?
     if (click) return user_click(pos); 
 
-    if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
-
     // Prevent Jitter from Early Publish
     if (mouse.last && last && mouse.last >= last) return;
 
     // Set last for the future.
-    mouse.last = last;
+    if (last) mouse.last = last;
+
+    // Update Text Display
+    if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
 
     // Set Delay to Fade User Out on No Activity.
     mouse.timerfade && clearTimeout(mouse.timerfade);
@@ -477,12 +476,12 @@ function user_updated(message) {
         Sprite.move( mouse, {
             'top'  : pos[1],
             'left' : pos[0]
-        }, wait );
+        }, wait + 10 );
 
         // Change Direction
         if (pos[0] > mouse.left)
             Sprite.setframe( mouse, 0, { top : 36 } );
-        else
+        else if (pos[0] < mouse.left)
             Sprite.setframe( mouse, 0, { top : 1 } );
     }
 }
@@ -491,7 +490,8 @@ function send_click(e) {
     var pos = get_pos(e)
     ,   msg = {
             'pos'   : pos,
-            'click' : 1
+            'click' : 1,
+            'uuid'  : uuid
         };
 
     if (!(pos[1] && pos[0])) return 1;
@@ -562,10 +562,14 @@ function monopuff(e) {
     return 1
 }
 function get_txt() {
-    var val = (textbox.value||'');
+    var val = (textbox.value||'')
+    ,   len = val.length;
 
-    if (val.length > maxmsg) {
+    if (len > maxmsg) {
         textbox.value = val = '...' + val.slice( -maxmsg );
+    }
+    else if(val.indexOf(init_text) != -1 && len > init_text.length) {
+        textbox.value = val = val.replace( init_text, '' );
     }
 
     return val;
@@ -589,7 +593,8 @@ PUBNUB.css( textbox, {
     'top'      : -10000,
     'left'     : 0
 } );
-textbox.value = cookie.get('mtxt') || 'Press ENTER, TYPE!!!';
+var init_text = 'TYPE!!!';
+textbox.value = cookie.get('mtxt') || init_text;
 body.appendChild(textbox);
 
 // Setup Events
