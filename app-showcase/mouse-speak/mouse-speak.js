@@ -346,7 +346,7 @@ function send(e) {
     }
 
     // Check Last Sent Text
-    if (lasttxt != txt || !(sentcnt % 3)) {
+    if (lasttxt != txt || !(sentcnt++ % 3)) {
         lasttxt    = txt;
         msg['txt'] = txt || ' ';
         cookie.set( 'mtxt', msg['txt'] );
@@ -356,7 +356,7 @@ function send(e) {
     if (!(msg['txt'] || msg['pos'])) return 1;
 
     // Set so we won't get jittery mice.
-    msg['c'] = sentcnt++;
+    msg['c'] = now();
 
     user_updated(msg);
 
@@ -441,16 +441,18 @@ function user_updated(message) {
     ,   tuuid = message['uuid']
     ,   mouse = mice[tuuid];
 
+    console.log(JSON.stringify(message));
+
     if (!mouse) return user_joined(message);
 
     // Is this a click message?
     if (click) return user_click(pos); 
 
     // Prevent Jitter from Early Publish
-    if (mouse.last && last && mouse.last >= last) return;
+    if (last && mouse.last && mouse.last > last) return;
 
     // Set last for the future.
-    if (last) mouse.last = last;
+    if (last || last < 5) mouse.last = last;
 
     // Update Text Display
     if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
@@ -526,19 +528,7 @@ function user_click(pos) {
 }
 
 // Receive Mice Friends
-PUBNUB.subscribe( { channel : channel }, function(message) {
-    // Get User
-    var theuuid = message['uuid'];
-
-    // New User?
-    if (!mice[theuuid]) return user_joined(message);
-
-    // Is this yourself?
-    if (theuuid == uuid) return 1;
-
-    // Update Existing User
-    user_updated(message);
-} );
+PUBNUB.subscribe( { channel : channel }, user_updated );
 
 // Capture Text Journey
 function keystroke( e, key ) {setTimeout(function(){
