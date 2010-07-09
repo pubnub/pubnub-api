@@ -483,13 +483,13 @@ var now = function() {
  * PARAMS
  * ======
  * var params = grep( script )
- */
 },  params = function( script ) {
     if (!script) return;
     grep( search('script'), function(script) {
         return ((script||{}).src||'').indexOf('simple-chat') != -1;
     } )[0].src.split(/[&=]/).slice(-1);
 
+ */
 
 
 
@@ -636,10 +636,25 @@ var now = function() {
  */
 },  ASYNC = 'async'
 ,   xdr = function( setup ) {
+    /* ---------------------------------------------
+       Web Worker Implementation for JSONP Long Poll
+       --------------------------------------------- */
+       /*
+       -if has web workers {
+            if (postMessage) {// if i'm the worker.
+                -create/get new document.implementation with head
+                var doc = document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+                -set this.document = this snazzy new document.
+            }
+            else { // im the parent script
+                do no
+            }
+        }
+       */
     var script    = create('script')
-    ,   unique    = now()
+    ,   unique    = 'x'+now()
     ,   waitlimit = 100
-    ,   timeout   = setTimeout(function(){done('timeout')},setup.timeout||30000)
+    ,   timeout   =setTimeout(function(){done('timeout')},setup.timeout||30000)
     ,   data      = setup.data    || {}
     ,   fail      = setup.fail    || function(){}
     ,   success   = setup.success || function(){}
@@ -705,7 +720,7 @@ var now = function() {
 
 // Build Interface
 var ORIGIN     = 'http://{{ORIGIN}}/'
-,   WEBSOCKET  = this['WebSocket']
+,   WEBSOCKET  = this['WebSocket'] 
 ,   LIMIT      = 1700
 ,   PUBNUB     = {
     /*
@@ -839,6 +854,10 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         // Remove Script
         PUBNUB.channels[channel].done && 
         PUBNUB.channels[channel].done(0);
+
+        // Unsubscribe WebSocket
+        PUBNUB.channels[channel].pubnub_ws &&
+        PUBNUB.channels[channel].pubnub_ws.close();
     },
 
     /*
@@ -860,7 +879,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         // Make sure we have a Channel
         if (!PUBNUB.subscribe_key) return log('Missing Subscribe Key');
 
-        var timetoken = 0
+        var timetoken = 1
         ,   waitlimit = 100
         ,   channel   =
             args['channel'] = PUBNUB.subscribe_key + '/' + args['channel'];
@@ -876,16 +895,18 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         PUBNUB.channels[channel].disabled = 0;
         PUBNUB.channels[channel].connected = 1;
 
-        if (WEBSOCKET) {/* hold on to websocket */}
-
         function find_PUBNUB_server() {setTimeout(function() { 
             waitlimit *= 2;
             xdr({
                 url     : ORIGIN + 'pubnub-subscribe',
                 data    : args,
                 success : function(response) {
-                    if (response && response['server'])
-                        pubnub(response['server']);
+                    if (response && response['server']) {
+                        if (WEBSOCKET)
+                            pubnub_ws(response['server']);
+                        else
+                            pubnub(response['server']);
+                    }
                     else
                         find_PUBNUB_server();
                 },
@@ -897,6 +918,40 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
 
         // Locate Comet Server
         find_PUBNUB_server();
+
+        // Connect to Channel Recommended Server w/ WEBSOCKET
+        function pubnub_ws(server) {
+            if (channel in PUBNUB.channels &&
+                PUBNUB.channels[channel].disabled) return;
+
+            var host = server.split(':')
+            ,   ws   = new WEBSOCKET(
+                "ws://" + host[0] + ':881' + host[1].slice(-1)
+            );
+
+            ws['onopen'] = function() {
+                ws.send(channel);
+            };
+
+            ws['onmessage'] = function (ws_message) {
+                callback(JSON.parse(ws_message.data));
+            };
+
+            // Did we close on accident or timeout?
+            ws['onclose'] = function() {
+                if (
+                    channel in PUBNUB.channels &&
+                    !PUBNUB.channels[channel].disabled
+                ) {
+                    waitlimit = 100;
+                    find_PUBNUB_server();
+                }
+            };
+
+            // Save WS for Unsubscribing.
+            PUBNUB.channels[channel].pubnub_ws = ws;
+        }
+
 
         // Connect To Channel Recommended Server
         function pubnub(server) {
@@ -913,7 +968,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
 
                     if (response['messages'][0] != 'xdr.timeout')
                         each( response['messages'], function(msg) {
-                            callback(msg)
+                            callback(msg);
                         } );
                 },
                 fail : function(response) {
