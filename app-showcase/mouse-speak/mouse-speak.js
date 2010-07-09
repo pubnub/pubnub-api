@@ -2,7 +2,7 @@
 
 /*
     www.pubnub.com - PubNub realtime push service in the cloud. 
-    http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog 
+    http://www.pubnub.com/blog/mouse-speak - Mouse Speak 
 
     PubNub Real Time Push APIs and Notifications Framework
     Copyright (c) 2010 Stephen Blum
@@ -47,7 +47,7 @@ var bind        = PUBNUB.bind
 ,   now         = function(){return+new Date}
 ,   mice        = {}
 ,   channel     = 'mouse-speak'
-,   mousefade   = 9000 // Time before use is considered Inactive
+,   mousefade   = 9000 // Time before user is considered Inactive
 ,   textbox     = PUBNUB.create('input')
 ,   focused     = 0    // Focused on Textbox?
 ,   lastpos     = []   // Last Sent Position
@@ -312,7 +312,8 @@ function send(e) {
     if (!uuid) return;
 
     // Get Local Timestamp
-    var right_now = now();
+    var right_now = now()
+    ,   mouse     = mice[uuid];
 
     // Don't continue if too soon (but check back)
     if (lastsent + wait > right_now) {
@@ -331,6 +332,8 @@ function send(e) {
     ,   txt   = get_txt()
     //,   xuuid = e['uuid']
     ,   msg   = { 'uuid' : /*xuuid ||*/ uuid };
+
+    if (!mouse) return user_joined(msg);
 
     // Don't send if no change in Position.
     if (!(
@@ -356,14 +359,15 @@ function send(e) {
     if (!(msg['txt'] || msg['pos'])) return 1;
 
     // Set so we won't get jittery mice.
-    msg['c'] = now();
-
-    user_updated(msg);
+    msg['c'] = (mice[uuid].last||1) + 2;
 
     PUBNUB.publish({
         channel : channel,
         message : msg
     });
+
+    msg['force'] = 1;
+    user_updated(msg);
 
     return 1;
 }
@@ -393,11 +397,6 @@ function user_joined(message) {
 
     // Do something when you mouseover.
     if (uuid != message['uuid']) bind( 'mouseover', mouse.node, function() {
-        PUBNUB.css( mouse.node, {
-            'textShadow' : '#00ff00 0 0 18px'//,
-            //'color'      : '#990099'
-        } );
-
         Sprite.move( mouse, {
             'opacity' : 0.5,
             'top'     : Math.ceil(Math.random()*150),
@@ -438,21 +437,29 @@ function user_updated(message) {
     ,   click = message['click']
     ,   txt   = message['txt']
     ,   last  = message['c']
+    ,   force = message['force']
     ,   tuuid = message['uuid']
     ,   mouse = mice[tuuid];
-
-    console.log(JSON.stringify(message));
 
     if (!mouse) return user_joined(message);
 
     // Is this a click message?
     if (click) return user_click(pos); 
 
+    // Common to reset value if page reloaded
+    if (force || (last && Math.abs(last - (mouse.last||0)) > 10))
+        mouse.last = last;
+
     // Prevent Jitter from Early Publish
-    if (last && mouse.last && mouse.last > last) return;
+    if (
+        !force            &&
+        last              &&
+        mouse.last        &&
+        mouse.last > last
+    ) return;
 
     // Set last for the future.
-    if (last || last < 5) mouse.last = last;
+    if (last) mouse.last = last;
 
     // Update Text Display
     if (txt) mouse.node.innerHTML = txt.replace( nohtml, '' );
@@ -498,12 +505,13 @@ function send_click(e) {
 
     if (!(pos[1] && pos[0])) return 1;
 
-    user_updated(msg);
-
     PUBNUB.publish({
         channel : channel,
         message : msg
     });
+
+    msg['force'] = 1;
+    user_updated(msg);
 }
 
 function user_click(pos) {
