@@ -267,7 +267,12 @@ this['JSON'] || (function () {
 // If the JSON object does not yet have a parse method, give it one.
 
     if (typeof JSON['parse'] !== 'function') {
-        JSON['parse'] = function (text, reviver) {
+        // JSON is parsed on the server for security purposes.
+        JSON['parse'] = function (text, reviver) {return eval('('+text+')')};
+
+        // JSON is parsed on the server for security purposes.
+        // No need for extra client code.
+        /*JSON['parse'] = function (text, reviver) {
 
 // The parse method takes a text and an optional reviver function, and returns
 // a JavaScript value if the text is a valid JSON text.
@@ -344,7 +349,7 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 // If the text is not JSON parseable, then a SyntaxError is thrown.
 
             throw new SyntaxError('JSON.parse');
-        };
+        };*/
     }
 }());
 
@@ -914,7 +919,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
                     find_PUBNUB_server();
                 }
             });
-         }, waitlimit )}
+        }, waitlimit )}
 
         // Locate Comet Server
         find_PUBNUB_server();
