@@ -5,8 +5,16 @@ PubNub Game Lobby Room
 ===============================================================================
 
 Use PubNub to build a Game Lobby Room! It is simple.  PubNub allows for state
-sharing between users.  This can be used to create game lobby rooms and is
-called "real time gossip" communication.  Follow the code in game-lobby-room.js
+sharing between users.  This can be used to create game lobby rooms. 
+"Real time gossip" communication is the method used to talk with a group.
+
+Communication Strategy with Real Time:
+presume the user is constantly void of all information.
+Therefore the strategy becomes clear,
+alsways send same set of data to all users.
+This is helpful as a user may have lost connection, closed the browser or refreshed the page accidettnly.
+
+Follow the code in game-lobby-room.js
 to see how to build a Game Lobby Room.  No need for private servers to host
 game room state.
 
