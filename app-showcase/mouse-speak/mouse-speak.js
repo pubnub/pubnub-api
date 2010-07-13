@@ -27,14 +27,17 @@ if (hrf.indexOf('account') != -1) return;
 if (hrf.indexOf('app-showcase') != -1) return;
 if (hrf.indexOf('contact') != -1) return;
 
-var cookie = {
+var db     = this['localStorage'],
+    cookie = {
     get : function(key) {
+        if (db) return db.getItem(key);
         if (document.cookie.indexOf(key) == -1) return null;
         return ((document.cookie||'').match(
             RegExp(key+'=([^;]+)')
         )||[])[1] || null;
     },
     set : function( key, value ) {
+        if (db) return db.setItem( key, value );
         document.cookie = key + '=' + value +
             '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
     }
@@ -54,7 +57,7 @@ var bind        = PUBNUB.bind
 ,   lasttxt     = ''   // Last Sent Text
 ,   sentcnt     = 0    // Number of Messages Sent
 ,   uuid        = cookie.get('uuid') || 0 // User Identification
-,   wait        = 90   // Publish Rate Limit (Time Between Data Push)
+,   wait        = 100  // Publish Rate Limit (Time Between Data Push)
 ,   maxmsg      = 34   // Max Message Length
 ,   moffset     = 10   // Offset of Mouse Position
 ,   timed       = 0    // Timeout for Publish Limiter
@@ -446,9 +449,13 @@ function user_updated(message) {
     // Is this a click message?
     if (click) return user_click(pos); 
 
+
     // Common to reset value if page reloaded
-    if (force || (last && Math.abs(last - (mouse.last||0)) > 10))
+    if (last && (mouse.last||0) - last > 20)
         mouse.last = last;
+
+    // Self
+    ///if (force) mouse.last = last;
 
     // Prevent Jitter from Early Publish
     if (
@@ -485,7 +492,7 @@ function user_updated(message) {
         Sprite.move( mouse, {
             'top'  : pos[1],
             'left' : pos[0]
-        }, wait + 10 );
+        }, wait - 10 );
 
         // Change Direction
         if (pos[0] > mouse.left)
