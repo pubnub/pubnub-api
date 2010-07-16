@@ -23,9 +23,7 @@
 */
 
 var hrf = window.location.href;
-if (hrf.indexOf('account') != -1) return;
-if (hrf.indexOf('app-showcase') != -1) return;
-if (hrf.indexOf('contact') != -1) return;
+if (hrf.indexOf('mouse') == -1) return;
 
 var db     = this['localStorage'],
     cookie = {
