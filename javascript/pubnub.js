@@ -725,7 +725,7 @@ var now = function() {
 
 // Build Interface
 var ORIGIN     = 'http://{{ORIGIN}}/'
-,   WEBSOCKET  = this['WebSocket'] 
+,   WEBSOCKET  = 0//this['WebSocket'] 
 ,   LIMIT      = 1700
 ,   PUBNUB     = {
     /*
