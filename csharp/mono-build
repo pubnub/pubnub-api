@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo -e "Building..."
+gmcs -debug Pubnub.cs -r:NetServ.Net.Json.dll
+
+echo -e "Running:"
+mono --debug Pubnub.exe
