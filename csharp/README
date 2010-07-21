@@ -29,3 +29,39 @@ C#: (Publish)
     pubnub.publish( channel, message );
 
 
+-------------------------------------------------------------------------------
+C#: (Subscribe)
+-------------------------------------------------------------------------------
+    // Init Pubnub Class
+    Pubnub pubnub = new Pubnub( "demo", "demo" );
+
+    // Subscribe
+    pubnub.subscribe(
+        PubnubTest.channel,
+        delegate (JsonObject message) {
+
+            // Print Message
+            JsonWriter writer = new JsonWriter();
+            message.Write(writer);
+            Console.WriteLine("Subscribe() Response: " + writer.ToString());
+
+            // Continue Listening
+            return true;
+        }
+    );
+
+
+-------------------------------------------------------------------------------
+C#: (History)
+-------------------------------------------------------------------------------
+    // Init Pubnub Class
+    Pubnub pubnub = new Pubnub( "demo", "demo" );
+
+    // Get History
+    JsonArray response = pubnub.history( PubnubTest.channel, 10 );
+
+    // Print Response
+    response.Write(writer);
+    Console.WriteLine("History() Response: " + writer.ToString());
+
+

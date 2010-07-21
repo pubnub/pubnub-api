@@ -118,7 +118,7 @@ public class PubnubTest {
             PubnubTest.SUBSCRIBE_KEY
         );
 
-        // Get History
+        // Subscribe
         pubnub.subscribe(
             PubnubTest.channel,
             delegate (JsonObject message) {
