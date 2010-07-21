@@ -1,1 +1,31 @@
-TODO
+www.pubnub.com - PubNub - realtime push service in the cloud
+
+
+===============================================================================
+PubNub C# Client API Boiler Plate
+===============================================================================
+
+-------------------------------------------------------------------------------
+JavaScript: (Subscribe)
+-------------------------------------------------------------------------------
+
+    PUBNUB.subscribe( { channel : "HELLO_WORLD" } , function(message) {
+        console.log(JSON.stringify(message));
+        alert(JSON.stringify(message));
+    } );
+
+
+-------------------------------------------------------------------------------
+C#: (Publish)
+-------------------------------------------------------------------------------
+
+    Pubnub     pubnub  = new Pubnub( "demo", "demo" );
+    JsonObject message = new JsonObject();
+    string     channel = "HELLO_WORLD";
+
+    message.Add( "some_text", "Hello World!" );
+
+    // Publish (Send Message)
+    pubnub.publish( channel, message );
+
+
