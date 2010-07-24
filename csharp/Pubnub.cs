@@ -138,8 +138,8 @@ public class PubnubTest {
 
 public class Pubnub {
     private static string ORIGIN        = "http://pubnub-prod.appspot.com";
-    private static int LIMIT            = 1700;
-    private static int UNIQUE           = 1;
+    private static int    LIMIT         = 1700;
+    private static int    UNIQUE        = 1;
     private static string PUBLISH_KEY   = "";
     private static string SUBSCRIBE_KEY = "";
 
@@ -217,7 +217,7 @@ public class Pubnub {
 
             // Listen for a Message
             JsonObject response = this._request(
-                "http://" + server,
+                "http://" + server + "/",
                 conn_params
             );
 
@@ -258,7 +258,7 @@ public class Pubnub {
 
     public void subscribe( string channel, Procedure callback ) {
         channel = Pubnub.SUBSCRIBE_KEY + "/" + channel;
-        this._subscribe( channel, callback, "1", "" );
+        this._subscribe( channel, callback, "0", "" );
     }
 
     private JsonObject _request( string url, Hashtable args ) {
