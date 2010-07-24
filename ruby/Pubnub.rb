@@ -118,7 +118,7 @@ class Pubnub
         end
 
         ## Wait for Message
-        response = self._request( 'http://' + server, {
+        response = self._request( 'http://' + server + '/', {
             'channel'   => channel,
             'timetoken' => timetoken
         } );
