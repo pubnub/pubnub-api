@@ -201,7 +201,7 @@ class Pubnub {
 
         try {
             ## Wait for Message
-            $response = $this->_request( 'http://' . $server, array(
+            $response = $this->_request( 'http://' . $server . '/', array(
                 'channel'   => $channel,
                 'timetoken' => $timetoken
             ) );
