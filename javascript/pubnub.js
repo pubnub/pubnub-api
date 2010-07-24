@@ -442,7 +442,7 @@ var now = function() {
 },  each = function( o, f ) {
     if ( !o || !f ) return;
 
-    if ( o[0] )
+    if ( typeof o[0] != 'undefined' )
         for ( var i = 0, l = o.length; i < l; )
             f.call( o[i], o[i], i++ );
     else 
@@ -570,7 +570,7 @@ var now = function() {
  */
 },  attr = function( node, attribute, value ) {
     if (value) node.setAttribute( attribute, value );
-    else return node.getAttribute && node.getAttribute(attribute);
+    else return node && node.getAttribute && node.getAttribute(attribute);
 
 
 /**
@@ -884,7 +884,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         // Make sure we have a Channel
         if (!PUBNUB.subscribe_key) return log('Missing Subscribe Key');
 
-        var timetoken = 1
+        var timetoken = 0
         ,   waitlimit = 100
         ,   channel   =
             args['channel'] = PUBNUB.subscribe_key + '/' + args['channel'];
@@ -964,7 +964,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
                 PUBNUB.channels[channel].disabled) return;
 
             PUBNUB.channels[channel].done = xdr({
-                url     : 'http://' + server,
+                url     : 'http://' + server + '/',
                 // timeout : 20000,
                 data    : { 'channel' : channel, 'timetoken' : timetoken },
                 success : function(response) {
