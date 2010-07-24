@@ -24,6 +24,7 @@
 
 var hrf = window.location.href;
 if (hrf.indexOf('mouse') == -1) return;
+if (hrf.indexOf('app-showcase') != -1) return;
 
 var db     = this['localStorage'],
     cookie = {
@@ -447,9 +448,8 @@ function user_updated(message) {
     // Is this a click message?
     if (click) return user_click(pos); 
 
-
     // Common to reset value if page reloaded
-    if (last && (mouse.last||0) - last > 20)
+    if (last && (mouse.last||0) - last > 100)
         mouse.last = last;
 
     // Self
