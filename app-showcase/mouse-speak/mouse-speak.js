@@ -22,10 +22,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var hrf = window.location.href;
-if (hrf.indexOf('mouse') == -1) return;
-if (hrf.indexOf('app-showcase') != -1) return;
-
 var db     = this['localStorage'],
     cookie = {
     get : function(key) {
