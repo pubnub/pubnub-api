@@ -50,7 +50,7 @@ class PubnubTest {
     }
 
     public static void test_subscribe() {
-        // History Test
+        // Subscribe Test
         System.out.println("\nTESTING SUBSCRIBE:");
 
         Pubnub pubnub  = new Pubnub( "demo", "demo" );
