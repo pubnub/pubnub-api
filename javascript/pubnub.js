@@ -503,7 +503,7 @@ var now = function() {
  * ========
  * var text = supplant( 'Hello {name}!', { name : 'John' } )
  */
-},  magic = /\${([\w\-]+)}/g
+},  magic = /\$?{([\w\-]+)}/g
 ,   supplant = function( str, values ) {
     return str.replace( magic, function( _, match ) {
         return ''+values[match] || ''
