@@ -1,0 +1,191 @@
+/* Utility */
+#traffic-beat-2 {margin-left:20px}
+.traffic-beat-clear {clear:both}
+.traffic-beat-relative {position:relative}
+.traffic-beat-sep {height:12px}
+/* -END- Utility */
+
+/* Ticker Line */
+.traffic-beat-ticker-line-box-highlight {
+    -webkit-box-shadow:0 0 20px #f90;
+    -moz-box-shadow:0 0 20px #f90;
+    box-shadow:0 0 20px #f90;
+    position:relative;
+    width:400px;
+    height:78px;
+    background:#fff;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    border:2px solid #fb2;
+    margin:20px;
+    overflow:hidden;
+    cursor:default;
+}
+.traffic-beat-ticker-line-box {
+    -webkit-box-shadow:0 0 10px #ccc;
+    -moz-box-shadow:0 0 10px #ccc;
+    box-shadow:0 0 10px #ccc;
+    position:relative;
+    width:400px;
+    height:78px;
+    background:#fff;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    border:2px solid #ccc;
+    margin:20px;
+    overflow:hidden;
+    cursor:default;
+}
+.traffic-beat-ticker-line-off {
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:4px;
+    height:60px;
+    background:#eee;
+    border-top:20px solid #fafafa;
+}
+.traffic-beat-ticker-line-on {
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:4px;
+    height:60px;
+    background:#f90;
+    border-top:20px solid #f00;
+}
+/* -END- Ticker Line */
+
+
+/* Bar Meters */
+.traffic-beat-bar {
+    width:4px;
+    height:18px;
+    background:#4a3;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -webkit-box-shadow:0 0 2px #292;
+    -moz-box-shadow:0 0 2px #292;
+    box-shadow:0 0 2px #292;
+    border:1px solid #393;
+    margin:1px;
+    float:left;
+    overflow:hidden;
+}
+.traffic-beat-bar-box {
+    position:relative;
+    width:400px;
+    background:#eee;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    border:1px solid #ccc;
+    margin:2px 2px 2px 21px;
+    overflow:hidden;
+    cursor:default;
+}
+.traffic-beat-bar-shine {
+    height:7px;
+    background:#9f5;
+    -webkit-box-shadow:0 0 9px #fff;
+    -moz-box-shadow:0 0 9px #fff;
+    box-shadow:0 0 9px #fff;
+}
+.traffic-beat-bar-text {
+    position:absolute;
+    top:0px;
+    right:5px;
+    text-shadow:0 0 2px #000;
+    color:#fff;
+    font-size:11px;
+    font-weight:bold;
+    font-family:Arial;
+    z-index:5;
+}
+.traffic-beat-bar-text-rpm {
+    position:absolute;
+    top:0px;
+    left:5px;
+    text-shadow:0 0 2px #000;
+    color:#fff;
+    font-size:11px;
+    font-weight:bold;
+    font-family:Arial;
+    z-index:5;
+}
+/* -END- Bar Meters */
+
+
+/* Percent Bar */
+.traffic-beat-percent-bar {
+    position:relative;
+    width:400px;
+    height:24px;
+    background: #bbb;
+    background-image:-moz-linear-gradient(100% 50% 90deg,#aaa,#eee);
+    background-image:-webkit-gradient(linear, 0% 0%,0 50%,from(#eee),to(#aaa));
+    -webkit-border-radius:15px;
+    -moz-border-radius:15px;
+    border-radius:15px;
+    border:1px solid #aaa;
+    overflow:hidden;
+    cursor:pointer;
+    margin:2px 2px 2px 21px;
+}
+.traffic-beat-percent-bar-shine {
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:400px;
+    height:12px;
+    background:#fff;
+    opacity:0.3;
+    filter:alpha(opacity=30);
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -webkit-box-shadow:0 0 18px #fff;
+    -moz-box-shadow:0 0 18px #fff;
+    box-shadow:0 0 18px #fff;
+    z-index:10;
+}
+.traffic-beat-percent-bar-meter {
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:30%;
+    height:24px;
+    background:#292;
+    -webkit-border-radius:15px;
+    -moz-border-radius:15px;
+    border-radius:15px;
+    -webkit-box-shadow:20px 0 30px #afa;
+    -moz-box-shadow:20px 0 30px #afa;
+    box-shadow:20px 0 30px #afa;
+    z-index:4;
+}
+.traffic-beat-percent-bar-text-url {
+    position:absolute;
+    top:0px;
+    left:5px;
+    text-shadow:0 0 2px #000;
+    color:#fff;
+    font-size:11px;
+    font-family:Arial;
+    z-index:5;
+}
+.traffic-beat-percent-bar-text-percent {
+    position:absolute;
+    top:0px;
+    right:5px;
+    font-weight:bold;
+    text-shadow:0 0 3px #000;
+    color:#fff;
+    font-size:11px;
+    font-family:mono;
+    z-index:5;
+}
+/* -END- Percent Bar */
