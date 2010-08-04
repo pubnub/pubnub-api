@@ -139,7 +139,7 @@ public class PubnubTest {
 public class Pubnub {
     private static string ORIGIN        = "http://pubnub-prod.appspot.com";
     private static int    LIMIT         = 1700;
-    private static int    UNIQUE        = 1;
+    private static int    UNIQUE        = "x1280000000000";
     private static string PUBLISH_KEY   = "";
     private static string SUBSCRIBE_KEY = "";
 
@@ -300,7 +300,7 @@ public class Pubnub {
 
         // Parse Response
         string message = sb.ToString();
-               message = message.Substring( 10, message.Length - 11 );
+               message = message.Substring( 23, message.Length - 24 );
 
         JsonParser parser = new JsonParser( new StringReader(message), true );
         JsonObject json   = parser.ParseObject();
