@@ -28,7 +28,7 @@ function create(sprite) {
         position         : 'absolute',
         top              : sprite.top,
         left             : sprite.left,
-        width            : sprite.image.width,
+        width            : sprite.cell.size,
         height           : sprite.image.height,
         backgroundRepeat : 'no-repeat',
         backgroundImage  : 'url(' + sprite.image.url + ')'
