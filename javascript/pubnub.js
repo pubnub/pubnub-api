@@ -639,32 +639,21 @@ var now = function() {
  *     }
  * });
  */
-},  ASYNC = 'async'
-,   xdr = function( setup ) {
-    /* ---------------------------------------------
-       Web Worker Implementation for JSONP Long Poll
-       --------------------------------------------- */
-       /*
-       -if has web workers {
-            if (postMessage) {// if i'm the worker.
-                -create/get new document.implementation with head
-                var doc = document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
-                -set this.document = this snazzy new document.
-            }
-            else { // im the parent script
-                do no
-            }
-        }
-       */
+},  ASYNC  = 'async'
+,   XORIGN = 0
+,   xdr    = function( setup ) {
+    // Do XHR instead if possible.
+    if (XORIGN) return ajax(setup);
+
     var script    = create('script')
     ,   unique    = 'x'+now()
     ,   waitlimit = 100
     ,   timeout   =setTimeout(function(){done('timeout')},setup.timeout||30000)
+    ,   url       = setup.url
     ,   data      = setup.data    || {}
     ,   fail      = setup.fail    || function(){}
     ,   success   = setup.success || function(){}
-
-    ,   append = function() { setTimeout( function() { 
+    ,   append    = function() { setTimeout( function() { 
             waitlimit *= 2;
             try {
                 var myhead  = head()
@@ -701,12 +690,73 @@ var now = function() {
     bind( 'error', script, function() { done('error') } );
 
     data['unique'] = unique;
-    script.src  = setup.url + urlize( data, setup.url );
+    script.src     = url + urlize( data, url );
 
     // try to call xdr as soon as possible.
     append();
 
     return done;
+
+},  jsonp_rx = /^this\[[^\]]+\]\((.+?)\)$/
+,   ajax     = function( setup ) {
+    var xhr = window.ActiveXObject ?
+              new ActiveXObject("Microsoft.XMLHTTP") :
+              new XMLHttpRequest()
+    ,   rsc = function() {
+            if (  // complete?
+                xhr &&
+                xhr.readyState == 4 &&
+                !done
+            ) {
+                var status = xhr.status;
+                done = 1;
+
+                if (ival) {
+                    clearInterval(ival);
+                    ival = null;
+                }
+
+                // Invoke Success Or Failure
+                if (
+                    (status >= 200 && status < 300) ||
+                    status == 304 || status == 1223
+                ) {
+                    success(JSON.parse(
+                        xhr.responseText.replace( jsonp_rx, '$1' )
+                    ));
+                }
+                else fail(xhr);
+
+                // Done with XHR
+                xhr = null;
+            }
+        }
+    ,   fail    = setup.fail    || function(){}
+    ,   success = setup.success || function(){}
+    ,   done    = 0
+    ,   data    = setup.data || {}
+    ,   url     = setup.url
+    ,   ival    = setInterval( rsc, 14 ); // polling method
+
+    data['unique'] = 'x'+now();
+
+    // Send
+    try {
+        xhr.open( 'GET', url + urlize( data, url ), true );
+        xhr.send();
+    }
+    catch(eee) {
+        XORIGN = 0;
+        return xdr(setup);
+    }
+
+    // Return 'done'
+    return function() {
+        done = 1;
+        if (xhr) {
+            xhr.abort && xhr.abort();
+        }
+    };
 };
 
 
@@ -718,14 +768,9 @@ var now = function() {
 /* =-=====================================================================-= */
 
 
-/*
-    Publish
-    Subscribe
-*/
-
 // Build Interface
 var ORIGIN     = 'http://{{ORIGIN}}/'
-,   WEBSOCKET  = 0//this['WebSocket'] 
+//,   WEBSOCKET  = 0//this['WebSocket'] 
 ,   LIMIT      = 1700
 ,   PUBNUB     = {
     /*
@@ -861,8 +906,10 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         PUBNUB.channels[channel].done(0);
 
         // Unsubscribe WebSocket
+        /*
         PUBNUB.channels[channel].pubnub_ws &&
         PUBNUB.channels[channel].pubnub_ws.close();
+        */
     },
 
     /*
@@ -907,9 +954,11 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
                 data    : args,
                 success : function(response) {
                     if (response && response['server']) {
+                    /*
                         if (WEBSOCKET)
                             pubnub_ws(response['server']);
                         else
+                        */
                             pubnub(response['server']);
                     }
                     else
@@ -925,7 +974,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         find_PUBNUB_server();
 
         // Connect to Channel Recommended Server w/ WEBSOCKET
-        function pubnub_ws(server) {
+        /*function pubnub_ws(server) {
             if (channel in PUBNUB.channels &&
                 PUBNUB.channels[channel].disabled) return;
 
@@ -955,7 +1004,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
 
             // Save WS for Unsubscribing.
             PUBNUB.channels[channel].pubnub_ws = ws;
-        }
+        }*/
 
 
         // Connect To Channel Recommended Server
@@ -997,13 +1046,27 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
     // Stored Information About Connected Channels
     channels : {},
 
-    // Expose PUBNUB Useful Functions
-    'each' : each, 'map' : map, 'css' : css,
-    '$' : $, 'create' : create, 'bind' : bind, 'supplant' : supplant,
-    'head' : head, 'search' : search, 'attr' : attr, 'now' : now
+    // Expose PUBNUB Functions
+    'each'     : each,
+    'map'      : map,
+    'css'      : css,
+    '$'        : $,
+    'create'   : create,
+    'bind'     : bind,
+    'supplant' : supplant,
+    'head'     : head,
+    'search'   : search,
+    'attr'     : attr,
+    'now'      : now
 };
+
+// Test for XHR Cross Domain Origin Capable Browser
+ajax({
+    url : ORIGIN + 'pubnub-x-origin',
+    success : function(message) { if (message['x-origin']) XORIGN = 1; }
+});
 
 // Provide Global Interfaces
 this['jQuery'] && (this['jQuery']['PUBNUB'] = PUBNUB);
 this['PUBNUB'] = PUBNUB;
-})()
+})();
