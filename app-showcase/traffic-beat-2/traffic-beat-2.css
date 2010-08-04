@@ -1,5 +1,8 @@
 /* Utility */
-#traffic-beat-2 {margin-left:20px}
+#traffic-beat-2 {
+    display:none;
+    margin-left:20px;
+}
 .traffic-beat-clear {clear:both}
 .traffic-beat-relative {position:relative}
 .traffic-beat-sep {height:12px}

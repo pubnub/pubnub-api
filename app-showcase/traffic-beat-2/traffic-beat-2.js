@@ -67,17 +67,17 @@ var PUB              = PUBNUB
 ,   traffic_interval = +attr( config, 'interval' )
 ,   traffic_demo     = attr( config, 'demo' )
 ,   url_limit        = +attr( config, 'url-display-limit' ) || 5
-,   ticker_lines     = []  // Array of
+,   ticker_lines     = []  // Array of ticker nodes
 ,   all_traffic      = {}  // Keyed by URL
 ,   rpm_traffic      = {}  // Keyed by Timestamp
-,   total_traffic    = 0   // ????????
-,   new_traffic      = 0;  // ??????
+,   total_traffic    = 0   // counter
+,   new_traffic      = 0;  // counter for ticker
 
 (function(){
     // Page Hit by Real Human.
     function hit(uri) { publish({
         'channel' : traffic_channel,
-        'message' : { page : uri }
+        'message' : { 'page' : uri, 'time' : now() }
     }) }
 
     // Hit the page.
@@ -86,6 +86,8 @@ var PUB              = PUBNUB
     // Draw Traffic Beat II User Interface?
     if (!traffic_ui_on) return;
 
+    // Show Master Traffic Beat Div
+    css( config, { 'display' : 'block' } );
 
     // TICKER BOX
     (function(){
@@ -311,15 +313,15 @@ var PUB              = PUBNUB
             // Capture as Array for Sorting
             each( all_traffic, function( page, info ) {
                 the_traffic.push({
-                    page : page,
-                    count : info.count,
-                    time : info.time
+                    'page' : page,
+                    'count' : info['count'],
+                    'time' : info['time']
                 });
             } );
 
             // Sort Most Recent Updated Page
             the_traffic.sort(function( a, b ) {
-                var diff = b.time - a.time;
+                var diff = b['time'] - a['time'];
                 if (!diff) return b.count - a.count;
                 return diff;
             });
@@ -331,9 +333,9 @@ var PUB              = PUBNUB
 
                 // Buffer Display HTML
                 buffer_url_percent_bars(
-                    the_traffic[i].page,
-                    the_traffic[i].count / total_traffic,
-                    the_traffic[i].count
+                    the_traffic[i]['page'],
+                    the_traffic[i]['count'] / total_traffic,
+                    the_traffic[i]['count']
                 );
             }
 
@@ -350,11 +352,14 @@ var PUB              = PUBNUB
         total_traffic++;
 
         // Track Individual Page Counters
-        if (!all_traffic[message.page])
-            all_traffic[message.page] = { url : message.page, count : 0 };
+        if (!all_traffic[message['page']])
+            all_traffic[message['page']] = {
+                'url' : message['page'],
+                'count' : 0
+            };
 
-        all_traffic[message.page].count++
-        all_traffic[message.page].time = now();
+        all_traffic[message['page']]['count']++
+        all_traffic[message['page']]['time'] = now();
 
         // RPM Tracking
         rpm_traffic[now()] = 1;
@@ -367,28 +372,40 @@ var PUB              = PUBNUB
     } );
 
     history( { 'channel' : traffic_channel, 'limit' : 100 },
-    function(messages) { each( messages, function(message) {
-        // Update Counters
-        total_traffic++;
+    function(messages) {
+        // Fallback
+        var instant = now();
 
-        // Track Individual Page Counters
-        if (!all_traffic[message.page])
-            all_traffic[message.page] = { url : message.page, count : 0 };
+        // Show at least one.
+        new_traffic++;
 
-        all_traffic[message.page].count++
-        all_traffic[message.page].time = now();
+        // Loop Through History
+        each( messages, function(message) {
 
-        // RPM Tracking
-        rpm_traffic[now()] = 1;
+            // Update Counters
+            total_traffic++;
 
-        // Update URL Posts
-        url_percent_updater();
+            // Track Individual Page Counters
+            if (!all_traffic[message['page']])
+                all_traffic[message['page']] = {
+                    'url'   : message['page'],
+                    'time'  : message['time'] || instant,
+                    'count' : 0
+                };
 
-        // Update RPMs
-        rpm_updater();
-    }) } );
+            all_traffic[message['page']]['count']++;
+
+            // RPM Tracking
+            rpm_traffic[now()] = 1;
+
+            // Update URL Posts
+            url_percent_updater();
+
+            // Update RPMs
+            rpm_updater();
+        });
+    } );
 
 })();
-
 
 })()
