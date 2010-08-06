@@ -1,6 +1,6 @@
-var PUB     = PUBNUB
-,   utility = PUB.utility
-,   cookie  = utility.cookie
+(function(){
+
+var PUB = PUBNUB
 
 /* --------
    Provide a Player Creation/Management Interface.
@@ -26,13 +26,24 @@ var PUB     = PUBNUB
    Capture Current User's Information.
    -------- */
 
-function current_player() {
-    return players.add({
-        // User's UUID (Uniquely Identify Each Player).
-        uuid : cookie.get('uuid') || PUB.uuid(function(uuid){
-            cookie.set( 'uuid', uuid );
+function current_player(ready) {
+    function is_ready() {
+        if (player['uuid'] && player['joined']) {
+            players.add(player);
+            ready(player)
+        }
+    }
+
+    var player = {
+        'uuid' : PUB.uuid(function(uuid){
+            player['uuid'] = uuid;
+            is_ready();
+        }),
+        'joined' : PUB.time(function(time){
+            player['joined'] = time;
+            is_ready();
         })
-    });
+    };
 }
 
 PUB['player'] = {
@@ -40,3 +51,4 @@ PUB['player'] = {
     'current_player' : current_player
 };
 
+})();
