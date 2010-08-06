@@ -140,7 +140,7 @@ function movie( sprite, pattern, loop, callback, position ) {
  * move sprite from one place to another.
  */
 function move( sprite, properties, duration, callback ) {
-    var start_time   = now();
+    var start_time = now();
 
     stop_all(sprite);
 
