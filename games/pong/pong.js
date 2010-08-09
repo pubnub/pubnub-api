@@ -31,15 +31,18 @@ var PUB     = PUBNUB
 ,   sprite  = PUB.sprite
 ,   publish = PUB.publish
 ,   utility = PUB.utility
+,   offset  = utility.offset
 ,   now     = utility.now
 ,   updater = utility.updater
 ,   player  = PUB.player
 ,   players = player.players
-,   mouse   = utility.mouse
+,   mouse   = utility.mouse    // Capture Touch/Mouse
+,   points  = {}               // Tracking of all Pointers by UUID
 ,   painter = $('painter')
 ,   channel = 'pong'
 ,   wait    = 100
-,   master  = { joined : now(), count : 0, reset : 60 }
+,   last    = 0                // Last sent touch/mouse event count.
+,   master  = { joined : now(), is : 0 }
 ,   stage   = { width : 320, height : 480 };
 
 // Set Relative Painter Node
@@ -65,54 +68,26 @@ var current_player = { ready : 0 };
 player.current_player(function(self){
     current_player.info  = self;
     current_player.ready = 1;
-    console.log('CURRENT_PLAYER: ', current_player);
+    // console.log('CURRENT_PLAYER: ', current_player);
 
     // Call Ready Function
     pong_ready();
 });
 
-// Setup Current Player
-current_player.sprite = sprite.create({
-    image : {
-        url    : '',
-        width  : 20,
-        height : 7,
-        offset : {
-            top  : 0,
-            left : 0
-        }
-    },
-    cell : {
-        count : 1
-    },
-    left : 0,
-    top  : 0,
-    framerate : 60
-});
-
-// Temporary User Puck CSS
-css( current_player.sprite.node, { 'backgroundColor' : '#00f' } );
-
-// Called when Mouse Movies
-var publish_updater = updater( function() {
-    // This information is required before sending.
-    if (!current_player.ready) return;
-
-    // Send Player State
-    ping_pong({
-        'action'   : 'player_state',
-        'pointers' : current_player.pointers,
-        'uuid'     : current_player.info.uuid,
-        'now'      : now()
-    });
-}, wait );
+/*
+*/
 
 // Update Mouse Pointer (could be multiple pointers)
 function update_pointer(e) {
-    var pointers = current_player.pointers = mouse(e);
-    //console.log(pointers);
+    var pointers    = current_player.pointers = mouse(e)
+    ,   offset_top  = offset( painter, 'Top' )
+    ,   offset_left = offset( painter, 'Left' );
+    // console.log(pointers);
+    // console.log(offset_top, offset_left);
 
     each( pointers, function(pointer) {
+        pointer[0] -= offset_left + 10;
+        pointer[1] -= offset_top + 20;
         // Test for Collision Here
         // TODO
         /*
@@ -121,7 +96,14 @@ function update_pointer(e) {
         */
     } );
 
-    // Send Latest Information (rate limited)
+    // Draw Self Locally
+    update_player({
+        'pointers' : current_player.pointers,
+        'uuid'     : '',
+        'now'      : now()
+    });
+
+    // Send Latest Information (to draw on connected screens) (rate limited)
     publish_updater();
 
     // TODO (do i need this return?)
@@ -202,16 +184,108 @@ animate_ball();
 // ---------------
 
 
+// Called when Mouse Moves
+var publish_updater = updater( function() {
+    // This information is required before sending.
+    if (!current_player.ready) return;
+
+    // Send Player State
+    ping_pong({
+        'action'   : 'player_state',
+        'pointers' : current_player.pointers,
+        'uuid'     : current_player.info.uuid,
+        'last'     : last++
+    });
+}, wait );
+
+// Called when new Player State ARIVES
+function update_player(message) {
+    var uuid     = message['uuid'] || 'self'
+    ,   last     = message['last']
+    ,   pointers = message['pointers']
+    ,   i        = 0;
+
+    // Don't draw if self.
+    if (uuid == current_player.info.uuid) return;
+    /*
+        -check if player uuid hash exsists,
+            -if not then add player to players obj
+            -check if player touch entry exists
+                -if not then add touch entry.
+        -draw each touch.
+    */
+
+    // Check if hash entry exists
+    if (!points[uuid]) {
+        points[uuid] = { last : last, touches : [] };
+    }
+
+    each( pointers, function(point) {
+
+        // Create Sprite for the Pointer
+        if (!points[uuid].touches[i]) {
+            points[uuid].touches[i] = {
+                xy     : point,
+                sprite : sprite.create({
+                    image : {
+                        url    : '',
+                        width  : 20,
+                        height : 7,
+                        offset : {
+                            top  : 0,
+                            left : 0
+                        }
+                    },
+                    cell : {
+                        count : 1
+                    },
+                    left : point[0],
+                    top  : point[1],
+                    framerate : 60
+                })
+            };
+
+            // Temporary User Puck CSS
+            css( points[uuid].touches[i].sprite.node, {
+                'backgroundColor' : '#00f'
+            } );
+        }
+
+        // Draw Pointer Locally
+        if (uuid == 'self') {
+            css( points[uuid].touches[i].sprite.node, {
+                'left' : point[0],
+                'top'  : point[1]
+            } );
+        }
+        // Draw Remote Pointer
+        else {
+            sprite.move( points[uuid].touches[i].sprite, {
+                'left' : point[0],
+                'top'  : point[1]
+            }, wait, animate_ball );
+        }
+
+        // Next Pointer
+        i++;
+    } );
+}
+
+
 // Called with new Game/Ball State
 function update_game(message) {
 
-    console.log('JOINED: ' + current_player.info.joined);
-    console.log('MSGJOINED: ' + message['joined']);
+    // console.log('JOINED: ' + current_player.info.joined);
+    // console.log('MSGJOINED: ' + message['joined']);
 
     // Don't update if Self or from a new player.
-    if (current_player.info.joined <= message['joined']) return;
+    // if (current_player.info.joined <= message['joined']) return;
+
+    // Don't update if master.
+    if (master.is) return;
 
     // Capture Oldest
+    /*
     if (master.joined >= message['joined']) {
         master.joined = message['joined'];
         if (master.count++ > master.reset) {
@@ -220,6 +294,7 @@ function update_game(message) {
         }
     }
     else return;
+    */
 
     ball.phys.x_vel = message['ball']['x_vel'];
     ball.phys.y_vel = message['ball']['y_vel'];
@@ -238,27 +313,21 @@ function update_game(message) {
     */
 }
 
-// Called when new Player State ARIVES
-function update_player(message) {
-    /*
-        -check if player exsists,
-            -if not then add player to players obj
-        -draw
-    */
-}
-
 // Called when we need to send game state
 function send_game_state(message) {
     // Don't send game state if not init'ed.
     if (!current_player.ready) return;
 
     // Don't send if Self or if not game master.
-    if (current_player.info.joined >= message['joined']) return;
+    //if (current_player.info.joined >= message['joined']) return;
+
+    // Don't send if not master.
+    if (!master.is) return;
 
     ping_pong({
         'action' : 'game_state',
-        'uuid'   : current_player.info.uuid,
-        'joined' : current_player.info.joined,
+        // 'uuid'   : current_player.info.uuid,
+        // 'joined' : current_player.info.joined,
         'ball'   : {
             'x_vel' : ball.phys.x_vel,
             'y_vel' : ball.phys.y_vel,
@@ -280,7 +349,7 @@ function request_game_state() {
 // Listen for Game Messages
 function pong_ready() {
     PUB.subscribe( { 'channel' : channel }, function(message) {
-        console.log('message: ' + JSON.stringify(message));
+        // console.log('message: ' + JSON.stringify(message));
 
         switch (message['action']) {
             case 'player_state' :
@@ -298,10 +367,22 @@ function pong_ready() {
     } );
 
     // Keep Game State Up-to- Date
+    /*
+        new strategy:
+            -determine_master()
+                - ???
+            -master sends ping ever 400ms with data.
+                -if master fails to deliver message in 2 seconds, determine_master()
+
+            -anyone can send a particle effect.
+            -only master responds to puck hits
+    */
+    /*
     request_game_state();
     setInterval( function() { setTimeout( function() {
         request_game_state()
     }, Math.ceil(Math.random() * 400 + 100) ) }, 400 );
+    */
 }
 
 // Set Browser to Gaming Mode
