@@ -20,7 +20,8 @@ var PUB      = PUBNUB
 ,   head     = PUB.head()
 ,   highlgt
 ,   mehcount = 0
-,   fbcss    = create('link')
+,   clicked  = 0
+// ,   fbcss    = create('link')
 ,   fbhtml   = '<a id="facebook-meh-button-box"><div id="facebook-meh-button-text">Meh</div><div id="facebook-meh-button-img"></div></a><div id="facebook-meh-button-fb-img"></div><div id="facebook-meh-button-count-text">{count} {people} care.</div>'
 ,   fbbutton = $('facebook-meh-button')
 ,   channel  = location.href.replace( /\W/g, '' ).replace( /www/, '' )
@@ -35,10 +36,13 @@ function build_fb() {
 }
 
 // Add Styles
+/*
+<link rel='stylesheet' type='text/css' href='http://cdn.pubnub.com/facebook/facebook-meh-button-style.css'/>
 fbcss.href = 'http://cdn.pubnub.com/facebook/facebook-meh-button-style.css';
 attr( fbcss, 'rel',  'stylesheet' );
 attr( fbcss, 'type', 'text/css' );
 head.appendChild(fbcss);
+*/
 
 // Build FB "Meh" Button
 PUB.history( { 'channel' : channel }, function(messages) {
@@ -50,7 +54,10 @@ PUB.history( { 'channel' : channel }, function(messages) {
 } );
 
 // Click FB "Meh" Button
-bind( 'mousedown', fbbutton, function (e) {
+function fb_click(e) {
+    if (clicked) return false;
+    clicked = 1;
+    setTimeout( function() { clicked = 0 }, 1000 );
     var target = attr( e.target || e.srcElement, 'id' );
 
     // If hit the button
@@ -63,20 +70,19 @@ bind( 'mousedown', fbbutton, function (e) {
     // Send "Meh" Click
     PUB.publish({ 'channel' : channel, 'message' : { 'c' : mehcount + 1 } });
     return false;
-} );
+}
 
-
-
-// Prevent Highlight of Button
+// Caputre Click Early + Prevent Highlight of Button
 each(
-    'touchmove,touchstart,touchend,selectstart'.split(','),
-    function(en) { bind( en, fbbutton, function(){return false} ) }
+    'mousedown,click,touchmove,touchstart,touchend,selectstart'.split(','),
+    function(en) { bind( en, fbbutton, fb_click ) }
 );
 
 // When ready to start listening for clicks
 bind( 'load', window, function() {
     // Listen for Clicks
     PUB.subscribe( { 'channel' : channel }, function(message) {
+        clicked = 0;
         css( fbbutton, { 'background' : '#f90' } );
         clearTimeout(highlgt);
 
