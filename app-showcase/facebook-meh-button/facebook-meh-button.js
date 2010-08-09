@@ -1,5 +1,14 @@
 (function(){
 
+/*
+
+    IMPORTANT!!!
+    Copy this div into your HTML just above the script.
+
+    <div id="facebook-meh-button"></div>
+
+*/
+
 
 var PUB      = PUBNUB
 ,   $        = PUB.$
