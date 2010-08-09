@@ -367,47 +367,14 @@ var now = function() {
     return++NOW+''+(+new Date)
     //return+new Date
 },  NOW = 1
-/**
- * WINFO
- * =====
- * var window_info = winfot();
- * log(window_info.height);
- */
-,  winfo = function() {
-    return {
-        height    : this.innerHeight ||
-                    document.documentElement.clientHeight ||
-                    document.body.clientHeight,
-        scrollTop : document.documentElement.scrollTop ||
-                    document.body.scrollTop,
-        size      : offset(search('body')[0], 'Height')
-    }
 
-/**
- * OFFSET
- * ======
- * offset( search('div')[0], 'Width' );
- * offset( search('div')[0], 'Height' );
- * offset( search('div')[0], 'Top' );
- * offset( search('div')[0], 'Left' );
- */
-},  offset = function( node, what ) {
-    var pos  = 0
-    ,   what = what || 'Top';
-
-    while (node) {
-        pos += node['offset'+what];
-        node = node.offsetParent;
-    }
-
-    return pos
 
 /**
  * $
  * =
  * var div = $('divid');
  */
-},  $ = function(id) {
+,  $ = function(id) {
     return document.getElementById(id);
 
 
@@ -784,7 +751,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
     */
     'history' : function( args, callback ) {
         callback = callback || function(){};
-        args['limit'] = args['limit'] || 10;
+        args['limit'] = args['limit'] || 100;
 
         // Make sure we have a Channel
         if (!args['channel']) return log('Must Specify a Channel');
