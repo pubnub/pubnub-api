@@ -10,7 +10,7 @@ var db     = this['localStorage']
 ,   cookie = {
     get : function(key) {
         if (db) return db.getItem(key);
-        if (document.cookie.indexOf(key) == -1) return null;
+        if ((document.cookie||'').indexOf(key) == -1) return null;
         return ((document.cookie||'').match(
             RegExp(key+'=([^;]+)')
         )||[])[1] || null;

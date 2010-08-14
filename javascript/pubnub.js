@@ -29,8 +29,8 @@
 */
 
 
-this['JSON'] || (function () {
-    this['JSON'] = {};
+window['JSON'] || (function () {
+    window['JSON'] = {};
 
     function f(n) {
         // Format integers to have at least two digits.
@@ -354,9 +354,9 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 }());
 
 
-this['PUBNUB'] || (function() {
-this.console||(this.console=this.console||{});
-console.log||(console.log=((this.opera||{}).postError||function(){}));
+window['PUBNUB'] || (function() {
+window.console||(window.console=window.console||{});
+console.log||(console.log=((window.opera||{}).postError||function(){}));
 
 /**
  * NOW
@@ -642,7 +642,7 @@ var now = function() {
 
     script[ASYNC] = ASYNC;
 
-    this[unique] = function(response) {
+    window[unique] = function(response) {
         // Stop if there isn't a response.
         if ( !response ) return done('no data');
 
@@ -650,7 +650,7 @@ var now = function() {
         success.call( script, response );
 
         // destroy
-        this[unique] = null;
+        window[unique] = null;
         done(0);
     };
 
@@ -664,10 +664,10 @@ var now = function() {
 
     return done;
 
-},  jsonp_rx = /^this\[[^\]]+\]\((.+?)\)$/
+},  jsonp_rx = /^window\[[^\]]+\]\((.+?)\)$/
 ,   ajax     = function( setup ) {
-    var xhr = window.ActiveXObject ?
-              new ActiveXObject("Microsoft.XMLHTTP") :
+    var xhr = window['ActiveXObject'] ?
+              new window['ActiveXObject']("Microsoft.XMLHTTP") :
               new XMLHttpRequest()
     ,   rsc = function() {
             if (  // complete?
@@ -737,7 +737,7 @@ var now = function() {
 
 // Build Interface
 var ORIGIN     = 'http://{{ORIGIN}}/'
-//,   WEBSOCKET  = 0//this['WebSocket'] 
+//,   WEBSOCKET  = 0//window['WebSocket'] 
 ,   LIMIT      = 1700
 ,   PUBNUB     = {
     /*
@@ -887,7 +887,14 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
             console.log(message);
         } );
     */
+    ready : 0,
+    ready_buffer : [],
     'subscribe' : function( args, callback ) {
+        // Reduce Status Flicker
+        if (!PUBNUB.ready) {
+            return PUBNUB.ready_buffer.push([ args, callback ]);
+        }
+
         // Make sure we have a Channel
         if (!args['channel']) return log('Must Specify a Channel');
 
@@ -1014,6 +1021,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
     channels : {},
 
     // Expose PUBNUB Functions
+    'xdr'      : xdr,
     'each'     : each,
     'map'      : map,
     'css'      : css,
@@ -1033,7 +1041,15 @@ ajax({
     success : function(message) { if (message['x-origin']) XORIGN = 1; }
 });
 
+// Bind for PUBNUB.ready
+bind( 'load', window, function() { setTimeout( function() {
+    PUBNUB.ready = 1;
+    each( PUBNUB.ready_buffer, function(sub) {
+        PUBNUB['subscribe']( sub[0], sub[1] );
+    } );
+}, 100 ); } );
+
 // Provide Global Interfaces
-this['jQuery'] && (this['jQuery']['PUBNUB'] = PUBNUB);
-this['PUBNUB'] = PUBNUB;
+window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
+window['PUBNUB'] = PUBNUB;
 })();
