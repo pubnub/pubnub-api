@@ -139,7 +139,7 @@ public class PubnubTest {
 public class Pubnub {
     private static string ORIGIN        = "http://pubnub-prod.appspot.com";
     private static int    LIMIT         = 1700;
-    private static int    UNIQUE        = "x1280000000000";
+    private static int    UNIQUE        = 1;
     private static string PUBLISH_KEY   = "";
     private static string SUBSCRIBE_KEY = "";
 
@@ -266,7 +266,7 @@ public class Pubnub {
         byte[]        buf = new byte[8192];
 
         // Add Unique
-        args.Add( "unique", (Pubnub.UNIQUE).ToString() );
+        args.Add( "unique", (Pubnub.UNIQUE++).ToString() );
 
         // Build URL
         url += "?";
@@ -300,7 +300,11 @@ public class Pubnub {
 
         // Parse Response
         string message = sb.ToString();
-               message = message.Substring( 23, message.Length - 24 );
+        int    par     = message.IndexOf("(") + 1;
+               message = message.Substring( par, message.Length - par - 1 );
+
+        // Console.WriteLine(sb);
+        // Console.WriteLine(message);
 
         JsonParser parser = new JsonParser( new StringReader(message), true );
         JsonObject json   = parser.ParseObject();
