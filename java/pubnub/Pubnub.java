@@ -167,8 +167,12 @@ public class Pubnub {
             reader.close();
 
             // Remove JSONP Wrapper
-            json = jsonp.substring( 10, jsonp.length() - 1 );
+            json = jsonp.substring(
+                jsonp.indexOf("(") + 1,
+                jsonp.length() - 1
+            );
             // System.out.println(jsonp);
+            // System.out.println(json);
 
         } catch (Exception e) {
             JSONObject jsono = new JSONObject();
