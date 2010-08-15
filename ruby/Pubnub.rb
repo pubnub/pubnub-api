@@ -198,7 +198,7 @@ class Pubnub
         ## Send Request Expecting JSONP Response
         open(request) do |f|
             response = f.read
-            response.gsub!( /^this\[[^\]]+\]\((.+?)\)$/, '\1' )
+            response.gsub!( /^[^\(]+\((.+?)\)$/, '\1' )
         end
 
         return JSON.parse(response)
