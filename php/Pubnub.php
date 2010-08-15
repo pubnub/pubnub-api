@@ -291,7 +291,7 @@ class Pubnub {
 
         ## Send Request Expecting JSONP Response
         $response = preg_replace(
-            '|^this\[[^\]]+\]\((.+?)\)$|', '$1',
+            '|^[^\(]+\((.+?)\)$|', '$1',
             file_get_contents($request)
         );
 
