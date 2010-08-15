@@ -124,7 +124,7 @@ public class Pubnub {
 
     public JSONObject _request( String url, HashMap<String,String> args ) {
         // Add Unique Param
-        args.put( "unique", Integer.toString(Pubnub.UNIQUE) );
+        args.put( "unique", Integer.toString(Pubnub.UNIQUE++) );
 
         String   json         = "";
         Iterator arg_iterator = args.keySet().iterator();
