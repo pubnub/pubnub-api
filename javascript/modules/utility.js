@@ -68,23 +68,6 @@ function mouse(e) {
 
 
 /**
- * WINFO
- * =====
- * var window_info = winfot();
- * log(window_info.height);
- */
-function winfo() {
-    return {
-        height    : this.innerHeight ||
-                    document.documentElement.clientHeight ||
-                    document.body.clientHeight,
-        scrollTop : document.documentElement.scrollTop ||
-                    document.body.scrollTop,
-        size      : offset(search('body')[0], 'Height')
-    }
-}
-
-/**
  * OFFSET
  * ======
  * offset( search('div')[0], 'Width' );
