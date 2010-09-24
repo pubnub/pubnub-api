@@ -1,5 +1,5 @@
 body{overflow:hidden;overflow-y:hidden;height:100%;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-text-size-adjust:none;background-color:#333;margin:0;padding:0}
 
-#screen{position:absolute;width:320px;height:480px;margin-top:-240px;margin-left:-160px;top:50%;left:50%;background:#fff;cursor:crosshair}
+#screen{position:absolute;width:320px;height:480px;margin-top:-240px;margin-left:-160px;top:50%;left:50%;background:#fff;cursor:crosshair;overflow:hidden}
 
 #painter{width:320px;height:480px;position:relative}
