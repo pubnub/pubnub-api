@@ -50,7 +50,7 @@ function mouse(e) {
     ,   mpos = [];
 
     if (tch) {
-        PUB.each( e.touches, function(touch) {
+        PUBNUB.each( e.touches, function(touch) {
             mpos.push([ touch.pageX, touch.pageY ]);
         } );
     }
@@ -182,8 +182,8 @@ function create(sprite) {
         left             : sprite.left,
         width            : sprite.cell.size,
         height           : sprite.image.height,
-        backgroundRepeat : 'no-repeat'//,
-        // backgroundImage  : 'url(' + sprite.image.url + ')'
+        backgroundRepeat : 'no-repeat',
+        backgroundImage  : 'url(' + sprite.image.url + ')'
     } );
 
     setframe( sprite, 0 );
@@ -422,18 +422,10 @@ function update_pointer(e) {
     var pointers    = current_player.pointers = mouse(e)
     ,   offset_top  = offset( painter, 'Top' )
     ,   offset_left = offset( painter, 'Left' );
-    // console.log(pointers);
-    // console.log(offset_top, offset_left);
 
     each( pointers, function(pointer) {
-        pointer[0] -= offset_left + 10;
-        pointer[1] -= offset_top + 40;
-        // Test for Collision Here
-        // TODO
-        /*
-            -if collision, send publish event.
-            -Set Position for each Pointer
-        */
+        pointer[0] -= offset_left + 20;
+        pointer[1] -= offset_top + 60;
     } );
 
     // Draw Self Locally
@@ -443,11 +435,8 @@ function update_pointer(e) {
         'now'      : now()
     });
 
-    // Send Latest Information (to draw on connected screens) (rate limited)
+    // Send Latest Information
     publish_updater();
-
-    // TODO (do i need this return?)
-    return false;
 }
 
 
@@ -462,11 +451,13 @@ var publish_updater = updater( function() {
     if (!current_player.ready) return;
 
     // Send Player State
-    ping_multi_touch({
-        'action'   : 'player_state',
-        'pointers' : current_player.pointers,
-        'uuid'     : current_player.info.uuid,
-        'last'     : last++
+    PUBNUB.publish({
+        'channel' : channel,
+        'message' : {
+            'pointers' : current_player.pointers,
+            'uuid'     : current_player.info.uuid,
+            'last'     : last++
+        }
     });
 }, wait );
 
@@ -501,9 +492,9 @@ function update_player(message) {
                 xy     : point,
                 sprite : sprite.create({
                     image : {
-                        url    : '',
-                        width  : 20,
-                        height : 7,
+                        url    : 'print.png',
+                        width  : 40,
+                        height : 60,
                         offset : {
                             top  : 0,
                             left : 0
@@ -519,12 +510,9 @@ function update_player(message) {
             };
 
             // Temporary User Puck CSS
+            var opacity = Math.random();
             css( points[uuid].touches[i].sprite.node, {
-                'backgroundColor' : '#' + (
-                    uuid == 'self' ?
-                    ( current_player['info']['uuid'] || 'f0f') :
-                    uuid
-                ).slice(-3)
+                'opacity' : opacity < 0.5 ? '0.5' : opacity
             } );
         }
 
@@ -551,21 +539,19 @@ function update_player(message) {
 
 // Listen for Game Messages
 function multi_touch_ready() {
-    PUB.subscribe( { 'channel' : channel }, function(message) {
-
-        switch (message['action']) {
-            case 'player_state' :
-                update_player(message);
-                break;
-
-        }
-    } );
+    PUBNUB.subscribe({
+        'channel'  : channel,
+        'callback' : update_player
+    });
 }
 
 // Set Browser to Gaming Mode
-each(
-    'mousedown,mousemove,touchmove,touchstart,touchend,selectstart'.split(','),
-    function(ename) { bind( ename, document, update_pointer ) }
+PUBNUB.bind(
+    'mouseup,mousedown,mousemove,touchmove,' +
+    'touchstart,touchend,selectstart,', //+
+    // 'gesturestart,gestureend,gesturechange',
+    document,
+    update_pointer
 );
 
 })();
