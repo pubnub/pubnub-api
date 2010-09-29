@@ -484,21 +484,22 @@ var now = function() {
  * } );
  */
 },  bind = function( type, el, fun ) {
-    var rapfun = function(e) {
-        if (!e) var e = window.event;
-        if (!fun(e)) {
-            e.cancelBubble = true;
-            e.returnValue  = false;
-            if (e.stopPropagation) {
-                e.stopPropagation();
-                e.preventDefault();
+    each( type.split(','), function(etype) {
+        var rapfun = function(e) {
+            if (!e) var e = window.event;
+            if (!fun(e)) {
+                e.cancelBubble = true;
+                e.returnValue  = false;
+                e.preventDefault && e.preventDefault();
+                e.stopPropagation && e.stopPropagation();
             }
-        }
-    };
+        };
 
-    if ( el.addEventListener ) el.addEventListener( type, rapfun, false );
-    else if ( el.attachEvent ) el.attachEvent( 'on' + type, rapfun );
-    else  el[ 'on' + type ] = rapfun;
+        if ( el.addEventListener ) el.addEventListener( etype, rapfun, false );
+        else if ( el.attachEvent ) el.attachEvent( 'on' + etype, rapfun );
+        else  el[ 'on' + etype ] = rapfun;
+    } );
+
 
 /**
  * UNBIND
@@ -900,6 +901,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
 
         // Make sure we have a Callback
         callback = callback || args['callback'];
+        delete args['callback'];
         if (!callback) return log('Must Specify a Callback');
 
         // Make sure we have a Channel
@@ -907,8 +909,8 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
 
         var timetoken = 0
         ,   waitlimit = 100
-        ,   channel   =
-            args['channel'] = PUBNUB.subscribe_key + '/' + args['channel'];
+        ,   channel   = args['channel'] =
+            PUBNUB.subscribe_key + '/' + args['channel'];
 
         if (!(channel in PUBNUB.channels))
             PUBNUB.channels[channel] = {};
