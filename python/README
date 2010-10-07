@@ -1,4 +1,43 @@
-## www.pubnub.com - Pubnub realtime push service in the cloud. 
+## www.pubnub.com - PubNub realtime push service in the cloud. 
 
-## -- TODO --
-## The Python Client API isn't built yet.
+## -------------
+## Python Push API
+## -------------
+
+# -------
+# PUBLISH
+# -------
+# Send Message
+pubnub = Pubnub( 'demo', 'demo' )
+info   = pubnub.publish({
+    'channel' : 'hello_world',
+    'message' : {
+        'some_text' : 'Hello my World'
+    }
+})
+print(info)
+
+# ---------
+# SUBSCRIBE
+# ---------
+# Listen for Messages *BLOCKING*
+def receive(message) :
+    print(message)
+    return True
+
+pubnub = Pubnub( 'demo', 'demo' )
+pubnub.subscribe({
+    'channel'  : 'hello_world',
+    'callback' : receive 
+})
+
+# -------
+# HISTORY
+# -------
+# Load Previously Published Messages
+pubnub  = Pubnub( 'demo', 'demo' )
+history = pubnub.history({
+    'channel' : 'hello_world',
+    'limit'   : 1
+})
+print(history)
