@@ -548,7 +548,7 @@ function multi_touch_ready() {
 // Set Browser to Gaming Mode
 PUBNUB.bind(
     'mouseup,mousedown,mousemove,touchmove,' +
-    'touchstart,touchend,selectstart,', //+
+    'touchstart,touchend,selectstart', //+
     // 'gesturestart,gestureend,gesturechange',
     document,
     update_pointer
