@@ -608,7 +608,7 @@ var now = function() {
  * });
  */
 },  ASYNC  = 'async'
-,   XORIGN = 0
+,   XORIGN = 1
 ,   xdr    = function( setup ) {
     // Do XHR instead if possible.
     if (XORIGN) return ajax(setup);
@@ -665,7 +665,7 @@ var now = function() {
 
     return done;
 
-},  jsonp_rx = /^window\[[^\]]+\]\((.+?)\)$/
+},  jsonp_rx = /^[^\(]+\((.+?)\)$/
 ,   ajax     = function( setup ) {
     var xhr = window['ActiveXObject'] ?
               new window['ActiveXObject']("Microsoft.XMLHTTP") :
@@ -738,7 +738,7 @@ var now = function() {
 
 // Build Interface
 var ORIGIN     = 'http://{{ORIGIN}}/'
-//,   WEBSOCKET  = 0//window['WebSocket'] 
+//,   WEBSOCKET  = window['WebSocket'] 
 ,   LIMIT      = 1700
 ,   PUBNUB     = {
     /*
@@ -908,7 +908,9 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
         if (!PUBNUB.subscribe_key) return log('Missing Subscribe Key');
 
         var timetoken = 0
-        ,   waitlimit = 100
+        ,   waitlimit = 50
+        ,   error     = args['error'] || function(){}
+        // ,   ready     = args['ready'] || function(){}
         ,   channel   = args['channel'] =
             PUBNUB.subscribe_key + '/' + args['channel'];
 
@@ -920,37 +922,43 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
             'Already Connected to this Channel: ' + channel
         );
 
-        PUBNUB.channels[channel].disabled = 0;
+        PUBNUB.channels[channel].disabled  = 0;
         PUBNUB.channels[channel].connected = 1;
 
-        function find_PUBNUB_server() {setTimeout(function() { 
-            waitlimit *= 2;
+        function find_PUBNUB_server() {waitlimit *= 2;setTimeout(function() { 
             xdr({
                 url     : ORIGIN + 'pubnub-subscribe',
                 data    : args,
                 success : function(response) {
                     if (response && response['server']) {
-                    /*
+                        /*
                         if (WEBSOCKET)
                             pubnub_ws(response['server']);
                         else
                         */
                             pubnub(response['server']);
                     }
-                    else
+                    else {
+                        // console.log('NO SERVER???FAILED!!!!');
                         find_PUBNUB_server();
+                    }
                 },
                 fail : function(response) {
+                    // console.log('FAILED!!!!');
                     find_PUBNUB_server();
+                    error(response);
                 }
             });
         }, waitlimit )}
 
         // Locate Comet Server
+
+        // console.log('Locate Comet Server (First Time)!!!!');
         find_PUBNUB_server();
 
         // Connect to Channel Recommended Server w/ WEBSOCKET
-        /*function pubnub_ws(server) {
+        /*
+        function pubnub_ws(server) {
             if (channel in PUBNUB.channels &&
                 PUBNUB.channels[channel].disabled) return;
 
@@ -960,6 +968,7 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
             );
 
             ws['onopen'] = function() {
+                console.log('OPENED WS!!!! ---> ' + channel);
                 ws.send(channel);
             };
 
@@ -974,13 +983,15 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
                     !PUBNUB.channels[channel].disabled
                 ) {
                     waitlimit = 100;
+                    console.log('CLOSED WS!!!!');
                     find_PUBNUB_server();
                 }
             };
 
             // Save WS for Unsubscribing.
             PUBNUB.channels[channel].pubnub_ws = ws;
-        }*/
+        }
+        */
 
 
         // Connect To Channel Recommended Server
@@ -1003,7 +1014,11 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
                 },
                 fail : function(response) {
                     if (response == 'timeout') pubnub(server);
-                    else find_PUBNUB_server();
+                    else {
+                        // console.log('32FAILED!!!!');
+                        find_PUBNUB_server();
+                        error(response);
+                    }
                 }
             });
         }
@@ -1038,10 +1053,11 @@ var ORIGIN     = 'http://{{ORIGIN}}/'
 };
 
 // Test for XHR Cross Domain Origin Capable Browser
-ajax({
+/*ajax({
     url : ORIGIN + 'pubnub-x-origin',
     success : function(message) { if (message['x-origin']) XORIGN = 1; }
 });
+*/
 
 // Bind for PUBNUB.ready
 bind( 'load', window, function() { setTimeout( function() {
@@ -1054,4 +1070,5 @@ bind( 'load', window, function() { setTimeout( function() {
 // Provide Global Interfaces
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
 window['PUBNUB'] = PUBNUB;
+
 })();
