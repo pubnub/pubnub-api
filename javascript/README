@@ -4,23 +4,17 @@
 // You must have a PubNub account to use the JavaScript API.
 // Click on http://www.pubnub.com/account-javascript-api-include
 
-// There are two simple API calls.
-// Publish() and Subscribe().
+// LISTEN
+PUBNUB.subscribe({
+    channel  : "hello_world",
+    callback : function(message) { alert(message) }
+})
 
-// The PubNub JavaScript global is PUBNUB.
-
-// PUBNUB.publish() Example:
-// This function will send messages to the channel of your choice.
-// You may pass any type of object or array as a message.
-PUBNUB.publish({ channel : 'my_channel', message : 'Hello World!' });
-
-// PUBNUB.subscribe() Example:
-// This function will listen for messages.
-PUBNUB.subscribe({ channel : 'my_channel' }, function(response) {
-    // When PUBNUB.publish() is called with the same channel,
-    // This callback will print the response in your console.
-    console.log(response);
-} );
+// SEND
+PUBNUB.publish({
+    channel : "hello_world",
+    message : "Hi."
+})
 
 // That's it! Nothing more complex is needed to pass messages.
 // Visit www.pubnub.com and sign up for an account!
