@@ -220,6 +220,7 @@ console.log||(console.log=((window.opera||{}).postError||function(){}));
 var NOW    = 1
 ,   MAGIC  = /\$?{([\w\-]+)}/g
 ,   ASYNC  = 'async'
+,   URLBIT = '/'
 ,   XORIGN = 1;
 
 /**
@@ -399,7 +400,7 @@ function jsonp_cb() { return XORIGN ? 0 : 'x'+unique() }
  * XDR Cross Domain Request
  * ========================
  *  xdr({
- *     url     : 'http://www.blah.com/url',
+ *     url     : ['http://www.blah.com/url'],
  *     success : function(response) {},
  *     fail    : function() {}
  *  });
@@ -445,7 +446,7 @@ function xdr( setup ) {
 
     bind( 'error', script, function() { done(1) } );
 
-    script.src = setup.url;
+    script.src = setup.url.join(URLBIT);
 
     append();
     return done;
@@ -455,7 +456,7 @@ function xdr( setup ) {
  * XDR Cross XHR Request
  * =====================
  *  xdr({
- *     url     : 'http://www.blah.com/url',
+ *     url     : ['http://www.blah.com/url'],
  *     success : function(response) {},
  *     fail    : function() {}
  *  });
@@ -495,7 +496,7 @@ function ajax( setup ) {
     // Send
     try {
         xhr = new XMLHttpRequest();
-        xhr.open( 'GET', setup.url, true );
+        xhr.open( 'GET', setup.url.join(URLBIT), true );
         xhr.send();
     }
     catch(eee) {
@@ -525,7 +526,6 @@ var PN            = $('pubnub')
 ,   SSL           = attr( PN, 'ssl' ) == 'on' ? 's' : ''
 ,   ORIGIN        = 'http'+SSL+'://pubsub.pubnub.com'
 ,   LIMIT         = 1800
-,   URLBIT        = '/'
 ,   READY         = 0
 ,   READY_BUFFER  = []
 ,   CHANNELS      = {}
@@ -554,7 +554,7 @@ var PN            = $('pubnub')
                 ORIGIN, 'history',
                 SUBSCRIBE_KEY, channel,
                 jsonp, limit
-            ].join(URLBIT),
+            ],
             success  : function(response) { callback(response['messages']) },
             fail     : function(response) { log(response) }
         });
@@ -567,8 +567,8 @@ var PN            = $('pubnub')
         var jsonp = jsonp_cb();
         xdr({
             callback : jsonp,
-            url      : [ORIGIN, 'time', jsonp].join(URLBIT),
-            success  : function(response) { callback(response['time']) },
+            url      : [ORIGIN, 'time', jsonp],
+            success  : function(response) { callback(response['time'][0]) },
             fail     : function() { callback(0) }
         });
     },
@@ -580,8 +580,8 @@ var PN            = $('pubnub')
         var jsonp = jsonp_cb();
         xdr({
             callback : jsonp,
-            url      : 'http://www.pubnub.com/pubnub-uuid?callback=' + jsonp,
-            success  : function(response) { callback(response['uuid']) },
+            url      : ['http'+SSL+'://www.pubnub.com/uuid?callback='+jsonp],
+            success  : function(response) { callback(response['uuid'][0]) },
             fail     : function() { callback(0) }
         });
     },
@@ -617,7 +617,7 @@ var PN            = $('pubnub')
                 PUBLISH_KEY, SUBSCRIBE_KEY,
                 0, channel,
                 jsonp, message
-            ].join(URLBIT),
+            ],
             success  : respond,
             fail     : respond
         });
@@ -681,7 +681,7 @@ var PN            = $('pubnub')
                     ORIGIN, 'subscribe',
                     SUBSCRIBE_KEY, channel,
                     jsonp, timetoken
-                ].join(URLBIT),
+                ],
                 fail     : function() { timeout( pubnub, 500 ); error()  },
                 success  : function(message) {
                     timetoken = message[1];
