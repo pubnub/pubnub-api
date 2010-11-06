@@ -552,7 +552,7 @@ var PN            = $('pubnub')
             callback : jsonp,
             url      : [
                 ORIGIN, 'history',
-                SUBSCRIBE_KEY, channel,
+                SUBSCRIBE_KEY, escape(channel),
                 jsonp, limit
             ],
             success  : function(response) { callback(response['messages']) },
@@ -597,7 +597,7 @@ var PN            = $('pubnub')
         ,   message  = args['message']
         ,   channel  = args['channel']
         ,   jsonp    = jsonp_cb()
-        ,   respond  = function(response) { callback(response) };
+        ,   respond  = function(response) { callback(response[0]) };
 
         if (!message)     return log('Missing Message');
         if (!channel)     return log('Missing Channel');
@@ -615,8 +615,8 @@ var PN            = $('pubnub')
             url      : [
                 ORIGIN, 'publish',
                 PUBLISH_KEY, SUBSCRIBE_KEY,
-                0, channel,
-                jsonp, message
+                0, escape(channel),
+                jsonp, escape(message)
             ],
             success  : respond,
             fail     : respond
@@ -679,7 +679,7 @@ var PN            = $('pubnub')
                 callback : jsonp,
                 url      : [
                     ORIGIN, 'subscribe',
-                    SUBSCRIBE_KEY, channel,
+                    SUBSCRIBE_KEY, escape(channel),
                     jsonp, timetoken
                 ],
                 fail     : function() { timeout( pubnub, 500 ); error()  },
