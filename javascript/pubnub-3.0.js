@@ -479,8 +479,9 @@ function ajax( setup ) {
                     status == 304 || status == 1223) &&
                     xhr.responseText
                 ) {
-                    try { success(JSON['parse'](xhr.responseText)); }
-                    catch(ee) { fail(xhr); }
+                    try { response = JSON['parse'](xhr.responseText); }
+                    catch(ee) {response = 0; fail(xhr); }
+                    response && success(response);
                 }
                 else fail(xhr);
 
@@ -488,10 +489,11 @@ function ajax( setup ) {
                 xhr = null;
             }
         }
-    ,   fail    = setup.fail    || function(){}
-    ,   success = setup.success || function(){}
-    ,   done    = 0
-    ,   ival    = setInterval( rsc, 20 );
+    ,   fail     = setup.fail    || function(){}
+    ,   success  = setup.success || function(){}
+    ,   response
+    ,   done     = 0
+    ,   ival     = setInterval( rsc, 20 );
 
     // Send
     try {
@@ -581,7 +583,7 @@ var PN            = $('pubnub')
         xdr({
             callback : jsonp,
             url      : ['http'+SSL+'://www.pubnub.com/uuid?callback='+jsonp],
-            success  : function(response) { callback(response['uuid'][0]) },
+            success  : function(response) { callback(response[0]) },
             fail     : function() { callback(0) }
         });
     },
@@ -682,14 +684,17 @@ var PN            = $('pubnub')
                     SUBSCRIBE_KEY, escape(channel),
                     jsonp, timetoken
                 ],
-                fail     : function() { timeout( pubnub, 500 ); error()  },
+                fail     : function() { timeout( pubnub, 1000 ); error()  },
                 success  : function(message) {
                     timetoken = message[1];
                     pubnub();
                     each( message[0], function(msg) { callback(msg) } );
                 }
             });
-        } pubnub();
+        }
+
+        // Begin Recursive Subscribe
+        pubnub();
     },
 
     // Expose PUBNUB Functions
