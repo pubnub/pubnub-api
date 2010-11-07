@@ -397,6 +397,13 @@ function timeout( fun, wait ) { return setTimeout( fun, wait ) }
 function jsonp_cb() { return XORIGN ? 0 : 'x'+unique() }
 
 /**
+ * ENCODE
+ * ======
+ * var encoded_path = encode('path');
+ */
+function encode(path) { return escape(path) }
+
+/**
  * XDR Cross Domain Request
  * ========================
  *  xdr({
@@ -430,16 +437,15 @@ function xdr( setup ) {
     ,   done = function(failed) {
             clearTimeout(timer);
             if (!script) return;
-            failed && fail.call( failed, script, unescape(script.src) );
+            failed && fail(script);
             script.onerror = null;
             try {head().removeChild(script);} catch(error) {}
         };
 
-    script[ASYNC] = ASYNC;
-
+    script[ASYNC]    = ASYNC;
     window[callback] = function(response) {
         if ( !response ) return done(1);
-        success.call( script, response );
+        success(response);
         window[callback] = null;
         done(0);
     };
@@ -554,7 +560,7 @@ var PN            = $('pubnub')
             callback : jsonp,
             url      : [
                 ORIGIN, 'history',
-                SUBSCRIBE_KEY, escape(channel),
+                SUBSCRIBE_KEY, encode(channel),
                 jsonp, limit
             ],
             success  : function(response) { callback(response['messages']) },
@@ -598,8 +604,7 @@ var PN            = $('pubnub')
         var callback = callback || args['callback'] || function(){}
         ,   message  = args['message']
         ,   channel  = args['channel']
-        ,   jsonp    = jsonp_cb()
-        ,   respond  = function(response) { callback(response[0]) };
+        ,   jsonp    = jsonp_cb();
 
         if (!message)     return log('Missing Message');
         if (!channel)     return log('Missing Channel');
@@ -617,11 +622,13 @@ var PN            = $('pubnub')
             url      : [
                 ORIGIN, 'publish',
                 PUBLISH_KEY, SUBSCRIBE_KEY,
-                0, escape(channel),
-                jsonp, escape(message)
+                0, encode(channel),
+                jsonp, encode(message)
             ],
-            success  : respond,
-            fail     : respond
+            success  : function(response) { callback(response) },
+            fail     : function(){timeout( function(){
+                           PUBNUB['publish']( args, callback )
+                       }, 1000 )}
         });
     },
 
@@ -681,7 +688,7 @@ var PN            = $('pubnub')
                 callback : jsonp,
                 url      : [
                     ORIGIN, 'subscribe',
-                    SUBSCRIBE_KEY, escape(channel),
+                    SUBSCRIBE_KEY, encode(channel),
                     jsonp, timetoken
                 ],
                 fail     : function() { timeout( pubnub, 1000 ); error()  },
