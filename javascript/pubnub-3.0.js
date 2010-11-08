@@ -401,7 +401,12 @@ function jsonp_cb() { return XORIGN ? 0 : 'x'+unique() }
  * ======
  * var encoded_path = encode('path');
  */
-function encode(path) { return escape(path) }
+function encode(path) {
+    return map( (''+path).split(''), function(chr) {
+        return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?".indexOf(chr) > -1 ?
+               "%"+chr.charCodeAt(0).toString(16).toUpperCase()      : chr
+    } ).join('');
+}
 
 /**
  * XDR Cross Domain Request
@@ -434,13 +439,13 @@ function xdr( setup ) {
             catch(err) { append(); }
          }, waitlimit *= 2 ) }
 
-    ,   done = function(failed) {
+    ,   done = function(failed) { timeout( function() {
             clearTimeout(timer);
-            if (!script) return;
             failed && fail(script);
             script.onerror = null;
-            try {head().removeChild(script);} catch(error) {}
-        };
+            try { head().removeChild(script); }
+            catch(error) {}
+        }, 500 ) };
 
     script[ASYNC]    = ASYNC;
     window[callback] = function(response) {
@@ -516,7 +521,7 @@ function ajax( setup ) {
     // Return 'done'
     return function() {
         done = 1;
-        if (xhr) xhr.abort && xhr.abort();
+        xhr && xhr.abort && xhr.abort();
     };
 }
 
@@ -563,7 +568,7 @@ var PN            = $('pubnub')
                 SUBSCRIBE_KEY, encode(channel),
                 jsonp, limit
             ],
-            success  : function(response) { callback(response['messages']) },
+            success  : function(response) { callback(response) },
             fail     : function(response) { log(response) }
         });
     },
@@ -576,7 +581,7 @@ var PN            = $('pubnub')
         xdr({
             callback : jsonp,
             url      : [ORIGIN, 'time', jsonp],
-            success  : function(response) { callback(response['time'][0]) },
+            success  : function(response) { callback(response[0]) },
             fail     : function() { callback(0) }
         });
     },
@@ -588,7 +593,10 @@ var PN            = $('pubnub')
         var jsonp = jsonp_cb();
         xdr({
             callback : jsonp,
-            url      : ['http'+SSL+'://www.pubnub.com/uuid?callback='+jsonp],
+            url      : [
+                'http' + SSL +
+                '://pubnub-prod.appspot.com/uuid?callback=' + jsonp
+            ],
             success  : function(response) { callback(response[0]) },
             fail     : function() { callback(0) }
         });
@@ -684,7 +692,7 @@ var PN            = $('pubnub')
             if (!CHANNELS[channel].connected) return;
 
             // Connect to PubNub Subscribe Servers
-            xdr({
+            CHANNELS[channel].done = xdr({
                 callback : jsonp,
                 url      : [
                     ORIGIN, 'subscribe',
@@ -693,6 +701,7 @@ var PN            = $('pubnub')
                 ],
                 fail     : function() { timeout( pubnub, 1000 ); error()  },
                 success  : function(message) {
+                    if (!CHANNELS[channel].connected) return;
                     timetoken = message[1];
                     pubnub();
                     each( message[0], function(msg) { callback(msg) } );
