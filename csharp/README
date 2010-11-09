@@ -1,4 +1,20 @@
-www.pubnub.com - PubNub - realtime push service in the cloud
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account-javascript-api-include
+##
+## ----------------------------------------------------
+
+## ----------------------------------------
+## PubNub 3.0 Real-time Cloud Push API - C#
+## ----------------------------------------
+##
+## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+## http://www.pubnub.com/tutorial/csharp-push-api
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
 
 
 ===============================================================================
@@ -9,44 +25,46 @@ PubNub C# Client API Boiler Plate
 JavaScript: (Subscribe)
 -------------------------------------------------------------------------------
 
-    PUBNUB.subscribe( { channel : "HELLO_WORLD" } , function(message) {
+    PUBNUB.subscribe( { channel : "hello_world" } , function(message) {
         console.log(JSON.stringify(message));
         alert(JSON.stringify(message));
     } );
 
 
 -------------------------------------------------------------------------------
+C#: (Init)
+-------------------------------------------------------------------------------
+
+    Pubnub pubnub = new Pubnub(
+        "demo",  // PUBLISH_KEY
+        "demo",  // SUBSCRIBE_KEY
+        "",      // SECRET_KEY
+        false    // SSL_ON?
+    );
+
+
+-------------------------------------------------------------------------------
 C#: (Publish)
 -------------------------------------------------------------------------------
 
-    Pubnub     pubnub  = new Pubnub( "demo", "demo" );
-    JsonObject message = new JsonObject();
-    string     channel = "HELLO_WORLD";
+    List<object> info = pubnub.publish(
+        "hello_world", // Channel Name
+        "Hi."          // Message
+    );
 
-    message.Add( "some_text", "Hello World!" );
-
-    // Publish (Send Message)
-    pubnub.publish( channel, message );
+    Console.WriteLine(info[0]); // 1
+    Console.WriteLine(info[1]); // 'D' or 'S' or "Error Message"
 
 
 -------------------------------------------------------------------------------
 C#: (Subscribe)
 -------------------------------------------------------------------------------
-    // Init Pubnub Class
-    Pubnub pubnub = new Pubnub( "demo", "demo" );
 
-    // Subscribe
     pubnub.subscribe(
-        PubnubTest.channel,
-        delegate (JsonObject message) {
-
-            // Print Message
-            JsonWriter writer = new JsonWriter();
-            message.Write(writer);
-            Console.WriteLine("Subscribe() Response: " + writer.ToString());
-
-            // Continue Listening
-            return true;
+        "hello_world", // Channel Name
+        delegate (object message) {
+            Console.WriteLine(message); // Print Received Message
+            return true;                // Keep Listening?
         }
     );
 
@@ -54,14 +72,10 @@ C#: (Subscribe)
 -------------------------------------------------------------------------------
 C#: (History)
 -------------------------------------------------------------------------------
-    // Init Pubnub Class
-    Pubnub pubnub = new Pubnub( "demo", "demo" );
 
-    // Get History
-    JsonArray response = pubnub.history( PubnubTest.channel, 10 );
-
-    // Print Response
-    response.Write(writer);
-    Console.WriteLine("History() Response: " + writer.ToString());
-
+    List<object> history = pubnub.history(
+        "hello_world", // Channel Name
+        1              // Limit
+    );
+    Console.WriteLine(history);
 

@@ -3,314 +3,395 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Collections;
-using NetServ.Net.Json;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Web.Script.Serialization;
 
-public class PubnubTest {
-    private static string channel       = "my_unique_channel";
-    private static string PUBLISH_KEY   = "demo";
-    private static string SUBSCRIBE_KEY = "demo";
-
+/**
+ * PubNub 3.0 Real-time Push Cloud API
+ *
+ * @author Stephen Blum
+ * @package pubnub
+ */
+public class PubnubTEST {
     static public void Main() {
-        // Example Publish Usage
-        PubnubTest.test_publish1();
-        PubnubTest.test_publish2();
-
-        // Example History Usage
-        PubnubTest.test_history();
-
-        // Example Subscribe Usage
-        PubnubTest.test_subscribe();
-    }
-
-    /// <summary>
-    /// Test for Pubnub.publish( string, JsonObject )
-    /// </summary>
-    private static void test_publish1() {
-        Console.WriteLine("TEST PUBLISH 1:");
-
+        // -----------------
         // Init Pubnub Class
-        Pubnub pubnub  = new Pubnub(
-            PubnubTest.PUBLISH_KEY,
-            PubnubTest.SUBSCRIBE_KEY
+        // -----------------
+        Pubnub pubnub = new Pubnub(
+            "demo",  // PUBLISH_KEY
+            "demo",  // SUBSCRIBE_KEY
+            "",      // SECRET_KEY
+            false    // SSL_ON?
+        );
+        string channel = "test-channel-顶";
+
+        // ---------------
+        // Publish Message
+        // ---------------
+        List<object> info    = pubnub.publish( channel, "Hello World" );
+
+        // ----------------
+        // Publish Response
+        // ----------------
+        Console.WriteLine(
+            "Publish Success: " + info[0].ToString() +
+            "\nPublish Info: "  + info[1]
         );
 
-        JsonObject message = new JsonObject();
+        // -------
+        // History
+        // -------
+        List<object> history = pubnub.history( channel, 1 );
+        Console.WriteLine("History Message: " + history[0]);
 
-        // Add Key
-        message.Add( "my_var", "Hello World 2!" );
+        // ----------------------
+        // Get PubNub Server Time
+        // ----------------------
+        int timestamp = pubnub.time();
+        Console.WriteLine("Server Time: " + timestamp.ToString());
 
-        // Send (Publish) Message
-        JsonObject response = pubnub.publish( PubnubTest.channel, message );
-
-        // Print Stuff
-        Console.WriteLine("Status: " + response["status"]);
-        Console.WriteLine("-----------------------------------------------\n");
-    }
-
-    /// <summary>
-    /// Test for Pubnub.publish( string, JsonObject )
-    /// </summary>
-    private static void test_publish2() {
-        Console.WriteLine("TEST PUBLISH 2:");
-
-        // Init Pubnub Class
-        Pubnub pubnub  = new Pubnub(
-            PubnubTest.PUBLISH_KEY,
-            PubnubTest.SUBSCRIBE_KEY
-        );
-
-        JsonWriter writer  = new JsonWriter();
-        JsonObject message = new JsonParser( new StringReader(
-            "{\"my_var\" : \"Hello World!\"}"
-        ), true ).ParseObject();
-
-        // Send (Publish) Message
-        JsonObject response = pubnub.publish( PubnubTest.channel, message );
-
-        // Print Full Response
-        response.Write(writer);
-        Console.WriteLine("Publish() Response: " + writer.ToString());
-
-        // Print Parts
-        Console.WriteLine("Status: " + response["status"]);
-        Console.WriteLine("-----------------------------------------------\n");
-    }
-
-    /// <summary>
-    /// Test for Pubnub.history( string, int )
-    /// </summary>
-    private static void test_history() {
-        Console.WriteLine("TEST HISTORY:");
-
-        // Init Pubnub Class
-        Pubnub pubnub  = new Pubnub(
-            PubnubTest.PUBLISH_KEY,
-            PubnubTest.SUBSCRIBE_KEY
-        );
-
-        // Get History
-        JsonArray response = pubnub.history( PubnubTest.channel, 10 );
-        JsonWriter writer  = new JsonWriter();
-
-        // Print Response
-        response.Write(writer);
-        Console.WriteLine("History() Response: " + writer.ToString());
-
-        // Print Each Message
-        foreach (JsonObject message in response) {
-            JsonWriter msg_writer = new JsonWriter();
-            message.Write(msg_writer);
-            Console.WriteLine(msg_writer.ToString());
-        }
-        Console.WriteLine("-----------------------------------------------\n");
-    }
-
-    /// <summary>
-    /// Test for Pubnub.subscribe( string, delegate )
-    /// </summary>
-    private static void test_subscribe() {
-        Console.WriteLine("TEST SUBSCRIBE:");
-        Console.WriteLine("TO TEST THIS FUNCTION, PUBLISH MESSAGES:");
-
-        // Init Pubnub Class
-        Pubnub pubnub  = new Pubnub(
-            PubnubTest.PUBLISH_KEY,
-            PubnubTest.SUBSCRIBE_KEY
-        );
-
+        // ---------
         // Subscribe
+        // ---------
         pubnub.subscribe(
-            PubnubTest.channel,
-            delegate (JsonObject message) {
-                // Print Message
-                JsonWriter writer = new JsonWriter();
-                message.Write(writer);
-                Console.WriteLine("Subscribe() Response: "+writer.ToString());
-
-                // Continue Listening
+            channel,
+            delegate (object message) {
+                Console.WriteLine("Received Message -> '" + message + "'");
                 return true;
             }
         );
-        Console.WriteLine("-----------------------------------------------\n");
     }
 }
 
 
+/**
+ * PubNub 3.0 Real-time Push Cloud API
+ *
+ * @author Stephen Blum
+ * @package pubnub
+ */
 public class Pubnub {
-    private static string ORIGIN        = "http://pubnub-prod.appspot.com";
-    private static int    LIMIT         = 1700;
-    private static int    UNIQUE        = 1;
-    private static string PUBLISH_KEY   = "";
-    private static string SUBSCRIBE_KEY = "";
+    private string ORIGIN        = "pubsub.pubnub.com";
+    private int    LIMIT         = 1800;
+    private string PUBLISH_KEY   = "";
+    private string SUBSCRIBE_KEY = "";
+    private string SECRET_KEY    = "";
+    private bool   SSL           = false;
 
-    public delegate bool Procedure(JsonObject message);
+    public delegate bool Procedure(object message);
 
-    public Pubnub( string publish_key, string subscribe_key ) {
-        Pubnub.PUBLISH_KEY   = publish_key;
-        Pubnub.SUBSCRIBE_KEY = subscribe_key;
-    }
-
-    public JsonArray history( string channel, int limit ) {
-        channel = Pubnub.SUBSCRIBE_KEY + "/" + channel;
-        Hashtable hist_params = new Hashtable();
-
-        hist_params.Add( "channel", channel );
-        hist_params.Add( "limit", limit.ToString() );
-
-        // Get History
-        JsonObject response = this._request(
-            Pubnub.ORIGIN + "/pubnub-history",
-            hist_params
-        );
-
-        // Return Array of Historical Messages
-        return (JsonArray)response["messages"];
-    }
-
-    public JsonObject publish( string channel, JsonObject message ) {
-        channel = Pubnub.SUBSCRIBE_KEY + "/" + channel;
-        Hashtable pub_params = new Hashtable();
-        JsonWriter writer    = new JsonWriter();
-
-        message.Write(writer);
-
-        pub_params.Add( "publish_key", Pubnub.PUBLISH_KEY );
-        pub_params.Add( "channel", channel );
-        pub_params.Add( "message", writer.ToString() );
-
-        // Publish Message Message
-        return this._request( Pubnub.ORIGIN + "/pubnub-publish", pub_params );
-    }
-
-    private void _subscribe(
-        string channel,
-        Procedure callback,
-        string timetoken,
-        string server
+    /**
+     * PubNub 3.0
+     *
+     * Prepare PubNub Class State.
+     *
+     * @param string Publish Key.
+     * @param string Subscribe Key.
+     * @param string Secret Key.
+     * @param bool SSL Enabled.
+     */
+    public Pubnub(
+        string publish_key,
+        string subscribe_key,
+        string secret_key,
+        bool ssl_on
     ) {
-        bool keep_listening = true;
+        this.init( publish_key, subscribe_key, secret_key, ssl_on );
+    }
 
-        // Find a PubNub Server
-        if (server.Length == 0) {
-            Hashtable sub_params = new Hashtable();
+    /**
+     * PubNub 2.0 Compatibility
+     *
+     * Prepare PubNub Class State.
+     *
+     * @param string Publish Key.
+     * @param string Subscribe Key.
+     */
+    public Pubnub(
+        string publish_key,
+        string subscribe_key
+    ) {
+        this.init( publish_key, subscribe_key, "", false );
+    }
 
-            sub_params.Add( "channel", channel );
+    /**
+     * PubNub 3.0 without SSL
+     *
+     * Prepare PubNub Class State.
+     *
+     * @param string Publish Key.
+     * @param string Subscribe Key.
+     * @param string Secret Key.
+     */
+    public Pubnub(
+        string publish_key,
+        string subscribe_key,
+        string secret_key
+    ) {
+        this.init( publish_key, subscribe_key, secret_key, false );
+    }
 
-            JsonObject resp_for_server = this._request(
-                Pubnub.ORIGIN + "/pubnub-subscribe",
-                sub_params
-            );
+    /**
+     * Init
+     *
+     * Prepare PubNub Class State.
+     *
+     * @param string Publish Key.
+     * @param string Subscribe Key.
+     * @param string Secret Key.
+     * @param bool SSL Enabled.
+     */
+    public void init(
+        string publish_key,
+        string subscribe_key,
+        string secret_key,
+        bool ssl_on
+    ) {
+        this.PUBLISH_KEY   = publish_key;
+        this.SUBSCRIBE_KEY = subscribe_key;
+        this.SECRET_KEY    = secret_key;
+        this.SSL           = ssl_on;
 
-            try {
-                server = resp_for_server["server"].ToString();
-            }
-            catch {
-                return;
-            }
+        // SSL On?
+        if (this.SSL) {
+            this.ORIGIN = "https://" + this.ORIGIN;
+        }
+        else {
+            this.ORIGIN = "http://" + this.ORIGIN;
+        }
+    }
+
+    /**
+     * History
+     *
+     * Load history from a channel.
+     *
+     * @param String channel name.
+     * @param int limit history count response.
+     * @return ListArray of history.
+     */
+    public List<object> history( string channel, int limit ) {
+        List<string> url = new List<string>();
+
+        url.Add("history");
+        url.Add(this.SUBSCRIBE_KEY);
+        url.Add(channel);
+        url.Add("0");
+        url.Add(limit.ToString());
+
+        return _request(url);
+    }
+
+    /**
+     * Publish
+     *
+     * Send a message to a channel.
+     *
+     * @param String channel name.
+     * @param List<object> info.
+     * @return bool false on fail.
+     */
+    public List<object> publish( string channel, object message ) {
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
+
+        // Generate String to Sign
+        string signature = "0";
+        if (this.SECRET_KEY.Length > 0) {
+            StringBuilder string_to_sign = new StringBuilder();
+            string_to_sign
+                .Append(this.PUBLISH_KEY)
+                .Append('/')
+                .Append(this.SUBSCRIBE_KEY)
+                .Append('/')
+                .Append(this.SECRET_KEY)
+                .Append('/')
+                .Append(channel)
+                .Append('/')
+                .Append(serializer.Serialize(message));
+
+            // Sign Message
+            signature = md5(string_to_sign.ToString());
         }
 
+        // Build URL
+        List<string> url = new List<string>();
+        url.Add("publish");
+        url.Add(this.PUBLISH_KEY);
+        url.Add(this.SUBSCRIBE_KEY);
+        url.Add(signature);
+        url.Add(channel);
+        url.Add("0");
+        url.Add(serializer.Serialize(message));
+
+        // Return JSONArray
+        return _request(url);
+    }
+
+    /**
+     * Subscribe
+     *
+     * This function is BLOCKING.
+     * Listen for a message on a channel.
+     *
+     * @param string channel name.
+     * @param Procedure function callback.
+     */
+    public void subscribe( string channel, Procedure callback ) {
+        this._subscribe( channel, callback, 0 );
+    }
+
+    /**
+     * Subscribe - Private Interface
+     *
+     * @param string channel name.
+     * @param Procedure function callback.
+     * @param string timetoken.
+     */
+    private void _subscribe(
+        string    channel,
+        Procedure callback,
+        object    timetoken
+    ) {
+        // Begin Recusive Subscribe
         try {
-            Hashtable conn_params = new Hashtable();
+            // Build URL
+            List<string> url = new List<string>();
+            url.Add("subscribe");
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add(channel);
+            url.Add("0");
+            url.Add(timetoken.ToString());
 
-            conn_params.Add( "channel", channel );
-            conn_params.Add( "timetoken", timetoken );
+            // Wait for Message
+            List<object> response = _request(url);
+            ArrayList messages    = (ArrayList)response[0];
+            timetoken             = response[1];
 
-            // Listen for a Message
-            JsonObject response = this._request(
-                "http://" + server + "/",
-                conn_params
-            );
-
-            // Test for Message
-            if (((JsonArray)response["messages"]).Count == 0) {
-                this._subscribe( channel, callback, timetoken, "" );
-                return;
-            }
-
-            // Was it a Timeout
-            JsonArray messages = (JsonArray)response["messages"];
-            if (messages[0].ToString() == "xdr.timeout") {
-                timetoken = response["timetoken"].ToString();
-                this._subscribe( channel, callback, timetoken, server );
+            // If it was a timeout
+            if (messages.Count == 0) {
+                _subscribe( channel, callback, timetoken );
                 return;
             }
 
             // Run user Callback and Reconnect if user permits.
-            foreach (JsonObject message in messages) {
-                keep_listening = keep_listening && callback(message);
+            foreach (object message in messages) {
+                if (!callback(message)) return;
             }
 
             // Keep listening if Okay.
-            if (keep_listening) {
-                timetoken = response["timetoken"].ToString();
-                this._subscribe( channel, callback, timetoken, server );
-                return;
-            }
+            this._subscribe( channel, callback, timetoken );
         }
         catch {
-            this._subscribe( channel, callback, timetoken, "" );
-            return;
+            System.Threading.Thread.Sleep(1000);
+            this._subscribe( channel, callback, timetoken );
         }
-
-        // Done Listening.
-        return;
     }
 
-    public void subscribe( string channel, Procedure callback ) {
-        channel = Pubnub.SUBSCRIBE_KEY + "/" + channel;
-        this._subscribe( channel, callback, "0", "" );
+    /**
+     * Time
+     *
+     * Timestamp from PubNub Cloud.
+     *
+     * @return int timestamp.
+     */
+    public int time() {
+        List<string> url = new List<string>();
+
+        url.Add("time");
+        url.Add("0");
+
+        List<object> response = _request(url);
+        return (int)response[0];
     }
 
-    private JsonObject _request( string url, Hashtable args ) {
-        StringBuilder  sb = new StringBuilder();
-        byte[]        buf = new byte[8192];
+    /**
+     * Request URL
+     *
+     * @param List<string> request of url directories.
+     * @return List<object> from JSON response.
+     */
+    private List<object> _request(List<string> url_components) {
+        string        temp  = null;
+        int           count = 0;
+        byte[]        buf   = new byte[8192];
+        StringBuilder url   = new StringBuilder();
+        StringBuilder sb    = new StringBuilder();
 
-        // Add Unique
-        args.Add( "unique", (Pubnub.UNIQUE++).ToString() );
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
 
-        // Build URL
-        url += "?";
-        foreach (DictionaryEntry dict in args) {
-            url += System.Uri.EscapeDataString((string)dict.Key) + "=" +
-                   System.Uri.EscapeDataString((string)dict.Value) + "&";
+        // Add Origin To The Request
+        url.Append(this.ORIGIN);
+
+        // Generate URL with UTF-8 Encoding
+        foreach ( string url_bit in url_components) {
+            url.Append("/");
+            url.Append(_encodeURIcomponent(url_bit));
         }
-        url = url.Substring( 0, url.Length -1 );
 
-        if (url.Length > Pubnub.LIMIT) {
-            return new JsonParser( new StringReader(
-                "{\"message\" : \"Message Too Long\"}"
-            ), true ).ParseObject();
+        // Fail if string too long
+        if (url.Length > this.LIMIT) {
+            List<object> too_long = new List<object>();
+            too_long.Add(0);
+            too_long.Add("Message Too Long.");
+            return too_long;
         }
 
         // Create Request
-        HttpWebRequest  request   = (HttpWebRequest)WebRequest.Create(url);
+        HttpWebRequest  request   = (HttpWebRequest)
+            WebRequest.Create(url.ToString());
+
+        // Set Timeout
+        request.Timeout          = 200000;
+        request.ReadWriteTimeout = 200000;
+
+        // Receive Response
         HttpWebResponse response  = (HttpWebResponse)request.GetResponse();
         Stream          resStream = response.GetResponseStream();
 
-        string tempString = null;
-        int    count      = 0;
-
+        // Read
         do {
             count = resStream.Read( buf, 0, buf.Length );
             if (count != 0) {
-                tempString = Encoding.ASCII.GetString( buf, 0, count );
-                sb.Append(tempString);
+                temp = Encoding.UTF8.GetString( buf, 0, count );
+                sb.Append(temp);
             }
         } while (count > 0);
 
         // Parse Response
         string message = sb.ToString();
-        int    par     = message.IndexOf("(") + 1;
-               message = message.Substring( par, message.Length - par - 1 );
 
-        // Console.WriteLine(sb);
-        // Console.WriteLine(message);
+        return serializer.Deserialize<List<object>>(message);
+    }
 
-        JsonParser parser = new JsonParser( new StringReader(message), true );
-        JsonObject json   = parser.ParseObject();
+    private string _encodeURIcomponent(string s) {
+        StringBuilder o = new StringBuilder();
+        foreach (char ch in s.ToCharArray()) {
+            if (isUnsafe(ch)) {
+                o.Append('%');
+                o.Append(toHex(ch / 16));
+                o.Append(toHex(ch % 16));
+            }
+            else o.Append(ch);
+        }
+        return o.ToString();
+    }
 
-        // Return Response
-        return json;
+    private char toHex(int ch) {
+        return (char)(ch < 10 ? '0' + ch : 'A' + ch - 10);
+    }
+
+    private bool isUnsafe(char ch) {
+        return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?".IndexOf(ch) >= 0;
+    }
+
+    public static string md5(string text) {
+        MD5 md5 = new MD5CryptoServiceProvider();
+        byte[] data = Encoding.Default.GetBytes(text);
+        byte[] hash = md5.ComputeHash(data);
+        string hexaHash = "";
+        foreach (byte b in hash) hexaHash += String.Format("{0:x2}", b);
+        return hexaHash;
     }
 }
  
