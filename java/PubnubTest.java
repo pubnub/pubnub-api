@@ -4,32 +4,39 @@ import pubnub.Callback;
 
 class PubnubTest {
     public static void main(String args[]) {
+        PubnubTest.test_time();
         PubnubTest.test_publish();
         PubnubTest.test_history();
         PubnubTest.test_subscribe();
     }
 
+    public static void test_time() {
+        // Publish Test
+        System.out.println("\nTESTING TIME:");
+
+        // Create Pubnub Object
+        Pubnub pubnub = new Pubnub( "demo", "demo", "", false );
+
+        System.out.println(pubnub.time());
+    }
     public static void test_publish() {
         // Publish Test
         System.out.println("\nTESTING PUBLISH:");
 
         // Create Pubnub Object
-        Pubnub pubnub  = new Pubnub( "demo", "demo" );
+        Pubnub pubnub  = new Pubnub( "demo", "demo", "", false );
         String channel = "java_test_channel";
 
         // Create JSON Message
         JSONObject message = new JSONObject();
-        try { message.put( "some_val", "Hello World!" ); }
+        try { message.put( "some_val", "Hello World! --> ɂ顶@#$%^&*()!" ); }
         catch (org.json.JSONException jsonError) {}
 
         // Publish Message
-        JSONObject response = pubnub.publish( channel, message );
+        JSONArray info = pubnub.publish( channel, message );
 
         // Print Response from PubNub JSONP REST Service
-        System.out.println(response);
-
-        System.out.println(response.optString("status"));
-        System.out.println(response.optString("message"));
+        System.out.println(info);
     }
 
     public static void test_history() {
@@ -37,11 +44,11 @@ class PubnubTest {
         System.out.println("\nTESTING HISTORY:");
 
         // Create Pubnub Object
-        Pubnub pubnub  = new Pubnub( "demo", "demo" );
+        Pubnub pubnub  = new Pubnub( "demo", "demo", "", false );
         String channel = "java_test_channel";
-        int    limit   = 10;
+        int    limit   = 1;
 
-        // Publish Message
+        // Get History
         JSONArray response = pubnub.history( channel, limit );
 
         // Print Response from PubNub JSONP REST Service
@@ -53,7 +60,7 @@ class PubnubTest {
         // Subscribe Test
         System.out.println("\nTESTING SUBSCRIBE:");
 
-        Pubnub pubnub  = new Pubnub( "demo", "demo" );
+        Pubnub pubnub  = new Pubnub( "demo", "demo", "", false );
         String channel = "java_test_channel";
 
         // Callback Interface when a Message is Received

@@ -1,184 +1,321 @@
 package pubnub;
+
 import org.json.*;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+
 import java.net.URL;
-import java.net.URLEncoder;
+import java.net.URLConnection;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+/**
+ * PubNub 3.0 Real-time Push Cloud API
+ *
+ * @author Stephen Blum
+ * @package pubnub
+ */
 public class Pubnub {
-    private static String ORIGIN        = "http://pubnub-prod.appspot.com";
-    private static int    LIMIT         = 1700;
-    private static int    UNIQUE        = 1;
-    private static String PUBLISH_KEY   = "";
-    private static String SUBSCRIBE_KEY = "";
+    private String ORIGIN        = "pubsub.pubnub.com";
+    private int    LIMIT         = 1800;
+    private String PUBLISH_KEY   = "";
+    private String SUBSCRIBE_KEY = "";
+    private String SECRET_KEY    = "";
+    private boolean SSL          = false;
 
-    public Pubnub( String publish_key, String subscribe_key ) {
-        Pubnub.PUBLISH_KEY   = publish_key;
-        Pubnub.SUBSCRIBE_KEY = subscribe_key;
+    /**
+     * PubNub 3.0
+     *
+     * Prepare PubNub Class State.
+     *
+     * @param String Publish Key.
+     * @param String Subscribe Key.
+     * @param String Secret Key.
+     * @param boolean SSL Enabled.
+     */
+    public Pubnub(
+        String publish_key,
+        String subscribe_key,
+        String secret_key,
+        boolean ssl_on
+    ) {
+        this.init( publish_key, subscribe_key, secret_key, ssl_on );
     }
 
-    public JSONObject publish( String channel, JSONObject message ) {
-        HashMap<String,String> params = new HashMap<String,String>();
-        channel = Pubnub.SUBSCRIBE_KEY + "/" + channel;
-
-        // Prepare HTTP GET Params
-        params.put( "publish_key", Pubnub.PUBLISH_KEY );
-        params.put( "channel", channel );
-        params.put( "message", message.toString() );
-
-        return this._request( Pubnub.ORIGIN + "/pubnub-publish", params );
+    /**
+     * PubNub 2.0 Compatibility
+     *
+     * Prepare PubNub Class State.
+     *
+     * @param String Publish Key.
+     * @param String Subscribe Key.
+     */
+    public Pubnub(
+        String publish_key,
+        String subscribe_key
+    ) {
+        this.init( publish_key, subscribe_key, "", false );
     }
 
+    /**
+     * PubNub 3.0 without SSL
+     *
+     * Prepare PubNub Class State.
+     *
+     * @param String Publish Key.
+     * @param String Subscribe Key.
+     * @param String Secret Key.
+     */
+    public Pubnub(
+        String publish_key,
+        String subscribe_key,
+        String secret_key
+    ) {
+        this.init( publish_key, subscribe_key, secret_key, false );
+    }
+
+    /**
+     * Init
+     *
+     * Prepare PubNub Class State.
+     *
+     * @param String Publish Key.
+     * @param String Subscribe Key.
+     * @param String Secret Key.
+     * @param boolean SSL Enabled.
+     */
+    public void init(
+        String publish_key,
+        String subscribe_key,
+        String secret_key,
+        boolean ssl_on
+    ) {
+        this.PUBLISH_KEY   = publish_key;
+        this.SUBSCRIBE_KEY = subscribe_key;
+        this.SECRET_KEY    = secret_key;
+        this.SSL           = ssl_on;
+
+        // SSL On?
+        if (this.SSL) {
+            this.ORIGIN = "https://" + this.ORIGIN;
+        }
+        else {
+            this.ORIGIN = "http://" + this.ORIGIN;
+        }
+    }
+
+    /**
+     * Publish
+     *
+     * Send a message to a channel.
+     *
+     * @param String channel name.
+     * @param JSONObject message.
+     * @return boolean false on fail.
+     */
+    public JSONArray publish( String channel, JSONObject message ) {
+        // Generate String to Sign
+        String signature = "0";
+        if (this.SECRET_KEY.length() > 0) {
+            StringBuilder string_to_sign = new StringBuilder();
+            string_to_sign
+                .append(this.PUBLISH_KEY)
+                .append('/')
+                .append(this.SUBSCRIBE_KEY)
+                .append('/')
+                .append(this.SECRET_KEY)
+                .append('/')
+                .append(channel)
+                .append('/')
+                .append(message.toString());
+
+            // Sign Message
+            signature = md5(string_to_sign.toString());
+        }
+
+        // Build URL
+        List<String> url = new ArrayList<String>();
+        url.add("publish");
+        url.add(this.PUBLISH_KEY);
+        url.add(this.SUBSCRIBE_KEY);
+        url.add(signature);
+        url.add(channel);
+        url.add("0");
+        url.add(message.toString());
+
+        // Return JSONArray
+        return _request(url);
+    }
+
+    /**
+     * Subscribe
+     *
+     * This function is BLOCKING.
+     * Listen for a message on a channel.
+     *
+     * @param String channel name.
+     * @param Callback function callback.
+     */
     public void subscribe( String channel, Callback callback ) {
-        channel = Pubnub.SUBSCRIBE_KEY + "/" + channel;
-        this._subscribe( channel, callback, "0", "" );
+        this._subscribe( channel, callback, "0" );
     }
 
+    /**
+     * Subscribe - Private Interface
+     *
+     * @param String channel name.
+     * @param Callback function callback.
+     * @param String timetoken.
+     */
     private void _subscribe(
         String   channel,
         Callback callback,
-        String   timetoken,
-        String   server
+        String   timetoken
     ) {
-        boolean keep_listening = true;
-
-        // Find a PubNub Server
-        if (server.length() == 0) {
-            HashMap<String,String> sub_params = new HashMap<String,String>();
-
-            sub_params.put( "channel", channel );
-
-            JSONObject resp_for_server = this._request(
-                Pubnub.ORIGIN + "/pubnub-subscribe",
-                sub_params
-            );
-
-            server = resp_for_server.optString("server");
-        }
-
+        // Begin Recusive Subscribe
         try {
-            HashMap<String,String> conn_params = new HashMap<String,String>();
+            // Build URL
+            List<String> url = new ArrayList<String>();
+            url.add("subscribe");
+            url.add(this.SUBSCRIBE_KEY);
+            url.add(channel);
+            url.add("0");
+            url.add(timetoken);
 
-            // Prepare HTTP GET Params
-            conn_params.put( "channel", channel );
-            conn_params.put( "timetoken", timetoken );
+            // Wait for Message
+            JSONArray response = _request(url);
+            JSONArray messages = response.optJSONArray(0);
+            timetoken          = response.optString(1);
 
-            // Listen for a Message
-            JSONObject response = this._request(
-                "http://" + server + "/",
-                conn_params
-            );
-
-            // Capture Messages
-            JSONArray messages = response.optJSONArray("messages");
-
-            // Test for Message
+            // If it was a timeout
             if (messages.length() == 0) {
-                this._subscribe( channel, callback, timetoken, "" );
-                return;
-            }
-
-            // Was it a Timeout
-            if (messages.optString( 0, "n" ).equals("xdr.timeout")) {
-                timetoken = response.optString("timetoken");
-                this._subscribe( channel, callback, timetoken, server );
+                _subscribe( channel, callback, timetoken );
                 return;
             }
 
             // Run user Callback and Reconnect if user permits.
             for ( int i = 0; messages.length() > i; i++ ) {
                 JSONObject message = messages.optJSONObject(i);
-                keep_listening = keep_listening && callback.execute(message);
+                if (!callback.execute(message)) return;
             }
 
             // Keep listening if Okay.
-            if (keep_listening) {
-                timetoken = response.optString("timetoken");
-                this._subscribe( channel, callback, timetoken, server );
-                return;
-            }
+            this._subscribe( channel, callback, timetoken );
         }
         catch (Exception e) {
-            this._subscribe( channel, callback, timetoken, "" );
-            return;
+            try { Thread.sleep(1000); }
+            catch(InterruptedException ie) {}
+            this._subscribe( channel, callback, timetoken );
         }
     }
 
+    /**
+     * History
+     *
+     * Load history from a channel.
+     *
+     * @param String channel name.
+     * @param int limit history count response.
+     * @return JSONArray of history.
+     */
     public JSONArray history( String channel, int limit ) {
-        HashMap<String,String> params = new HashMap<String,String>();
-        channel = Pubnub.SUBSCRIBE_KEY + "/" + channel;
+        List<String> url = new ArrayList<String>();
 
-        // Prepare HTTP GET Params
-        params.put( "channel", channel );
-        params.put( "limit", Integer.toString(limit) );
+        url.add("history");
+        url.add(this.SUBSCRIBE_KEY);
+        url.add(channel);
+        url.add("0");
+        url.add(Integer.toString(limit));
 
-        JSONObject response = this._request(
-            Pubnub.ORIGIN + "/pubnub-history",
-            params
-        );
-
-        return response.optJSONArray("messages");
+        return _request(url);
     }
 
-    public JSONObject _request( String url, HashMap<String,String> args ) {
-        // Add Unique Param
-        args.put( "unique", Integer.toString(Pubnub.UNIQUE++) );
+    /**
+     * Time
+     *
+     * Timestamp from PubNub Cloud.
+     *
+     * @return int timestamp.
+     */
+    public int time() {
+        List<String> url = new ArrayList<String>();
 
+        url.add("time");
+        url.add("0");
+
+        JSONArray response = _request(url);
+        return response.optInt(0);
+    }
+
+    /**
+     * Request URL
+     *
+     * @param List<String> request of url directories.
+     * @return JSONArray from JSON response.
+     */
+    private JSONArray _request(List<String> url_components) {
         String   json         = "";
-        Iterator arg_iterator = args.keySet().iterator();
+        StringBuilder url     = new StringBuilder();
+        Iterator url_iterator = url_components.iterator();
 
-        url += "?";
-        while (arg_iterator.hasNext()) {
+        url.append(this.ORIGIN);
+
+        // Generate URL with UTF-8 Encoding
+        while (url_iterator.hasNext()) {
             try {
-                String key = (String)arg_iterator.next();
-                url += URLEncoder.encode( key, "UTF-8" ) + "=" +
-                       URLEncoder.encode( args.get(key), "UTF-8" ) + "&";
+                String url_bit = (String) url_iterator.next();
+                url.append("/").append(_encodeURIcomponent(url_bit));
             }
-            catch(java.io.UnsupportedEncodingException e) {
+            catch(Exception e) {
                 e.printStackTrace();
-                JSONObject jsono = new JSONObject();
-                try { jsono.put( "message", "Failed UTF-8 Encoding URL." ); }
-                catch (org.json.JSONException jsone) {}
+                JSONArray jsono = new JSONArray();
+                try { jsono.put("Failed UTF-8 Encoding URL."); }
+                catch (Exception jsone) {}
                 return jsono;
             }
         }
-        url = url.substring( 0, url.length() -1 );
 
         // Fail if string too long
-        if (url.length() > Pubnub.LIMIT) {
-            JSONObject jsono = new JSONObject();
-                try { jsono.put( "message", "Message Too Long." ); }
-                catch (org.json.JSONException jsone) {}
+        if (url.length() > this.LIMIT) {
+            JSONArray jsono = new JSONArray();
+                try { 
+                    jsono.put(0); 
+                    jsono.put("Message Too Long."); 
+                }
+                catch (Exception jsone) {}
             return jsono;
         }
 
         try {
-            URL            request = new URL(url);
+            URL            request = new URL(url.toString());
+            URLConnection  conn    = request.openConnection();
             String         line    = "";
-            String         jsonp   = "";
-            BufferedReader reader  = new BufferedReader(
-                new InputStreamReader(request.openStream())
+
+            conn.setConnectTimeout(200000);
+            conn.setReadTimeout(200000);
+
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(conn.getInputStream())
             );
 
-            // Read JSONP Message
-            while ((line = reader.readLine()) != null) { jsonp += line; }
+            // Read JSON Message
+            while ((line = reader.readLine()) != null) { json += line; }
             reader.close();
 
-            // Remove JSONP Wrapper
-            json = jsonp.substring(
-                jsonp.indexOf("(") + 1,
-                jsonp.length() - 1
-            );
-            // System.out.println(jsonp);
-            // System.out.println(json);
-
         } catch (Exception e) {
-            JSONObject jsono = new JSONObject();
 
-            try { jsono.put( "message", "Failed JSONP HTTP Request." ); }
-            catch (org.json.JSONException jsone) {}
+            JSONArray jsono = new JSONArray();
+
+            try { jsono.put("Failed JSONP HTTP Request."); }
+            catch (Exception jsone) {}
 
             e.printStackTrace();
             System.out.println(e);
@@ -186,13 +323,57 @@ public class Pubnub {
             return jsono;
         }
 
-        // System.out.println(json);
-
         // Parse JSON String
-        try { return new JSONObject(json); }
-        catch (org.json.JSONException jsone) {}
+        try { return new JSONArray(json); }
+        catch (Exception e) {
+            JSONArray jsono = new JSONArray();
 
-        return new JSONObject();
+            try { jsono.put("Failed JSON Parsing."); }
+            catch (Exception jsone) {}
+
+            e.printStackTrace();
+            System.out.println(e);
+
+            // Return Failure to Parse
+            return jsono;
+        }
+    }
+
+    private String _encodeURIcomponent(String s) {
+        StringBuilder o = new StringBuilder();
+        for (char ch : s.toCharArray()) {
+            if (isUnsafe(ch)) {
+                o.append('%');
+                o.append(toHex(ch / 16));
+                o.append(toHex(ch % 16));
+            }
+            else o.append(ch);
+        }
+        return o.toString();
+    }
+
+    private char toHex(int ch) {
+        return (char)(ch < 10 ? '0' + ch : 'A' + ch - 10);
+    }
+
+    private boolean isUnsafe(char ch) {
+        return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?".indexOf(ch) >= 0;
+    }
+
+    private String md5(String input) {
+        try {
+            MessageDigest md            = MessageDigest.getInstance("MD5");
+            byte[]        messageDigest = md.digest(input.getBytes());
+            BigInteger    number        = new BigInteger(1, messageDigest);
+            String        hashtext      = number.toString(16);
+
+            while (hashtext.length() < 32) hashtext = "0" + hashtext;
+
+            return hashtext;
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
