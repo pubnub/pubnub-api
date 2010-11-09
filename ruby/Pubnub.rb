@@ -4,201 +4,211 @@
 ## PubNub Real Time Push APIs and Notifications Framework
 ## Copyright (c) 2010 Stephen Blum
 ## http://www.pubnub.com/
-## 
-## This program is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-## 
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
 
-## -------------
-## Ruby Push API
-## -------------
+## -----------------------------------
+## PubNub 3.0 Real-time Push Cloud API
+## -----------------------------------
 
+require 'digest/md5'
 require 'open-uri'
 require 'uri'
 require 'json'
 require 'pp'
 
-$ORIGIN = 'http://pubnub-prod.appspot.com'
-$LIMIT  = 1700
-
 class Pubnub
-    def initialize( publish_key, subscribe_key )
+    #**
+    #* Pubnub
+    #*
+    #* Init the Pubnub Client API
+    #*
+    #* @param string publish_key required key to send messages.
+    #* @param string subscribe_key required key to receive messages.
+    #* @param string secret_key required key to sign messages.
+    #* @param boolean ssl required for 2048 bit encrypted messages.
+    #*
+    def initialize( publish_key, subscribe_key, secret_key, ssl_on )
         @publish_key   = publish_key
         @subscribe_key = subscribe_key
+        @secret_key    = secret_key
+        @ssl           = ssl_on
+        @origin        = 'pubsub.pubnub.com'
+        @limit         = 1800
+
+        if @ssl
+            @origin = 'https://' + @origin
+        else
+            @origin = 'http://'  + @origin
+        end
     end
 
-    # -------
-    # PUBLISH
-    # -------
-    # Send Message
-    # info = pubnub.publish({
-    #     'channel' => 'hello_world',
-    #     'message' => { 'text' => 'some text data' }
-    # })
+    #**
+    #* Publish
+    #*
+    #* Send a message to a channel.
+    #*
+    #* @param array args with channel and message.
+    #* @return array success information.
+    #*
     def publish(args)
-        ## Fail if not enough information
+        ## Fail if bad input.
         if !(args['channel'] && args['message'])
             puts('Missing Channel or Message')
             return false
         end
 
         ## Capture User Input
-        channel = @subscribe_key + '/' + args['channel']
+        channel = args['channel']
         message = args['message'].to_json
 
+        ## Sign Message
+        signature = @secret_key.length > 0 ? Digest::MD5.hexdigest([
+            @publish_key,
+            @subscribe_key,
+            @secret_key,
+            channel,
+            message
+        ].join('/')) : '0'
+
         ## Fail if message too long.
-        if message.length > $LIMIT
-            puts('Message TOO LONG (' + $LIMIT + ' LIMIT)')
-            return false
+        if message.length > @limit
+            puts('Message TOO LONG (' + @limit.to_s + ' LIMIT)')
+            return [ 0, 'Message Too Long.' ]
         end
 
         ## Send Message
-        response = self._request( $ORIGIN + '/pubnub-publish', {
-            'publish_key' => @publish_key,
-            'channel'     => channel,
-            'message'     => message
-        } )
-
-        return response
+        return self._request([
+            'publish',
+            @publish_key,
+            @subscribe_key,
+            signature,
+            channel,
+            '0',
+            message
+        ])
     end
 
-    # ---------
-    # SUBSCRIBE
-    # ---------
-    # Listen for Messages *BLOCKING*
-    # pubnub.subscribe({
-    #     'channel'  => 'hello_world',
-    #     'callback' => lambda do |message|
-    #         pp(message) ## print message
-    #         return true ## keep listening?
-    #     end
-    # })
+    #**
+    #* Subscribe
+    #*
+    #* This is BLOCKING.
+    #* Listen for a message on a channel.
+    #*
+    #* @param array args with channel and message.
+    #* @return false on fail, array on success.
+    #*
     def subscribe(args)
+        ## Capture User Input
+        channel   = args['channel']
+        callback  = args['callback']
+        timetoken = args['timetoken'] ? args['timetoken'] : 0
+
         ## Fail if missing channel
-        if !args['channel']
-            puts('Missing Channel.')
+        if !channel
+            echo("Missing Channel.\n")
             return false
         end
 
         ## Fail if missing callback
-        if !args['callback']
-            puts('Missing Callback.')
+        if !callback
+            echo("Missing Callback.\n")
             return false
         end
 
-        ## Capture User Input
-        channel   = @subscribe_key + '/' + args['channel']
-        callback  = args['callback']
-        timetoken = args['timetoken'] || '0'
-        server    = args['server']    || false
-        continue  = true
+        ## Begin Recusive Subscribe
+        begin
+            ## Wait for Message
+            response = self._request([
+                'subscribe',
+                @subscribe_key,
+                channel,
+                '0',
+                timetoken.to_s
+            ])
 
-        ## Find Server
-        if !server
-            resp_for_server = self._request( $ORIGIN + '/pubnub-subscribe', {
-                'channel' => channel
-            })
+            messages          = response[0]
+            args['timetoken'] = response[1]
 
-            server = resp_for_server['server']
-            args['server'] = server
-
-            if !server
-                pp(args)
-                puts('Incorrect API Keys *OR* Out of PubNub Credits')
-                puts('Account API Keys http://www.pubnub.com/account')
-                puts('Buy Credits http://www.pubnub.com/account-buy-credit')
-                return false
+            ## If it was a timeout
+            if !messages.length
+                return self.subscribe(args)
             end
-        end
 
-        ## Wait for Message
-        response = self._request( 'http://' + server + '/', {
-            'channel'   => channel,
-            'timetoken' => timetoken
-        } );
+            ## Run user Callback and Reconnect if user permits.
+            messages.each do |message|
+                if !callback.call(message)
+                    return
+                end
+            end
 
-        ## If we lost a server connection.
-        if !response['messages'][0]
-            args['server'] = false
-            return self.subscribe(args);
-        end
-
-        ## If it was a timeout
-        if response['messages'][0] == 'xdr.timeout'
-            args['timetoken'] = response['timetoken']
+            ## Keep Listening.
+            return self.subscribe(args)
+        rescue Timeout::Error
+            return self.subscribe(args)
+        rescue
+            sleep(1)
             return self.subscribe(args)
         end
-
-        ## Run user Callback and Reconnect if user permits.
-        response['messages'].each do |message|
-            continue = continue && callback.call(message);
-        end
-
-        ## If okay to keep listening.
-        if continue
-            args['timetoken'] = response['timetoken'];
-            return self.subscribe(args);
-        end
-
-        ## Done Listening
-        return true
     end
 
-
-    # -------
-    # HISTORY
-    # -------
-    # Load Previously Published Messages
-    # messages = pubnub.history({
-    #     'channel' => 'hello_world',
-    #     'limit'   => 10
-    # })
+    #**
+    #* History
+    #*
+    #* Load history from a channel.
+    #*
+    #* @param array args with 'channel' and 'limit'.
+    #* @return mixed false on fail, array on success.
+    #*
     def history(args)
-        ## Fail if Missing Channel
-        if !args['channel']
-            puts('Missing Channel')
+        ## Capture User Input
+        limit   = +args['limit'] ? +args['limit'] : 10
+        channel = args['channel']
+
+        ## Fail if bad input.
+        if (!channel)
+            echo('Missing Channel')
             return false
         end
 
-        channel = @subscribe_key + '/' + args['channel']
-        limit   = args['limit'] || 10
-
-        response = self._request( $ORIGIN + '/pubnub-history', {
-            'channel' => channel,
-            'limit'   => limit
-        } )
-
-        return response['messages']
+        ## Get History
+        return self._request([
+            'history',
+            @subscribe_key,
+            channel,
+            '0',
+            limit.to_s
+        ]);
     end
 
-    # response = self._request( $ORIGIN + '/pubnub-history', {
-    #     'channel' => channel,
-    #     'limit'   => limit
-    # } )
-    def _request( request, args )
-        ## Expecting JSONP
-        args['unique'] = Time.new.to_f.to_s.gsub!( /\./, '' )
+    #**
+    #* Time
+    #*
+    #* Timestamp from PubNub Cloud.
+    #*
+    #* @return int timestamp.
+    #*
+    def time()
+        return self._request([
+            'time',
+            '0'
+        ])[0]
+    end
 
-        ## Format URL Params
-        params = []
-        args.each do |key,val|
-            params.push(URI.escape(key.to_s) +'='+ URI.escape(val.to_s))
-        end
+    #**
+    #* Request URL
+    #*
+    #* @param array request of url directories.
+    #* @return array from JSON response.
+    #*
+    def _request(request)
+        ## Construct Request URL
+        url = @origin + '/' + request.map{ |bit| bit.split('').map{ |ch|
+            ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
+            '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
+        }.join('') }.join('/')
 
-        ## Append Params to URL
-        request += '?' + params.join('&')
         response = ''
-
-        ## Send Request Expecting JSONP Response
-        open(request) do |f|
+        open(url) do |f|
             response = f.read
-            response.gsub!( /^[^\(]+\((.+?)\)$/, '\1' )
         end
 
         return JSON.parse(response)

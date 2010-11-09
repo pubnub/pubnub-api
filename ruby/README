@@ -1,36 +1,59 @@
-## www.pubnub.com - PubNub realtime push service in the cloud. 
-## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog 
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account-javascript-api-include
+##
+## ----------------------------------------------------
+
+## ------------------------------------------
+## PubNub 3.0 Real-time Cloud Push API - RUBY
+## ------------------------------------------
+##
+## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+## http://www.pubnub.com/blog/ruby-push-api
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
 
 ## -------------
 ## Ruby Push API
 ## -------------
+pubnub = Pubnub.new(
+    "demo",  ## PUBLISH_KEY
+    "demo",  ## SUBSCRIBE_KEY
+    "",      ## SECRET_KEY
+    false    ## SSL_ON?
+)
 
 # -------
 # PUBLISH
 # -------
 # Send Message
-# info = pubnub.publish({
-#     'channel' => 'hello_world',
-#     'message' => { 'text' => 'some text data' }
-# })
+info = pubnub.publish({
+    'channel' => 'hello_world',
+    'message' => { 'text' => 'some text data' }
+})
+puts(info)
 
 # ---------
 # SUBSCRIBE
 # ---------
 # Listen for Messages *BLOCKING*
-# pubnub.subscribe({
-#     'channel'  => 'hello_world',
-#     'callback' => lambda do |message|
-#         pp(message) ## print message
-#         return true ## keep listening?
-#     end
-# })
+pubnub.subscribe({
+    'channel'  => 'hello_world',
+    'callback' => lambda do |message|
+        puts(message) ## print message
+        return true   ## keep listening?
+    end
+})
 
 # -------
 # HISTORY
 # -------
 # Load Previously Published Messages
-# messages = pubnub.history({
-#     'channel' => 'hello_world',
-#     'limit'   => 10
-# })
+messages = pubnub.history({
+    'channel' => 'hello_world',
+    'limit'   => 10
+})
+puts(messages)

@@ -1,21 +1,20 @@
 require 'Pubnub'
-require 'pp'
 
 publish_key   = ARGV[0]
 subscribe_key = ARGV[1]
-
+ssl_on        = !!ARGV[2]
 
 ## Print usage if missing info.
-if !(publish_key && subscribe_key)
-    puts("
+if !subscribe_key
+    puts('
     Get API Keys at http://www.pubnub.com/account
     ==============
     EXAMPLE USAGE:
     ==============
-    ruby history.rb PUBLISH-KEY SUBSCRIBE-KEY
-    ruby history.rb PUBLISH-KEY SUBSCRIBE-KEY
+    ruby history-example.rb PUBLISH-KEY SUBSCRIBE-KEY SSL-ON
+    ruby history-example.rb demo demo true
 
-    ")
+    ')
     exit()
 end
 
@@ -23,7 +22,7 @@ end
 ## Create Pubnub Client API (INITIALIZATION)
 ## -----------------------------------------
 puts('Creating new Pubnub Client API')
-pubnub = Pubnub.new( publish_key, subscribe_key )
+pubnub = Pubnub.new( publish_key, subscribe_key, nil, ssl_on )
 
 ## --------------------------------
 ## Request Past Publishes (HISTORY)
@@ -34,6 +33,4 @@ messages = pubnub.history({
     'limit'   => 10
 })
 
-## Print Pretty
-pp(messages)
-#puts(info)
+puts(messages)
