@@ -1,103 +1,18 @@
 <?php
 
-/*
-    www.pubnub.com - PubNub realtime push service in the cloud. 
-
-    PubNub Real Time Push APIs and Notifications Framework
-    Copyright (c) 2010 Stephen Blum
-    http://www.google.com/profiles/blum.stephen
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 /**
- * Pubnub Client API
- *
- * PHP 5.2.0+ REQUIRED
- * PHP 5.3.0+ RECOMMENDED
- * For earlier of PHP versions, use CREATE_FUNCTION for callbacks.
- *
- * Client API for interfacing with Pubnub.
- * Publish/Subscribe and History APIs.
- *
- * NOTE: Subscribe API for PHP is BLOCKING.
- *       Your application will hault until a message is received.
- * 
- * USAGE PHP EXAMPLE:
- * ==================
- * More examples in the example folder.
-
-    ## -----------------------------------------
-    ## Create Pubnub Client API (INITIALIZATION)
-    ## -----------------------------------------
-    $pubnub = new Pubnub( 'YOUR-PUBLISH-KEY', 'YOUR-SUBSCRIBE-KEY' );
-
-    ## ----------------------
-    ## Send Message (PUBLISH)
-    ## ----------------------
-    $info = $pubnub->publish(array(
-        'channel' => 'hello_world', ## REQUIRED Channel to Send
-        'message' => 'Hey World!'   ## REQUIRED Message String/Array
-    ));
-    echo($info['status']);          ## 200 if successful.
-
-    ## --------------------------
-    ## Request Messages (HISTORY)
-    ## --------------------------
-    $messages = $pubnub->history(array(
-        'channel' => 'hello_world',  ## REQUIRED Channel to Send
-        'limit'   => 100             ## OPTIONAL Limit Number of Messages
-    ));
-    var_dump($messages);             ## Prints array of messages.
-
-    ## ----------------------------------
-    ## Receive Message (SUBSCRIBE)
-    ## PHP 5.3.0 ONLY. THIS WILL BLOCK!!!
-    ## THIS WILL BLOCK. PHP 5.3.0 ONLY!!!
-    ## ----------------------------------
-    $pubnub->subscribe(array(
-        'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
-        'callback' => function($message) {  ## REQUIRED Callback With Response
-            var_dump($message);  ## Print Message
-            return true;         ## Keep listening (return false to stop)
-        }
-    ));
-
-    ## ----------------------------------
-    ## Receive Message (SUBSCRIBE)
-    ## PHP 5.2.0 ONLY. THIS WILL BLOCK!!!
-    ## THIS WILL BLOCK. PHP 5.2.0
-    ## ----------------------------------
-    $pubnub->subscribe(array(
-        'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
-        'callback' => create_function(      ## REQUIRED PHP 5.2.0 Method
-            '$message',
-            'var_dump($message); return true;'
-        )
-    ));
-
- * More Examples in the examples folder.
+ * PubNub 3.0 Real-time Push Cloud API
  *
  * @author Stephen Blum
  * @package Pubnub
  */
-
 class Pubnub {
-    private static $ORIGIN        = 'http://pubnub-prod.appspot.com';
-    private static $LIMIT         = 1700;
-    private static $PUBLISH_KEY   = '';
-    private static $SUBSCRIBE_KEY = '';
+    private $ORIGIN        = 'pubsub.pubnub.com';
+    private $LIMIT         = 1800;
+    private $PUBLISH_KEY   = 'demo';
+    private $SUBSCRIBE_KEY = 'demo';
+    private $SECRET_KEY    = false;
+    private $SSL           = false;
 
     /**
      * Pubnub
@@ -106,10 +21,22 @@ class Pubnub {
      *
      * @param string $publish_key required key to send messages.
      * @param string $subscribe_key required key to receive messages.
+     * @param string $secret_key required key to sign messages.
+     * @param boolean $ssl required for 2048 bit encrypted messages.
      */
-    function Pubnub( $publish_key, $subscribe_key ) {
-        self::$PUBLISH_KEY   = $publish_key;
-        self::$SUBSCRIBE_KEY = $subscribe_key;
+    function Pubnub(
+        $publish_key,
+        $subscribe_key,
+        $secret_key = false,
+        $ssl = false
+    ) {
+        $this->PUBLISH_KEY   = $publish_key;
+        $this->SUBSCRIBE_KEY = $subscribe_key;
+        $this->SECRET_KEY    = $secret_key;
+        $this->SSL           = $ssl;
+
+        if ($ssl) $this->ORIGIN = 'https://' . $this->ORIGIN;
+        else      $this->ORIGIN = 'http://'  . $this->ORIGIN;
     }
 
     /**
@@ -118,36 +45,47 @@ class Pubnub {
      * Send a message to a channel.
      *
      * @param array $args with channel and message.
-     * @return mixed false on fail, array on success.
+     * @return array success information.
      */
     function publish($args) {
         ## Fail if bad input.
-        if (!(
-            $args['channel'] &&
-            $args['message']
-        )) {
+        if (!($args['channel'] && $args['message'])) {
             echo('Missing Channel or Message');
             return false;
         }
 
         ## Capture User Input
-        $channel = self::$SUBSCRIBE_KEY . '/' . $args['channel'];
+        $channel = $args['channel'];
         $message = json_encode($args['message']);
 
+        ## Generate String to Sign
+        $string_to_sign = implode( '/', array(
+            $this->PUBLISH_KEY,
+            $this->SUBSCRIBE_KEY,
+            $this->SECRET_KEY,
+            $channel,
+            $message
+        ) );
+
+        ## Sign Message
+        $signature = $this->SECRET_KEY ? md5($string_to_sign) : '0';
+
         ## Fail if message too long.
-        if (strlen($message) > self::$LIMIT) {
-            echo('Message TOO LONG (' . self::$LIMIT . ' LIMIT)');
-            return false;
+        if (strlen($message) > $this->LIMIT) {
+            echo('Message TOO LONG (' . $this->LIMIT . ' LIMIT)');
+            return array( 0, 'Message Too Long.' );
         }
 
         ## Send Message
-        $response = $this->_request( self::$ORIGIN . '/pubnub-publish', array(
-            'publish_key' => self::$PUBLISH_KEY,
-            'channel'     => $channel,
-            'message'     => $message
-        ) );
-
-        return $response;
+        return $this->_request(array(
+            'publish',
+            $this->PUBLISH_KEY,
+            $this->SUBSCRIBE_KEY,
+            $signature,
+            $channel,
+            '0',
+            $message
+        ));
     }
 
     /**
@@ -160,82 +98,54 @@ class Pubnub {
      * @return mixed false on fail, array on success.
      */
     function subscribe($args) {
+        ## Capture User Input
+        $channel   = $args['channel'];
+        $callback  = $args['callback'];
+        $timetoken = isset($args['timetoken']) ? $args['timetoken'] : '0';
+
         ## Fail if missing channel
-        if (!$args['channel']) {
+        if (!$channel) {
             echo("Missing Channel.\n");
             return false;
         }
 
         ## Fail if missing callback
-        if (!$args['callback']) {
+        if (!$callback) {
             echo("Missing Callback.\n");
             return false;
         }
 
-        ## Capture User Input
-        $channel   = self::$SUBSCRIBE_KEY . '/' . $args['channel'];
-        $callback  = $args['callback'];
-        $timetoken = isset($args['timetoken']) ? $args['timetoken'] : '0';
-        $server    = isset($args['server'])    ? $args['server']    : false;
-        $continue  = true;
-
-        ## Find Server
-        if (!$server) {
-            $resp_for_server = $this->_request(
-                self::$ORIGIN . '/pubnub-subscribe', array(
-                    'channel' => $channel
-                )
-            );
-
-            if (!isset($resp_for_server['server'])) {
-                print_r($args);
-                echo("Incorrect API Keys *OR* Out of PubNub Credits\n");
-                echo("Account API Keys http://www.pubnub.com/account\n");
-                echo("Buy Credits http://www.pubnub.com/account-buy-credit\n");
-                return false;
-            }
-
-            $server = $resp_for_server['server'];
-            $args['server'] = $server;
-        }
-
+        ## Begin Recusive Subscribe
         try {
             ## Wait for Message
-            $response = $this->_request( 'http://' . $server . '/', array(
-                'channel'   => $channel,
-                'timetoken' => $timetoken
-            ) );
+            $response = $this->_request(array(
+                'subscribe',
+                $this->SUBSCRIBE_KEY,
+                $channel,
+                '0',
+                $timetoken
+            ));
 
-            ## If we lost a server connection.
-            if (!isset($response['messages'][0])) {
-                unset($args['server']);
-                return $this->subscribe($args);
-            }
+            $messages          = $response[0];
+            $args['timetoken'] = $response[1];
 
             ## If it was a timeout
-            if ($response['messages'][0] == 'xdr.timeout') {
-                $args['timetoken'] = $response['timetoken'];
+            if (!count($messages)) {
                 return $this->subscribe($args);
             }
 
             ## Run user Callback and Reconnect if user permits.
-            foreach ($response['messages'] as $message) {
-                $continue = $continue && $callback($message);
+            foreach ($messages as $message) {
+                if (!$callback($message)) return;
             }
 
-            ## If okay to keep listening.
-            if ($continue) {
-                $args['timetoken'] = $response['timetoken'];
-                return $this->subscribe($args);
-            }
-        }
-        catch (Exception $error) {
-            unset($args['server']);
+            ## Keep Listening.
             return $this->subscribe($args);
         }
-
-        ## Done listening.
-        return true;
+        catch (Exception $error) {
+            sleep(1);
+            return $this->subscribe($args);
+        }
     }
 
     /**
@@ -243,59 +153,88 @@ class Pubnub {
      *
      * Load history from a channel.
      *
-     * Messages remain in history for up to 30 days.
-     * Up to 100 messages returnable.
-     * Messages order by most recent first.
-     *
      * @param array $args with 'channel' and 'limit'.
      * @return mixed false on fail, array on success.
      */
     function history($args) {
+        ## Capture User Input
+        $limit   = +$args['limit'] ? +$args['limit'] : 10;
+        $channel = $args['channel'];
+
         ## Fail if bad input.
-        if (!$args['channel']) {
+        if (!$channel) {
             echo('Missing Channel');
             return false;
         }
 
-        ## Capture User Input
-        $channel = self::$SUBSCRIBE_KEY . '/' . $args['channel'];
-        $limit   = +$args['limit'] ? +$args['limit'] : 10;
-
         ## Get History
-        $response = $this->_request( self::$ORIGIN . '/pubnub-history', array(
-            'channel' => $channel,
-            'limit'   => $limit
-        ) );
+        return $this->_request(array(
+            'history',
+            $this->SUBSCRIBE_KEY,
+            $channel,
+            '0',
+            $limit
+        ));
+    }
 
-        return $response['messages'];
+    /**
+     * Time
+     *
+     * Timestamp from PubNub Cloud.
+     *
+     * @return int timestamp.
+     */
+    function time() {
+        ## Get History
+        $response = $this->_request(array(
+            'time',
+            '0'
+        ));
+
+        return $response[0];
     }
 
     /**
      * Request URL
      *
-     * @param string $request url.
-     * @param array $args of key/vals.
-     * @return object from response.
+     * @param array $request of url directories.
+     * @return array from JSON response.
      */
-    private function _request( $request, $args ) {
-        ## Expecting JSONP
-        $args['unique'] = time();
+    private function _request($request) {
+        $request = array_map( 'Pubnub::_encode', $request );
+        array_unshift( $request, $this->ORIGIN );
 
-        ## Format URL Params
-        $params = array();
-        foreach ($args as $key => $val)
-            $params[] = urlencode($key) .'='. urlencode($val);
+        $ctx = stream_context_create(array(
+            'http' => array( 'timeout' => 200 ) 
+        ));
 
-        ## Append Params
-        $request .= '?' . implode( '&', $params );
+        return json_decode( @file_get_contents(
+            implode( '/', $request ), 0, $ctx
+        ), true );
+    }
 
-        ## Send Request Expecting JSONP Response
-        $response = preg_replace(
-            '|^[^\(]+\((.+?)\)$|', '$1',
-            file_get_contents($request)
-        );
+    /**
+     * Encode
+     *
+     * @param string $part of url directories.
+     * @return string encoded string.
+     */
+    private static function _encode($part) {
+        return implode( '', array_map(
+            'Pubnub::_encode_char', str_split($part)
+        ) );
+    }
 
-        return json_decode( $response, true );
+    /**
+     * Encode Char
+     *
+     * @param string $char val.
+     * @return string encoded char.
+     */
+    private static function _encode_char($char) {
+        if (strpos( ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?', $char ) === false)
+            return $char;
+        return rawurlencode($char);
     }
 }
 

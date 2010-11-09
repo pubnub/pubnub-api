@@ -3,6 +3,7 @@
     ## Capture Publish and Subscribe Keys from Command Line
     $publish_key   = isset($argv[1]) ? $argv[1] : false;
     $subscribe_key = isset($argv[2]) ? $argv[2] : false;
+    $channel_name  = isset($argv[3]) ? $argv[3] : 'hello_world2';
 
     # Print usage if missing info.
     if (!($publish_key && $subscribe_key)) {
@@ -31,9 +32,10 @@ echo("
     ## ------------------------------
     echo("Listening for Messages (Press ^C to stop)\n");
     $pubnub->subscribe(array(
-        'channel'  => 'hello_world',        ## REQUIRED Channel to Listen
+        'channel'  => $channel_name,        ## REQUIRED Channel to Listen
         'callback' => function($message) {  ## REQUIRED Callback With Response
             var_dump($message);  ## Print Message
+            usleep(100);
             return true;         ## Keep listening (return false to stop)
         }
     ));
