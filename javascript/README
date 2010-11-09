@@ -1,20 +1,29 @@
-// www.pubnub.com - PubNub Real-time Push Service in The Cloud. 
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account-javascript-api-include
+##
+## ----------------------------------------------------
 
-// The PubNub JavaScript API is hosted at www.pubnub.com website.
-// You must have a PubNub account to use the JavaScript API.
-// Click on http://www.pubnub.com/account-javascript-api-include
+## ------------------------------------------------
+## PubNub 3.0 Real-time Cloud Push API - JAVASCRIPT
+## ------------------------------------------------
+##
+## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+## http://www.pubnub.com/tutorial/javascript-push-api
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
 
-// LISTEN
+// LISTEN FOR MESSAGES
 PUBNUB.subscribe({
     channel  : "hello_world",
     callback : function(message) { alert(message) }
 })
 
-// SEND
+// SEND MESSAGE
 PUBNUB.publish({
     channel : "hello_world",
     message : "Hi."
 })
-
-// That's it! Nothing more complex is needed to pass messages.
-// Visit www.pubnub.com and sign up for an account!
