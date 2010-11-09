@@ -1,7 +1,7 @@
 from Pubnub import Pubnub
 
 ## Initiat Class
-pubnub  = Pubnub( 'demo', 'demo' )
+pubnub = Pubnub( 'demo', 'demo', None, False )
 
 ## History Example
 history = pubnub.history({

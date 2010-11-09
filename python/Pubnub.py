@@ -1,70 +1,137 @@
+## www.pubnub.com - PubNub Real-time push service in the cloud. 
+# coding=utf8
+
+## PubNub Real-time Push APIs and Notifications Framework
+## Copyright (c) 2010 Stephen Blum
+## http://www.pubnub.com/
+
+## -----------------------------------
+## PubNub 3.0 Real-time Push Cloud API
+## -----------------------------------
+
 import json
 import time
+import hashlib
 import urllib2
 
-
 class Pubnub():
-    def __init__( self, publish_key, subscribe_key ) :
+    def __init__(
+        self,
+        publish_key,
+        subscribe_key,
+        secret_key = False,
+        ssl_on = False
+    ) :
         """
-            ## Initiat Class
-            pubnub = Pubnub( 'PUBLISH-KEY', 'SUBSCRIBE-KEY' )
+        #**
+        #* Pubnub
+        #*
+        #* Init the Pubnub Client API
+        #*
+        #* @param string publish_key required key to send messages.
+        #* @param string subscribe_key required key to receive messages.
+        #* @param string secret_key required key to sign messages.
+        #* @param boolean ssl required for 2048 bit encrypted messages.
+        #**
+
+        ## Initiat Class
+        pubnub = Pubnub( 'PUBLISH-KEY', 'SUBSCRIBE-KEY', 'SECRET-KEY', False )
+
         """
-        self.origin        = 'http://pubnub-prod.appspot.com/'
-        self.limit         = 1700
+        self.origin        = 'pubsub.pubnub.com'
+        self.limit         = 1800
         self.publish_key   = publish_key
         self.subscribe_key = subscribe_key
+        self.secret_key    = secret_key
+        self.ssl           = ssl_on
+
+        if self.ssl :
+            self.origin = 'https://' + self.origin
+        else :
+            self.origin = 'http://'  + self.origin
 
 
     def publish( self, args ) :
         """
-            ## Initiat Class
-            pubnub = Pubnub( 'demo', 'demo' )
+        #**
+        #* Publish
+        #*
+        #* Send a message to a channel.
+        #*
+        #* @param array args with channel and message.
+        #* @return array success information.
+        #**
 
-            ## Publish Example
-            info = pubnub.publish({
-                'channel' : 'hello_world',
-                'message' : {
-                    'some_text' : 'Hello my World'
-                }
-            })
-            print(info)
+        ## Publish Example
+        info = pubnub.publish({
+            'channel' : 'hello_world',
+            'message' : {
+                'some_text' : 'Hello my World'
+            }
+        })
+        print(info)
+
         """
-        ## Fail if bad input
-        if not ('channel' in args and 'message' and args) :
-            print('Missing Channel or Message')
+        ## Fail if bad input.
+        if not (args['channel'] and args['message']) :
+            puts('Missing Channel or Message')
             return False
 
         ## Capture User Input
-        channel = self.subscribe_key + '/' + args['channel']
+        channel = args['channel']
         message = json.dumps(args['message'])
+
+        ## Sign Message
+        if self.secret_key :
+            signature = hashlib.md5('/'.join([
+                self.publish_key,
+                self.subscribe_key,
+                self.secret_key,
+                channel,
+                message
+            ])).hexdigest()
+        else :
+            signature = '0'
 
         ## Fail if message too long.
         if len(message) > self.limit :
-            print('Message TOO LONG (' + self.limit + ' LIMIT)')
-            return False
+            print('Message TOO LONG (' + str(limit) + ' LIMIT)')
+            return [ 0, 'Message Too Long.' ]
 
         ## Send Message
-        response = self._request( self.origin + '/pubnub-publish', {
-            'publish_key' : self.publish_key,
-            'channel'     : channel,
-            'message'     : message
-        } )
-
-        return response
+        return self._request([
+            'publish',
+            self.publish_key,
+            self.subscribe_key,
+            signature,
+            channel,
+            '0',
+            message
+        ])
 
 
     def subscribe( self, args ) :
         """
-            ## Subscribe Example
-            def receive(message) :
-                print(message)
-                return True
+        #**
+        #* Subscribe
+        #*
+        #* This is BLOCKING.
+        #* Listen for a message on a channel.
+        #*
+        #* @param array args with channel and message.
+        #* @return false on fail, array on success.
+        #**
 
-            pubnub = Pubnub( 'demo', 'demo' )
-            pubnub.subscribe({
-                'channel'  : 'hello_world',
-                'callback' : receive 
-            })
+        ## Subscribe Example
+        def receive(message) :
+            print(message)
+            return True
+
+        pubnub.subscribe({
+            'channel'  : 'hello_world',
+            'callback' : receive 
+        })
+
         """
         ## Fail if missing channel
         if not 'channel' in args :
@@ -77,157 +144,110 @@ class Pubnub():
             return False
 
         ## Capture User Input
-        channel   = self.subscribe_key + '/' + args['channel']
+        channel   = args['channel']
         callback  = args['callback']
-        timetoken = 'timetoken' in args and args['timetoken'] or '0'
-        server    = 'server' in args and args['server'] or False
-        listening = True
+        timetoken = 'timetoken' in args and args['timetoken'] or 0
 
-        ## Find Server
-        if not server :
-            resp_for_server = self._request(
-                self.origin + '/pubnub-subscribe',
-                {'channel' : channel}
-            )
-
-            if not 'server' in resp_for_server :
-                print(args)
-                print("Incorrect API Keys *OR* Out of PubNub Credits\n")
-                print("Account API Keys http://www.pubnub.com/account\n")
-                print("Buy Credits http://www.pubnub.com/account-buy-credit\n")
-                return False
-
-            server         = resp_for_server['server']
-            args['server'] = server
-
+        ## Begin Recusive Subscribe
         try :
             ## Wait for Message
-            response = self._request( 'http://' + server + '/', {
-                'channel'   : channel,
-                'timetoken' : timetoken
-            } )
+            response = self._request([
+                'subscribe',
+                self.subscribe_key,
+                channel,
+                '0',
+                str(timetoken)
+            ])
 
-            ## If we lost a server connection.
-            if not ('messages' in response and response['messages'][0]) :
-                args['server'] = False
-                return self.subscribe(args)
+            messages          = response[0]
+            args['timetoken'] = response[1]
 
             ## If it was a timeout
-            if response['messages'][0] == 'xdr.timeout' :
-                args['timetoken'] = response['timetoken']
+            if not len(messages) :
                 return self.subscribe(args)
 
             ## Run user Callback and Reconnect if user permits.
-            for message in response['messages'] :
-                listening = listening and callback(message)
+            for message in messages :
+                if not callback(message) :
+                    return
 
-            ## If okay to keep listening.
-            if listening :
-                args['timetoken'] = response['timetoken']
-                return self.subscribe(args)
+            ## Keep Listening.
+            return self.subscribe(args)
         except :
-            args['server'] = False
+            time.sleep(1)
             return self.subscribe(args)
 
-        ## Done Listening.
         return True
-
 
     def history( self, args ) :
         """
-            ## Initiat Class
-            pubnub  = Pubnub( 'demo', 'demo' )
+        #**
+        #* History
+        #*
+        #* Load history from a channel.
+        #*
+        #* @param array args with 'channel' and 'limit'.
+        #* @return mixed false on fail, array on success.
+        #*
 
-            ## History Example
-            history = pubnub.history({
-                'channel' : 'hello_world',
-                'limit'   : 1
-            })
-            print(history)
+        ## History Example
+        history = pubnub.history({
+            'channel' : 'hello_world',
+            'limit'   : 1
+        })
+        print(history)
+
         """
-        ## Fail if bad input
-        if not 'channel' in args :
-            print('Missing Channel')
+        ## Capture User Input
+        limit   = args.has_key('limit') and int(args['limit']) or 10
+        channel = args['channel']
+
+        ## Fail if bad input.
+        if not channel :
+            echo('Missing Channel')
             return False
 
-        ## Capture User Input Channel
-        channel = self.subscribe_key + '/' + args['channel']
-
-        ## Limit Provided
-        if 'limit' in args :
-            limit = int(args['limit'])
-        else :
-            limit = 10
-
         ## Get History
-        response = pubnub._request( self.origin + '/pubnub-history', {
-            'channel' : channel,
-            'limit'   : limit
-        } )
+        return self._request([
+            'history',
+            self.subscribe_key,
+            channel,
+            '0',
+            str(limit)
+        ]);
 
-        return response['messages']
+        """
+        #**
+        #* Time
+        #*
+        #* Timestamp from PubNub Cloud.
+        #*
+        #* @return int timestamp.
+        #*
 
-    def _request( self, request, args ) :
-        ## Expecting JSONP
-        args['unique'] = int(time.time())
+        ## PubNub Server Time Example
+        timestamp = pubnub.time()
+        print(timestamp)
 
-        ## Format URL Params
-        params = []
-        for arg in args :
-            params.append(
-                urllib2.quote(str(arg)) + '=' +
-                urllib2.quote(str(args[arg]))
-            )
+        """
+    def time(self) :
+        return self._request([
+            'time',
+            '0'
+        ])[0]
 
-        ## Append Params
-        request = request + '?' + '&'.join(params)
-
-        #print('REQUEST: -> ' + request)
+    def _request( self, request ) :
+        ## Build URL
+        url = self.origin + '/' + "/".join([
+            "".join([ ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.find(ch) > -1 and
+                hex(ord(ch)).replace( '0x', '%' ).upper() or
+                ch for ch in list(bit)
+            ]) for bit in request])
 
         ## Send Request Expecting JSONP Response
-        usock    = urllib2.urlopen(request)
+        usock    = urllib2.urlopen( url, None, 200 )
         response = usock.read()
         usock.close()
 
-        response = response[response.find('(')+1: -1]
-        #print(response)
-
         return json.loads( response )
-
-
-## Demo usage of Pubnub() Class
-if __name__ == '__main__':
-
-    ## Initiat Class
-    pubnub  = Pubnub( 'demo', 'demo' )
-
-    ## Publish Example
-    info = pubnub.publish({
-        'channel' : 'hello_world',
-        'message' : {
-            'some_text' : 'Hello my World'
-        }
-    })
-    print('\n\nPublish Response:')
-    print(info)
-
-    ## History Example
-    history = pubnub.history({
-        'channel' : 'hello_world',
-        'limit'   : 1
-    })
-    print('\n\nHistory Response:')
-    print(history)
-
-    ## Subscribe Example
-    def receive(message) :
-        print('\n\nSubscribe Response:')
-        print(message)
-
-        return True
-
-    pubnub.subscribe({
-        'channel'  : 'hello_world',
-        'callback' : receive 
-    })
 

@@ -1,15 +1,36 @@
-## www.pubnub.com - PubNub realtime push service in the cloud. 
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account-javascript-api-include
+##
+## ----------------------------------------------------
 
-## -------------
+## ---------------------------------------------
+## PubNub 3.0 Real-time Cloud Push API - PYTHON
+## ---------------------------------------------
+##
+## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+## http://github.com/pubnub/pubnub-api/tree/master/python/
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
+
+## ---------------
 ## Python Push API
-## -------------
+## ---------------
+pubnub = Pubnub(
+    "demo",  ## PUBLISH_KEY
+    "demo",  ## SUBSCRIBE_KEY
+    None,    ## SECRET_KEY
+    False    ## SSL_ON?
+)
 
 # -------
 # PUBLISH
 # -------
 # Send Message
-pubnub = Pubnub( 'demo', 'demo' )
-info   = pubnub.publish({
+info = pubnub.publish({
     'channel' : 'hello_world',
     'message' : {
         'some_text' : 'Hello my World'
@@ -25,7 +46,6 @@ def receive(message) :
     print(message)
     return True
 
-pubnub = Pubnub( 'demo', 'demo' )
 pubnub.subscribe({
     'channel'  : 'hello_world',
     'callback' : receive 
@@ -35,7 +55,6 @@ pubnub.subscribe({
 # HISTORY
 # -------
 # Load Previously Published Messages
-pubnub  = Pubnub( 'demo', 'demo' )
 history = pubnub.history({
     'channel' : 'hello_world',
     'limit'   : 1
