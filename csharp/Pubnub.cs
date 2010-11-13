@@ -268,7 +268,7 @@ public class Pubnub {
             ArrayList messages    = (ArrayList)response[0];
 
             // Update TimeToken
-            if (response[1].ToString().Length  > 15)
+            if (response[1].ToString().Length  > 0)
                 timetoken = (object)response[1];
 
             // If it was a timeout
