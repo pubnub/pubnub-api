@@ -195,7 +195,7 @@ public class Pubnub {
             JSONArray messages = response.optJSONArray(0);
 
             // Update TimeToken
-            if (response.optString(1).length() > 15)
+            if (response.optString(1).length() > 0)
                 timetoken = response.optString(1);
 
             // If it was a timeout
