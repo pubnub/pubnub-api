@@ -193,7 +193,10 @@ public class Pubnub {
             // Wait for Message
             JSONArray response = _request(url);
             JSONArray messages = response.optJSONArray(0);
-            timetoken          = response.optString(1);
+
+            // Update TimeToken
+            if (response.optString(1).length() > 15)
+                timetoken = response.optString(1);
 
             // If it was a timeout
             if (messages.length() == 0) {
@@ -243,16 +246,16 @@ public class Pubnub {
      *
      * Timestamp from PubNub Cloud.
      *
-     * @return int timestamp.
+     * @return double timestamp.
      */
-    public int time() {
+    public double time() {
         List<String> url = new ArrayList<String>();
 
         url.add("time");
         url.add("0");
 
         JSONArray response = _request(url);
-        return response.optInt(0);
+        return response.optDouble(0);
     }
 
     /**
