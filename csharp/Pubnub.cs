@@ -48,7 +48,7 @@ public class PubnubTEST {
         // ----------------------
         // Get PubNub Server Time
         // ----------------------
-        int timestamp = pubnub.time();
+        object timestamp = pubnub.time();
         Console.WriteLine("Server Time: " + timestamp.ToString());
 
         // ---------
@@ -266,7 +266,10 @@ public class Pubnub {
             // Wait for Message
             List<object> response = _request(url);
             ArrayList messages    = (ArrayList)response[0];
-            timetoken             = response[1];
+
+            // Update TimeToken
+            if (response[1].ToString().Length  > 15)
+                timetoken = (object)response[1];
 
             // If it was a timeout
             if (messages.Count == 0) {
@@ -293,16 +296,16 @@ public class Pubnub {
      *
      * Timestamp from PubNub Cloud.
      *
-     * @return int timestamp.
+     * @return object timestamp.
      */
-    public int time() {
+    public object time() {
         List<string> url = new List<string>();
 
         url.Add("time");
         url.Add("0");
 
         List<object> response = _request(url);
-        return (int)response[0];
+        return response[0];
     }
 
     /**
