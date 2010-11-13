@@ -228,7 +228,7 @@ var NOW    = 1
  * ======
  * var timestamp = unique();
  */
-function unique() { return++NOW+''+(+new Date) }
+function unique() { return'x'+ ++NOW+''+(+new Date) }
 
 /**
  * $
@@ -394,7 +394,7 @@ function timeout( fun, wait ) { return setTimeout( fun, wait ) }
  * ========
  * var callback = jsonp_cb();
  */
-function jsonp_cb() { return XORIGN ? 0 : 'x'+unique() }
+function jsonp_cb() { return XORIGN ? 0 : unique() }
 
 /**
  * ENCODE
@@ -423,41 +423,42 @@ function xdr( setup ) {
 
     var script    = create('script')
     ,   callback  = setup.callback
-    ,   waitlimit = 25
-    ,   timer     = timeout(function(){done(1)},setup.timeout||200000)
+    ,   id        = unique()
+    ,   finished  = 0
+    ,   limit     = setup.timeout || 200000
+    ,   timer     = timeout( function(){done(1)}, limit )
     ,   fail      = setup.fail    || function(){}
     ,   success   = setup.success || function(){}
 
-    ,   append = function() { timeout( function() { 
-            try {
-                var myhead  = head()
-                ,   myfirst = myhead.firstChild;
+    ,   append = function() {
+            head().appendChild(script);
+        }
 
-                if (myfirst) myhead.insertBefore( script, myfirst );
-                else myhead.appendChild(script);
-            }
-            catch(err) { append(); }
-         }, waitlimit *= 2 ) }
+    ,   done = function( failed, response ) {
+            if (finished) return;
+                finished = 1;
 
-    ,   done = function(failed) { timeout( function() {
-            clearTimeout(timer);
-            failed && fail(script);
+            failed || success(response);
             script.onerror = null;
-            try { head().removeChild(script); }
-            catch(error) {}
-        }, 500 ) };
+            clearTimeout(timer);
 
-    script[ASYNC]    = ASYNC;
+            timeout( function() {
+                failed && fail();
+                var s = $(id)
+                ,   p = s && s.parentNode;
+                p && p.removeChild(s);
+            }, 1000 );
+        };
+
     window[callback] = function(response) {
-        if ( !response ) return done(1);
-        success(response);
-        window[callback] = null;
-        done(0);
+        done( 0, response );
     };
 
-    bind( 'error', script, function() { done(1) } );
+    script[ASYNC]  = ASYNC;
+    script.onerror = function() { done(1) };
+    script.src     = setup.url.join(URLBIT);
 
-    script.src = setup.url.join(URLBIT);
+    attr( script, 'id', id );
 
     append();
     return done;
@@ -475,54 +476,47 @@ function xdr( setup ) {
 function ajax( setup ) {
     var xhr
     ,   rsc = function() {
-            if ( xhr && xhr.readyState == 4 && !done ) {
-                var status = xhr.status;
-                done = 1;
-
-                if (ival) {
-                    clearInterval(ival);
-                    ival = null;
-                }
-
-                // Invoke Success Or Failure
-                if (
-                    ((status >= 200 && status < 300) ||
-                    status == 304 || status == 1223) &&
-                    xhr.responseText
-                ) {
-                    try { response = JSON['parse'](xhr.responseText); }
-                    catch(ee) {response = 0; fail(xhr); }
-                    response && success(response);
-                }
-                else fail(xhr);
-
-                // Done with XHR
-                xhr = null;
-            }
+            if (xhr.readyState != 4) return;
+            if (xhr.status == 200) finished();
+            else fail();
         }
+    ,   finished = function() {
+            if (complete) return;
+                complete = 1;
+
+            response = JSON['parse'](xhr.responseText);
+            success(response);
+        }
+    ,   complete = 0
     ,   fail     = setup.fail    || function(){}
     ,   success  = setup.success || function(){}
-    ,   response
-    ,   done     = 0
-    ,   ival     = setInterval( rsc, 20 );
+    ,   done     = function(failed) {
+            xhr && xhr.abort && xhr.abort();
+            failed && fail();
+        };
 
     // Send
     try {
-        xhr = new XMLHttpRequest();
+        xhr = window.XDomainRequest &&
+              new XDomainRequest()  ||
+              new XMLHttpRequest();
+
+        xhr.onerror            = function(){ done(1) };
+        xhr.onload             = finished;
+        xhr.timeout            = 200000;
+        xhr.onreadystatechange = rsc;
+
         xhr.open( 'GET', setup.url.join(URLBIT), true );
         xhr.send();
     }
     catch(eee) {
+        done(0);
         XORIGN = 0;
-        ival && clearInterval(ival);
         return xdr(setup);
     }
 
     // Return 'done'
-    return function() {
-        done = 1;
-        xhr && xhr.abort && xhr.abort();
-    };
+    return done;
 }
 
 
@@ -537,7 +531,7 @@ var PN            = $('pubnub')
 ,   PUBLISH_KEY   = attr( PN, 'pub-key' ) || DEMO
 ,   SUBSCRIBE_KEY = attr( PN, 'sub-key' ) || DEMO
 ,   SSL           = attr( PN, 'ssl' ) == 'on' ? 's' : ''
-,   ORIGIN        = 'http'+SSL+'://pubsub.pubnub.com'
+,   ORIGIN        = 'http'+SSL+'://'+(attr(PN,'origin')||'pubsub.pubnub.com')
 ,   LIMIT         = 1800
 ,   READY         = 0
 ,   READY_BUFFER  = []
