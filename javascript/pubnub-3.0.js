@@ -478,13 +478,14 @@ function ajax( setup ) {
     ,   rsc = function() {
             if (xhr.readyState != 4) return;
             if (xhr.status == 200) finished();
-            else fail();
+            else done(1);
         }
     ,   finished = function() {
             if (complete) return;
                 complete = 1;
 
-            response = JSON['parse'](xhr.responseText);
+            try       { response = JSON['parse'](xhr.responseText); }
+            catch (r) { return done(1); }
             success(response);
         }
     ,   complete = 0
