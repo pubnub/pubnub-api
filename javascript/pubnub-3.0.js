@@ -475,11 +475,6 @@ function xdr( setup ) {
  */
 function ajax( setup ) {
     var xhr
-    ,   rsc = function() {
-            if (xhr.readyState != 4) return;
-            if (xhr.status == 200) finished();
-            else done(1);
-        }
     ,   finished = function() {
             if (complete) return;
                 complete = 1;
@@ -502,10 +497,9 @@ function ajax( setup ) {
               new XDomainRequest()  ||
               new XMLHttpRequest();
 
-        xhr.onerror            = function(){ done(1) };
-        xhr.onload             = finished;
-        xhr.timeout            = 200000;
-        xhr.onreadystatechange = rsc;
+        xhr.onerror = function(){ done(1) };
+        xhr.onload  = finished;
+        xhr.timeout = 200000;
 
         xhr.open( 'GET', setup.url.join(URLBIT), true );
         xhr.send();
