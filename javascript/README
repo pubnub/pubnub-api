@@ -3,6 +3,8 @@
 ## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 ## http://www.pubnub.com/account-javascript-api-include
 ##
+## USE "DEMO" INCLUDES (BELOW) FREE! WHILE DEVELOPING
+##
 ## ----------------------------------------------------
 
 ## ------------------------------------------------
@@ -33,17 +35,25 @@
     src="http://pubnub-prod.appspot.com/js-api?pub-key=demo&sub-key=demo&origin=pubsub.pubnub.com&ssl=&java=&devmode="
 ></script>
 
+<!-- ====================== -->
 <!-- EXAMPLE USE PUBNUB API -->
+<!-- ====================== -->
 <script>
+
+    // -------------------
     // LISTEN FOR MESSAGES
+    // -------------------
     PUBNUB.subscribe({
         channel  : "hello_world",
         callback : function(message) { alert(message) }
     })
 
+    // ------------
     // SEND MESSAGE
+    // ------------
     PUBNUB.publish({
         channel : "hello_world",
         message : "Hi."
     })
+
 </script>
