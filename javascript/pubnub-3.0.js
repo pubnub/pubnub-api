@@ -40,19 +40,7 @@
         return n < 10 ? '0' + n : n;
     }
 
-    if (typeof Date.prototype.toJSON !== 'function') {
-
-        Date.prototype.toJSON = function (key) {
-
-            return isFinite(this.valueOf()) ?
-                   this.getUTCFullYear()   + '-' +
-                 f(this.getUTCMonth() + 1) + '-' +
-                 f(this.getUTCDate())      + 'T' +
-                 f(this.getUTCHours())     + ':' +
-                 f(this.getUTCMinutes())   + ':' +
-                 f(this.getUTCSeconds())   + 'Z' : null;
-        };
-
+    if (typeof String.prototype.toJSON !== 'function') {
         String.prototype.toJSON =
         Number.prototype.toJSON =
         Boolean.prototype.toJSON = function (key) {
@@ -74,7 +62,6 @@
             '\\': '\\\\'
         },
         rep;
-
 
     function quote(string) {
         escapable.lastIndex = 0;
@@ -200,6 +187,7 @@
     }
 }());
 
+
 /* =-=====================================================================-= */
 /* =-=====================================================================-= */
 /* =-========================     DOM UTIL     ===========================-= */
@@ -208,19 +196,20 @@
 
 window['PUBNUB'] || (function() {
 
-// ============================================================================
-// CONSOLE COMPATIBILITY
-// ============================================================================
+/**
+ * CONSOLE COMPATIBILITY
+ */
 window.console||(window.console=window.console||{});
 console.log||(console.log=((window.opera||{}).postError||function(){}));
 
-// ============================================================================
-// DOM UTIL LOCALS
-// ============================================================================
+/**
+ * UTIL LOCALS
+ */
 var NOW    = 1
 ,   MAGIC  = /\$?{([\w\-]+)}/g
 ,   ASYNC  = 'async'
 ,   URLBIT = '/'
+,   XHRTME = 120000
 ,   XORIGN = 1;
 
 /**
@@ -333,7 +322,6 @@ function bind( type, el, fun ) {
     } );
 }
 
-
 /**
  * UNBIND
  * ======
@@ -361,7 +349,6 @@ function attr( node, attribute, value ) {
     if (value) node.setAttribute( attribute, value );
     else return node && node.getAttribute && node.getAttribute(attribute);
 }
-
 
 /**
  * CSS
@@ -418,15 +405,13 @@ function encode(path) {
  *  });
  */
 function xdr( setup ) {
-    // XHR if possible.
     if (XORIGN) return ajax(setup);
 
     var script    = create('script')
     ,   callback  = setup.callback
     ,   id        = unique()
     ,   finished  = 0
-    ,   limit     = setup.timeout || 200000
-    ,   timer     = timeout( function(){done(1)}, limit )
+    ,   timer     = timeout( function(){done(1)}, XHRTME )
     ,   fail      = setup.fail    || function(){}
     ,   success   = setup.success || function(){}
 
@@ -465,8 +450,8 @@ function xdr( setup ) {
 }
 
 /**
- * XDR Cross XHR Request
- * =====================
+ * CORS XHR Request
+ * ================
  *  xdr({
  *     url     : ['http://www.blah.com/url'],
  *     success : function(response) {},
@@ -476,18 +461,33 @@ function xdr( setup ) {
 function ajax( setup ) {
     var xhr
     ,   finished = function() {
-            if (complete) return;
-                complete = 1;
+            if (loaded) return;
+                loaded = 1;
+
+            clearTimeout(timer);
 
             try       { response = JSON['parse'](xhr.responseText); }
             catch (r) { return done(1); }
+
             success(response);
         }
     ,   complete = 0
+    ,   loaded   = 0
+    ,   timer    = timeout( function(){done(1)}, XHRTME )
     ,   fail     = setup.fail    || function(){}
     ,   success  = setup.success || function(){}
     ,   done     = function(failed) {
-            xhr && xhr.abort && xhr.abort();
+            if (complete) return;
+                complete = 1;
+
+            clearTimeout(timer);
+
+            if (xhr) {
+                xhr.onerror = xhr.onload = null;
+                xhr.abort && xhr.abort();
+                xhr = null;
+            }
+
             failed && fail();
         };
 
@@ -499,7 +499,7 @@ function ajax( setup ) {
 
         xhr.onerror = function(){ done(1) };
         xhr.onload  = finished;
-        xhr.timeout = 200000;
+        xhr.timeout = XHRTME;
 
         xhr.open( 'GET', setup.url.join(URLBIT), true );
         xhr.send();
@@ -616,16 +616,14 @@ var PN            = $('pubnub')
         // Send Message
         xdr({
             callback : jsonp,
+            success  : function(response) { callback(response) },
+            fail     : function() { callback([ 0, 'Disconnected' ]) },
             url      : [
                 ORIGIN, 'publish',
                 PUBLISH_KEY, SUBSCRIBE_KEY,
                 0, encode(channel),
                 jsonp, encode(message)
-            ],
-            success  : function(response) { callback(response) },
-            fail     : function(){timeout( function(){
-                           PUBNUB['publish']( args, callback )
-                       }, 1000 )}
+            ]
         });
     },
 
@@ -692,7 +690,7 @@ var PN            = $('pubnub')
                 success  : function(message) {
                     if (!CHANNELS[channel].connected) return;
                     timetoken = message[1];
-                    pubnub();
+                    timeout( pubnub, 10 );
                     each( message[0], function(msg) { callback(msg) } );
                 }
             });
@@ -723,7 +721,7 @@ bind( 'load', window, function() { timeout( function() {
     each( READY_BUFFER, function(sub) {
         PUBNUB['subscribe']( sub[0], sub[1] );
     } );
-}, 200 ); } );
+}, 1000 ); } );
 
 // Provide Global Interfaces
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
