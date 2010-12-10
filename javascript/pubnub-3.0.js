@@ -1,11 +1,7 @@
 /*
-    WAIT! - This file depends on instructions from the PUBNUB Server.
-    It is recommended that you load this file from a <script> include tag.
+    WAIT! - This file depends on instructions from the PUBNUB Cloud.
 
-    Get your JS Include <script> include tag here:
     http://www.pubnub.com/account-javascript-api-include
-
-    Make sure to use that link if you want to use PubNub Comet.
 */
 
 /*
