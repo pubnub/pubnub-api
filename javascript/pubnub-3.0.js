@@ -205,7 +205,7 @@ var NOW    = 1
 ,   MAGIC  = /\$?{([\w\-]+)}/g
 ,   ASYNC  = 'async'
 ,   URLBIT = '/'
-,   XHRTME = 120000
+,   XHRTME = 140000
 ,   XORIGN = 1;
 
 /**
