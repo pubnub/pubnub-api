@@ -19,7 +19,6 @@ $th3->join();
 
 
 # called by threads:
-
 sub publish {
     sleep(1); # give subscribe() a head start
     print 'publish(): ',

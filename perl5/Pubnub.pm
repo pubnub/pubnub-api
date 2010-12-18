@@ -4,7 +4,7 @@ use Modern::Perl;
 use LWP::Simple;
 use URI::Escape;
 use JSON;
-use Digest::MD5 qw(md5_hsx);
+use Digest::MD5 qw(md5_hex);
 
 our $origin = 'pubsub.pubnub.com';
 our $limit = 1800;
