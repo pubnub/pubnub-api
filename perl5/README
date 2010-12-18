@@ -1,0 +1,59 @@
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account-javascript-api-include
+##
+## ----------------------------------------------------
+
+## --------------------------------------------
+## PubNub 3.0 Real-time Cloud Push API - PERL 5
+## --------------------------------------------
+##
+## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+## http://github.com/pubnub/pubnub-api/tree/master/perl5/
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to web and mobile clients simultaneously.
+
+## ---------------
+## Perl Push API
+## ---------------
+my $pubnub = Pubnub->new({
+    pubkey => 'demo',
+    subkey => 'demo',
+    ssl    => 0
+});
+
+# -------
+# PUBLISH
+# -------
+# Send Message
+my $info = $pubnub->publish({ 
+    channel => 'hello_world', 
+    message => 'He said, "helowrld"' 
+});
+print($info);
+
+# ---------
+# SUBSCRIBE
+# ---------
+# Listen for Messages *BLOCKING*
+$pubnub->subscribe({
+    channel  => 'hello_world', 
+    callback => 
+        sub { 
+            my $msg = shift; 
+            print "subscribe(): $msg\n"; 
+            return 0; # stop after one message...
+        }
+});
+
+# -------
+# HISTORY
+# -------
+# Load Previously Published Messages
+my $history = $pubnub->history({
+    channel => 'hello_world'
+});
+print($history);
