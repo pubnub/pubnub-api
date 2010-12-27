@@ -4,17 +4,24 @@ Objective-C PubNub 3.0 Real-time Cloud Push API
 PubNub Account
 --------------
 You must have a pubnub account to use the API.
-http://www.pubnub.com/account
+[http://www.pubnub.com/account](http://www.pubnub.com/account "PubNub Account")
 
 About PubNub
 ------------
 PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time bidirectional
-messages to web, mobile, tv, tablet and gps clients.
+messages to web, mobile, TV, tablet and GPS clients.
 
 Objective-C Info
 ----------------
-http://github.com/pubnub/pubnub-api/tree/master/objective-c/
+The PubNub Objective C Real-time Cloud Push API runs on Cocoa Native
+and Mobile Devices.  This library offers complete non-blocking asynchronous
+message passing in the cloud.
+
+The PubNub Real-time Cloud Push Service works with every mobile device
+using any carrier service provider.
+
+[http://github.com/pubnub/pubnub-api/tree/master/objective-c/](http://github.com/pubnub/pubnub-api/tree/master/objective-c/ "Objective-C PubNub 3.0 Real-time Cloud Push API")
 
 
 PubNub Usage Code Examples
@@ -31,9 +38,22 @@ Init Pubnub Class
         origin:       @"pubsub.pubnub.com"
     ];
 
+PubNub Publish Message (Send Message) [Usage Example]
+-----------------------------------------------------
 
-PubNub Publish Message (Send Message)
--------------------------------------
+    [pubnub
+        publish: @"hello_world_objective_c"
+        message: [NSDictionary
+            dictionaryWithObjectsAndKeys:
+            @"Star",    @"first_name", 
+            @"Salzman", @"last_name", 
+            99999,      @"awesomeness", 
+        nil]
+        deligate: [Response alloc]
+    ];
+
+PubNub Publish Message (Send Message) [Full Example]
+----------------------------------------------------
 
     @interface      PublishResponse: Response @end
     @implementation PublishResponse
@@ -56,7 +76,7 @@ PubNub Publish Message (Send Message)
 
         // NSArray Example
         [pubnub
-            publish: channel
+            publish: @"hello_world_objective_c"
             message: [NSArray arrayWithObjects:
                 @"one",
                 @"two",
@@ -68,7 +88,7 @@ PubNub Publish Message (Send Message)
 
         // NSDictionary Example
         [pubnub
-            publish: channel
+            publish: @"hello_world_objective_c"
             message: [NSDictionary
                 dictionaryWithObjectsAndKeys:
                 @"Star",    @"first_name", 
@@ -87,9 +107,19 @@ PubNub Publish Message (Send Message)
         return 0;
     }
 
+PubNub Subscribe (Receive Messages) [Usage Example]
+---------------------------------------------------
 
-PubNub Subscribe (Receive Messages)
------------------------------------
+    [pubnub
+        subscribe: @"hello_world_objective_c"
+        deligate:  [[SubscribeResponse alloc]
+            pubnub:  pubnub
+            channel: @"hello_world_objective_c"
+        ]
+    ];
+
+PubNub Subscribe (Receive Messages) [Full Example]
+--------------------------------------------------
 
     @interface      SubscribeResponse: Response @end
     @implementation SubscribeResponse
@@ -107,12 +137,12 @@ PubNub Subscribe (Receive Messages)
             origin:       @"pubsub.pubnub.com"
         ];
 
-        NSLog( @"Listening to: %@", channel );
+        NSLog( @"Listening to: %@", @"hello_world_objective_c" );
         [pubnub
-            subscribe: channel
+            subscribe: @"hello_world_objective_c"
             deligate:  [[SubscribeResponse alloc]
                 pubnub:  pubnub
-                channel: channel
+                channel: @"hello_world_objective_c"
             ]
         ];
 
@@ -126,8 +156,17 @@ PubNub Subscribe (Receive Messages)
     }
 
 
-PubNub History (Recent Message History)
----------------------------------------
+PubNub History (Recent Message History) [Usage Example]
+-------------------------------------------------------
+
+    [pubnub
+        history:  @"hello_world_objective_c"
+        limit:    10
+        deligate: [HistoryResponse alloc]
+    ];
+
+PubNub History (Recent Message History) [Full Example]
+------------------------------------------------------
 
     @interface      HistoryResponse: Response @end
     @implementation HistoryResponse
@@ -151,7 +190,7 @@ PubNub History (Recent Message History)
         ];
 
         [pubnub
-            history:  channel
+            history:  @"hello_world_objective_c"
             limit:    10
             deligate: [HistoryResponse alloc]
         ];
@@ -165,8 +204,13 @@ PubNub History (Recent Message History)
         return 0;
     }
 
-PubNub Server Time Example (Get TimeToken)
-------------------------------------------
+PubNub Server Time Example (Get TimeToken) [Usage Example]
+----------------------------------------------------------
+
+    [pubnub time: [TimeResponse alloc]];
+
+PubNub Server Time Example (Get TimeToken) [Full Example]
+---------------------------------------------------------
 
     @interface      TimeResponse: TimeDelegate @end
     @implementation TimeResponse
@@ -202,17 +246,17 @@ Building Application with PubNub Real-Time Cloud Push API 3.0
 BUILDING Cocoa iOS XCode
 ------------------------
  1. Copy PubNub directory into your XCode Project Class Directory.
- 2. #import "pubnub.h"
+ 2. \#import "pubnub.h"
  3. Refer to example.m for PubNub Usage Example.
 
 BUILDING Cocoa Command Line
 ---------------------------
  1. Copy PubNub directory into your Project Directory.
- 2. #import "pubnub.h"
+ 2. \#import "pubnub.h"
  3. Refer to example.m for PubNub Usage Example.
 
 BUILDING Cocoa Command Line Example
 -----------------------------------
-    1. Run ./build-example
-    2. This will build example.m with a basic test of PubNub functions.
+ 1. Run ./build-example
+ 2. This will build example.m with a basic test of PubNub functions.
 
