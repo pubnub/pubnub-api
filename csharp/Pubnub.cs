@@ -29,7 +29,7 @@ public class PubnubTEST {
         // ---------------
         // Publish Message
         // ---------------
-        List<object> info    = pubnub.publish( channel, "Hello World" );
+        List<object> info = pubnub.publish( channel, "Hello World" );
 
         // ----------------
         // Publish Response
@@ -265,20 +265,13 @@ public class Pubnub {
 
             // Wait for Message
             List<object> response = _request(url);
-            ArrayList messages    = (ArrayList)response[0];
 
             // Update TimeToken
             if (response[1].ToString().Length  > 0)
                 timetoken = (object)response[1];
 
-            // If it was a timeout
-            if (messages.Count == 0) {
-                _subscribe( channel, callback, timetoken );
-                return;
-            }
-
             // Run user Callback and Reconnect if user permits.
-            foreach (object message in messages) {
+            foreach (object message in (object[])response[0]) {
                 if (!callback(message)) return;
             }
 

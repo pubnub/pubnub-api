@@ -16,6 +16,10 @@
 ## This is a cloud-based service for broadcasting Real-time messages
 ## to thousands of web and mobile clients simultaneously.
 
+## -------------------------------------------
+## ARE YOU COMPILING WITH .NET OLDER THAN 3.5?
+## -------------------------------------------
+## YOU MUST USE System.Web.Extensions.dll included in this directory.
 
 ===============================================================================
 PubNub C# Client API Boiler Plate
