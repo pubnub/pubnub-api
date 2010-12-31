@@ -43,7 +43,10 @@ public class PubnubTEST {
         // History
         // -------
         List<object> history = pubnub.history( channel, 1 );
-        Console.WriteLine("History Message: " + history[0]);
+        foreach (object history_message in history) {
+            Console.Write("History Message: ");
+            Console.WriteLine(history_message);
+        }
 
         // ----------------------
         // Get PubNub Server Time

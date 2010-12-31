@@ -77,9 +77,9 @@ C#: (Subscribe)
 C#: (History)
 -------------------------------------------------------------------------------
 
-    List<object> history = pubnub.history(
-        "hello_world", // Channel Name
-        1              // Limit
-    );
-    Console.WriteLine(history);
+    List<object> history = pubnub.history( "hello_world", 1 );
+    foreach (object history_message in history) {
+        Console.Write("History Message: ");
+        Console.WriteLine(history_message);
+    }
 
