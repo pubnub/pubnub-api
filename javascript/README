@@ -21,7 +21,7 @@
 <!-- ============================= -->
 <!-- INCLUDE SCRIPT PREFERED STYLE -->
 <!-- ============================= -->
-<script src=http://pubnub.s3.amazonaws.com/pubnub-3.0.min.js
+<script src=http://cdn.pubnub.com/pubnub-3.0.min.js
     pub-key=demo
     sub-key=demo
     ssl=off
