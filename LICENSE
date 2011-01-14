@@ -1,11 +1,7 @@
-PubNub Real-time Cloud Push API and Push Notifications Client Frameworks
+PubNub Real-time Cloud-Hosted Push API and Push Notification Client Frameworks
 Copyright (c) 2010 Stephen Blum
 http://www.pubnub.com/
 http://www.google.com/profiles/blum.stephen
-
-The MIT License
-
-Copyright (c) <year> <copyright holders>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-PubNub Real-time Cloud Push API and Push Notifications Client Frameworks
+PubNub Real-time Cloud-Hosted Push API and Push Notification Client Frameworks
 Copyright (c) 2010 Stephen Blum
 http://www.pubnub.com/
 http://www.google.com/profiles/blum.stephen
