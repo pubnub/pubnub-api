@@ -66,45 +66,43 @@ sub publish {
 
 # This is blocking
 sub subscribe {
-    
     my $self = shift;
-    my $h = shift;
+    my $args = shift;
 
     die "Required params: \$channel, \$callback\n" if 
-        !$h->{'channel'} || !$h->{'callback'};
+        !$args->{'channel'} || !$args->{'callback'};
     
     # shorteners
-    my $callback = $h->{'callback'};
-    my $timetoken = $h->{'timetoken'} ? $h->{'timetoken'} : '0';
+    my $channel   = $args->{'channel'};
+    my $callback  = $args->{'callback'};
+    my $timetoken = $args->{'timetoken'} ? $args->{'timetoken'} : '0';
 
     # build URL from params
     my $url = $self->{'protocol'} . '://' . $origin .
         '/subscribe' . 
         '/' . $self->{'subkey'} .
-        '/' . $h->{'channel'} .
+        '/' . $channel .
         '/0' .                  # TODO callback 
         '/' . $timetoken;
    
-    print "\n\n$url\n\n" if $TRACE;
-    print "$callback\n" if $TRACE; 
-
     my $resp = decode_json(get($url));
     my $messages = $$resp[0];
 
+    $args->{'timetoken'} = $$resp[1] || 0;
+
     # timeout
-    if (!@$messages) { return $self->subscribe($h); }
+    if (!@$messages) { return $self->subscribe($args); }
    
     foreach my $msg (@$messages) {
         return if !&$callback($msg); # user cancels
     }
     
-    return $self->subscribe($h);
+    return $self->subscribe($args);
 
 } # subscribe
 
 
 sub history {
-    
     my $self = shift;
     my $h = shift;
 
