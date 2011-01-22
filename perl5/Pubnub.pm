@@ -14,17 +14,14 @@ sub new {
 
     my $class = shift;
     my $self = {};
-    
-    $self->{'pubkey'} = shift;
-    $self->{'subkey'} = shift;
-    $self->{'secret'} = 0;
-    $self->{'ssl'} = shift;
 
-    # default to 'demo'
-    $self->{'pubkey'} = $self->{'pubkey'} ? $self->{'pubkey'} : 'demo';
-    $self->{'subkey'} = $self->{'subkey'} ? $self->{'subkey'} : 'demo';
+    my $param = shift;
     
-    $self->{'protocol'} = $self->{'ssl'} ? 'https' : 'http';
+    # default to 'demo'
+    $self->{'pubkey'} = $param->{'pubkey'} ? $param->{'pubkey'} : 'demo';
+    $self->{'subkey'} = $param->{'subkey'} ? $param->{'subkey'} : 'demo';
+    $self->{'protocol'} = $param->{'ssl'} ? 'https' : 'http';
+    $self->{'secret'} = 0;
 
     bless($self, $class);
     return $self;
