@@ -5,9 +5,10 @@ use threads::shared;
 use Pubnub;
 
 my $channel = 'some_unique_channel_perhaps';
-
-my $p = Pubnub->new(); # defaults to 'demo' channel
-
+my $p = Pubnub->new({
+    pubkey => 'demo',
+    subkey => 'demo',
+}); # defaults to 'demo' channel
 
 # call these on thread, since subscribe() will block
 my $th = threads->create('subscribe');

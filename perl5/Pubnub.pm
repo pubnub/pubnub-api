@@ -11,19 +11,40 @@ our $limit = 1800;
 our $TRACE = 0;
 
 sub new {
-
     my $class = shift;
     my $self = {};
 
-    my $param = shift;
+    my $param  = shift; ## May contain Publish Key
+    my $subkey = shift;
+    my $seckey = shift;
+    my $ssl_on = shift;
+    my $selected_origin = shift;
+
+    $self->{'protocol'} = 'http';
     
     # default to 'demo'
-    $self->{'pubkey'} = $param->{'pubkey'} ? $param->{'pubkey'} : 'demo';
-    $self->{'subkey'} = $param->{'subkey'} ? $param->{'subkey'} : 'demo';
-    $self->{'protocol'} = $param->{'ssl'} ? 'https' : 'http';
-    $self->{'secret'} = 0;
+    if (ref $param eq 'HASH' ) {
+        $self->{'pubkey'}   = $param->{'pubkey'} ? $param->{'pubkey'} : 'demo';
+        $self->{'subkey'}   = $param->{'subkey'} ? $param->{'subkey'} : 'demo';
+        $self->{'protocol'} = $param->{'ssl'} ? 'https' : 'http';
+        $self->{'secret'}   = 0;
+    }
 
-    bless($self, $class);
+    if ($subkey) {
+        $self->{'pubkey'} = $param;
+        $self->{'subkey'} = $subkey;
+    }
+    if ($seckey) {
+        $self->{'secret'} = $seckey;
+    }
+    if ($ssl_on) {
+        $self->{'protocol'} = 'https';
+    }
+    if ($selected_origin) {
+        $origin = $selected_origin;
+    }
+
+    bless( $self, $class );
     return $self;
         
 } # new
