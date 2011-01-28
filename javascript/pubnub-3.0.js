@@ -354,7 +354,9 @@ function attr( node, attribute, value ) {
 function css( element, styles ) {
     for (var style in styles) if (styles.hasOwnProperty(style))
         try {element.style[style] = styles[style] + (
-            '|width|height|top|left|'.indexOf(style) > 0 ? 'px' : ''
+            '|width|height|top|left|'.indexOf(style) > 0 &&
+            typeof styles[style] == 'number'
+            ? 'px' : ''
         )}catch(e){}
 }
 
