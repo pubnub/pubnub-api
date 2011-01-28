@@ -57,11 +57,9 @@ multiplayer:subscribe({
 --
 -- PUBNUB UN-SUBSCRIBE CHANNEL (STOP RECEIVING MESSAGES)
 --
---[[
 multiplayer:unsubscribe({
     channel = "lua-corona-demo-channel"
 })
---]]
 
 --
 -- PUBNUB LOAD MESSAGE HISTORY

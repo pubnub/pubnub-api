@@ -33,7 +33,7 @@ echo("
     ## ----------------------
     echo("Sending a message with Publish Function\n");
     $info = $pubnub->publish(array(
-        'channel' => 'hello_world2',
+        'channel' => 'OOSS',
         'message' => $message
     ));
 

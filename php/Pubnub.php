@@ -21,19 +21,23 @@ class Pubnub {
      *
      * @param string $publish_key required key to send messages.
      * @param string $subscribe_key required key to receive messages.
-     * @param string $secret_key required key to sign messages.
+     * @param string $secret_key optional key to sign messages.
+     * @param string $origin optional setting for cloud origin.
      * @param boolean $ssl required for 2048 bit encrypted messages.
      */
     function Pubnub(
         $publish_key,
         $subscribe_key,
         $secret_key = false,
-        $ssl = false
+        $ssl        = false,
+        $origin     = false
     ) {
         $this->PUBLISH_KEY   = $publish_key;
         $this->SUBSCRIBE_KEY = $subscribe_key;
         $this->SECRET_KEY    = $secret_key;
         $this->SSL           = $ssl;
+
+        if ($origin) $this->ORIGIN = $origin;
 
         if ($ssl) $this->ORIGIN = 'https://' . $this->ORIGIN;
         else      $this->ORIGIN = 'http://'  . $this->ORIGIN;

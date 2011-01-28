@@ -139,8 +139,8 @@ function pubnub.new(init)
     end
 
     function self:history(args)
-        if not args.callback then
-            return print("Missing History Callback")
+        if not (args.callback and args.channel) then
+            return print("Missing History Callback and/or Channel")
         end
 
         limit    = args.limit
@@ -182,14 +182,11 @@ function pubnub.new(init)
         table.insert( args.request, 1, self.origin )
 
         local url = table.concat( args.request, "/" )
-        print(url)
 
         network.request( url, "GET", function(event)
             if (event.isError) then
                 return args.callback(nil)
             end
-
-            print(event.response)
             args.callback(Json.Decode(event.response))
         end )
     end
@@ -214,26 +211,3 @@ function pubnub.new(init)
     -- RETURN NEW PUBNUB OBJECT
     return self
 end
-
-
---[[ md5
-print (crypto.digest( crypto.md5, "test" )) 
-
-
--- request
-local function ( event )
-    if ( event.isError ) then
-        print( "Network error!")
-    else
-        print ( "RESPONSE: " .. event.response )
-    end
-end
- 
-network.request( "http://encrypted.google.com", "GET", networkListener )
-
-
--- timer
-timer.performWithDelay( delay, listener [, iterations] )
- 
-
- --]]
