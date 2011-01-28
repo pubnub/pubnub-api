@@ -22,7 +22,8 @@ class Pubnub():
         publish_key,
         subscribe_key,
         secret_key = False,
-        ssl_on = False
+        ssl_on = False,
+        origin = 'pubsub.pubnub.com'
     ) :
         """
         #**
@@ -34,13 +35,14 @@ class Pubnub():
         #* @param string subscribe_key required key to receive messages.
         #* @param string secret_key required key to sign messages.
         #* @param boolean ssl required for 2048 bit encrypted messages.
+        #* @param string origin PUBNUB Server Origin.
         #**
 
         ## Initiat Class
         pubnub = Pubnub( 'PUBLISH-KEY', 'SUBSCRIBE-KEY', 'SECRET-KEY', False )
 
         """
-        self.origin        = 'pubsub.pubnub.com'
+        self.origin        = origin
         self.limit         = 1800
         self.publish_key   = publish_key
         self.subscribe_key = subscribe_key
