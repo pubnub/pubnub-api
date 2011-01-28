@@ -4,6 +4,7 @@
     $publish_key   = isset($argv[1]) ? $argv[1] : false;
     $subscribe_key = isset($argv[2]) ? $argv[2] : false;
     $message       = isset($argv[3]) ? $argv[3] : false;
+    $channel_name  = isset($argv[4]) ? $argv[4] : 'hello_world2';
 
     ## Print usage if missing info.
     if (!($publish_key && $subscribe_key && $message)) {
@@ -33,7 +34,7 @@ echo("
     ## ----------------------
     echo("Sending a message with Publish Function\n");
     $info = $pubnub->publish(array(
-        'channel' => 'OOSS',
+        'channel' => $channel_name,
         'message' => $message
     ));
 
