@@ -1,10 +1,15 @@
+--
+-- Corona Multiplayer Networking and Push Notifications
+-- Copy "pubnub.lua" and "Json.lua" into your Project Directory.
+--
+
 require "pubnub"
 
 --
 -- GET YOUR PUBNUB KEYS HERE:
 -- http://www.pubnub.com/account#api-keys
 --
-multiplayer = pubnub.new({
+network = pubnub.new({
     publish_key   = "demo",             -- YOUR PUBLISH KEY
     subscribe_key = "demo",             -- YOUR SUBSCRIBE KEY
     secret_key    = nil,                -- YOUR SECRET KEY
@@ -13,19 +18,9 @@ multiplayer = pubnub.new({
 })
 
 --
--- PUBNUB SERVER TIME
---
-multiplayer:time({
-    callback = function(time)
-        -- PRINT TIME
-        print("PUBNUB SERVER TIME: " .. time)
-    end
-})
-
---
 -- PUBNUB PUBLISH MESSAGE (SEND A MESSAGE)
 --
-multiplayer:publish({
+network:publish({
     channel  = "lua-corona-demo-channel",
     message  = { "1234", 2, 3, 4 },
     callback = function(info)
@@ -43,7 +38,7 @@ multiplayer:publish({
 --
 -- PUBNUB SUBSCRIBE CHANNEL (RECEIVE MESSAGES)
 --
-multiplayer:subscribe({
+network:subscribe({
     channel  = "lua-corona-demo-channel",
     callback = function(message)
         -- MESSAGE RECEIVED!!!
@@ -57,14 +52,14 @@ multiplayer:subscribe({
 --
 -- PUBNUB UN-SUBSCRIBE CHANNEL (STOP RECEIVING MESSAGES)
 --
-multiplayer:unsubscribe({
+network:unsubscribe({
     channel = "lua-corona-demo-channel"
 })
 
 --
 -- PUBNUB LOAD MESSAGE HISTORY
 --
-multiplayer:history({
+network:history({
     channel  = "lua-corona-demo-channel",
     limit    = 10,
     callback = function(messages)
@@ -81,6 +76,17 @@ multiplayer:history({
         for i, message in ipairs(messages) do
             print(Json.Encode(message))
         end
+    end
+})
+
+
+--
+-- PUBNUB SERVER TIME
+--
+network:time({
+    callback = function(time)
+        -- PRINT TIME
+        print("PUBNUB SERVER TIME: " .. time)
     end
 })
 

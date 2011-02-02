@@ -192,12 +192,9 @@ function pubnub.new(init)
     end
 
     function self:_encode(str)
-        str = string.gsub( str, "\n", "\r\n" )
-        str = string.gsub( str, "([^%w ])", function(c)
+        return string.gsub( str, "([^%a%d])", function(c)
             return string.format( "%%%02X", string.byte(c) )
         end )
-        str = string.gsub( str, " ", "%20" )
-        return str
     end
 
     function self:_map( func, array )
