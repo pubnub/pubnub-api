@@ -9,7 +9,7 @@ require "pubnub"
 -- GET YOUR PUBNUB KEYS HERE:
 -- http://www.pubnub.com/account#api-keys
 --
-network = pubnub.new({
+multiplayer = pubnub.new({
     publish_key   = "demo",             -- YOUR PUBLISH KEY
     subscribe_key = "demo",             -- YOUR SUBSCRIBE KEY
     secret_key    = nil,                -- YOUR SECRET KEY
@@ -20,7 +20,7 @@ network = pubnub.new({
 --
 -- PUBNUB PUBLISH MESSAGE (SEND A MESSAGE)
 --
-network:publish({
+multiplayer:publish({
     channel  = "lua-corona-demo-channel",
     message  = { "1234", 2, 3, 4 },
     callback = function(info)
@@ -38,7 +38,7 @@ network:publish({
 --
 -- PUBNUB SUBSCRIBE CHANNEL (RECEIVE MESSAGES)
 --
-network:subscribe({
+multiplayer:subscribe({
     channel  = "lua-corona-demo-channel",
     callback = function(message)
         -- MESSAGE RECEIVED!!!
@@ -52,14 +52,14 @@ network:subscribe({
 --
 -- PUBNUB UN-SUBSCRIBE CHANNEL (STOP RECEIVING MESSAGES)
 --
-network:unsubscribe({
+multiplayer:unsubscribe({
     channel = "lua-corona-demo-channel"
 })
 
 --
 -- PUBNUB LOAD MESSAGE HISTORY
 --
-network:history({
+multiplayer:history({
     channel  = "lua-corona-demo-channel",
     limit    = 10,
     callback = function(messages)
@@ -83,7 +83,7 @@ network:history({
 --
 -- PUBNUB SERVER TIME
 --
-network:time({
+multiplayer:time({
     callback = function(time)
         -- PRINT TIME
         print("PUBNUB SERVER TIME: " .. time)
