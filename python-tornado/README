@@ -1,0 +1,88 @@
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account-javascript-api-include
+##
+## ----------------------------------------------------
+
+## ---------------------------------------------
+## PubNub 3.0 Real-time Cloud Push API - PYTHON
+## ---------------------------------------------
+##
+## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+## http://github.com/pubnub/pubnub-api/tree/master/python/
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
+
+## ---------------
+## Python Push API
+## ---------------
+pubnub = Pubnub(
+    "demo",  ## PUBLISH_KEY
+    "demo",  ## SUBSCRIBE_KEY
+    "",      ## SECRET_KEY
+    False    ## SSL_ON?
+)
+
+## -----------------------------------------------------------------------
+## IO Event Loop
+## -----------------------------------------------------------------------
+## VERY IMPORTANT TO ADD THIS LINE AT THE VERY BOTTOM!
+##
+## tornado.ioloop.IOLoop.instance().start() ## IMPORTANT!
+##
+
+## -----------------------------------------------------------------------
+## Publish Example
+## -----------------------------------------------------------------------
+def publish_complete(info):
+    print(info)
+
+pubnub.publish({
+    'channel' : "my-tornado-channel",
+    'message' : {
+        'some_text' : 'Hello World!'
+    },
+    'callback' : publish_complete
+})
+
+## -----------------------------------------------------------------------
+## Subscribe Example
+## -----------------------------------------------------------------------
+def message_received(message):
+    print(message)
+
+pubnub.subscribe({
+    'channel'  : "my-tornado-channel",
+    'callback' : message_received
+})
+
+## -----------------------------------------------------------------------
+## Time Example
+## -----------------------------------------------------------------------
+def time_complete(timestamp):
+    print(timestamp)
+
+pubnub.time({ 'callback' : time_complete })
+
+## -----------------------------------------------------------------------
+## History Example
+## -----------------------------------------------------------------------
+def history_complete(messages):
+    print(messages)
+
+pubnub.history( {
+    'channel'  : "my-tornado-channel",
+    'limit'    : 10,
+    'callback' : history_complete
+})
+
+## -----------------------------------------------------------------------
+## IO Event Loop
+## -----------------------------------------------------------------------
+tornado.ioloop.IOLoop.instance().start()
+
+
+
