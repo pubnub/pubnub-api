@@ -12,8 +12,8 @@ echo("
     ==============
     EXAMPLE USAGE:
     ==============
-    php ./publish-example.php PUBLISH-KEY SUBSCRIBE-KEY 'ANY MESSAGE HERE'
-    php ./publish-example.php PUBLISH-KEY SUBSCRIBE-KEY 'Hey what is up?'
+    php ./publish-example.php PUBLISH-KEY SUBSCRIBE-KEY 'ANY MESSAGE HERE' 'CHANNEL_NAME'
+    php ./publish-example.php demo demo 'Hey what is up?' 'hello_world_channel'
 
 ");
         exit();
@@ -33,12 +33,13 @@ echo("
     ## Send Message (PUBLISH)
     ## ----------------------
     echo("Sending a message with Publish Function\n");
+    $message = array( 'text' => $message );
     $info = $pubnub->publish(array(
         'channel' => $channel_name,
         'message' => $message
     ));
 
     echo("Response:\n");
-    var_dump($info);
+    print_r(array( 'published' => $message/*, 'success' => $info*/ ));
 
 ?>
