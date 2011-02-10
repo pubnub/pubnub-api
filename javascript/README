@@ -8,7 +8,7 @@
 ## ----------------------------------------------------
 
 ## ------------------------------------------------
-## PubNub 3.0 Real-time Cloud Push API - JAVASCRIPT
+## PubNub 3.1 Real-time Cloud Push API - JAVASCRIPT
 ## ------------------------------------------------
 ##
 ## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
@@ -21,26 +21,50 @@
 <!-- ============================= -->
 <!-- INCLUDE SCRIPT PREFERED STYLE -->
 <!-- ============================= -->
-<script src=http://cdn.pubnub.com/pubnub-3.0.min.js
+<div
+    id=pubnub
     pub-key=demo
     sub-key=demo
     ssl=off
     origin=pubsub.pubnub.com
-    id=pubnub
-></script>
+></div>
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script>(function(){
+    // ----------------------------------
+    // LISTEN FOR MESSAGES
+    // ----------------------------------
+    PUBNUB.subscribe({
+        channel  : 'test',
+        callback : function(message) {
+            console.log(JSON.stringify(message));
+        },
+        error : function() {
+            // The internet is gone.
+            console.log("Connection Lost");
+        }
+    });
 
-<!-- ================================= -->
-<!-- ALTERNATVIE INCLUDE STYLE         -->
-<!-- ================================= -->
-<!-- SET java=1 WHEN USING JAVA JS     -->
-<!-- SET devmode=1 TO VIEW SOURCE CODE -->
-<!-- SET ssl=1 TO ENABLE SSL SECURITY  -->
-<script src=http://pubnub-prod.appspot.com/js-api?pub-key=demo&sub-key=demo&origin=pubsub.pubnub.com&ssl=&java=&devmode= 
- ></script>
+    // ----------------------------------
+    // SEND MESSAGE
+    // ----------------------------------
+    setInterval( function() {
+        PUBNUB.publish({
+            channel  : 'test',
+            message  : { example : "Hello World!" },
+            callback : function(info) {
+                if (info[0])
+                    console.log("Successfully Sent Message!");
+                else
+                    // The internet is gone.
+                    console.log("Failed! -> " + info[1]);
+            }
+        });
+    }, 1000 );
+})();</script>
 
-<!-- ====================== -->
-<!-- EXAMPLE USE PUBNUB API -->
-<!-- ====================== -->
+<!-- ============================= -->
+<!-- SIMPLE EXAMPLE USE PUBNUB API -->
+<!-- ============================= -->
 <script>
 
     // -------------------
