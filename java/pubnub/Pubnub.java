@@ -171,6 +171,8 @@ public class Pubnub {
     /**
      * Subscribe - Private Interface
      *
+     * Patch provided by petereddy on GitHub
+     *
      * @param String channel name.
      * @param Callback function callback.
      * @param String timetoken.
@@ -180,45 +182,35 @@ public class Pubnub {
         Callback callback,
         String   timetoken
     ) {
-        // Begin Recusive Subscribe
-        try {
-            // Build URL
-            List<String> url = new ArrayList<String>();
-            url.add("subscribe");
-            url.add(this.SUBSCRIBE_KEY);
-            url.add(channel);
-            url.add("0");
-            url.add(timetoken);
+        while (true) {
+            try {
+                // Build URL
+                List<String> url = java.util.Arrays.asList(
+                    "subscribe", this.SUBSCRIBE_KEY, channel, "0", timetoken
+                );
 
-            // Wait for Message
-            JSONArray response = _request(url);
-            JSONArray messages = response.optJSONArray(0);
+                // Wait for Message
+                JSONArray response = _request(url);
+                JSONArray messages = response.optJSONArray(0);
 
-            // Update TimeToken
-            if (response.optString(1).length() > 0)
-                timetoken = response.optString(1);
+                // Update TimeToken
+                if (response.optString(1).length() > 0)
+                    timetoken = response.optString(1);
 
-            // If it was a timeout
-            if (messages.length() == 0) {
-                _subscribe( channel, callback, timetoken );
-                return;
+                // Run user Callback and Reconnect if user permits. If
+                // there's a timeout then messages.length() == 0.
+                for ( int i = 0; messages.length() > i; i++ ) {
+                    JSONObject message = messages.optJSONObject(i);
+                    if (!callback.execute(message)) return;
+                }
             }
-
-            // Run user Callback and Reconnect if user permits.
-            for ( int i = 0; messages.length() > i; i++ ) {
-                JSONObject message = messages.optJSONObject(i);
-                if (!callback.execute(message)) return;
+            catch (Exception e) {
+                try { Thread.sleep(1000); }
+                catch(InterruptedException ie) {}
             }
-
-            // Keep listening if Okay.
-            this._subscribe( channel, callback, timetoken );
-        }
-        catch (Exception e) {
-            try { Thread.sleep(1000); }
-            catch(InterruptedException ie) {}
-            this._subscribe( channel, callback, timetoken );
         }
     }
+
 
     /**
      * History
