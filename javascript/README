@@ -28,7 +28,7 @@
     ssl=off
     origin=pubsub.pubnub.com
 ></div>
-<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js ></script>
 <script>(function(){
     // ----------------------------------
     // LISTEN FOR MESSAGES
