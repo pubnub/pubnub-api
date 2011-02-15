@@ -744,8 +744,9 @@ function ready(interval) {
 bind( 'load', window, function() { timeout( ready, 1000 ); } );
 
 // PUBNUB Flash Socket
+var swf = 'http://cdn.pubnub.com/pubnub.swf';
 css( PN, { 'position' : 'absolute', 'top' : -1 } );
-PN['innerHTML'] = "<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data=http://pubnub.s3.amazonaws.com/pubnub.swf><param name=movie value=http://pubnub.s3.amazonaws.com/pubnub.swf /><param name=allowscriptaccess value=always /></object>";
+PN['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+swf+'><param name=movie value='+swf+' /><param name=allowscriptaccess value=always /></object>';
 
 var pubnubs = $('pubnubs') || {}
 ,   psready = setInterval( function(){
@@ -760,7 +761,7 @@ PUBNUB['rdx'] = function ( id, data ) {
 
 function FDomainRequest() {
     if (!pubnubs['get']) return 0;
-    if (navigator.userAgent.indexOf("Firefox") > 0) return 0;
+    if (navigator.userAgent.indexOf('Firefox') > 0) return 0;
 
     var fdomainrequest = {
         'id'    : FDomainRequest['id']++,

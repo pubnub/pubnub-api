@@ -187,7 +187,14 @@ function pubnub.new(init)
             if (event.isError) then
                 return args.callback(nil)
             end
-            args.callback(Json.Decode(event.response))
+
+            status, message = pcall( Json.Decode, event.response )
+
+            if status then
+                return args.callback(message)
+            else
+                return args.callback(nil)
+            end
         end )
     end
 
