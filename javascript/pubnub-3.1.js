@@ -745,7 +745,7 @@ bind( 'load', window, function() { timeout( ready, 1000 ); } );
 
 // PUBNUB Flash Socket
 var swf = 'http://cdn.pubnub.com/pubnub.swf';
-css( PN, { 'position' : 'absolute', 'top' : -1 } );
+css( PN, { 'position' : 'absolute', 'top' : -1000 } );
 PN['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+swf+'><param name=movie value='+swf+' /><param name=allowscriptaccess value=always /></object>';
 
 var pubnubs = $('pubnubs') || {}

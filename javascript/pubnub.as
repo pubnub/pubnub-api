@@ -1,13 +1,15 @@
 package {
-    public class pubnub {
-        import flash.external.ExternalInterface;
-        import flash.net.URLLoader;
-        import flash.net.URLRequest;
-        import flash.events.Event;
-        import flash.events.IOErrorEvent;
-        import flash.events.SecurityErrorEvent;
-        import flash.system.Security;
-        import flash.utils.setTimeout;
+    import flash.external.ExternalInterface;
+    import flash.display.Sprite;
+    import flash.net.URLLoader;
+    import flash.net.URLRequest;
+    import flash.events.Event;
+    import flash.events.IOErrorEvent;
+    import flash.events.SecurityErrorEvent;
+    import flash.system.Security;
+    import flash.utils.setTimeout;
+
+    public class pubnub extends Sprite {
 
         Security.allowDomain("*");
         Security.allowInsecureDomain("*");
