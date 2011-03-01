@@ -81,7 +81,7 @@ class Pubnub():
         """
         ## Fail if bad input.
         if not (args['channel'] and args['message']) :
-            puts('Missing Channel or Message')
+            print('Missing Channel or Message')
             return False
 
         ## Capture User Input
@@ -102,7 +102,7 @@ class Pubnub():
 
         ## Fail if message too long.
         if len(message) > self.limit :
-            print('Message TOO LONG (' + str(limit) + ' LIMIT)')
+            print('Message TOO LONG (' + str(self.limit) + ' LIMIT)')
             return [ 0, 'Message Too Long.' ]
 
         ## Send Message
@@ -254,7 +254,7 @@ class Pubnub():
 
         ## Fail if bad input.
         if not channel :
-            echo('Missing Channel')
+            print('Missing Channel')
             return False
 
         ## Get History
