@@ -1,5 +1,9 @@
+THIS REPOSITORY HAS BEEN UPDATED:
+=================================
+[https://github.com/jazzychad/CEPubnub](https://github.com/jazzychad/CEPubnub "Objective-C PubNub 3.0 Real-time Cloud Push API")
+
 Objective-C PubNub 3.0 Real-time Cloud Push API
-===============================================
+-----------------------------------------------
 
 PubNub Account
 --------------
@@ -23,5 +27,6 @@ using any carrier service provider.
 
 
 THIS REPOSITORY HAS BEEN UPDATED:
+=================================
 [https://github.com/jazzychad/CEPubnub](https://github.com/jazzychad/CEPubnub "Objective-C PubNub 3.0 Real-time Cloud Push API")
 
