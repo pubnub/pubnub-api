@@ -209,7 +209,7 @@ console.log||(console.log=((window.opera||{}).postError||function(){}));
  * UTIL LOCALS
  */
 var NOW    = 1
-,   MAGIC  = /\$?{([\w\-]+)}/g
+,   MAGIC  = /{([\w\-]+)}/g
 ,   ASYNC  = 'async'
 ,   URLBIT = '/'
 ,   XHRTME = 140000
@@ -259,9 +259,10 @@ function search(elements) {
 function each( o, f ) {
     if ( !o || !f ) return;
 
-    if ( typeof o[0] != 'undefined' ) for ( var i = 0, l = o.length; i < l; )
+    var i;
+    if ( typeof o[0] != 'undefined' ) for ( i = 0, l = o.length; i < l; )
         f.call( o[i], o[i], i++ );
-    else for ( var i in o )
+    else for ( i in o )
         o.hasOwnProperty    &&
         o.hasOwnProperty(i) &&
         f.call( o[i], i, o[i] );
@@ -310,7 +311,7 @@ function supplant( str, values ) {
 function bind( type, el, fun ) {
     each( type.split(','), function(etype) {
         var rapfun = function(e) {
-            if (!e) var e = window.event;
+            if (!e) e = window.event;
             if (!fun(e)) {
                 e.cancelBubble = true;
                 e.returnValue  = false;
@@ -608,7 +609,8 @@ var PN            = $('pubnub')
             var callback = callback || args['callback'] || function(){}
             ,   message  = args['message']
             ,   channel  = args['channel']
-            ,   jsonp    = jsonp_cb();
+            ,   jsonp    = jsonp_cb()
+            ,   url;
 
             if (!message)     return log('Missing Message');
             if (!channel)     return log('Missing Channel');
@@ -617,20 +619,23 @@ var PN            = $('pubnub')
             // If trying to send Object
             message = JSON['stringify'](message);
 
+            // Create URL
+            url = [
+                ORIGIN, 'publish',
+                PUBLISH_KEY, SUBSCRIBE_KEY,
+                0, encode(channel),
+                jsonp, encode(message)
+            ];
+
             // Make sure message is small enough.
-            if (message.length > LIMIT) return log('Message Too Big');
+            if (url.join().length > LIMIT) return log('Message Too Big');
 
             // Send Message
             xdr({
                 callback : jsonp,
                 success  : function(response) { callback(response) },
                 fail     : function() { callback([ 0, 'Disconnected' ]) },
-                url      : [
-                    ORIGIN, 'publish',
-                    PUBLISH_KEY, SUBSCRIBE_KEY,
-                    0, encode(channel),
-                    jsonp, encode(message)
-                ]
+                url      : url
             });
         },
 
@@ -744,7 +749,9 @@ function ready(interval) {
 bind( 'load', window, function() { timeout( ready, 1000 ); } );
 
 // PUBNUB Flash Socket
-var swf = 'http://cdn.pubnub.com/pubnub.swf';
+var swf = !location.href.indexOf('https') ?
+    'https://pubnub.s3.amazonaws.com/pubnub.swf' :
+    'http://cdn.pubnub.com/pubnub.swf';
 css( PN, { 'position' : 'absolute', 'top' : -1000 } );
 PN['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+swf+'><param name=movie value='+swf+' /><param name=allowscriptaccess value=always /></object>';
 
@@ -757,7 +764,7 @@ PUBNUB['rdx'] = function ( id, data ) {
     if (!data) return FDomainRequest[id]['onerror']();
     FDomainRequest[id]['responseText'] = unescape(data);
     FDomainRequest[id]['onload']();
-}
+};
 
 function FDomainRequest() {
     if (!pubnubs['get']) return 0;
