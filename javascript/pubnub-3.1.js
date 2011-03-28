@@ -259,13 +259,14 @@ function search(elements) {
 function each( o, f ) {
     if ( !o || !f ) return;
 
-    var i;
-    if ( typeof o[0] != 'undefined' ) for ( i = 0, l = o.length; i < l; )
-        f.call( o[i], o[i], i++ );
-    else for ( i in o )
-        o.hasOwnProperty    &&
-        o.hasOwnProperty(i) &&
-        f.call( o[i], i, o[i] );
+    if ( typeof o[0] != 'undefined' )
+        for ( var i = 0, l = o.length; i < l; )
+            f.call( o[i], o[i], i++ );
+    else
+        for ( var i in o )
+            o.hasOwnProperty    &&
+            o.hasOwnProperty(i) &&
+            f.call( o[i], i, o[i] );
 }
 
 /**
@@ -664,13 +665,13 @@ var PN            = $('pubnub')
         */
         'subscribe' : function( args, callback ) {
 
-            // Reduce Status Flicker
-            if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
-
             var channel   = args['channel']
             ,   callback  = callback || args['callback']
             ,   timetoken = 0
             ,   error     = args['error'] || function(){};
+
+            // Reduce Status Flicker
+            if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
 
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
@@ -740,9 +741,13 @@ PUBNUB = CREATE_PUBNUB({
 
 function ready(interval) {
     interval && clearInterval(interval)
+
     if (READY) return;
     READY = 1;
-    each( READY_BUFFER, function(sub){sub[2]['subscribe']( sub[0], sub[1] )} );
+
+    each( READY_BUFFER, function(sub) {
+        sub[2]['subscribe']( sub[0], sub[1] )
+    } );
 }
 
 // Bind for PUBNUB Readiness to Subscribe
