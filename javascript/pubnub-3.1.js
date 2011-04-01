@@ -241,10 +241,10 @@ function log(message) { console['log'](message) }
  * ======
  * var elements = search('a div span');
  */
-function search(elements) {
+function search( elements, start ) {
     var list = [];
     each( elements.split(/\s+/), function(el) {
-        each( document.getElementsByTagName(el), function(node) {
+        each( (start || document).getElementsByTagName(el), function(node) {
             list.push(node);
         } );
     } );

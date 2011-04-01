@@ -1,7 +1,7 @@
 /*
     WAIT! - This file depends on instructions from the PUBNUB Cloud.
 
-    http://www.pubnub.com/account-javascript-api-include
+    http://www.pubnub.com/account
 */
 
 /*
