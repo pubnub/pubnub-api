@@ -135,7 +135,7 @@ function pubnub.new(init)
         if not subscriptions[channel] then return nil end
 
         -- DISCONNECT
-        subscriptions[channel].connected = 0
+        subscriptions[channel].connected = nil
     end
 
     function self:history(args)
