@@ -668,7 +668,9 @@ var PN            = $('pubnub')
             var channel   = args['channel']
             ,   callback  = callback || args['callback']
             ,   timetoken = 0
-            ,   error     = args['error'] || function(){};
+            ,   error     = args['error'] || function(){}
+            ,   connected = 0
+            ,   connect   = args['connect'] || function(){};
 
             // Reduce Status Flicker
             if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
@@ -700,8 +702,14 @@ var PN            = $('pubnub')
                         jsonp, timetoken
                     ],
                     fail : function() { timeout( pubnub, 1000 ); error()  },
-                    success  : function(message) {
+                    success : function(message) {
                         if (!CHANNELS[channel].connected) return;
+
+                        if (!connected) {
+                            connected = 1;
+                            connect();
+                        }
+
                         timetoken = message[1];
                         timeout( pubnub, 10 );
                         each( message[0], function(msg) { callback(msg) } );
