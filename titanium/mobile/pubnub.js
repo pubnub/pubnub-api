@@ -30,13 +30,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 --------------------------------------------------------------------------- */
 
-window['PUBNUB'] || (function() {
-
-/**
- * CONSOLE COMPATIBILITY
- */
-window.console||(window.console=window.console||{});
-console.log||(console.log=((window.opera||{}).postError||function(){}));
+(function() {
 
 /**
  * UTIL LOCALS
@@ -376,21 +370,6 @@ var DEMO          = 'demo'
             pubnub();
         },
 
-        /*
-            // A Clean No Conflict API (Remove PUBNUB Global)
-            PUBNUB.clean(true)(function(PUBNUB){
-                PUBNUB.subscribe({...})
-                PUBNUB.publish({...})
-            });
-        */
-        'clean' : function(remove) {
-            return function(cbready) {
-                var ret = cbready(SELF);
-                if (remove) delete window['PUBNUB'];
-                return ret || SELF;
-            };
-        },
-
         // Expose PUBNUB Functions
         'each'     : each,
         'map'      : map,
@@ -407,16 +386,13 @@ var DEMO          = 'demo'
     };
 
     return SELF;
-},
+};
+
 PUBNUB = CREATE_PUBNUB({
     'publish_key'   : DEMO,
     'subscribe_key' : DEMO,
     'ssl'           : false,
     'origin'        : 'pubsub.pubnub.com'
 });
-
-// Provide Global Interfaces
-window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
-window['PUBNUB'] = PUBNUB;
 
 })();
