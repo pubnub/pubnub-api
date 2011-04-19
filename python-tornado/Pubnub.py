@@ -88,6 +88,12 @@ class Pubnub():
         channel = args['channel']
         message = json.dumps(args['message'])
 
+        ## Capture Callback
+        if args.has_key('callback') :
+            callback = args['callback']
+        else :
+            callback = lambda x : x
+
         ## Sign Message
         if self.secret_key :
             signature = hashlib.md5('/'.join([
@@ -114,7 +120,7 @@ class Pubnub():
             channel,
             '0',
             message
-        ], args['callback'] );
+        ], callback );
 
 
     def subscribe( self, args ) :
@@ -134,9 +140,18 @@ class Pubnub():
             print(message)
             return True
 
+        ## On Connect Callback
+        def connected() :
+            pubnub.publish({
+                'channel' : 'hello_world',
+                'message' : { 'some_var' : 'text' }
+            })
+
+        ## Subscribe
         pubnub.subscribe({
             'channel'  : 'hello_world',
-            'callback' : receive 
+            'connect'  : connected,
+            'callback' : receive
         })
 
         """
@@ -153,6 +168,7 @@ class Pubnub():
         ## Capture User Input
         channel   = args['channel']
         callback  = args['callback']
+        connectcb = args['connect']
 
         if 'errorback' in args:
             errorback = args['errorback']
@@ -162,12 +178,13 @@ class Pubnub():
         ## New Channel?
         if not (channel in self.subscriptions) :
             self.subscriptions[channel] = {
+                'first'     : False,
                 'connected' : 0,
                 'timetoken' : '0'
             }
 
         ## Ensure Single Connection
-        if (self.subscriptions[channel]['connected']) :
+        if self.subscriptions[channel]['connected'] :
             print("Already Connected")
             return False
 
@@ -183,6 +200,11 @@ class Pubnub():
                 ## STOP CONNECTION?
                 if not self.subscriptions[channel]['connected']:
                     return
+
+                ## CONNECTED CALLBACK
+                if not self.subscriptions[channel]['first'] :
+                    self.subscriptions[channel]['first'] = True
+                    connectcb()
 
                 ## PROBLEM?
                 if not response:
@@ -202,7 +224,7 @@ class Pubnub():
                 substabizel()
 
                 for message in response[0]:
-                    args['callback'](message)
+                    callback(message)
 
             ## CONNECT TO PUBNUB SUBSCRIBE SERVERS
             try :
@@ -227,6 +249,8 @@ class Pubnub():
 
         ## DISCONNECT
         self.subscriptions[channel]['connected'] = 0
+        self.subscriptions[channel]['timetoken'] = 0
+        self.subscriptions[channel]['first']     = False
 
 
     def history( self, args ) :

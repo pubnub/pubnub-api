@@ -73,9 +73,33 @@ pubnub.publish({
 ## -----------------------------------------------------------------------
 def message_received(message):
     print(message)
+    print('Disconnecting...')
+    pubnub.unsubscribe({ 'channel' : crazy })
+
+    def done() :
+        print('final connection, done :)')
+        pubnub.unsubscribe({ 'channel' : crazy })
+
+    def dumpster(message) :
+        print('never see this')
+        print(message)
+
+    print('reconnecting...')
+    pubnub.subscribe({
+        'channel'  : crazy,
+        'connect'  : done,
+        'callback' : dumpster
+    })
+
+def connected() :
+    pubnub.publish({
+        'channel' : crazy,
+        'message' : { 'Info' : 'Connected!' }
+    })
 
 pubnub.subscribe({
     'channel'  : crazy,
+    'connect'  : connected,
     'callback' : message_received
 })
 
