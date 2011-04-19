@@ -41,7 +41,7 @@ class Pubnub():
         pubnub = Pubnub( 'PUBLISH-KEY', 'SUBSCRIBE-KEY', 'SECRET-KEY', False )
 
         """
-        self.origin        = 'pubsub.pubnub.com'
+        self.origin        = origin
         self.limit         = 1800
         self.publish_key   = publish_key
         self.subscribe_key = subscribe_key
