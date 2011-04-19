@@ -78,6 +78,7 @@ def message_received(message):
     def done() :
         print('final connection, done :)')
         pubnub.unsubscribe({ 'channel' : crazy })
+        tornado.ioloop.IOLoop.instance().stop()
 
     def dumpster(message) :
         print('never see this')
@@ -89,7 +90,6 @@ def message_received(message):
         'connect'  : done,
         'callback' : dumpster
     })
-    tornado.ioloop.IOLoop.instance().stop()
 
 def connected() :
     pubnub.publish({
