@@ -24,7 +24,6 @@ ssl_on        = len(sys.argv) > 4 and bool(sys.argv[4]) or False
 pubnub = Pubnub( publish_key, subscribe_key, secret_key, ssl_on )
 crazy  = ' ~`!@#$%^&*(顶顅Ȓ)+=[]\\{}|;\':",./<>?abcd'
 
-
 ## ---------------------------------------------------------------------------
 ## Unit Test Function
 ## ---------------------------------------------------------------------------

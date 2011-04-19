@@ -34,33 +34,34 @@ def connected() :
         'message' : { 'Info' : 'Connected!' }
     })
 
-SUP = { 'max' : 0 }
-def TMP(message):
-    key = str(datetime.datetime.now())[0:19]
+trips = { 'max' : 0 }
 
-    if not SUP.has_key(key) :
-        SUP[key] = 0
+def received(message):
+    current_trip = str(datetime.datetime.now())[0:19]
 
-    SUP[key] = SUP[key] + 1
+    if not trips.has_key(current_trip) :
+        trips[current_trip] = 0
 
-    if SUP[key] > SUP['max'] :
-        SUP['max'] = SUP[key]
+    trips[current_trip] = trips[current_trip] + 1
+
+    if trips[current_trip] > trips['max'] :
+        trips['max'] = trips[current_trip]
 
     print(message)
     pubnub.publish({
         'channel' : crazy,
-        'message' : key +
+        'message' : current_trip +
             " Trip: " +
-            str(SUP[key]) +
+            str(trips[current_trip]) +
             " Max Trips: " +
-            str(SUP['max']) +
+            str(trips['max']) +
             "/sec"
     })
-    
+
 pubnub.subscribe({
     'channel'  : crazy,
     'connect'  : connected,
-    'callback' : TMP
+    'callback' : received
 })
 
 ## -----------------------------------------------------------------------
