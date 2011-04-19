@@ -90,6 +90,7 @@ def message_received(message):
         'connect'  : done,
         'callback' : dumpster
     })
+    tornado.ioloop.IOLoop.instance().stop()
 
 def connected() :
     pubnub.publish({

@@ -23,12 +23,11 @@ ssl_on        = len(sys.argv) > 4 and bool(sys.argv[4]) or False
 ## Initiat Class
 ## -----------------------------------------------------------------------
 pubnub = Pubnub( publish_key, subscribe_key, secret_key, ssl_on )
-crazy  = ' ~`!@#$%^&*(顶顅Ȓ)+=[]\\{}|;\':",./<>?abcd'
+crazy  = ' ~`!@#$%^&*( 顶顅 Ȓ)+=[]\\{}|;\':",./<>?abcd'
 
 ## -----------------------------------------------------------------------
-## Subscribe Example
+## BENCHMARK
 ## -----------------------------------------------------------------------
-
 def connected() :
     pubnub.publish({
         'channel' : crazy,
@@ -37,8 +36,7 @@ def connected() :
 
 SUP = { 'max' : 0 }
 def TMP(message):
-
-    key = str(datetime.datetime.now())[11:19]
+    key = str(datetime.datetime.now())[0:19]
 
     if not SUP.has_key(key) :
         SUP[key] = 0
@@ -52,10 +50,11 @@ def TMP(message):
     pubnub.publish({
         'channel' : crazy,
         'message' : key +
-            " Current: " +
+            " Trip: " +
             str(SUP[key]) +
-            " MAX Trips per Second: " +
-            str(SUP['max'])
+            " Max Trips: " +
+            str(SUP['max']) +
+            "/sec"
     })
     
 pubnub.subscribe({
