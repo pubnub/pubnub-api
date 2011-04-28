@@ -298,7 +298,7 @@ function grep( list, fun ) {
  */
 function supplant( str, values ) {
     return str.replace( MAGIC, function( _, match ) {
-        return ''+values[match] || ''
+        return values[match] || _
     } );
 }
 
@@ -529,7 +529,7 @@ function ajax( setup ) {
 /* =-====================================================================-= */
 /* =-====================================================================-= */
 
-var PN            = $('pubnub')
+var PN            = $('pubnub') || {}
 ,   DEMO          = 'demo'
 ,   LIMIT         = 1800
 ,   READY         = 0
@@ -597,6 +597,40 @@ var PN            = $('pubnub')
                 ],
                 success  : function(response) { callback(response[0]) },
                 fail     : function() { callback(0) }
+            });
+        },
+
+        /*
+            PUBNUB.analytics({
+                channel  : '',   // Leave blank for All Channels
+                ago      : 0,    // Minutes Ago
+                duration : 10,   // Minutes Offset
+                limit    : 1000, // Max Results to Aggregate
+                callback : function(response) {}
+            });
+        */
+        'analytics' : function(args) {
+            var jsonp    = jsonp_cb()
+            ,   channel  = args['channel']  || ''
+            ,   limit    = args['limit']    || 100
+            ,   ago      = args['ago']      || 0
+            ,   duration = args['duration'] || 100
+            ,   callback = args['callback'];
+
+            xdr({
+                callback : jsonp,
+                success  : function(response) { callback(response) },
+                fail     : function() { callback(0) },
+                url      : [[
+                    'http' + SSL +
+                    '://pubnub-prod.appspot.com/analytics-channel?callback=' +
+                    jsonp,
+                    'key='      + SUBSCRIBE_KEY,
+                    'channel='  + channel,
+                    'limit='    + limit,
+                    'ago='      + ago,
+                    'duration=' + duration
+                ].join('&')]
             });
         },
 
@@ -746,9 +780,24 @@ PUBNUB = CREATE_PUBNUB({
     'origin'        : attr( PN, 'origin' )
 });
 
+// PUBNUB Flash Socket
+var swf = !location.href.indexOf('https') ?
+    'https://pubnub.s3.amazonaws.com/pubnub.swf' :
+    'http://cdn.pubnub.com/pubnub.swf';
+css( PN, { 'position' : 'absolute', 'top' : -1000 } );
 
-function ready(interval) {
-    interval && clearInterval(interval)
+if (!(
+    navigator.userAgent.indexOf('Firefox') > 0 ||
+    navigator.userAgent.indexOf('MSIE 9') > 0
+)) PN['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+swf+'><param name=movie value='+swf+' /><param name=allowscriptaccess value=always /></object>';
+
+var pubnubs = $('pubnubs') || {}
+,   psready = setInterval( function(){
+        !('chrome' in window) && pubnubs['get'] && ready()
+    }, 100 );
+
+function ready() {
+    clearInterval(psready)
 
     if (READY) return;
     READY = 1;
@@ -761,19 +810,7 @@ function ready(interval) {
 // Bind for PUBNUB Readiness to Subscribe
 bind( 'load', window, function() { timeout( ready, 1000 ); } );
 
-// PUBNUB Flash Socket
-var swf = !location.href.indexOf('https') ?
-    'https://pubnub.s3.amazonaws.com/pubnub.swf' :
-    'http://cdn.pubnub.com/pubnub.swf';
-css( PN, { 'position' : 'absolute', 'top' : -1000 } );
-PN['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+swf+'><param name=movie value='+swf+' /><param name=allowscriptaccess value=always /></object>';
-
-var pubnubs = $('pubnubs') || {}
-,   psready = setInterval( function(){
-        pubnubs['get'] && ready(psready)
-    }, 100 );
-
-PUBNUB['rdx'] = function ( id, data ) {
+PUBNUB['rdx'] = function( id, data ) {
     if (!data) return FDomainRequest[id]['onerror']();
     FDomainRequest[id]['responseText'] = unescape(data);
     FDomainRequest[id]['onload']();
@@ -781,7 +818,6 @@ PUBNUB['rdx'] = function ( id, data ) {
 
 function FDomainRequest() {
     if (!pubnubs['get']) return 0;
-    if (navigator.userAgent.indexOf('Firefox') > 0) return 0;
 
     var fdomainrequest = {
         'id'    : FDomainRequest['id']++,
