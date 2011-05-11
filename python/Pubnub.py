@@ -9,7 +9,11 @@
 ## PubNub 3.0 Real-time Push Cloud API
 ## -----------------------------------
 
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 import time
 import hashlib
 import urllib2
@@ -175,7 +179,7 @@ class Pubnub():
 
             ## Keep Listening.
             return self.subscribe(args)
-        except :
+        except Exception:
             time.sleep(1)
             return self.subscribe(args)
 
@@ -247,9 +251,13 @@ class Pubnub():
             ]) for bit in request])
 
         ## Send Request Expecting JSONP Response
-        usock    = urllib2.urlopen( url, None, 200 )
+        try:
+            # timeout added in 2.6
+            usock    = urllib2.urlopen( url, None, 200 )
+        except TypeError:
+            usock    = urllib2.urlopen( url, None )
+
         response = usock.read()
         usock.close()
 
         return json.loads( response )
-
