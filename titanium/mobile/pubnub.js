@@ -52,7 +52,7 @@ function unique() { return'x'+ ++NOW+''+(+new Date) }
  * ===
  * log('message');
  */
-function log(message) { console['log'](message) }
+function log(message) { Ti.API.info(message) }
 
 /**
  * EACH
@@ -373,14 +373,7 @@ var DEMO          = 'demo'
         // Expose PUBNUB Functions
         'each'     : each,
         'map'      : map,
-        'css'      : css,
-        '$'        : $,
-        'create'   : create,
-        'bind'     : bind,
         'supplant' : supplant,
-        'head'     : head,
-        'search'   : search,
-        'attr'     : attr,
         'now'      : unique,
         'init'     : CREATE_PUBNUB
     };
@@ -389,8 +382,8 @@ var DEMO          = 'demo'
 };
 
 PUBNUB = CREATE_PUBNUB({
-    'publish_key'   : DEMO,
-    'subscribe_key' : DEMO,
+    'publish_key'   : 'demo',
+    'subscribe_key' : 'demo',
     'ssl'           : false,
     'origin'        : 'pubsub.pubnub.com'
 });
