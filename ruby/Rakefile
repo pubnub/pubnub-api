@@ -1,0 +1,18 @@
+# encoding: utf-8
+require 'rake'
+
+require 'jeweler'
+Jeweler::Tasks.new do |gem|
+  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
+  gem.name = "pubnub-ruby"
+  gem.homepage = "http://github.com/rubynerd/pubnub"
+  gem.license = "MIT"
+  gem.summary = %Q{PubNub unofficial gem}
+  gem.description = %Q{Simply Pubnub.rb in gem format, :require => "pubnub" - ask @rubynerd for upgrades} 
+  gem.email = "orlyowlizere@gmail.com"
+  gem.authors = ["Luke Carpenter"]
+  gem.files = FileList['lib/**/*.rb', 'examples/**/*.rb', 'tests/**/*.rb'] 
+  # dependencies defined in Gemfile
+  gem.add_dependency "json"
+end
+Jeweler::RubygemsDotOrgTasks.new
