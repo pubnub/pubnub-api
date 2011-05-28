@@ -1,4 +1,4 @@
-require 'Pubnub'
+require '../lib/pubnub'
 
 publish_key   = ARGV[0]
 subscribe_key = ARGV[1]
