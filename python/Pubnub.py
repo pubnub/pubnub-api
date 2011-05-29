@@ -237,7 +237,7 @@ class Pubnub():
             'channel'  : 'channel-name-here', ## Leave blank for all channels
             'limit'    : 100,                 ## aggregation range
             'ago'      : 0,                   ## minutes ago to look backward
-            'duratoin' : 100                  ## minutes offset
+            'duration' : 100                  ## minutes offset
         })
         print(analytics)
 
