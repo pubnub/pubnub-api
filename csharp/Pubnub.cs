@@ -29,7 +29,7 @@ public class PubnubTEST {
         // ---------------
         // Publish Message
         // ---------------
-        List<object> info = pubnub.publish( channel, "Hello World" );
+        List<object> info = pubnub.Publish( channel, "Hello World" );
 
         // ----------------
         // Publish Response
@@ -42,7 +42,7 @@ public class PubnubTEST {
         // -------
         // History
         // -------
-        List<object> history = pubnub.history( channel, 1 );
+        List<object> history = pubnub.History( channel, 1 );
         foreach (object history_message in history) {
             Console.Write("History Message: ");
             Console.WriteLine(history_message);
@@ -51,13 +51,13 @@ public class PubnubTEST {
         // ----------------------
         // Get PubNub Server Time
         // ----------------------
-        object timestamp = pubnub.time();
+        object timestamp = pubnub.Time();
         Console.WriteLine("Server Time: " + timestamp.ToString());
 
         // ---------
         // Subscribe
         // ---------
-        pubnub.subscribe(
+        pubnub.Subscribe(
             channel,
             delegate (object message) {
                 Console.WriteLine("Received Message -> '" + message + "'");
@@ -174,7 +174,7 @@ public class Pubnub {
      * @param int limit history count response.
      * @return ListArray of history.
      */
-    public List<object> history( string channel, int limit ) {
+    public List<object> History( string channel, int limit ) {
         List<string> url = new List<string>();
 
         url.Add("history");
@@ -195,7 +195,7 @@ public class Pubnub {
      * @param List<object> info.
      * @return bool false on fail.
      */
-    public List<object> publish( string channel, object message ) {
+    public List<object> Publish( string channel, object message ) {
         JavaScriptSerializer serializer = new JavaScriptSerializer();
 
         // Generate String to Sign
@@ -240,7 +240,7 @@ public class Pubnub {
      * @param string channel name.
      * @param Procedure function callback.
      */
-    public void subscribe( string channel, Procedure callback ) {
+    public void Subscribe( string channel, Procedure callback ) {
         this._subscribe( channel, callback, 0 );
     }
 
@@ -294,7 +294,7 @@ public class Pubnub {
      *
      * @return object timestamp.
      */
-    public object time() {
+    public object Time() {
         List<string> url = new List<string>();
 
         url.Add("time");
@@ -384,7 +384,7 @@ public class Pubnub {
         return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?".IndexOf(ch) >= 0;
     }
 
-    public static string md5(string text) {
+    private static string md5(string text) {
         MD5 md5 = new MD5CryptoServiceProvider();
         byte[] data = Encoding.Default.GetBytes(text);
         byte[] hash = md5.ComputeHash(data);

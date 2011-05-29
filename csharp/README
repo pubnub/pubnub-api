@@ -5,15 +5,15 @@
 ##
 ## ----------------------------------------------------
 
-## ----------------------------------------
-## PubNub 3.0 Real-time Cloud Push API - C#
-## ----------------------------------------
+## ----------------------------------------------
+## PubNub 3.0 Web Data Push Cloud-Hosted API - C#
+## ----------------------------------------------
 ##
-## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+## www.pubnub.com - PubNub Web Data Push Service in the Cloud. 
 ## http://www.pubnub.com/tutorial/csharp-push-api
 ##
-## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
-## This is a cloud-based service for broadcasting Real-time messages
+## PubNub is a Massively Scalable Web Push Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting messages
 ## to thousands of web and mobile clients simultaneously.
 
 ## -------------------------------------------
@@ -51,7 +51,7 @@ C#: (Init)
 C#: (Publish)
 -------------------------------------------------------------------------------
 
-    List<object> info = pubnub.publish(
+    List<object> info = pubnub.Publish(
         "hello_world", // Channel Name
         "Hi."          // Message
     );
@@ -64,7 +64,7 @@ C#: (Publish)
 C#: (Subscribe)
 -------------------------------------------------------------------------------
 
-    pubnub.subscribe(
+    pubnub.Subscribe(
         "hello_world", // Channel Name
         delegate (object message) {
             Console.WriteLine(message); // Print Received Message
@@ -77,7 +77,7 @@ C#: (Subscribe)
 C#: (History)
 -------------------------------------------------------------------------------
 
-    List<object> history = pubnub.history( "hello_world", 1 );
+    List<object> history = pubnub.History( "hello_world", 1 );
     foreach (object history_message in history) {
         Console.Write("History Message: ");
         Console.WriteLine(history_message);
