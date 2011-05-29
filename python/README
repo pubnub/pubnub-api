@@ -5,15 +5,15 @@
 ##
 ## ----------------------------------------------------
 
-## ---------------------------------------------
-## PubNub 3.0 Real-time Cloud Push API - PYTHON
-## ---------------------------------------------
+## --------------------------------------------------
+## PubNub 3.0 Web Data Push Cloud-hosted API - PYTHON
+## --------------------------------------------------
 ##
-## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+## www.pubnub.com - PubNub Web Data Push Service in the Cloud. 
 ## http://github.com/pubnub/pubnub-api/tree/master/python/
 ##
-## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
-## This is a cloud-based service for broadcasting Real-time messages
+## PubNub is a Massively Scalable Data Push Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting messages
 ## to thousands of web and mobile clients simultaneously.
 
 ## ---------------
@@ -50,6 +50,17 @@ pubnub.subscribe({
     'channel'  : 'hello_world',
     'callback' : receive 
 })
+
+# ------------------
+## Channel Analytics
+# ------------------
+analytics = pubnub.analytics({
+    'channel'  : 'channel-name-here', ## Leave blank for all channels
+    'limit'    : 100,                 ## aggregation range
+    'ago'      : 0,                   ## minutes ago to look backward
+    'duratoin' : 100                  ## minutes offset
+})
+print(analytics)
 
 # -------
 # HISTORY

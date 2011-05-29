@@ -222,6 +222,42 @@ class Pubnub():
             str(limit)
         ]);
 
+    def analytics( self, args ) :
+        """
+        #**
+        #* Analytics
+        #*
+        #* Channel Analytics.
+        #*
+        #* @return dictionary keyed by datetimes
+        #*
+
+        ## Channel Analytics Example
+        analytics = pubnub.analytics({
+            'channel'  : 'channel-name-here', ## Leave blank for all channels
+            'limit'    : 100,                 ## aggregation range
+            'ago'      : 0,                   ## minutes ago to look backward
+            'duratoin' : 100                  ## minutes offset
+        })
+        print(analytics)
+
+        """
+
+        ## Capture User Input
+        channel  = args.has_key('channel')  and args['channel']       or ''
+        limit    = args.has_key('limit')    and int(args['limit'])    or 100
+        ago      = args.has_key('ago')      and int(args['ago'])      or 0
+        duration = args.has_key('duration') and int(args['duration']) or 100
+        protocol = self.ssl and 'https' or 'http'
+
+        return self._request( ['&'.join([
+            'analytics-channel?key=' + self.subscribe_key,
+            'channel='               + ''.join(self._encode([channel])),
+            'limit='                 + str(limit),
+            'ago='                   + str(ago),
+            'duration='              + str(duration)
+        ])], protocol + '://pubnub-prod.appspot.com', False )
+
     def time(self) :
         """
         #**
@@ -242,20 +278,25 @@ class Pubnub():
             '0'
         ])[0]
 
-    def _request( self, request ) :
-        ## Build URL
-        url = self.origin + '/' + "/".join([
+    def _encode( self, request ) :
+        return [
             "".join([ ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.find(ch) > -1 and
                 hex(ord(ch)).replace( '0x', '%' ).upper() or
                 ch for ch in list(bit)
-            ]) for bit in request])
+            ]) for bit in request]
+
+    def _request( self, request, origin = None, encode = True ) :
+        ## Build URL
+        url = (origin or self.origin) + '/' + "/".join(
+            encode and self._encode(request) or request
+        )
 
         ## Send Request Expecting JSONP Response
         try:
             # timeout added in 2.6
-            usock    = urllib2.urlopen( url, None, 200 )
+            usock = urllib2.urlopen( url, None, 200 )
         except TypeError:
-            usock    = urllib2.urlopen( url, None )
+            usock = urllib2.urlopen( url, None )
 
         response = usock.read()
         usock.close()
