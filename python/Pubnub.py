@@ -248,14 +248,15 @@ class Pubnub():
         limit    = args.has_key('limit')    and int(args['limit'])    or 100
         ago      = args.has_key('ago')      and int(args['ago'])      or 0
         duration = args.has_key('duration') and int(args['duration']) or 100
-        protocol = self.ssl and 'https' or 'http'
+        protocol = self.ssl                 and 'https'               or 'http'
 
         return self._request( ['&'.join([
-            'analytics-channel?key=' + self.subscribe_key,
-            'channel='               + ''.join(self._encode([channel])),
-            'limit='                 + str(limit),
-            'ago='                   + str(ago),
-            'duration='              + str(duration)
+            'analytics-channel?sub-key=' + self.subscribe_key,
+            'pub-key='                   + self.publish_key,
+            'channel='                   + ''.join(self._encode([channel])),
+            'limit='                     + str(limit),
+            'ago='                       + str(ago),
+            'duration='                  + str(duration)
         ])], protocol + '://pubnub-prod.appspot.com', False )
 
     def time(self) :
