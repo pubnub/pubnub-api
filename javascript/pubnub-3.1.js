@@ -625,8 +625,9 @@ var PN            = $('pubnub') || {}
                     'http' + SSL +
                     '://pubnub-prod.appspot.com/analytics-channel?callback=' +
                     jsonp,
-                    'key='      + SUBSCRIBE_KEY,
-                    'channel='  + channel,
+                    'sub-key='  + SUBSCRIBE_KEY,
+                    'pub-key='  + PUBLISH_KEY,
+                    'channel='  + encode(channel),
                     'limit='    + limit,
                     'ago='      + ago,
                     'duration=' + duration
