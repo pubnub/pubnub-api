@@ -3,7 +3,6 @@
 <head>
     <title>PubNub Chat</title>
     <link
-        background: red;
         href=http://fonts.googleapis.com/css?family=Nunito|Amaranth|Ubuntu
         rel=stylesheet
         type=text/css>
@@ -179,7 +178,9 @@
     ,   now           = function(){return+new Date}
     ,   safe_rx       = /[<>]/g
     ,   domain        = (document.referrer || '//www.pubnub.com').split('/')[2]
-    ,   channel       = 'pubnub-easy-chat-' + domain
+    ,   channel_ns    = (location.href.match(/CHAT-ROOM=([\w\-]+)/)||[''])
+                        .slice(-1)[0]||''
+    ,   channel       = 'pubnub-easy-chat-' + domain + channel_ns
     ,   stream_id     = (location.href.match(/stream-id=([\w\-]+)/)||[''])
                         .slice(-1)[0];
 
