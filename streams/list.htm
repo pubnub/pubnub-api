@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+<head>
+    <title>PubNub Stream</title>
+    <link href=http://fonts.googleapis.com/css?family=Cabin rel=stylesheet>
+    <meta http-equiv=Content-Type content=text/html;charset=utf-8>
+    <meta name=viewport content=width=320,height=480,user-scalable=0>
+    <meta name=apple-mobile-web-app-capable content=yes>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+
+        font-size: 14px;
+        line-height: 18px;
+        font-family: Cabin,'Helvetica Neue',Helvetica,Arial,Verdana,sans-serif;
+        text-shadow: rgba(0,0,0,0.1) 0 1px 2px;
+
+        color: #444;
+        background-color: transparent;
+    }
+    .template { display: none }
+    .item {
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        width: 320px;
+        height: 80px;
+
+        border-bottom: 1px solid #ccc;
+
+        background: #fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAABQCAYAAABoMayFAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAEtSURBVHja7NvBDYQwEARBkMiG/LNxKPaaEHh7pyoEHq1Zn+4eY7wXQKCnqnwFQAABogK41vIVAAsQQAABBBBAAAEEEKBNAOecvgJgAQIIIIAAAjQOoH+CABYggAUIIIAATmAACxDAAgRoEEB/hQMsQIC0AHoDBCxAAAsQwAIEsAABLEAACxBAAAGcwADHBdBf4QALECAtgN4AAQEEcAIDWIAAAgjgBAawAAEsQAALEEAAAZzAABYggAUIIIAATmAAAQRwAgNYgAAWIIAFCGABAggggBMYwAIEsAABfgO49/YVAAsQICqA3gABCxAgLYDeAAELECAtgN4AAQsQIC2A3gABJzCAExjACQzgBAYQQAABBBBAAAEEOC6AfgUGLEAAAQRwAgNYgAAdfQIMACob7szyxrOuAAAAAElFTkSuQmCC');
+
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        -ms-transition: all 0.3s;
+        -o-transition: all 0.3s;
+        transition: all 0.3s;
+    }
+    .item:hover {
+        background-color: #2771e6;
+        color: #eee;
+    }
+    .item-new {
+        background-color: #fd0;
+        color: #eee;
+    }
+    .item-padding {
+        position: relative;
+        padding: 10px;
+    }
+    .item-title {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 28px;
+    }
+    .item-link {
+        display: none;
+    }
+    .item-text {
+        font-size: 12px;
+        line-height: 14px;
+        width: 270px;
+        height: 32px;
+        overflow: hidden;
+    }
+    .item-arrow {
+        position: absolute;
+        top: 24px;
+        right: 20px;
+        font-size: 25px;
+        font-weight: 700;
+        line-height: 25px;
+        
+    }
+
+    #top-bar {
+        width: 320px;
+        height: 19px;
+        border-bottom: 1px solid #aaa;
+        color: #fff;
+        background: #a00 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAUCAYAAAC07qxWAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAA3SURBVHjaYnzw4IEeAxGA5cePHwzUVfj9+3fiFH779m34KPz69etAmUh9q4eCQqKTGbEJFyDAAOdDOfHGNE+4AAAAAElFTkSuQmCC');
+        text-align: center;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 19px;
+    }
+    #list {
+        position: relative;
+        width: 320px;
+        height: 440px;
+        overflow: hidden;
+        background: #eee url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAFCAYAAABIHbx0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAABpJREFUGNNjZGBgYGUgDH4TUsDEQCUwjA0CAE5RAQroMxhVAAAAAElFTkSuQmCC');
+    }
+
+    #list-footer {
+        cursor: pointer;
+        position: absolute;
+        top: 407px;
+        left: 0;
+        width: 320px;
+        height: 53px;
+        background:
+            url(http://pubnub.s3.amazonaws.com/2011/pubnub-list-widget.png);
+    }
+</style>
+</head>
+<body>
+
+<!-- ITEM TEMPLATE -->
+<div id=item-template class=template>
+    <div id="ln-{ln}" class=item-link>{link}</div>
+    <div class=item-arrow ln="{ln}">&gt;</div>
+    <div class=item-padding ln="{ln}">
+        <div class=item-title ln="{ln}">{title}</div>
+        <div class=item-text ln="{ln}">{description}</div>
+    </div>
+</div>
+
+<div id=top-bar>Loading Stream...</div>
+<div id=list><div></div></div>
+
+
+<div id=list-footer></div>
+<div id=pubnub></div>
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script>(function(){
+    // =======================================================================
+    // STREAM FRAMEWORK CODE
+    // =======================================================================
+    var p         = PUBNUB
+    ,   origin    = 'http://pubnub-prod.appspot.com'
+    //,   origin    = 'http://localhost:8080'
+    ,   stream_id = (location.href.match(/stream-id=([\w\-]+)/)||[''])
+                    .slice(-1)[0];
+
+    // =====================================================================
+    // SERVER API CALL
+    // =====================================================================
+    var NOW = 1;
+    function uniq() { return 'x'+((+new Date)+'')+(++NOW) }
+    function request(setup) {
+        var script    = p.create('script')
+        ,   url       = origin + setup.url || ''
+        ,   data      = setup.data         || {}
+        ,   callback  = setup.callback     || function(){}
+        ,   errorback = setup.errorback    || function(){}
+        ,   unique    = uniq();
+
+        window[unique] = function(msg) {
+            setTimeout( function() {
+                p.search('body')[0].removeChild(script);
+            }, 5000 );
+            if (!msg) return errorback();
+            callback(msg);
+        };
+
+        script.onerror = errorback;
+
+        script.src = [
+            url,
+            '?callback=',
+            unique,
+            '&data=',
+            encodeURIComponent(JSON.stringify(data))
+        ].join('');
+
+        p.search('body')[0].appendChild(script);
+    }
+
+    // =======================================================================
+    // STARTUP
+    // =======================================================================
+    request({
+        url       : '/stream-get',
+        data      : { 'stream-id' : stream_id },
+        errorback : function() {
+            new_item({
+                link        : 'http://www.pubnub.com/streams',
+                title       : 'PubNub Stream Reader Error',
+                description : 'Unable to Acquire Stream.'
+            });
+        },
+        callback  : function(message) {
+            console.log(JSON.stringify(message));
+
+            p.$('top-bar').innerHTML = message.title;
+
+            if (!message.success) return new_item({
+                link        : 'http://www.pubnub.com/streams',
+                title       : 'PubNub Stream Reader Error',
+                description : message.reason
+            });
+
+            p.network = p.init({
+                subscribe_key : message.subscribe_key,
+                origin        : message.origin
+            });
+
+            p.network.subscribe({
+                channel  : message.channel,
+                callback : new_item
+            });
+
+            // ===============================================================
+            // HISTORY
+            // ===============================================================
+            p.network.history({
+                limit    : 5,
+                channel  : message.channel,
+                callback : function(messages) {
+                    p.each( messages, function(msg) { new_item(msg) } );
+                }
+            });
+        }
+    });
+
+    // =======================================================================
+    // NEW LINK PUSHED FROM THE NETWORK
+    // =======================================================================
+    var link_list     = p.$('list')
+    ,   item_template = p.$('item-template').innerHTML;
+
+    function new_item(message) {
+        var ln  = message.ln = uniq()
+        ,   itm = p.create('div');
+
+        p.attr( itm, 'ln', ln );
+        p.attr( itm, 'class', 'item item-new' );
+        p.css( itm, { height : '0px' } );
+
+        itm.innerHTML = p.supplant( item_template, message );
+        link_list.insertBefore( itm, link_list.firstChild );
+
+        setTimeout( function() { p.css( itm, { height : 80 } ) }, 10 );
+        setTimeout( function() { p.attr( itm, 'class', 'item' ) }, 80 );
+    }
+
+    new_item({
+        link        : 'http://www.pubnub.com/streams',
+        title       : 'PubNub Stream Reader',
+        description : 'Visit http://www.pubnub.com/streams to create your ' +
+                      'own Free Stream Reader.'
+    });
+
+    // =======================================================================
+    // LINK CLICKING
+    // =======================================================================
+    p.bind( 'mousedown,touchstart', link_list, function(e) {
+        var target = e.target || e.srcElement
+        ,   parent = target.parentNode
+        ,   ln     = p.attr( target, 'ln' ) || p.attr( parent, 'ln' );
+
+        if (!ln) return;
+
+        open(p.$('ln-'+ln).innerHTML);
+    } );
+
+    // =======================================================================
+    // PUBNUB FOOTER LINK
+    // =======================================================================
+    p.bind( 'mousedown,touchstart', p.$('list-footer'), function() {
+        open('http://www.pubnub.com/streams');
+    } );
+
+
+})();</script>
+
+</body>
+</html>
+

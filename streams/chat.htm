@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+<head>
+    <title>PubNub Chat</title>
+    <link
+        background: red;
+        href=http://fonts.googleapis.com/css?family=Nunito|Amaranth|Ubuntu
+        rel=stylesheet
+        type=text/css>
+    <meta http-equiv=Content-Type content=text/html;charset=utf-8>
+    <meta name=viewport content=width=320,height=480,user-scalable=0>
+    <meta name=apple-mobile-web-app-capable content=yes>
+<style>
+    a, a:hover, a:active, a:focus, body, button, input {
+        outline: 0;
+        margin: 0;
+        padding: 0;
+
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 18px;
+        font-family: 'Amaranth', arial, serif;
+        text-shadow: rgba(0,0,0,0.1) 0 1px 1px;
+
+        color: #444;
+    }
+    a {
+        text-decoration: underline;
+    }
+    a:hover {
+        text-decoration: none;
+        color: #09f;
+    }
+    #chat-textbox, #chat-send {
+        padding: 4px;
+        color: #fff;
+        background: #eee;
+        border: 2px solid #999;
+
+        margin: 5px;
+        font-size: 14px;
+        line-height: 14px;
+
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        -o-border-radius: 4px;
+        border-radius: 4px;
+    }
+    #chat-send {
+        outline: 0;
+        cursor: pointer;
+        text-align: center;
+        text-shadow: rgba(0,0,0,0.7) 0 1px 1px;
+        color: #eee;
+        font-family: 'Nunito', arial, serif;
+        font-weight: 700;
+        width: 50px;
+
+        background: #3af url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAABQCAYAAABoMayFAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAEtSURBVHja7NvBDYQwEARBkMiG/LNxKPaaEHh7pyoEHq1Zn+4eY7wXQKCnqnwFQAABogK41vIVAAsQQAABBBBAAAEEEKBNAOecvgJgAQIIIIAAAjQOoH+CABYggAUIIIAATmAACxDAAgRoEEB/hQMsQIC0AHoDBCxAAAsQwAIEsAABLEAACxBAAAGcwADHBdBf4QALECAtgN4AAQEEcAIDWIAAAgjgBAawAAEsQAALEEAAAZzAABYggAUIIIAATmAAAQRwAgNYgAAWIIAFCGABAggggBMYwAIEsAABfgO49/YVAAsQICqA3gABCxAgLYDeAAELECAtgN4AAQsQIC2A3gABJzCAExjACQzgBAYQQAABBBBAAAEEOC6AfgUGLEAAAQRwAgNYgAAdfQIMACob7szyxrOuAAAAAElFTkSuQmCC');
+
+        border: 0px;
+        -webkit-box-shadow: inset rgba(0,0,0,0.1) 0 0 10px;
+        -moz-box-shadow: inset rgba(0,0,0,0.1) 0 0 10px;
+        -ms-box-shadow: inset rgba(0,0,0,0.1) 0 0 10px;
+        -o-box-shadow: inset rgba(0,0,0,0.1) 0 0 10px;
+        box-shadow: inset rgba(0,0,0,0.1) 0 0 10px;
+
+        -webkit-border-radius: 7px;
+        -moz-border-radius: 7px;
+        -ms-border-radius: 7px;
+        -o-border-radius: 7px;
+        border-radius: 7px;
+    }
+    #chat-send:hover {
+        background-color: #c00;
+    }
+    #chat-send:active {
+        background-color: #0af;
+    }
+    #chat-textbox {
+        width: 230px;
+        text-shadow: rgba(255,255,255,0.9) 0 1px 2px;
+        color: #555;
+    }
+    #chat-bar {
+        z-index: 100;
+        position: absolute;
+        top: 30px;
+        left: 0;
+    }
+    #chat-display {
+        z-index: 200;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 320px;
+        height: 327px;
+        overflow: hidden;
+        background: #fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAFCAYAAABIHbx0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAABpJREFUGNNjZGBgYGUgDH4TUsDEQCUwjA0CAE5RAQroMxhVAAAAAElFTkSuQmCC');
+        border-top: 1px solid #fff;
+    }
+    .chat-item {
+        padding: 10px;
+        border-bottom: 1px solid #fff;
+        background-color: #f2f2f2;
+        background-color: rgba(240,240,240,0.5);
+
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+        -ms-transition: all 0.5s;
+        -o-transition: all 0.5s;
+        transition: all 0.5s;
+    }
+    .template { display: none }
+    #top-bar {
+        z-index: 200;
+        width: 320px;
+        height: 19px;
+        border-bottom: 1px solid #aaa;
+        font-family: arial, serif;
+        color: #fff;
+        background: #1af url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAUCAYAAAC07qxWAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAA3SURBVHjaYnzw4IEeAxGA5cePHwzUVfj9+3fiFH779m34KPz69etAmUh9q4eCQqKTGbEJFyDAAOdDOfHGNE+4AAAAAElFTkSuQmCC');
+        text-align: center;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 19px;
+    }
+    #list {
+        z-index: 50;
+        position: relative;
+        width: 320px;
+        height: 440px;
+        overflow: hidden;
+        background: #fafafa url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAFCAYAAABIHbx0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAABpJREFUGNNjZGBgYGUgDH4TUsDEQCUwjA0CAE5RAQroMxhVAAAAAElFTkSuQmCC');
+    }
+    #list-footer {
+        z-index: 300;
+        cursor: pointer;
+        position: absolute;
+        top: 407px;
+        left: 0;
+        width: 320px;
+        height: 53px;
+        background:
+            url(http://pubnub.s3.amazonaws.com/2011/pubnub-list-widget.png);
+    }
+</style>
+</head>
+<body>
+
+<div id=top-bar>Chat</div>
+
+<div id=chat-bar>
+    <input id=chat-textbox placeholder='Chat Here' />
+    <button id=chat-send>chat</button>
+</div>
+
+<div id=chat-display><div></div></div>
+
+<div id=list></div>
+
+<a href=http://www.pubnub.com/streams target=pubnub>
+<div id=list-footer></div>
+</a>
+
+<div id=pubnub></div>
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script>(function(){
+    // =======================================================================
+    // STREAM FRAMEWORK CODE
+    // =======================================================================
+    var p             = PUBNUB
+    ,   top_bar       = p.$('top-bar')
+    ,   chat_display  = p.$('chat-display')
+    ,   chat_send     = p.$('chat-send')
+    ,   chat_textbox  = p.$('chat-textbox')
+    ,   last_received = 0
+    ,   now           = function(){return+new Date}
+    ,   safe_rx       = /[<>]/g
+    ,   domain        = (document.referrer || '//www.pubnub.com').split('/')[2]
+    ,   channel       = 'pubnub-easy-chat-' + domain
+    ,   stream_id     = (location.href.match(/stream-id=([\w\-]+)/)||[''])
+                        .slice(-1)[0];
+
+    top_bar.innerHTML = p.supplant(
+        'Chat on - {domain}',
+        { domain : domain }
+    );
+
+    // =======================================================================
+    // CHAT RECIEVED
+    // =======================================================================
+    function new_chat(message) {
+        var chat_line = p.create('div');
+
+        p.attr( chat_line, 'class', 'chat-item' );
+        p.css( chat_line, { backgroundColor : '#ff0' } )
+
+        if (!message.link)
+            chat_line.innerHTML = 
+                message.description.replace( safe_rx, '' );
+        else
+            chat_line.innerHTML = [
+                "<a target='x",
+                now(),
+                "' href='",
+                (message.link||'#').replace( safe_rx, '' ),
+                "'>",
+                message.description.replace( safe_rx, '' ),
+                "</a>"
+            ].join('');
+
+        chat_display.insertBefore( chat_line, chat_display.firstChild );
+
+        setTimeout( function() {
+            p.css( chat_line, { backgroundColor : '#f2f2f2' } )
+            p.css( chat_line, { backgroundColor : 'rgba(240,240,240,0.7)' } )
+        }, 1000 );
+    }
+
+    // =======================================================================
+    // LISTEN FOR NEW CHATS
+    // =======================================================================
+    p.subscribe({
+        channel  : channel,
+        callback : new_chat
+    });
+
+    // =======================================================================
+    // SEND CHAT
+    // =======================================================================
+    function send_chat(text) {
+        p.publish({
+            channel : channel,
+            message : { description : text.replace( safe_rx, '' ) }
+        });
+    }
+
+    // =======================================================================
+    // HISTORY
+    // =======================================================================
+    p.history({
+        limit    : 10,
+        channel  : channel,
+        callback : function(messages) {
+            p.each( messages, new_chat );
+
+            // Initial Message
+            new_chat({
+                link        : 'http://www.pubnub.com/streams',
+                description : 'You are using PubNub Streams.'
+            });
+        }
+    });
+
+    // =======================================================================
+    // BIND UI CHAT
+    // =======================================================================
+    function ui_chat_bind(e) {
+        var text = chat_textbox.value;
+
+        if ((e.keyCode || e.charCode || 13) !== 13) return 1;
+        if (!text) return 1;
+
+        send_chat(text);
+        chat_textbox.value = '';
+
+        return 1;
+    }
+
+    p.bind( 'mousedown,touchstart', chat_send, ui_chat_bind );
+    p.bind( 'keydown', chat_textbox, ui_chat_bind );
+
+})();</script>
+
+</body>
+</html>
+
