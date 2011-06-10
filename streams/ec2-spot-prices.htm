@@ -1,0 +1,414 @@
+<!doctype html>
+<html>
+<head>
+    <title>PubNub Stream</title>
+    <link href=http://fonts.googleapis.com/css?family=Cabin|Kameron
+        rel=stylesheet>
+    <meta http-equiv=Content-Type content=text/html;charset=utf-8>
+    <meta name=viewport content=width=320,height=480,user-scalable=0>
+    <meta name=apple-mobile-web-app-capable content=yes>
+
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+
+        font-size: 14px;
+        line-height: 14px;
+        font-family: Cabin,'Helvetica Neue',Helvetica,Arial,sans-serif;
+        text-shadow: rgba(0,0,0,0.3) 0 -1px 1px;
+
+        color: #fff;
+        background-color: #000;
+    }
+    .template { display: none }
+    .relative { position: relative }
+
+    .os-title {
+        margin: 10px 0 0 10px;
+    }
+    .clear { clear: both }
+
+    .list-footer {
+        color: #fff;
+        font-size: 18px;
+        line-height: 18px;
+    }
+    #list-footer {
+        text-align: center;
+        margin: 10px 4px 4px 4px;
+        padding: 20px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        -o-border-radius: 4px;
+        border-radius: 4px;
+    }
+
+    /* -----------------------------------------------------------------------
+    INSTANCES
+    ----------------------------------------------------------------------- */
+    .instance {
+        float: left;
+        position: relative;
+        cursor: default;
+        width: 312px;
+        height: 66px;
+
+        background: #778 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAABCCAYAAACbx8wMAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABQSURBVHjaYvz//38QA3YgxAIk/uOQ/D9Qkv9wSP4j21iGweYgGoXQMIqy/zSM7EEXn+T7c3h45f9A5eyREEJMDHjAQLh2IBxEIzvxGgsQYADsCHjfVTwmSwAAAABJRU5ErkJggg==');
+
+        margin: 10px 4px 4px 4px;
+
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -ms-border-radius: 4px;
+        -o-border-radius: 4px;
+        border-radius: 4px;
+
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+        -ms-transition: all 0.5s;
+        -o-transition: all 0.5s;
+        transition: all 0.5s;
+    }
+    .type {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+
+        font-size: 18px;
+        line-height: 18px;
+    }
+    .platform {
+        position: absolute;
+        top: 30px;
+        left: 10px;
+
+        color: #ddd;
+        font-size: 12px;
+        line-height: 12px;
+    }
+    .price {
+        position: absolute;
+        top: 22px;
+        right: 110px;
+
+        font-family: Kameron;
+        font-weight: 700;
+        text-align: right;
+        font-size: 22px;
+        line-height: 22px;
+    }
+    .price-range {
+        position: absolute;
+        top: 10px;
+        right: 110px;
+
+        font-weight: 700;
+        text-align: right;
+        font-size: 12px;
+        line-height: 12px;
+    }
+    .high {
+        color: #f22;
+        text-shadow: rgba(0,0,0,0.4) 0 1px 1px;
+    }
+    .avg {
+        color: #dd2;
+        text-shadow: rgba(0,0,0,0.4) 0 1px 1px;
+    }
+    .low {
+        color: #0e0;
+        text-shadow: rgba(0,0,0,0.4) 0 1px 1px;
+    }
+
+    .price-change {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+
+        width: 90px;
+        height: 26px;
+
+        background-repeat: repeat-x;
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAaCAYAAACD+r1hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAA5SURBVHjaYvz///8kBhIACxD/oLmG76NOooWGn4NPwy+aa/hNcw1/Bp+GvzTX8I/mGv7T1AaAAAMA1RYcZ0WJbPgAAAAASUVORK5CYII=');
+
+        font-family: Kameron;
+        font-weight: 700;
+        text-align: center;
+        padding-top: 4px;
+
+        font-size: 15px;
+        line-height: 22px;
+
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        -ms-border-radius: 6px;
+        -o-border-radius: 6px;
+        border-radius: 6px;
+    }
+    .up {
+        background-color: #f00;
+        border: 2px solid #a00;
+    }
+    .flat {
+        background-color: #dd0;
+        border: 2px solid #cc0;
+    }
+    .down {
+        background-color: #0c0;
+        border: 2px solid #0a0;
+    }
+    .remove {
+        position: absolute;
+        cursor: pointer;
+        right: -4px;
+        top: -8px;
+
+        width: 20px;
+        height: 20px;
+
+        background: #000 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAaCAYAAACD+r1hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAA5SURBVHjaYvz///8kBhIACxD/oLmG76NOooWGn4NPwy+aa/hNcw1/Bp+GvzTX8I/mGv7T1AaAAAMA1RYcZ0WJbPgAAAAASUVORK5CYII=') repeat-x;
+
+        text-align: center;
+        font-size: 14px;
+        line-height: 20px;
+
+        -webkit-border-radius: 60px;
+        -moz-border-radius: 60px;
+        -ms-border-radius: 60px;
+        -o-border-radius: 60px;
+        border-radius: 60px;
+    }
+
+
+    /* -----------------------------------------------------------------------
+    PERCENT BOX
+    ----------------------------------------------------------------------- */
+    .percent-container {
+        position: absolute;
+        top: 55px;
+        left: 10px;
+
+        overflow: hidden;
+        width: 291px;
+        height: 3px;
+        border-bottom: 1px solid rgba(255,255,255,0.4);
+        border-right: 1px solid rgba(255,255,255,0.4);
+    }
+    .percent-range {
+        background: rgba(255,255,255,0.7);
+        height: 3px;
+        border-right: 2px solid rgba(255,255,255,0.6);
+
+        -webkit-transition: all 0.9s;
+        -moz-transition: all 0.9s;
+        -ms-transition: all 0.9s;
+        -o-transition: all 0.9s;
+        transition: all 0.9s;
+    }
+    .percent-high {
+        background: #b22;
+    }
+    .percent-avg {
+        background: #dd2;
+    }
+    .percent-low {
+        background: #2a2;
+    }
+    </style>
+</head>
+<body>
+
+<!-- ITEM TEMPLATE -->
+<div id=instance-template class=template>
+    <div class=instance id={id}>
+        <div class=type>{type}</div>
+        <div class=platform>{platform}</div>
+        <div
+            id={id}-range
+            class='{range} price-range'
+        >{range_name}</div>
+        <div
+            id={id}
+            class=price
+        >{price}</div>
+        <div
+            id={id}-change
+            class='{direction} price-change'
+        >{change}</div>
+        <div
+            id={id}-percent-container
+            class='percent-{range} percent-container'>
+            <div
+                id={id}-percent
+                class=percent-range
+                style=width:{percent}%
+            ></div>
+        </div>
+        <div class=remove>&#10006;</div>
+    </div>
+</div>
+
+<!-- LIST OF INSTANCES -->
+<div id=oses-lists>
+<div class=os-title>Linux/UNIX</div>
+<div id=instances-linux-unix><div></div><div id=instances-linux></div></div>
+<div class=clear></div>
+
+<div class=os-title>SUSE Linux</div>
+<div id=instances-suse-linux><div></div></div>
+<div class=clear></div>
+
+<div class=os-title>Windows</div>
+<div id=instances-windows><div></div></div>
+<div class=clear></div>
+</div>
+
+<!-- FOOTER -->
+<div id=list-footer><a
+    href=http://www.pubnub.com/
+    class=list-footer
+    target=pubnubwebsite
+>Powered by PubNub</a></div>
+<div id=pubnub sub-key=e19f2bb0-623a-11df-98a1-fbd39d75aa3f></div>
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script>(function(){
+
+    // =======================================================================
+    // COMMON VARS
+    // =======================================================================
+    var p                 = PUBNUB
+    ,   instances         = {
+            'windows'    : p.$('instances-windows'),
+            'linux'      : p.$('instances-linux'),
+            'linux-unix' : p.$('instances-linux-unix'),
+            'suse-linux' : p.$('instances-suse-linux')
+        }
+    ,   instance_template = p.$('instance-template').innerHTML
+    ,   rx_space          = /[ \/]/g
+    ,   ranges            = ['low', 'avg', 'high', 'high'];
+
+    // =======================================================================
+    // ADD UPDATE INSTANCE
+    // =======================================================================
+    function add_update_instance(details) {
+        var inst_id    = (details.type  + '-' + details.platform)
+                         .replace( rx_space, '-' ).toLowerCase()
+        ,   type       = details.platform
+                         .replace( rx_space, '-' ).toLowerCase()
+        ,   exists     = p.$(inst_id)
+        ,   percent    = Math.abs(details.price - details.avg.low /
+                         details.avg.high - details.avg.low)
+        ,   instance   = exists && exists.parentNode || p.create('div');
+
+        instance.innerHTML = p.supplant( instance_template, {
+            id         : inst_id,
+            type       : details.type.toUpperCase(),
+            platform   : details.platform,
+            range      : ' ',
+            range_name : ' ',
+            price      : '$' + details.price,
+            direction  : 'flat',
+            change     : '--',
+            percent    : (instance.last_percent || percent) * 100
+        } );
+
+        // -----------
+        // Display New
+        // -----------
+        if (!exists && type in instances) {
+            instance.last_price = details.price;
+            instance.last_percent = percent;
+            instances[type].insertBefore( instance, instances.firstChild );
+            return;
+        }
+
+        // ---------
+        // Do Update
+        // ---------
+        var diff       = instance.last_price - details.price
+        ,   rng        = ranges[Math.floor(percent * 3)]
+        ,   change     = p.$(inst_id + '-change')
+        ,   range_name = p.$(inst_id + '-range')
+        ,   bar        = p.$(inst_id + '-percent')
+        ,   insta      = p.$(inst_id)
+        ,   bar_conta  = p.$(inst_id + '-percent-container')
+        ,   direction  = diff > 0 ? 'up' : 'down';
+
+        // Difference Box
+        p.attr( change, 'class', direction + ' price-change' );
+        change.innerHTML = (''+diff).slice( 0, 6 ) +
+                           (diff > 0 ? '&uarr;' : '&darr;');
+
+        // Percent Bar
+        p.css( bar, { width : (percent * 100) + '%' } );
+        p.attr(
+            bar_conta,
+            'class',
+            'percent-' + rng + ' percent-container'
+        );
+
+        // Price Indicator
+        range_name.innerHTML = rng.toUpperCase();
+        p.attr( range_name, 'class', rng + ' price-range' );
+
+        // Show Highlighting
+        p.css( insta, { backgroundColor : diff > 0 ? '#b22' : '#2a2' } );
+        setTimeout( function() {
+            p.css( insta, { backgroundColor : '#778' } );
+        }, 5000 );
+
+        // Save History for Next Update
+        exists.last_price = details.price;
+        instance.last_percent = percent;
+    }
+
+    // =======================================================================
+    // REMOVE BUTTON
+    // =======================================================================
+    p.bind( 'click', p.$('oses-lists'), function(e) {
+        var target = e.target || e.srcElement || {};
+
+        if (p.attr( target, 'class' ) !== 'remove') return;
+
+        p.css( target.parentNode, {
+            overflow : 'hidden',
+            width    : 1,
+            height   : 1
+        } );
+
+        setTimeout( function() {
+            p.css( target.parentNode.parentNode, { display : 'none' } );
+        }, 600 );
+
+        return true;
+    } );
+
+
+    // =======================================================================
+    // RECEIVE UPDATES
+    // =======================================================================
+    p.subscribe({
+        channel  : 'ec2-spot-price-history',
+        callback : add_update_instance
+    });
+
+    // =======================================================================
+    // HISTORY
+    // =======================================================================
+    p.history({
+        channel  : 'ec2-spot-price-history',
+        limit    : 50,
+        callback : function(updates) {
+            p.each( updates, add_update_instance );
+        }
+    });
+
+})();</script>
+
+<script>var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-16927549-1']);_gaq.push(['_trackPageview']);(function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src='http://www.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})()</script>
+
+</body>
+</html>
+
