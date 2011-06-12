@@ -320,7 +320,9 @@
         if (!exists && type in instances) {
             instance.last_price = details.price;
             instance.last_percent = percent;
-            instances[type].insertBefore( instance, instances.firstChild );
+            instances[type].appendChild(
+                instance
+            );
             return;
         }
 
@@ -399,8 +401,9 @@
     // =======================================================================
     p.history({
         channel  : 'ec2-spot-price-history',
-        limit    : 50,
+        limit    : 72,
         callback : function(updates) {
+            updates = updates.sort(function(a,b){ return a.price - b.price });
             p.each( updates, add_update_instance );
         }
     });
