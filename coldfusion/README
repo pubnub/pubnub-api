@@ -14,6 +14,7 @@ https://github.com/bennadel/PubNub.cfc
 * subscribeAsync( channel, callback [, timeout] )
 * history( channel [, limit] )
 * time( [returnAsBigInt] )
+* unsubscribe()
 
 ## Relevant Blog Entries ##
 
