@@ -1,0 +1,23 @@
+# ColdFusion Wrapper For PubNub API #
+
+PubNub.cfc is a ColdFusion component that provides a simple wrapper to PubNub's simple RESTful API. It provides both synchronous and asynchronous ways to subscribe to a channel.
+
+## PubNub.cfc Repository ##
+
+https://github.com/bennadel/PubNub.cfc
+
+## PubNub.cfc Interface ##
+
+* init( ... )
+* publish( channel, message )
+* subscribe( channel [, timeToken] )
+* subscribeAsync( channel, callback [, timeout] )
+* history( channel [, limit] )
+* time( [returnAsBigInt] )
+* unsubscribe()
+
+## Relevant Blog Entries ##
+
+* http://www.bennadel.com/blog/2213-Sending-Client-To-Client-Realtime-Messages-With-The-PubNub-JavaScript-Library.htm
+* http://www.bennadel.com/blog/2214-PubNub-cfc-A-ColdFusion-Wrapper-For-The-PubNub-Realtime-Messaging-Platform.htm
+
