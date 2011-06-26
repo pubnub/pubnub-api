@@ -96,9 +96,8 @@ function pubnub.new(init)
                     -- STOP CONNECTION?
                     if not subscriptions[channel].connected then return end
 
-
-                    ## CONNECTED CALLBACK
-                    if not subscriptions[channel.first then
+                    -- CONNECTED CALLBACK
+                    if not subscriptions[channel].first then
                         subscriptions[channel].first = true
                         connectcb()
                     end
