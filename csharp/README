@@ -1,4 +1,14 @@
 ## ---------------------------------------------------
+## UPDATE! UPDATE! UPDATE! UPDATE!
+## ---------------------------------------------------
+##
+## If you are looking for an Asynchronous C# API:
+## https://github.com/pubnub/pubnub-api/tree/master/silverlight
+##
+## Use the Silverlight C# API when you need
+## NON-Blocking Publish/Subscribe APIs.
+## 
+## ---------------------------------------------------
 ##
 ## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 ## http://www.pubnub.com/account
