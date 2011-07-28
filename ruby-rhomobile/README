@@ -1,5 +1,9 @@
-Pubnub - http://github/pubnub/pubnub-api
-@poptartinc on Twitter, @poptart on Github
+PubNub - http://github/pubnub/pubnub-api
+
+David Greene
+https://github.com/trumpetx
+http://davidgreene.me/
+Austin, TX
 
 ## ------------------------------------------
 ## PubNub 3.0 Real-time Cloud Push API - RUBY
@@ -32,17 +36,27 @@ info = pubnub.publish({
 })
 puts(info)
 
+
 # ---------
 # SUBSCRIBE
 # ---------
-# Listen for Messages *BLOCKING*
-pubnub.subscribe({
-    'channel'  => 'hello_world',
-    'callback' => lambda do |message|
-        puts(message) ## print message
-        return true   ## keep listening?
+def on_activate_app
+    require 'helpers/pubnub'
+    puts('Creating new Pubnub Client API')
+
+    # sub, pub, secret, ssl on or off
+    pubnub = Pubnub.new( 'demo', 'demo', nil, false )
+
+    t1 = Thread.new do
+        pubnub.subscribe({
+            'channel'  => 'hello_world',
+            'callback' => lambda do |message| 
+                WebView.execute_js("alert('#{message}');")
+                return true
+            end
+        })
     end
-})
+end
 
 # -------
 # HISTORY
