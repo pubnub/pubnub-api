@@ -48,8 +48,8 @@ math.randomseed (os.time())
 
 -- initialize pubnub
 multiplayer = pubnub.new ({
-	publish_key = "pub-1eeb801d-7b54-4240-9c8e-87cbc6a4636e",
-	subscribe_key = "sub-414e2e73-30de-11e0-b282-2ba6fb4e5352",
+	publish_key = "demo",
+	subscribe_key = "demo",
 	secret_key = "",
 	ssl = nil,
 	origin = "pubsub.pubnub.com" })
