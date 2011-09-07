@@ -152,9 +152,9 @@ function pubnub.new(init)
             return print("Missing History Callback and/or Channel")
         end
 
-        limit    = args.limit
-        channel  = args.channel
-        callback = args.callback
+        local limit    = args.limit
+        local channel  = args.channel
+        local callback = args.callback
 
         if not limit then limit = 10 end
 
