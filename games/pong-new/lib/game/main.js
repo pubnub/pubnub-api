@@ -15,7 +15,19 @@ ig.module(
 .defines(function(){
 
 MyGame = ig.PubNubGame.extend({
+
+  game_status: "connecting", // game state e.g. 'looking_for_game' etc
+  player_uuid: "", // player identifier
+  game_uuid: "", // game identifier
+  player_paddle: undefined,
+  opponent_paddle: undefined,
+  latency: 0,
+  opponent_latency: 0,
+  latency_tests: [],
+  is_host: false, // whether or not the player is the host
+  puck_interval: 0, 
 	
+
 	// Load a font
 	font: new ig.Font( 'media/04b03.font.png' ),
 	
@@ -24,23 +36,32 @@ MyGame = ig.PubNubGame.extend({
 		ig.input.bind( ig.KEY.DOWN_ARROW, 'down' );
 		
 		this.loadLevel( LevelMain );
-
-                
 	},
 	
 	update: function() {
 		// Update all entities and backgroundMaps
 		this.parent();
+    var game_obj = this;
 		
-    if (this.game_status == "in_game") {
-      if (this.getPuck().pos.x < 0) {
-        this.game_status = "won_by_p2";
-        clearInterval(this.puck_interval);
-      }
-      if (this.getPuck().pos.x > 769) {
-        this.game_status = "won_by_p1";
-        clearInterval(this.puck_interval);
-      }
+    switch (game_obj.game_status) {
+      // host starts game when ready
+      case "found_match":
+        if ((game_obj.is_host == true) && (game_obj.opponent_latency != 0)) {
+          game_obj.startGame(); 
+        }
+        break;
+
+      // check for winner
+      case "in_game":
+        if (game_obj.getPuck().pos.x < 0) {
+          game_obj.game_status = "won_by_p2";
+          clearInterval(game_obj.puck_interval);
+        }
+        if (game_obj.getPuck().pos.x > 769) {
+          game_obj.game_status = "won_by_p1";
+          clearInterval(game_obj.puck_interval);
+        }
+        break;
     }
 	},
 	
@@ -62,27 +83,6 @@ MyGame = ig.PubNubGame.extend({
     return this.getEntitiesByType('EntityPuck')[0];
   },
 
-
-  game_status: "connecting", // game state i.e. 'looking_for_game' etc
-  player_uuid: "", // player identifier
-  game_uuid: "", // game identifier
-  player_paddle: undefined,
-  opponent_paddle: undefined,
-  latency: 0,
-  opponent_latency: 0,
-  latency_tests: [],
-  is_host: false, // whether or not the player is the host
-  puck_interval: 0, 
-
-  startGame: function(extra_milliseconds) {
-    console.log('starting game!');
-    var game_obj = this;
-    game_obj.game_status = "in_game";
-    setTimeout( function() {
-      game_obj.getPuck().startMoving();
-    }, (3000 + extra_milliseconds));
-  },
-
   loadLevel: function(data) {
     this.findMatch();
     this.parent(data);
@@ -102,7 +102,7 @@ MyGame = ig.PubNubGame.extend({
           switch (message.type) {
             case "looking_for_game":
               if (game_obj.game_status == "looking_for_game") {
-                //potential match found!
+                //potential match found
                 game_obj.game_status = 'found_potential_match';
                 PUBNUB.publish({
                     channel : "pong",
@@ -114,16 +114,13 @@ MyGame = ig.PubNubGame.extend({
 
             case "lets_play_ill_host":
               if (game_obj.game_status == "looking_for_game") {
-                //confirmed match found!
+                //confirmed match found
                 PUBNUB.uuid(function(uuid) { //generate a game_uuid
                   game_obj.game_uuid = uuid;
                   game_obj.game_status = 'found_match';
                   game_obj.player_paddle = game_obj.getPaddle2();
                   game_obj.opponent_paddle = game_obj.getPaddle1();
                   game_obj.getPaddle2().is_local_player = true;
-                  game_obj.getPaddle2().game_uuid = game_obj.game_uuid;
-                  game_obj.getPaddle2().player_uuid = game_obj.player_uuid;
-                  console.log('match really found for offhost (p2)');
                   PUBNUB.publish({
                     channel : "pong",
                     message : { "player_uuid": game_obj.player_uuid,
@@ -143,15 +140,10 @@ MyGame = ig.PubNubGame.extend({
                 game_obj.player_paddle = game_obj.getPaddle1();
                 game_obj.opponent_paddle = game_obj.getPaddle2();
                 game_obj.getPaddle1().is_local_player = true;
-                game_obj.getPaddle1().game_uuid = game_obj.game_uuid;
-                game_obj.getPaddle1().player_uuid = game_obj.player_uuid;
-                console.log('match really found for host (p1) ');
                 game_obj.is_host = true;
                 game_obj.setupMatch();
               }
               break;
-
-
           }
         }
       },
@@ -184,40 +176,23 @@ MyGame = ig.PubNubGame.extend({
           switch (message.type) {
             case "moving_up":
               game_obj.opponent_paddle.last_broadcasted_state = 'moving_up';
-              console.log('opponent moving up');
               break;
 
             case "moving_down":
-              console.log('opponent moving down');
               game_obj.opponent_paddle.last_broadcasted_state = 'moving_down';
               break;
 
             case "not_moving":
-              console.log('opponent not moving');
               game_obj.opponent_paddle.last_broadcasted_state = 'not_moving';
               game_obj.opponent_paddle.last_broadcasted_y = message.pos_y;
               break;
 
             case "lets_play":
-              console.log('opponent wants to play!');
-              game_obj.startGame(0);
-              game_obj.puck_interval = setInterval( function() {
-                game_obj.sharePuckPos();
-                console.log("sharing stuff");
-              }, 500);
+              game_obj.startGame();
               break;
 
             case "share_latency":
-              console.log('got opponents latency');
               game_obj.opponent_latency = message.latency;
-              if (game_obj.is_host == true) {
-                PUBNUB.publish({
-                    channel : "pong_" + game_obj.game_uuid,
-                    message : { "type": "lets_play",
-                                "player_uuid": game_obj.player_uuid }
-                });
-                game_obj.startGame(game_obj.opponent_latency);
-              }
               break;
 
             case "puck_pos":
@@ -228,7 +203,6 @@ MyGame = ig.PubNubGame.extend({
               break;
 
             case "still_here":
-              game_obj.opponent_paddle.last_broadcasted_state = 'moving_down';
               break;
           }
         }
@@ -244,11 +218,11 @@ MyGame = ig.PubNubGame.extend({
               }
               console.log("latency_tests: " + game_obj.latency_tests);
               game_obj.computeAverageLatency(); 
-              setTimeout( function() {
-                game_obj.shareLatency(); 
-              }, 1000);
-              break; 
+              game_obj.shareLatency(); 
 
+              //now reset the latency tests
+              game_obj.latency_test = [];
+              break; 
           }
         }
       },
@@ -272,7 +246,6 @@ MyGame = ig.PubNubGame.extend({
 
   computeAverageLatency: function() {
     var game_obj = this;
-
     var total = 0;
 
     for (var i = 0; i < game_obj.latency_tests.length; i++) {
@@ -300,6 +273,33 @@ MyGame = ig.PubNubGame.extend({
                     "latency": game_obj.latency,
                     "player_uuid": game_obj.player_uuid }
     });
+  },
+
+  startGame: function() {
+    var game_obj = this;
+
+    var extra_milliseconds = 0;
+
+    if (game_obj.is_host) { 
+      extra_milliseconds = game_obj.opponent_latency;
+      PUBNUB.publish({
+          channel : "pong_" + game_obj.game_uuid,
+          message : { "type": "lets_play",
+                      "player_uuid": game_obj.player_uuid }
+      });
+
+    }
+    else {
+      game_obj.puck_interval = setInterval( function() {
+        game_obj.sharePuckPos();
+      }, 500);
+    }
+
+    game_obj.game_status = "game_starting";
+    setTimeout( function() {
+      game_obj.game_status = "in_game";
+      game_obj.getPuck().startMoving();
+    }, (3000 + extra_milliseconds));
   },
 
   sharePuckPos: function() {
