@@ -30,8 +30,8 @@ EntityPuck = ig.Entity.extend({
 	},
 
 	startMoving: function() {
-		this.vel.x = 100;
-		this.vel.y = 100;
+		this.vel.x = 200;
+		this.vel.y = 200;
   },
 
   update: function() {

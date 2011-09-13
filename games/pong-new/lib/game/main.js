@@ -32,7 +32,16 @@ MyGame = ig.PubNubGame.extend({
 		// Update all entities and backgroundMaps
 		this.parent();
 		
-		// Add your own, additional update code here
+    if (this.game_status == "in_game") {
+      if (this.getPuck().pos.x < 0) {
+        this.game_status = "won_by_p2";
+        clearInterval(this.puck_interval);
+      }
+      if (this.getPuck().pos.x > 769) {
+        this.game_status = "won_by_p1";
+        clearInterval(this.puck_interval);
+      }
+    }
 	},
 	
 	draw: function() {
@@ -53,6 +62,7 @@ MyGame = ig.PubNubGame.extend({
     return this.getEntitiesByType('EntityPuck')[0];
   },
 
+
   game_status: "connecting", // game state i.e. 'looking_for_game' etc
   player_uuid: "", // player identifier
   game_uuid: "", // game identifier
@@ -62,11 +72,12 @@ MyGame = ig.PubNubGame.extend({
   opponent_latency: 0,
   latency_tests: [],
   is_host: false, // whether or not the player is the host
-
+  puck_interval: 0, 
 
   startGame: function(extra_milliseconds) {
     console.log('starting game!');
     var game_obj = this;
+    game_obj.game_status = "in_game";
     setTimeout( function() {
       game_obj.getPuck().startMoving();
     }, (3000 + extra_milliseconds));
@@ -190,22 +201,34 @@ MyGame = ig.PubNubGame.extend({
             case "lets_play":
               console.log('opponent wants to play!');
               game_obj.startGame(0);
+              game_obj.puck_interval = setInterval( function() {
+                game_obj.sharePuckPos();
+                console.log("sharing stuff");
+              }, 500);
               break;
 
             case "share_latency":
-              console.log('sharing latency');
+              console.log('got opponents latency');
               game_obj.opponent_latency = message.latency;
-              if ((game_obj.latency != 0) && (game_obj.opponent_latency != 0) && (game_obj.is_host == true)) {
-                console.log('lets fucking play');
+              if (game_obj.is_host == true) {
                 PUBNUB.publish({
                     channel : "pong_" + game_obj.game_uuid,
                     message : { "type": "lets_play",
                                 "player_uuid": game_obj.player_uuid }
                 });
-                console.log('lets fucking play');
                 game_obj.startGame(game_obj.opponent_latency);
-                console.log('lets fucking play');
               }
+              break;
+
+            case "puck_pos":
+              if (game_obj.game_status == "in_game") {
+                game_obj.getPuck().pos = message.puck_pos;
+                game_obj.getPuck().vel = message.puck_vel;
+              }
+              break;
+
+            case "still_here":
+              game_obj.opponent_paddle.last_broadcasted_state = 'moving_down';
               break;
           }
         }
@@ -250,22 +273,18 @@ MyGame = ig.PubNubGame.extend({
   computeAverageLatency: function() {
     var game_obj = this;
 
-    console.log("computing average latency");
     var total = 0;
 
     for (var i = 0; i < game_obj.latency_tests.length; i++) {
       total += game_obj.latency_tests[i];
     }
 
-    console.log("total: " + total);
     var initial_average = (total / game_obj.latency_tests.length);
-    console.log("initial_average: " + initial_average);
 
     for (var i = 0; i < game_obj.latency_tests.length; i++) {
       if ( game_obj.latency_tests[i] > (initial_average * 1.5)) {
         // throw out the outliers
         total -= game_obj.latency_tests[i];
-        console.log("threw out " + game_obj.latency_tests[i]);
       }
     }
 
@@ -279,6 +298,17 @@ MyGame = ig.PubNubGame.extend({
         channel : "pong_" + game_obj.game_uuid,
         message : { "type": "share_latency",
                     "latency": game_obj.latency,
+                    "player_uuid": game_obj.player_uuid }
+    });
+  },
+
+  sharePuckPos: function() {
+    var game_obj = this;
+    PUBNUB.publish({
+        channel : "pong_" + game_obj.game_uuid,
+        message : { "type": "puck_pos",
+                    "puck_pos": game_obj.getPuck().pos,
+                    "puck_vel": game_obj.getPuck().vel,
                     "player_uuid": game_obj.player_uuid }
     });
   },
