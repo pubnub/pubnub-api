@@ -15,7 +15,10 @@
             margin: 0 auto 0 auto;
         }
         .server {
-            margin: 10px 0;
+            display: inline-block;
+
+            width: 300px;
+            margin: 10px;
             line-height: 0px;
 
             -webkit-border-radius: 15px;
@@ -48,11 +51,12 @@
             -moz-box-shadow: 0px 0px 2px 3px #fce94f;
             box-shadow: 0px 0px 2px 3px #fce94f;
             */
+            -webkit-box-shadow: 0px 0px 1px 5px #eee;
         }
         .online-text {
             position: absolute;
-            top: 44px;
-            left: 38px;
+            top: 68px;
+            left: 8px;
             font-size: 18px;
             color: #edd400;
             color: #fce94f;
@@ -83,7 +87,15 @@
 
 <div class=server>
     <div class=online><div class=online-text>ONLINE</div></div>
-    
+</div>
+
+
+<div class=server>
+    <div class=online><div class=online-text>ONLINE</div></div>
+</div>
+
+<div class=server>
+    <div class=online><div class=online-text>ONLINE</div></div>
 </div>
 
 
@@ -103,6 +115,21 @@
 <script>(function(){
 
     // ....
+    // ....
+    // ....
+    /*
+        
+    */
+
+    var p                 = PUBNUB
+    ,   namespace_channel = 'demo';//'pubnub-public-origin-servers';
+
+    p.subscribe({
+        channel  : namespace_channel,
+        callback : function(message) {
+            console.log(JSON.stringify(message));
+        }
+    });
 
 })();</script> 
 </div></body>
