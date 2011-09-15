@@ -208,8 +208,8 @@ class Pubnub():
 
                 ## PROBLEM?
                 if not response:
-                    def time_callback(time):
-                        if not time:
+                    def time_callback(_time):
+                        if not _time:
                             time.sleep(1)
                             substabizel()
                             return errorback("Lost Network Connection")
