@@ -14,6 +14,10 @@ import time
 import hashlib
 import urllib2
 import tornado.httpclient
+import sys
+
+import tornado.ioloop
+ioloop = tornado.ioloop.IOLoop.instance()
 
 class Pubnub():
     def __init__(
@@ -210,12 +214,10 @@ class Pubnub():
                 if not response:
                     def time_callback(_time):
                         if not _time:
-                            time.sleep(1)
-                            substabizel()
+                            ioloop.add_timeout(time.time()+1, substabizel)
                             return errorback("Lost Network Connection")
-
-                        time.sleep(1)
-                        substabizel()
+                        else:
+                            ioloop.add_timeout(time.time()+1, substabizel)
 
                     ## ENSURE CONNECTED (Call Time Function)
                     return self.time({ 'callback' : time_callback })
@@ -236,7 +238,8 @@ class Pubnub():
                     str(self.subscriptions[channel]['timetoken'])
                 ], sub_callback )
             except :
-                time.sleep(1)
+                ioloop.add_timeout(time.time()+1, substabizel)
+                return
 
         ## BEGIN SUBSCRIPTION (LISTEN FOR MESSAGES)
         substabizel()
