@@ -2,11 +2,11 @@ ig.module(
 	'game.entities.paddle'
 )
 .requires(
-	'impact.entity'
+	'plugins.pubnub.entity'
 )
 .defines(function(){
 
-EntityPaddle = ig.Entity.extend({
+EntityPaddle = ig.PubNubEntity.extend({
 	
 	size: {x:64, y:128},
 	collides: ig.Entity.COLLIDES.FIXED,

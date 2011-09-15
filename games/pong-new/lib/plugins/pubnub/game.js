@@ -7,15 +7,7 @@ ig.module(
 )
 .defines(function(){
 
-
   ig.PubNubGame = ig.Game.extend({
-
-    loadLevel: function( data ) {
-      console.log(data); 
-      console.log('pubnub!'); 
-      this.parent(data);
-    },
-	
 
   });
 
