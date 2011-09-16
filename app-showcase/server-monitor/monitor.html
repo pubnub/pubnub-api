@@ -1,0 +1,143 @@
+<!doctype html> 
+<html> 
+<head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <title>PubNub ★ Monitor</title> 
+    <link href='http://fonts.googleapis.com/css?family=Bowlby+One+SC|Didact+Gothic&v2' rel='stylesheet' type='text/css'>
+    <style>
+        body, div {
+            margin: 0;
+            padding: 0;
+            font-family: 'Didact Gothic';
+        }
+        .stage {
+            width: 1000px;
+            margin: 0 auto 0 auto;
+        }
+        .server {
+            display: inline-block;
+
+            width: 300px;
+            margin: 10px;
+            line-height: 0px;
+
+            -webkit-border-radius: 15px;
+            -moz-border-radius: 15px;
+            -ms-border-radius: 15px;
+            -o-border-radius: 15px;
+            border-radius: 15px;
+
+            background: #fcf7c9;
+            background: -moz-linear-gradient(top, #fcf7c9 0%, #f1da36 100%);
+            background: -webkit-gradient(
+                linear,
+                left top,
+                left bottom,
+                color-stop(0%,#fcf7c9),
+                color-stop(100%,#f1da36)
+            );
+            background: -webkit-linear-gradient(top, #fcf7c9 0%,#f1da36 100%);
+            background: -o-linear-gradient(top, #fcf7c9 0%,#f1da36 100%);
+            background: -ms-linear-gradient(top, #fcf7c9 0%,#f1da36 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(
+                startColorstr='#fcf7c9',
+                endColorstr='#f1da36',
+                GradientType=0
+            );
+            background: linear-gradient(top, #fcf7c9 0%,#f1da36 100%);
+
+            /*
+            -webkit-box-shadow: 0px 0px 1px 5px #fce94f;
+            -moz-box-shadow: 0px 0px 2px 3px #fce94f;
+            box-shadow: 0px 0px 2px 3px #fce94f;
+            */
+            -webkit-box-shadow: 0px 0px 1px 5px #eee;
+        }
+        .online-text {
+            position: absolute;
+            top: 68px;
+            left: 8px;
+            font-size: 18px;
+            color: #edd400;
+            color: #fce94f;
+            color: #fff;
+            color: #eeeeec;
+            text-shadow: 0 0 10px rgba(0,0,0,0.3);
+            font-family: 'Bowlby One SC';
+            opacity: 0.9;
+        }
+        .online {
+            display: inline-block;
+            position: relative;
+            width: 86px;
+            height: 86px;
+            background: #babdb6 url(online3.gif) no-repeat 12px 12px;
+
+            -webkit-border-top-left-radius: 15px;
+            -webkit-border-bottom-left-radius: 15px;
+            -moz-border-radius-topleft: 15px;
+            -moz-border-radius-bottomleft: 15px;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
+    </style>
+</head> 
+<body><div class=stage>
+ 
+
+<div class=server>
+    <div class=online><div class=online-text>ONLINE</div></div>
+</div>
+
+
+<div class=server>
+    <div class=online><div class=online-text>ONLINE</div></div>
+</div>
+
+<div class=server>
+    <div class=online><div class=online-text>ONLINE</div></div>
+</div>
+
+
+
+<div>
+    <h3>Install Common CPAN Mods</h3>
+    <pre class=box2>
+        sudo cpan LWP::Simple
+        sudo cpan URI::Escape
+        sudo cpan JSON::XS
+        sudo cpan Digest::MD5
+    </pre>
+</div>
+
+<div id=pubnub></div> 
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script> 
+<script>(function(){
+
+    // ....
+    // ....
+    // ....
+    /*
+        
+    */
+
+    var p                 = PUBNUB
+    ,   namespace_channel = 'demo';//'pubnub-public-origin-servers';
+
+    p.subscribe({
+        channel  : namespace_channel,
+        callback : function(message) {
+            console.log(JSON.stringify(message));
+        }
+    });
+
+})();</script> 
+</div></body>
+</html>
+
+
+
+
+
+
+
