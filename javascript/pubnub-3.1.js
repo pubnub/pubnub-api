@@ -223,6 +223,24 @@ var NOW    = 1
  */
 function unique() { return'x'+ ++NOW+''+(+new Date) }
 
+function rnow() { return+new Date }
+function updater( fun, rate ) {
+    var timeout
+    ,   last   = 0
+    ,   runnit = function() {
+        if (last + rate > rnow()) {
+            clearTimeout(timeout);
+            timeout = setTimeout( runnit, rate );
+        }
+        else {
+            last = rnow();
+            fun();
+        }
+    };
+
+    return runnit;
+}
+
 /**
  * $
  * =
@@ -402,6 +420,32 @@ function encode(path) {
                "%"+chr.charCodeAt(0).toString(16).toUpperCase()
     } ).join('');
 }
+
+/**
+ * EVENTS
+ * ======
+ * PUBNUB.events.bind( 'you-stepped-on-flower', function(message) {
+ *     // Do Stuff with message
+ * } );
+ *
+ * PUBNUB.events.fire( 'you-stepped-on-flower', "message-data" );
+ * PUBNUB.events.fire( 'you-stepped-on-flower', {message:"data"} );
+ * PUBNUB.events.fire( 'you-stepped-on-flower', [1,2,3] );
+ *
+ */
+var events = {
+    list   : {},
+    unbind : function( name ) { events.list[name] = [] },
+    bind   : function( name, fun ) {
+        (events.list[name] = events.list[name] || []).push(fun);
+    },
+    fire : function( name, data ) {
+        each(
+            events.list[name] || [],
+            function(fun) { fun(data) }
+        );
+    }
+};
 
 /**
  * XDR Cross Domain Request
@@ -774,6 +818,8 @@ var PN            = $('pubnub') || {}
         'search'   : search,
         'attr'     : attr,
         'now'      : unique,
+        'events'   : events,
+        'updater'  : updater,
         'init'     : CREATE_PUBNUB
     };
 
