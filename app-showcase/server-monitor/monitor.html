@@ -10,6 +10,9 @@
             padding: 0;
             font-family: 'Didact Gothic';
         }
+        #server-template {
+            display: none;
+        }
         .stage {
             width: 1000px;
             margin: 0 auto 0 auto;
@@ -89,16 +92,11 @@
     <div class=online><div class=online-text>ONLINE</div></div>
 </div>
 
-
-<div class=server>
+<div id=server-template>
     <div class=online><div class=online-text>ONLINE</div></div>
+    <div class=server-load>{load}</div>
+    <div class=server-memory>{mem}</div>
 </div>
-
-<div class=server>
-    <div class=online><div class=online-text>ONLINE</div></div>
-</div>
-
-
 
 <div>
     <h3>Install Common CPAN Mods</h3>
@@ -118,18 +116,35 @@
     // ....
     // ....
     /*
-        
+        TODO - rnd namespace for server tracking.
+        TODO - command(s) for adding new server
+        TODO - add timeout check if server doesn't report (ignore if offline)
+        TODO - 
+        TODO - 
     */
 
     var p                 = PUBNUB
-    ,   namespace_channel = 'demo';//'pubnub-public-origin-servers';
+    ,   namespace_channel = 'demo' //'pubnub-public-origin-servers';
+    ,   server_template   = p.$('server-template').innerHTML;
 
     p.subscribe({
         channel  : namespace_channel,
-        callback : function(message) {
-            console.log(JSON.stringify(message));
-        }
+        callback : update_server
     });
+
+    /*
+    //   Add or Update a Server Listed on the Page.
+    */
+    function update_server(server) {
+
+        console.log(JSON.stringify(message));
+
+        var server_id  = server.sig
+        ,   server_div = p.$(server_id) || p.create('div');
+
+        p.attr( server_div, 'class', 'server' );
+        server_div.innerHTML = p.supplant( server_template, server );
+    }
 
 })();</script> 
 </div></body>
