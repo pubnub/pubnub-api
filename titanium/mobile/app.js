@@ -17,6 +17,12 @@ Ti.include('pubnub.js');
     // ----------------------------------
     pubnub.subscribe({
         channel  : 'test',
+        connect  : function() {
+            // You can Receive Messages!
+            send_a_message("Hello World! #1");
+            send_a_message("Hello World! #2");
+            send_a_message("Hello World! #3");
+        },
         callback : function(message) {
             // Message RECEIVED!
             Ti.API.log(JSON.stringify(message));
@@ -30,18 +36,15 @@ Ti.include('pubnub.js');
     // ----------------------------------
     // SEND MESSAGE
     // ----------------------------------
-    setInterval( function() {
+    function send_a_message(message) {
         pubnub.publish({
             channel  : 'test',
-            message  : { example : "Hello World!" },
+            message  : { example : message },
             callback : function(info) {
-                if (info[0])
-                    Ti.API.log("Successfully Sent Message!");
-                else
-                    // The internet is gone.
-                    Ti.API.log("Failed! -> " + info[1]);
+                if (info[0])  Ti.API.log("Successfully Sent Message!");
+                if (!info[0]) Ti.API.log("Failed Because: " + info[1]);
             }
         });
-    }, 1000 );
+    }
 
 })();
