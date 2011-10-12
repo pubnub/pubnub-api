@@ -1,4 +1,4 @@
-include('pubnub.js');
+Ti.include('pubnub.js');
 
 (function(){
 
@@ -19,11 +19,11 @@ include('pubnub.js');
         channel  : 'test',
         callback : function(message) {
             // Message RECEIVED!
-            console.log(JSON.stringify(message));
+            Ti.API.log(JSON.stringify(message));
         },
         error : function() {
             // The internet is gone.
-            console.log("Connection Lost");
+            Ti.API.log("Connection Lost");
         }
     });
 
@@ -36,10 +36,10 @@ include('pubnub.js');
             message  : { example : "Hello World!" },
             callback : function(info) {
                 if (info[0])
-                    console.log("Successfully Sent Message!");
+                    Ti.API.log("Successfully Sent Message!");
                 else
                     // The internet is gone.
-                    console.log("Failed! -> " + info[1]);
+                    Ti.API.log("Failed! -> " + info[1]);
             }
         });
     }, 1000 );
