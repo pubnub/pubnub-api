@@ -434,12 +434,12 @@ function encode(path) {
  *
  */
 var events = {
-    list   : {},
-    unbind : function( name ) { events.list[name] = [] },
-    bind   : function( name, fun ) {
+    'list'   : {},
+    'unbind' : function( name ) { events.list[name] = [] },
+    'bind'   : function( name, fun ) {
         (events.list[name] = events.list[name] || []).push(fun);
     },
-    fire : function( name, data ) {
+    'fire' : function( name, data ) {
         each(
             events.list[name] || [],
             function(fun) { fun(data) }
