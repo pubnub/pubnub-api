@@ -1,0 +1,131 @@
+<!doctype html> 
+<html> 
+<head> 
+    <title>PubNub Audio Rotate</title> 
+    <link href='http://fonts.googleapis.com/css?family=Didact+Gothic&v2' rel='stylesheet' type='text/css'>
+    <style>
+        body, div {
+            margin: 0;
+            padding: 0;
+            font-family: 'Didact Gothic';
+        }
+        .stage {
+            margin: 0 auto 0 auto;
+            width: 1000px;
+        }
+    </style>
+</head> 
+<body><div class=stage>
+
+<audio id=audio controls preload >
+    <source src="http://pubnub.s3.amazonaws.com/general/SkullCat-Unmastered-8bc.mp3" type="audio/mp3" />
+</audio>
+
+<div id=timer></div>
+ 
+<div id=pubnub></div>
+<script src=http://cdn.pubnub.com/pubnub-3.1.js></script> 
+<script>(function(){
+    
+    var p = PUBNUB
+    ,   now    = function() { return+new Date }
+    ,   start  = now()
+    ,   audio  = p.$('audio')
+    ,   timer  = p.$('timer')
+    ,   master = 'pubnub-audio-rotater'
+    ,   pierid = Math.floor(Math.random()*999999)
+    ,   piers  = []
+    ,   pspot  = 0;
+
+    // ======================================================================
+    // LISTEN FOR EVENTS
+    // ======================================================================
+    p.subscribe({
+        channel  : master,
+        callback : function(evt) { p.events.fire( evt.name, evt.data ) }
+    });
+
+    // ======================================================================
+    // HERALD PRESENCE OF SELF AS PIER
+    // ======================================================================
+    var herald = function() { p.publish({
+        channel : master,
+        message : {
+            name : 'pier-harbinger',
+            data : pierid
+        }
+    }); };
+    herald();
+    setInterval( herald, 1500 );
+
+    // ======================================================================
+    // EVENT: PIER HARBINGER
+    // ======================================================================
+    piers.seen = {};
+    p.events.bind( 'pier-harbinger', function(pier) {
+        if (pier in piers.seen) return;
+
+        piers.seen[pier] = 1;
+        piers.push(pier);
+        // TODO... finish logic here.
+    } );
+
+    // ======================================================================
+    // BIND KEYBOARD TO ROTATE AUDIO
+    // ======================================================================
+    p.bind( 'keyup', document, function(e) {
+        var key = e.keyCode || e.charCode;
+        if (key !== 32) return true;
+        signle_rotate_audio();
+    } );
+
+    // ======================================================================
+    // SIGNLE ROTATE AUDIO
+    // ======================================================================
+    function signle_rotate_audio() {
+        p.publish({
+            channel : master,
+            message : {
+                name : 'rotate-audio',
+                data : {
+                    pierid   : pierid,
+                    position : now() - start
+                }
+            }
+        });
+    }
+
+    // ======================================================================
+    // EVENT: ROTATE AUDIO 
+    // ======================================================================
+    p.events.bind( 'rotate-audio', function(data) {
+        if (pierid === data.pierid) return audio.stop();
+    } );
+
+
+    // ======================================================================
+    // CLOCK/TIMER
+    // ======================================================================
+    setInterval( function() {
+        var current = now()
+        ,   diff    = current - start + 56000
+        ,   mill    = (''+diff).split('').slice(-3).join('')
+        ,   sec     = Math.floor(diff / 1000) % 60
+        ,   min     = Math.floor(diff / 60000); 
+
+        sec < 10 && (sec = "0" + sec);
+        min < 10 && (min = "0" + min);
+
+        timer.innerHTML = [min, sec, mill].join(":");
+    }, 60 );
+
+})();</script> 
+</div></body>
+</html>
+
+
+
+
+
+
+
