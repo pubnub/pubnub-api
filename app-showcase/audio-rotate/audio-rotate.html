@@ -117,6 +117,8 @@
     ,   timer         = p.$('timer')
     ,   userlist      = p.$('userlist')
     ,   master        = 'pubnub-audio-rotater'
+    ,   rotate_rate   = 2000
+    ,   last_rotate   = now()
     ,   userid        = ''+Math.floor(Math.random()*999999999)
     ,   users         = []
     ,   body          = p.search('body')[0]
@@ -198,14 +200,22 @@
             body.stop_interval && body.stop_interval();
         }, 300 ); }
 
-        if (user !== userid) return;
+        if (user !== userid) return (last_rotate = now());
 
         // TODO -> auto-adjust latency
         // TODO -> auto-adjust latency
         // TODO -> auto-adjust latency
         // TODO -> auto-adjust latency
-        audio.currentTime = data.time || Math.random()*100;
+        var diff = last_rotate - now() + rotate_rate
+        ,   time = (data.time && (data.time) || 0) / 1000;
+
+        console.log(diff, '<---- DIFF');
+
+        audio.currentTime = time || Math.random()*100;
+
         start_timer = data.clock;
+        last_rotate = now();
+
         audio.play();
 
         body.stop_interval = function() {
@@ -258,10 +268,10 @@
 
         function rotateit() {
             p.attr( target, 'userid', get_random_user() );
-            start_music( target, (now() - start + latency) / 1000, 1 );
+            start_music( target, (now() - start + latency), 1 );
         }
 
-        rotateival = setInterval( rotateit, 2000 );
+        rotateival = setInterval( rotateit, rotate_rate );
         rotateit();
     } );
 
