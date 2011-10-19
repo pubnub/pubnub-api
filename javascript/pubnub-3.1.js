@@ -5,7 +5,7 @@ http://www.pubnub.com/account-javascript-api-include
 
 /* ---------------------------------------------------------------------------
 PubNub Real-time Cloud-Hosted Push API and Push Notification Client Frameworks
-Copyright (c) 2011 TopMambo Inc.
+Copyright (c) 2011 PubNub Inc.
 http://www.pubnub.com/
 http://www.pubnub.com/terms
 --------------------------------------------------------------------------- */

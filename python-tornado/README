@@ -5,12 +5,12 @@
 ##
 ## ----------------------------------------------------
 
-## ---------------------------------------------
-## PubNub 3.0 Real-time Cloud Push API - PYTHON
-## ---------------------------------------------
+## ----------------------------------------------------
+## PubNub 3.0 Real-time Cloud Push API - PYTHON TORNADO
+## ----------------------------------------------------
 ##
 ## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
-## http://github.com/pubnub/pubnub-api/tree/master/python/
+## http://github.com/pubnub/pubnub-api/tree/master/python-tornado/
 ##
 ## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 ## This is a cloud-based service for broadcasting Real-time messages
