@@ -41,7 +41,7 @@ pubnub = Pubnub(
 ## -----------------------------------------------------------------------
 ## VERY IMPORTANT TO ADD THIS LINE AT THE VERY BOTTOM!
 ##
-## twisted.ioloop.IOLoop.instance().start() ## IMPORTANT!
+## reactor.run() ## IMPORTANT!
 ##
 
 ## -----------------------------------------------------------------------
@@ -95,7 +95,7 @@ pubnub.history( {
 ## -----------------------------------------------------------------------
 ## IO Event Loop
 ## -----------------------------------------------------------------------
-twisted.ioloop.IOLoop.instance().start()
+reactor.run()
 
 
 
