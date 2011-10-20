@@ -144,7 +144,12 @@ function xdr(setup) {
     ,   data     = ""
     ,   rbuffer  = Ti.createBuffer({ length : 2048 })
     ,   wbuffer  = Ti.createBuffer({ value : "GET " + url + " HTTP/1.0\n\n"})
-    ,   fail     = setup.fail    || function(){}
+    ,   failed   = 0
+    ,   fail     = function() {
+            if (failed) return;
+            failed = 1;
+            (setup.fail || function(){})();
+        }
     ,   success  = setup.success || function(){}
     ,   sock     = Ti.Network.Socket.createTCP({
         host      : url.split(URLBIT)[2],
@@ -344,7 +349,7 @@ var DEMO          = 'demo'
 
                 // Connect to PubNub Subscribe Servers
                 CHANNELS[channel].done = xdr({
-                    url      : [
+                    url : [
                         ORIGIN, 'subscribe',
                         SUBSCRIBE_KEY, encode(channel),
                         0, timetoken
