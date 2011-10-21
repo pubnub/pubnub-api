@@ -9,15 +9,16 @@
 ## PubNub 3.0 Real-time Push Cloud API
 ## -----------------------------------
 
+import sys
 import json
 import time
 import hashlib
 import urllib2
-import tornado.httpclient
-import sys
 
-import tornado.ioloop
-ioloop = tornado.ioloop.IOLoop.instance()
+from twisted.internet import reactor
+from twisted.internet.defer import Deferred
+from twisted.internet.protocol import Protocol
+from twisted.web.client import Agent
 
 class Pubnub():
     def __init__(
@@ -311,6 +312,7 @@ class Pubnub():
 
         """
         def complete(response) :
+            if not response: return 0
             args['callback'](response[0])
 
         self._request( [
@@ -326,6 +328,25 @@ class Pubnub():
                 ch for ch in list(bit)
             ]) for bit in request])
 
+        agent   = Agent(reactor)
+        request = agent.request( 'GET', url, None )
+
+        def received(response):
+            finished = Deferred()
+            response.deliverBody(PubNubResponse(finished))
+            return finished
+
+        def complete(data):
+            try    : obj = json.loads(data)
+            except : obj = None
+
+            callback(obj)
+
+        request.addCallback(received)
+        request.addBoth(complete)
+
+        ## OLD
+        """
         def complete(response) :
             if response.error:
                 return callback(None)
@@ -339,4 +360,16 @@ class Pubnub():
             connect_timeout=200,
             request_timeout=200
         )
+        """
+        ## OLD
 
+
+class PubNubResponse(Protocol):
+    def __init__( self, finished ):
+        self.finished = finished
+
+    def dataReceived( self, bytes ):
+            self.finished.callback(bytes)
+
+    #def connectionLost( self, reason ):
+        #print 'Finished receiving body:', reason.getErrorMessage()

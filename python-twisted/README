@@ -6,15 +6,25 @@
 ## ----------------------------------------------------
 
 ## ----------------------------------------------------
-## PubNub 3.0 Real-time Cloud Push API - PYTHON TORNADO
+## PubNub 3.0 Real-time Cloud Push API - PYTHON TWISTED
 ## ----------------------------------------------------
 ##
 ## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
-## http://github.com/pubnub/pubnub-api/tree/master/python-tornado/
+## http://github.com/pubnub/pubnub-api/tree/master/python-twisted/
 ##
 ## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 ## This is a cloud-based service for broadcasting Real-time messages
 ## to thousands of web and mobile clients simultaneously.
+
+## ----------------------------------------------------
+## Python Twisted Setup
+## ----------------------------------------------------
+## Download BZ2 archive from http://twistedmatrix.com/
+## 
+## > tar xvfj Twisted-11.0.0.tar.bz2
+## > cd Twisted-11.0.0
+## > sudo python setup.py install
+## 
 
 ## ---------------
 ## Python Push API
@@ -31,7 +41,7 @@ pubnub = Pubnub(
 ## -----------------------------------------------------------------------
 ## VERY IMPORTANT TO ADD THIS LINE AT THE VERY BOTTOM!
 ##
-## tornado.ioloop.IOLoop.instance().start() ## IMPORTANT!
+## reactor.run() ## IMPORTANT!
 ##
 
 ## -----------------------------------------------------------------------
@@ -46,7 +56,7 @@ def connected() :
         print(info)
 
     pubnub.publish({
-        'channel' : "my-tornado-channel",
+        'channel' : "my-twisted-channel",
         'message' : {
             'some_text' : 'Hello World!'
         },
@@ -57,7 +67,7 @@ def message_received(message):
     print(message)
 
 pubnub.subscribe({
-    'channel'  : "my-tornado-channel",
+    'channel'  : "my-twisted-channel",
     'connect'  : connected,
     'callback' : message_received
 })
@@ -77,7 +87,7 @@ def history_complete(messages):
     print(messages)
 
 pubnub.history( {
-    'channel'  : "my-tornado-channel",
+    'channel'  : "my-twisted-channel",
     'limit'    : 10,
     'callback' : history_complete
 })
@@ -85,7 +95,7 @@ pubnub.history( {
 ## -----------------------------------------------------------------------
 ## IO Event Loop
 ## -----------------------------------------------------------------------
-tornado.ioloop.IOLoop.instance().start()
+reactor.run()
 
 
 

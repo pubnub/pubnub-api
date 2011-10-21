@@ -1,0 +1,82 @@
+body, div {
+    margin: 0;
+    padding: 0;
+    font-family: 'Didact Gothic';
+
+    -webkit-transition: background 0.2s;
+    -moz-transition: background 0.2s;
+    -ms-transition: background 0.2s;
+    -o-transition: background 0.2s;
+    transition: background 0.2s;
+}
+
+.stage {
+    margin: 0 auto 0 auto;
+    width: 1000px;
+}
+
+#audio-mosaic {
+    text-align: center;
+    font-size: 20px;
+    line-height: 50px;
+}
+
+#userlist {
+    text-align: center;
+}
+
+.user {
+    display: inline-block;
+    cursor: pointer;
+
+    font-family: 'Bowlby One SC';
+    text-align: center;
+    line-height: 150px;
+    font-size: 50px;
+
+    text-shadow: 0 0 10px rgba(255,255,255,0.7);
+    color: #eee;
+    background: #444442;
+
+    width: 150px;
+    height: 150px;
+
+    margin: 8px;
+
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+    border-radius: 15px;
+
+    -webkit-box-shadow: 0px 0px 1px 5px #eee;
+    -moz-box-shadow: 0px 0px 1px 5px #eee;
+    -ms-box-shadow: 0px 0px 1px 5px #eee;
+    -o-box-shadow: 0px 0px 1px 5px #eee;
+    box-shadow: 0px 0px 1px 5px #eee;
+
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
+.user:hover {
+    text-shadow: 0 0 10px rgba(255,220,10,0.9);
+    color: #fd0;
+    background: #aaaaae;
+}
+
+.user:active {
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    color: #aaaaae;
+    background: #fd0;
+
+    -webkit-box-shadow: inset 0px 0px 1px 5px #eee;
+    -moz-box-shadow: inset 0px 0px 1px 5px #eee;
+    -ms-box-shadow: inset 0px 0px 1px 5px #eee;
+    -o-box-shadow: inset 0px 0px 1px 5px #eee;
+    box-shadow: inset 0px 0px 1px 5px #eee;
+}
+

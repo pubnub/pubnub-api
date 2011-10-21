@@ -1,0 +1,30 @@
+<!doctype html> 
+<html> 
+<head> 
+    <title>PubNub Keystroke Chat</title> 
+</head> 
+<body>
+
+    <!-- BEGIN: Source Code for Chat :BEGIN -->
+    <div
+        channel=keystroke-chat-demo
+        channel-info='Name of the chat room, IRC room style.'
+
+        pubrate=100
+        pubrate-info='Keystroke max update frequency speed.'
+
+        max-message=200
+        max-message-info='Max message bubble size.'
+
+        max-bubble-flood=2
+        max-bubble-flood-info='Prevent bubble spamming'
+
+        id=real-time-keystrok-chat
+    ></div>
+    <div id=pubnub></div>
+    <script src=http://cdn.pubnub.com/pubnub-3.1.js></script>
+    <script src=keystroke-chat.js></script>
+    <!-- END: Source Code for Chat :END -->
+
+</body>
+</html>

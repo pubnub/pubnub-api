@@ -21,7 +21,7 @@ use JSON::XS;
 use Digest::MD5 qw(md5_hex);
 
 ## Load User-specified Namespace
-my $namespace = $ARGV[0];
+my $namespace = $ARGV[0] || 'demo';
 print("Providing Stats on Channel: '$namespace'.\n");
 
 ##
@@ -54,7 +54,7 @@ sub loadavg { (split( /\s+/, qx{ cat /proc/loadavg } ))[0..2]     }
 ## ===========================================================================
 my $ip_address = get('http://automation.whatismyip.com/n09230945.asp');
 my $os_version = qx{ cat /proc/version };
-my $os_sig     = ''.md5_hex($os_version);
+my $os_sig     = ''.md5_hex($os_version . time());
 my @cpu_usage  = proc();
 my @mem_usage  = mems();
 my @load_avg   = loadavg();

@@ -10,12 +10,18 @@
             padding: 0;
             font-family: 'Didact Gothic';
         }
+        #server-template {
+            display: none;
+        }
         .stage {
             width: 1000px;
             margin: 0 auto 0 auto;
         }
         .server {
-            margin: 10px 0;
+            display: inline-block;
+
+            width: 300px;
+            margin: 10px;
             line-height: 0px;
 
             -webkit-border-radius: 15px;
@@ -48,11 +54,12 @@
             -moz-box-shadow: 0px 0px 2px 3px #fce94f;
             box-shadow: 0px 0px 2px 3px #fce94f;
             */
+            -webkit-box-shadow: 0px 0px 1px 5px #eee;
         }
         .online-text {
             position: absolute;
-            top: 44px;
-            left: 38px;
+            top: 68px;
+            left: 8px;
             font-size: 18px;
             color: #edd400;
             color: #fce94f;
@@ -83,10 +90,13 @@
 
 <div class=server>
     <div class=online><div class=online-text>ONLINE</div></div>
-    
 </div>
 
-
+<div id=server-template>
+    <div class=online><div class=online-text>ONLINE</div></div>
+    <div class=server-load>{load}</div>
+    <div class=server-memory>{mem}</div>
+</div>
 
 <div>
     <h3>Install Common CPAN Mods</h3>
@@ -103,6 +113,38 @@
 <script>(function(){
 
     // ....
+    // ....
+    // ....
+    /*
+        TODO - rnd namespace for server tracking.
+        TODO - command(s) for adding new server
+        TODO - add timeout check if server doesn't report (ignore if offline)
+        TODO - 
+        TODO - 
+    */
+
+    var p                 = PUBNUB
+    ,   namespace_channel = 'demo' //'pubnub-public-origin-servers';
+    ,   server_template   = p.$('server-template').innerHTML;
+
+    p.subscribe({
+        channel  : namespace_channel,
+        callback : update_server
+    });
+
+    /*
+    //   Add or Update a Server Listed on the Page.
+    */
+    function update_server(server) {
+
+        console.log(JSON.stringify(message));
+
+        var server_id  = server.sig
+        ,   server_div = p.$(server_id) || p.create('div');
+
+        p.attr( server_div, 'class', 'server' );
+        server_div.innerHTML = p.supplant( server_template, server );
+    }
 
 })();</script> 
 </div></body>
