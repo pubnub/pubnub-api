@@ -9,11 +9,12 @@
 
 ## ----------------------------------------------------
 ##
-## TESTLING.JS - PubNub JavaScript API for Web Browsers
-##               uses Testling.JS Cloud Service
-##               for QA and Deployment.
+## TESTLING - PubNub JavaScript API for Web Browsers
+##            uses Testling Cloud Service
+##            for QA and Deployment.
 ##
-## http://www.testling.com/ - You need it.
+## http://www.testling.com/
+## You need this to run './test.sh' unit test.
 ##
 ## ----------------------------------------------------
 
