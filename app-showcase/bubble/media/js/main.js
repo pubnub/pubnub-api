@@ -3,13 +3,14 @@ largeCircle.fillColor = 'black';
 
 var text = new PointText(view.center);
 text.fillColor = 'white';
-text.characterStyle.fontSize = 20;
+text.characterStyle.fontSize = 35;
+text.paragraphStyle.justification = 'center';
 text.content = 'PubNub';
 
 
 function onMouseMove(event) {
   largeCircle.position = event.point;
-  text.position = event.point;  
+  text.position = largeCircle.bounds.center;  
 }
 
 function onFrame(event) {
