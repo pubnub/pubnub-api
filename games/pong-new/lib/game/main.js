@@ -32,6 +32,8 @@ MyGame = ig.PubNubGame.extend({
 	font: new ig.Font( 'media/04b03.font.png' ),
 	
 	init: function() {
+    this.parent();
+
 		ig.input.bind( ig.KEY.UP_ARROW, 'up' );
 		ig.input.bind( ig.KEY.DOWN_ARROW, 'down' );
 		

@@ -1,0 +1,19 @@
+{
+  "name": "pubnub-bubbles",
+  "version": "0.0.0",
+  "repository": {
+    "url": ""
+  },
+  "author": "Phil <phil@pubnub.com>",
+  "directories": {
+    "lib": "."
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "jade": "0.14",
+    "express": "2.4.6",
+    "mime": "1.2.2"
+  }
+}

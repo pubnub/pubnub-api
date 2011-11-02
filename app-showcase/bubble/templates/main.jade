@@ -1,0 +1,30 @@
+doctype html
+html(lang='en')
+  head
+    title PubNub Bubbles
+    meta(name="description", content="")
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+    meta(name="author", content="")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel='stylesheet', href='/media/css/reset.css')
+    link(rel='stylesheet', href='/media/css/text.css')
+    link(rel='stylesheet', href='/media/css/960.css')
+    link(rel='stylesheet', href='/media/css/style.css')
+
+    script
+      window.jQuery \|\| document.write("<script src='/media/js/jquery-1.6.2.min.js'>\\x3C/script>")
+    //script(src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js");
+    script(type='text/javascript', src='media/js/paper.js')
+    script(type='text/paperscript', src='media/js/main.js', canvas='main_canvas')
+
+  body
+    div.container_12 
+      h1 PubNub Bubbles 
+      input#bubble_text 
+      div.grid_12
+        canvas#main_canvas(resize ) 
+
+    div(pub-key="demo", sub-key="demo", ssl="off", origin="pubsub.pubnub.com", id="pubnub")
+    script(src="http://cdn.pubnub.com/pubnub-3.1.min.js")
+
