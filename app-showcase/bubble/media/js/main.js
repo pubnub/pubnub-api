@@ -1,11 +1,10 @@
-var largeCircle = new Path.Circle([676, 433], 100);
-
-largeCircle.fillColor = 'black';
-largeCircle.strokeColor = 'black';
-largeCircle.strokeWidth = 8;
-largeCircle.visible = false;
-
 var placed = false;
+
+var large_circle = new Path.Circle([676, 433], 100);
+large_circle.fillColor = 'black';
+large_circle.strokeColor = 'black';
+large_circle.strokeWidth = 8;
+large_circle.visible = false;
 
 var text = new PointText(view.center);
 text.fillColor = 'white';
@@ -13,19 +12,20 @@ text.characterStyle.fontSize = 35;
 text.paragraphStyle.justification = 'center';
 text.content = 'PubNub';
 
-var group = new Group([largeCircle, text]);
+var group = new Group([large_circle, text]);
+
 
 
 function onMouseMove(event) {
   if (placed === false) {
-    largeCircle.position = event.point;
-    text.position = largeCircle.bounds.center;  
+    large_circle.position = event.point;
+    text.position = large_circle.bounds.center;  
   }
 }
 
 function onFrame(event) {
   if (placed === false) {
-    largeCircle.rotate(1);
+    large_circle.rotate(1);
   }
   else {
     group.scale(.99); 
@@ -43,9 +43,9 @@ function onMouseDown(event) {
 
   if (placed === false) {
     placed = true;
-    largeCircle.opacity = 1;
-    largeCircle.position = event.point;
-    largeCircle.dashArray = [14, 0];
+    large_circle.opacity = 1;
+    large_circle.position = event.point;
+    large_circle.dashArray = [14, 0];
     text.position = event.point;
   }
 }
@@ -53,10 +53,12 @@ function onMouseDown(event) {
 
 $("#place").click( function(e) {
   e.preventDefault();
+
   placed = false;
+
   text.content = $("#bubble_text").val();
-  largeCircle.visible = true;
-  largeCircle.dashArray = [14, 4];
-  largeCircle.opacity = .5;
+  large_circle.visible = true;
+  large_circle.dashArray = [14, 4];
+  large_circle.opacity = .5;
 });
 
