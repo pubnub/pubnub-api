@@ -1,4 +1,5 @@
 var largeCircle = new Path.Circle([676, 433], 100);
+
 largeCircle.fillColor = 'black';
 largeCircle.strokeColor = 'black';
 largeCircle.strokeWidth = 8;
@@ -12,6 +13,8 @@ text.characterStyle.fontSize = 35;
 text.paragraphStyle.justification = 'center';
 text.content = 'PubNub';
 
+var group = new Group([largeCircle, text]);
+
 
 function onMouseMove(event) {
   if (placed === false) {
@@ -24,19 +27,27 @@ function onFrame(event) {
   if (placed === false) {
     largeCircle.rotate(1);
   }
-  //largeCircle.scale(0.99);
-  //text.scale(0.99);
+  else {
+    group.scale(.99); 
+  }
 }
 
 function onMouseDown(event) {
-  placed = true;
-  largeCircle.opacity = 1;
-  largeCircle.position = event.point;
-  largeCircle.dashArray = [14, 0];
-  text.position = event.point;
+  
+  if (placed === true) {
+    hit_result = group.hitTest(event.point);
+    if ((hit_result !== null) && (hit_result !== undefined)) {
+      group.scale(1.5);
+    }
+  } 
 
-  //largeCircle.scale(1.5);
-  //text.scale(1.5);
+  if (placed === false) {
+    placed = true;
+    largeCircle.opacity = 1;
+    largeCircle.position = event.point;
+    largeCircle.dashArray = [14, 0];
+    text.position = event.point;
+  }
 }
 
 
@@ -48,3 +59,4 @@ $("#place").click( function(e) {
   largeCircle.dashArray = [14, 4];
   largeCircle.opacity = .5;
 });
+
