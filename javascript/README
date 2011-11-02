@@ -1,9 +1,20 @@
-## ---------------------------------------------------
+## ----------------------------------------------------
 ##
 ## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 ## http://www.pubnub.com/account-javascript-api-include
 ##
 ## USE "DEMO" INCLUDES (BELOW) FREE! WHILE DEVELOPING
+##
+## ----------------------------------------------------
+
+## ----------------------------------------------------
+##
+## TESTLING - PubNub JavaScript API for Web Browsers
+##            uses Testling Cloud Service
+##            for QA and Deployment.
+##
+## http://www.testling.com/
+## You need this to run './test.sh' unit test.
 ##
 ## ----------------------------------------------------
 

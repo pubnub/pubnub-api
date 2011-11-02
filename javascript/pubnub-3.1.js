@@ -891,5 +891,8 @@ FDomainRequest['id'] = 1000;
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
 window['PUBNUB'] = PUBNUB;
 
+// For Testling.js - http://testling.com/
+module && (module.exports = PUBNUB) && ready();
+
 })();
 
