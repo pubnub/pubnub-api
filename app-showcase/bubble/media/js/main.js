@@ -36,23 +36,29 @@ function onFrame(event) {
 }
 
 function onMouseDown(event) {
+  var uuid = 'uuid' in event && event.uuid;
 
-  PUBNUB.publish({
+  // Publish Fun For All
+  /*
+  uuid || PUBNUB.publish({
      channel : channel,
      message : {
        name  : 'bubble-click',
-       point : event.point
+       point : event.point,
      }
   });
+  */
 
-  if (onMouseDown.last + 2000 > now()) return;
-  onMouseDown.last = now();
+  // uuid && console.log('NETWORK EVETNT!!!');
+
+  if (onMouseDown.last + 800 > now()) return;
 
   for (var i = 0; i < bubbles.length; i++) {
-    hit_result = bubbles[i].hitTest(event.point);
-    if ((hit_result !== null) && (hit_result !== undefined)) {
-      bubbles[i].scale(1.5);
-    }
+      hit_result = bubbles[i].hitTest(event.point);
+      if ((hit_result !== null) && (hit_result !== undefined)) {
+        bubbles[i].scale(1.5);
+        onMouseDown.last = now();
+      }
   }
 }
 onMouseDown.last = now();
@@ -86,7 +92,7 @@ PUBNUB.subscribe({
   channel  : channel,
   connect  : function() {},
   callback : function(event) {
-    PUBNUB.events.fire( event.name, event );
+      PUBNUB.events.fire( event.name, event );
   }
 });
 
