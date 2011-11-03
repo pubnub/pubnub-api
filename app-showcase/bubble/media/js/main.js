@@ -4,9 +4,11 @@ var now     = function(){return+new Date};
 var channel = 'pubnub-demo-channel';
 
 var large_circle = new Path.Circle([676, 433], 100);
+
+
 large_circle.fillColor = '#29C9FF';
 large_circle.strokeColor = '#000';
-large_circle.strokeWidth = 8;
+large_circle.strokeWidth = 5;
 
 var text = new PointText(view.center);
 text.fillColor = '#000';
@@ -69,6 +71,7 @@ function onMouseDown(event) {
       hit_result = bubbles[i].hitTest(event.point);
       if ((hit_result !== null) && (hit_result !== undefined)) {
         bubbles[i].scale(1.5);
+        bubbles[i].children[0].strokeWidth *= 1.5; 
         onMouseDown.last = now();
       }
   }
