@@ -118,5 +118,8 @@ PUBNUB.events.bind( 'bubble-click', function(event) {
 } );
 
 function generateRandomLocation() {
-  return new Point(Math.random() * view.size.width, Math.random() * view.size.height); 
+  c_width = large_circle.bounds.width;
+  c_height = large_circle.bounds.height;
+  return new Point(Math.random() * (view.size.width - (c_width /2 )) + (c_width / 4) , 
+                   Math.random() * (view.size.height - (c_height /2 )) + (c_height / 4)); 
 }
