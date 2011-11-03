@@ -46,21 +46,23 @@ function onFrame(event) {
 
 function onMouseDown(event) {
   var uuid = 'uuid' in event && event.uuid;
+  //if (onMouseDown.last + 800 > now()) return;
 
   // Publish Fun For All
   /*
   uuid || PUBNUB.publish({
-     channel : channel,
-     message : {
+     channel  : channel,
+     callback : function(i){console.log(i)},
+     message  : {
        name  : 'bubble-click',
        point : event.point,
      }
   });
   */
 
-  // uuid && console.log('NETWORK EVETNT!!!');
+  uuid || console.log('NETWORK EVETNT!!!');
 
-  if (onMouseDown.last + 800 > now()) return;
+  //console.log(event.point);
 
   for (var i = 0; i < bubbles.length; i++) {
       hit_result = bubbles[i].hitTest(event.point);
