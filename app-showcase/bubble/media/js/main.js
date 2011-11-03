@@ -1,6 +1,8 @@
 var bubbles = [];
+var bubble_index = {};
 var placed  = false;
 var now     = function(){return+new Date};
+var channel = 'pubnub-demo-channel';
 
 var large_circle = new Path.Circle([676, 433], 100);
 large_circle.fillColor = '#000';
@@ -38,7 +40,7 @@ function onFrame(event) {
 }
 
 function onMouseDown(event) {
-  if (onMouseDown.last + 100 > now()) return;
+  if (onMouseDown.last + 500 > now()) return;
   onMouseDown.last = now();
 
   for (var i = 0; i < bubbles.length; i++) {
@@ -72,5 +74,26 @@ $("#place").click( function(e) {
 
   bubbles.push(new_bubble);
 
+  // Create New Bubble Entity Lookup
+  PUBNUB.uuid(function(uuid) {
+    new_bubble.uuid = uuid;
+    bubble_index[uuid] = { bubble : new_bubble, uuid : uuid };
+  } );
+
 });
+
+
+// PubNub Networking
+PUBNUB.subscribe({
+    channel  : channel,
+    connect  : function() {},
+    callback : function(event) {
+        PUBNUB.events.fire( 'bubble-click', event ):
+    }
+});
+
+// PubNub Events
+PUBNUB.events.bind( 'bubble-click', function(event) {
+    onMouseDown(event);
+} );
 
