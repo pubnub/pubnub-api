@@ -24,13 +24,20 @@ function onMouseMove(event) {
 
 function onFrame(event) {
   for (var i = 0; i < bubbles.length; i++) {
-      bubbles[i].scale(.99); 
+    console.log("aoeuaueo");
+    bubbles[i].scale(.99); 
+    console.log(bubbles[i].children[0].bounds);
+    /*
+    if (bubbles[i].bounds.width <= 50) {
+      console.log('pop!');
+    }
+    */
   }
 }
 
 function onMouseDown(event) {
 
-  0&& PUBNUB.publish({
+  PUBNUB.publish({
      channel : channel,
      message : {
        name  : 'bubble-click',
@@ -38,23 +45,20 @@ function onMouseDown(event) {
      }
   });
 
-  console.log(event.point);
-
   if (onMouseDown.last + 2000 > now()) return;
   onMouseDown.last = now();
 
   for (var i = 0; i < bubbles.length; i++) {
-      hit_result = bubbles[i].hitTest(event.point);
-      if ((hit_result !== null) && (hit_result !== undefined)) {
-        bubbles[i].scale(1.5);
-      }
+    hit_result = bubbles[i].hitTest(event.point);
+    if ((hit_result !== null) && (hit_result !== undefined)) {
+      bubbles[i].scale(1.5);
+    }
   }
 }
 onMouseDown.last = now();
 
 $("#place").click( function(e) {
   e.preventDefault();
-
 
   var new_bubble = group.clone(); 
   
@@ -79,18 +83,18 @@ $("#place").click( function(e) {
 // PubNub Networking
 // ---------------------------------------------------------------------------
 PUBNUB.subscribe({
-    channel  : channel,
-    connect  : function() {},
-    callback : function(event) {
-        PUBNUB.events.fire( event.name, event );
-    }
+  channel  : channel,
+  connect  : function() {},
+  callback : function(event) {
+    PUBNUB.events.fire( event.name, event );
+  }
 });
 
 // ---------------------------------------------------------------------------
 // PubNub Events
 // ---------------------------------------------------------------------------
 PUBNUB.events.bind( 'bubble-click', function(event) {
-    onMouseDown(event);
+  onMouseDown(event);
 } );
 
 function generateRandomLocation() {
