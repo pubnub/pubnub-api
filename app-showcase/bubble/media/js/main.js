@@ -4,28 +4,28 @@ var large_circle = new Path.Circle([676, 433], 100);
 large_circle.fillColor = 'black';
 large_circle.strokeColor = 'black';
 large_circle.strokeWidth = 8;
-large_circle.visible = false;
 
 var text = new PointText(view.center);
 text.fillColor = 'white';
 text.characterStyle.fontSize = 35;
 text.paragraphStyle.justification = 'center';
 text.content = 'PubNub';
+text.position = large_circle.center;
 
 var group = new Group([large_circle, text]);
-
+group.visible = false;
 
 
 function onMouseMove(event) {
   if (placed === false) {
-    large_circle.position = event.point;
-    text.position = large_circle.bounds.center;  
+    group.children[0].position = event.point;
+    group.position = large_circle.bounds.center;  
   }
 }
 
 function onFrame(event) {
   if (placed === false) {
-    large_circle.rotate(1);
+    group.children[0].rotate(1);
   }
   else {
     group.scale(.99); 
@@ -43,10 +43,9 @@ function onMouseDown(event) {
 
   if (placed === false) {
     placed = true;
-    large_circle.opacity = 1;
-    large_circle.position = event.point;
-    large_circle.dashArray = [14, 0];
-    text.position = event.point;
+    group.opacity = 1;
+    group.position = event.point;
+    group.dashArray = [14, 0];
   }
 }
 
@@ -56,9 +55,10 @@ $("#place").click( function(e) {
 
   placed = false;
 
-  text.content = $("#bubble_text").val();
-  large_circle.visible = true;
-  large_circle.dashArray = [14, 4];
-  large_circle.opacity = .5;
+  group.children[1].content = $("#bubble_text").val();
+  group.children[1].position = group.position;
+  group.visible = true;
+  group.children[0].dashArray = [14, 4];
+  group.opacity = .5;
 });
 
