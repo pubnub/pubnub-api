@@ -1,13 +1,14 @@
 var bubbles = [];
-var placed = false;
+var placed  = false;
+var now     = function(){return+new Date};
 
 var large_circle = new Path.Circle([676, 433], 100);
-large_circle.fillColor = 'black';
-large_circle.strokeColor = 'black';
+large_circle.fillColor = '#000';
+large_circle.strokeColor = '#000';
 large_circle.strokeWidth = 8;
 
 var text = new PointText(view.center);
-text.fillColor = 'white';
+text.fillColor = '#fff';
 text.characterStyle.fontSize = 35;
 text.paragraphStyle.justification = 'center';
 text.content = 'PubNub';
@@ -15,7 +16,6 @@ text.position = large_circle.center;
 
 var group = new Group([large_circle, text]);
 group.visible = false;
-
 
 function onMouseMove(event) {
   if (placed === false) {
@@ -38,7 +38,9 @@ function onFrame(event) {
 }
 
 function onMouseDown(event) {
-  
+  if (onMouseDown.last + 100 > now()) return;
+  onMouseDown.last = now();
+
   for (var i = 0; i < bubbles.length; i++) {
     if (placed === true) {
       hit_result = bubbles[i].hitTest(event.point);
@@ -55,7 +57,7 @@ function onMouseDown(event) {
     }
   }
 }
-
+onMouseDown.last = now();
 
 $("#place").click( function(e) {
   e.preventDefault();
