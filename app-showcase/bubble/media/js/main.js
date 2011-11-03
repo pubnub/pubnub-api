@@ -24,9 +24,9 @@ function onMouseMove(event) {
 
 function onFrame(event) {
   for (var i = 0; i < bubbles.length; i++) {
-    console.log("aoeuaueo");
+    //console.log("aoeuaueo");
     bubbles[i].scale(.99); 
-    console.log(bubbles[i].children[0].bounds);
+    //console.log(bubbles[i].children[0].bounds);
     /*
     if (bubbles[i].bounds.width <= 50) {
       console.log('pop!');
@@ -35,39 +35,46 @@ function onFrame(event) {
   }
 }
 
-function onMouseDown(event) {
-  var uuid = 'uuid' in event && event.uuid;
-  //if (onMouseDown.last + 800 > now()) return;
-
-  // Publish Fun For All
-  /*
-  uuid || PUBNUB.publish({
+function send_bubble_click( uuid, event ) {
+  PUBNUB.publish({
      channel  : channel,
      callback : function(i){console.log(i)},
      message  : {
        name  : 'bubble-click',
        point : event.point,
+       uuid  : uuid
      }
   });
-  */
+}
 
-  uuid || console.log('NETWORK EVETNT!!!');
+function onMouseDown(event) {
+  var uuid = 'uuid' in event && event.uuid;
+  //if (onMouseDown.last + 800 > now()) return;
 
-  //console.log(event.point);
+  uuid && console.log('NETWORK EVETNT!!!',uuid);
+
+  uuid && !(uuid in bubble_index) && add_new_bubble(uuid);
 
   for (var i = 0; i < bubbles.length; i++) {
       hit_result = bubbles[i].hitTest(event.point);
-      if ((hit_result !== null) && (hit_result !== undefined)) {
-        bubbles[i].scale(1.5);
+      if (hit_result) {
+        if (uuid) {
+          bubbles[i].scale(1.5);
+          continue;
+        }
+        // Publish Fun For All
+        send_bubble_click( bubbles[i].uuid, event );
         onMouseDown.last = now();
       }
   }
 }
 onMouseDown.last = now();
 
-$("#place").click( function(e) {
-  e.preventDefault();
 
+// ---------------------------------------------------------------------------
+// Make New Bubble
+// ---------------------------------------------------------------------------
+function add_new_bubble(uuid) {
   var new_bubble = group.clone(); 
   
   new_bubble.children[1].content = $("#bubble_text").val();
@@ -79,11 +86,18 @@ $("#place").click( function(e) {
   bubbles.push(new_bubble);
 
   // Create New Bubble Entity Lookup
-  PUBNUB.uuid(function(uuid) {
+  new_bubble.uuid = uuid;
+  bubble_index[uuid] = { bubble : new_bubble, uuid : uuid };
+
+  uuid || PUBNUB.uuid(function(uuid) {
     new_bubble.uuid = uuid;
     bubble_index[uuid] = { bubble : new_bubble, uuid : uuid };
   } );
+}
 
+$("#place").click( function(e) {
+  e.preventDefault();
+  add_new_bubble();
 });
 
 
@@ -94,7 +108,8 @@ PUBNUB.subscribe({
   channel  : channel,
   connect  : function() {},
   callback : function(event) {
-      PUBNUB.events.fire( event.name, event );
+    console.log(event);
+    PUBNUB.events.fire( event.name, event );
   }
 });
 
