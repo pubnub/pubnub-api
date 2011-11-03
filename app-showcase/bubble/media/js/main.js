@@ -74,3 +74,7 @@ $("#place").click( function(e) {
 
 });
 
+
+function generateRandomLocation() {
+  return new Point(Math.random() * view.size.width(), Math.random() * view.size.height()); 
+}
