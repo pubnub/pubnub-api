@@ -25,7 +25,8 @@ html(lang='en')
         input#bubble_text 
         input(type="submit")#place 
       div.grid_12
-        canvas#main_canvas(resize ) 
+        canvas#main_canvas(width='300', height='400' ) 
+
 
     div(pub-key="demo", sub-key="demo", ssl="off", origin="pubsub.pubnub.com", id="pubnub")
     script(src="http://cdn.pubnub.com/pubnub-3.1.min.js")
