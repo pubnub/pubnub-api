@@ -40,25 +40,31 @@ function onFrame(event) {
 }
 
 function onMouseDown(event) {
+  var uuid = 'uuid' in event && event.uuid;
 
-  0&& PUBNUB.publish({
+  // Publish Fun For All
+  /*
+  uuid || PUBNUB.publish({
      channel : channel,
      message : {
        name  : 'bubble-click',
-       point : event.point
+       point : event.point,
      }
   });
+  */
 
-  console.log(event.point);
+  uuid && console.log('NETWORK EVETNT!!!');
 
-  if (onMouseDown.last + 2000 > now()) return;
-  onMouseDown.last = now();
+  //console.log(event.point);
+
+  if (onMouseDown.last + 800 > now()) return;
 
   for (var i = 0; i < bubbles.length; i++) {
     if (bubbles[i].placed === true) {
       hit_result = bubbles[i].hitTest(event.point);
       if ((hit_result !== null) && (hit_result !== undefined)) {
         bubbles[i].scale(1.5);
+        onMouseDown.last = now();
       }
     } 
     else {
@@ -98,18 +104,18 @@ $("#place").click( function(e) {
 // PubNub Networking
 // ---------------------------------------------------------------------------
 PUBNUB.subscribe({
-    channel  : channel,
-    connect  : function() {},
-    callback : function(event) {
-        PUBNUB.events.fire( event.name, event );
-    }
+  channel  : channel,
+  connect  : function() {},
+  callback : function(event) {
+      PUBNUB.events.fire( event.name, event );
+  }
 });
 
 // ---------------------------------------------------------------------------
 // PubNub Events
 // ---------------------------------------------------------------------------
 PUBNUB.events.bind( 'bubble-click', function(event) {
-    onMouseDown(event);
+  onMouseDown(event);
 } );
 
 function generateRandomLocation() {
