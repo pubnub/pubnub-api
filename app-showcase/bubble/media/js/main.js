@@ -18,17 +18,17 @@ var group = new Group([large_circle, text]);
 group.visible = false;
 
 function onMouseMove(event) {
-  if (placed === false) {
-    for (var i = 0; i < bubbles.length; i++) {
+  for (var i = 0; i < bubbles.length; i++) {
+    if (bubbles[i].placed === false) {
       bubbles[i].children[0].position = event.point;
-      bubbles[i].position = large_circle.bounds.center;  
+      bubbles[i].children[1].position = event.point;
     }
   }
 }
 
 function onFrame(event) {
   for (var i = 0; i < bubbles.length; i++) {
-    if (placed === false) {
+    if (bubbles[i].placed === false) {
       bubbles[i].children[0].rotate(1);
     }
     else {
@@ -42,15 +42,14 @@ function onMouseDown(event) {
   onMouseDown.last = now();
 
   for (var i = 0; i < bubbles.length; i++) {
-    if (placed === true) {
+    if (bubbles[i].placed === true) {
       hit_result = bubbles[i].hitTest(event.point);
       if ((hit_result !== null) && (hit_result !== undefined)) {
         bubbles[i].scale(1.5);
       }
     } 
-
-    if (placed === false) {
-      placed = true;
+    else {
+      bubbles[i].placed = true;
       bubbles[i].opacity = 1;
       bubbles[i].position = event.point;
       bubbles[i].dashArray = [14, 0];
@@ -62,15 +61,14 @@ onMouseDown.last = now();
 $("#place").click( function(e) {
   e.preventDefault();
 
-  placed = false;
 
   var new_bubble = group.clone(); 
   
   new_bubble.children[1].content = $("#bubble_text").val();
-  new_bubble.children[1].position = new_bubble.position;
   new_bubble.visible = true;
   new_bubble.children[0].dashArray = [14, 4];
   new_bubble.opacity = .5;
+  new_bubble.placed = false;
 
   bubbles.push(new_bubble);
 

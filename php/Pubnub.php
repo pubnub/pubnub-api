@@ -26,11 +26,11 @@ class Pubnub {
      * @param boolean $ssl required for 2048 bit encrypted messages.
      */
     function Pubnub(
-        $publish_key,
-        $subscribe_key,
-        $secret_key = false,
-        $ssl        = false,
-        $origin     = false
+        $publish_key   = 'demo',
+        $subscribe_key = 'demo',
+        $secret_key    = false,
+        $ssl           = false,
+        $origin        = false
     ) {
         $this->PUBLISH_KEY   = $publish_key;
         $this->SUBSCRIBE_KEY = $subscribe_key;
