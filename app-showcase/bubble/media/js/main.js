@@ -40,7 +40,7 @@ function onMouseDown(event) {
 
   console.log(event.point);
 
-  if (onMouseDown.last + 500 > now()) return;
+  if (onMouseDown.last + 2000 > now()) return;
   onMouseDown.last = now();
 
   for (var i = 0; i < bubbles.length; i++) {
