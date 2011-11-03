@@ -1,16 +1,15 @@
 var bubbles = [];
 var bubble_index = {};
-var placed  = false;
 var now     = function(){return+new Date};
 var channel = 'pubnub-demo-channel';
 
 var large_circle = new Path.Circle([676, 433], 100);
-large_circle.fillColor = '#000';
+large_circle.fillColor = '#29C9FF';
 large_circle.strokeColor = '#000';
 large_circle.strokeWidth = 8;
 
 var text = new PointText(view.center);
-text.fillColor = '#fff';
+text.fillColor = '#000';
 text.characterStyle.fontSize = 35;
 text.paragraphStyle.justification = 'center';
 text.content = 'PubNub';
@@ -27,6 +26,7 @@ function onFrame(event) {
     //console.log("aoeuaueo");
     if (bubbles[i].popping === false) {
       bubbles[i].scale(.99); 
+      bubbles[i].children[0].strokeWidth *= .99; 
       //console.log(bubbles[i].children[0].bounds);
 
       if (bubbles[i].children[0].bounds.width <= 50) {
@@ -35,6 +35,7 @@ function onFrame(event) {
     }
     else {
       bubbles[i].scale(1.2); 
+      bubbles[i].children[0].strokeWidth *= 1.2; 
       bubbles[i].opacity = bubbles[i].opacity *.7; 
       if (bubbles[i].opacity < .02) {
         bubbles[i].remove();
