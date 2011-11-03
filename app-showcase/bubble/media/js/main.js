@@ -40,6 +40,17 @@ function onFrame(event) {
 }
 
 function onMouseDown(event) {
+
+  0&& PUBNUB.publish({
+     channel : channel,
+     message : {
+       name  : 'bubble-click',
+       point : event.point
+     }
+  });
+
+  console.log(event.point);
+
   if (onMouseDown.last + 500 > now()) return;
   onMouseDown.last = now();
 
@@ -83,16 +94,20 @@ $("#place").click( function(e) {
 });
 
 
+// ---------------------------------------------------------------------------
 // PubNub Networking
+// ---------------------------------------------------------------------------
 PUBNUB.subscribe({
     channel  : channel,
     connect  : function() {},
     callback : function(event) {
-        PUBNUB.events.fire( 'bubble-click', event ):
+        PUBNUB.events.fire( event.name, event );
     }
 });
 
+// ---------------------------------------------------------------------------
 // PubNub Events
+// ---------------------------------------------------------------------------
 PUBNUB.events.bind( 'bubble-click', function(event) {
     onMouseDown(event);
 } );
