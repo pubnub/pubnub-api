@@ -97,3 +97,6 @@ PUBNUB.events.bind( 'bubble-click', function(event) {
     onMouseDown(event);
 } );
 
+function generateRandomLocation() {
+  return new Point(Math.random() * view.size.width(), Math.random() * view.size.height()); 
+}
