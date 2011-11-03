@@ -20,22 +20,18 @@ var group = new Group([large_circle, text]);
 group.visible = false;
 
 function onMouseMove(event) {
-  for (var i = 0; i < bubbles.length; i++) {
-    if (bubbles[i].placed === false) {
-      bubbles[i].children[0].position = event.point;
-      bubbles[i].children[1].position = event.point;
-    }
-  }
 }
 
 function onFrame(event) {
   for (var i = 0; i < bubbles.length; i++) {
-    if (bubbles[i].placed === false) {
-      bubbles[i].children[0].rotate(1);
+    console.log("aoeuaueo");
+    bubbles[i].scale(.99); 
+    console.log(bubbles[i].children[0].bounds);
+    /*
+    if (bubbles[i].bounds.width <= 50) {
+      console.log('pop!');
     }
-    else {
-      bubbles[i].scale(.99); 
-    }
+    */
   }
 }
 
@@ -59,21 +55,12 @@ function onMouseDown(event) {
 
   //console.log(event.point);
 
-
   for (var i = 0; i < bubbles.length; i++) {
-    if (bubbles[i].placed === true) {
       hit_result = bubbles[i].hitTest(event.point);
       if ((hit_result !== null) && (hit_result !== undefined)) {
         bubbles[i].scale(1.5);
         onMouseDown.last = now();
       }
-    } 
-    else {
-      bubbles[i].placed = true;
-      bubbles[i].opacity = 1;
-      bubbles[i].position = event.point;
-      bubbles[i].dashArray = [14, 0];
-    }
   }
 }
 onMouseDown.last = now();
@@ -81,14 +68,13 @@ onMouseDown.last = now();
 $("#place").click( function(e) {
   e.preventDefault();
 
-
   var new_bubble = group.clone(); 
   
   new_bubble.children[1].content = $("#bubble_text").val();
   new_bubble.visible = true;
-  new_bubble.children[0].dashArray = [14, 4];
-  new_bubble.opacity = .5;
-  new_bubble.placed = false;
+  var bubble_pos = generateRandomLocation();
+  new_bubble.children[0].position = bubble_pos;
+  new_bubble.children[1].position = bubble_pos;
 
   bubbles.push(new_bubble);
 
@@ -120,5 +106,5 @@ PUBNUB.events.bind( 'bubble-click', function(event) {
 } );
 
 function generateRandomLocation() {
-  return new Point(Math.random() * view.size.width(), Math.random() * view.size.height()); 
+  return new Point(Math.random() * view.size.width, Math.random() * view.size.height); 
 }
