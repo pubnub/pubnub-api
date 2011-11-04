@@ -25,13 +25,22 @@ function onMouseMove(event) {
 function onFrame(event) {
   for (var i = 0; i < bubbles.length; i++) {
     //console.log("aoeuaueo");
-    bubbles[i].scale(.99); 
-    //console.log(bubbles[i].children[0].bounds);
-    /*
-    if (bubbles[i].bounds.width <= 50) {
-      console.log('pop!');
+    if (bubbles[i].popping === false) {
+      bubbles[i].scale(.99); 
+      //console.log(bubbles[i].children[0].bounds);
+
+      if (bubbles[i].children[0].bounds.width <= 50) {
+        bubbles[i].popping = true;   
+      }
     }
-    */
+    else {
+      bubbles[i].scale(1.2); 
+      bubbles[i].opacity = bubbles[i].opacity *.7; 
+      if (bubbles[i].opacity < .02) {
+        bubbles[i].remove();
+        bubbles.splice(i,1);
+      }
+    }
   }
 }
 
@@ -82,7 +91,10 @@ function add_new_bubble(uuid) {
   var bubble_pos = generateRandomLocation();
   new_bubble.children[0].position = bubble_pos;
   new_bubble.children[1].position = bubble_pos;
+  new_bubble.position = bubble_pos;
+  new_bubble.popping = false;
 
+  var bubble_pos = generateRandomLocation();
   bubbles.push(new_bubble);
 
   // Create New Bubble Entity Lookup
