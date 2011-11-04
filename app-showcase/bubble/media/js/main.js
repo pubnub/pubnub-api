@@ -9,6 +9,7 @@ var large_circle = new Path.Circle([676, 433], 100);
 large_circle.fillColor = '#29C9FF';
 large_circle.strokeColor = '#000';
 large_circle.strokeWidth = 5;
+var default_hue = large_circle.fillColor.hue;
 
 var text = new PointText(view.center);
 text.fillColor = '#000';
@@ -25,24 +26,33 @@ function onMouseMove(event) {
 
 function onFrame(event) {
   for (var i = 0; i < bubbles.length; i++) {
-    //console.log("aoeuaueo");
-    if (bubbles[i].popping === false) {
-      bubbles[i].scale(.99); 
-      bubbles[i].children[0].strokeWidth *= .99; 
-      //console.log(bubbles[i].children[0].bounds);
 
-      if (bubbles[i].children[0].bounds.width <= 50) {
-        bubbles[i].popping = true;   
-      }
-    }
-    else {
-      bubbles[i].scale(1.2); 
-      bubbles[i].children[0].strokeWidth *= 1.2; 
-      bubbles[i].opacity = bubbles[i].opacity *.7; 
-      if (bubbles[i].opacity < .02) {
-        bubbles[i].remove();
-        bubbles.splice(i,1);
-      }
+    switch (bubbles[i].action) {
+      case "":
+        bubbles[i].scale(.99); 
+        bubbles[i].children[0].strokeWidth *= .99; 
+
+        if (bubbles[i].children[0].bounds.width <= 50) {
+          bubbles[i].action = "popping";   
+        }
+        break;
+
+      case "flashing":
+        bubbles[i].children[0].fillColor.hue += 10;
+        if (bubbles[i].children[0].fillColor.hue >= default_hue) {
+          bubbles[i].action = '';
+        }
+        break;
+
+      case "popping": 
+        bubbles[i].scale(1.2); 
+        bubbles[i].children[0].strokeWidth *= 1.2; 
+        bubbles[i].opacity = bubbles[i].opacity *.7; 
+        if (bubbles[i].opacity < .02) {
+          bubbles[i].remove();
+          bubbles.splice(i,1);
+        }
+        break;
     }
   }
 }
@@ -70,6 +80,8 @@ function onMouseDown(event) {
   for (var i = 0; i < bubbles.length; i++) {
       hit_result = bubbles[i].hitTest(event.point);
       if ((hit_result !== null) && (hit_result !== undefined)) {
+        bubbles[i].action = 'flashing';
+        bubbles[i].children[0].fillColor.hue -= 50;
         bubbles[i].scale(1.5);
         bubbles[i].children[0].strokeWidth *= 1.5; 
         onMouseDown.last = now();
@@ -89,7 +101,7 @@ $("#place").click( function(e) {
   new_bubble.children[0].position = bubble_pos;
   new_bubble.children[1].position = bubble_pos;
   new_bubble.position = bubble_pos;
-  new_bubble.popping = false;
+  new_bubble.action = '';
 
   var bubble_pos = generateRandomLocation();
   bubbles.push(new_bubble);
@@ -127,3 +139,4 @@ function generateRandomLocation() {
   return new Point(Math.random() * (view.size.width - (c_width /2 )) + (c_width / 4) , 
                    Math.random() * (view.size.height - (c_height /2 )) + (c_height / 4)); 
 }
+
