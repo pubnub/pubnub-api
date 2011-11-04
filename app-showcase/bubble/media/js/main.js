@@ -2,6 +2,7 @@ var bubbles = [];
 var bubble_index = {};
 var now     = function(){return+new Date};
 var channel = 'pubnub-demo-channel';
+var my_id   = PUBNUB.uuid(function(uuid){ my_id = uuid });
 
 var large_circle = new Path.Circle([676, 433], 100);
 
@@ -57,59 +58,95 @@ function onFrame(event) {
   }
 }
 
-function onMouseDown(event) {
-  var uuid = 'uuid' in event && event.uuid;
-  //if (onMouseDown.last + 800 > now()) return;
-
-  // Publish Fun For All
-  /*
-  uuid || PUBNUB.publish({
+function send_bubble_click(event) {
+  PUBNUB.publish({
      channel  : channel,
      callback : function(i){console.log(i)},
      message  : {
        name  : 'bubble-click',
        point : event.point,
+       text  : event.text,
+       uuid  : event.uuid,
+       from  : my_id
      }
   });
-  */
+}
 
-  uuid || console.log('NETWORK EVETNT!!!');
+function pump_bubble_up(bubble) {
+  bubble.scale(1.5);
+  bubble.children[0].strokeWidth *= 1.5; 
+}
 
-  //console.log(event.point);
+function onMouseDown(event) {
+  var uuid = 'uuid' in event && event.uuid;
+  //if (onMouseDown.last + 800 > now()) return;
 
+  uuid && console.log('NETWORK EVETNT!!!',uuid);
+  uuid && !(uuid in bubble_index) && add_new_bubble(event);
+
+  // Prevent Local/Remote Double Click
+  //if (uuid && event.from === my_id) return;
+
+  // (Remote Click) UUID Bubble Pump
+  if (uuid) return pump_bubble_up(bubble_index[uuid].bubble);
+
+  // (Local Click) X,Y Hit?
   for (var i = 0; i < bubbles.length; i++) {
       hit_result = bubbles[i].hitTest(event.point);
-      if ((hit_result !== null) && (hit_result !== undefined)) {
+      if (bubbles[i].hitTest(event.point)) {
+        // Create Bubble Click Event.
+        event.uuid = bubbles[i].uuid;
+        send_bubble_click(event);
+        onMouseDown.last = now();
+
         bubbles[i].action = 'flashing';
         bubbles[i].children[0].fillColor.hue -= 50;
         bubbles[i].scale(1.5);
         bubbles[i].children[0].strokeWidth *= 1.5; 
-        onMouseDown.last = now();
       }
   }
 }
 onMouseDown.last = now();
 
-$("#place").click( function(e) {
-  e.preventDefault();
 
+// ---------------------------------------------------------------------------
+// Make New Bubble
+// ---------------------------------------------------------------------------
+function add_new_bubble(event) {
   var new_bubble = group.clone(); 
+  var uuid = event.uuid;
   
-  new_bubble.children[1].content = $("#bubble_text").val();
+  new_bubble.children[1].content = event.text;
   new_bubble.visible = true;
-  var bubble_pos = generateRandomLocation();
+  var bubble_pos = event.point;
   new_bubble.children[0].position = bubble_pos;
   new_bubble.children[1].position = bubble_pos;
   new_bubble.position = bubble_pos;
   new_bubble.action = '';
 
-  var bubble_pos = generateRandomLocation();
+  var bubble_pos = event.point;
   bubbles.push(new_bubble);
 
   // Create New Bubble Entity Lookup
-  PUBNUB.uuid(function(uuid) {
+  new_bubble.uuid = uuid;
+  bubble_index[uuid] = { bubble : new_bubble, uuid : uuid };
+
+  uuid || PUBNUB.uuid(function(uuid) {
     new_bubble.uuid = uuid;
     bubble_index[uuid] = { bubble : new_bubble, uuid : uuid };
+  } );
+}
+
+
+$("#place").click( function(e) {
+  e.preventDefault();
+
+  PUBNUB.uuid(function(uuid) {
+    send_bubble_click({
+      point : generateRandomLocation(),
+      uuid  : uuid,
+      text  : $("#bubble_text").val()
+    });
   } );
 
 });
@@ -122,7 +159,8 @@ PUBNUB.subscribe({
   channel  : channel,
   connect  : function() {},
   callback : function(event) {
-      PUBNUB.events.fire( event.name, event );
+    console.log(event);
+    PUBNUB.events.fire( event.name, event );
   }
 });
 
