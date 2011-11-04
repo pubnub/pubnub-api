@@ -1,16 +1,18 @@
 var bubbles = [];
 var bubble_index = {};
-var placed  = false;
 var now     = function(){return+new Date};
 var channel = 'pubnub-demo-channel';
+var my_id   = PUBNUB.uuid(function(uuid){ my_id = uuid });
 
 var large_circle = new Path.Circle([676, 433], 100);
-large_circle.fillColor = '#000';
+
+
+large_circle.fillColor = '#29C9FF';
 large_circle.strokeColor = '#000';
-large_circle.strokeWidth = 8;
+large_circle.strokeWidth = 5;
 
 var text = new PointText(view.center);
-text.fillColor = '#fff';
+text.fillColor = '#000';
 text.characterStyle.fontSize = 35;
 text.paragraphStyle.justification = 'center';
 text.content = 'PubNub';
@@ -27,6 +29,7 @@ function onFrame(event) {
     //console.log("aoeuaueo");
     if (bubbles[i].popping === false) {
       bubbles[i].scale(.99); 
+      bubbles[i].children[0].strokeWidth *= .99; 
       //console.log(bubbles[i].children[0].bounds);
 
       if (bubbles[i].children[0].bounds.width <= 50) {
@@ -35,6 +38,7 @@ function onFrame(event) {
     }
     else {
       bubbles[i].scale(1.2); 
+      bubbles[i].children[0].strokeWidth *= 1.2; 
       bubbles[i].opacity = bubbles[i].opacity *.7; 
       if (bubbles[i].opacity < .02) {
         bubbles[i].remove();
@@ -44,16 +48,23 @@ function onFrame(event) {
   }
 }
 
-function send_bubble_click( uuid, event ) {
+function send_bubble_click(event) {
   PUBNUB.publish({
      channel  : channel,
      callback : function(i){console.log(i)},
      message  : {
        name  : 'bubble-click',
        point : event.point,
-       uuid  : uuid
+       text  : event.text,
+       uuid  : event.uuid,
+       from  : my_id
      }
   });
+}
+
+function pump_bubble_up(bubble) {
+  bubble.scale(1.5);
+  bubble.children[0].strokeWidth *= 1.5; 
 }
 
 function onMouseDown(event) {
@@ -61,20 +72,23 @@ function onMouseDown(event) {
   //if (onMouseDown.last + 800 > now()) return;
 
   uuid && console.log('NETWORK EVETNT!!!',uuid);
+  uuid && !(uuid in bubble_index) && add_new_bubble(event);
 
-  uuid && !(uuid in bubble_index) && add_new_bubble(uuid);
+  // Prevent Local/Remote Double Click
+  //if (uuid && event.from === my_id) return;
 
+  // (Remote Click) UUID Bubble Pump
+  if (uuid) return pump_bubble_up(bubble_index[uuid].bubble);
+
+  // (Local Click) X,Y Hit?
   for (var i = 0; i < bubbles.length; i++) {
-      hit_result = bubbles[i].hitTest(event.point);
-      if (hit_result) {
-        if (uuid) {
-          bubbles[i].scale(1.5);
-          continue;
-        }
-        // Publish Fun For All
-        send_bubble_click( bubbles[i].uuid, event );
-        onMouseDown.last = now();
-      }
+    if (bubbles[i].hitTest(event.point)) {
+      // Create Bubble Click Event.
+      event.uuid = bubbles[i].uuid;
+      send_bubble_click(event);
+      onMouseDown.last = now();
+
+    }
   }
 }
 onMouseDown.last = now();
@@ -83,18 +97,19 @@ onMouseDown.last = now();
 // ---------------------------------------------------------------------------
 // Make New Bubble
 // ---------------------------------------------------------------------------
-function add_new_bubble(uuid) {
+function add_new_bubble(event) {
   var new_bubble = group.clone(); 
+  var uuid = event.uuid;
   
-  new_bubble.children[1].content = $("#bubble_text").val();
+  new_bubble.children[1].content = event.text;
   new_bubble.visible = true;
-  var bubble_pos = generateRandomLocation();
+  var bubble_pos = event.point;
   new_bubble.children[0].position = bubble_pos;
   new_bubble.children[1].position = bubble_pos;
   new_bubble.position = bubble_pos;
   new_bubble.popping = false;
 
-  var bubble_pos = generateRandomLocation();
+  var bubble_pos = event.point;
   bubbles.push(new_bubble);
 
   // Create New Bubble Entity Lookup
@@ -107,9 +122,18 @@ function add_new_bubble(uuid) {
   } );
 }
 
+
 $("#place").click( function(e) {
   e.preventDefault();
-  add_new_bubble();
+
+  PUBNUB.uuid(function(uuid) {
+    send_bubble_click({
+      point : generateRandomLocation(),
+      uuid  : uuid,
+      text  : $("#bubble_text").val()
+    });
+  } );
+
 });
 
 
@@ -133,5 +157,8 @@ PUBNUB.events.bind( 'bubble-click', function(event) {
 } );
 
 function generateRandomLocation() {
-  return new Point(Math.random() * view.size.width, Math.random() * view.size.height); 
+  c_width = large_circle.bounds.width;
+  c_height = large_circle.bounds.height;
+  return new Point(Math.random() * (view.size.width - (c_width /2 )) + (c_width / 4) , 
+                   Math.random() * (view.size.height - (c_height /2 )) + (c_height / 4)); 
 }
