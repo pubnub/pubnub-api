@@ -75,6 +75,10 @@ function send_bubble_click(event) {
 function pump_bubble_up(bubble) {
   bubble.scale(1.5);
   bubble.children[0].strokeWidth *= 1.5; 
+  bubble.action = 'flashing';
+  bubble.children[0].fillColor.hue -= 50;
+  bubble.scale(1.5);
+  bubble.children[0].strokeWidth *= 1.5; 
 }
 
 function onMouseDown(event) {
@@ -98,11 +102,6 @@ function onMouseDown(event) {
         event.uuid = bubbles[i].uuid;
         send_bubble_click(event);
         onMouseDown.last = now();
-
-        bubbles[i].action = 'flashing';
-        bubbles[i].children[0].fillColor.hue -= 50;
-        bubbles[i].scale(1.5);
-        bubbles[i].children[0].strokeWidth *= 1.5; 
       }
   }
 }
@@ -138,6 +137,9 @@ function add_new_bubble(event) {
 }
 
 
+// ---------------------------------------------------------------------------
+// Make New Bubble (User Event)
+// ---------------------------------------------------------------------------
 $("#place").click( function(e) {
   e.preventDefault();
 
@@ -171,6 +173,9 @@ PUBNUB.events.bind( 'bubble-click', function(event) {
   onMouseDown(event);
 } );
 
+// ---------------------------------------------------------------------------
+// Generate Randomized Point
+// ---------------------------------------------------------------------------
 function generateRandomLocation() {
   c_width = large_circle.bounds.width;
   c_height = large_circle.bounds.height;
