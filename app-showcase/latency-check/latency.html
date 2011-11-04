@@ -1,0 +1,54 @@
+<!doctype html> 
+<html> 
+<head> 
+    <title>PubNub Latency Check Example</title> 
+    <style>
+        #latency {
+            font-size: 30px;
+            color: #eeeee2;
+            background: #444;
+            padding: 10px;
+
+            -webkit-transition: all 0.1s;
+            -moz-transition: all 0.1s;
+            -ms-transition: all 0.1s;
+            -o-transition: all 0.1s;
+            transition: all 0.1s;
+        }
+    </style>
+</head> 
+<body>
+
+<div id=latency></div>
+
+<div id=pubnub></div>
+<script src=http://cdn.pubnub.com/pubnub-3.1.js></script>
+<script>(function(){
+
+    // Copy this Code to Check Latency
+    function now(){return+new Date}
+    function connection_latency(callback) {
+        var start = now();
+        PUBNUB.time(function(){
+            callback(now() - start);
+            setTimeout( function(){ connection_latency(callback) }, 1000 );
+        });
+    }
+
+    // This is how you use the code
+    // Periodically Get Latency in Miliseconds
+    connection_latency(function(latency){
+        var out = PUBNUB.$('latency');
+        out.innerHTML = "Latency: " + latency + "ms";
+
+        // Flash Update
+        PUBNUB.css( out, { background : '#5b5' } );
+        setTimeout( function() {
+            PUBNUB.css( out, { background : '#444' } );
+        }, 300 );
+    });
+
+})();</script>
+</div></body>
+</html>
+
