@@ -2,11 +2,12 @@ var bubbles = [];
 var bubble_index = {};
 var now     = function(){return+new Date};
 var channel = 'pubnub-demo-channel';
-var my_id   = PUBNUB.uuid(function(uuid){ my_id = uuid });
+var timeframe = 500;
 
+// ---------------------------------------------------------------------------
+// Starter Objects (Circle and Text)
+// ---------------------------------------------------------------------------
 var large_circle = new Path.Circle([676, 433], 100);
-
-
 large_circle.fillColor = '#29C9FF';
 large_circle.strokeColor = '#000';
 large_circle.strokeWidth = 5;
@@ -22,74 +23,45 @@ text.position = large_circle.center;
 var group = new Group([large_circle, text]);
 group.visible = false;
 
-function onMouseMove(event) {
-}
 
+// ---------------------------------------------------------------------------
+// Paper.JS Events: Mouse Move
+// ---------------------------------------------------------------------------
+function onMouseMove(event) {}
+
+
+
+// ---------------------------------------------------------------------------
+// Paper.JS Events: Frame Render
+// ---------------------------------------------------------------------------
+onFrame.last_frame = now();
 function onFrame(event) {
-  for (var i = 0; i < bubbles.length; i++) {
+  // Calculate last time since previous frame.
+  onFrame.elapsed_time = now() - onFrame.last_frame
+  onFrame.modifier     = onFrame.elapsed_time / timeframe;
 
-    switch (bubbles[i].action) {
-      case "":
-        bubbles[i].scale(.99); 
-        bubbles[i].children[0].strokeWidth *= .99; 
+  onFrame.last_frame = now();
 
-        if (bubbles[i].children[0].bounds.width <= 50) {
-          bubbles[i].action = "popping";   
-        }
-        break;
-
-      case "flashing":
-        bubbles[i].children[0].fillColor.hue += 10;
-        if (bubbles[i].children[0].fillColor.hue >= default_hue) {
-          bubbles[i].action = '';
-        }
-        break;
-
-      case "popping": 
-        bubbles[i].scale(1.2); 
-        bubbles[i].children[0].strokeWidth *= 1.2; 
-        bubbles[i].opacity = bubbles[i].opacity *.7; 
-        if (bubbles[i].opacity < .02) {
-          bubbles[i].remove();
-          bubbles.splice(i,1);
-        }
-        break;
-    }
-  }
+  // For Each Bubble: Fire Action.
+  PUBNUB.each( bubbles, function( bubble, position ) {
+    if (!bubble) return;
+    PUBNUB.events.fire( bubble.action, {
+      bubble   : bubble,
+      position : position,
+      frame    : onFrame
+    } );
+  } );
 }
 
-function send_bubble_click(event) {
-  PUBNUB.publish({
-     channel  : channel,
-     callback : function(i){console.log(i)},
-     message  : {
-       name  : 'bubble-click',
-       point : event.point,
-       text  : event.text,
-       uuid  : event.uuid,
-       from  : my_id
-     }
-  });
-}
-
-function pump_bubble_up(bubble) {
-  bubble.scale(1.5);
-  bubble.children[0].strokeWidth *= 1.5; 
-  bubble.action = 'flashing';
-  bubble.children[0].fillColor.hue -= 50;
-  bubble.scale(1.5);
-  bubble.children[0].strokeWidth *= 1.5; 
-}
-
+// ---------------------------------------------------------------------------
+// Paper.JS Events: Mouse Down
+// ---------------------------------------------------------------------------
 function onMouseDown(event) {
   var uuid = 'uuid' in event && event.uuid;
   //if (onMouseDown.last + 800 > now()) return;
 
-  uuid && console.log('NETWORK EVETNT!!!',uuid);
+  //uuid && console.log('NETWORK EVETNT!!!',uuid);
   uuid && !(uuid in bubble_index) && add_new_bubble(event);
-
-  // Prevent Local/Remote Double Click
-  //if (uuid && event.from === my_id) return;
 
   // (Remote Click) UUID Bubble Pump
   if (uuid) return pump_bubble_up(bubble_index[uuid].bubble);
@@ -98,15 +70,89 @@ function onMouseDown(event) {
   for (var i = 0; i < bubbles.length; i++) {
       hit_result = bubbles[i].hitTest(event.point);
       if (bubbles[i].hitTest(event.point)) {
+
         // Create Bubble Click Event.
         event.uuid = bubbles[i].uuid;
         send_bubble_click(event);
         onMouseDown.last = now();
+
       }
   }
 }
 onMouseDown.last = now();
 
+// ---------------------------------------------------------------------------
+// Animate Bubble (Constantly Shrinking)
+// ---------------------------------------------------------------------------
+PUBNUB.events.bind( "animate", function(data) {
+  var bubble = data.bubble
+  ,   modifier = data.frame.modifier;
+
+  bubble.scale(1 - .4 * modifier);
+  bubble.children[0].strokeWidth *= (1 - .4 * modifier); 
+
+  if (bubble.children[0].bounds.width <= 50) {
+    bubble.action = "popping";   
+  }
+} );
+
+// ---------------------------------------------------------------------------
+// Flash The Bubble
+// ---------------------------------------------------------------------------
+PUBNUB.events.bind( "flashing", function(data) {
+  var bubble   = data.bubble
+  ,   modifier = data.frame.modifier;
+
+  bubble.children[0].fillColor.hue += 10;// * modifier;
+  if (bubble.children[0].fillColor.hue >= default_hue) {
+    bubble.action = "animate";
+  }
+} );
+
+// ---------------------------------------------------------------------------
+// POP The Bubble
+// ---------------------------------------------------------------------------
+PUBNUB.events.bind( "popping", function(data) {
+  var bubble   = data.bubble
+  ,   modifier = data.frame.modifier;
+
+  bubble.scale(1 + 1.8 * modifier); 
+  bubble.children[0].strokeWidth *= 1 + 1.8 * modifier; 
+  bubble.opacity *= 1 - 9.0 * modifier; 
+
+  // Is the bubble still in popping animation?
+  if (bubble.opacity >= .02) return;
+
+  // The bubble has finished popping, remove it.
+  bubble.remove();
+  bubbles.splice( data.position, 1 );
+} );
+
+// ---------------------------------------------------------------------------
+// Send Click Event (Click Sharing)
+// ---------------------------------------------------------------------------
+function send_bubble_click(event) {
+  PUBNUB.publish({
+     channel  : channel,
+     callback : function(i){0&&console.log(i)},
+     message  : {
+       name  : 'bubble-click',
+       point : event.point,
+       text  : event.text,
+       uuid  : event.uuid
+     }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Bubble Insta Expand (usually when clicked)
+// ---------------------------------------------------------------------------
+function pump_bubble_up(bubble) {
+  bubble.action = 'flashing';
+  bubble.children[0].fillColor.hue -= 50;
+  bubble.scale(1.5);
+  bubble.children[0].strokeWidth *= 1.5; 
+}
 
 // ---------------------------------------------------------------------------
 // Make New Bubble
@@ -121,7 +167,7 @@ function add_new_bubble(event) {
   new_bubble.children[0].position = bubble_pos;
   new_bubble.children[1].position = bubble_pos;
   new_bubble.position = bubble_pos;
-  new_bubble.action = '';
+  new_bubble.action = 'animate';
 
   var bubble_pos = event.point;
   bubbles.push(new_bubble);
@@ -161,7 +207,7 @@ PUBNUB.subscribe({
   channel  : channel,
   connect  : function() {},
   callback : function(event) {
-    console.log(event);
+    //console.log(event);
     PUBNUB.events.fire( event.name, event );
   }
 });
