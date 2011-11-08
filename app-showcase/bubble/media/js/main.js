@@ -160,11 +160,12 @@ uuid  : event.uuid
 function pump_bubble_up(bubble) {
   if (bubble.action === 'popping') return;
 
-  bubble.weight += 1;
+  bubble.weight += bubble.weight > 1 ? 0 : 1;
+
   bubble.action = 'flashing';
   bubble.children[0].fillColor.hue -= 50;
   //bubble.scale(1.5);
-  //bubble.children[0].strokeWidth *= 1.5; 
+  bubble.children[0].strokeWidth *= 1.5; 
 }
 
 // ---------------------------------------------------------------------------
