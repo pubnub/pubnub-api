@@ -80,11 +80,12 @@ onMouseDown.last = now();
 PUBNUB.events.bind( "animate", function(data) {
   var bubble        = data.bubble
   ,   elapsed_time  = data.frame.elapsed_time
-  ///,   time          = data.time - bubble.birth
+  ,   modifier      = data.frame.modifier
+  ,   time          = data.time - bubble.birth
   ,   current_scale = bubble.bounds.width / bubble.birth_width
   ,   desired_scale = sigmoid(bubble.weight);
 
-  console.log('current_scale',current_scale, 'desired_scale',desired_scale, bubble.bounds.width, large_circle.bounds.width, 'scalefoactor',desired_scale / current_scale, 'current_width',bubble.bounds.width ) ;
+ //onsole.log('current_scale',current_scale, 'desired_scale',desired_scale, bubble.bounds.width, 'scalefoactor',desired_scale / current_scale, 'current_width',bubble.bounds.width ) ;
 
 /*
   
@@ -95,12 +96,10 @@ PUBNUB.events.bind( "animate", function(data) {
   //bubble.bounds.width =  100*sigmoid(bubble.weight);
   //console.log(1 - .4 * modifier, sigmoid(bubble.weight));
   bubble.scale((desired_scale / current_scale) / .4);
-  /*
   bubble.children[0].strokeWidth *= (
     1 - .4 * modifier * sigmoid(time)
   );
-  console.log(bubble.size,bubble.size.width)
-  */
+//  console.log(bubble.size,bubble.size.width)
 
 /*
   if (bubble.children[0].bounds.width <= 50) {
@@ -163,10 +162,11 @@ uuid  : event.uuid
 function pump_bubble_up(bubble) {
   if (bubble.action === 'popping') return;
 
+  bubble.weight += 1;
   bubble.action = 'flashing';
   bubble.children[0].fillColor.hue -= 50;
-  bubble.scale(1.5);
-  bubble.children[0].strokeWidth *= 1.5; 
+  //bubble.scale(1.5);
+  //bubble.children[0].strokeWidth *= 1.5; 
 }
 
 // ---------------------------------------------------------------------------
