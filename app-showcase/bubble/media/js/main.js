@@ -101,11 +101,9 @@ PUBNUB.events.bind( "animate", function(data) {
   );
 //  console.log(bubble.size,bubble.size.width)
 
-/*
   if (bubble.children[0].bounds.width <= 50) {
     bubble.action = "popping";   
   }
-  */
 } );
 
 // ---------------------------------------------------------------------------
