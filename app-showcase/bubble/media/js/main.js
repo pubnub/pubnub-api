@@ -5,24 +5,11 @@ var channel = 'pubnub-demo-channel';
 var timeframe = 500;
 
 // ---------------------------------------------------------------------------
-// Starter Objects (Circle and Text)
+// Starter Color
 // ---------------------------------------------------------------------------
-var large_circle = new Path.Circle([676, 433], 100);
-large_circle.fillColor = '#29C9FF';
-large_circle.strokeColor = '#000';
-large_circle.strokeWidth = 5;
-var default_hue = large_circle.fillColor.hue;
-
-var text = new PointText(view.center);
-text.fillColor = '#000';
-text.characterStyle.fontSize = 35;
-text.paragraphStyle.justification = 'center';
-text.content = 'PubNub';
-text.position = large_circle.center;
-
-var group = new Group([large_circle, text]);
-group.visible = false;
-
+  var dummy = new Path.Circle([676, 433], 100);
+  dummy.fillColor = '#29C9FF';
+  var default_hue = dummy.fillColor.hue;
 
 function sigmoid(t) {
   return 1/(1+Math.pow(Math.E, -t));
@@ -131,43 +118,43 @@ PUBNUB.events.bind( "flashing", function(data) {
 
   bubble.children[0].fillColor.hue += 10;// * modifier;
   if (bubble.children[0].fillColor.hue >= default_hue) {
-    bubble.action = "animate";
+  bubble.action = "animate";
   }
-} );
+  } );
 
 // ---------------------------------------------------------------------------
 // POP The Bubble
 // ---------------------------------------------------------------------------
 PUBNUB.events.bind( "popping", function(data) {
-  var bubble   = data.bubble
-  ,   modifier = data.frame.modifier;
+    var bubble   = data.bubble
+    ,   modifier = data.frame.modifier;
 
-  bubble.scale(1 + 1.8 * modifier); 
-  bubble.children[0].strokeWidth *= 1 + 1.8 * modifier; 
-  bubble.opacity *= 1 - 9.0 * modifier; 
+    bubble.scale(1 + 1.8 * modifier); 
+    bubble.children[0].strokeWidth *= 1 + 1.8 * modifier; 
+    bubble.opacity *= 1 - 9.0 * modifier; 
 
-  // Is the bubble still in popping animation?
-  if (bubble.opacity >= .02) return;
+    // Is the bubble still in popping animation?
+    if (bubble.opacity >= .02) return;
 
-  // The bubble has finished popping, remove it.
-  bubble.remove();
-  bubbles.splice( data.position, 1 );
-} );
+    // The bubble has finished popping, remove it.
+    bubble.remove();
+    bubbles.splice( data.position, 1 );
+    } );
 
 // ---------------------------------------------------------------------------
 // Send Click Event (Click Sharing)
 // ---------------------------------------------------------------------------
 function send_bubble_click(event) {
   PUBNUB.publish({
-     channel  : channel,
-     callback : function(i){0&&console.log(i)},
-     message  : {
-       name  : 'bubble-click',
-       point : event.point,
-       text  : event.text,
-       uuid  : event.uuid
-     }
-  });
+channel  : channel,
+callback : function(i){0&&console.log(i)},
+message  : {
+name  : 'bubble-click',
+point : event.point,
+text  : event.text,
+uuid  : event.uuid
+}
+});
 }
 
 // ---------------------------------------------------------------------------
@@ -186,6 +173,32 @@ function pump_bubble_up(bubble) {
 // Make New Bubble
 // ---------------------------------------------------------------------------
 function add_new_bubble(event) {
+
+  // ---------------------------------------------------------------------------
+  // Starter Objects (Oval and Text)
+  // ---------------------------------------------------------------------------
+
+  var topLeft = new Point(100, 100);
+  var oval_width = event.text.length * 25;
+  var size = new Size(oval_width, 130);
+  var rectangle = new Rectangle(topLeft, size);
+  var large_circle = new Path.Oval(rectangle);
+
+  large_circle.fillColor = '#29C9FF';
+  large_circle.strokeColor = '#000';
+  large_circle.strokeWidth = 5;
+  var default_hue = large_circle.fillColor.hue;
+
+  var text = new PointText(view.center);
+  text.fillColor = '#000';
+  text.characterStyle.fontSize = 35;
+  text.paragraphStyle.justification = 'center';
+  text.content = 'PubNub';
+  text.position = large_circle.center;
+
+  var group = new Group([large_circle, text]);
+  group.visible = false;
+
   var new_bubble = group.clone(); 
   var uuid = event.uuid;
 
@@ -255,8 +268,10 @@ PUBNUB.events.bind( 'bubble-click', function(event) {
 // Generate Randomized Point
 // ---------------------------------------------------------------------------
 function generateRandomLocation() {
-  c_width = large_circle.bounds.width;
-  c_height = large_circle.bounds.height;
+  //c_width = large_circle.bounds.width;
+  //c_height = large_circle.bounds.height;
+  c_width = 100;
+  c_height = 100;
   return new Point(Math.random() * (view.size.width - c_width ) + (c_width / 2) , 
                    Math.random() * (view.size.height - c_height ) + (c_height / 2)); 
 }
