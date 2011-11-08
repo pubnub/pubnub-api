@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "jade": "0.12.4",
-    "express": "2.4.6",
+    "express": "2.5.0",
     "mime": "1.2.2"
   }
 }
