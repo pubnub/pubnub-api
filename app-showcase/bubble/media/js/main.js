@@ -24,6 +24,11 @@ var group = new Group([large_circle, text]);
 group.visible = false;
 
 
+function sigmoid(t) {
+  return 1/(1+Math.pow(Math.E, -t));
+}
+
+
 // ---------------------------------------------------------------------------
 // Paper.JS Events: Mouse Move
 // ---------------------------------------------------------------------------
@@ -48,7 +53,8 @@ function onFrame(event) {
     PUBNUB.events.fire( bubble.action, {
       bubble   : bubble,
       position : position,
-      frame    : onFrame
+      frame    : onFrame,
+      time     : now()
     } );
   } );
 }
@@ -85,15 +91,35 @@ onMouseDown.last = now();
 // Animate Bubble (Constantly Shrinking)
 // ---------------------------------------------------------------------------
 PUBNUB.events.bind( "animate", function(data) {
-  var bubble = data.bubble
-  ,   modifier = data.frame.modifier;
+  var bubble        = data.bubble
+  ,   elapsed_time  = data.frame.elapsed_time
+  ///,   time          = data.time - bubble.birth
+  ,   current_scale = bubble.bounds.width / bubble.birth_width
+  ,   desired_scale = sigmoid(bubble.weight);
 
-  bubble.scale(1 - .4 * modifier);
-  bubble.children[0].strokeWidth *= (1 - .4 * modifier); 
+  console.log('current_scale',current_scale, 'desired_scale',desired_scale, bubble.bounds.width, large_circle.bounds.width, 'scalefoactor',desired_scale / current_scale, 'current_width',bubble.bounds.width ) ;
 
+/*
+  
+*/
+  // Shrink Weight
+  bubble.weight -= elapsed_time / 1000;
+  //bubble.bounds.height  = 100*sigmoid(bubble.weight);
+  //bubble.bounds.width =  100*sigmoid(bubble.weight);
+  //console.log(1 - .4 * modifier, sigmoid(bubble.weight));
+  bubble.scale((desired_scale / current_scale) / .4);
+  /*
+  bubble.children[0].strokeWidth *= (
+    1 - .4 * modifier * sigmoid(time)
+  );
+  console.log(bubble.size,bubble.size.width)
+  */
+
+/*
   if (bubble.children[0].bounds.width <= 50) {
     bubble.action = "popping";   
   }
+  */
 } );
 
 // ---------------------------------------------------------------------------
@@ -148,6 +174,8 @@ function send_bubble_click(event) {
 // Bubble Insta Expand (usually when clicked)
 // ---------------------------------------------------------------------------
 function pump_bubble_up(bubble) {
+  if (bubble.action === 'popping') return;
+
   bubble.action = 'flashing';
   bubble.children[0].fillColor.hue -= 50;
   bubble.scale(1.5);
@@ -160,7 +188,11 @@ function pump_bubble_up(bubble) {
 function add_new_bubble(event) {
   var new_bubble = group.clone(); 
   var uuid = event.uuid;
-  
+
+  new_bubble.weight = 0;
+  new_bubble.birth = now();
+  new_bubble.birth_width  = 300;//large_circle.bounds.width;
+  new_bubble.birth_height = 200;//large_circle.bounds.hight;
   new_bubble.children[1].content = event.text;
   new_bubble.visible = true;
   var bubble_pos = event.point;
@@ -186,7 +218,7 @@ function add_new_bubble(event) {
 // ---------------------------------------------------------------------------
 // Make New Bubble (User Event)
 // ---------------------------------------------------------------------------
-$("#place").click( function(e) {
+$("#place").bind( 'mousedown', function(e) {
   e.preventDefault();
 
   PUBNUB.uuid(function(uuid) {
