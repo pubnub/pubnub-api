@@ -104,13 +104,13 @@ class Pubnub
 
         ## Fail if missing channel
         if !channel
-            echo("Missing Channel.\n")
+            puts "Missing Channel."
             return false
         end
 
         ## Fail if missing callback
         if !callback
-            echo("Missing Callback.\n")
+            puts "Missing Callback."
             return false
         end
 
@@ -165,7 +165,7 @@ class Pubnub
 
         ## Fail if bad input.
         if (!channel)
-            echo('Missing Channel')
+            puts 'Missing Channel.'
             return false
         end
 
