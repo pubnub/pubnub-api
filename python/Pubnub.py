@@ -152,36 +152,36 @@ class Pubnub():
         ## Capture User Input
         channel   = args['channel']
         callback  = args['callback']
-        timetoken = 'timetoken' in args and args['timetoken'] or 0
 
-        ## Begin Recusive Subscribe
-        try :
-            ## Wait for Message
-            response = self._request([
-                'subscribe',
-                self.subscribe_key,
-                channel,
-                '0',
-                str(timetoken)
-            ])
+        ## Begin Subscribe
+        while True :
 
-            messages          = response[0]
-            args['timetoken'] = response[1]
+            timetoken = 'timetoken' in args and args['timetoken'] or 0
 
-            ## If it was a timeout
-            if not len(messages) :
-                return self.subscribe(args)
+            try :
+                ## Wait for Message
+                response = self._request([
+                    'subscribe',
+                    self.subscribe_key,
+                    channel,
+                    '0',
+                    str(timetoken)
+                ])
 
-            ## Run user Callback and Reconnect if user permits.
-            for message in messages :
-                if not callback(message) :
-                    return
+                messages          = response[0]
+                args['timetoken'] = response[1]
 
-            ## Keep Listening.
-            return self.subscribe(args)
-        except Exception:
-            time.sleep(1)
-            return self.subscribe(args)
+                ## If it was a timeout
+                if not len(messages) :
+                    continue
+
+                ## Run user Callback and Reconnect if user permits.
+                for message in messages :
+                    if not callback(message) :
+                        return
+
+            except Exception:
+                time.sleep(1)
 
         return True
 
