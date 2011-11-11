@@ -13,7 +13,11 @@ import time
 import hashlib
 import urllib2
 
-from django.utils import simplejson as json
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
+
 from google.appengine.api import urlfetch
 
 class Pubnub():
