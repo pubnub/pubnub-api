@@ -100,53 +100,49 @@ class Pubnub
         ## Capture User Input
         channel   = args['channel']
         callback  = args['callback']
-        timetoken = args['timetoken'] ? args['timetoken'] : 0
 
         ## Fail if missing channel
         if !channel
-            echo("Missing Channel.\n")
+            puts "Missing Channel."
             return false
         end
 
         ## Fail if missing callback
         if !callback
-            echo("Missing Callback.\n")
+            puts "Missing Callback."
             return false
         end
 
-        ## Begin Recusive Subscribe
-        begin
-            ## Wait for Message
-            response = self._request([
-                'subscribe',
-                @subscribe_key,
-                channel,
-                '0',
-                timetoken.to_s
-            ])
+        ## Begin Subscribe
+        loop do
+            begin
+                timetoken = args['timetoken'] ? args['timetoken'] : 0
 
-            messages          = response[0]
-            args['timetoken'] = response[1]
+                ## Wait for Message
+                response = self._request([
+                    'subscribe',
+                    @subscribe_key,
+                    channel,
+                    '0',
+                    timetoken.to_s
+                ])
 
-            ## If it was a timeout
-            if !messages.length
-                return self.subscribe(args)
-            end
+                messages          = response[0]
+                args['timetoken'] = response[1]
 
-            ## Run user Callback and Reconnect if user permits.
-            messages.each do |message|
-                if !callback.call(message)
-                    return
+                ## If it was a timeout
+                next if !messages.length
+
+                ## Run user Callback and Reconnect if user permits.
+                messages.each do |message|
+                    if !callback.call(message)
+                        return
+                    end
                 end
+            rescue Timeout::Error
+            rescue
+                sleep(1)
             end
-
-            ## Keep Listening.
-            return self.subscribe(args)
-        rescue Timeout::Error
-            return self.subscribe(args)
-        rescue
-            sleep(1)
-            return self.subscribe(args)
         end
     end
 
@@ -165,7 +161,7 @@ class Pubnub
 
         ## Fail if bad input.
         if (!channel)
-            echo('Missing Channel')
+            puts 'Missing Channel.'
             return false
         end
 
