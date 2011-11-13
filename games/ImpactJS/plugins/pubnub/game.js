@@ -83,23 +83,6 @@ ig.module(
 
       });
 
-      /*
-      var event = this.event = {
-        list : {},
-        bind : function( name, fun ) {
-          //console.log( 'bind', name );
-          (event.list[name] = event.list[name] || []).push(fun);
-        },
-        fire : function( name, data ) {
-          //console.log( 'fire', name );
-          p.each(
-            event.list[name] || [],
-            function(fun) { fun(data) }
-          );
-        },
-      }
-      */
-
       p.events.bind("send_to_lobby", function(message) {
         console.log('sent_to_lobby ' + message.type + ' ' + message.id); 
         message.player_id = game_obj.player_id;
