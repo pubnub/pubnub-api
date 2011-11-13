@@ -30,11 +30,11 @@ ig.module(
           channel  : uuid + "_from_server",
           callback : function(message) { 
             console.log('got_from_server ' + message.type + ' ' + message.id); 
-            game_obj.event.fire("got_from_server", message);
+            p.events.fire("got_from_server", message);
           }
         });
 
-        game_obj.event.bind("got_from_server", function(message) {
+        p.events.bind("got_from_server", function(message) {
           switch (message.type) {
             case "in_queue":
               console.log("in_queue");  
@@ -55,7 +55,7 @@ ig.module(
               break;
 
             case "still_there":
-              game_obj.event.fire("send_to_server", {'type':'still_here'});
+              p.events.fire("send_to_server", {'type':'still_here'});
               break;
 
             case "opponent_left":
@@ -78,11 +78,12 @@ ig.module(
         });
         
         setTimeout( function() {
-          game_obj.event.fire("send_to_lobby", {'type':'looking_for_game'}); 
+          p.events.fire("send_to_lobby", {'type':'looking_for_game'}); 
         }, 2000);
 
       });
 
+      /*
       var event = this.event = {
         list : {},
         bind : function( name, fun ) {
@@ -97,8 +98,9 @@ ig.module(
           );
         },
       }
+      */
 
-      this.event.bind("send_to_lobby", function(message) {
+      p.events.bind("send_to_lobby", function(message) {
         console.log('sent_to_lobby ' + message.type + ' ' + message.id); 
         message.player_id = game_obj.player_id;
         p.publish({
@@ -107,7 +109,7 @@ ig.module(
         });
       });
 
-      this.event.bind("send_to_server", function(message) {
+      p.events.bind("send_to_server", function(message) {
         console.log('sent_to_server ' + message.type + ' ' + message.id); 
         p.publish({
           channel : game_obj.player_id + "_from_client",

@@ -60,14 +60,14 @@ ig.PubNubEntity = ig.Entity.extend({
                'pos': this.pos, 
                'vel': this.vel, 
                'id': this.id }
-    ig.game.event.fire("send_to_server", to_send);
+    PUBNUB.events.fire("send_to_server", to_send);
     this.last_broadcasted = { "pos": this.pos, "vel": this.vel } 
 
   },
 
   keepUpdated: function() {
     var ent_obj = this;
-    ig.game.event.bind("got_from_server", function(message) {
+    PUBNUB.events.bind("got_from_server", function(message) {
       if (message.id == ent_obj.id) {
         switch (message.type) {
           case "ent_update":
