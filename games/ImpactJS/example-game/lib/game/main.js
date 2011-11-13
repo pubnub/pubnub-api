@@ -21,7 +21,6 @@ MyGame = ig.PubNubGame.extend({
 	font: new ig.Font( 'media/04b03.font.png' ),
 	
 	init: function() {
-    console.log(PUBNUB);
     this.parent();
     var game_obj = this;
 
