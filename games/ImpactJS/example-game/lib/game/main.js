@@ -43,11 +43,14 @@ MyGame = ig.PubNubGame.extend({
       game_obj.game_status = "in_game";
       if (game_obj.which_player == "player_1") {
         game_obj.getPaddle2().keepUpdated();
+        game_obj.getPaddle1().belongs_to_me = true;
       }
       else {
         game_obj.getPaddle1().keepUpdated();
+        game_obj.getPaddle2().belongs_to_me = true;
+        game_obj.getPuck().belongs_to_me = true;
       }
-      game_obj.getPuck().keepUpdated();
+      game_obj.getPuck().keepUpdated(message.which_player);
     });
 
     p.events.bind("opponent_left", function(message) {
@@ -57,11 +60,17 @@ MyGame = ig.PubNubGame.extend({
     p.events.bind("you_win", function(message) {
       game_obj.player_notification = 'You win!';
       game_obj.getPuck().stopMoving(); 
+      //game_obj.getPuck().stopUpdating();
+      //game_obj.getPaddle1().stopUpdating();
+      //game_obj.getPaddle2().stopUpdating();
     });
 
     p.events.bind("you_lose", function(message) {
       game_obj.player_notification = 'You lose!';
       game_obj.getPuck().stopMoving(); 
+      //game_obj.getPuck().stopUpdating();
+      //game_obj.getPaddle1().stopUpdating();
+      //game_obj.getPaddle2().stopUpdating();
     });
 
     p.events.bind("game_not_active", function(message) {
@@ -89,9 +98,15 @@ MyGame = ig.PubNubGame.extend({
     puck = this.getPuck();
     paddle1 = this.getPaddle1();
     paddle2 = this.getPaddle2();
-    this.font.draw(puck.belongs_to, puck.pos.x, puck.pos.y );
-    this.font.draw(paddle1.belongs_to, paddle1.pos.x + 15, paddle1.pos.y + 5 );
-    this.font.draw(paddle2.belongs_to, paddle2.pos.x + 15, paddle2.pos.y + 5 );
+    if (puck.belongs_to_me === true) {
+      this.font.draw("belongs_to_me", puck.pos.x, puck.pos.y );
+    }
+    if (paddle1.belongs_to_me === true) {
+      this.font.draw("belongs_to_me", paddle1.pos.x + 15, paddle1.pos.y + 5 );
+    }
+    if (paddle2.belongs_to_me === true) {
+      this.font.draw("belongs_to_me", paddle2.pos.x + 15, paddle2.pos.y + 5 );
+    }
     this.font.draw("you are " + this.which_player, 370, 100 );
     this.font.draw(this.player_notification, 370, 80 );
 	},

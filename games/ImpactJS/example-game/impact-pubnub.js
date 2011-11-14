@@ -117,8 +117,9 @@ exports.verifyStillConnected = function(players, player_id) {
         console.log("player " + player_id.substr(0,5) + " timeout" );
         clearInterval(player.interval);
 
-        if (queue === player_id)
-          queue = undefined;  // if they were the queue, they're not anymore
+        //todo: fix this 
+        //if (queue === player_id)
+        //  queue = undefined;  // if they were the queue, they're not anymore
 
         if (player.opponent !== undefined) 
           exports.sendToUser(player.opponent, {'type': 'opponent_left'});
