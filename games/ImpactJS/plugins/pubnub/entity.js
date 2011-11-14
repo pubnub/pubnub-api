@@ -67,33 +67,29 @@ ig.PubNubEntity = ig.Entity.extend({
 
   keepUpdated: function() {
     var ent_obj = this;
-    PUBNUB.events.bind("got_from_server", function(message) {
-      if (message.id == ent_obj.id) {
-        switch (message.type) {
-          case "ent_update":
-            if (ent_obj.belongs_to != ig.game.which_player) {
-              ent_obj.pos = message.pos;
-              ent_obj.vel = message.vel;
-            }
-            break;
 
-          case "ent_now_yours":
-            ent_obj.belongs_to = ig.game.which_player;
-            ent_obj.pos = message.pos;
-            break;
-
-          case "ent_not_yours":
-            if (ig.game.which_player == "player_1") {
-              ent_obj.belongs_to = "player_2";
-            }
-            else {
-              ent_obj.belongs_to = "player_1"; 
-            }
-            ent_obj.pos = message.pos;
-            break;
+    PUBNUB.events.bind("ent_update", function(message) {
+      if (message.id === ent_obj.id) {
+        if (ent_obj.belongs_to != ig.game.which_player) {
+          ent_obj.pos = message.pos;
+          ent_obj.vel = message.vel;
         }
-      }  
+      }
     });
+
+    PUBNUB.events.bind("ent_now_yours", function(message) {
+      if (message.id === ent_obj.id) {
+        ent_obj.belongs_to = ig.game.which_player;
+        ent_obj.pos = message.pos;
+      }
+    });
+
+    PUBNUB.events.bind("ent_not_yours", function(message) {
+      if (message.id === ent_obj.id) {
+        ent_obj.belongs_to = "";
+      }
+    });
+
   }
 
 });

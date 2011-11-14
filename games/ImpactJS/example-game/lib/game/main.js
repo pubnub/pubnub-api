@@ -23,11 +23,56 @@ MyGame = ig.PubNubGame.extend({
 	init: function() {
     this.parent();
     var game_obj = this;
+    var p = PUBNUB;
 
 		ig.input.bind( ig.KEY.UP_ARROW, 'up' );
 		ig.input.bind( ig.KEY.DOWN_ARROW, 'down' );
 		
 		this.loadLevel( LevelMain );
+
+    // when a message comes in, it's type maps to one of the following event
+    // note there also events at the plugin level
+    p.events.bind("in_queue", function(message) {
+      console.log("in_queue");  
+    });
+
+    p.events.bind("game_found", function(message) {
+      console.log("game_found");  
+      game_obj.which_player = message.which_player;
+      game_obj.getPuck().startMoving();
+      game_obj.game_status = "in_game";
+      if (game_obj.which_player == "player_1") {
+        game_obj.getPaddle2().keepUpdated();
+      }
+      else {
+        game_obj.getPaddle1().keepUpdated();
+      }
+      game_obj.getPuck().keepUpdated();
+    });
+
+    p.events.bind("opponent_left", function(message) {
+      console.log('opponent left');
+    });
+
+    p.events.bind("you_win", function(message) {
+      game_obj.player_notification = 'You win!';
+      game_obj.getPuck().stopMoving(); 
+    });
+
+    p.events.bind("you_lose", function(message) {
+      game_obj.player_notification = 'You lose!';
+      game_obj.getPuck().stopMoving(); 
+    });
+
+    p.events.bind("game_not_active", function(message) {
+      console.log("game not active");
+    });
+
+
+    //start the game
+    setTimeout( function() {
+      p.events.fire("send_to_lobby", {'type':'looking_for_game'}); 
+    }, 2000);
 
 	},
 

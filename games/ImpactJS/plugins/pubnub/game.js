@@ -34,57 +34,18 @@ ig.module(
           }
         });
 
-        p.events.bind("got_from_server", function(message) {
-          switch (message.type) {
-            case "in_queue":
-              console.log("in_queue");  
-              break;
-
-            case "game_found":
-              console.log("game_found");  
-              game_obj.which_player = message.which_player;
-              game_obj.getPuck().startMoving();
-              game_obj.game_status = "in_game";
-              if (game_obj.which_player == "player_1") {
-                game_obj.getPaddle2().keepUpdated();
-              }
-              else {
-                game_obj.getPaddle1().keepUpdated();
-              }
-              game_obj.getPuck().keepUpdated();
-              break;
-
-            case "still_there":
-              p.events.fire("send_to_server", {'type':'still_here'});
-              break;
-
-            case "opponent_left":
-              console.log('opponent left');
-              break;
-
-            case "you_win":
-              game_obj.player_notification = 'You win!';
-              game_obj.getPuck().stopMoving(); 
-              break;
-
-            case "you_lose":
-              game_obj.player_notification = 'You lose!';
-              game_obj.getPuck().stopMoving(); 
-              break;
-
-            case "game_not_active":
-              break;
-          }
+        PUBNUB.events.bind("got_from_server", function(message) {
+          p.events.fire(message.type, message);
         });
-        
-        setTimeout( function() {
-          p.events.fire("send_to_lobby", {'type':'looking_for_game'}); 
-        }, 2000);
 
       });
 
+      p.events.bind("still_there", function(message) {
+        p.events.fire("send_to_server", {'type':'still_here'});
+      });
+
       p.events.bind("send_to_lobby", function(message) {
-        console.log('sent_to_lobby ' + message.type + ' ' + message.id); 
+        console.log('sent_to_lobby ' + message.type); 
         message.player_id = game_obj.player_id;
         p.publish({
           channel : game_obj.game_lobby,
@@ -99,9 +60,7 @@ ig.module(
           message : message  
         });
       });
-
     },
-
   });
 
 });
