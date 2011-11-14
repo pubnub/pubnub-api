@@ -137,11 +137,18 @@ network.subscribe({
                                         'game': game_id,
                                         'which_player': "player_2" });
           ip.sendToUser(queue, {'type': 'game_found',
-                             'game': game_id,
-                             'which_player': "player_1" });
-          games[game_id].status = 'started';
+                                'game': game_id,
+                                'which_player': "player_1" });
+
+          setTimeout( function() {
+            ip.sendToUser(message.player_id, {'type': 'game_start' });
+            ip.sendToUser(queue, {'type': 'game_start'} );
+            games[game_id].status = 'started';
+            queue = undefined;
+          }, 3000);
+
+
         
-          queue = undefined;
         }
         break;
 

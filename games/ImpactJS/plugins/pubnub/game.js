@@ -11,7 +11,6 @@ ig.module(
 
     game_id : "",
     player_id : "",
-    game_status : "not_in_game",
     game_lobby : "pong_lobby",
     player_notification : "",
 

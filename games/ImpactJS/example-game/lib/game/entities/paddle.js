@@ -24,17 +24,15 @@ EntityPaddle = ig.PubNubEntity.extend({
 	update: function() {
     var paddle_obj = this;
     		
-    if (ig.game.game_status == 'in_game') {
-      if (ig.game.which_player == paddle_obj.belongs_to) {
-        if( ig.input.state('up') ) {
-          paddle_obj.vel.y = -100;
-        }
-        else if( ig.input.state('down') ) {
-          paddle_obj.vel.y = 100;
-        }
-        else {
-          paddle_obj.vel.y = 0;
-        }
+    if (ig.game.which_player == paddle_obj.belongs_to) {
+      if( ig.input.state('up') ) {
+        paddle_obj.vel.y = -100;
+      }
+      else if( ig.input.state('down') ) {
+        paddle_obj.vel.y = 100;
+      }
+      else {
+        paddle_obj.vel.y = 0;
       }
     }
 		this.parent();

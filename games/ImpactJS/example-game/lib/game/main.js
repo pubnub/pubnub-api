@@ -16,7 +16,6 @@ ig.module(
 
 MyGame = ig.PubNubGame.extend({
 
-  game_status: "not_in_game",
 	// Load a font
 	font: new ig.Font( 'media/04b03.font.png' ),
 	
@@ -38,9 +37,8 @@ MyGame = ig.PubNubGame.extend({
 
     p.events.bind("game_found", function(message) {
       console.log("game_found");  
+      game_obj.player_notification = 'get ready.....';
       game_obj.which_player = message.which_player;
-      game_obj.getPuck().startMoving();
-      game_obj.game_status = "in_game";
       if (game_obj.which_player === "player_1") {
         game_obj.getPaddle2().keepUpdated();
         game_obj.getPaddle1().belongs_to_me = true;
@@ -51,6 +49,11 @@ MyGame = ig.PubNubGame.extend({
         game_obj.getPuck().belongs_to_me = true;
       }
       game_obj.getPuck().keepUpdated();
+    });
+
+    p.events.bind("game_start", function(message) {
+      game_obj.player_notification = 'play!';
+      game_obj.getPuck().startMoving();
     });
 
     p.events.bind("opponent_left", function(message) {
