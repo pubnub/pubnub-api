@@ -13,27 +13,6 @@ ig.PubNubEntity = ig.Entity.extend({
   update_every: 30,
   belongs_to_me: false,
   last_broadcasted: undefined, 
-  synced_with_server: false,
-
-  init: function( x, y, settings ) {
-    this.parent( x, y, settings );
-
-    p.events.bind("ent_update", function(message) {
-      console.log("ent_update");
-      p.events.fire("ent_update_" + message.id, message);
-    });
-
-    p.events.bind("ent_now_yours", function(message) {
-      console.log("ent_now_yours");
-      p.events.fire("ent_now_yours_" + message.id, message);
-    });
-
-    p.events.bind("ent_not_yours", function(message) {
-      console.log("ent_not_yours");
-      p.events.fire("ent_not_yours_" + message.id, message);
-    });
-
-  },
 
   update: function() {
     this.parent();
@@ -47,15 +26,11 @@ ig.PubNubEntity = ig.Entity.extend({
   },
   
   checkIfUpdateNeeded: function(prev, curr) {
-    // if the item is not currently being synced, return false 
-    if (this.synced_with_server === false)
-      return false;
-
     // if it's not time for a new update, return false
     if (this.counter % this.update_every != 0)  
       return false;
 
-    //if this entity isn't under our control, return false
+    // if this entity isn't under our control, return false
     if (this.belongs_to_me === false) 
       return false;
  
@@ -76,7 +51,6 @@ ig.PubNubEntity = ig.Entity.extend({
     return false;
   },
 
-
   broadcastUpdate: function() {
     to_send = {'type': 'ent_update', 
                'pos': this.pos, 
@@ -89,7 +63,6 @@ ig.PubNubEntity = ig.Entity.extend({
 
   keepUpdated: function() {
     var ent_obj = this;
-    ent_obj.synced_with_server = true;
 
     p.events.bind("ent_update_" + ent_obj.id, function(message) {
       console.log("ent_update_" + ent_obj.id);
@@ -108,12 +81,10 @@ ig.PubNubEntity = ig.Entity.extend({
     p.events.bind("ent_not_yours_" + ent_obj.id, function(message) {
       ent_obj.belongs_to_me = false;
     });
-
   },
 
   stopUpdating: function() {
     var ent_obj = this;
-    ent_obj.synced_with_server = false;
 
     p.events.unbind("ent_update_" + ent_obj.id);
     p.events.unbind("ent_not_yours_" + ent_obj.id);

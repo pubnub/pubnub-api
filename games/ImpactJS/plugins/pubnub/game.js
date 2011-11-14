@@ -60,6 +60,22 @@ ig.module(
           message : message  
         });
       });
+
+      p.events.bind("ent_update", function(message) {
+        console.log("ent_update");
+        p.events.fire("ent_update_" + message.id, message);
+      });
+
+      p.events.bind("ent_now_yours", function(message) {
+        console.log("ent_now_yours");
+        p.events.fire("ent_now_yours_" + message.id, message);
+      });
+
+      p.events.bind("ent_not_yours", function(message) {
+        console.log("ent_not_yours");
+        p.events.fire("ent_not_yours_" + message.id, message);
+      });
+
     },
   });
 

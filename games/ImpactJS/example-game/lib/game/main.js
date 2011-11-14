@@ -41,7 +41,7 @@ MyGame = ig.PubNubGame.extend({
       game_obj.which_player = message.which_player;
       game_obj.getPuck().startMoving();
       game_obj.game_status = "in_game";
-      if (game_obj.which_player == "player_1") {
+      if (game_obj.which_player === "player_1") {
         game_obj.getPaddle2().keepUpdated();
         game_obj.getPaddle1().belongs_to_me = true;
       }
@@ -50,7 +50,7 @@ MyGame = ig.PubNubGame.extend({
         game_obj.getPaddle2().belongs_to_me = true;
         game_obj.getPuck().belongs_to_me = true;
       }
-      game_obj.getPuck().keepUpdated(message.which_player);
+      game_obj.getPuck().keepUpdated();
     });
 
     p.events.bind("opponent_left", function(message) {
