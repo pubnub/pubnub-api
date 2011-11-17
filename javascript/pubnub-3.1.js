@@ -842,6 +842,7 @@ css( PN, { 'position' : 'absolute', 'top' : -1000 } );
 if (!(
     UA.indexOf('Firefox') > 0 ||
     UA.indexOf('MSIE 9')  > 0 ||
+    UA.indexOf('WebKit')  > 0 ||
     UA.indexOf('MSIE 6')  > 0
 )) PN['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+swf+'><param name=movie value='+swf+' /><param name=allowscriptaccess value=always /></object>';
 
@@ -892,7 +893,7 @@ window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
 window['PUBNUB'] = PUBNUB;
 
 // For Testling.js - http://testling.com/
-module && (module.exports = PUBNUB) && ready();
+typeof module !== 'undefined' && (module.exports = PUBNUB) && ready();
 
 })();
 

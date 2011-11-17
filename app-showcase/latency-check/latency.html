@@ -28,11 +28,22 @@
     // Copy this Code to Check Latency
     function now(){return+new Date}
     function connection_latency(callback) {
-        var start = now();
+        connection_latency.start = now();
+
         PUBNUB.time(function(){
-            callback(now() - start);
+            callback(now() - connection_latency.start);
             setTimeout( function(){ connection_latency(callback) }, 1000 );
+            clearInterval(connection_latency.ival);
+            connection_latency.ival = 0;
         });
+
+        if (connection_latency.ival) return;
+
+        connection_latency.ival = setInterval( function() {
+            callback(now() - connection_latency.start);
+        }, 1500 );
+
+        return connection_latency.ival;
     }
 
     // This is how you use the code
@@ -42,7 +53,7 @@
         out.innerHTML = "Latency: " + latency + "ms";
 
         // Flash Update
-        PUBNUB.css( out, { background : '#5b5' } );
+        PUBNUB.css( out, { background : latency > 2000 ? '#f32' : '#5b5' } );
         setTimeout( function() {
             PUBNUB.css( out, { background : '#444' } );
         }, 300 );
