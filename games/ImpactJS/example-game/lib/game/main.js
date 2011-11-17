@@ -92,7 +92,6 @@ MyGame = ig.PubNubGame.extend({
 	update: function() {
 		// Update all entities and backgroundMaps
 		this.parent();
-    var game_obj = this;
 	},
 	
 	draw: function() {
