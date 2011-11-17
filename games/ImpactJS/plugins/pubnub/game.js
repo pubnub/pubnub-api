@@ -7,12 +7,18 @@ ig.module(
 )
 .defines(function(){
 
+
   ig.PubNubGame = ig.Game.extend({
 
     game_id : "",
     player_id : "",
     game_lobby : "pong_lobby",
     player_notification : "",
+    timestamp: undefined,
+
+    update: function() {
+      this.parent();
+    },
 
     init: function() {
       var game_obj = this;
