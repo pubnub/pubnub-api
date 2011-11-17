@@ -79,7 +79,6 @@ var network = ip.setupNetwork("demo", "demo", "", false, "pubsub.pubnub.com");
 var players = {};
 var queue = undefined;
 var games = {};
-var opponents = {};
 var entity_ownership =  {'1': 'closest',
                          '2': 'player_1',
                          '3': 'player_2' };
@@ -105,10 +104,7 @@ ip.events.bind('looking_for_game', function(message) {
   players[message.player_id] = { 
    'opponent': undefined,
    'game': undefined,
-   'which': undefined,
-   'interval': undefined,
-   'timeout': undefined,
-   'countdown': undefined };
+   'which': undefined };
 
   ip.verifyStillConnected(message.player_id);
   ip.listenToGame(players, games, entity_ownership, message.player_id);                    
@@ -150,14 +146,15 @@ ip.events.bind('looking_for_game', function(message) {
 
 ip.events.bind('client_disconnected', function(player_id) {
   console.log("player " + player_id.substr(0,5) + " left");
+  delete players[player_id]; 
 
-  //TODO fix this 
-  //if (queue === player_id)
-  //  queue = undefined;  // if they were the queue, they're not anymore
+  if (queue === player_id)
+    queue = undefined;  // if they were the queue, they're not anymore
 
   // TODO notify opponent of left
   //if (client.opponent !== undefined) 
   //  exports.sendToUser(client.opponent, {'type': 'opponent_left'});
+
 });
 
 

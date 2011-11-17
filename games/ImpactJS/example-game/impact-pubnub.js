@@ -147,10 +147,10 @@ exports.verifyStillConnected = function(player_id) {
         exports.events.fire("client_disconnected", player_id );
         clearInterval(client.interval);
 
-      }, 2500 );
+      }, 1250 );
 
     });
-  }, 3000 );
+  }, 1500 );
 
 };
 
