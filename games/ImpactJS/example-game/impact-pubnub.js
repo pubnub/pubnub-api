@@ -47,8 +47,9 @@ exports.setupNetwork = function(publish_key, subscribe_key, secret_key, ssl, ori
 // 0: an array of players
 // 1: object of initial positons (of entities) and their ownership
 exports.startGame = function(players, entities) {
-  for (var i; i < players.length; i++ ) {
-    player_id = players[i];
+  //for (var i; i < players.length; i++ ) {
+  players.forEach( function(player_id) {
+    //var player_id = players[i];
 
     // bind events
     exports.events.bind('ent_update_' + player_id, function(message) {
@@ -58,18 +59,13 @@ exports.startGame = function(players, entities) {
       entity.pos = message.pos;  // update position
 
       // send msg to all other players in room
-      for (var j; j < players.length; i++) {   
-        if (players[j] == player_id) continue; 
-        exports.sendToUser(player.opponent, message);
-      }
-     
-      /*
-      if (checkForWin(message.pos) == true) {
-        exports.sendToUser(player_id, {type: 'you_win'});
-        exports.sendToUser(player.opponent, {type: 'you_lose'});
-        return;
-      }
+      players.forEach( function(other_player) {
+        if (other_player !== player_id) { 
+          exports.sendToUser(other_player, message);
+        }
+      });
 
+     
       if (entity.dynamic == false) // if it's a static entity, we're done
         return;
 
@@ -77,43 +73,48 @@ exports.startGame = function(players, entities) {
       // set ownership to that entity's owner
 
       var closest = { 'distance': 100000, 'ent': undefined } ;
-      for (var static_ent in entities) {
-        if (game.entities[static_ent] === entity) {
-          //console.log('compairing to the same ent, continue');
-          continue;
+      for (var ent_id in entities) {
+        var static_ent = entities[ent_id];
+
+        if (static_ent === entity) {
+          continue; //if it's the same, don't care 
         }
-        if (entity_ownership[static_ent] === 'closest') {
-          //console.log('entity we are compairing to is dynamic also, continue');
-          continue;
+        if (static_ent.dynamic) {
+          continue;  // if it's also dynamic, don't care
         }
-        if (game.entities[static_ent].pos === undefined) // fixing an unexplainable bug
-          return;
-        var dis = computeDistance(game.entities[static_ent].pos, entity.pos);
+
+
+        var dis = computeDistance(static_ent.pos, entity.pos);
         if (dis < closest.distance) {
-          closest =  {'distance': dis, 'ent': game.entities[static_ent]};
+          closest =  {'distance': dis, 'ent': static_ent};
         }
       }
 
       if (entity.owned_by !== closest.ent.owned_by) {
-        exports.sendToUser(game[closest.ent.owned_by], 
+        exports.sendToUser(closest.ent.owned_by, 
           {"id":   message.id,
            "type": "ent_now_yours",
            "pos":  entity.pos });
-        exports.sendToUser(game[entity.owned_by], 
+        exports.sendToUser(entity.owned_by, 
           {"id":   message.id, 
            "type": "ent_not_yours",
            "pos":  entity.pos });
         entity.owned_by = closest.ent.owned_by;
       }
-      */
 
     });
 
-    
-    exports.events.bind('ent_update_' + player_id, function(message) {
+    exports.events.bind('disconnected_' + player_id, function(message) {
+      console.log("player " + player_id.substr(0,5) + " left");
+      for (var i; i < players.length; i++) {   
+        if (players[i] == player_id) continue; 
+        exports.sendToUser(player.opponent, {'type': 'player_disconnected', 
+                                             'player_id': player_id});
+      }
     });
 
-  }
+
+  });
 };
 
 var computeDistance = function(pos1, pos2) {
@@ -135,7 +136,7 @@ exports.verifyStillConnected = function(player_id) {
     'countdown': undefined };
 
   exports.events.bind('still_here_' + player_id, function(message) {
-    console.log('received ' + message.type + ' from ' + player_id.substr(0,5)); 
+    //console.log('received ' + message.type + ' from ' + player_id.substr(0,5)); 
     clearTimeout(client.timeout);
     client.countdown = 3;
   });
@@ -158,19 +159,8 @@ exports.verifyStillConnected = function(player_id) {
     });
   }, 1500 );
 
-  exports.events.bind('disconnected_' + player_id, function(message) {
-    console.log("player " + player_id.substr(0,5) + " left");
-  });
 
 
-};
-
-
-var checkForWin = function(puck_pos) {
-  if ((puck_pos.x < 0) || (puck_pos.x > 700)) {
-    return true;
-  }
-  return false;
 };
 
 exports.sendToUser = function(player_id, message, callback) { 
@@ -193,7 +183,7 @@ exports.sendToUser = function(player_id, message, callback) {
       break; 
 
     case "still_there": 
-      console.log('sent ' + message.type + ' to ' + player_id.substr(0,5)); 
+      //console.log('sent ' + message.type + ' to ' + player_id.substr(0,5)); 
       break; 
 
     default:

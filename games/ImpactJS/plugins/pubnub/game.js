@@ -34,7 +34,14 @@ ig.module(
         p.subscribe({
           channel  : uuid + "_from_server",
           callback : function(message) { 
-            console.log('got_from_server ' + message.type + ' ' + message.id); 
+
+            if (message.type == "ent_update") {  
+              console.log('got_from server ' + message.type + ' on ent ' + message.id); 
+            }
+            else {
+              console.log('got_from_server ' + message.type); 
+            }
+
             p.events.fire("got_from_server", message);
           }
         });
@@ -59,7 +66,12 @@ ig.module(
       });
 
       p.events.bind("send_to_server", function(message) {
-        console.log('sent_to_server ' + message.type + ' ' + message.id); 
+        if (message.type == "ent_update") {  
+          console.log('sent_to_server ' + message.type + ' on ent ' + message.id); 
+        }
+        else {
+          console.log('sent_to_server ' + message.type); 
+        }
         p.publish({
           channel : game_obj.player_id + "_from_client",
           message : message  

@@ -76,7 +76,6 @@ var load_page = function(path, res ){
 
 var network = ip.setupNetwork("demo", "demo", "", false, "pubsub.pubnub.com");
 
-var players = {};
 var queue = undefined;
 
 
@@ -96,42 +95,41 @@ ip.events.bind('looking_for_game', function(message) {
   else {
 
     var initial_positions = {'1': {'pos': {'x':380, 'y':212 }, 
-                             'owned_by': 'player_2', 
+                             'owned_by': message.player_id, 
                              'dynamic': true },
 
                              '2': {'pos': {'x':8,   'y':168 }, 
-                             'owned_by': 'player_1', 
+                             'owned_by': queue, 
                              'dynamic': false },
 
                              '3': {'pos': {'x':696, 'y':164 }, 
-                             'owned_by': 'player_2', 
+                             'owned_by': message.player_id, 
                              'dynamic': false}};
 
 
     ip.startGame([queue, message.player_id], initial_positions);
 
-    // every ent update, we need to be checking for a win
-    ip.events.bind('ent_update_' + player_id, function(message) {
-      if (checkForWin(message.pos) == true) {
-        //exports.sendToUser(player_id, {type: 'you_win'});
-        //exports.sendToUser(player.opponent, {type: 'you_lose'});
-        console.log('someone won');
-        return;
-      }
+    var x = 1;
+    [queue, message.player_id].forEach( function(player) {
+      //var player = players[i];
+
+      // every ent update, we need to be checking for a win
+      ip.events.bind('ent_update_' + player, function(message) {
+        if (checkForWin(message.pos) == true) {
+          //exports.sendToUser(player_id, {type: 'you_win'});
+          console.log('someone won');
+          return;
+        }
+      });
+
+      ip.sendToUser(player, {'type': 'game_found', 'which_player': "player_" + x });
+
+      setTimeout( function() {
+        ip.sendToUser(player, {'type': 'game_start' });
+      }, 3000);
+      x++;
     });
-
-    ip.sendToUser(message.player_id, {'type': 'game_found',
-                                      'which_player': "player_2" });
-
-    ip.sendToUser(queue, {'type': 'game_found',
-                          'which_player': "player_1" });
-
-
-    setTimeout( function() {
-      ip.sendToUser(message.player_id, {'type': 'game_start' });
-      ip.sendToUser(queue, {'type': 'game_start'} );
-      queue = undefined;
-    }, 3000);
+    //queue = undefined;
   }
 });
 
@@ -141,9 +139,6 @@ ip.events.bind('client_disconnected', function(player_id) {
   if (queue === player_id)
     queue = undefined;  // if they were the queue, they're not anymore
 
-  // TODO notify opponent of left
-  //if (client.opponent !== undefined) 
-  //  exports.sendToUser(client.opponent, {'type': 'opponent_left'});
 
 });
 
