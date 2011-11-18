@@ -1,6 +1,6 @@
 var pubnub = require('./pubnub.js');
 var network;
-var clients = {};
+exports.clients = {};
 
 
 // node.js events are not working,
@@ -43,86 +43,77 @@ exports.setupNetwork = function(publish_key, subscribe_key, secret_key, ssl, ori
   return network; 
 }
 
-exports.listenToGame = function(players, games, entity_ownership, player_id) {
+// args:
+// 0: an array of players
+// 1: object of initial positons (of entities) and their ownership
+exports.startGame = function(players, entities) {
+  for (var i; i < players.length; i++ ) {
+    player_id = players[i];
 
-  // bind events
-  exports.events.bind('ent_update_' + player_id, function(message) {
-    console.log('received ' + message.type + ' on ' + message.id + ' from ' + player_id.substr(0,5)); 
-    var player = players[player_id];
-    var game = games[player.game];
-    var entity = game.entities[message.id];
+    // bind events
+    exports.events.bind('ent_update_' + player_id, function(message) {
+      console.log('received ' + message.type + ' on ' + message.id + ' from ' + player_id.substr(0,5)); 
+       
+      var entity = entities[message.id];
+      entity.pos = message.pos;  // update position
 
-    if ((player === undefined) || (game === undefined) || (entity === undefined))
-      return;
+      // send msg to all other players in room
+      for (var j; j < players.length; i++) {   
+        if (players[j] == player_id) continue; 
+        exports.sendToUser(player.opponent, message);
+      }
      
-    entity.pos = message.pos;  // update position
-    exports.sendToUser(player.opponent, message);  //forward on the message
-    
-    if (game.status !== 'started') {
-      exports.sendToUser(player_id, {type: 'game_not_active'});
-      return;
-    }
-    
-    if (checkForWin(message.pos, player.which) == true) {
-      exports.sendToUser(player_id, {type: 'you_win'});
-      exports.sendToUser(player.opponent, {type: 'you_lose'});
-      game.status = "won_by_" + player.which;
-      return;
-    }
-
-    if (entity_ownership[message.id] !== "closest") //if it's not a static entity, we're done
-      return;
-
-    // find closest staticly-owned entity
-    // set ownership to that entity's owner
-
-    var closest = { 'distance': 100000, 'ent': undefined } ;
-    for (var static_ent in game.entities) {
-      if (game.entities[static_ent] === entity) {
-        //console.log('compairing to the same ent, continue');
-        continue;
-      }
-      if (entity_ownership[static_ent] === 'closest') {
-        //console.log('entity we are compairing to is dynamic also, continue');
-        continue;
-      }
-      if (game.entities[static_ent].pos === undefined) // fixing an unexplainable bug
+      /*
+      if (checkForWin(message.pos) == true) {
+        exports.sendToUser(player_id, {type: 'you_win'});
+        exports.sendToUser(player.opponent, {type: 'you_lose'});
         return;
-      var dis = computeDistance(game.entities[static_ent].pos, entity.pos);
-      if (dis < closest.distance) {
-        closest =  {'distance': dis, 'ent': game.entities[static_ent]};
       }
-    }
 
-    if (entity.owned_by !== closest.ent.owned_by) {
-      exports.sendToUser(game[closest.ent.owned_by], 
-        {"id":   message.id,
-         "type": "ent_now_yours",
-         "pos":  entity.pos });
-      exports.sendToUser(game[entity.owned_by], 
-        {"id":   message.id, 
-         "type": "ent_not_yours",
-         "pos":  entity.pos });
-      entity.owned_by = closest.ent.owned_by;
-    }
+      if (entity.dynamic == false) // if it's a static entity, we're done
+        return;
 
-  });
+      // find closest staticly-owned entity
+      // set ownership to that entity's owner
 
-  exports.events.bind('still_here_' + player_id, function(message) {
-    console.log('received ' + message.type + ' from ' + player_id.substr(0,5)); 
-    clearTimeout(players[player_id].timeout);
-    clients[player_id].countdown = 3;
-  });
-  
-  exports.events.bind('ent_update_' + player_id, function(message) {
-  });
+      var closest = { 'distance': 100000, 'ent': undefined } ;
+      for (var static_ent in entities) {
+        if (game.entities[static_ent] === entity) {
+          //console.log('compairing to the same ent, continue');
+          continue;
+        }
+        if (entity_ownership[static_ent] === 'closest') {
+          //console.log('entity we are compairing to is dynamic also, continue');
+          continue;
+        }
+        if (game.entities[static_ent].pos === undefined) // fixing an unexplainable bug
+          return;
+        var dis = computeDistance(game.entities[static_ent].pos, entity.pos);
+        if (dis < closest.distance) {
+          closest =  {'distance': dis, 'ent': game.entities[static_ent]};
+        }
+      }
 
-  network.subscribe({
-    channel  : player_id + "_from_client",
-    callback : function(message) {
-      exports.events.fire(message.type + '_' + player_id, message);
-    }
-  });
+      if (entity.owned_by !== closest.ent.owned_by) {
+        exports.sendToUser(game[closest.ent.owned_by], 
+          {"id":   message.id,
+           "type": "ent_now_yours",
+           "pos":  entity.pos });
+        exports.sendToUser(game[entity.owned_by], 
+          {"id":   message.id, 
+           "type": "ent_not_yours",
+           "pos":  entity.pos });
+        entity.owned_by = closest.ent.owned_by;
+      }
+      */
+
+    });
+
+    
+    exports.events.bind('ent_update_' + player_id, function(message) {
+    });
+
+  }
 };
 
 var computeDistance = function(pos1, pos2) {
@@ -131,10 +122,23 @@ var computeDistance = function(pos1, pos2) {
 
 
 exports.verifyStillConnected = function(player_id) {
-  var client = clients[player_id] = { 
+  network.subscribe({
+    channel  : player_id + "_from_client",
+    callback : function(message) {
+      exports.events.fire(message.type + '_' + player_id, message);
+    }
+  });
+
+  var client = exports.clients[player_id] = { 
     'interval': undefined,
     'timeout': undefined,
     'countdown': undefined };
+
+  exports.events.bind('still_here_' + player_id, function(message) {
+    console.log('received ' + message.type + ' from ' + player_id.substr(0,5)); 
+    clearTimeout(client.timeout);
+    client.countdown = 3;
+  });
 
   client.interval = setInterval( function() {
     exports.sendToUser(player_id, {'type': 'still_there'}, function(info) { 
@@ -144,18 +148,25 @@ exports.verifyStillConnected = function(player_id) {
         if (--client.countdown > 0) 
           return;
 
-        exports.events.fire("client_disconnected", player_id );
-        clearInterval(client.interval);
+        var interval_to_clear = client.interval;
+        exports.events.fire("disconnected_" + player_id, {});
+        delete client; 
+        clearInterval(interval_to_clear);
 
       }, 1250 );
 
     });
   }, 1500 );
 
+  exports.events.bind('disconnected_' + player_id, function(message) {
+    console.log("player " + player_id.substr(0,5) + " left");
+  });
+
+
 };
 
 
-var checkForWin = function(puck_pos, player) {
+var checkForWin = function(puck_pos) {
   if ((puck_pos.x < 0) || (puck_pos.x > 700)) {
     return true;
   }

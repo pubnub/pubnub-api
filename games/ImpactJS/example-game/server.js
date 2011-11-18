@@ -51,9 +51,9 @@ var render_page = function(template_name, res, context) {
     options.inline = false;     
   }
   jade.renderFile(template_path, options, function(err, html) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end(html);
-  });
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.end(html);
+      });
 };
 
 var send_404 = function(res){
@@ -63,90 +63,80 @@ var send_404 = function(res){
 
 var load_page = function(path, res ){
   fs.readFile(__dirname + path, function(err, data){
-    if (err) {
+      if (err) {
       return send_404(res);
-    }
-    var content_type = mime.lookup(path);
+      }
+      var content_type = mime.lookup(path);
 
-    res.writeHead(200,{ 'Content-Type': content_type });
-    res.write(data, 'utf8');
-    res.end();
-  });
+      res.writeHead(200,{ 'Content-Type': content_type });
+      res.write(data, 'utf8');
+      res.end();
+      });
 };
 
 var network = ip.setupNetwork("demo", "demo", "", false, "pubsub.pubnub.com");
 
 var players = {};
 var queue = undefined;
-var games = {};
-var entity_ownership =  {'1': 'closest',
-                         '2': 'player_1',
-                         '3': 'player_2' };
-var initial_positions = {'1': {'pos': {'x':380, 'y':212 }, 'owned_by': 'player_2'},
-                         '2': {'pos': {'x':8,   'y':168 }, 'owned_by': 'player_1'},
-                         '3': {'pos': {'x':696, 'y':164 }, 'owned_by': 'player_2'}};
-
-// will need this later
-Object.prototype.clone = function() {
-  var newObj = (this instanceof Array) ? [] : {};
-  for (var i in this) {
-    if (i == 'clone') continue;
-    if (this[i] && typeof this[i] === "object") {
-      newObj[i] = this[i].clone();
-    } else newObj[i] = this[i];
-  } return newObj;
-};
-
-
 
 
 ip.events.bind('looking_for_game', function(message) {
-  players[message.player_id] = { 
-   'opponent': undefined,
-   'game': undefined,
-   'which': undefined };
 
   ip.verifyStillConnected(message.player_id);
-  ip.listenToGame(players, games, entity_ownership, message.player_id);                    
+
+  // if player that's in queue disconnects, remove him from the queue 
+  ip.events.bind('disconnected_' + message.player_id, function(message) {
+    if (queue !== undefined) queue = undefined;
+  });
 
   if (queue === undefined) { 
     queue = message.player_id;
     ip.sendToUser(message.player_id, {'type': 'in_queue'});
   } 
   else {
-    var game_id = queue.substr(0,4) + message.player_id.substr(0,4);
-    games[game_id] = { 'player_1': queue, 
-                       'player_2': message.player_id,
-                       'entities': initial_positions.clone(),
-                       'status':   'not_started'}; 
 
-    players[message.player_id].opponent = queue;
-    players[message.player_id].which = 'player_2';
-    players[message.player_id].game = game_id;
+    var initial_positions = {'1': {'pos': {'x':380, 'y':212 }, 
+                             'owned_by': 'player_2', 
+                             'dynamic': true },
 
-    players[queue].opponent = message.player_id;
-    players[queue].which = 'player_1';
-    players[queue].game = game_id;
+                             '2': {'pos': {'x':8,   'y':168 }, 
+                             'owned_by': 'player_1', 
+                             'dynamic': false },
+
+                             '3': {'pos': {'x':696, 'y':164 }, 
+                             'owned_by': 'player_2', 
+                             'dynamic': false}};
+
+
+    ip.startGame([queue, message.player_id], initial_positions);
+
+    // every ent update, we need to be checking for a win
+    ip.events.bind('ent_update_' + player_id, function(message) {
+      if (checkForWin(message.pos) == true) {
+        //exports.sendToUser(player_id, {type: 'you_win'});
+        //exports.sendToUser(player.opponent, {type: 'you_lose'});
+        console.log('someone won');
+        return;
+      }
+    });
 
     ip.sendToUser(message.player_id, {'type': 'game_found',
-                                  'game': game_id,
-                                  'which_player': "player_2" });
+                                      'which_player': "player_2" });
+
     ip.sendToUser(queue, {'type': 'game_found',
-                          'game': game_id,
                           'which_player': "player_1" });
+
 
     setTimeout( function() {
       ip.sendToUser(message.player_id, {'type': 'game_start' });
       ip.sendToUser(queue, {'type': 'game_start'} );
-      games[game_id].status = 'started';
       queue = undefined;
     }, 3000);
   }
 });
 
+
 ip.events.bind('client_disconnected', function(player_id) {
-  console.log("player " + player_id.substr(0,5) + " left");
-  delete players[player_id]; 
 
   if (queue === player_id)
     queue = undefined;  // if they were the queue, they're not anymore
@@ -167,6 +157,13 @@ network.subscribe({
     console.log("Network Connection Dropped");
   }
 });
+
+var checkForWin = function(puck_pos) {
+  if ((puck_pos.x < 0) || (puck_pos.x > 700)) {
+    return true;
+  }
+  return false;
+};
 
 console.log('Port ' + global.PORT);
 
