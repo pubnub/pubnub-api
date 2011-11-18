@@ -122,7 +122,7 @@ var computeDistance = function(pos1, pos2) {
 };
 
 
-exports.verifyStillConnected = function(player_id) {
+exports.initPlayer = function(player_id) {
   network.subscribe({
     channel  : player_id + "_from_client",
     callback : function(message) {
@@ -158,8 +158,6 @@ exports.verifyStillConnected = function(player_id) {
 
     });
   }, 1500 );
-
-
 
 };
 

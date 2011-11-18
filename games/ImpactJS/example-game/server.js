@@ -81,7 +81,7 @@ var queue = undefined;
 
 ip.events.bind('looking_for_game', function(message) {
 
-  ip.verifyStillConnected(message.player_id);
+  ip.initPlayer(message.player_id);
 
   // if player that's in queue disconnects, remove him from the queue 
   ip.events.bind('disconnected_' + message.player_id, function(message) {
@@ -111,8 +111,6 @@ ip.events.bind('looking_for_game', function(message) {
 
     var x = 1;
     [queue, message.player_id].forEach( function(player) {
-      //var player = players[i];
-
       // every ent update, we need to be checking for a win
       ip.events.bind('ent_update_' + player, function(message) {
         if (checkForWin(message.pos) == true) {
@@ -129,19 +127,14 @@ ip.events.bind('looking_for_game', function(message) {
       }, 3000);
       x++;
     });
-    //queue = undefined;
+    queue = undefined;
   }
 });
 
-
 ip.events.bind('client_disconnected', function(player_id) {
-
   if (queue === player_id)
     queue = undefined;  // if they were the queue, they're not anymore
-
-
 });
-
 
 network.subscribe({
   channel  : "pong_lobby",
