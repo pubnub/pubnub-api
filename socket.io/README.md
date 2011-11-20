@@ -8,34 +8,34 @@ all browsers. It also enhances WebSockets by providing built-in multiplexing,
 automatic scalability, automatic JSON encoding/decoding, and
 even more with PubNub.
 
-## Enhanced with PubNub
+## Enhanced Socket.IO with PubNub
 
 We enhanced Socket.IO with PubNub.
 Socket.IO with PubNub does not require a Node.JS backend.
 This means your code is more
-simple and you have 2x extra time to build your
+simple and you have extra time to build your
 app rather than fiddling with the back-end server code.
 Additionally the JS lib payload has been improved for Mobile apps.
 
-## Simplified API Usage
+## Simplified Socket.IO API Usage
 
 By default, broadcasting is turned on.  This means when you use
 emit() or send() functions, broadcasting to all connections occurs 
 except to the connection where the message came from.
 
-## Added/Simplifed Features in PubNub Version of Socket.IO
+## Simplifed Features with Socket.IO on PubNub
 
--Enhanced User Tracking Presence Events (join, leave).
--Counts of Active User Connections.
--Socket Connection Events (connect, disconnect).
--Stanford Crypto Library with AES Encryption.
--Batching of Publishes (Send multiple messages at once).
--Smart Broadcasting (broadcast with auto-recovery on failure).
--Acknowledgements of Message Receipt.
--Multiplexing many channels on one socket.
--Private Messaging.
--Server Side Events.
--Disconnect from a Socket or Namespace.
++ Enhanced User Tracking Presence Events (join, leave).
++ Counts of Active User Connections.
++ Socket Connection Events (connect, disconnect).
++ Stanford Crypto Library with AES Encryption.
++ Batching of Publishes (Send multiple messages at once).
++ Smart Broadcasting (broadcast with auto-recovery on failure).
++ Acknowledgements of Message Receipt.
++ Multiplexing many channels on one socket.
++ Private Messaging.
++ Server Side Events.
++ Disconnect from a Socket or Namespace.
 
 ## How to use
 
@@ -88,6 +88,11 @@ socket.on( 'reconnect', function() {
     console.log('my connection has been restored!');
 } );
 
+```
+
+### Enhanced Presence with User Counts.
+
+```js
 ```
 
 ### Restricting yourself to a namespace
