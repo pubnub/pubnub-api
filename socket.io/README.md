@@ -8,6 +8,8 @@ all browsers. It also enhances WebSockets by providing built-in multiplexing,
 automatic scalability, automatic JSON encoding/decoding, and
 even more with PubNub.
 
+![Socket.IO on Pubnub](http://pubnub.s3.amazonaws.com/assets/socket.io-on-pubnub.png "Socket.IO on Pubnub")
+
 ## Enhanced Socket.IO with PubNub
 
 We enhanced Socket.IO with PubNub.
@@ -90,10 +92,48 @@ socket.on( 'reconnect', function() {
 
 ```
 
+### User Presence (Rooms)
+
+Sometimes you want to put certain sockets in the same room, so that it's easy
+to broadcast to all of them together.
+
+Think of this as built-in channels for sockets. Sockets `join` and `leave`
+rooms in each socket.
+
+```js
+var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
+chat.on( 'leave', function(user) {
+    console.log('user left');
+} );
+chat.on( 'join', function(user) {
+    console.log('user joined');
+} );
+```
+
 ### Enhanced Presence with User Counts.
 
 ```js
+// TODO
 ```
+
+### Using it just as a cross-browser WebSocket
+
+If you just want the WebSocket semantics, you can do that too.
+Simply leverage `send` and listen on the `message` event:
+
+```html
+<script>
+  var socket = io.connect('http://localhost/');
+  socket.on('connect', function () {
+    socket.send('hi');
+
+    socket.on('message', function (msg) {
+      // my msg
+    });
+  });
+</script>
+```
+
 
 ### Restricting yourself to a namespace
 
@@ -131,52 +171,13 @@ confirmed the message reception.
 
 TODO!
 
-```html
-<script>
+```js
   var socket = io.connect(); // TIP: .connect with no args does auto-discovery
   socket.on('connect', function () { // TIP: you can avoid listening on `connect` and listen on events directly too!
     socket.emit('ferret', 'tobi', function (data) {
       console.log(data); // data will be 'woot'
     });
   });
-</script>
-```
-
-### Rooms
-
-Sometimes you want to put certain sockets in the same room, so that it's easy
-to broadcast to all of them together.
-
-Think of this as built-in channels for sockets. Sockets `join` and `leave`
-rooms in each socket.
-
-```js
-var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
-chat.on( 'leave', function(user) {
-    console.log('user left');
-} );
-chat.on( 'join', function(user) {
-    console.log('user joined');
-} );
-```
-
-
-### Using it just as a cross-browser WebSocket
-
-If you just want the WebSocket semantics, you can do that too.
-Simply leverage `send` and listen on the `message` event:
-
-```html
-<script>
-  var socket = io.connect('http://localhost/');
-  socket.on('connect', function () {
-    socket.send('hi');
-
-    socket.on('message', function (msg) {
-      // my msg
-    });
-  });
-</script>
 ```
 
 ## License 
