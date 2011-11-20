@@ -2,19 +2,20 @@
 
 Now you can use Socket.IO with PubNub! Take advangate of the Socket.IO API 
 leveraging the Human Perceptive Real-time PubNub Cloud Infrastructure.
-We believe Socket.IO can be considered the jQuery of Networking.
+We believe Socket.IO is the jQuery of Networking.
 Socket.IO is a project that makes WebSockets and realtime possible in
 all browsers. It also enhances WebSockets by providing built-in multiplexing,
-automatic scalability, automatic JSON encoding/decoding, and more.
+automatic scalability, automatic JSON encoding/decoding, and
+even more with PubNub.
 
-## Enhanced PubNub Version
+## Enhanced with PubNub
 
-Note this version of Socket.IO is enhanced and
-does not require a Node.JS backend.
-This means your code is even more
+We enhanced Socket.IO with PubNub.
+Socket.IO with PubNub does not require a Node.JS backend.
+This means your code is more
 simple and you have 2x extra time to build your
 app rather than fiddling with the back-end server code.
-Additionally the JS lib payload has been reduced to less than 5KB.
+Additionally the JS lib payload has been improved for Mobile apps.
 
 ## Simplified API Usage
 
@@ -24,20 +25,21 @@ except to the connection where the message came from.
 
 ## Added/Simplifed Features in PubNub Version of Socket.IO
 
-Enhanced User Tracking Presence Events (join, part)
-Counts of Active User Connections.
-Socket Connection Events (connect, disconnect)
-Stanford Crypto Library with AES Encryption.
-Batching of Publishes (Send multiple publishes at once).
-Smart Broadcasting (broadcast with auto-recovery on failure).
-Multiplexing many channels on 1 socket.
-Private Messaging.
-Server Side Events.
-Disconnect From a Socket.
+-Enhanced User Tracking Presence Events (join, leave).
+-Counts of Active User Connections.
+-Socket Connection Events (connect, disconnect).
+-Stanford Crypto Library with AES Encryption.
+-Batching of Publishes (Send multiple messages at once).
+-Smart Broadcasting (broadcast with auto-recovery on failure).
+-Acknowledgements of Message Receipt.
+-Multiplexing many channels on one socket.
+-Private Messaging.
+-Server Side Events.
+-Disconnect from a Socket or Namespace.
 
 ## How to use
 
-First, include `pubnub.js` and `socket.io`:
+First, include `pubnub.js` and `socket.io.js`:
 
 ```html
 <script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
@@ -46,7 +48,7 @@ First, include `pubnub.js` and `socket.io`:
   var socket = io.connect('http://localhost');
   socket.on( 'news', function (data) {
     console.log(data);
-    socket.emit( 'my other event', { my: 'data' } );
+    socket.emit( 'my-other-event', { my: 'data' } );
   } );
 </script>
 ```
@@ -59,6 +61,7 @@ Socket.IO allows you to emit and receive custom events.
 Besides `connect`, `message` and `disconnect`, you can emit custom events:
 
 ```js
+// Use PubNub Setup for Your PubNub Account
 var pubnub_setup = {
     channel       : 'my_mobile_app',
     publish_key   : 'demo',
@@ -69,13 +72,22 @@ var pubnub_setup = {
 var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
 
 socket.on( 'connect', function() {
-    test( feed, 'Socket Connection Estabilshed.' );
+    console.log('Connection Established! Ready to send/receive data!');
     socket.send('sock');
 } );
 
 socket.on( 'message', function(message) {
-    test( message === 'sock', 'Received Socket Message' );
+    console.log(message);
 } );
+
+socket.on( 'disconnect', function() {
+    console.log('my connection dropped');
+} );
+
+socket.on( 'reconnect', function() {
+    console.log('my connection has been restored!');
+} );
+
 ```
 
 ### Restricting yourself to a namespace
@@ -112,11 +124,7 @@ The following example defines a socket that listens on '/chat' and one for
 Sometimes, you might want to get a callback when the client
 confirmed the message reception.
 
-To do this, simply pass a function as the last parameter of `.send` or `.emit`.
-What's more, when you use `.emit`, the acknowledgement is done by you, which
-means you can also pass data along:
-
-#### Client side
+TODO!
 
 ```html
 <script>
@@ -171,6 +179,7 @@ Simply leverage `send` and listen on the `message` event:
 (The MIT License)
 
 Copyright (c) 2011 PubNub Inc.
+
 Copyright (c) 2011 Guillermo Rauch <guillermo@learnboost.com>
 
 Permission is hereby granted, free of charge, to any person obtaining

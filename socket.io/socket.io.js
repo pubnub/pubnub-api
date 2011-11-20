@@ -12,6 +12,7 @@
 
             // PARSE SETUP and HOST
             var urlbits   = (host+'////').split('/')
+            ,   setup     = setup || {}
             ,   origin    = urlbits[2]
             ,   namespace = urlbits[3] || 'default'
             ,   socket    = create_socket(namespace);
@@ -24,7 +25,7 @@
             setup.origin   = origin;
             p              = p.init(setup);
             p.disconnected = 0;
-            p.channel      = setup.channel;
+            p.channel      = setup.channel || 'default';
 
             // SETUP USERS
             socket.users      = users[namespace] = {};
