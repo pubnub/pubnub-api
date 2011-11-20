@@ -8,7 +8,7 @@ all browsers. It also enhances WebSockets by providing built-in multiplexing,
 automatic scalability, automatic JSON encoding/decoding, and
 even more with PubNub.
 
-![Socket.IO on Pubnub](http://pubnub.s3.amazonaws.com/assets/socket.io-on-pubnub.png "Socket.IO on Pubnub")
+![Socket.IO on Pubnub](http://pubnub.s3.amazonaws.com/assets/socket.io-on-pubnub-2.png "Socket.IO on Pubnub")
 
 ## Enhanced Socket.IO with PubNub
 
