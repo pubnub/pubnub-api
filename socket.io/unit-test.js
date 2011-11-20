@@ -138,7 +138,7 @@
         chat.on( 'join', function(user) {
             
         } );
-        chat.on( 'part', function(user) {
+        chat.on( 'leave', function(user) {
             
         } );
 

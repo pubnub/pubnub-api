@@ -39,34 +39,8 @@ Disconnect From a Socket.
 
 First, include `pubnub.js` and `socket.io`:
 
-```js
-<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
-<script src=http://cdn.pubnub.com/socket.io.min.js></script>
-```
-
-
-... VVVVVVVVVVVVVVVV
-
-    var socket = io.connect('http://localhost');
-    on
-        connection-established
-        connection-lost
-
-        joined
-        part
-
-        private message customer
-        public message
-    emit - ME
-        'channel', {data}
-    send - sends on global channel
-        {data}
-    broadcast - no.... just make it do the same thing.
-
-... ^^^^^^^^^^^^^^^^
-
-
 ```html
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
 <script src="socket.io.js"></script>
 <script>
   var socket = io.connect('http://localhost');
@@ -77,8 +51,6 @@ First, include `pubnub.js` and `socket.io`:
 </script>
 ```
 
-For more thorough examples, look at the `examples/` directory.
-
 ## Short recipes
 
 ### Sending and receiving events.
@@ -87,59 +59,23 @@ Socket.IO allows you to emit and receive custom events.
 Besides `connect`, `message` and `disconnect`, you can emit custom events:
 
 ```js
-// note, io.listen(<port>) will create a http server for you
-var io = require('socket.io').listen(80);
+var pubnub_setup = {
+    channel       : 'my_mobile_app',
+    publish_key   : 'demo',
+    subscribe_key : 'demo',
+    ssl           : false
+};
 
-io.sockets.on('connection', function (socket) {
-  io.sockets.emit('this', { will: 'be received by everyone' });
+var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
 
-  socket.on('private message', function (from, msg) {
-    console.log('I received a private message by ', from, ' saying ', msg);
-  });
+socket.on( 'connect', function() {
+    test( feed, 'Socket Connection Estabilshed.' );
+    socket.send('sock');
+} );
 
-  socket.on('disconnect', function () {
-    io.sockets.emit('user disconnected');
-  });
-});
-```
-
-### Storing data associated to a client
-
-Sometimes it's necessary to store data associated with a client that's
-necessary for the duration of the session.
-
-#### Server side
-
-```js
-var io = require('socket.io').listen(80);
-
-io.sockets.on('connection', function (socket) {
-  socket.on('set nickname', function (name) {
-    socket.set('nickname', name, function () { socket.emit('ready'); });
-  });
-
-  socket.on('msg', function () {
-    socket.get('nickname', function (err, name) {
-      console.log('Chat message by ', name);
-    });
-  });
-});
-```
-
-#### Client side
-
-```html
-<script>
-  var socket = io.connect('http://localhost');
-
-  socket.on('connect', function () {
-    socket.emit('set nickname', confirm('What is your nickname?'));
-    socket.on('ready', function () {
-      console.log('Connected !');
-      socket.emit('msg', confirm('What is your message?'));
-    });
-  });
-</script>
+socket.on( 'message', function(message) {
+    test( message === 'sock', 'Received Socket Message' );
+} );
 ```
 
 ### Restricting yourself to a namespace
@@ -155,28 +91,6 @@ socket.io using two `WebSocket` connections, it'll use one.
 
 The following example defines a socket that listens on '/chat' and one for
 '/news':
-
-#### Server side
-
-NEED TO SHOW HOW TO DO THIS ...
-```js
-var io = require('socket.io').listen(80);
-
-var chat = io
-  .of('/chat');
-  .on('connection', function (socket) {
-    socket.emit('a message', { that: 'only', '/chat': 'will get' });
-    chat.emit('a message', { everyone: 'in', '/chat': 'will get' });
-  });
-
-var news = io
-  .of('/news');
-  .on('connection', function (socket) {
-    socket.emit('item', { news: 'item' });
-  });
-```
-
-#### Client side:
 
 ```html
 <script>
@@ -202,18 +116,6 @@ To do this, simply pass a function as the last parameter of `.send` or `.emit`.
 What's more, when you use `.emit`, the acknowledgement is done by you, which
 means you can also pass data along:
 
-#### Server side
-
-```js
-var io = require('socket.io').listen(80);
-
-io.sockets.on('connection', function (socket) {
-  socket.on('ferret', function (name, fn) {
-    fn('woot');
-  });
-});
-```
-
 #### Client side
 
 ```html
@@ -227,23 +129,6 @@ io.sockets.on('connection', function (socket) {
 </script>
 ```
 
-### Broadcasting messages
-
-To broadcast, simply add a `broadcast` flag to `emit` and `send` method calls.
-Broadcasting means sending a message to everyone else except for the socket
-that starts it.
-
-#### Server side
-
-```js
-var io = require('socket.io').listen(80);
-
-io.sockets.on('connection', function (socket) {
-  socket.broadcast.emit('user connected');
-  socket.broadcast.json.send({ a: 'message' });
-});
-```
-
 ### Rooms
 
 Sometimes you want to put certain sockets in the same room, so that it's easy
@@ -252,35 +137,21 @@ to broadcast to all of them together.
 Think of this as built-in channels for sockets. Sockets `join` and `leave`
 rooms in each socket.
 
-#### Server side
-
 ```js
-var io = require('socket.io').listen(80);
-
-io.sockets.on('connection', function (socket) {
-  socket.join('justin bieber fans');
-  socket.broadcast.to('justin bieber fans').emit('new fan');
-  io.sockets.in('rammstein fans').emit('new non-fan');
-});
+var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
+chat.on( 'leave', function(user) {
+    console.log('user left');
+} );
+chat.on( 'join', function(user) {
+    console.log('user joined');
+} );
 ```
+
 
 ### Using it just as a cross-browser WebSocket
 
 If you just want the WebSocket semantics, you can do that too.
 Simply leverage `send` and listen on the `message` event:
-
-#### Server side
-
-```js
-var io = require('socket.io').listen(80);
-
-io.sockets.on('connection', function (socket) {
-  socket.on('message', function () { });
-  socket.on('disconnect', function () { });
-});
-```
-
-#### Client side
 
 ```html
 <script>
@@ -300,6 +171,7 @@ io.sockets.on('connection', function (socket) {
 (The MIT License)
 
 Copyright (c) 2011 PubNub Inc.
+Copyright (c) 2011 Guillermo Rauch <guillermo@learnboost.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

@@ -104,7 +104,7 @@
 
         user.connected = false;
         user.socket.user_count--;
-        p.events.fire( user.namespace + 'part', user ) 
+        p.events.fire( user.namespace + 'leave', user ) 
     }
 
     typeof window !== 'undefined' &&
