@@ -2,6 +2,7 @@ var pubnub = require('./pubnub.js');
 var network;
 exports.clients = {};
 
+exports.debug = false;
 
 // node.js events are not working,
 // let's define a simple event system
@@ -53,7 +54,8 @@ exports.startGame = function(players, entities) {
 
     // bind events
     exports.events.bind('ent_update_' + player_id, function(message) {
-      console.log('received ' + message.type + ' on ' + message.id + ' from ' + player_id.substr(0,5)); 
+      if (exports.debug) 
+        console.log('received ' + message.type + ' on ' + message.id + ' from ' + player_id.substr(0,5)); 
        
       var entity = entities[message.id];
       entity.pos = message.pos;  // update position
@@ -105,7 +107,8 @@ exports.startGame = function(players, entities) {
     });
 
     exports.events.bind('disconnected_' + player_id, function(message) {
-      console.log("player " + player_id.substr(0,5) + " left");
+      if (exports.debug) 
+        console.log("player " + player_id.substr(0,5) + " left");
       for (var i; i < players.length; i++) {   
         if (players[i] == player_id) continue; 
         exports.sendToUser(player.opponent, {'type': 'player_disconnected', 
@@ -136,7 +139,8 @@ exports.initPlayer = function(player_id) {
     'countdown': undefined };
 
   exports.events.bind('still_here_' + player_id, function(message) {
-    //console.log('received ' + message.type + ' from ' + player_id.substr(0,5)); 
+    if (exports.debug) 
+      console.log('received ' + message.type + ' from ' + player_id.substr(0,5)); 
     clearTimeout(client.timeout);
     client.countdown = 3;
   });
@@ -175,18 +179,20 @@ exports.sendToUser = function(player_id, message, callback) {
     callback : callback 
   });
 
-  switch (message.type) {
-    case "ent_update": 
-      console.log('sent ' + message.type + ' on ent ' + message.id+ ' to ' + player_id.substr(0,5)); 
-      break; 
+  if (exports.debug) {
+    switch (message.type) {
+      case "ent_update": 
+        console.log('sent ' + message.type + ' on ent ' + message.id+ ' to ' + player_id.substr(0,5)); 
+        break; 
 
-    case "still_there": 
-      //console.log('sent ' + message.type + ' to ' + player_id.substr(0,5)); 
-      break; 
+      case "still_there": 
+        console.log('sent ' + message.type + ' to ' + player_id.substr(0,5)); 
+        break; 
 
-    default:
-      console.log('sent ' + message.type + ' to ' + player_id.substr(0,5)); 
-      break; 
+      default:
+        console.log('sent ' + message.type + ' to ' + player_id.substr(0,5)); 
+        break; 
+    }
   }
 };
 

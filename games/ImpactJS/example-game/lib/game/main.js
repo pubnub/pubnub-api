@@ -15,6 +15,9 @@ ig.module(
 .defines(function(){
 
 MyGame = ig.PubNubGame.extend({
+  
+  // make true to see debug info on screen
+  debug: false,
 
 	// Load a font
 	font: new ig.Font( 'media/04b03.font.png' ),
@@ -97,19 +100,21 @@ MyGame = ig.PubNubGame.extend({
 	draw: function() {
 		// Draw all entities and backgroundMaps
 		this.parent();
-    puck = this.getPuck();
-    paddle1 = this.getPaddle1();
-    paddle2 = this.getPaddle2();
-    if (puck.belongs_to_me === true) {
-      this.font.draw("belongs_to_me", puck.pos.x, puck.pos.y );
+    if (this.debug) {
+      puck = this.getPuck();
+      paddle1 = this.getPaddle1();
+      paddle2 = this.getPaddle2();
+      if (puck.belongs_to_me === true) {
+        this.font.draw("belongs_to_me", puck.pos.x, puck.pos.y );
+      }
+      if (paddle1.belongs_to_me === true) {
+        this.font.draw("belongs_to_me", paddle1.pos.x + 15, paddle1.pos.y + 5 );
+      }
+      if (paddle2.belongs_to_me === true) {
+        this.font.draw("belongs_to_me", paddle2.pos.x + 15, paddle2.pos.y + 5 );
+      }
+      this.font.draw("you are " + this.which_player, 370, 100 );
     }
-    if (paddle1.belongs_to_me === true) {
-      this.font.draw("belongs_to_me", paddle1.pos.x + 15, paddle1.pos.y + 5 );
-    }
-    if (paddle2.belongs_to_me === true) {
-      this.font.draw("belongs_to_me", paddle2.pos.x + 15, paddle2.pos.y + 5 );
-    }
-    this.font.draw("you are " + this.which_player, 370, 100 );
     this.font.draw(this.player_notification, 370, 80 );
 	},
 

@@ -19,8 +19,7 @@ EntityPuck = ig.PubNubEntity.extend({
 		this.parent( x, y, settings );
 		
 		this.addAnim( 'idle', 0.1, [0,1,2,3,4,4,4,4,3,2,1] );
-		
-    
+
 		this.vel.x = 0;
 		this.vel.y = 0;
     this.accel.x = 0;
