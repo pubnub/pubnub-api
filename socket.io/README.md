@@ -29,15 +29,16 @@ except to the connection where the message came from.
 
 + Enhanced User Tracking Presence Events (join, leave).
 + Counts of Active User Connections.
-+ Socket Connection Events (connect, disconnect).
-+ Stanford Crypto Library with AES Encryption.
-+ Batching of Publishes (Send multiple messages at once).
-+ Smart Broadcasting (broadcast with auto-recovery on failure).
-+ Acknowledgements of Message Receipt.
++ Socket Connection Events (connect, disconnect, reconnect).
 + Multiplexing many channels on one socket.
-+ Private Messaging.
-+ Server Side Events.
-+ Disconnect from a Socket or Namespace.
++ Smart Broadcasting (broadcast with auto-recovery on failure).
++ Disconnect from a Channel.
++ Acknowledgements of Message Receipt.
++ Geo Data with Latitude/Longitude. [comming soon]
++ Stanford Crypto Library with AES Encryption. [comming soon]
++ Batching of Publishes (Send multiple messages at once). [comming soon]
++ Private Messaging. [comming soon]
++ Server Side Events. [comming soon]
 
 ## How to use
 
@@ -86,13 +87,14 @@ socket.on( 'disconnect', function() {
     console.log('my connection dropped');
 } );
 
+// Extra event in Socket.IO provided by PubNub
 socket.on( 'reconnect', function() {
     console.log('my connection has been restored!');
 } );
 
 ```
 
-### User Presence (Rooms)
+### User Presence (Room Events: join, leave)
 
 Sometimes you want to put certain sockets in the same room, so that it's easy
 to broadcast to all of them together.
@@ -112,8 +114,23 @@ chat.on( 'join', function(user) {
 
 ### Enhanced Presence with User Counts.
 
+Often you will want to know how many users are connected to a channel (room).
+To get this information you simply access the user_count function.
+
 ```js
-// TODO
+var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
+chat.on( 'leave', function(user) {
+    console.log(
+        'User left. There are %d users left.',
+        chat.get_user_count()
+    );
+} );
+chat.on( 'join', function(user) {
+    console.log(
+        'User joined! There are %d users.',
+        chat.get_user_count()
+    );
+} );
 ```
 
 ### Using it just as a cross-browser WebSocket
@@ -164,18 +181,18 @@ The following example defines a socket that listens on '/chat' and one for
 </script>
 ```
 
-### Getting acknowledgements
+### Getting Acknowledgements (Receipt Confirmation)
 
-Sometimes, you might want to get a callback when the client
+Sometimes, you might want to get a callback when the message was delivered to
 confirmed the message reception.
 
-TODO!
-
 ```js
-  var socket = io.connect(); // TIP: .connect with no args does auto-discovery
-  socket.on('connect', function () { // TIP: you can avoid listening on `connect` and listen on events directly too!
-    socket.emit('ferret', 'tobi', function (data) {
-      console.log(data); // data will be 'woot'
+  var socket = io.connect(); // TIP: auto-discovery
+  socket.on( 'connect', function () {
+    socket.emit( 'important-message', {data:true}, function (receipt) {
+      // Message Delivered!
+      // Was it successful?
+      console.log(data);
     });
   });
 ```

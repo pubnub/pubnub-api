@@ -28,8 +28,9 @@
             p.channel      = setup.channel || 'default';
 
             // SETUP USERS
-            socket.users      = users[namespace] = {};
-            socket.user_count = 0;
+            socket.users          = users[namespace] = {};
+            socket.user_count     = 0;
+            socket.get_user_count = function(){ return socket.user_count };
 
             // ESTABLISH CONNECTION
             p.subscribe({
@@ -116,7 +117,7 @@
     // =====================================================================
     // PUBLISH A MESSAGE + Retry if Failed with fallback
     // =====================================================================
-    function send( event, data, wait ) {
+    function send( event, data, wait, cb ) {
         p.publish({
             channel  : p.channel,
             message  : {
@@ -125,7 +126,7 @@
                 uuid : uuid
             },
             callback : function(info) {
-                if (info[0]) return;
+                if (info[0]) return (cb||function(){})(info);
                 var retry = (wait || 500) * 2;
                 setTimeout( event, data, retry > 10000 && 10000 || retry );
             }
@@ -138,8 +139,8 @@
     function create_socket(namespace) {
         namespaces[namespace] = namespace;
         return {
-            'emit' : function( event, data ) {
-                send( namespace + event, data );
+            'emit' : function( event, data, receipt ) {
+                send( namespace + event, data, 0, receipt );
             },
             'send' : function(data) {
                 console.log(  namespace + 'message', data );

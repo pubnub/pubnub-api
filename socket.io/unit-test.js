@@ -56,7 +56,7 @@
     ====================================================================== */
     p.bind( 'mousedown,touchstart', start_button, start_test );
     function start_test() {
-        test.plan = 10; // # of tests
+        test.plan = 11; // # of tests
         test.pass = 0;  // 0 passes so far
         test.fail = 0;  // 0 failes so far
         test.done = 0;  // 0 tests done so far
@@ -94,6 +94,13 @@
         socket.on( 'connect', function() {
             test( feed, 'Socket Connection Estabilshed.' );
             socket.send('sock');
+            socket.emit(
+                'important-message',
+                { data : true },
+                function (receipt) {
+                    test( receipt, 'Acknowledgements Receipt Confirmation.' );
+                }
+            );
         } );
 
         socket.on( 'message', function(message) {
