@@ -56,7 +56,7 @@
     ====================================================================== */
     p.bind( 'mousedown,touchstart', start_button, start_test );
     function start_test() {
-        test.plan = 11; // # of tests
+        test.plan = 14; // # of tests
         test.pass = 0;  // 0 passes so far
         test.fail = 0;  // 0 failes so far
         test.done = 0;  // 0 tests done so far
@@ -68,14 +68,18 @@
         p.css( p.$('finished-success'), { display : 'none' } );
 
         test( 1, 'Ready to Test' );
-        test( PUBNUB, 'PubNub Lib Exists' );
-        test( io, 'Socket.IO Lib Exists' );
+
+        test( 'PUBNUB' in window, 'PubNub Lib Exists' );
+        test( 'io' in window, 'Socket.IO Lib Exists' );
+        test( 'sjcl' in window, 'Stanford Crypto Lib Exists' );
 
         var pubnub_setup = {
             channel       : 'my_mobile_app',
             publish_key   : 'demo',
             subscribe_key : 'demo',
-            ssl           : false
+            password      : '',     // Encrypt with Password
+            ssl           : false,  // Use SSL
+            geo           : false   // Include Geo Data (Lat/Lng)
         };
 
         // Multi-plexing Single Connection
@@ -98,7 +102,7 @@
                 'important-message',
                 { data : true },
                 function (receipt) {
-                    test( receipt, 'Acknowledgements Receipt Confirmation.' );
+                    test( receipt, 'Acknowledgement Receipt Confirmation.' );
                 }
             );
         } );
@@ -149,28 +153,25 @@
             
         } );
 
+        // STANFORD CRYPTO LIBRARY WITH AES ENCRYPTION
+        pubnub_setup.password = '12345678';
+        var encrypted = io.connect(
+            'http://pubsub.pubnub.com/secret',
+            pubnub_setup
+        );
 
-/*
-        socket.on('connect', function () {
-            socket.send('hi');
-
-            socket.on('message', function (msg) {
-                // my msg
-            });
-        });
-
-        socket.on( 'news', function (data) {
-            console.log(data);
-            socket.emit( 'my other event', { my: 'data' } );
+        encrypted.on( 'connect', function() {
+            encrypted.send({ my_encrypted_data : 'Super Secret!' });
+            test( 1, 'Connected to Encrypted Channel' );
+        } );
+        encrypted.on( 'message', function(message) {
+            test(
+                message.my_encrypted_data === 'Super Secret!',
+                'Stanford Crypto AES'
+            );
         } );
 
-        var socket = io.connect();
-        socket.on('connect', function () {
-            socket.emit('ferret', 'tobi', function (data) {
-                console.log(data);
-            });
-        });
-        */
+
     }
     start_test();
 

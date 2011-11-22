@@ -34,8 +34,8 @@ except to the connection where the message came from.
 + Smart Broadcasting (broadcast with auto-recovery on failure).
 + Disconnect from a Channel.
 + Acknowledgements of Message Receipt.
++ Stanford Crypto Library with AES Encryption.
 + Geo Data with Latitude/Longitude. [comming soon]
-+ Stanford Crypto Library with AES Encryption. [comming soon]
 + Batching of Publishes (Send multiple messages at once). [comming soon]
 + Private Messaging. [comming soon]
 + Server Side Events. [comming soon]
@@ -100,7 +100,7 @@ Sometimes you want to put certain sockets in the same room, so that it's easy
 to broadcast to all of them together.
 
 Think of this as built-in channels for sockets. Sockets `join` and `leave`
-rooms in each socket.
+rooms in each channel.
 
 ```js
 var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
@@ -133,6 +133,60 @@ chat.on( 'join', function(user) {
 } );
 ```
 
+### Stanford Encryption AES
+
+To keep super secret messages private, you can use the password feature
+of Socket.IO on PubNub.  You will be able to encrypte and decrypt 
+automatically client side.  This means all data transmitted is encrypted
+and unreadable.
+
+It is simply to have data encrypted and automatically decrypt on receipt.
+Simply add the `password` entry in the `pubnub_setup` object.
+
+```html
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script src=crypto.js></script>
+<script src=socket.io.js></script>
+<script>
+    // STANFORD CRYPTO LIBRARY WITH AES ENCRYPTION
+    var pubnub_setup = {
+        channel       : 'my_mobile_app',
+        publish_key   : 'demo',
+        subscribe_key : 'demo',
+        password      : 'MY-PASSWORD',  // Encrypt with Password
+        ssl           : false
+    };
+
+    // Setup Encrypted Channel
+    var encrypted = io.connect(
+        'http://pubsub.pubnub.com/secret',
+        pubnub_setup
+    );
+
+    // Listen for Connection Ready
+    encrypted.on( 'connect', function() {
+        // Send an Encrypted Messsage
+        encrypted.send({ my_encrypted_data : 'Super Secret!' });
+    } );
+
+    // Receive Encrypted Messages
+    encrypted.on( 'message', function(message) {
+        // Print Unencrypted Data
+        console.log(message.my_encrypted_data);
+    } );
+</script>
+```
+
+This feature will automatically encrypte and decrypt messages
+using the Stanford JavaScript Crypto Library with AES.
+You can mix encrypted and unencrypted channels with the
+channel multiplexing feature by excluding a password from the
+`pubnub_setup` object.
+
+NOTE: if passwords don't match, then the message will not be received.
+Make sure each authorized user has the correct password!
+
+
 ### Using it just as a cross-browser WebSocket
 
 If you just want the WebSocket semantics, you can do that too.
@@ -150,7 +204,6 @@ Simply leverage `send` and listen on the `message` event:
   });
 </script>
 ```
-
 
 ### Restricting yourself to a namespace
 
@@ -191,7 +244,6 @@ confirmed the message reception.
   socket.on( 'connect', function () {
     socket.emit( 'important-message', {data:true}, function (receipt) {
       // Message Delivered!
-      // Was it successful?
       console.log(data);
     });
   });

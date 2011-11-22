@@ -17,6 +17,9 @@
             ,   namespace = urlbits[3] || 'default'
             ,   socket    = create_socket(namespace);
 
+            // PASSWORD ENCRYPTION
+            socket.password = 'sjcl' in window && setup.password;
+
             // PUBNUB ALREADY SETUP?
             if (io['connected']) return socket;
             io['connected'] = true;
@@ -49,7 +52,7 @@
                     } );
                 },
                 callback : function(evt) {
-                    if (p.disconnected) p.each( namespaces, function(ns) {
+                    if (p.disconnected) p.each( evt.ns, function(ns) {
                         p.events.fire( ns + 'reconnect', {} ) 
                     } );
  
@@ -57,24 +60,27 @@
 
                     // USER EVENTS
                     if (evt.uuid && evt.uuid !== uuid)
-                        users[namespace][evt.uuid] =
-                        users[namespace][evt.uuid] || (function() {
+                        users[evt.ns][evt.uuid] =
+                        users[evt.ns][evt.uuid] || (function() {
                             socket.emit( 'join', evt.uuid );
                             return {
+                                geo       : evt.geo || [0,0],
                                 uuid      : evt.uuid,
                                 last      : now(),
                                 socket    : socket,
-                                namespace : namespace,
+                                namespace : evt.ns,
                                 connected : true,
                                 slot      : socket.user_count++
                             };
                         })();
 
                     if (evt.name === 'user-disconnect')
-                        disconnect(users[namespace][evt.uuid]);
+                        disconnect(users[evt.ns][evt.uuid]);
 
-                    if (namespace in namespaces)
-                        p.events.fire( evt.name, evt.data )
+                    if (evt.ns in namespaces) {
+                        var data = decrypt( evt.ns, evt.data );
+                        data && p.events.fire( evt.ns + evt.name, data );
+                    }
                 }
             });
 
@@ -111,19 +117,43 @@
 
     typeof window !== 'undefined' &&
     p.bind( 'beforeunload', window, function() {
-        send( 'user-disconnect', uuid );
+        send( 'user-disconnect', '', uuid );
     } );
+
+    // =====================================================================
+    // Stanford Crypto Library with AES Encryption
+    // =====================================================================
+    function encrypt( namespace, data ) {
+        var namespace = namespace || 'default'
+        ,   socket    = namespaces[namespace];
+
+        return socket.password && sjcl.encrypt(
+           socket.password,
+           JSON.stringify(data)+''
+        ) || data;
+    }
+
+    function decrypt( namespace, data ) {
+        var namespace = namespace || 'default'
+        ,   socket    = namespaces[namespace];
+
+        if (!socket.password) return data;
+        try      { return JSON.parse(sjcl.decrypt( socket.password, data )); }
+        catch(e) { return null; }
+    }
 
     // =====================================================================
     // PUBLISH A MESSAGE + Retry if Failed with fallback
     // =====================================================================
-    function send( event, data, wait, cb ) {
+    function send( event, namespace, data, wait, cb ) {
         p.publish({
-            channel  : p.channel,
-            message  : {
+            channel : p.channel,
+            message : {
                 name : event,
-                data : data || {},
-                uuid : uuid
+                ns   : namespace,
+                data : encrypt( namespace, data || {} ),
+                uuid : uuid,
+                geo  : p.location || [ 0, 0 ]
             },
             callback : function(info) {
                 if (info[0]) return (cb||function(){})(info);
@@ -134,17 +164,26 @@
     }
 
     // =====================================================================
+    // GEO LOCATION DATA (LATITUDE AND LONGITUDE)
+    // =====================================================================
+    function locate(callback) {
+        navigator && navigator.geolocation &&
+        navigator.geolocation.getCurrentPosition(function(position) {  
+            p.location = [position.coords.latitude, position.coords.longitude];
+            callback(p.location);
+        }) || callback([ 0, 0 ]); 
+    }
+
+    // =====================================================================
     // CREATE SOCKET
     // =====================================================================
     function create_socket(namespace) {
-        namespaces[namespace] = namespace;
-        return {
+        return namespaces[namespace] = {
             'emit' : function( event, data, receipt ) {
-                send( namespace + event, data, 0, receipt );
+                send( event, namespace, data, 0, receipt );
             },
-            'send' : function(data) {
-                console.log(  namespace + 'message', data );
-                send( namespace + 'message', data );
+            'send' : function( data, receipt ) {
+                send( 'message', namespace, data, 0, receipt );
             },
             'on' : function( event, fn ) {
                 p.events.bind( namespace + event, fn );
