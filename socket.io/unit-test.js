@@ -25,9 +25,13 @@
 
         if (test.done === test.plan) {
             stop_test();
-            test.fail ||
-            p.css( p.$('finished-success'), { display : 'inline-block' } ) &&
-            p.css( p.$('finished-fail'), { display : 'inline-block' } );
+
+            if (test.fail) return p.css(
+                p.$('finished-fail'),
+                { display : 'inline-block' }
+            );
+
+            p.css( p.$('finished-success'), { display : 'inline-block' } );
         }
     }
 
@@ -56,7 +60,7 @@
     ====================================================================== */
     p.bind( 'mousedown,touchstart', start_button, start_test );
     function start_test() {
-        test.plan = 14; // # of tests
+        test.plan = 15; // # of tests
         test.pass = 0;  // 0 passes so far
         test.fail = 0;  // 0 failes so far
         test.done = 0;  // 0 tests done so far
@@ -98,6 +102,11 @@
         socket.on( 'connect', function() {
             test( feed, 'Socket Connection Estabilshed.' );
             socket.send('sock');
+
+            // Connected Users
+            test( socket.get_user_count() === 1, 'Counts of Active User' );
+
+            // Acknowledgement Receipt Confirmation
             socket.emit(
                 'important-message',
                 { data : true },
@@ -110,6 +119,7 @@
         socket.on( 'message', function(message) {
             test( message === 'sock', 'Received Socket Message' );
         } );
+
 
         // CONNECTION ESTABLISHED
         feed.on( 'connect', function() {

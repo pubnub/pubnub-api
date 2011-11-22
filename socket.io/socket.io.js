@@ -30,11 +30,6 @@
             p.disconnected = 0;
             p.channel      = setup.channel || 'default';
 
-            // SETUP USERS
-            socket.users          = users[namespace] = {};
-            socket.user_count     = 0;
-            socket.get_user_count = function(){ return socket.user_count };
-
             // ESTABLISH CONNECTION
             p.subscribe({
                 channel  : p.channel,
@@ -179,6 +174,11 @@
     // =====================================================================
     function create_socket(namespace) {
         return namespaces[namespace] = {
+            'users'          : users[namespace] = {},
+            'user_count'     : 1,
+            'get_user_count' : function(){
+                return namespaces[namespace].user_count
+            },
             'emit' : function( event, data, receipt ) {
                 send( event, namespace, data, 0, receipt );
             },

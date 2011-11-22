@@ -61,7 +61,8 @@ First, include `pubnub.js` and `socket.io.js`:
 ### Sending and receiving events.
 
 Socket.IO allows you to emit and receive custom events.
-Besides `connect`, `message` and `disconnect`, you can emit custom events:
+Reserved Events are: `connect`, `message`, `disconnect`,
+`reconnect`, `join` and `leave`.
 
 ```js
 // Use PubNub Setup for Your PubNub Account
@@ -138,7 +139,7 @@ chat.on( 'join', function(user) {
 To keep super secret messages private, you can use the password feature
 of Socket.IO on PubNub.  You will be able to encrypte and decrypt 
 automatically client side.  This means all data transmitted is encrypted
-and unreadable.
+and unreadable to everyone without the correct password.
 
 It is simply to have data encrypted and automatically decrypt on receipt.
 Simply add the `password` entry in the `pubnub_setup` object.
@@ -148,7 +149,7 @@ Simply add the `password` entry in the `pubnub_setup` object.
 <script src=crypto.js></script>
 <script src=socket.io.js></script>
 <script>
-    // STANFORD CRYPTO LIBRARY WITH AES ENCRYPTION
+    // Include a Password in the PubNub Setup Object.
     var pubnub_setup = {
         channel       : 'my_mobile_app',
         publish_key   : 'demo',
@@ -183,9 +184,8 @@ You can mix encrypted and unencrypted channels with the
 channel multiplexing feature by excluding a password from the
 `pubnub_setup` object.
 
-NOTE: if passwords don't match, then the message will not be received.
-Make sure each authorized user has the correct password!
-
+NOTE: If a password doesn't match, then the message will not be received.
+Make sure authorized users have the correct password!
 
 ### Using it just as a cross-browser WebSocket
 
