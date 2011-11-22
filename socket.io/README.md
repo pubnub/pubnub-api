@@ -48,7 +48,7 @@ First, include `pubnub.js` and `socket.io.js`:
 <script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
 <script src="socket.io.js"></script>
 <script>
-  var socket = io.connect('http://localhost');
+  var socket = io.connect('http://pubsub.pubnub.com');
   socket.on( 'news', function (data) {
     console.log(data);
     socket.emit( 'my-other-event', { my: 'data' } );
@@ -194,7 +194,7 @@ Simply leverage `send` and listen on the `message` event:
 
 ```html
 <script>
-  var socket = io.connect('http://localhost/');
+  var socket = io.connect('http://pubsub.pubnub.com/');
   socket.on('connect', function () {
     socket.send('hi');
 
@@ -221,8 +221,8 @@ The following example defines a socket that listens on '/chat' and one for
 
 ```html
 <script>
-  var chat = io.connect('http://localhost/chat')
-    , news = io.connect('http://localhost/news');
+  var chat = io.connect('http://pubsub.pubnub.com/chat')
+    , news = io.connect('http://pubsub.pubnub.com/news');
 
   chat.on('connect', function () {
     chat.emit('hi!');
