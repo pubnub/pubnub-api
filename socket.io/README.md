@@ -1,41 +1,42 @@
 # EARLY ACCESS - Socket.IO on PubNub
 
-Now you can use Socket.IO with PubNub! Take advangate of the Socket.IO API 
-leveraging the Human Perceptive Real-time PubNub Cloud Infrastructure.
+Get a faster Socket.IO with PubNub! Take advangate of the Socket.IO API 
+leveraging Human Perceptive Real-time on PubNub Infrastructure.
 We believe Socket.IO is the jQuery of Networking.
-Socket.IO is a project that makes WebSockets and realtime possible in
+Socket.IO is a project that makes WebSockets and Real-time possible in
 all browsers. It also enhances WebSockets by providing built-in multiplexing,
 automatic scalability, automatic JSON encoding/decoding, and
 even more with PubNub.
 
-![Socket.IO on Pubnub](http://pubnub.s3.amazonaws.com/assets/socket.io-on-pubnub-2.png "Socket.IO on Pubnub")
-
 ## Enhanced Socket.IO with PubNub
 
+![Socket.IO on Pubnub](http://pubnub.s3.amazonaws.com/assets/socket.io-enhanced-with-pubnub.png "Socket.IO on Pubnub")
+
 We enhanced Socket.IO with PubNub.
+Faster JavaScript, Smaller Footprint, Faster Cloud Network and 
 Socket.IO with PubNub does not require a Node.JS backend.
-This means your code is more
-simple and you have extra time to build your
-app rather than fiddling with the back-end server code.
-Additionally the JS lib payload has been improved for Mobile apps.
+This means your code is lean and 
+simple giving you extra time to build your app.
+The updated JS payload has been optimized for Mobile Apps;
+which means excellent performance for laptops too.
 
 ## Simplified Socket.IO API Usage
 
-By default, broadcasting is turned on.  This means when you use
-emit() or send() functions, broadcasting to all connections occurs 
-except to the connection where the message came from.
+By default, all messages are broadcast.  This means when you use
+emit() or send() functions, the message will be broadcast.
 
-## Simplifed Features with Socket.IO on PubNub
+## New and Simplifed Features with Socket.IO on PubNub
 
 + Enhanced User Tracking Presence Events (join, leave).
-+ Counts of Active User Connections.
-+ Socket Connection Events (connect, disconnect, reconnect).
++ Get Counts of Active User per Connection.
++ Socket level Events (connect, disconnect, reconnect).
 + Multiplexing many channels on one socket.
 + Smart Broadcasting (broadcast with auto-recovery on failure).
 + Disconnect from a Channel.
 + Acknowledgements of Message Receipt.
 + Stanford Crypto Library with AES Encryption.
 + Geo Data with Latitude/Longitude. [comming soon]
++ Guaranteed Message Delivered Events. [comming soon]
 + Batching of Publishes (Send multiple messages at once). [comming soon]
 + Private Messaging. [comming soon]
 + Server Side Events. [comming soon]
@@ -51,10 +52,14 @@ First, include `pubnub.js` and `socket.io.js`:
   var socket = io.connect('http://pubsub.pubnub.com');
   socket.on( 'news', function (data) {
     console.log(data);
-    socket.emit( 'my-other-event', { my: 'data' } );
   } );
 </script>
 ```
+
+This simplified usage of Socket.IO will create a connection, listen for a 
+`news` event and log the data to the console.
+
+![Socket.IO on Pubnub - Terminal](http://pubnub.s3.amazonaws.com/assets/pubnub-socket.io-terminal.png "Socket.IO on Pubnub - Terminal")
 
 ## Short recipes
 
@@ -65,7 +70,7 @@ Reserved Events are: `connect`, `message`, `disconnect`,
 `reconnect`, `join` and `leave`.
 
 ```js
-// Use PubNub Setup for Your PubNub Account
+// IMPORTANT: PubNub Setup with Account
 var pubnub_setup = {
     channel       : 'my_mobile_app',
     publish_key   : 'demo',
@@ -77,7 +82,10 @@ var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
 
 socket.on( 'connect', function() {
     console.log('Connection Established! Ready to send/receive data!');
-    socket.send('sock');
+    socket.send('my message here');
+    socket.send(1234567);
+    socket.send([1,2,3,4,5]);
+    socket.send({ apples : 'bananas' });
 } );
 
 socket.on( 'message', function(message) {
@@ -92,7 +100,6 @@ socket.on( 'disconnect', function() {
 socket.on( 'reconnect', function() {
     console.log('my connection has been restored!');
 } );
-
 ```
 
 ### User Presence (Room Events: join, leave)
@@ -116,93 +123,22 @@ chat.on( 'join', function(user) {
 ### Enhanced Presence with User Counts.
 
 Often you will want to know how many users are connected to a channel (room).
-To get this information you simply access the user_count function.
+To get this information you simply access the `get_user_count()` function.
 
 ```js
 var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
 chat.on( 'leave', function(user) {
     console.log(
-        'User left. There are %d users left.',
+        'User left. There are %d user(s) remaining.',
         chat.get_user_count()
     );
 } );
 chat.on( 'join', function(user) {
     console.log(
-        'User joined! There are %d users.',
+        'User joined! There are %d user(s) online.',
         chat.get_user_count()
     );
 } );
-```
-
-### Stanford Encryption AES
-
-To keep super secret messages private, you can use the password feature
-of Socket.IO on PubNub.  You will be able to encrypte and decrypt 
-automatically client side.  This means all data transmitted is encrypted
-and unreadable to everyone without the correct password.
-
-It is simply to have data encrypted and automatically decrypt on receipt.
-Simply add the `password` entry in the `pubnub_setup` object.
-
-```html
-<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
-<script src=crypto.js></script>
-<script src=socket.io.js></script>
-<script>
-    // Include a Password in the PubNub Setup Object.
-    var pubnub_setup = {
-        channel       : 'my_mobile_app',
-        publish_key   : 'demo',
-        subscribe_key : 'demo',
-        password      : 'MY-PASSWORD',  // Encrypt with Password
-        ssl           : false
-    };
-
-    // Setup Encrypted Channel
-    var encrypted = io.connect(
-        'http://pubsub.pubnub.com/secret',
-        pubnub_setup
-    );
-
-    // Listen for Connection Ready
-    encrypted.on( 'connect', function() {
-        // Send an Encrypted Messsage
-        encrypted.send({ my_encrypted_data : 'Super Secret!' });
-    } );
-
-    // Receive Encrypted Messages
-    encrypted.on( 'message', function(message) {
-        // Print Unencrypted Data
-        console.log(message.my_encrypted_data);
-    } );
-</script>
-```
-
-This feature will automatically encrypte and decrypt messages
-using the Stanford JavaScript Crypto Library with AES.
-You can mix encrypted and unencrypted channels with the
-channel multiplexing feature by excluding a password from the
-`pubnub_setup` object.
-
-NOTE: If a password doesn't match, then the message will not be received.
-Make sure authorized users have the correct password!
-
-### Using it just as a cross-browser WebSocket
-
-If you just want the WebSocket semantics, you can do that too.
-Simply leverage `send` and listen on the `message` event:
-
-```html
-<script>
-  var socket = io.connect('http://pubsub.pubnub.com/');
-  socket.on('connect', function () {
-    socket.send('hi');
-
-    socket.on('message', function (msg) {
-      // my msg
-    });
-  });
-</script>
 ```
 
 ### Restricting yourself to a namespace
@@ -234,20 +170,147 @@ The following example defines a socket that listens on '/chat' and one for
 </script>
 ```
 
+### Stanford Encryption AES
+
+To keep super secret messages private, you can use the `password` feature
+of Socket.IO on PubNub.  You will be able to encrypt and decrypt 
+automatically `client side`.  This means all data transmitted is encrypted
+and unreadable to everyone without the correct password.
+
+It is simply to have data encrypted and automatically decrypt on receipt.
+Simply add the `password` entry in the `pubnub_setup` object.
+
+IMPORTANT: you must include the `cyrpto.js` library!
+
+```html
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script src=crypto.js></script>
+<script src=socket.io.js></script>
+<script>
+    // Include a Password in the PubNub Setup Object.
+    var pubnub_setup = {
+        channel       : 'my_mobile_app',
+        publish_key   : 'demo',
+        subscribe_key : 'demo',
+        password      : 'MY-PASSWORD',  // Encrypt with Password
+        ssl           : false
+    };
+
+    // Setup Encrypted Channel
+    var encrypted = io.connect(
+        'http://pubsub.pubnub.com/secret',
+        pubnub_setup
+    );
+
+    // Listen for Connection Ready
+    encrypted.on( 'connect', function() {
+        // Send an Encrypted Messsage
+        encrypted.send({ my_secure_data : 'Super Secret!' });
+    } );
+
+    // Receive Encrypted Messages
+    encrypted.on( 'message', function(message) {
+        // Print Decrypted Data
+        console.log(message.my_secure_data);
+    } );
+</script>
+```
+
+This feature will automatically encrypt and decrypt messages
+using the Stanford JavaScript Crypto Library with AES.
+You can mix `encrypted` and `unencrypted` channels with the
+channel multiplexing feature by excluding a password from the
+`pubnub_setup` object when setting up a new connection.
+
+NOTE: If a password doesn't match, then the message will *not* be received.
+Make sure authorized users have the correct password!
+
+### Using it just as a cross-browser WebSocket
+
+If you just want the WebSocket semantics, you can do that too.
+Simply leverage `send` and listen on the `message` event:
+
+```html
+<script>
+  var socket = io.connect('http://pubsub.pubnub.com/');
+  socket.on('connect', function () {
+    socket.send('hi');
+
+    socket.on('message', function (msg) {
+      // my msg
+    });
+  });
+</script>
+```
+
 ### Getting Acknowledgements (Receipt Confirmation)
 
-Sometimes, you might want to get a callback when the message was delivered to
-confirmed the message reception.
+Sometimes, you might want to get a callback when the message was sent
+with success status. Note that this does not confirm that the message
+was recieved by other clients.  This only acknowledges that the message
+was received by the PubNub Cloud.
 
 ```js
   var socket = io.connect(); // TIP: auto-discovery
   socket.on( 'connect', function () {
-    socket.emit( 'important-message', {data:true}, function (receipt) {
-      // Message Delivered!
-      console.log(data);
+    socket.emit( 'important-message', { data : 1234 }, function (receipt) {
+      // Message Delivered Successfully!
+      console.log(receipt);
     });
   });
 ```
+
+### Sending Events from a Server
+
+This example shows you how to send events to your Socket.IO clients
+using other PubNub libraries.  We are using the simple syntax of `Python`
+here for the example:
+
+```python
+    from Pubnub import Pubnub
+
+    ## Initiat Class
+    pubnub = Pubnub( 'demo', 'demo', None, False )
+
+    ## Publish Example
+    info = pubnub.publish({
+        'channel' : 'leaf-wrap',
+        'message' : {
+            'name' : 'message',     ## emit( 'event-name', ... )
+            'ns'   : 'chat',        ## chat, news, feed, etc.
+            'data' : {'msg':'Hi'}   ## object to be received.
+        }
+    })
+    print(info)
+```
+
+The `Python` code above will send a message to your Socket.IO clients.
+Make sure that the client is connected first.
+
+```js
+// Use PubNub Setup for Your PubNub Account
+var pubnub_setup = {
+    channel       : 'leaf-wrap',
+    publish_key   : 'demo',
+    subscribe_key : 'demo',
+    ssl           : false
+};
+
+var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
+
+chat.on( 'connect', function(message) {
+    console.log('ready to receive messages...');
+} );
+
+chat.on( 'message', function(message) {
+    // Received Message from Server!
+    console.log(message);
+} );
+```
+
+When you combine the `JavaScript` Socket.IO example with `Python`, you
+have the  ablity to send messages to the client directly from your web server 
+or terminal!
 
 ## License 
 
@@ -256,6 +319,8 @@ confirmed the message reception.
 Copyright (c) 2011 PubNub Inc.
 
 Copyright (c) 2011 Guillermo Rauch <guillermo@learnboost.com>
+
+![Socket.IO on Pubnub](http://pubnub.s3.amazonaws.com/assets/socket.io-on-pubnub-2.png "Socket.IO on Pubnub")
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -275,3 +340,4 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
