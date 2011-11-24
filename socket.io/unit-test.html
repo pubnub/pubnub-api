@@ -10,7 +10,7 @@
         #stop-test,
         #finished-fail,
         #finished-success,
-        .tpl {display:none}
+        {display:none}
     </style>
 </head>
 <body><div class=container>
@@ -43,7 +43,7 @@
 </table>
 
 <!-- TEMPLATES -->
-<script type=text/template id=test_template class=tpl>
+<script type=text/template id=test_template>
     <td><span class="label {result}">{display}</span></td>
     <td>{message}</td>
 </script>

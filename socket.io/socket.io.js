@@ -24,6 +24,9 @@
             if (io['connected']) return socket;
             io['connected'] = true;
 
+            // GEO LOCATION
+            if (setup['geo']) setInterval( locate, 15000 ) && locate();
+
             // SETUP PUBNUB
             setup.origin   = origin;
             p              = p.init(setup);
@@ -164,7 +167,10 @@
     function locate(callback) {
         navigator && navigator.geolocation &&
         navigator.geolocation.getCurrentPosition(function(position) {  
-            p.location = [position.coords.latitude, position.coords.longitude];
+            p.location = [
+                position.coords.latitude,
+                position.coords.longitude
+            ];
             callback(p.location);
         }) || callback([ 0, 0 ]); 
     }

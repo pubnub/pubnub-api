@@ -28,18 +28,18 @@ emit() or send() functions, the message will be broadcast.
 ## New and Simplifed Features with Socket.IO on PubNub
 
 + Enhanced User Tracking Presence Events (join, leave).
-+ Get Counts of Active User per Connection.
++ Get Counts of Active Users per Connection.
 + Socket level Events (connect, disconnect, reconnect).
 + Multiplexing many channels on one socket.
 + Smart Broadcasting (broadcast with auto-recovery on failure).
 + Disconnect from a Channel.
 + Acknowledgements of Message Receipt.
 + Stanford Crypto Library with AES Encryption.
-+ Geo Data with Latitude/Longitude. [comming soon]
++ Server Side Events.
++ Geo Data with Latitude/Longitude. [beta]
 + Guaranteed Message Delivered Events. [comming soon]
 + Batching of Publishes (Send multiple messages at once). [comming soon]
 + Private Messaging. [comming soon]
-+ Server Side Events. [comming soon]
 
 ## How to use
 
@@ -267,21 +267,20 @@ using other PubNub libraries.  We are using the simple syntax of `Python`
 here for the example:
 
 ```python
-    from Pubnub import Pubnub
+from Pubnub import Pubnub
 
-    ## Initiat Class
-    pubnub = Pubnub( 'demo', 'demo', None, False )
+## Create a PubNub Object
+pubnub = Pubnub( 'demo', 'demo', None, False )
 
-    ## Publish Example
-    info = pubnub.publish({
-        'channel' : 'leaf-wrap',
-        'message' : {
-            'name' : 'message',     ## emit( 'event-name', ... )
-            'ns'   : 'chat',        ## chat, news, feed, etc.
-            'data' : {'msg':'Hi'}   ## object to be received.
-        }
-    })
-    print(info)
+## Publish To Socket.IO
+pubnub.publish({
+    'channel' : 'leaf-wrap',
+    'message' : {
+        'name' : 'message',     ## emit( 'event-name', ... )
+        'ns'   : 'chat',        ## chat, news, feed, etc.
+        'data' : {'msg':'Hi'}   ## object to be received.
+    }
+})
 ```
 
 The `Python` code above will send a message to your Socket.IO clients.
