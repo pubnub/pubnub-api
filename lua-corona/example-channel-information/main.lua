@@ -11,15 +11,16 @@ multiplayer = pubnub.new({
 -- 
 -- Player ID (Generated Later)
 -- 
-my_player_id   = nil
-my_player_name = "John Smith"
+me      = {}
+me.id   = nil
+me.name = "John Smith"
 
 --
 -- Generate Player ID
 --
 multiplayer:time({
     callback = function(time)
-        my_player_id.id = time .. '-' .. math.random( 1, 999999 )
+        me.id = time .. '-' .. math.random( 1, 999999 )
     end
 })
 
@@ -32,7 +33,6 @@ players_per_game_room = {
 }
 
 game_room_1234 = "game_room_1234"
-
 
 -- 
 -- Join Game Room 1234
@@ -51,8 +51,8 @@ multiplayer:subscribe({
                 channel = game_room_1234,
                 message = {
                     action  = "pong",
-                    id      = my_player_id,
-                    name    = my_player_name
+                    id      = me.id,
+                    name    = me.name
                 }
             })
 
@@ -94,7 +94,7 @@ function wait_for_info_from_players()
     -- Print Info about Each Player
     --
     for player_id, player in pairs(players_per_game_room[game_room_1234]) do
-        print("Player: " .. player_id "'s Name is " .. player.name)
+        print("Player: " .. player_id .. "'s Name is " .. player.name)
     end
 end
 
