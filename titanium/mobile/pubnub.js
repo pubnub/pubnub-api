@@ -35,10 +35,11 @@ THE SOFTWARE.
 /**
  * UTIL LOCALS
  */
-var NOW    = 1
-,   MAGIC  = /\$?{([\w\-]+)}/g
-,   URLBIT = '/'
-,   XHRTME = 140000;
+var NOW     = 1
+,   MAGIC   = /\$?{([\w\-]+)}/g
+,   URLBIT  = '/'
+,   ANDROID = Titanium.Platform.osname === 'android'
+,   XHRTME  = 140000;
 
 /**
  * UNIQUE
@@ -130,6 +131,67 @@ function encode(path) {
 }
 
 /**
+ * Titanium XHR Request (Android)
+ * ==============================
+ *  xdr({
+ *     url     : ['http://www.blah.com/url'],
+ *     success : function(response) {},
+ *     fail    : function() {}
+ *  });
+ */
+function xdra( setup ) {
+    var xhr
+    ,   finished = function() {
+            if (loaded) return;
+                loaded = 1;
+
+            clearTimeout(timer);
+
+            try       { response = JSON['parse'](xhr.responseText); }
+            catch (r) { return done(1); }
+
+            success(response);
+        }
+    ,   complete = 0
+    ,   loaded   = 0
+    ,   timer    = timeout( function(){done(1)}, XHRTME )
+    ,   fail     = setup.fail    || function(){}
+    ,   success  = setup.success || function(){}
+    ,   done     = function(failed) {
+            if (complete) return;
+                complete = 1;
+
+            clearTimeout(timer);
+
+            if (xhr) {
+                xhr.onerror = xhr.onload = null;
+                xhr.abort && xhr.abort();
+                xhr = null;
+            }
+
+            failed && fail();
+        };
+
+    // Send
+    try {
+        xhr         = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(){ done(1) };
+        xhr.onload  = finished;
+        xhr.timeout = XHRTME;
+
+        xhr.open( 'GET', setup.url.join(URLBIT), true );
+        xhr.send();
+    }
+    catch(eee) {
+        done(0);
+        return xdr(setup);
+    }
+
+    // Return 'done'
+    return done;
+}
+
+/**
  * Titanium TCP Sockets
  * ====================
  *  xdr({
@@ -139,6 +201,8 @@ function encode(path) {
  *  });
  */
 function xdr(setup) {
+    if (ANDROID) return xdra(setup);
+
     var url      = setup.url.join(URLBIT)
     ,   body     = []
     ,   data     = ""
