@@ -1,4 +1,4 @@
-Ti.include('pubnub.js');
+Ti.include('./pubnub.js');
 
 (function(){
 
