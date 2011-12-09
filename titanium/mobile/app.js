@@ -5,7 +5,7 @@ Ti.include('./pubnub.js');
     // ----------------------------------
     // INIT PUBNUB
     // ----------------------------------
-    var pubnub = PUBNUB.init({
+    var pubnub = Ti.PubNub.init({
         publish_key   : 'demo',
         subscribe_key : 'demo',
         ssl           : false,
