@@ -157,10 +157,10 @@
 
         // USER JOINS/PARTS CHAT
         chat.on( 'join', function(user) {
-            
+            console.log(user);
         } );
         chat.on( 'leave', function(user) {
-            
+            console.log(user);
         } );
 
         // STANFORD CRYPTO LIBRARY WITH AES ENCRYPTION

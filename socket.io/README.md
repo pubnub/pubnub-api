@@ -36,7 +36,10 @@ emit() or send() functions, the message will be broadcast.
 + Acknowledgements of Message Receipt.
 + Stanford Crypto Library with AES Encryption.
 + Server Side Events.
-+ Geo Data with Latitude/Longitude. [beta]
++ Geo Data with Latitude/Longitude.
++ List of Users
++ Facebook Connect [comming soon]
++ RSA Public/Private Key Encryption [comming soon]
 + Guaranteed Message Delivered Events. [comming soon]
 + Batching of Publishes (Send multiple messages at once). [comming soon]
 + Private Messaging. [comming soon]
@@ -113,14 +116,41 @@ rooms in each channel.
 ```js
 var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
 chat.on( 'leave', function(user) {
-    console.log('user left');
+    console.log( 'user left', user );
 } );
 chat.on( 'join', function(user) {
-    console.log('user joined');
+    console.log( 'user joined', user );
 } );
 ```
 
-### Enhanced Presence with User Counts.
+### User Geo Data with Latitude/Longitude
+
+Do you need Geographical Coordinate Data from which your users are
+communicating from?
+
+```js
+var pubnub_setup = {
+    channel       : 'my_mobile_app',
+    publish_key   : 'demo',
+    subscribe_key : 'demo',
+    geo           : true,    //   <--- Geo Flag!!!
+    ssl           : false
+};
+
+var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
+
+chat.on( 'join', function(user) {
+    console.log( 'user joined from:', user.geo );
+} );
+chat.on( 'leave', function(user) {
+    console.log( 'user left from:', user.geo );
+} );
+```
+
+If a user joins after a group has already formed,
+a `join` event will be fired for each user already connected.
+
+### Enhanced Presence with User Counts & Lists.
 
 Often you will want to know how many users are connected to a channel (room).
 To get this information you simply access the `get_user_count()` function.
@@ -130,13 +160,15 @@ var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
 chat.on( 'leave', function(user) {
     console.log(
         'User left. There are %d user(s) remaining.',
-        chat.get_user_count()
+        chat.get_user_count(),
+        chat.get_user_list()
     );
 } );
 chat.on( 'join', function(user) {
     console.log(
         'User joined! There are %d user(s) online.',
-        chat.get_user_count()
+        chat.get_user_count(),
+        chat.get_user_list()
     );
 } );
 ```

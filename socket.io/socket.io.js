@@ -60,7 +60,11 @@
                     if (evt.uuid && evt.uuid !== uuid)
                         users[evt.ns][evt.uuid] =
                         users[evt.ns][evt.uuid] || (function() {
-                            socket.emit( 'join', evt.uuid );
+
+                            setTimeout( function() {
+                                socket.emit( 'join', users[evt.ns][evt.uuid] )
+                            }, 10 );
+
                             return {
                                 geo       : evt.geo || [0,0],
                                 uuid      : evt.uuid,
@@ -165,6 +169,7 @@
     // GEO LOCATION DATA (LATITUDE AND LONGITUDE)
     // =====================================================================
     function locate(callback) {
+        var callback = callback || function(){};
         navigator && navigator.geolocation &&
         navigator.geolocation.getCurrentPosition(function(position) {  
             p.location = [
@@ -182,6 +187,9 @@
         return namespaces[namespace] = {
             'users'          : users[namespace] = {},
             'user_count'     : 1,
+            'get_user_list'  : function(){
+                return namespaces[namespace].users
+            },
             'get_user_count' : function(){
                 return namespaces[namespace].user_count
             },
