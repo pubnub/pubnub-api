@@ -34,27 +34,42 @@ def connected() :
         'message' : { 'Info' : 'Connected!' }
     })
 
-trips = { 'max' : 0 }
+trips = { 'last' : None, 'current' : None, 'max' : 0, 'avg' : 0 }
 
 def received(message):
-    current_trip = str(datetime.datetime.now())[0:19]
+    current_trip = trips['current'] = str(datetime.datetime.now())[0:19]
+    last_trip    = trips['last']    = str(
+        datetime.datetime.now() - datetime.timedelta(seconds=1)
+    )[0:19]
 
+    ## New Trip Span (1 Second)
     if not trips.has_key(current_trip) :
         trips[current_trip] = 0
 
+        ## Average
+        if trips.has_key(last_trip):
+            trips['avg'] = (trips['avg'] + trips[last_trip]) / 2
+
+    ## Increment Trip Counter
     trips[current_trip] = trips[current_trip] + 1
 
+    ## Update Max
     if trips[current_trip] > trips['max'] :
         trips['max'] = trips[current_trip]
 
+
     print(message)
+
     pubnub.publish({
         'channel' : crazy,
-        'message' : current_trip +
-            " Trip: " +
+        'message' : current_trip     +
+            " Trip: "                +
             str(trips[current_trip]) +
-            " Max Trips: " +
-            str(trips['max']) +
+            " MAX: "                 +
+            str(trips['max'])        +
+            "/sec "                  +
+            " AVG: "                 +
+            str(trips['avg'])        +
             "/sec"
     })
 
