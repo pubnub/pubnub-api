@@ -129,9 +129,8 @@
         var namespace = namespace || 'default'
         ,   socket    = namespaces[namespace];
 
-        return socket.password && sjcl.encrypt(
-           socket.password,
-           JSON.stringify(data)+''
+        return 'password' in socket && socket.password && sjcl.encrypt(
+           socket.password, JSON.stringify(data)+''
         ) || data;
     }
 
