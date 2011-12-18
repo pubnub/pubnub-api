@@ -58,12 +58,19 @@
 
                     // USER EVENTS
                     if (evt.uuid && evt.uuid !== uuid)
+                        users[evt.ns] = users[evt.ns] || {};
                         users[evt.ns][evt.uuid] =
                         users[evt.ns][evt.uuid] || (function() {
 
-                            setTimeout( function() {
-                                socket.emit( 'join', users[evt.ns][evt.uuid] )
-                            }, 10 );
+                            setTimeout( function() { socket.emit( 'join', {
+                                geo       : evt.geo || [0,0],
+                                uuid      : evt.uuid,
+                                last      : now(),
+                                //socket    : socket,
+                                namespace : evt.ns,
+                                connected : true,
+                                slot      : socket.user_count++
+                            } ) }, 10 );
 
                             return {
                                 geo       : evt.geo || [0,0],
@@ -79,6 +86,9 @@
                     if (evt.name === 'user-disconnect')
                         disconnect(users[evt.ns][evt.uuid]);
 
+                    if (evt.name === 'ping')
+                        users[evt.ns][evt.uuid].last = now();
+
                     if (evt.ns in namespaces) {
                         var data = decrypt( evt.ns, evt.data );
                         data && p.events.fire( evt.ns + evt.name, data );
@@ -87,7 +97,7 @@
             });
 
             // TCP KEEP ALIVE
-            p.tcpKeepAlive = setInterval( function() { send('ping') }, 1500 );
+            p.tcpKeepAlive = setInterval( function() { send('ping') }, 2500 );
 
             // RETURN SOCKET
             return socket;
@@ -101,9 +111,9 @@
         if (p.disconnected) return;
 
         p.each( users, function(namespace) {
-            p.each( users[namespace], function(user) {
-                if (now() - user.last < 3000) return;
-
+            p.each( users[namespace], function(uid) {
+                var user = users[namespace][uid];
+                if (now() - user.last < 5000 || uid === uuid) return;
                 disconnect(user);
             } );
         } );
@@ -151,7 +161,7 @@
             channel : p.channel,
             message : {
                 name : event,
-                ns   : namespace,
+                ns   : namespace || 'default',
                 data : encrypt( namespace, data || {} ),
                 uuid : uuid,
                 geo  : p.location || [ 0, 0 ]
