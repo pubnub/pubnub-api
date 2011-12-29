@@ -104,7 +104,7 @@
             socket.send('sock');
 
             // Connected Users
-            test( socket.get_user_count() === 1, 'Counts of Active User' );
+            test( socket.get_user_count(), 'Counts of Active User' );
 
             // Acknowledgement Receipt Confirmation
             socket.emit(

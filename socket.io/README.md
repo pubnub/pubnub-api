@@ -20,6 +20,14 @@ simple giving you extra time to build your app.
 The updated JS payload has been optimized for Mobile Apps;
 which means excellent performance for laptops too.
 
+## Directory Explanation
+
++ ./bootstrap-mobile/ - Starting Place for Mobile iPhone/Android Apps.
++ ./bootstrap-web/ - Starting Place for Desktop/Tablet Web Apps.
++ ./simple-button/ - Single Button App for learning Hello World.
++ ./google-chat/ - Complex Chat App for learning PubNub.
++ ./facebook-connect/ - Complex Facebook App for learning PubNub.
+
 ## Simplified Socket.IO API Usage
 
 By default, all messages are broadcast.  This means when you use
@@ -38,19 +46,13 @@ emit() or send() functions, the message will be broadcast.
 + Server Side Events.
 + Geo Data with Latitude/Longitude.
 + List of Users
-+ Facebook Connect [comming soon]
-+ RSA Public/Private Key Encryption [comming soon]
-+ Guaranteed Message Delivered Events. [comming soon]
-+ Batching of Publishes (Send multiple messages at once). [comming soon]
-+ Private Messaging. [comming soon]
 
 ## How to use
 
 First, include `pubnub.js` and `socket.io.js`:
 
 ```html
-<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
-<script src="socket.io.js"></script>
+<script src="http://cdn.pubnub.com/socket.io.min.js"></script>
 <script>
   var socket = io.connect('http://pubsub.pubnub.com');
   socket.on( 'news', function (data) {
@@ -215,9 +217,7 @@ Simply add the `password` entry in the `pubnub_setup` object.
 IMPORTANT: you must include the `cyrpto.js` library!
 
 ```html
-<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
-<script src=crypto.js></script>
-<script src=socket.io.js></script>
+<script src="http://cdn.pubnub.com/socket.io.min.js"></script>
 <script>
     // Include a Password in the PubNub Setup Object.
     var pubnub_setup = {
