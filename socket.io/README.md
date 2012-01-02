@@ -1,4 +1,4 @@
-# EARLY ACCESS - Socket.IO on PubNub
+# Socket.IO on PubNub
 
 Get a faster Socket.IO with PubNub! Take advangate of the Socket.IO API 
 leveraging Human Perceptive Real-time on PubNub Infrastructure.
@@ -24,9 +24,8 @@ which means excellent performance for laptops too.
 
 + ./bootstrap-mobile/ - Starting Place for Mobile iPhone/Android Apps.
 + ./bootstrap-web/ - Starting Place for Desktop/Tablet Web Apps.
-+ ./simple-button/ - Single Button App for learning Hello World.
-+ ./google-chat/ - Complex Chat App for learning PubNub.
-+ ./facebook-connect/ - Complex Facebook App for learning PubNub.
++ ./simple-button/ - Single Button App for learning PubNub.
++ ./video-tutorials/hello-world/ - Hello World Tutorial from Video.
 
 ## Simplified Socket.IO API Usage
 
