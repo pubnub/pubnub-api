@@ -22,22 +22,15 @@ which means excellent performance for laptops too.
 
 ## VIDEO TUTORIALS
 
-+ ./bootstrap-mobile/ - Bootstrap for Mobile iPhone/Android Apps.
- PLAY VIDEO
-+ ./bootstrap-web/ - Bootstrap for Desktop/Tablet Web Apps.
- PLAY VIDEO
-+ ./unit-test/ - Unit Test for Socket.IO on PubNub.
- PLAY VIDEO
-+ ./simple-button/ - Single Button App for learning PubNub.
- PLAY VIDEO
-+ ./multiplexing/ - Multiplexing Tutorial.
- PLAY VIDEO
-+ ./encryption/ - Encryption Tutorial.
- PLAY VIDEO
-+ ./acknowledgements/ - Acknowledgements Tutorial.
- PLAY VIDEO
-+ ./presence/ - Presence Tutorial.
- PLAY VIDEO
++ Credits Go To - [Origin of Socket.IO on PubNub](http://vimeo.com/pubnub/socket-io-pubnub-origin-of-socket-io)
++ ./presence/ - [Presence Tutorial.](http://vimeo.com/pubnub/socket-io-pubnub-user-presence)
++ ./bootstrap-mobile/ - [Bootstrap for Mobile iPhone/Android Apps.](http://vimeo.com/pubnub/socket-io-pubnub-get-started-with-a-bootstrap)
++ ./bootstrap-web/ - [Bootstrap for Desktop/Tablet Web Apps.](http://vimeo.com/pubnub/socket-io-pubnub-get-started-with-a-bootstrap)
++ ./unit-test/ - [Unit Test for Socket.IO on PubNub.](http://vimeo.com/pubnub/socket-io-pubnub-unit-test)
++ ./simple-button/ - [Simple Button App for learning PubNub.](http://vimeo.com/pubnub/socket-io-pubnub-simple-button)
++ ./multiplexing/ - [Multiplexing Tutorial.](http://vimeo.com/pubnub/socket-io-pubnub-socket-multiplexing)
++ ./encryption/ - [Encryption Tutorial.](http://vimeo.com/pubnub/socket-io-on-pubnub-encryption)
++ ./acknowledgements/ - [Acknowledgements Tutorial.](http://vimeo.com/pubnub/socket-io-pubnub-acknowledgement-of-message-receipt)
 
 ## Simplified Socket.IO API Usage
 
@@ -75,8 +68,6 @@ First, include `pubnub.js` and `socket.io.js`:
 
 This simplified usage of Socket.IO will create a connection, listen for a 
 `news` event and log the data to the console.
-
-![Socket.IO on Pubnub - Terminal](http://pubnub.s3.amazonaws.com/assets/pubnub-socket.io-terminal.png "Socket.IO on Pubnub - Terminal")
 
 ## Short recipes
 
