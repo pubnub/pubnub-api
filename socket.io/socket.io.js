@@ -64,16 +64,19 @@
             p.disconnected = 0;
             p.channel      = setup.channel || standard;
 
+            // DISCONNECTED
+            function dropped() {
+                if (p.disconnected) return;
+                p.disconnected = 1;
+                p.each( namespaces, function(ns) {
+                    p.events.fire( ns + 'disconnect', {} ) 
+                } );
+            }
+
             // ESTABLISH CONNECTION
             p.subscribe({
                 channel  : p.channel,
-                error    : function() {
-                    if (p.disconnected) return;
-                    p.disconnected = 1;
-                    p.each( namespaces, function(ns) {
-                        p.events.fire( ns + 'disconnect', {} ) 
-                    } );
-                },
+                error    : dropped,
                 connect  : function() {
                     p.disconnected = 0;
                     p.each( namespaces, function(ns) {
@@ -81,51 +84,55 @@
                     } );
                 },
                 callback : function(evt) {
-                    if (p.disconnected) p.each( evt.ns, function(ns) {
+                    if (p.disconnected) p.each( namespaces, function(ns) {
                         p.events.fire( ns + 'reconnect', {} ) 
                     } );
  
                     p.disconnected = 0;
 
-                    if (evt.ns in namespaces) {
-                        var data = decrypt( evt.ns, evt.data );
+                    var data = decrypt( evt.ns, evt.data );
+
+                    if (evt.ns in namespaces)
                         data && p.events.fire( evt.ns + evt.name, data );
-                    }
 
                     // USER EVENTS
                     if (!evt.uuid || evt.uuid === uuid) return;
 
-                    users[evt.ns] = users[evt.ns] || {};
+                    evt.name === 'ping' && p.each( data, function(ns) {
 
-                    users[evt.ns][evt.uuid] =
-                    users[evt.ns][evt.uuid] || (function() {
+                        users[ns] = users[ns] || {};
 
-                        var user = {
-                            geo       : evt.geo || [0,0],
+                        var user = users[ns][evt.uuid] =
+                        users[ns][evt.uuid] || (function() { return {
+                            geo       : evt.geo || [ 0, 0 ],
                             uuid      : evt.uuid,
                             last      : now(),
                             socket    : socket,
-                            namespace : evt.ns,
-                            connected : true,
+                            namespace : ns,
+                            connected : false,
                             slot      : socket.user_count++
-                        };
+                        } })();
 
-                        p.events.fire( evt.ns + 'join', user );
+                        user.last = now();
 
-                        return user;
+                        if (user.connected) return;
 
-                    })();
+                        user.connected = true;
+                        p.events.fire( ns + 'join', user );
 
-                    if (evt.name === 'user-disconnect')
-                        disconnect(users[evt.ns][evt.uuid]);
+                    } );
 
-                    if (evt.name === 'ping')
-                        users[evt.ns][evt.uuid].last = now();
+                    if (evt.name === 'user-disconnect') disconnect(evt.uuid);
+
+
                 }
             });
 
             // TCP KEEP ALIVE
-            p.tcpKeepAlive = setInterval( function() { send('ping') }, 2500 );
+            p.tcpKeepAlive = setInterval( p.updater( function() {
+                var nss = p.map( namespaces, function(ns) { return ns } );
+                send( 'ping', standard, nss );
+            }, 2500 ), 500 );
 
             // RETURN SOCKET
             return socket;
@@ -141,19 +148,21 @@
         p.each( users, function(namespace) {
             p.each( users[namespace], function(uid) {
                 var user = users[namespace][uid];
-                if (now() - user.last < 5000 || uid === uuid) return;
-                disconnect(user);
+                if (now() - user.last < 5500 || uid === uuid) return;
+                disconnect(user.uuid);
             } );
         } );
     }, 1000 );
 
-    function disconnect(user) {
-        if (!user.connected) return;
+    function disconnect(uid) {
+        p.each( namespaces, function(ns) {
+            var user = users[ns][uid];
+            if (!user.connected) return;
 
-        delete users[user.namespace][user.uuid];
-        user.connected = false;
-        user.socket.user_count--;
-        p.events.fire( user.namespace + 'leave', user ) 
+            user.connected = false;
+            user.socket.user_count--;
+            p.events.fire( ns + 'leave', user ) 
+        } );
     }
 
     typeof window !== 'undefined' &&
@@ -201,7 +210,9 @@
             callback : function(info) {
                 if (info[0]) return (cb||function(){})(info);
                 var retry = (wait || 500) * 2;
-                setTimeout( event, data, retry > 10000 && 10000 || retry );
+                setTimeout( function() {
+                    send( event, namespace, data, retry, cb );
+                }, retry > 5500 ? 5500 : retry );
             }
         });
     }
@@ -246,7 +257,12 @@
                 send( 'message', namespace, data, 0, receipt );
             },
             on : function( event, fn ) {
-                p.events.bind( namespace + event, fn );
+                if (typeof event === 'string')
+                    p.events.bind( namespace + event, fn );
+                else if (typeof event === 'object')
+                    p.each( event, function(evt) {
+                        p.events.bind( namespace + evt, fn );
+                    } );
             },
             disconnect : function() {
                 delete namespaces[namespace];

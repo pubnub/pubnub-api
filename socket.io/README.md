@@ -20,12 +20,24 @@ simple giving you extra time to build your app.
 The updated JS payload has been optimized for Mobile Apps;
 which means excellent performance for laptops too.
 
-## Directory Explanation
+## VIDEO TUTORIALS
 
-+ ./bootstrap-mobile/ - Starting Place for Mobile iPhone/Android Apps.
-+ ./bootstrap-web/ - Starting Place for Desktop/Tablet Web Apps.
++ ./bootstrap-mobile/ - Bootstrap for Mobile iPhone/Android Apps.
+ PLAY VIDEO
++ ./bootstrap-web/ - Bootstrap for Desktop/Tablet Web Apps.
+ PLAY VIDEO
++ ./unit-test/ - Unit Test for Socket.IO on PubNub.
+ PLAY VIDEO
 + ./simple-button/ - Single Button App for learning PubNub.
-+ ./video-tutorials/hello-world/ - Hello World Tutorial from Video.
+ PLAY VIDEO
++ ./multiplexing/ - Multiplexing Tutorial.
+ PLAY VIDEO
++ ./encryption/ - Encryption Tutorial.
+ PLAY VIDEO
++ ./acknowledgements/ - Acknowledgements Tutorial.
+ PLAY VIDEO
++ ./presence/ - Presence Tutorial.
+ PLAY VIDEO
 
 ## Simplified Socket.IO API Usage
 
@@ -36,15 +48,16 @@ emit() or send() functions, the message will be broadcast.
 
 + Enhanced User Tracking Presence Events (join, leave).
 + Get Counts of Active Users per Connection.
++ Get a List of Active Users.
 + Socket level Events (connect, disconnect, reconnect).
 + Multiplexing many channels on one socket.
++ Multiple Event Binding on one socket.
 + Smart Broadcasting (broadcast with auto-recovery on failure).
 + Disconnect from a Channel.
 + Acknowledgements of Message Receipt.
 + Stanford Crypto Library with AES Encryption.
 + Server Side Events.
 + Geo Data with Latitude/Longitude.
-+ List of Users
 
 ## How to use
 
@@ -71,7 +84,7 @@ This simplified usage of Socket.IO will create a connection, listen for a
 
 Socket.IO allows you to emit and receive custom events.
 Reserved Events are: `connect`, `message`, `disconnect`,
-`reconnect`, `join` and `leave`.
+`reconnect`, `ping`, `join` and `leave`.
 
 ```js
 // IMPORTANT: PubNub Setup with Account
