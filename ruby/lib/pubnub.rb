@@ -1,5 +1,5 @@
-## www.pubnub.com - PubNub realtime push service in the cloud. 
-## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog 
+## www.pubnub.com - PubNub realtime push service in the cloud.
+## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog
 
 ## PubNub Real Time Push APIs and Notifications Framework
 ## Copyright (c) 2010 Stephen Blum
@@ -12,6 +12,7 @@
 require 'digest/md5'
 require 'open-uri'
 require 'uri'
+require 'net/http'
 require 'json'
 require 'pp'
 
@@ -39,6 +40,9 @@ class Pubnub
         else
             @origin = 'http://'  + @origin
         end
+
+        uri         = URI.parse(@origin)
+        @connection = Net::HTTP.start(uri.host, uri.port)
     end
 
     #**
@@ -197,16 +201,13 @@ class Pubnub
     #*
     def _request(request)
         ## Construct Request URL
-        url = @origin + '/' + request.map{ |bit| bit.split('').map{ |ch|
+        url = '/' + request.map{ |bit| bit.split('').map{ |ch|
             ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
             '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
         }.join('') }.join('/')
 
-        response = ''
-        open(url) do |f|
-            response = f.read
-        end
-
+        puts "Sending URL: #{url}"
+        response = @connection.get(url).body
         return JSON.parse(response)
     end
 end
