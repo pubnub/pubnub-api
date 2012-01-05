@@ -206,9 +206,8 @@ class Pubnub
             '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
         }.join('') }.join('/')
 
-        puts "Sending URL: #{url}"
         response = @connection.get(url).body
-        return JSON.parse(response)
+        JSON.parse(response)
     end
 end
 
