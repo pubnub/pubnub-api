@@ -17,6 +17,8 @@ require 'json'
 require 'pp'
 
 class Pubnub
+    MAX_RETRIES = 3
+
     #**
     #* Pubnub
     #*
@@ -206,8 +208,20 @@ class Pubnub
             '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
         }.join('') }.join('/')
 
-        response = @connection.get(url).body
+        response = send_with_retries(url, MAX_RETRIES)
         JSON.parse(response)
+    end
+
+    private
+
+    def send_with_retries(url, retries)
+      tries = 0
+      begin
+        @connection.get(url).body
+      rescue
+        tries += 1
+        tries < retries ? retry : raise
+      end
     end
 end
 
