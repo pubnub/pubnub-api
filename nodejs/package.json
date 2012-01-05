@@ -1,10 +1,10 @@
 {
   "name": "pubnub",
   "preferGlobal": "false",
-  "version": "3.1.0", 
+  "version": "3.1.1", 
   "author": "Pubnub <stephen@pubnub.com>",
-  "description": "Publish/subscribe-modeled real-time messaging with PubNub",
-  "contributors": [ 
+  "description": "Publish & Subscribe Real-time Messaging with PubNub",
+  "contributors": [
     {
       "name": "Stephen Blum",
       "email": "stephen@pubnub.com"

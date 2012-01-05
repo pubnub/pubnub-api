@@ -123,9 +123,8 @@ exports.init = function(setup) {
     ,   SSL           = setup.ssl
     ,   ORIGIN        = setup.origin || 'pubsub.pubnub.com'
     ,   LIMIT         = 1800
-    ,   CHANNELS      = {};
-
-    return {
+    ,   CHANNELS      = {}
+    ,   PN            = {
         /*
             PUBNUB.history({
                 channel  : 'my_chat_channel',
@@ -232,7 +231,9 @@ exports.init = function(setup) {
             var channel   = args['channel']
             ,   callback  = callback || args['callback']
             ,   timetoken = 0
-            ,   error     = args['error'] || function(){};
+            ,   error     = args['error'] || function(){}
+            ,   connected = 0
+            ,   connect   = args['connect'] || function(){};
 
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
@@ -258,10 +259,19 @@ exports.init = function(setup) {
                         SUBSCRIBE_KEY, encode(channel),
                         '0', timetoken
                     ],
-                    origin  : ORIGIN,
-                    fail    : function() { timeout( pubnub, 1000 ); error() },
+                    origin : ORIGIN,
+                    fail : function() {
+                        timeout( pubnub, 1000 );
+                        PN.time(function(success){
+                            success || error();
+                        });
+                    },
                     success : function(message) {
                         if (!CHANNELS[channel].connected) return;
+                        if (!connected) {
+                            connected = 1;
+                            connect();
+                        }
                         timetoken = message[1];
                         timeout( pubnub, 10 );
                         message[0].forEach(function(msg) { callback(msg) });
@@ -273,4 +283,6 @@ exports.init = function(setup) {
             pubnub();
         }
     };
+
+    return PN;
 }
