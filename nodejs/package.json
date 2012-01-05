@@ -1,7 +1,7 @@
 {
   "name": "pubnub",
   "preferGlobal": "false",
-  "version": "3.1.1", 
+  "version": "3.1.2", 
   "author": "Pubnub <stephen@pubnub.com>",
   "description": "Publish & Subscribe Real-time Messaging with PubNub",
   "contributors": [
@@ -17,7 +17,10 @@
   "bin": {},
   "scripts": { },
   "main": "./pubnub.js",
-  "repository": { },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pubnub/pubnub-api.git"
+  },
   "keywords": [
     "cloud",
     "publish",
