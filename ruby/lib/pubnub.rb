@@ -1,5 +1,5 @@
-## www.pubnub.com - PubNub realtime push service in the cloud. 
-## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog 
+## www.pubnub.com - PubNub realtime push service in the cloud.
+## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog
 
 ## PubNub Real Time Push APIs and Notifications Framework
 ## Copyright (c) 2010 Stephen Blum
@@ -12,10 +12,13 @@
 require 'digest/md5'
 require 'open-uri'
 require 'uri'
+require 'net/http'
 require 'json'
 require 'pp'
 
 class Pubnub
+    MAX_RETRIES = 3
+
     #**
     #* Pubnub
     #*
@@ -39,6 +42,9 @@ class Pubnub
         else
             @origin = 'http://'  + @origin
         end
+
+        uri         = URI.parse(@origin)
+        @connection = Net::HTTP.start(uri.host, uri.port)
     end
 
     #**
@@ -197,17 +203,25 @@ class Pubnub
     #*
     def _request(request)
         ## Construct Request URL
-        url = @origin + '/' + request.map{ |bit| bit.split('').map{ |ch|
+        url = '/' + request.map{ |bit| bit.split('').map{ |ch|
             ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
             '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
         }.join('') }.join('/')
 
-        response = ''
-        open(url) do |f|
-            response = f.read
-        end
+        response = send_with_retries(url, MAX_RETRIES)
+        JSON.parse(response)
+    end
 
-        return JSON.parse(response)
+    private
+
+    def send_with_retries(url, retries)
+      tries = 0
+      begin
+        @connection.get(url).body
+      rescue
+        tries += 1
+        tries < retries ? retry : raise
+      end
     end
 end
 
