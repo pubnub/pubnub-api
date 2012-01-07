@@ -66,6 +66,7 @@ function pubnub.new(init)
         local channel   = args.channel
         local callback  = callback or args.callback
         local errorback = args['errorback'] or function() end
+        local connectcb = args['connect'] or function() end
         local timetoken = 0
 
         if not channel then return print("Missing Channel") end
@@ -82,6 +83,7 @@ function pubnub.new(init)
         end
 
         subscriptions[channel].connected = 1
+        subscriptions[channel].first     = nil
 
         -- SUBSCRIPTION RECURSION 
         local function substabizel()
@@ -93,6 +95,12 @@ function pubnub.new(init)
                 callback = function(response)
                     -- STOP CONNECTION?
                     if not subscriptions[channel].connected then return end
+
+                    -- CONNECTED CALLBACK
+                    if not subscriptions[channel].first then
+                        subscriptions[channel].first = true
+                        connectcb()
+                    end
 
                     -- PROBLEM?
                     if not response then
@@ -136,6 +144,7 @@ function pubnub.new(init)
 
         -- DISCONNECT
         subscriptions[channel].connected = nil
+        subscriptions[channel].first  = nil
     end
 
     function self:history(args)
@@ -143,9 +152,9 @@ function pubnub.new(init)
             return print("Missing History Callback and/or Channel")
         end
 
-        limit    = args.limit
-        channel  = args.channel
-        callback = args.callback
+        local limit    = args.limit
+        local channel  = args.channel
+        local callback = args.callback
 
         if not limit then limit = 10 end
 
