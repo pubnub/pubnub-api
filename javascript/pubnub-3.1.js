@@ -235,12 +235,26 @@ var NOW    = 1
 ,   SWF    = 'https://dh15atwfs066y.cloudfront.net/pubnub.swf'
 ,   REPL   = /{([\w\-]+)}/g
 ,   ASYNC  = 'async'
-,   START  = 0
-,   OPERA  = 'opera' in window
 ,   URLBIT = '/'
 ,   XHRTME = 140000
 ,   SECOND = 1000
-,   XORIGN = navigator.userAgent.indexOf('MSIE 6') == -1;
+,   UA     = navigator.userAgent
+,   XORIGN = UA.indexOf('MSIE 6') == -1;
+
+/**
+ * NEXTORIGIN
+ * ==========
+ * var next_origin = nextorigin();
+ */
+var nextorigin = (function() {
+    var ori = Math.random()*9|1;
+    return function(origin) {
+        return origin.indexOf('pubsub') > 0
+           && origin.replace(
+               'pubsub', 'ps' + (ori<10?ori++:ori=1)
+           ) || origin;
+    }
+})();
 
 /**
  * UNIQUE
@@ -425,9 +439,6 @@ function create(element) { return document.createElement(element) }
  */
 function timeout( fun, wait ) {
     return setTimeout( fun, wait );
-    //console.log( 'timeout called', wait === XHRTME && START++ < 4 ? SECOND : wait, wait );
-    //return setTimeout( fun, wait === XHRTME && START++ < 4 ? SECOND : wait );
-    //return setTimeout( fun, rnow() - START > 4 * SECOND ? SECOND : wait );
 }
 
 /**
@@ -779,7 +790,8 @@ var PDIV            = $('pubnub') || {}
             ,   timetoken = 0
             ,   error     = args['error'] || function(){}
             ,   connected = 0
-            ,   connect   = args['connect'] || function(){};
+            ,   connect   = args['connect'] || function(){}
+            ,   origin    = nextorigin(ORIGIN);
 
             // Reduce Status Flicker
             if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
@@ -806,7 +818,7 @@ var PDIV            = $('pubnub') || {}
                 CHANNELS[channel].done = xdr({
                     callback : jsonp,
                     url      : [
-                        ORIGIN, 'subscribe',
+                        origin, 'subscribe',
                         SUBSCRIBE_KEY, encode(channel),
                         jsonp, timetoken
                     ],
@@ -880,7 +892,7 @@ PUBNUB = CREATE_PUBNUB({
 css( PDIV, { 'position' : 'absolute', 'top' : -SECOND } );
 
 
-if (OPERA) PDIV['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+SWF+'><param name=movie value='+SWF+' /><param name=allowscriptaccess value=always /></object>';
+if ('opera' in window) PDIV['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+SWF+'><param name=movie value='+SWF+' /><param name=allowscriptaccess value=always /></object>';
 
 var pubnubs = $('pubnubs') || {};
 
@@ -889,11 +901,13 @@ function ready() { PUBNUB['time'](function(t){ timeout( function() {
     if (READY) return;
     READY = 1;
 
-    var prime = unique()
-    ,   P2    = CREATE_PUBNUB({ 'ssl' : 1 });
+    if (UA.indexOf('MSIE') > 0) {
+        var prime = unique()
+        ,   P2    = CREATE_PUBNUB({ 'ssl' : 1 });
 
-    P2['subscribe']({ 'channel' : prime, 'callback' : rnow });
-    P2['unsubscribe']({ 'channel' : prime });
+        P2['subscribe']({ 'channel' : prime, 'callback' : rnow });
+        P2['unsubscribe']({ 'channel' : prime });
+    }
 
     each( READY_BUFFER, function(sub) {
         sub[2]['subscribe']( sub[0], sub[1] )
@@ -901,7 +915,7 @@ function ready() { PUBNUB['time'](function(t){ timeout( function() {
 }, SECOND ); }); }
 
 // Bind for PUBNUB Readiness to Subscribe
-bind( 'load', window, ready );
+bind( 'load', window, function(){ timeout( ready, 0 ) } );
 
 // Create Interface for Opera Flash
 PUBNUB['rdx'] = function( id, data ) {
