@@ -613,7 +613,7 @@ function ajax( setup ) {
 /* =-====================================================================-= */
 /* =-====================================================================-= */
 
-var PDIV            = $('pubnub') || {}
+var PDIV          = $('pubnub') || {}
 ,   DEMO          = 'demo'
 ,   LIMIT         = 1800
 ,   READY         = 0
@@ -891,24 +891,15 @@ PUBNUB = CREATE_PUBNUB({
 // PUBNUB Flash Socket
 css( PDIV, { 'position' : 'absolute', 'top' : -SECOND } );
 
-
 if ('opera' in window) PDIV['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+SWF+'><param name=movie value='+SWF+' /><param name=allowscriptaccess value=always /></object>';
 
 var pubnubs = $('pubnubs') || {};
 
 // PUBNUB READY TO CONNECT
-function ready() { PUBNUB['time'](function(t){ timeout( function() {
+function ready() { PUBNUB['time'](rnow);
+PUBNUB['time'](function(t){ timeout( function() {
     if (READY) return;
     READY = 1;
-
-    if (UA.indexOf('MSIE') > 0) {
-        var prime = unique()
-        ,   P2    = CREATE_PUBNUB({ 'ssl' : 1 });
-
-        P2['subscribe']({ 'channel' : prime, 'callback' : rnow });
-        P2['unsubscribe']({ 'channel' : prime });
-    }
-
     each( READY_BUFFER, function(sub) {
         sub[2]['subscribe']( sub[0], sub[1] )
     } );

@@ -81,7 +81,7 @@
     }
 
     var p            = PUBNUB
-    ,   many_con_tst = 10
+    ,   many_con_tst = 'opera' in window ? -1 : 10
     ,   channel      = 'pn-javascript-unit-test'
     ,   out          = p.$('unit-test-out')
     ,   test_tpl     = p.$('test_template').innerHTML
@@ -205,13 +205,21 @@
                 p.unsubscribe({ channel : restore_channel });
 
                 // Send Message While Not Connected
-                p.publish({ channel : restore_channel, message : 'test' });
-                p.subscribe({
-                    restore  : true,
+                p.publish({
                     channel  : restore_channel,
-                    callback : function( message, stack ) {
-                        p.unsubscribe({ channel : restore_channel });
-                        test( message === "test", 'Subscribe Restore' );
+                    message  : 'test',
+                    callback : function() {
+                        p.subscribe({
+                            restore  : true,
+                            channel  : restore_channel,
+                            callback : function( message, stack ) {
+                                p.unsubscribe({ channel : restore_channel });
+                                test(
+                                    message === "test",
+                                    'Subscribe Restore'
+                                );
+                            }
+                        });
                     }
                 });
             }
