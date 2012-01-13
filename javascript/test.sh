@@ -21,7 +21,7 @@ then
     exit
 fi
 
-browsers='iexplore/8.0,iexplore/9.0,chrome/13.0,firefox/3.6'
+browsers='chrome/13.0,firefox/3.6,iexplore/8.0,iexplore/9.0'
 noinstrument='pubnub-3.1.js'
 
 tar -cf- test.js pubnub-3.1.js | \

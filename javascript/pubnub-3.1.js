@@ -891,7 +891,7 @@ PUBNUB = CREATE_PUBNUB({
 // PUBNUB Flash Socket
 css( PDIV, { 'position' : 'absolute', 'top' : -SECOND } );
 
-if ('opera' in window) PDIV['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+SWF+'><param name=movie value='+SWF+' /><param name=allowscriptaccess value=always /></object>';
+if ('opera' in window || attr( PDIV, 'flash' )) PDIV['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+SWF+'><param name=movie value='+SWF+' /><param name=allowscriptaccess value=always /></object>';
 
 var pubnubs = $('pubnubs') || {};
 
