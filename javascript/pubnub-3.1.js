@@ -39,10 +39,6 @@ THE SOFTWARE.
 (window['JSON'] && window['JSON']['stringify']) || (function () {
     window['JSON'] || (window['JSON'] = {});
 
-    function f(n) {
-        return n < 10 ? '0' + n : n;
-    }
-
     if (typeof String.prototype.toJSON !== 'function') {
         String.prototype.toJSON =
         Number.prototype.toJSON =
@@ -206,24 +202,51 @@ window.console||(window.console=window.console||{});
 console.log||(console.log=((window.opera||{}).postError||function(){}));
 
 /**
+ * UTILITIES
+ */
+function unique() { return'x'+ ++NOW+''+(+new Date) }
+function rnow() { return+new Date }
+
+/**
+ * LOCAL STORAGE OR COOKIE
+ */
+var db = (function(){
+    var ls = window['localStorage'];
+    return {
+        get : function(key) {
+            if (ls) return ls.getItem(key);
+            if (document.cookie.indexOf(key) == -1) return null;
+            return ((document.cookie||'').match(
+                RegExp(key+'=([^;]+)')
+            )||[])[1] || null;
+        },
+        set : function( key, value ) {
+            if (ls) return ls.setItem( key, value ) && 0;
+            document.cookie = key + '=' + value +
+                '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
+        }
+    };
+})();
+
+/**
  * UTIL LOCALS
  */
 var NOW    = 1
-,   MAGIC  = /{([\w\-]+)}/g
+,   SWF    = 'https://dh15atwfs066y.cloudfront.net/pubnub.swf'
+,   REPL   = /{([\w\-]+)}/g
 ,   ASYNC  = 'async'
+,   START  = 0
+,   OPERA  = 'opera' in window
 ,   URLBIT = '/'
 ,   XHRTME = 140000
-,   UA     = navigator.userAgent
-,   XORIGN = UA.indexOf('MSIE 6') == -1;
+,   SECOND = 1000
+,   XORIGN = navigator.userAgent.indexOf('MSIE 6') == -1;
 
 /**
  * UNIQUE
  * ======
  * var timestamp = unique();
  */
-function unique() { return'x'+ ++NOW+''+(+new Date) }
-
-function rnow() { return+new Date }
 function updater( fun, rate ) {
     var timeout
     ,   last   = 0
@@ -316,7 +339,7 @@ function grep( list, fun ) {
  * var text = supplant( 'Hello {name}!', { name : 'John' } )
  */
 function supplant( str, values ) {
-    return str.replace( MAGIC, function( _, match ) {
+    return str.replace( REPL, function( _, match ) {
         return values[match] || _
     } );
 }
@@ -400,7 +423,12 @@ function create(element) { return document.createElement(element) }
  * =======
  * timeout( function(){}, 100 );
  */
-function timeout( fun, wait ) { return setTimeout( fun, wait ) }
+function timeout( fun, wait ) {
+    return setTimeout( fun, wait );
+    //console.log( 'timeout called', wait === XHRTME && START++ < 4 ? SECOND : wait, wait );
+    //return setTimeout( fun, wait === XHRTME && START++ < 4 ? SECOND : wait );
+    //return setTimeout( fun, rnow() - START > 4 * SECOND ? SECOND : wait );
+}
 
 /**
  * jsonp_cb
@@ -484,7 +512,7 @@ function xdr( setup ) {
                 var s = $(id)
                 ,   p = s && s.parentNode;
                 p && p.removeChild(s);
-            }, 1000 );
+            }, SECOND );
         };
 
     window[callback] = function(response) {
@@ -574,7 +602,7 @@ function ajax( setup ) {
 /* =-====================================================================-= */
 /* =-====================================================================-= */
 
-var PN            = $('pubnub') || {}
+var PDIV            = $('pubnub') || {}
 ,   DEMO          = 'demo'
 ,   LIMIT         = 1800
 ,   READY         = 0
@@ -747,6 +775,7 @@ var PN            = $('pubnub') || {}
 
             var channel   = args['channel']
             ,   callback  = callback || args['callback']
+            ,   restore   = args['restore']
             ,   timetoken = 0
             ,   error     = args['error'] || function(){}
             ,   connected = 0
@@ -782,12 +811,12 @@ var PN            = $('pubnub') || {}
                         jsonp, timetoken
                     ],
                     fail : function() {
-                        timeout( pubnub, 1000 );
+                        timeout( pubnub, SECOND );
                         SELF['time'](function(success){
                             success || error();
                         });
                     },
-                    success : function(message) {
+                    success : function(messages) {
                         if (!CHANNELS[channel].connected) return;
 
                         if (!connected) {
@@ -795,9 +824,20 @@ var PN            = $('pubnub') || {}
                             connect();
                         }
 
-                        timetoken = message[1];
+                        // Restore Previous Connection Point if Needed
+                        // Also Update Timetoken
+                        restore = db.set(
+                            SUBSCRIBE_KEY + channel,
+                            timetoken = restore && db.get(
+                                SUBSCRIBE_KEY + channel
+                            ) || messages[1]
+                        );
+
+                        each( messages[0], function(msg) {
+                            callback( msg, messages );
+                        } );
+
                         timeout( pubnub, 10 );
-                        each( message[0], function(msg) { callback(msg) } );
                     }
                 });
             }
@@ -807,6 +847,7 @@ var PN            = $('pubnub') || {}
         },
 
         // Expose PUBNUB Functions
+        'db'       : db,
         'each'     : each,
         'map'      : map,
         'css'      : css,
@@ -817,54 +858,52 @@ var PN            = $('pubnub') || {}
         'head'     : head,
         'search'   : search,
         'attr'     : attr,
-        'now'      : unique,
+        'now'      : rnow,
+        'unique'   : unique,
         'events'   : events,
         'updater'  : updater,
         'init'     : CREATE_PUBNUB
     };
 
     return SELF;
-},
+};
 
+// CREATE A PUBNUB GLOBAL OBJECT
 PUBNUB = CREATE_PUBNUB({
-    'publish_key'   : attr( PN, 'pub-key' ),
-    'subscribe_key' : attr( PN, 'sub-key' ),
-    'ssl'           : attr( PN, 'ssl' ) == 'on',
-    'origin'        : attr( PN, 'origin' )
+    'publish_key'   : attr( PDIV, 'pub-key' ),
+    'subscribe_key' : attr( PDIV, 'sub-key' ),
+    'ssl'           : attr( PDIV, 'ssl' ) == 'on',
+    'origin'        : attr( PDIV, 'origin' )
 });
 
 // PUBNUB Flash Socket
-var swf = !location.href.indexOf('https') ?
-    'https://dh15atwfs066y.cloudfront.net/pubnub.swf' :
-    'http://cdn.pubnub.com/pubnub.swf';
-css( PN, { 'position' : 'absolute', 'top' : -1000 } );
+css( PDIV, { 'position' : 'absolute', 'top' : -SECOND } );
 
-if (!(
-    UA.indexOf('Firefox') > 0 ||
-    UA.indexOf('MSIE 9')  > 0 ||
-    UA.indexOf('WebKit')  > 0 ||
-    UA.indexOf('MSIE 6')  > 0
-)) PN['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+swf+'><param name=movie value='+swf+' /><param name=allowscriptaccess value=always /></object>';
 
-var pubnubs = $('pubnubs') || {}
-,   psready = setInterval( function(){
-        !('chrome' in window) && pubnubs['get'] && ready()
-    }, 100 );
+if (OPERA) PDIV['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+SWF+'><param name=movie value='+SWF+' /><param name=allowscriptaccess value=always /></object>';
 
-function ready() {
-    clearInterval(psready)
+var pubnubs = $('pubnubs') || {};
 
+// PUBNUB READY TO CONNECT
+function ready() { PUBNUB['time'](function(t){ timeout( function() {
     if (READY) return;
     READY = 1;
+
+    var prime = unique()
+    ,   P2    = CREATE_PUBNUB({ 'ssl' : 1 });
+
+    P2['subscribe']({ 'channel' : prime, 'callback' : rnow });
+    P2['unsubscribe']({ 'channel' : prime });
 
     each( READY_BUFFER, function(sub) {
         sub[2]['subscribe']( sub[0], sub[1] )
     } );
-}
+}, SECOND ); }); }
 
 // Bind for PUBNUB Readiness to Subscribe
-bind( 'load', window, function() { timeout( ready, 1000 ); } );
+bind( 'load', window, ready );
 
+// Create Interface for Opera Flash
 PUBNUB['rdx'] = function( id, data ) {
     if (!data) return FDomainRequest[id]['onerror']();
     FDomainRequest[id]['responseText'] = unescape(data);
@@ -886,14 +925,12 @@ function FDomainRequest() {
 
     return fdomainrequest;
 }
-FDomainRequest['id'] = 1000;
+FDomainRequest['id'] = SECOND;
 
-// Provide Global Interfaces
+// jQuery Interface
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
-window['PUBNUB'] = PUBNUB;
 
 // For Testling.js - http://testling.com/
 typeof module !== 'undefined' && (module.exports = PUBNUB) && ready();
 
 })();
-

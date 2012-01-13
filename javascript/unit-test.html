@@ -141,11 +141,9 @@
                     history_test();
                 }
             });
-
-            p.unsubscribe({ channel : channel });
         }
 
-        publish_test();
+        publish_test(1);
 
         function history_test() {
             p.history({
@@ -162,11 +160,33 @@
             channel  : channel,
             connect  : publish_test,
             callback : function(message) {
+                p.unsubscribe({ channel : channel });
                 test( message, 'Subscribe Message' );
                 test( message.test === "test", 'Subscribe Message Data' );
             }
         });
+
+        /*
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
+                - test SSL!!!!!!!!
+                - test restore
+                - flash opera only
+                - multi-connect
+                - test second callback arg (message) in subscribe
+            TODO
+            TODO
+            TODO
+            TODO
+            TODO
+        */
     }
+    start_test();
 
 })();</script>
 </div></body>
