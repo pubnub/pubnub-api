@@ -39,10 +39,6 @@ THE SOFTWARE.
 (window['JSON'] && window['JSON']['stringify']) || (function () {
     window['JSON'] || (window['JSON'] = {});
 
-    function f(n) {
-        return n < 10 ? '0' + n : n;
-    }
-
     if (typeof String.prototype.toJSON !== 'function') {
         String.prototype.toJSON =
         Number.prototype.toJSON =
