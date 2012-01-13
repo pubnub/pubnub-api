@@ -81,6 +81,7 @@
     }
 
     var p            = PUBNUB
+    ,   many_con_tst = 10
     ,   channel      = 'pn-javascript-unit-test'
     ,   out          = p.$('unit-test-out')
     ,   test_tpl     = p.$('test_template').innerHTML
@@ -88,7 +89,6 @@
     ,   stop_button  = p.$('stop-test')
     ,   status_area  = p.$('test-status')
     ,   status_tpl   = p.attr( status_area, 'template' );
-
 
     /* ======================================================================
     Stop Test
@@ -105,7 +105,7 @@
     ====================================================================== */
     p.bind( 'mousedown,touchstart', start_button, start_test );
     function start_test() {
-        test.plan = 16; // # of tests
+        test.plan = 19 + many_con_tst*3; // # of tests
         test.done = 0;  // 0 tests done so far
         test.pass = 0;  // 0 passes so far
         test.fail = 0;  // 0 failes so far
@@ -159,32 +159,64 @@
         p.subscribe({
             channel  : channel,
             connect  : publish_test,
-            callback : function(message) {
+            callback : function( message, stack ) {
                 p.unsubscribe({ channel : channel });
                 test( message, 'Subscribe Message' );
                 test( message.test === "test", 'Subscribe Message Data' );
+                test( stack[1], 'TimeToken Returned: ' + stack[1] );
             }
         });
 
-        /*
-            TODO
-            TODO
-            TODO
-            TODO
-            TODO
-            TODO
-            TODO
-                - test SSL!!!!!!!!
-                - test restore
-                - flash opera only
-                - multi-connect
-                - test second callback arg (message) in subscribe
-            TODO
-            TODO
-            TODO
-            TODO
-            TODO
-        */
+        /* ------------------------------------------------------------------
+        --- MANY CONNECTIONS TESTS
+        ------------------------------------------------------------------ */
+        p.map( Array(many_con_tst).join('-').split('-'), function( _, conn ) {
+            var chan = 'many-conn-test-' + conn;
+            test( chan, 'Many Connections: ' + conn + ' Connecting...' );
+
+            p.subscribe({
+                channel  : chan,
+                connect  : function() {
+                    test( chan, 'Many Connections: ' + conn + ' Connected!' );
+                    p.publish({ channel : chan, message : chan });
+                },
+                callback : function(message) {
+                    test(
+                        chan === message,
+                        'Many Connections: ' + conn + ' Received'
+                    );
+                    setTimeout(
+                        function() { p.unsubscribe({ channel : chan }) },
+                        5000
+                    );
+                }
+            });
+        } );
+
+        /* ------------------------------------------------------------------
+        --- TESTING NEW CONNECTION RESTORE FEATURE
+        ------------------------------------------------------------------ */
+        var restore_channel = 'restore-channel'+Math.random();
+        p.subscribe({
+            restore  : true,
+            channel  : restore_channel,
+            callback : function(){},
+            connect  : function() {
+                p.unsubscribe({ channel : restore_channel });
+
+                // Send Message While Not Connected
+                p.publish({ channel : restore_channel, message : 'test' });
+                p.subscribe({
+                    restore  : true,
+                    channel  : restore_channel,
+                    callback : function( message, stack ) {
+                        p.unsubscribe({ channel : restore_channel });
+                        test( message === "test", 'Subscribe Restore' );
+                    }
+                });
+            }
+        });
+
     }
     start_test();
 
