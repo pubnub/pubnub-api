@@ -22,7 +22,6 @@ which means excellent performance for laptops too.
 
 ## VIDEO TUTORIALS
 
-+ Credits Go To - [Origin of Socket.IO on PubNub](http://vimeo.com/pubnub/socket-io-pubnub-origin-of-socket-io)
 + ./presence/ - [Presence Tutorial.](http://vimeo.com/pubnub/socket-io-pubnub-user-presence)
 + ./bootstrap-mobile/ - [Bootstrap for Mobile iPhone/Android Apps.](http://vimeo.com/pubnub/socket-io-pubnub-get-started-with-a-bootstrap)
 + ./bootstrap-web/ - [Bootstrap for Desktop/Tablet Web Apps.](http://vimeo.com/pubnub/socket-io-pubnub-get-started-with-a-bootstrap)
@@ -31,6 +30,10 @@ which means excellent performance for laptops too.
 + ./multiplexing/ - [Multiplexing Tutorial.](http://vimeo.com/pubnub/socket-io-pubnub-socket-multiplexing)
 + ./encryption/ - [Encryption Tutorial.](http://vimeo.com/pubnub/socket-io-on-pubnub-encryption)
 + ./acknowledgements/ - [Acknowledgements Tutorial.](http://vimeo.com/pubnub/socket-io-pubnub-acknowledgement-of-message-receipt)
+
+## BACKGROUND VIDEO
+
++ [Origin of Socket.IO on PubNub](http://vimeo.com/pubnub/socket-io-pubnub-origin-of-socket-io)
 
 ## Simplified Socket.IO API Usage
 
