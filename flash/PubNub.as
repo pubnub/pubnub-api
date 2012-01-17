@@ -213,7 +213,7 @@ package com.fantom.net.pubnub
  
             var channel:String          = args.channel;
  
-            var time:Number = start_time_token;
+            var time:Number = 0;
             if (!subscriptions[channel])
             {
                 subscriptions[channel] = {}
@@ -250,17 +250,23 @@ package com.fantom.net.pubnub
  
                 if ( evt.type == Event.COMPLETE ) {
                     try {
-                        var result:Object = JSON.decode(loader.data);
-                        var updatedTime:Number = 0;
+                        var result:Object = JSON.decode(loader.data);						
                         if(result is Array) {
-                            var messages:Array = result[0];
-                            if(messages) {
-                                for (var i:int = 0; i < messages.length; i++) {
-                                    onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { channel:channel, result:[i+1,messages[i]], timeout:1 } ));        
-                                }
-                            }
-                            updatedTime = result[1];
-                            //trace(updatedTime)
+							if (time == 0)
+							{
+								onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE_CONNECTED, { channel:channel }));
+							}
+							else
+							{
+								var messages:Array = result[0];
+								if(messages) {
+									for (var i:int = 0; i < messages.length; i++) {
+										onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { channel:channel, result:[i+1,messages[i]], timeout:1 } ));        
+									}
+								}
+							}
+							time = result[1];
+							//trace(time);
                         }
                     } catch (e:Error) {
                         trace("[PubNub] Bad Data Content Ignored");
@@ -270,7 +276,7 @@ package com.fantom.net.pubnub
  
                     timer = new Timer(interval, 1);
                     timer.addEventListener(TimerEvent.TIMER_COMPLETE, function():void {
-                        _request({ url:url, channel:channel, handler:subHandler, uid:uid, timetoken:updatedTime });
+                        _request({ url:url, channel:channel, handler:subHandler, uid:uid, timetoken:time });
                     });
                     timer.start();
                 } else {
@@ -423,7 +429,7 @@ package com.fantom.net.pubnub
             // Jan 1-4, 1970 (in which case this number could have only
             // 1-7 hex digits), we pad on the left with 7 zeros
             // before taking the low digits.
-            var timeString:String = ("0000000" + time.toString(16).toUpperCase()).subst    return String.fromCharCode.apply(null, uid);
+			return String.fromCharCode.apply(null, uid);
         }               
  
     }   
