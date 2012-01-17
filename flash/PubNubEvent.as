@@ -8,6 +8,7 @@ package com.fantom.net.pubnub
      */
     public class PubNubEvent extends Event 
     {
+	public static const SUBSCRIBE_CONNECTED:String = "SubscribeConnected";
         public static const PUBLISH:String = "Publish";
         public static const SUBSCRIBE:String = "Subscribe";
         public static const UNSUBSCRIBE:String = "Unsubscribe";
