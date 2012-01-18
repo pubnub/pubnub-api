@@ -162,7 +162,7 @@
             channel  : channel,
             connect  : publish_test,
             callback : function(message) {
-                test( message, 'Subscribe Message' );
+                test( message, 'Subscribe Message Received' );
                 test( message.test === "test", 'Subscribe Message Data' );
             }
         });
