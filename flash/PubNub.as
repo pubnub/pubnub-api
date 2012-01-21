@@ -43,6 +43,14 @@ package com.fantom.net.pubnub
  
         private var start_time_token:Number = 0;
         private var queue:Array;
+
+        private var ori:Number = Math.random()*9|1;
+        private function nextorigin(origin:String):String {                                                                            
+            return origin.indexOf('pubsub') > 0                                                                                 
+               && origin.replace( 
+                   'pubsub', 'ps' + (ori<10?ori++:ori=1)                                                                        
+               ) || origin;
+        }
  
         public function PubNub(enforcer:SingletonEnforcer) 
         {
@@ -226,7 +234,7 @@ package com.fantom.net.pubnub
             }
  
             subscriptions[channel].connected = true;
-            var url:String = origin + "/" + "subscribe" + "/" + sub_key + "/" + _encode(channel) + "/" + 0;
+            var url:String = nextorigin(origin) + "/" + "subscribe" + "/" + sub_key + "/" + _encode(channel) + "/" + 0;
             var uid:String = _uid();
  
             function subHandler( evt:Event ):void {
