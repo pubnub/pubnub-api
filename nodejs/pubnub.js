@@ -86,17 +86,23 @@ function xdr( setup ) {
 
     var url     = setup.url.join(URLBIT)
     ,   success = setup.success
-    ,   fail    = setup.fail
     ,   origin  = setup.origin
     ,   ssl     = setup.ssl
-    ,   body    = ''
+    ,   failed  = 0
+    ,   fail    = function(e) {
+            if (failed) return;
+            failed = 1;
+            (setup.fail||function(){})(e);
+    },  body    = ''
     ,   google  = http.createClient( 80, origin, ssl )
     ,   request = google.request( 'GET', url, { 'host': origin });
 
     request.end();
+    request.on( 'error', fail );
     request.on( 'response', function (response) {
         response.setEncoding('utf8');
 
+        response.on( 'error', fail );
         response.on( 'data', function (chunk) {
             if (chunk) body += chunk;
         } );
