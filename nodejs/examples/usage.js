@@ -8,7 +8,7 @@
     http://www.pubnub.com/account#api-keys
 
 --------------------------------------------------------------------------- */
-var pubnub  = require("./pubnub.js");
+var pubnub  = require("./../pubnub.js");
 var network = pubnub.init({
     publish_key   : "demo",
     subscribe_key : "demo",
