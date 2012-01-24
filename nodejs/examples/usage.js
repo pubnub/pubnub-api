@@ -1,9 +1,5 @@
 /* ---------------------------------------------------------------------------
 
-    Run Example:
-
-        node example-usage.js
-
     Init PubNub and Get your PubNub API Keys:
     http://www.pubnub.com/account#api-keys
 
@@ -39,7 +35,7 @@ network.subscribe({
 
                 console.log(info);
 
-                0&&network.history({
+                network.history({
                     channel  : "hello_world",
                     limit    : 1,
                     callback : function(messages){

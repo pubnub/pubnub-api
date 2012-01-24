@@ -4,10 +4,7 @@
 --------------------------------------------------------------------------- */
 var pubnub = require("./../pubnub.js").init({
     publish_key   : "demo",
-    subscribe_key : "demo",
-    secret_key    : "",
-    ssl           : false,
-    origin        : "pubsub.pubnub.com"
+    subscribe_key : "demo"
 })
 ,   exec  = require('child_process').exec;
 
@@ -22,7 +19,11 @@ pubnub.subscribe({
     },
     callback : function(message) {
         console.log(message);
-        exec('say ' + ('voice' in message && message.voice ? '-v ' + message.voice + ' ' : '' ) + message.text);
+        exec('say ' + (
+            'voice' in message &&
+            message.voice ? '-v ' +
+            message.voice + ' ' : ''
+        ) + message.text);
 
     },
     error : function() {
