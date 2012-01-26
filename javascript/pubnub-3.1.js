@@ -247,12 +247,12 @@ var NOW    = 1
  * var next_origin = nextorigin();
  */
 var nextorigin = (function() {
-    var ori = Math.random()*9|1;
+    var ori = Math.floor(Math.random() * 9) + 1;
     return function(origin) {
         return origin.indexOf('pubsub') > 0
-           && origin.replace(
-               'pubsub', 'ps' + (ori<10?ori++:ori=1)
-           ) || origin;
+            && origin.replace(
+             'pubsub', 'ps' + (++ori < 10 ? ori : ori=1)
+            ) || origin;
     }
 })();
 
