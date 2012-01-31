@@ -107,8 +107,13 @@ function xdr( setup ) {
             if (chunk) body += chunk;
         } );
         response.on( 'end', function () {
-            if (body) return success(JSON.parse(body));
-            else      fail();
+            try {
+                if (body) return success(JSON.parse(body));
+                else      fail();
+            }
+            catch(e) {
+                fail();
+            }
         } );
     } );
 }
