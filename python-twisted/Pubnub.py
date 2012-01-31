@@ -215,10 +215,10 @@ class Pubnub():
                 if not response:
                     def time_callback(_time):
                         if not _time:
-                            ioloop.add_timeout(time.time()+1, substabizel)
+                            reactor.callLater(time.time()+1, substabizel)
                             return errorback("Lost Network Connection")
                         else:
-                            ioloop.add_timeout(time.time()+1, substabizel)
+                            reactor.callLater(time.time()+1, substabizel)
 
                     ## ENSURE CONNECTED (Call Time Function)
                     return self.time({ 'callback' : time_callback })
@@ -239,7 +239,7 @@ class Pubnub():
                     str(self.subscriptions[channel]['timetoken'])
                 ], sub_callback )
             except :
-                ioloop.add_timeout(time.time()+1, substabizel)
+                reactor.callLater(time.time()+1, substabizel)
                 return
 
         ## BEGIN SUBSCRIPTION (LISTEN FOR MESSAGES)
