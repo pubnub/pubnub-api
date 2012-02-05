@@ -589,8 +589,8 @@ function ajax( setup ) {
               new XDomainRequest()  ||
               new XMLHttpRequest();
 
-        xhr.onerror = function(){ done(1) };
-        xhr.onload  = finished;
+        xhr.onerror = xhr.onabort   = function(){ done(1) };
+        xhr.onload  = xhr.onloadend = finished;
         xhr.timeout = XHRTME;
 
         xhr.open( 'GET', setup.url.join(URLBIT), true );
@@ -784,14 +784,16 @@ var PDIV          = $('pubnub') || {}
         */
         'subscribe' : function( args, callback ) {
 
-            var channel   = args['channel']
-            ,   callback  = callback || args['callback']
-            ,   restore   = args['restore']
-            ,   timetoken = 0
-            ,   error     = args['error'] || function(){}
-            ,   connected = 0
-            ,   connect   = args['connect'] || function(){}
-            ,   origin    = nextorigin(ORIGIN);
+            var channel      = args['channel']
+            ,   callback     = callback || args['callback']
+            ,   restore      = args['restore']
+            ,   timetoken    = 0
+            ,   connect      = args['connect'] || function(){}
+            ,   reconnect    = args['reconnect'] || function(){}
+            ,   disconnect   = args['error']||args['disconnect']||function(){}
+            ,   disconnected = 0
+            ,   connected    = 0
+            ,   origin       = nextorigin(ORIGIN);
 
             // Reduce Status Flicker
             if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
@@ -823,17 +825,27 @@ var PDIV          = $('pubnub') || {}
                         jsonp, timetoken
                     ],
                     fail : function() {
+                        // Disconnect
+                        if (!disconnected) {
+                            disconnected = 1;
+                            disconnect();
+                        }
+
                         timeout( pubnub, SECOND );
-                        SELF['time'](function(success){
-                            success || error();
-                        });
                     },
                     success : function(messages) {
                         if (!CHANNELS[channel].connected) return;
 
+                        // Connect
                         if (!connected) {
                             connected = 1;
                             connect();
+                        }
+
+                        // Reconnect
+                        if (disconnected) {
+                            disconnected = 0;
+                            reconnect();
                         }
 
                         // Restore Previous Connection Point if Needed
