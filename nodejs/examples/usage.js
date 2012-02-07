@@ -22,6 +22,7 @@ Listen for Messages
 network.subscribe({
     channel  : "hello_world",
     connect  : function() {
+
         // Publish a Message on Connect
         network.publish({
             channel  : "hello_world",

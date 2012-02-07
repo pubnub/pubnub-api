@@ -46,6 +46,22 @@ var NOW    = 1
  */
 function unique() { return'x'+ ++NOW+''+(+new Date) }
 
+
+/**
+ * NEXTORIGIN
+ * ==========
+ * var next_origin = nextorigin();
+ */
+var nextorigin = (function() {
+    var ori = Math.floor(Math.random() * 9) + 1;
+    return function(origin) {
+        return origin.indexOf('pubsub') > 0
+            && origin.replace(
+             'pubsub', 'ps' + (++ori < 10 ? ori : ori=1)
+            ) || origin;
+    }
+})();
+
 /**
  * LOG
  * ===
@@ -94,8 +110,8 @@ function xdr( setup ) {
             failed = 1;
             (setup.fail||function(){})(e);
     },  body    = ''
-    ,   google  = http.createClient( 80, origin, ssl )
-    ,   request = google.request( 'GET', url, { 'host': origin });
+    ,   client  = http.createClient( 80, origin, ssl )
+    ,   request = client.request( 'GET', url, { 'host': origin });
 
     request.end();
     request.on( 'error', fail );
@@ -238,13 +254,18 @@ exports.init = function(setup) {
                 callback : function(message) { console.log(message) }
             });
         */
-        subscribe : function( args, callback ) {
-            var channel   = args['channel']
-            ,   callback  = callback || args['callback']
-            ,   timetoken = 0
-            ,   error     = args['error'] || function(){}
-            ,   connected = 0
-            ,   connect   = args['connect'] || function(){};
+        'subscribe' : function( args, callback ) {
+
+            var channel      = args['channel']
+            ,   callback     = callback || args['callback']
+            ,   timetoken    = 0
+            ,   error        = args['error'] || function(){}
+            ,   connect      = args['connect'] || function(){}
+            ,   reconnect    = args['reconnect'] || function(){}
+            ,   disconnect   = args['disconnect'] || function(){}
+            ,   disconnected = 0
+            ,   connected    = 0
+            ,   origin       = nextorigin(ORIGIN);
 
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
@@ -264,35 +285,53 @@ exports.init = function(setup) {
 
                 // Connect to PubNub Subscribe Servers
                 CHANNELS[channel].done = xdr({
-                    ssl : SSL,
-                    url : [
+                    ssl    : SSL,
+                    origin : origin,
+                    url    : [
                         'subscribe',
-                        SUBSCRIBE_KEY, encode(channel),
+                        SUBSCRIBE_KEY,
+                        encode(channel),
                         '0', timetoken
                     ],
-                    origin : ORIGIN,
                     fail : function() {
+                        // Disconnect
+                        if (!disconnected) {
+                            disconnected = 1;
+                            disconnect();
+                        }
                         timeout( pubnub, 1000 );
-                        PN.time(function(success){
+                        PN['time'](function(success){
                             success || error();
                         });
                     },
-                    success : function(message) {
+                    success : function(messages) {
                         if (!CHANNELS[channel].connected) return;
+
+                        // Connect
                         if (!connected) {
                             connected = 1;
                             connect();
                         }
-                        timetoken = message[1];
+
+                        // Reconnect
+                        if (disconnected) {
+                            disconnected = 0;
+                            reconnect();
+                        }
+
+                        messages[0].forEach(function(msg) {
+                            callback( msg, messages );
+                        });
+
+                        timetoken = messages[1];
                         timeout( pubnub, 10 );
-                        message[0].forEach(function(msg) { callback(msg) });
                     }
                 });
             }
 
             // Begin Recursive Subscribe
             pubnub();
-        }
+        },
     };
 
     return PN;
