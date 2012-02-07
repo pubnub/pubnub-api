@@ -42,11 +42,62 @@ var NOW     = 1
 ,   XHRTME  = 140000;
 
 /**
- * UNIQUE
- * ======
- * var timestamp = unique();
+ * UTILITIES
  */
 function unique() { return'x'+ ++NOW+''+(+new Date) }
+function rnow() { return+new Date }
+
+/**
+ * LOCAL STORAGE OR COOKIE
+ */
+var db = (function(){
+    return {
+        get : function(key) {
+            Ti.App.Properties.getString(''+key);
+        },
+        set : function( key, value ) {
+            Ti.App.Properties.setString( ''+key, ''+value );
+        }
+    };
+})();
+
+/**
+ * NEXTORIGIN
+ * ==========
+ * var next_origin = nextorigin();
+ */
+var nextorigin = (function() {
+    var ori = Math.floor(Math.random() * 9) + 1;
+    return function(origin) {
+        return origin.indexOf('pubsub') > 0
+            && origin.replace(
+             'pubsub', 'ps' + (++ori < 10 ? ori : ori=1)
+            ) || origin;
+    }
+})();
+
+/**
+ * UPDATER
+ * =======
+ * var timestamp = unique();
+ */
+function updater( fun, rate ) {
+    var timeout
+    ,   last   = 0
+    ,   runnit = function() {
+        if (last + rate > rnow()) {
+            clearTimeout(timeout);
+            timeout = setTimeout( runnit, rate );
+        }
+        else {
+            last = rnow();
+            fun();
+        }
+    };
+
+    return runnit;
+}
+
 
 /**
  * LOG
@@ -388,12 +439,17 @@ var DEMO          = 'demo'
         */
         'subscribe' : function( args, callback ) {
 
-            var channel   = args['channel']
-            ,   timetoken = 0
-            ,   connected = 0
-            ,   callback  = callback        || args['callback']
-            ,   error     = args['error']   || function(){}
-            ,   connect   = args['connect'] || function(){};
+            var channel      = args['channel']
+            ,   callback     = callback || args['callback']
+            ,   restore      = args['restore']
+            ,   timetoken    = 0
+            ,   error        = args['error'] || function(){}
+            ,   connect      = args['connect'] || function(){}
+            ,   reconnect    = args['reconnect'] || function(){}
+            ,   disconnect   = args['disconnect'] || function(){}
+            ,   disconnected = 0
+            ,   connected    = 0
+            ,   origin       = nextorigin(ORIGIN);
 
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
@@ -408,33 +464,59 @@ var DEMO          = 'demo'
 
             // Recurse Subscribe
             function pubnub() {
+                var jsonp = jsonp_cb();
+
                 // Stop Connection
                 if (!CHANNELS[channel].connected) return;
 
                 // Connect to PubNub Subscribe Servers
                 CHANNELS[channel].done = xdr({
-                    url : [
-                        ORIGIN, 'subscribe',
+                    callback : jsonp,
+                    url      : [
+                        origin, 'subscribe',
                         SUBSCRIBE_KEY, encode(channel),
-                        0, timetoken
+                        jsonp, timetoken
                     ],
                     fail : function() {
-                        timeout( pubnub, 1000 );
+                        // Disconnect
+                        if (!disconnected) {
+                            disconnected = 1;
+                            disconnect();
+                        }
+                        timeout( pubnub, SECOND );
                         SELF['time'](function(success){
                             success || error();
                         });
                     },
-                    success : function(message) {
+                    success : function(messages) {
                         if (!CHANNELS[channel].connected) return;
 
+                        // Connect
                         if (!connected) {
                             connected = 1;
                             connect();
                         }
 
-                        timetoken = message[1];
+                        // Reconnect
+                        if (disconnected) {
+                            disconnected = 0;
+                            reconnect();
+                        }
+
+                        // Restore Previous Connection Point if Needed
+                        // Also Update Timetoken
+                        restore = db.set(
+                            SUBSCRIBE_KEY + channel,
+                            timetoken = restore && db.get(
+                                SUBSCRIBE_KEY + channel
+                            ) || messages[1]
+                        );
+
+                        each( messages[0], function(msg) {
+                            callback( msg, messages );
+                        } );
+
                         timeout( pubnub, 10 );
-                        each( message[0], function(msg) { callback(msg) } );
                     }
                 });
             }
@@ -444,6 +526,7 @@ var DEMO          = 'demo'
         },
 
         // Expose PUBNUB Functions
+        'db'       : db,
         'each'     : each,
         'map'      : map,
         'supplant' : supplant,

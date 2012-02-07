@@ -30,7 +30,7 @@ Ti.App.Chat = function(setup) {
     pubnub.subscribe({
         channel  : setup['chat-room'],
         connect  : function() {
-            append_chat_message("Entered Chat Room...");
+            append_chat_message("Entered Chat...");
         },
         callback : function(message) {
             append_chat_message( message.text, message.color );
