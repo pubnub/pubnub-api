@@ -1,11 +1,11 @@
 /* ---------------------------------------------------------------------------
 WAIT! - This file depends on instructions from the PUBNUB Cloud.
-http://www.pubnub.com/account
+http://www.pubnub.com/account-javascript-api-include
 --------------------------------------------------------------------------- */
 
 /* ---------------------------------------------------------------------------
 PubNub Real-time Cloud-Hosted Push API and Push Notification Client Frameworks
-Copyright (c) 2011 TopMambo Inc.
+Copyright (c) 2011 PubNub Inc.
 http://www.pubnub.com/
 http://www.pubnub.com/terms
 --------------------------------------------------------------------------- */
@@ -30,162 +30,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 --------------------------------------------------------------------------- */
 
-/* =-====================================================================-= */
-/* =-====================================================================-= */
-/* =-=========================     JSON     =============================-= */
-/* =-====================================================================-= */
-/* =-====================================================================-= */
-
-(window['JSON'] && window['JSON']['stringify']) || (function () {
-    window['JSON'] || (window['JSON'] = {});
-
-    if (typeof String.prototype.toJSON !== 'function') {
-        String.prototype.toJSON =
-        Number.prototype.toJSON =
-        Boolean.prototype.toJSON = function (key) {
-            return this.valueOf();
-        };
-    }
-
-    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-        gap,
-        indent,
-        meta = {    // table of character substitutions
-            '\b': '\\b',
-            '\t': '\\t',
-            '\n': '\\n',
-            '\f': '\\f',
-            '\r': '\\r',
-            '"' : '\\"',
-            '\\': '\\\\'
-        },
-        rep;
-
-    function quote(string) {
-        escapable.lastIndex = 0;
-        return escapable.test(string) ?
-            '"' + string.replace(escapable, function (a) {
-                var c = meta[a];
-                return typeof c === 'string' ? c :
-                    '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-            }) + '"' :
-            '"' + string + '"';
-    }
-
-
-    function str(key, holder) {
-        var i,          // The loop counter.
-            k,          // The member key.
-            v,          // The member value.
-            length,
-            mind = gap,
-            partial,
-            value = holder[key];
-
-        if (value && typeof value === 'object' &&
-                typeof value.toJSON === 'function') {
-            value = value.toJSON(key);
-        }
-
-        if (typeof rep === 'function') {
-            value = rep.call(holder, key, value);
-        }
-
-        switch (typeof value) {
-        case 'string':
-            return quote(value);
-
-        case 'number':
-            return isFinite(value) ? String(value) : 'null';
-
-        case 'boolean':
-        case 'null':
-            return String(value);
-
-        case 'object':
-
-            if (!value) {
-                return 'null';
-            }
-
-            gap += indent;
-            partial = [];
-
-            if (Object.prototype.toString.apply(value) === '[object Array]') {
-
-                length = value.length;
-                for (i = 0; i < length; i += 1) {
-                    partial[i] = str(i, value) || 'null';
-                }
-
-                v = partial.length === 0 ? '[]' :
-                    gap ? '[\n' + gap +
-                            partial.join(',\n' + gap) + '\n' +
-                                mind + ']' :
-                          '[' + partial.join(',') + ']';
-                gap = mind;
-                return v;
-            }
-            if (rep && typeof rep === 'object') {
-                length = rep.length;
-                for (i = 0; i < length; i += 1) {
-                    k = rep[i];
-                    if (typeof k === 'string') {
-                        v = str(k, value);
-                        if (v) {
-                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                        }
-                    }
-                }
-            } else {
-                for (k in value) {
-                    if (Object.hasOwnProperty.call(value, k)) {
-                        v = str(k, value);
-                        if (v) {
-                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                        }
-                    }
-                }
-            }
-
-            v = partial.length === 0 ? '{}' :
-                gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' +
-                        mind + '}' : '{' + partial.join(',') + '}';
-            gap = mind;
-            return v;
-        }
-    }
-
-    if (typeof JSON['stringify'] !== 'function') {
-        JSON['stringify'] = function (value, replacer, space) {
-            var i;
-            gap = '';
-            indent = '';
-
-            if (typeof space === 'number') {
-                for (i = 0; i < space; i += 1) {
-                    indent += ' ';
-                }
-            } else if (typeof space === 'string') {
-                indent = space;
-            }
-            rep = replacer;
-            if (replacer && typeof replacer !== 'function' &&
-                    (typeof replacer !== 'object' ||
-                     typeof replacer.length !== 'number')) {
-                throw new Error('JSON.stringify');
-            }
-            return str('', {'': value});
-        };
-    }
-
-    if (typeof JSON['parse'] !== 'function') {
-        // JSON is parsed on the server for security.
-        JSON['parse'] = function (text) {return eval('('+text+')')};
-    }
-}());
-
 
 /* =-====================================================================-= */
 /* =-====================================================================-= */
@@ -202,21 +46,80 @@ window.console||(window.console=window.console||{});
 console.log||(console.log=((window.opera||{}).postError||function(){}));
 
 /**
+ * UTILITIES
+ */
+function unique() { return'x'+ ++NOW+''+(+new Date) }
+function rnow() { return+new Date }
+
+/**
+ * LOCAL STORAGE OR COOKIE
+ */
+var db = (function(){
+    var ls = window['localStorage'];
+    return {
+        get : function(key) {
+            if (ls) return ls.getItem(key);
+            if (document.cookie.indexOf(key) == -1) return null;
+            return ((document.cookie||'').match(
+                RegExp(key+'=([^;]+)')
+            )||[])[1] || null;
+        },
+        set : function( key, value ) {
+            if (ls) return ls.setItem( key, value ) && 0;
+            document.cookie = key + '=' + value +
+                '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
+        }
+    };
+})();
+
+/**
  * UTIL LOCALS
  */
 var NOW    = 1
-,   MAGIC  = /\$?{([\w\-]+)}/g
+,   REPL   = /{([\w\-]+)}/g
 ,   ASYNC  = 'async'
 ,   URLBIT = '/'
 ,   XHRTME = 140000
-,   XORIGN = 1;
+,   SECOND = 1000
+,   UA     = navigator.userAgent
+,   XORIGN = UA.indexOf('MSIE 6') == -1;
+
+/**
+ * NEXTORIGIN
+ * ==========
+ * var next_origin = nextorigin();
+ */
+var nextorigin = (function() {
+    var ori = Math.floor(Math.random() * 9) + 1;
+    return function(origin) {
+        return origin.indexOf('pubsub') > 0
+            && origin.replace(
+             'pubsub', 'ps' + (++ori < 10 ? ori : ori=1)
+            ) || origin;
+    }
+})();
 
 /**
  * UNIQUE
  * ======
  * var timestamp = unique();
  */
-function unique() { return'x'+ ++NOW+''+(+new Date) }
+function updater( fun, rate ) {
+    var timeout
+    ,   last   = 0
+    ,   runnit = function() {
+        if (last + rate > rnow()) {
+            clearTimeout(timeout);
+            timeout = setTimeout( runnit, rate );
+        }
+        else {
+            last = rnow();
+            fun();
+        }
+    };
+
+    return runnit;
+}
 
 /**
  * $
@@ -237,10 +140,10 @@ function log(message) { console['log'](message) }
  * ======
  * var elements = search('a div span');
  */
-function search(elements) {
+function search( elements, start ) {
     var list = [];
     each( elements.split(/\s+/), function(el) {
-        each( document.getElementsByTagName(el), function(node) {
+        each( (start || document).getElementsByTagName(el), function(node) {
             list.push(node);
         } );
     } );
@@ -255,12 +158,14 @@ function search(elements) {
 function each( o, f ) {
     if ( !o || !f ) return;
 
-    if ( typeof o[0] != 'undefined' ) for ( var i = 0, l = o.length; i < l; )
-        f.call( o[i], o[i], i++ );
-    else for ( var i in o )
-        o.hasOwnProperty    &&
-        o.hasOwnProperty(i) &&
-        f.call( o[i], i, o[i] );
+    if ( typeof o[0] != 'undefined' )
+        for ( var i = 0, l = o.length; i < l; )
+            f.call( o[i], o[i], i++ );
+    else
+        for ( var i in o )
+            o.hasOwnProperty    &&
+            o.hasOwnProperty(i) &&
+            f.call( o[i], i, o[i] );
 }
 
 /**
@@ -291,8 +196,8 @@ function grep( list, fun ) {
  * var text = supplant( 'Hello {name}!', { name : 'John' } )
  */
 function supplant( str, values ) {
-    return str.replace( MAGIC, function( _, match ) {
-        return ''+values[match] || ''
+    return str.replace( REPL, function( _, match ) {
+        return values[match] || _
     } );
 }
 
@@ -306,7 +211,7 @@ function supplant( str, values ) {
 function bind( type, el, fun ) {
     each( type.split(','), function(etype) {
         var rapfun = function(e) {
-            if (!e) var e = window.event;
+            if (!e) e = window.event;
             if (!fun(e)) {
                 e.cancelBubble = true;
                 e.returnValue  = false;
@@ -375,7 +280,9 @@ function create(element) { return document.createElement(element) }
  * =======
  * timeout( function(){}, 100 );
  */
-function timeout( fun, wait ) { return setTimeout( fun, wait ) }
+function timeout( fun, wait ) {
+    return setTimeout( fun, wait );
+}
 
 /**
  * jsonp_cb
@@ -390,11 +297,37 @@ function jsonp_cb() { return XORIGN ? 0 : unique() }
  * var encoded_path = encode('path');
  */
 function encode(path) {
-    return map( (''+path).split(''), function(chr) {
-        return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?".indexOf(chr) > -1 ?
-               "%"+chr.charCodeAt(0).toString(16).toUpperCase()      : chr
+    return map( (encodeURIComponent(path)).split(''), function(chr) {
+        return "-_.!~*'()".indexOf(chr) < 0 ? chr :
+               "%"+chr.charCodeAt(0).toString(16).toUpperCase()
     } ).join('');
 }
+
+/**
+ * EVENTS
+ * ======
+ * PUBNUB.events.bind( 'you-stepped-on-flower', function(message) {
+ *     // Do Stuff with message
+ * } );
+ *
+ * PUBNUB.events.fire( 'you-stepped-on-flower', "message-data" );
+ * PUBNUB.events.fire( 'you-stepped-on-flower', {message:"data"} );
+ * PUBNUB.events.fire( 'you-stepped-on-flower', [1,2,3] );
+ *
+ */
+var events = {
+    'list'   : {},
+    'unbind' : function( name ) { events.list[name] = [] },
+    'bind'   : function( name, fun ) {
+        (events.list[name] = events.list[name] || []).push(fun);
+    },
+    'fire' : function( name, data ) {
+        each(
+            events.list[name] || [],
+            function(fun) { fun(data) }
+        );
+    }
+};
 
 /**
  * XDR Cross Domain Request
@@ -433,7 +366,7 @@ function xdr( setup ) {
                 var s = $(id)
                 ,   p = s && s.parentNode;
                 p && p.removeChild(s);
-            }, 1000 );
+            }, SECOND );
         };
 
     window[callback] = function(response) {
@@ -498,8 +431,8 @@ function ajax( setup ) {
               new XDomainRequest()  ||
               new XMLHttpRequest();
 
-        xhr.onerror = function(){ done(1) };
-        xhr.onload  = finished;
+        xhr.onerror = xhr.onabort   = function(){ done(1) };
+        xhr.onload  = xhr.onloadend = finished;
         xhr.timeout = XHRTME;
 
         xhr.open( 'GET', setup.url.join(URLBIT), true );
@@ -522,8 +455,11 @@ function ajax( setup ) {
 /* =-====================================================================-= */
 /* =-====================================================================-= */
 
-var DEMO          = 'demo'
+var PDIV          = $('pubnub') || {}
+,   DEMO          = 'demo'
 ,   LIMIT         = 1800
+,   READY         = 0
+,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
     var CHANNELS      = {}
     ,   PUBLISH_KEY   = setup['publish_key']   || DEMO
@@ -591,6 +527,41 @@ var DEMO          = 'demo'
         },
 
         /*
+            PUBNUB.analytics({
+                channel  : '',   // Leave blank for All Channels
+                ago      : 0,    // Minutes Ago
+                duration : 10,   // Minutes Offset
+                limit    : 1000, // Max Results to Aggregate
+                callback : function(response) {}
+            });
+        */
+        'analytics' : function(args) {
+            var jsonp    = jsonp_cb()
+            ,   channel  = args['channel']  || ''
+            ,   limit    = args['limit']    || 100
+            ,   ago      = args['ago']      || 0
+            ,   duration = args['duration'] || 100
+            ,   callback = args['callback'];
+
+            xdr({
+                callback : jsonp,
+                success  : function(response) { callback(response) },
+                fail     : function() { callback(0) },
+                url      : [[
+                    'http' + SSL +
+                    '://pubnub-prod.appspot.com/analytics-channel?callback=' +
+                    jsonp,
+                    'sub-key='  + SUBSCRIBE_KEY,
+                    'pub-key='  + PUBLISH_KEY,
+                    'channel='  + encode(channel),
+                    'limit='    + limit,
+                    'ago='      + ago,
+                    'duration=' + duration
+                ].join('&')]
+            });
+        },
+
+        /*
             PUBNUB.publish({
                 channel : 'my_chat_channel',
                 message : 'hello!'
@@ -600,7 +571,8 @@ var DEMO          = 'demo'
             var callback = callback || args['callback'] || function(){}
             ,   message  = args['message']
             ,   channel  = args['channel']
-            ,   jsonp    = jsonp_cb();
+            ,   jsonp    = jsonp_cb()
+            ,   url;
 
             if (!message)     return log('Missing Message');
             if (!channel)     return log('Missing Channel');
@@ -609,20 +581,23 @@ var DEMO          = 'demo'
             // If trying to send Object
             message = JSON['stringify'](message);
 
+            // Create URL
+            url = [
+                ORIGIN, 'publish',
+                PUBLISH_KEY, SUBSCRIBE_KEY,
+                0, encode(channel),
+                jsonp, encode(message)
+            ];
+
             // Make sure message is small enough.
-            if (message.length > LIMIT) return log('Message Too Big');
+            if (url.join().length > LIMIT) return log('Message Too Big');
 
             // Send Message
             xdr({
                 callback : jsonp,
                 success  : function(response) { callback(response) },
                 fail     : function() { callback([ 0, 'Disconnected' ]) },
-                url      : [
-                    ORIGIN, 'publish',
-                    PUBLISH_KEY, SUBSCRIBE_KEY,
-                    0, encode(channel),
-                    jsonp, encode(message)
-                ]
+                url      : url
             });
         },
 
@@ -650,10 +625,21 @@ var DEMO          = 'demo'
             });
         */
         'subscribe' : function( args, callback ) {
-            var channel   = args['channel']
-            ,   callback  = callback || args['callback']
-            ,   timetoken = 0
-            ,   error     = args['error'] || function(){};
+
+            var channel      = args['channel']
+            ,   callback     = callback || args['callback']
+            ,   restore      = args['restore']
+            ,   timetoken    = 0
+            ,   error        = args['error'] || function(){}
+            ,   connect      = args['connect'] || function(){}
+            ,   reconnect    = args['reconnect'] || function(){}
+            ,   disconnect   = args['disconnect'] || function(){}
+            ,   disconnected = 0
+            ,   connected    = 0
+            ,   origin       = nextorigin(ORIGIN);
+
+            // Reduce Status Flicker
+            if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
 
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
@@ -677,16 +663,50 @@ var DEMO          = 'demo'
                 CHANNELS[channel].done = xdr({
                     callback : jsonp,
                     url      : [
-                        ORIGIN, 'subscribe',
+                        origin, 'subscribe',
                         SUBSCRIBE_KEY, encode(channel),
                         jsonp, timetoken
                     ],
-                    fail : function() { timeout( pubnub, 1000 ); error()  },
-                    success  : function(message) {
+                    fail : function() {
+                        // Disconnect
+                        if (!disconnected) {
+                            disconnected = 1;
+                            disconnect();
+                        }
+                        timeout( pubnub, SECOND );
+                        SELF['time'](function(success){
+                            success || error();
+                        });
+                    },
+                    success : function(messages) {
                         if (!CHANNELS[channel].connected) return;
-                        timetoken = message[1];
+
+                        // Connect
+                        if (!connected) {
+                            connected = 1;
+                            connect();
+                        }
+
+                        // Reconnect
+                        if (disconnected) {
+                            disconnected = 0;
+                            reconnect();
+                        }
+
+                        // Restore Previous Connection Point if Needed
+                        // Also Update Timetoken
+                        restore = db.set(
+                            SUBSCRIBE_KEY + channel,
+                            timetoken = restore && db.get(
+                                SUBSCRIBE_KEY + channel
+                            ) || messages[1]
+                        );
+
+                        each( messages[0], function(msg) {
+                            callback( msg, messages );
+                        } );
+
                         timeout( pubnub, 10 );
-                        each( message[0], function(msg) { callback(msg) } );
                     }
                 });
             }
@@ -695,22 +715,8 @@ var DEMO          = 'demo'
             pubnub();
         },
 
-        /*
-            // A Clean No Conflict API (Remove PUBNUB Global)
-            PUBNUB.clean(true)(function(PUBNUB){
-                PUBNUB.subscribe({...})
-                PUBNUB.publish({...})
-            });
-        */
-        'clean' : function(remove) {
-            return function(cbready) {
-                var ret = cbready(SELF);
-                if (remove) delete window['PUBNUB'];
-                return ret || SELF;
-            };
-        },
-
         // Expose PUBNUB Functions
+        'db'       : db,
         'each'     : each,
         'map'      : map,
         'css'      : css,
@@ -721,21 +727,41 @@ var DEMO          = 'demo'
         'head'     : head,
         'search'   : search,
         'attr'     : attr,
-        'now'      : unique,
+        'now'      : rnow,
+        'unique'   : unique,
+        'events'   : events,
+        'updater'  : updater,
         'init'     : CREATE_PUBNUB
     };
 
     return SELF;
-},
+};
+
+// CREATE A PUBNUB GLOBAL OBJECT
 PUBNUB = CREATE_PUBNUB({
-    'publish_key'   : DEMO,
-    'subscribe_key' : DEMO,
-    'ssl'           : false,
-    'origin'        : 'pubsub.pubnub.com'
+    'publish_key'   : attr( PDIV, 'pub-key' ),
+    'subscribe_key' : attr( PDIV, 'sub-key' ),
+    'ssl'           : attr( PDIV, 'ssl' ) == 'on',
+    'origin'        : attr( PDIV, 'origin' )
 });
 
-// Provide Global Interfaces
+// PUBNUB Flash Socket
+css( PDIV, { 'position' : 'absolute', 'top' : -SECOND } );
+
+// PUBNUB READY TO CONNECT
+function ready() { PUBNUB['time'](rnow);
+PUBNUB['time'](function(t){ timeout( function() {
+    if (READY) return;
+    READY = 1;
+    each( READY_BUFFER, function(sub) {
+        sub[2]['subscribe']( sub[0], sub[1] )
+    } );
+}, SECOND ); }); }
+
+// Bind for PUBNUB Readiness to Subscribe
+bind( 'load', window, function(){ timeout( ready, 0 ) } );
+
+// jQuery Interface
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
-window['PUBNUB'] = PUBNUB;
 
 })();
