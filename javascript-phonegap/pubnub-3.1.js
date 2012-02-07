@@ -527,41 +527,6 @@ var PDIV          = $('pubnub') || {}
         },
 
         /*
-            PUBNUB.analytics({
-                channel  : '',   // Leave blank for All Channels
-                ago      : 0,    // Minutes Ago
-                duration : 10,   // Minutes Offset
-                limit    : 1000, // Max Results to Aggregate
-                callback : function(response) {}
-            });
-        */
-        'analytics' : function(args) {
-            var jsonp    = jsonp_cb()
-            ,   channel  = args['channel']  || ''
-            ,   limit    = args['limit']    || 100
-            ,   ago      = args['ago']      || 0
-            ,   duration = args['duration'] || 100
-            ,   callback = args['callback'];
-
-            xdr({
-                callback : jsonp,
-                success  : function(response) { callback(response) },
-                fail     : function() { callback(0) },
-                url      : [[
-                    'http' + SSL +
-                    '://pubnub-prod.appspot.com/analytics-channel?callback=' +
-                    jsonp,
-                    'sub-key='  + SUBSCRIBE_KEY,
-                    'pub-key='  + PUBLISH_KEY,
-                    'channel='  + encode(channel),
-                    'limit='    + limit,
-                    'ago='      + ago,
-                    'duration=' + duration
-                ].join('&')]
-            });
-        },
-
-        /*
             PUBNUB.publish({
                 channel : 'my_chat_channel',
                 message : 'hello!'
