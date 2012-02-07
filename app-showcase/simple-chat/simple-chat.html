@@ -1,0 +1,23 @@
+<input id=input></input>
+<button id=button>SEND</button>
+<div id=output></div>
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script>(function(){
+    var input  = PUBNUB.$('input')
+    ,   button = PUBNUB.$('button')
+    ,   output = PUBNUB.$('output')
+
+    PUBNUB.subscribe({
+        'channel'  : 'simple-chat',
+        'callback' : function(message) {
+            output.innerHTML = message + '<br>' + output.innerHTML
+        }
+    })
+        
+    PUBNUB.bind( 'mousedown,touchstart', button, function() {
+        PUBNUB.publish({
+            'channel' : 'simple-chat',
+            'message' : input.value
+        })
+    } ) 
+})()</script>
