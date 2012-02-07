@@ -788,9 +788,10 @@ var PDIV          = $('pubnub') || {}
             ,   callback     = callback || args['callback']
             ,   restore      = args['restore']
             ,   timetoken    = 0
+            ,   error        = args['error'] || function(){}
             ,   connect      = args['connect'] || function(){}
             ,   reconnect    = args['reconnect'] || function(){}
-            ,   disconnect   = args['error']||args['disconnect']||function(){}
+            ,   disconnect   = args['disconnect'] || function(){}
             ,   disconnected = 0
             ,   connected    = 0
             ,   origin       = nextorigin(ORIGIN);
@@ -830,8 +831,10 @@ var PDIV          = $('pubnub') || {}
                             disconnected = 1;
                             disconnect();
                         }
-
                         timeout( pubnub, SECOND );
+                        SELF['time'](function(success){
+                            success || error();
+                        });
                     },
                     success : function(messages) {
                         if (!CHANNELS[channel].connected) return;
