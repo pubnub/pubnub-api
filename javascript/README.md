@@ -1,12 +1,14 @@
 # YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 http://www.pubnub.com/account
 
-## TESTLING
+## TESTLING - (OPTIONAL)
 PubNub JavaScript API for Web Browsers
-uses Testling Cloud Service
-for QA and Deployment.
+uses Testling Cloud Service for QA and Deployment.
 http://www.testling.com/
+
 You need this to run './test.sh' unit test.
+This is completely optional, however we love Testling.
+
 
 ## PubNub 3.1 Real-time Cloud Push API - JAVASCRIPT
 http://www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
@@ -16,7 +18,7 @@ PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time messages
 to thousands of web and mobile clients simultaneously.
 
-## SIMPLE EXAMPLE USE PUBNUB API -->
+## SIMPLE EXAMPLE USE PUBNUB API
 ```html
 <div id=pubnub></div>
 <script src=http://cdn.pubnub.com/pubnub-3.1.min.js ></script>
@@ -37,7 +39,7 @@ to thousands of web and mobile clients simultaneously.
 </script>
 ```
 
-## INCLUDE SCRIPT PREFERED STYLE -->
+## ADVANCED STYLE
 ```html
 <div id=pubnub></div>
 <script src=http://cdn.pubnub.com/pubnub-3.1.min.js ></script>
@@ -50,6 +52,12 @@ to thousands of web and mobile clients simultaneously.
         callback   : function(message) { // RECEIVED A MESSAGE.
             alert(message)
         },
+        connect    : function() {        // CONNECTION ESTABLISHED.
+            PUBNUB.publish({             // SEND A MESSAGE.
+                channel : "hello_world",
+                message : "Hi from PubNub."
+            })
+        },
         disconnect : function() {        // LOST CONNECTION.
             alert(
                 "Connection Lost." +
@@ -58,12 +66,6 @@ to thousands of web and mobile clients simultaneously.
         },
         reconnect  : function() {        // CONNECTION RESTORED.
             alert("And we're Back!")
-        },
-        connect    : function() {        // CONNECTION ESTABLISHED.
-            PUBNUB.publish({             // SEND A MESSAGE.
-                channel : "hello_world",
-                message : "Hi from PubNub."
-            })
         }
     })
 })();</script>
