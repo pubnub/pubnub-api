@@ -45,6 +45,7 @@ emit() or send() functions, the message will be broadcast.
 + Enhanced User Tracking Presence Events (join, leave).
 + Get Counts of Active Users per Connection.
 + Get a List of Active Users.
++ Customer User Data.
 + Socket level Events (connect, disconnect, reconnect).
 + Multiplexing many channels on one socket.
 + Multiple Event Binding on one socket.
@@ -129,6 +130,44 @@ chat.on( 'leave', function(user) {
 chat.on( 'join', function(user) {
     console.log( 'user joined', user );
 } );
+```
+
+### Custom User Presence (Custom User Data)
+
+Optionally you may need to supply specific details
+about a user who has connected
+or disconnected recently, or ongoign during usage of the app.
+This is because you have a database with user details in a table
+like MongoDB, CouchDB, MySQL, Redis or another.
+And you want to share these details over the wire
+on Join/Leave events with other connected users.
+The best way to relay custom user details is to
+use this following sample code:
+
+```js
+var MY_USER_DATA = { name : "John" };
+var pubnub_setup = {
+    user          : MY_USER_DATA,
+    channel       : 'my_mobile_app',
+    publish_key   : 'demo',
+    subscribe_key : 'demo',
+    ssl           : false
+};
+var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
+chat.on( 'leave', function(user) {
+    // Print and User Data from Other Users
+    console.log( 'user left', user.data );
+} );
+chat.on( 'join', function(user) {
+    // Print and User Data from Other Users
+    console.log( 'user joined', user.data );
+} );
+
+// Change User Details after 5 Seconds
+// All Connected users will receive the update.
+setTimeout( function() {
+    MY_USER_DATA.name = "Sam";
+}, 5000 );
 ```
 
 ### User Geo Data with Latitude/Longitude

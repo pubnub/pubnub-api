@@ -163,6 +163,7 @@ Ti.App.Chat = function(setup) {
 
     this.chat_window = chat_window;
     this.my_color    = rnd_color();
+    this.pubnub      = pubnub;
 
     append_chat_message(" ");
     append_chat_message(" ");

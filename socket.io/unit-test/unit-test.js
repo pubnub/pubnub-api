@@ -182,6 +182,20 @@
         } );
 
 
+        // CUSTOMER USER DATA ON PRESENCE EVENTS
+        var pubnub_setup = {
+            channel       : 'my_mobile_app',
+            publish_key   : 'demo',
+            subscribe_key : 'demo',
+            user          : { name : "John" }
+        };
+
+        // Multi-plexing Single Connection
+        var cpresence = io.connect(
+            'http://pubsub.pubnub.com/custom-presence',
+            pubnub_setup
+        );
+
     }
     start_test();
 

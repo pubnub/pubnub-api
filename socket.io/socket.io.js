@@ -1,11 +1,6 @@
 (function(){
 
     // =====================================================================
-    // REQUIRES PUBNUB LIB
-    // =====================================================================
-    'PUBNUB' in window || console.error("Missing PubNub JS Include!");
-
-    // =====================================================================
     // LOCAL STORAGE
     // =====================================================================
     (function(){
@@ -44,6 +39,7 @@
             // PARSE SETUP and HOST
             var urlbits   = (host+'////').split('/')
             ,   setup     = setup || {}
+            ,   cuser     = setup.user || {}
             ,   origin    = urlbits[2]
             ,   namespace = urlbits[3] || standard
             ,   socket    = create_socket(namespace);
@@ -75,9 +71,10 @@
 
             // ESTABLISH CONNECTION
             p.subscribe({
-                channel  : p.channel,
-                error    : dropped,
-                connect  : function() {
+                channel : p.channel,
+                disconnect : dropped,
+                reconnect : function() {p.disconnected = 0;},
+                connect : function() {
                     p.disconnected = 0;
                     p.each( namespaces, function(ns) {
                         p.events.fire( ns + 'connect', {} ) 
@@ -98,7 +95,7 @@
                     // USER EVENTS
                     if (!evt.uuid || evt.uuid === uuid) return;
 
-                    evt.name === 'ping' && p.each( data, function(ns) {
+                    evt.name === 'ping' && p.each( data.nss, function(ns) {
 
                         users[ns] = users[ns] || {};
 
@@ -114,6 +111,7 @@
                         } })();
 
                         user.last = now();
+                        user.data = data.cuser;
 
                         if (user.connected) return;
 
@@ -123,15 +121,13 @@
                     } );
 
                     if (evt.name === 'user-disconnect') disconnect(evt.uuid);
-
-
                 }
             });
 
             // TCP KEEP ALIVE
             p.tcpKeepAlive = setInterval( p.updater( function() {
                 var nss = p.map( namespaces, function(ns) { return ns } );
-                send( 'ping', standard, nss );
+                send( 'ping', standard, { nss : nss, cuser : cuser } );
             }, 2500 ), 500 );
 
             // RETURN SOCKET
