@@ -14,11 +14,14 @@ This is completely optional, however we love Testling.
 http://www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/tutorial/javascript-push-api
 
-PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
-This is a cloud-based service for broadcasting Real-time messages
-to thousands of web and mobile clients simultaneously.
+PubNub is a blazingly fast cloud-hosted messaging service for building
+real-time web and mobile apps. Hundreds of apps and thousands of developers
+rely on PubNub for delivering human-perceptive real-time
+experiences that scale to millions of users worldwide. PubNub delivers
+the infrastructure needed to build amazing MMO games, social apps,
+business collaborative solutions, and more.
 
-## SIMPLE EXAMPLE USE PUBNUB API
+## SIMPLE EXAMPLE
 ```html
 <div id=pubnub></div>
 <script src=http://cdn.pubnub.com/pubnub-3.1.min.js ></script>
