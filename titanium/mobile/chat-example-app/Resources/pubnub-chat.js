@@ -1,3 +1,7 @@
+var isAndroid = (Ti.Platform.osname=='android');
+
+
+
 // ----------------------------------
 // INCLUDE PUBNUB
 // ----------------------------------
@@ -6,9 +10,9 @@ Ti.include('./pubnub.js');
 // ----------------------------------
 // INIT PUBNUB
 // ----------------------------------
-var pubnub = Ti.PubNub.init({
-    publish_key   : 'demo',
-    subscribe_key : 'demo',
+var pubnub = PubNub.init({
+    publish_key   : 'pub-bce1efb0-dd32-4025-ba70-7ad27951b0f5',
+    subscribe_key : 'sub-e9e365ab-5286-11e1-a51a-eb16d07a8bf6',
     ssl           : false,
     origin        : 'pubsub.pubnub.com'
 });
@@ -18,7 +22,7 @@ var pubnub = Ti.PubNub.init({
 // ----------------------------------
 function rnd_hex(light) { return Math.ceil(Math.random()*9) }
 function rnd_color() {
-    return '#'+Ti.PubNub.map(
+    return '#'+PubNub.map(
         Array(3).join().split(','), rnd_hex
     ).join('');
 }
@@ -57,30 +61,32 @@ Ti.App.Chat = function(setup) {
         });
     }
 
+
     // ----------------------------------
     // CREATE BASE UI TAB AND ROOT WINDOW
     // ----------------------------------
     var chat_window = Ti.UI.createWindow(setup['window']);
     var textfield   = Ti.UI.createTextField({
-        width       : 247,
-        height      : 30,
+        width       : (isAndroid) ? '75%' : 247,
+        height      : (isAndroid) ? '50dp' : 30,
         left        : 4,
         top         : 4,
         color       : "#111",
         value       : "",
         border      : 1,
         borderStyle : Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+        borderRadius : 4,
         font        : {
-            fontSize   : 14,
+            fontSize   : (isAndroid) ? '18dp' : 14,
             fontWeight : 'bold'
         }
     });
 
     // Text Chat History
     var table = Ti.UI.createTableView({
-        separatorColor : '#fff',
-        top            : 40,
-        height         : 420
+        separatorColor : (isAndroid) ? '#000' : '#fff',
+        top            : (isAndroid) ? '60dp' : 40,
+        height         : '80%'
     });
 
     // Send Button
@@ -88,14 +94,14 @@ Ti.App.Chat = function(setup) {
         title         : 'Send',
         top           : 4,
         right         : 4,
-        width         : 60,
-        height        : 30,
+        width         : (isAndroid) ? '60dp' : 60,
+        height        : (isAndroid) ? '50dp' : 30,
         borderRadius  : 6,
         shadowColor   : "#001",
         shadowOffset  : { x : 1, y : 1 },
         style         : Ti.UI.iPhone.SystemButtonStyle.PLAIN,
         font          : {
-            fontSize   : 16,
+            fontSize   : (isAndroid) ? '18dp' : 16,
             fontWeight : 'bold'
         },
         backgroundGradient : {
@@ -127,11 +133,14 @@ Ti.App.Chat = function(setup) {
 
         var label = Ti.UI.createLabel({
             text   : message || "no-message",
-            height : 'auto',
+            height : (isAndroid) ? '50dp' : 'auto',
             width  : 'auto',
             color  : color || "#111",
             left   : 10,
-            font   : { fontSize : 13}
+            font   : { 
+            	fontSize : (isAndroid) ? '19dp' : 14,
+            	fontWeight: (isAndroid) ? 'bold' : 'normal'
+            }
         });
 
         row.add(label);
