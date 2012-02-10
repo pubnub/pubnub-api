@@ -29,7 +29,8 @@ PUBNUB.secure = (function(){
             subscribe : function(args) {
                 var callback = args.callback;
                 args.callback = function(message) {
-                    callback(decrypt(message));
+                    var decrypted = decrypt(message);
+                    decrypted && callback(decrypted);
                 }
 
                 return pubnub.subscribe(args);
