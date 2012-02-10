@@ -1,35 +1,32 @@
 Logfile initialized
-[INFO] logfile = /opt/pubnub-api/titanium/mobile/chat-example-app/build.log
-[DEBUG] /Users/stephen/Library/Application Support/Titanium/mobilesdk/osx/1.7.5/android/builder.py simulator Andriod Fix /opt/android-sdk-macosx /opt/pubnub-api/titanium/mobile/chat-example-app com.pubnub.android 4 HVGA 
+[INFO] logfile = /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/build.log
+[DEBUG] /Library/Application Support/Titanium/mobilesdk/osx/1.8.1/android/builder.py simulator Andriod Fix /android-sdk /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app com.pubnub.android 6 WVGA854 
 [INFO] Building Andriod Fix for Android ... one moment
-[INFO] Titanium SDK version: 1.7.5 (11/02/11 17:00 ab20af7)
+[INFO] Titanium SDK version: 1.8.1 (01/27/12 17:31 a24502a)
 [DEBUG] Waiting for device to be ready ...
 [TRACE] adb devices returned 1 devices/emulators
 [DEBUG] Device connected... (waited 0 seconds)
-[DEBUG] waited 0.045944 seconds on emulator to get ready
+[DEBUG] waited 0.023734 seconds on emulator to get ready
 [DEBUG] com.pubnub.android installed? True
 [INFO] Fastdev server running, deploying in Fastdev mode
 [INFO] Copying project resources..
+[TRACE] COPYING MODIFIED FILE: /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/pubnub-chat.js => /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/build/android/bin/assets/Resources/pubnub-chat.js
+[TRACE] COPYING MODIFIED FILE: /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/pubnub.js => /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/build/android/bin/assets/Resources/pubnub.js
 [INFO] Tiapp.xml unchanged, skipping class generation
 [DEBUG] Processing Android resource drawables
-[DEBUG] found drawable-long-land-hdpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-long-land-hdpi/default.png
-[DEBUG] found drawable-long-land-ldpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-long-land-ldpi/default.png
-[DEBUG] found drawable-long-port-hdpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-long-port-hdpi/default.png
-[DEBUG] found drawable-long-port-ldpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-long-port-ldpi/default.png
-[DEBUG] found drawable-notlong-land-hdpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-land-hdpi/default.png
-[DEBUG] found drawable-notlong-land-ldpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-land-ldpi/default.png
-[DEBUG] found drawable-notlong-land-mdpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-land-mdpi/default.png
-[DEBUG] found drawable-notlong-port-hdpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-port-hdpi/default.png
-[DEBUG] found drawable-notlong-port-ldpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-port-ldpi/default.png
-[DEBUG] found drawable-notlong-port-mdpi splash screen at /opt/pubnub-api/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-port-mdpi/default.png
+[DEBUG] found drawable-long-land-hdpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-long-land-hdpi/default.png
+[DEBUG] found drawable-long-land-ldpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-long-land-ldpi/default.png
+[DEBUG] found drawable-long-port-hdpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-long-port-hdpi/default.png
+[DEBUG] found drawable-long-port-ldpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-long-port-ldpi/default.png
+[DEBUG] found drawable-notlong-land-hdpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-land-hdpi/default.png
+[DEBUG] found drawable-notlong-land-ldpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-land-ldpi/default.png
+[DEBUG] found drawable-notlong-land-mdpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-land-mdpi/default.png
+[DEBUG] found drawable-notlong-port-hdpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-port-hdpi/default.png
+[DEBUG] found drawable-notlong-port-ldpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-port-ldpi/default.png
+[DEBUG] found drawable-notlong-port-mdpi splash screen at /Users/tpoulsen/Documents/Work docs/zCourse repos/pubnub/titanium/mobile/chat-example-app/Resources/android/images/res-notlong-port-mdpi/default.png
 [INFO] Waiting for SDCard to become available..
 [INFO] Re-launching application ... Andriod Fix
 [INFO] Launching application ... Andriod Fix
 [TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.pubnub.android/.AndriodFixActivity }
-Error type 3
-Error: Activity class {com.pubnub.android/com.pubnub.android.AndriodFixActivity} does not exist.
 
-[INFO] Launching application ... Andriod Fix
-[TRACE] Launch output: Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.pubnub.android/.AndriodFixActivity }
-
-[INFO] Deployed Andriod Fix ... Application should be running.
+[INFO] Android Emulator has exited

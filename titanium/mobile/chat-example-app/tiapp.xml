@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <sdk-version>1.7.5</sdk-version>
+    <sdk-version>1.8.1</sdk-version>
     <property name="ti.android.threadstacksize" type="int">327680</property>
     <deployment-targets>
         <target device="mobileweb">false</target>
