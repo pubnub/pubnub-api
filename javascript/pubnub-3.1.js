@@ -214,16 +214,20 @@ var db = (function(){
     var ls = window['localStorage'];
     return {
         get : function(key) {
-            if (ls) return ls.getItem(key);
-            if (document.cookie.indexOf(key) == -1) return null;
-            return ((document.cookie||'').match(
-                RegExp(key+'=([^;]+)')
-            )||[])[1] || null;
+            try {
+                if (ls) return ls.getItem(key);
+                if (document.cookie.indexOf(key) == -1) return null;
+                return ((document.cookie||'').match(
+                    RegExp(key+'=([^;]+)')
+                )||[])[1] || null;
+            } catch(e) { return }
         },
         set : function( key, value ) {
-            if (ls) return ls.setItem( key, value ) && 0;
-            document.cookie = key + '=' + value +
-                '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
+            try {
+                if (ls) return ls.setItem( key, value ) && 0;
+                document.cookie = key + '=' + value +
+                    '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
+            } catch(e) { return }
         }
     };
 })();
@@ -871,7 +875,10 @@ PUBNUB = CREATE_PUBNUB({
 // PUBNUB Flash Socket
 css( PDIV, { 'position' : 'absolute', 'top' : -SECOND } );
 
-if ('opera' in window || attr( PDIV, 'flash' )) PDIV['innerHTML'] = '<object id=pubnubs type=application/x-shockwave-flash width=1 height=1 data='+SWF+'><param name=movie value='+SWF+' /><param name=allowscriptaccess value=always /></object>';
+if ('opera' in window || attr( PDIV, 'flash' )) PDIV['innerHTML'] =
+    '<object id=pubnubs data='  + SWF +
+    '><param name=movie value=' + SWF +
+    '><param name=allowscriptaccess value=always></object>';
 
 var pubnubs = $('pubnubs') || {};
 
