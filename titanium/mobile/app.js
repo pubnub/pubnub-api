@@ -1,20 +1,18 @@
-Ti.include('./pubnub.js');
-
 (function(){
 
-    // ----------------------------------
+    // -------------------------------------
     // INIT PUBNUB
-    // ----------------------------------
-    var pubnub = Ti.PubNub.init({
+    // -------------------------------------
+    var pubnub = require('pubnub').init({
         publish_key   : 'demo',
         subscribe_key : 'demo',
         ssl           : false,
         origin        : 'pubsub.pubnub.com'
     });
 
-    // ----------------------------------
+    // -------------------------------------
     // LISTEN FOR MESSAGES
-    // ----------------------------------
+    // -------------------------------------
     pubnub.subscribe({
         channel  : 'test',
         connect  : function() {

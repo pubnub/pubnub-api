@@ -537,7 +537,7 @@ var DEMO          = 'demo'
     return SELF;
 };
 
-Ti.PubNub = Ti.App.PubNub = CREATE_PUBNUB({
+module.exports = CREATE_PUBNUB({
     'publish_key'   : 'demo',
     'subscribe_key' : 'demo',
     'ssl'           : false,

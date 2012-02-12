@@ -1,18 +1,14 @@
-var isAndroid = (Ti.Platform.osname=='android');
-
-
-
 // ----------------------------------
-// INCLUDE PUBNUB
+// Detect Platform
 // ----------------------------------
-Ti.include('./pubnub.js');
+var isAndroid = Ti.Platform.osname === 'android';
 
 // ----------------------------------
 // INIT PUBNUB
 // ----------------------------------
-var pubnub = PubNub.init({
-    publish_key   : 'pub-bce1efb0-dd32-4025-ba70-7ad27951b0f5',
-    subscribe_key : 'sub-e9e365ab-5286-11e1-a51a-eb16d07a8bf6',
+var pubnub = require('pubnub').init({
+    publish_key   : 'demo',
+    subscribe_key : 'demo',
     ssl           : false,
     origin        : 'pubsub.pubnub.com'
 });
@@ -22,7 +18,7 @@ var pubnub = PubNub.init({
 // ----------------------------------
 function rnd_hex(light) { return Math.ceil(Math.random()*9) }
 function rnd_color() {
-    return '#'+PubNub.map(
+    return '#'+pubnub.map(
         Array(3).join().split(','), rnd_hex
     ).join('');
 }
