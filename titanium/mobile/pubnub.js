@@ -30,8 +30,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 --------------------------------------------------------------------------- */
 
-(function() {
-
 /**
  * UTIL LOCALS
  */
@@ -537,11 +535,9 @@ var DEMO          = 'demo'
     return SELF;
 };
 
-Ti.PubNub = Ti.App.PubNub = CREATE_PUBNUB({
+module.exports = CREATE_PUBNUB({
     'publish_key'   : 'demo',
     'subscribe_key' : 'demo',
     'ssl'           : false,
     'origin'        : 'pubsub.pubnub.com'
 });
-
-})();
