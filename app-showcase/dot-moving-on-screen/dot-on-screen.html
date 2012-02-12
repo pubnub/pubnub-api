@@ -1,0 +1,35 @@
+<html>
+<body>
+<div pub-key="demo" sub-key="demo" ssl="off" origin="pubsub.pubnub.com" id="pubnub"></div>
+<div id="mouse" style="position:absolute; top:0px; left:0px; width:5px; height:5px; background-color:#ff0000;"></div>
+<div id="status" style="">Trying to connect...</div>
+<script src="http://cdn.pubnub.com/pubnub-3.1.min.js"></script>
+<script>
+(function(){
+  var mouse = document.getElementById('mouse');
+  var status = document.getElementById('status');
+  // LISTEN FOR MESSAGES
+  PUBNUB.subscribe({
+    channel: "hello_world",      // CONNECT TO THIS CHANNEL.
+    restore: false,              // STAY CONNECTED, EVEN WHEN BROWSER IS CLOSED OR WHEN PAGE CHANGES.
+    callback: function(message) { // RECEIVED A MESSAGE.
+      mouse.style.top = message.y + 'px';
+      mouse.style.left = message.x + 'px';
+    },
+    disconnect: function() {        // LOST CONNECTION.
+      status.innerHTML = 'Connection Lost. Will auto-reconnect when Online.';
+    },
+    reconnect: function() {        // CONNECTION RESTORED.
+      status.innerHTML = 'And we are Back!';
+    },
+    connect: function() {        // CONNECTION ESTABLISHED.
+      status.innerHTML = 'Connected!';
+      document.onmousemove = function(e) {
+        PUBNUB.publish({channel:"hello_world",message:{'x':e.clientX,'y':e.clientY}});
+      };
+    }
+  });
+})();
+</script>
+</body>
+</html>
