@@ -35,6 +35,7 @@ THE SOFTWARE.
  */
 var NOW    = 1
 ,   http   = require('http')
+,   https  = require('https')
 ,   URLBIT = '/'
 ,   XHRTME = 140000
 ,   XORIGN = 1;
@@ -113,7 +114,7 @@ function xdr( setup ) {
         };
 
     try {
-        http.get( {
+        (ssl ? https : http).get( {
             host : origin,
             port : ssl ? 443 : 80,
             path : url

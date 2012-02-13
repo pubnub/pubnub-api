@@ -9,7 +9,7 @@ var network = pubnub.init({
     publish_key   : "demo",
     subscribe_key : "demo",
     secret_key    : "",
-    ssl           : false,
+    ssl           : true,
     origin        : "pubsub.pubnub.com"
 });
 
