@@ -105,33 +105,32 @@ function xdr( setup ) {
     ,   origin  = setup.origin
     ,   ssl     = setup.ssl
     ,   failed  = 0
+    ,   body    = ''
     ,   fail    = function(e) {
             if (failed) return;
             failed = 1;
             (setup.fail||function(){})(e);
-    },  body    = ''
-    ,   client  = http.createClient( 80, origin, ssl )
-    ,   request = client.request( 'GET', url, { 'host': origin });
+        };
 
-    request.end();
-    request.on( 'error', fail );
-    request.on( 'response', function (response) {
-        response.setEncoding('utf8');
-
-        response.on( 'error', fail );
-        response.on( 'data', function (chunk) {
-            if (chunk) body += chunk;
-        } );
-        response.on( 'end', function () {
-            try {
-                if (body) return success(JSON.parse(body));
-                else      fail();
-            }
-            catch(e) {
-                fail();
-            }
-        } );
-    } );
+    try {
+        http.get( {
+            host : origin,
+            port : ssl ? 443 : 80,
+            path : url
+        }, function(response) {
+            response.setEncoding('utf8');
+            response.on( 'error', fail );
+            response.on( 'data', function (chunk) {
+                if (chunk) body += chunk;
+            } );
+            response.on( 'end', function () {
+                try {
+                    if (body) return success(JSON.parse(body));
+                    else      fail();
+                } catch(e) { fail(); }
+            } );
+        }).on( 'error', fail );
+    } catch(e) { fail(); }
 }
 
 
