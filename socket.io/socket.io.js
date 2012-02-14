@@ -39,7 +39,8 @@
             // PARSE SETUP and HOST
             var urlbits   = (host+'////').split('/')
             ,   setup     = setup || {}
-            ,   cuser     = setup.user || {}
+            ,   cuser     = setup['user'] || {}
+            ,   presence  = 'presence' in setup ? setup['presence'] : true
             ,   origin    = urlbits[2]
             ,   namespace = urlbits[3] || standard
             ,   socket    = create_socket(namespace);
@@ -125,10 +126,11 @@
             });
 
             // TCP KEEP ALIVE
-            p.tcpKeepAlive = setInterval( p.updater( function() {
-                var nss = p.map( namespaces, function(ns) { return ns } );
-                send( 'ping', standard, { nss : nss, cuser : cuser } );
-            }, 2500 ), 500 );
+            if (presence)
+                p.tcpKeepAlive = setInterval( p.updater( function() {
+                    var nss = p.map( namespaces, function(ns) { return ns } );
+                    send( 'ping', standard, { nss : nss, cuser : cuser } );
+                }, 2500 ), 500 );
 
             // RETURN SOCKET
             return socket;

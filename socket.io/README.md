@@ -43,6 +43,7 @@ emit() or send() functions, the message will be broadcast.
 ## New and Simplifed Features with Socket.IO on PubNub
 
 + Enhanced User Tracking Presence Events (join, leave).
++ Disable Presence (join, leave).
 + Get Counts of Active Users per Connection.
 + Get a List of Active Users.
 + Customer User Data.
@@ -131,6 +132,23 @@ chat.on( 'join', function(user) {
     console.log( 'user joined', user );
 } );
 ```
+### Disable User Presence (Room Events: join, leave)
+
+Maybe you do not need to spend the extra message consumption rates of
+Sending/Receiving messages for User Join/Leave events.  If this is the case,
+you will want to disable presenece detection.  This saves you a lot of messages.
+
+```js
+var pubnub_setup = {
+    channel       : 'my_mobile_app',
+    presence      : false, // DISABLE PRESENCE HERE
+    publish_key   : 'demo',
+    subscribe_key : 'demo',
+    ssl           : false
+};
+var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
+```
+
 
 ### Custom User Presence (Custom User Data)
 
