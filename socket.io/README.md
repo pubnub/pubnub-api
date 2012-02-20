@@ -1,6 +1,6 @@
 # Socket.IO on PubNub
 
-Get a faster Socket.IO with PubNub! Take advangate of the Socket.IO API 
+Get a faster Socket.IO with PubNub! Take advantage of the Socket.IO API 
 leveraging Human Perceptive Real-time on PubNub Infrastructure.
 We believe Socket.IO is the jQuery of Networking.
 Socket.IO is a project that makes WebSockets and Real-time possible in
@@ -20,6 +20,9 @@ simple giving you extra time to build your app.
 The updated JS payload has been optimized for Mobile Apps;
 which means excellent performance for laptops too.
 
+## SOCKET.IO VIMEO CHANNEL
+
++ [Socket.IO Vimeo Channel](https://vimeo.com/channels/291682)
 ## VIDEO TUTORIALS
 
 + ./presence/ - [Presence Tutorial.](http://vimeo.com/pubnub/socket-io-pubnub-user-presence)

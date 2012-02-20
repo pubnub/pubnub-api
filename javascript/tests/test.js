@@ -3,7 +3,10 @@ var PUBNUB  = require('./pubnub-3.1');
 var channel = 'unit-test-pubnub-channel';
 
 test('PUBNUB JavaScript API', function (test) {
-    var pubnub = PUBNUB.init({});
+    var pubnub = PUBNUB.init({
+        publish_key   : 'demo',
+        subscribe_key : 'demo'
+    });
 
     test.plan(14);
 

@@ -618,14 +618,13 @@ function ajax( setup ) {
 /* =-====================================================================-= */
 
 var PDIV          = $('pubnub') || {}
-,   DEMO          = 'demo'
 ,   LIMIT         = 1800
 ,   READY         = 0
 ,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
     var CHANNELS      = {}
-    ,   PUBLISH_KEY   = setup['publish_key']   || DEMO
-    ,   SUBSCRIBE_KEY = setup['subscribe_key'] || DEMO
+    ,   PUBLISH_KEY   = setup['publish_key']   || ''
+    ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
     ,   SSL           = setup['ssl'] ? 's' : ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
     ,   SELF          = {
@@ -843,6 +842,7 @@ var PDIV          = $('pubnub') || {}
         },
 
         // Expose PUBNUB Functions
+        'ready'    : ready,
         'db'       : db,
         'each'     : each,
         'map'      : map,
