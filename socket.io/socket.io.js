@@ -1,28 +1,7 @@
 (function(){
 
     // =====================================================================
-    // LOCAL STORAGE
-    // =====================================================================
-    (function(){
-        var db = window['localStorage'];
-        PUBNUB.db = {
-            get : function(key) {
-                if (db) return db.getItem(key);
-                if (document.cookie.indexOf(key) == -1) return null;
-                return ((document.cookie||'').match(
-                    RegExp(key+'=([^;]+)')
-                )||[])[1] || null;
-            },
-            set : function( key, value ) {
-                if (db) return db.setItem( key, value );
-                document.cookie = key + '=' + value +
-                    '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
-            }
-        };
-    })();
-
-    // =====================================================================
-    // MAIN
+    // PubNub Socket.IO
     // =====================================================================
     var p          = PUBNUB
     ,   standard   = 'standard'

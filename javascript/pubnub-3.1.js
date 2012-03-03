@@ -842,6 +842,7 @@ var PDIV          = $('pubnub') || {}
         },
 
         // Expose PUBNUB Functions
+        'xdr'      : xdr,
         'ready'    : ready,
         'db'       : db,
         'each'     : each,

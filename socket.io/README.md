@@ -45,6 +45,7 @@ emit() or send() functions, the message will be broadcast.
 
 ## New and Simplifed Features with Socket.IO on PubNub
 
++ Full Security Mode with SSL at 2048bit by PubNub.
 + Enhanced User Tracking Presence Events (join, leave).
 + Disable Presence (join, leave).
 + Get Counts of Active Users per Connection.
@@ -90,8 +91,7 @@ Reserved Events are: `connect`, `message`, `disconnect`,
 var pubnub_setup = {
     channel       : 'my_mobile_app',
     publish_key   : 'demo',
-    subscribe_key : 'demo',
-    ssl           : false
+    subscribe_key : 'demo'
 };
 
 var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
@@ -146,8 +146,7 @@ var pubnub_setup = {
     channel       : 'my_mobile_app',
     presence      : false, // DISABLE PRESENCE HERE
     publish_key   : 'demo',
-    subscribe_key : 'demo',
-    ssl           : false
+    subscribe_key : 'demo'
 };
 var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
 ```
@@ -171,8 +170,7 @@ var pubnub_setup = {
     user          : MY_USER_DATA,
     channel       : 'my_mobile_app',
     publish_key   : 'demo',
-    subscribe_key : 'demo',
-    ssl           : false
+    subscribe_key : 'demo'
 };
 var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
 chat.on( 'leave', function(user) {
@@ -191,6 +189,49 @@ setTimeout( function() {
 }, 5000 );
 ```
 
+### Enabling SSL
+
+Enabling security is important, right?
+Get started easily by following these four steps:
+
+1. Add On-Page DIV `<div id=pubnub ssl=on></div>`.
+2. Point to HTTPS Script `https://dh15atwfs066y.cloudfront.net/socket.io.min.js`.
+3. Set `ssl : true` in `pubnub_setup` var.
+4. Set HTTPS `https://` in `io.connect()` function.
+
+```html
+<!-- 1.) ENABLE SECURE CONN FOR THIS PAGE -->
+<div id=pubnub ssl=on></div>
+
+<!-- 2.) ENABLE SECURE CONN FOR THIS PAGE -->
+<script src=https://dh15atwfs066y.cloudfront.net/socket.io.min.js></script>
+
+<script>(function(){
+
+var pubnub_setup = {
+    channel       : 'my_mobile_app',
+    publish_key   : 'demo',
+    subscribe_key : 'demo',
+    ssl           : true     // 3.) Set SSL to true
+};
+
+// 4.) Set Transport to HTTPS
+var chat = io.connect( 'https://pubsub.pubnub.com/chat', pubnub_setup );
+
+chat.on( 'join', function(user) {
+    console.log( 'user joined from:', user.geo );
+} );
+chat.on( 'leave', function(user) {
+    console.log( 'user left from:', user.geo );
+} );
+
+})();</script>
+```
+
+If a user joins after a group has already formed,
+a `join` event will be fired for each user already connected.
+
+
 ### User Geo Data with Latitude/Longitude
 
 Do you need Geographical Coordinate Data from which your users are
@@ -201,8 +242,7 @@ var pubnub_setup = {
     channel       : 'my_mobile_app',
     publish_key   : 'demo',
     subscribe_key : 'demo',
-    geo           : true,    //   <--- Geo Flag!!!
-    ssl           : false
+    geo           : true     //   <--- Geo Flag!!!
 };
 
 var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );
@@ -290,8 +330,7 @@ IMPORTANT: you must include the `cyrpto.js` library!
         channel       : 'my_mobile_app',
         publish_key   : 'demo',
         subscribe_key : 'demo',
-        password      : 'MY-PASSWORD',  // Encrypt with Password
-        ssl           : false
+        password      : 'MY-PASSWORD'  // Encrypt with Password
     };
 
     // Setup Encrypted Channel
@@ -389,8 +428,7 @@ Make sure that the client is connected first.
 var pubnub_setup = {
     channel       : 'leaf-wrap',
     publish_key   : 'demo',
-    subscribe_key : 'demo',
-    ssl           : false
+    subscribe_key : 'demo'
 };
 
 var chat = io.connect( 'http://pubsub.pubnub.com/chat', pubnub_setup );

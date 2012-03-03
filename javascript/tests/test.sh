@@ -21,10 +21,21 @@ then
     exit
 fi
 
-browsers='firefox/10.0,chrome/17.0,iexplore/8.0,iexplore/9.0,safari/5.1'
+browsers='firefox/3.6'
+browsers=$browsers',firefox/9.0'
+browsers=$browsers',firefox/10.0'
+browsers=$browsers',chrome/16.0'
+browsers=$browsers',chrome/17.0'
+browsers=$browsers',iexplore/7.0'
+browsers=$browsers',iexplore/8.0'
+browsers=$browsers',iexplore/9.0'
+browsers=$browsers',safari/5.1'
+
+echo -e "Testing: $browsers"
+
 noinstrument='pubnub-3.1.js'
 
-tar -cf- test.js pubnub-3.1.js | \
+tar -cf- test.js ../pubnub-3.1.js | \
     curl -u $1 -sSNT- \
     "testling.com/?noinstrument=$noinstrument&browsers=$browsers"
 
