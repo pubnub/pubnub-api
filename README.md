@@ -1,15 +1,15 @@
 # PubNub - Real-time Communications
 - Publish and Subscribe Always-on Socket Cloud
 - One-to-Many / One-to-One / Platform Ubiquitous Cloud
-- Global Distribution Cloud Network
-- Optimized for Mobile and Web
+- Globally Distributed Cloud Network - Many Datacenters World-Wide - Fastest Connections
+- Optimized for Mobile and Web - iPhone, Android, Chrome, Firefox, IE and more.
 
 PubNub is a client-to-client push service in the cloud.
-Connect Everything to Everything.
+Connect Everything to Everything; literlally!
 This is a cloud-based service for broadcasting Real-time messages
 to millions of web and mobile clients simultaneously.
 
-## Additional Links
+## Quick Links
 
 - Twitter: http://twitter.com/PubNub
 - Website: http://www.pubnub.com
@@ -33,9 +33,9 @@ to millions of web and mobile clients simultaneously.
 
 # PubNub API Specification
 
-Use this section of the README to see the current specification for
-PubNub Client Libraries.
-The following pseudocode will guide you in learning how each
+Use this section of the README to review the current specification for
+PubNub Cloud Client Libraries.
+The pseudocode will guide you in learning how each
 client library must act in order to properly support the
 breadth of features powered by PubNub Cloud.
 Most client libraries are already written!
@@ -43,9 +43,14 @@ So go check out the list of libraries already available.
 
 ## IMPORT
 
+There are support libs that are needed in order to provide
+full implementation of a PubNub Client API.
+Here is a list of all needed external imports
+common to most platforms and programming languages.
+
 - Crypto Standford AES
 - TLS/SSL 2048bit Support or Better
-- JSON Encode/Decode Stringify/Parse
+- JSON Encode/Decode or Stringify/Parse
 - Async HTTP/HTTPS or Async TCP Sockets
 - Event System
 - HashLib for SHA256
@@ -62,12 +67,8 @@ So go check out the list of libraries already available.
 - subscribe()
 - unsubscribe()
 - history()
-- updater()
-- 
-- 
 
-
-## COMET/BOSH over HTTP REST
+## REST Interface
 
 ### TIME()
 
@@ -161,7 +162,7 @@ GET /publish/demo/demo/e0991b12871de57b333fd0c992f7d3112577cf62/my-channel/0/{"m
 
 #### Response Codes:
 
-The Publish Response always returns successful transmission details.
+The Publish Response always returns success transmission details.
 The First element of the response Array is a bool value either `0` or `1`.
 `0` means failure and `1` means successful trasmission.
 If the response code is `0`, then the transmission has failed.
@@ -190,26 +191,29 @@ in the second element of the response array.
 
 ### HISTORY()
 
-URL Format:
+History API will allow you to fetch previously published messages.
+Currently you can only fetch the last 100 messages.
+However soon-to-come features will include forever-history fetching.
+
+#### URL Format:
 
 ```
-/history/sub-key/channel/callback/limit
+/history/sub-key/channel/0/limit
 ```
 
-Request Example: 
+#### Request Example: 
 
 ```http
-GET /time/0 HTTP/1.1
+GET /history/demo/my-channel/0/100 HTTP/1.1
 ```
 
-Response: 
+#### Response: 
 
 ```javascript
-[7529152783414]
+[MSG,MSG,MSG]
 ```
 
-
-## Function Paramater Definitions 
+## Asynchronous Mandate
 
 All functions are required to be non-blocking.
 All I/O must be Asynchronous.
