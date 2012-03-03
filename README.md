@@ -42,6 +42,13 @@ breadth of features powered by PubNub Cloud.
 Most client libraries are already written!
 So go check out the list of libraries already available.
 
+# Rules of PubNub Client Lib
+
+- Must be able to communicate with EVERY other PubNub Client Lib.
+- Must be Non-blocking (Asynchronous) on all I/O.
+- Must use single Dictionary/Object as Paramater for all methods.
+- Must follow guides in this README file including method usage structure.
+
 ## IMPORT LIBS
 
 There are support libs that are needed in order to provide
