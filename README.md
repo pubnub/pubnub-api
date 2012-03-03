@@ -48,6 +48,8 @@ So go check out the list of libraries already available.
 - Must be Non-blocking (Asynchronous) on all I/O.
 - Must use single Dictionary/Object as Paramater for all methods.
 - Must follow guides in this README file including method usage patterns.
+- Includes a Full Unit Test with a test of each method.
+- Includes Quick Usage Doc with Example Copy/Paste Code.
 
 ## IMPORT LIBS
 
