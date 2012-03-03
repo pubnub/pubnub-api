@@ -219,10 +219,10 @@ var pubnub_setup = {
 var chat = io.connect( 'https://pubsub.pubnub.com/chat', pubnub_setup );
 
 chat.on( 'join', function(user) {
-    console.log( 'user joined from:', user.geo );
+    console.log( 'user joined:', user );
 } );
 chat.on( 'leave', function(user) {
-    console.log( 'user left from:', user.geo );
+    console.log( 'user left:', user );
 } );
 
 })();</script>
