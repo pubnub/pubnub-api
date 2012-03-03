@@ -618,7 +618,6 @@ function ajax( setup ) {
 /* =-====================================================================-= */
 
 var PDIV          = $('pubnub') || {}
-,   LIMIT         = 1800
 ,   READY         = 0
 ,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
@@ -714,9 +713,6 @@ var PDIV          = $('pubnub') || {}
                 0, encode(channel),
                 jsonp, encode(message)
             ];
-
-            // Make sure message is small enough.
-            if (url.join().length > LIMIT) return log('Message Too Big');
 
             // Send Message
             xdr({

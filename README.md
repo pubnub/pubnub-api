@@ -175,7 +175,7 @@ PubNub.history({
 
 ##### Request Example: 
 
-```http
+```
 GET /time/0 HTTP/1.1
 ```
 
@@ -207,7 +207,7 @@ fires a timetoken update.
 
 ##### First Request: 
 
-```http
+```
 GET /subscribe/demo/my-channel/0/0 HTTP/1.1
 ```
 
@@ -219,7 +219,7 @@ GET /subscribe/demo/my-channel/0/0 HTTP/1.1
 
 ##### Second Request: 
 
-```http
+```
 GET /subscribe/demo/my-channel/0/7529152783414 HTTP/1.1
 ```
 
@@ -245,7 +245,7 @@ GET /subscribe/demo/my-channel/0/7529152783414 HTTP/1.1
 
 ##### Request Example: 
 
-```http
+```
 GET /publish/demo/demo/e0991b12871de57b333fd0c992f7d3112577cf62/my-channel/0/{"msg":"hi"} HTTP/1.1
 ```
 
@@ -298,7 +298,7 @@ However soon-to-come features will include forever-history fetching.
 
 ##### Request Example: 
 
-```http
+```
 GET /history/demo/my-channel/0/100 HTTP/1.1
 ```
 
@@ -331,5 +331,147 @@ of the function -- and the return value is supplied to the callback.
 
 ## Pseudocode Logic Requirements
 
+Publish and Subscribe require significant amounts of checks
+in order to provide for easy use to the developer using the API.
+Show as follows are the Publish and Subscribe functions which
+have basic Pseudocode Logic Requirements:
 
+### PUBLISH()
+
+```python
+def publish( self, args ) :
+    ## Fail if bad input.
+    if not (args['channel'] and args['message']) :
+        print('Missing Channel or Message')
+        return False
+
+    ## Capture User Input
+    channel = args['channel']
+
+    if self.cipher_key:
+        message = json.dumps(EncodeAES( self.cipher_key, args['message'] ))
+    else :
+        message = json.dumps(args['message'])
+
+    ## Capture Callback
+    if args.has_key('callback') :
+        callback = args['callback']
+    else :
+        callback = lambda x : x
+
+    ## Sign Message
+    if self.secret_key :
+        signature = hmac.new( self.secret_key, '/'.join([
+            self.publish_key,
+            self.subscribe_key,
+            channel,
+            message
+        ]), hashlib.sha256 ).hexdigest()
+    else :
+        signature = '0'
+
+    ## Send Message
+    self._request([
+        'publish',
+        self.publish_key,
+        self.subscribe_key,
+        signature,
+        channel,
+        '0',
+        message
+    ], callback );
+```
+
+### SUBSCRIBE()
+
+```python
+def subscribe( self, args ) :
+    ## Fail if missing channel
+    if not 'channel' in args :
+        print('Missing Channel.')
+        return False
+
+    ## Fail if missing callback
+    if not 'callback' in args :
+        print('Missing Callback.')
+        return False
+
+    ## Capture User Input
+    channel   = args['channel']
+    callback  = args['callback']
+    connectcb = args['connect']
+
+    if 'errorback' in args:
+        errorback = args['errorback']
+    else:
+        errorback = lambda x: x
+
+    ## New Channel?
+    if not (channel in self.subscriptions) :
+        self.subscriptions[channel] = {
+            'first'     : False,
+            'connected' : 0,
+            'timetoken' : '0'
+        }
+
+    ## Ensure Single Connection
+    if self.subscriptions[channel]['connected'] :
+        print("Already Connected")
+        return False
+
+    self.subscriptions[channel]['connected'] = 1
+
+    ## Subscription TimeStack 
+    def receive():
+        ## STOP CONNECTION?
+        if not self.subscriptions[channel]['connected']:
+            return
+
+        def sub_callback(response):
+            ## STOP CONNECTION?
+            if not self.subscriptions[channel]['connected']:
+                return
+
+            ## CONNECTED CALLBACK
+            if not self.subscriptions[channel]['first'] :
+                self.subscriptions[channel]['first'] = True
+                connectcb()
+
+            ## PROBLEM?
+            if not response:
+                def time_callback(_time):
+                    if not _time:
+                        reactor.callLater(time.time()+1, receive)
+                        return errorback("Lost Network Connection")
+                    else:
+                        reactor.callLater(time.time()+1, receive)
+
+                ## ENSURE CONNECTED (Call Time Function)
+                return self.time({ 'callback' : time_callback })
+
+            self.subscriptions[channel]['timetoken'] = response[1]
+            reactor.callLater(time.time()+0.0001, receive)
+
+            for message in response[0]:
+                if self.cipher_key:
+                    callback(json.loads(DecodeAES( self.cipher_key, message )))
+                else:
+                    callback(json.loads(message))
+
+        ## CONNECT TO PUBNUB SUBSCRIBE SERVERS
+        try :
+            self._request( [
+                'subscribe',
+                self.subscribe_key,
+                channel,
+                '0',
+                str(self.subscriptions[channel]['timetoken'])
+            ], sub_callback )
+        except :
+            reactor.callLater(time.time()+1, receive)
+            return
+
+    ## BEGIN SUBSCRIPTION (LISTEN FOR MESSAGES)
+    receive()
+```
 
