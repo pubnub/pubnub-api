@@ -200,10 +200,10 @@ Get started easily by following these four steps:
 4. Set HTTPS `https://` in `io.connect()` function.
 
 ```html
-<!-- 1.) ENABLE SECURE CONN FOR THIS PAGE -->
+<!-- 1.) ENABLE SECURE CONNECTIONS FOR THIS PAGE -->
 <div id=pubnub ssl=on></div>
 
-<!-- 2.) ENABLE SECURE CONN FOR THIS PAGE -->
+<!-- 2.) Use PubNub CDN HTTPS URL -->
 <script src=https://dh15atwfs066y.cloudfront.net/socket.io.min.js></script>
 
 <script>(function(){
@@ -227,10 +227,6 @@ chat.on( 'leave', function(user) {
 
 })();</script>
 ```
-
-If a user joins after a group has already formed,
-a `join` event will be fired for each user already connected.
-
 
 ### User Geo Data with Latitude/Longitude
 
