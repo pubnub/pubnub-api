@@ -125,7 +125,7 @@ class Pubnub():
             channel,
             '0',
             message
-        ], callback );
+        ], callback )
 
 
     def subscribe( self, args ) :
@@ -292,7 +292,7 @@ class Pubnub():
             channel,
             '0',
             str(limit)
-        ], args['callback'] );
+        ], args['callback'] )
 
     def time( self, args ) :
         """

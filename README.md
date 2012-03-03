@@ -47,7 +47,7 @@ So go check out the list of libraries already available.
 - Must be able to communicate with EVERY other PubNub Client Lib.
 - Must be Non-blocking (Asynchronous) on all I/O.
 - Must use single Dictionary/Object as Paramater for all methods.
-- Must follow guides in this README file including method usage structure.
+- Must follow guides in this README file including method usage patterns.
 
 ## IMPORT LIBS
 
@@ -383,10 +383,10 @@ def publish( self, args ) :
         self.publish_key,
         self.subscribe_key,
         signature,
-        channel,
+        URL_ENCODE(channel),
         '0',
-        message
-    ], callback );
+        URL_ENCODE(message)
+    ], callback )
 ```
 
 ### SUBSCRIBE()
@@ -404,9 +404,11 @@ def subscribe( self, args ) :
         return False
 
     ## Capture User Input
-    channel   = args['channel']
-    callback  = args['callback']
-    connectcb = args['connect']
+    channel      = URL_ENCODE(args['channel'])
+    callback     = args['callback']
+    connectcb    = args['connect'] or lambda x:x
+    disconnectcb = args['disconnect'] or lambda x:x
+    reconnectcb  = args['reconnect'] or lambda x:x
 
     if 'errorback' in args:
         errorback = args['errorback']
@@ -416,9 +418,10 @@ def subscribe( self, args ) :
     ## New Channel?
     if not (channel in self.subscriptions) :
         self.subscriptions[channel] = {
-            'first'     : False,
-            'connected' : 0,
-            'timetoken' : '0'
+            'first'        : False,
+            'connected'    : 0,
+            'disconnected' : 0,
+            'timetoken'    : '0'
         }
 
     ## Ensure Single Connection
@@ -446,6 +449,11 @@ def subscribe( self, args ) :
 
             ## PROBLEM?
             if not response:
+                ## Disconnect
+                if not self.subscriptions[channel]['disconnected']:
+                    self.subscriptions[channel]['disconnected'] = 1
+                    disconnectcb()
+
                 def time_callback(_time):
                     if not _time:
                         reactor.callLater(time.time()+1, receive)
@@ -455,6 +463,11 @@ def subscribe( self, args ) :
 
                 ## ENSURE CONNECTED (Call Time Function)
                 return self.time({ 'callback' : time_callback })
+            else:
+                ## Reconnect
+                if self.subscriptions[channel]['disconnected']:
+                    self.subscriptions[channel]['disconnected'] = 0
+                    reconnectcb()
 
             self.subscriptions[channel]['timetoken'] = response[1]
             reactor.callLater(time.time()+0.0001, receive)
