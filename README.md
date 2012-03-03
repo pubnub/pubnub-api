@@ -3,6 +3,7 @@
 - One-to-Many / One-to-One / Platform Ubiquitous Cloud
 - Globally Distributed Cloud Network - Many Datacenters World-Wide - Fastest Connections
 - Optimized for Mobile and Web - iPhone, Android, Chrome, Firefox, IE and more.
+- Locksetp Synchronization with Everyone on Earth - Synchronize Mass Audiences.
 
 PubNub is a client-to-client push service in the cloud.
 Connect Everything to Everything; literally!
