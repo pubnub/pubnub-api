@@ -1,5 +1,5 @@
 # PubNub - Simple Real-time Communications API
-## Publish() Subscribe()
+## Publish and Subscribe / One-to-Many / One-to-One / Platform Ubiquitous Cloud
 
 PubNub is a client-to-client push service in the cloud.
 Connect Everything to Everything.
@@ -24,6 +24,8 @@ to millions of web and mobile clients simultaneously.
 - PHP, Ruby, JavaScript and more - All Streamlined Platforms Supported.
 - The API FAST! - iPhone, Android and Blackberry phones zip!
 - It's a Breeze for Mobile Phones - Quick and Easy Development.
+- Mass Broadcasting Replication - Send a message to Millions of People in Milliseconds.
+- Platform Ubiquitous Cloud - Every Platform Now has a way to communicate Instantly.
 - Cross Device Communication - Androids and iPhones and Browsers -- all connected.
 
 # PubNub API Specification
