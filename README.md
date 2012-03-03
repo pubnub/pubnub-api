@@ -5,7 +5,7 @@
 - Optimized for Mobile and Web - iPhone, Android, Chrome, Firefox, IE and more.
 
 PubNub is a client-to-client push service in the cloud.
-Connect Everything to Everything; literlally!
+Connect Everything to Everything; literally!
 This is a cloud-based service for broadcasting Real-time messages
 to millions of web and mobile clients simultaneously.
 
@@ -24,7 +24,7 @@ to millions of web and mobile clients simultaneously.
 - Many Datacenters World Wide - High Performance everywhere on Earth.
 - Optimized for Slow and Fast Connections - Fast for mobile 3G, WiFi, 4G and Edge.
 - Reliable Message Delivery on Unreliable connections.
-- Compression and Bundling - Faster than WebSockets - up to 100 messges per second vs. 1 msg/sec.
+- Compression and Bundling - Faster than WebSockets - up to 100msg per second faster.
 - PHP, Ruby, JavaScript and more - All Streamlined Platforms Supported.
 - The API FAST! - iPhone, Android and Blackberry phones zip!
 - It's a Breeze for Mobile Phones - Quick and Easy Development.
@@ -46,7 +46,7 @@ So go check out the list of libraries already available.
 
 - Must be able to communicate with EVERY other PubNub Client Lib.
 - Must be Non-blocking (Asynchronous) on all I/O.
-- Must use single Dictionary/Object as Paramater for all methods.
+- Must use single Dictionary/Object as Parameter for all methods.
 - Must follow guides in this README file including method usage patterns.
 - Includes a Full Unit Test with a test of each method.
 - Includes Quick Usage Doc with Example Copy/Paste Code.
@@ -83,7 +83,7 @@ common to most platforms and programming languages.
 Create a new PubNub Entity for Publishing/Subscribing.
 This entity associates itself with account-level credentials
 and a selected origin.
-Also Secuirty Options are Specified.
+Also Security Options are Specified.
 
 ```javascript
 var pubnub = PubNub.init({
@@ -268,7 +268,7 @@ GET /publish/demo/demo/e0991b12871de57b333fd0c992f7d3112577cf62/my-channel/0/{"m
 
 The Publish Response always returns success transmission details.
 The First element of the response Array is a bool value either `0` or `1`.
-`0` means failure and `1` means successful trasmission.
+`0` means failure and `1` means successful transmission.
 If the response code is `0`, then the transmission has failed.
 In the condition of a failed transmission, an explanation is provided
 in the second element of the response array.
@@ -321,7 +321,7 @@ GET /history/demo/my-channel/0/100 HTTP/1.1
 
 All functions are required to be non-blocking.
 All I/O must be Asynchronous.
-Threads are `okay` however *SOCKET LOOPS* are much prefered.
+Threads are `okay` however *SOCKET LOOPS* are much preferred.
 Examples of Good Socket Loop libs are:
 
 - Twisted (Python)
@@ -335,7 +335,7 @@ Examples of Good Socket Loop libs are:
 
 Any executed function must not stop the execution stack.
 If a return value is needed from a function call,
-then a callback function is required to be a paramater
+then a callback function is required to be a parameter
 of the function -- and the return value is supplied to the callback.
 
 ## Pseudocode Logic Requirements
