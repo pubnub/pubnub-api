@@ -1,5 +1,8 @@
-# PubNub - Simple Real-time Communications API
-## Publish and Subscribe / One-to-Many / One-to-One / Platform Ubiquitous Cloud
+# PubNub - Real-time Communications
+- Publish and Subscribe Always-on Socket Cloud
+- One-to-Many / One-to-One / Platform Ubiquitous Cloud
+- Global Distribution Cloud Network
+- Optimized for Mobile and Web
 
 PubNub is a client-to-client push service in the cloud.
 Connect Everything to Everything.
@@ -45,8 +48,9 @@ So go check out the list of libraries already available.
 - JSON Encode/Decode Stringify/Parse
 - Async HTTP/HTTPS or Async TCP Sockets
 - Event System
+- HashLib for SHA256
 - ZLib for GZIP
-- UUID
+- UUID for Universally Unique ID
 - URL Encode
 
 ## Public Methods 
@@ -67,19 +71,19 @@ So go check out the list of libraries already available.
 
 ### TIME()
 
-URL Format:
+#### URL Params:
 
 ```
 /time/0
 ```
 
-Request Example: 
+#### Request Example: 
 
 ```http
 GET /time/0 HTTP/1.1
 ```
 
-Response: 
+#### Response: 
 
 ```javascript
 [7529152783414]
@@ -99,10 +103,10 @@ fires a timetoken update.
 4. Receive a response after X Minutes with array of Messages (may be empty) and new TimeToken.
 5. Repeat #2-#5 forever until UNSUBSCRIBE()
 
-#### URL Format:
+#### URL Params:
 
 ```
-GET /subscribe/subscribe_key/channel/0/timetoken HTTP/1.1
+/subscribe/subscribe_key/channel/0/timetoken
 ```
 
 #### First Request: 
@@ -137,28 +141,52 @@ GET /subscribe/demo/my-channel/0/7529152783414 HTTP/1.1
 
 ### PUBLISH()
 
-URL Format:
+#### URL Params:
 
 ```
-/history/sub-key/channel/callback/limit
+/publish/pub-key/sub-key/sha256-signature/channel/0/json
 ```
 
-
- * /publish/pub-key/sub-key/signature/channel/callback/"msg"
- * /publish/pub-key/sub-key/signature/channel/callback/{"msg":"hi"}
- * /publish/pub-key/sub-key/signature/channel/callback/123
-
-Request Example: 
+#### Request Example: 
 
 ```http
-GET /time/0 HTTP/1.1
+GET /publish/demo/demo/e0991b12871de57b333fd0c992f7d3112577cf62/my-channel/0/{"msg":"hi"} HTTP/1.1
 ```
 
-Response: 
+#### Response: 
 
 ```javascript
-[7529152783414]
+[1,"D"]
 ```
+
+#### Response Codes:
+
+The Publish Response always returns successful transmission details.
+The First element of the response Array is a bool value either `0` or `1`.
+`0` means failure and `1` means successful trasmission.
+If the response code is `0`, then the transmission has failed.
+In the condition of a failed transmission, an explanation is provided
+in the second element of the response array.
+
+#### Successful Transmission: 
+
+```javascript
+[1,"D"]
+```
+
+#### Failed Transmission: 
+
+```javascript
+[0,"Reason Here"]
+```
+
+#### Possible Failure Reasons:
+
+- "Disconnected" - The network has gone away.
+- "Message Too Big" - Max message size exceeded.
+- "Invalid Publish Key" - Wrong Publish Key was Used.
+- "Invalid Message Signature" - The message was SHA256 Signed incorrectly.
+
 
 ### HISTORY()
 
