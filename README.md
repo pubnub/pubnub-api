@@ -63,9 +63,9 @@ full implementation of a PubNub Client API.
 Here is a list of all needed external imports
 common to most platforms and programming languages.
 
-- Crypto Standford AES - Client Side Encryption/Decryption
+- Crypto AES - Client Side Encryption/Decryption
 - TLS/SSL 2048bit Support or Better
-- HashLib for SHA256
+- HMAC and SHA256 Hash-Lib
 - Async HTTP/HTTPS or Async TCP Sockets (Non-Blocking)
 - JSON Encode/Decode or Stringify/Parse
 - ZLib for GZIP
@@ -96,7 +96,7 @@ var pubnub = PubNub.init({
     subscribe_key : "CUSTOMER_SUBSCRIBE_KEY",
     secret_key    : "CUSTOMER_SECRET_KEY",
     ssl           : true,
-    cipher_key    : "AES-Standford-Crypto-Cipher-Key",
+    cipher_key    : "AES-Crypto-Cipher-Key",
     origin        : "pubsub.pubnub.com"
 })
 ```
@@ -201,7 +201,6 @@ Search for `cipher\_key` to find interface guide.
 
 http://pubnub.github.com/pubnub-api/crypto/index.html
 
-
 ## Connection Pooling Guide for APIs
 
 As a rule of performance, an always-on socket connection
@@ -233,6 +232,21 @@ next_socket = create_socket_pool()
 next_socket() ## Get Next Socket.
 ```
 
+## HTTPS TLS SSL 2048bit Encryption
+
+HTTPS is recommended for the highest level of security for
+REST requests to PubNub. Using REST over HTTPS is not required. 
+However for secure communication, you should make sure the client or
+REST toolkit you're using is configured to use SSL.
+The PubNub Cloud service will continue to support both HTTP and HTTPS.
+
+## Message Signing Guide with HMAC/SHA256
+
+In order to provide Origin Authenticity and High Level of Security,
+Secret Key
+When accessing Amazon SimpleDB using one of the AWS SDKs, the SDK handles the authentication process for you. For a list of available AWS SDKs supporting Amazon SimpleDB, see Available Libraries.
+
+However, when accessing Amazon SimpleDB using a REST request, you must provide the following items so the request can be authenticated.
 
 ## REST Interface
 
