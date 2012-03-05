@@ -190,7 +190,10 @@ V: Version-Number
 User-Agent: NAME-OF-THE-CLIENT-INTERFACE
 ```
 
-Possible `User-Agent`'s will be:
+There are may possible `User-Agent`'s.
+The following is an accepted style format
+for the value of `User-Agent' header:
+
 - PHP
 - JavaScript
 - Node.JS
