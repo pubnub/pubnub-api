@@ -178,6 +178,29 @@ PubNub.history({
 })
 ```
 
+## Cryptography Guide
+
+##### PubNub Cryptography in JavaScript
+
+[PubNub Crypto](http://pubnub.github.com/pubnub-api/crypto/index.html)
+demonstrates with PubNub Cryptography for sensitive data.
+Use this page and source code to provide high
+levels of security for data intended to be private
+and unreadable.
+
+The Cipher Key specifies the particular transformation
+of plaintext into ciphertext, or vice versa during decryption.
+The Cipher Key exchange must occur on an external system
+outside of PubNub in order to maintain secrecy of the key.
+
+Make use of the design patterns shown here when implementing a
+PubNub Client Library.  However you must follow directly
+the Interface shown in this Doc when utilizing
+AES Encryption.
+Search for `cipher_key` to find interface guide.
+
+http://pubnub.github.com/pubnub-api/crypto/index.html
+
 ## REST Interface
 
 ##### HTTP HEADERS
