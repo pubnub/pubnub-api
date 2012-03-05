@@ -10,6 +10,10 @@ Connect Everything to Everything; literally!
 This is a cloud-based service for broadcasting Real-time messages
 to millions of web and mobile clients simultaneously.
 
+## PubNub Version 3.1
+
+The current version number for communication with PubNub Cloud is `3.1`.
+
 ## Quick Links
 
 - Twitter: http://twitter.com/PubNub
@@ -19,7 +23,7 @@ to millions of web and mobile clients simultaneously.
 - Showcase: http://www.pubnub.com/blog
 - Interview: http://techzinglive.com/?p=227
 
-## PubNub is OPTIMIZED for MOBILE and WEB
+## PubNub is Optimized for MOBILE and WEB
 
 - Earth Scale Deployment - Your App scales with ease.
 - Many Datacenters World Wide - High Performance everywhere on Earth.
@@ -174,6 +178,65 @@ PubNub.history({
 ```
 
 ## REST Interface
+
+##### HTTP HEADERS
+
+Include these *required* headers with each reqeust to the
+PubNub HTTP REST interface.
+Exclude all other headers where possible.
+
+```
+V: Version-Number
+User-Agent: NAME-OF-THE-CLIENT-INTERFACE
+```
+
+Possible `User-Agent`'s will be:
+- PHP
+- JavaScript
+- Node.JS
+- Ruby
+- Ruby-Rhomobile
+- Python
+- Python-Twisted
+- Python-Tornado
+- C-LibEV
+- C-LibEvent
+- C-Qt
+- VB
+- C#
+- Java
+- Java-Android
+- Erlang
+- Titanium
+- Corona
+- C-Arduino
+- C-Unity
+- C#-Mono
+- Lua
+- Obj-C-iOS
+- C#-WP7
+- Cocoa
+- Perl5
+- Perl6
+- Go-Google
+- Bash
+- Haskell
+
+##### Example Headers:
+
+```
+V: 3.1
+User-Agent: PHP
+```
+
+##### FULL HTTP Request Example:
+
+```
+GET /time/0 HTTP/1.1
+V: 3.1
+User-Agent: Ruby
+Host: pubsub.pubnub.com
+```
 
 ### TIME()
 
