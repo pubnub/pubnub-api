@@ -197,9 +197,42 @@ Make use of the design patterns shown here when implementing a
 PubNub Client Library.  However you must follow directly
 the Interface shown in this Doc when utilizing
 AES Encryption.
-Search for `cipher_key` to find interface guide.
+Search for `cipher\_key` to find interface guide.
 
 http://pubnub.github.com/pubnub-api/crypto/index.html
+
+
+## Connection Pooling Guide for APIs
+
+As a rule of performance, an always-on socket connection
+pre-established will provide faster message delivery
+and receipt.
+Establishing a socket pool is simple when using
+socket loop libraries such as `Ruby::EventMachine`
+or `C LibEvent`.
+The following Pseudocode will guide you when
+create a socket connection pool:
+
+```python
+def create_socket_pool():
+    current_socket = -1
+    max_sockets    = 10
+
+    for connection_number in range(max_sockets):
+        socket_pool.append(Socket('pubsub.pubnub.com'))
+
+    def next_socket():
+        current_socket += 1
+        if current_socket >= max_sockets: current_socket = -1
+        return socket_pool[current_socket]
+
+    return next_socket
+
+next_socket = create_socket_pool()
+
+next_socket() ## Get Next Socket.
+```
+
 
 ## REST Interface
 
