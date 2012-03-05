@@ -127,9 +127,9 @@ PubNub.uuid(function(uuid){
 Broadcast a message on a specific channel.
 The message may be any valid JSON value including:
 
-1. Dictionary (Objects).
-2. Strings.
-3. Numbers.
+1. Dictionary (Objects).  ```{"msg":"hi"}```
+2. Strings.               ```"Hello!"```
+3. Numbers.               ```123456```
 
 ```javascript
 PubNub.publish({
@@ -192,7 +192,7 @@ User-Agent: NAME-OF-THE-CLIENT-INTERFACE
 
 There are may possible `User-Agent`'s.
 The following is an accepted style format
-for the value of `User-Agent' header:
+for the value of `User-Agent` header:
 
 - PHP
 - JavaScript
