@@ -549,7 +549,7 @@ def subscribe( self, args ) :
 
         ## CONNECT TO PUBNUB SUBSCRIBE SERVERS
         try :
-            self._request( [
+            self.subscriptions[channel]['request'] = self._request( [
                 'subscribe',
                 self.subscribe_key,
                 channel,
@@ -564,3 +564,22 @@ def subscribe( self, args ) :
     receive()
 ```
 
+### UNSUBSCRIBE()
+
+```python
+def unsubscribe( self, args ):
+    channel = args['channel']
+
+    ## IGNORE IF NOT CONNECTED
+    if not (channel in self.subscriptions):
+        return False
+
+    ## ABORT CONNECTION
+    self.subscriptions[channel]['request'].abort()
+
+    ## DISCONNECT
+    self.subscriptions[channel]['disconnected'] = 0
+    self.subscriptions[channel]['connected']    = 0
+    self.subscriptions[channel]['timetoken']    = 0
+    self.subscriptions[channel]['first']        = False
+```
