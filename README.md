@@ -128,8 +128,9 @@ Broadcast a message on a specific channel.
 The message may be any valid JSON value including:
 
 1. Dictionary (Objects).  ```{"msg":"hi"}```
-2. Strings.               ```"Hello!"```
-3. Numbers.               ```123456```
+2. Arrays.                ```[1,2,3,4]```
+3. Strings.               ```"Hello!"```
+4. Numbers.               ```123456```
 
 ```javascript
 PubNub.publish({
@@ -188,6 +189,22 @@ Exclude all other headers where possible.
 ```
 V: Version-Number
 User-Agent: NAME-OF-THE-CLIENT-INTERFACE
+
+```
+##### Example Headers:
+
+```
+V: 3.1
+User-Agent: PHP
+```
+
+##### FULL HTTP Request Example:
+
+```
+GET /time/0 HTTP/1.1
+V: 3.1
+User-Agent: Ruby
+Host: pubsub.pubnub.com
 ```
 
 There are may possible `User-Agent`'s.
@@ -224,22 +241,6 @@ for the value of `User-Agent` header:
 - Go-Google
 - Bash
 - Haskell
-
-##### Example Headers:
-
-```
-V: 3.1
-User-Agent: PHP
-```
-
-##### FULL HTTP Request Example:
-
-```
-GET /time/0 HTTP/1.1
-V: 3.1
-User-Agent: Ruby
-Host: pubsub.pubnub.com
-```
 
 ### TIME()
 
