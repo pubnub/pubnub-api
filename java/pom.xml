@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>pubnub</groupId>
+  <artifactId>pubnub</artifactId>
+  <packaging>jar</packaging>
+  <version>3.0</version>
+  <name>pubnub</name>
+  <url>https://github.com/pubnub/pubnub-api/</url>
+  <build>
+    <sourceDirectory>${basedir}/src/</sourceDirectory>
+  </build>
+  <dependencies>
+    <dependency>
+	<groupId>org.json</groupId>
+	<artifactId>json</artifactId>
+	<version>20090211</version>
+    </dependency>
+  </dependencies>
+</project>
