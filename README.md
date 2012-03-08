@@ -52,9 +52,11 @@ So go check out the list of libraries already available.
 - Must be able to communicate with EVERY other PubNub Client Lib.
 - Must be Non-blocking (Asynchronous) on all I/O.
 - Must use single Dictionary/Object as Parameter for all methods.
-- Must follow guides in this README file including method usage patterns.
+- Must follow guides in this README file including method param patterns.
 - Includes a Full Unit Test with a test of each method.
-- Includes Quick Usage Doc with Example Copy/Paste Code.
+- Includes Quick Usage Doc with Example Copy/Paste Code for each Method.
+- The Lib must be only ONE file. (i.e. pubnub.py, Pubnub.java, Pubnub.cs)
+- Okay to include Vendor Files.
 
 ## IMPORT LIBS
 
@@ -231,6 +233,17 @@ next_socket = create_socket_pool()
 
 next_socket() ## Get Next Socket.
 ```
+
+## Documentation Rules
+
+ - Must fit into a single page README.md file.
+ - Must be inside README.md within the API directory.
+ - May not be more than one file.
+
+## API Directory Structure Rules
+
+ - Must be simple to start with copy/paste easy.
+ - Include all required vendor libs in sub-directories.
 
 ## HTTPS TLS SSL 2048bit Encryption
 
