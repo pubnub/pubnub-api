@@ -56,8 +56,7 @@ So go check out the list of libraries already available.
 - Includes a Full Unit Test with a test of each method.
 - Includes Quick Usage Doc with Example Copy/Paste Code.
 
-<a id="import-libs"></a>
-## IMPORT LIBS
+<h2 id="import-libs">IMPORT LIBS</h2>
 
 There are support libs that are needed in order to provide
 full implementation of a PubNub Client API.
