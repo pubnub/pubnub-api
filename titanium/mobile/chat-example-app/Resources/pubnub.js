@@ -38,7 +38,8 @@ THE SOFTWARE.
 var NOW     = 1
 ,   MAGIC   = /\$?{([\w\-]+)}/g
 ,   URLBIT  = '/'
-,   ANDROID = Ti.Platform.osname === 'android'
+,   SECOND  = 1000
+,   ANDROID = Ti.Platform.name.toLowerCase().indexOf('android') >= 0
 ,   XHRTME  = 140000;
 
 /**
