@@ -10,7 +10,7 @@ Connect Everything to Everything; literally!
 This is a cloud-based service for broadcasting Real-time messages
 to millions of web and mobile clients simultaneously.
 
-## PubNub Version 3.1
+## PubNub Version 3.1 <a id="version" />
 
 The current version number for communication with PubNub Cloud is `3.1`.
 
