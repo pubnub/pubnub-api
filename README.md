@@ -288,7 +288,6 @@ User-Agent: PHP
 GET /time/0 HTTP/1.1
 V: 3.1
 User-Agent: Ruby
-Host: pubsub.pubnub.com
 ```
 
 There are may possible `User-Agent`'s.
