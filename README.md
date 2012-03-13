@@ -10,7 +10,7 @@ Connect Everything to Everything; literally!
 This is a cloud-based service for broadcasting Real-time messages
 to millions of web and mobile clients simultaneously.
 
-## PubNub Version 3.1 <a id="version" />
+## PubNub Version 3.1
 
 The current version number for communication with PubNub Cloud is `3.1`.
 
@@ -58,7 +58,34 @@ So go check out the list of libraries already available.
 - The Lib must be only ONE file. (i.e. pubnub.py, Pubnub.java, Pubnub.cs)
 - Okay to include Vendor Files.
 
-<a id="import"/>
+# Robustness of API
+
+The client must be fault tolerant
+and never throw exceptions or errors.
+If a message was unable to be delivered,
+you must return an unsuccessful value.
+If an error code was returned of any kind from
+the PubNub Cloud, then you must inform the failure
+by returning an unsuccessful response.
+If a connection was lost, the connection
+must continuously attempt to be re-established.
+
+# Ubiquity
+
+All Client APIs must be able to communicate with
+every other Client API in every supported mode including
+but not limited to:
+
+ - AES Encryption
+ - Signed HMAC SHA256 messages
+ - TCP Sockets
+ - HTTPS
+ - HTTP
+
+For example, This means that PHP and Ruby will always be able
+communicate via Publish/Subscribe.
+Same goes for Python and JavaScript and every other language.
+
 ## IMPORT LIBS
 
 There are support libs that are needed in order to provide
@@ -149,6 +176,13 @@ Listen for messages on a specified channel.
 Register events for receiving messages, connecting,
 disconnecting and reconnecting after an unintended disconnect.
 
+Never Fire the `disconnect` event if the network is avaiable.
+Only fire the `disconnect` event if the internet is **unreachable**.
+Note that periodically PubNub will purge connections.
+However it is the duty of the Client API to re-establish the connection
+instnatly when this happens.
+It is wrong to fire the `disconnect` event if PubNub is reacable.
+
 ```javascript
 PubNub.subscribe({
     channel    : "my-channel",
@@ -206,7 +240,7 @@ http://pubnub.github.com/pubnub-api/crypto/index.html
 
 ## Connection Pooling Guide for APIs
 
-As a rule of performance, an always-on socket connection
+As a rule of performance: an always-on socket connection
 pre-established will provide faster message delivery
 and receipt.
 Establishing a socket pool is simple when using
@@ -234,6 +268,9 @@ next_socket = create_socket_pool()
 
 next_socket() ## Get Next Socket.
 ```
+
+Each channel connection will get its own dedicated
+socket to which an always-on
 
 ## Documentation Rules
 
