@@ -1,0 +1,64 @@
+{{layout "base"}}
+
+  {{if debug}}
+    <script src="/media/js/Tween.js"></script>
+    <script src="/media/js/Sparks.js"></script>
+    <script src="/media/js/Three.js"></script>
+    <script src="/media/js/RequestAnimationFrame.js"></script>
+    <script src="/media/js/farbtastic.js"></script>
+  {{else}}
+    <script src="http://pubnub.s3.amazonaws.com/media/js/Tween.js"></script>
+    <script src="http://pubnub.s3.amazonaws.com/media/js/Sparks.js"></script>
+    <script src="http://pubnub.s3.amazonaws.com/media/js/Three.js"></script>
+    <script src="http://pubnub.s3.amazonaws.com/media/js/RequestAnimationFrame.js"></script>
+    <script src="http://pubnub.s3.amazonaws.com/media/js/farbtastic.js"></script>
+  {{/if}}
+
+<div id="container">
+  <div id="info">
+    <button id="spin_left"> <span class="ui-icon ui-icon-arrowreturnthick-1-w"></span> </button>
+    <button id="spin_right"> <span class="ui-icon ui-icon-arrowreturnthick-1-e"></span> </button>
+    <div id="radio">
+      <input type="radio" id="create_mode" name="radio" checked="checked" /><label for="create_mode">Create</label>
+      <input type="radio" id="remove_mode" name="radio" /><label for="remove_mode">Remove</label>
+    </div>
+      <div id="online">online:<span id="num_online" class="ui-widget-content ui-corner-all">1</span></div>
+    <div id="server_on">
+      <div id="wipe">wipe:
+          <span id="wipe_m" class='ui-widget-content ui-corner-left'>00</span><span id="wipe_c" class='ui-widget-content'>:</span><span id="wipe_s" class='ui-widget-content ui-corner-right'>00</span>
+      </div>
+    </div>
+    <div id="server_off">
+      <div id="wipe_unknown">wipe:
+          <span id="wipe_u" class='ui-widget-content ui-corner-all'>unknown</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="color_box">
+    <p> Color: </p>
+    <div id="color_display">
+    </div>
+    <div id="color_picker"></div>
+  </div>
+
+  {{if debug}}
+    <script src="/media/js/presence.js"></script>
+    <script src="/media/js/blocks.js"></script>
+    <script src="/media/js/timer.js"></script>
+    <script src="/media/js/color.js"></script>
+  {{else}}
+    <script src="http://pubnub.s3.amazonaws.com/media/js/presence.js"></script>
+    <script src="http://pubnub.s3.amazonaws.com/media/js/blocks.js"></script>
+    <script src="http://pubnub.s3.amazonaws.com/media/js/timer.js"></script>
+    <script src="http://pubnub.s3.amazonaws.com/media/js/color.js"></script>
+  {{/if}}
+
+  <script>
+    $(document).data("time_til_wipe", "${time_til_wipe}");
+    $(document).ready( function() {
+      $("#radio").buttonset();
+    });
+  </script>
+</div>
+

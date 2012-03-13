@@ -1,0 +1,132 @@
+{{layout "base"}}
+
+<div id="non_webgl_container">
+  <script src="http://cdn.pubnub.com/media/js/presence.js"></script>
+  
+  <table id="admin_table">
+    <tr>
+      <td>
+        uuid
+      </td>
+      <td>
+        special
+      </td>
+      <td>
+        connected
+      </td>
+      <td>
+        last_action
+      </td>
+      <td>
+        created
+      </td>
+      <td>
+        removed
+      </td>
+    </tr>
+    {{each(i, client) clients }}
+      <tr id="${client.info.uuid}">
+        <td>
+          ${client.info.uuid}
+        </td>
+        <td>
+          {{if client.infoadmin == true}}
+          admin
+          {{else client.info.spammer == true}}
+          spammer
+          {{/if}} 
+        </td>
+        <td class='connected_timestamp'>
+          ${client.info.connected_timestamp}
+        </td>
+        <td class='last_action_timestamp'>
+          ${client.info.last_action_timestamp}
+        </td>
+        <td class='blocks_created'>
+          ${client.info.blocks_created}
+        </td>
+        <td class='blocks_removed'>
+          ${client.info.blocks_removed}
+        </td>
+      </tr>
+    {{/each}}        
+  </table>
+  
+  <script>
+    var clients = {};
+    {{each(i, client) clients }}
+      var c = clients['${client.info.uuid}'] = {};
+      c.connected_timestamp = ${client.info.connected_timestamp};
+      c.last_action_timestamp = ${client.info.last_action_timestamp};
+      c.blocks_created = ${client.info.blocks_created};
+      c.blocks_removed = ${client.info.blocks_removed};
+    {{/each}} 
+
+    function makeHumanTime(timestamp) {
+      diff = ((+new Date) - timestamp) / 1000;
+      if (diff < 60) {
+        return Math.floor(diff) + " seconds";
+      }
+      else if (diff < 3600) {
+        return Math.floor(diff / 60) + " minutes";
+      }
+      else if (diff < 86400) {
+        return Math.floor(diff / 3600) + " hours";
+      }
+      else {
+        return Math.floor(diff / 86400) + " days";
+      }
+    }
+
+    // takes object which has uuid, timestamps, etc
+    function addNewRow(client_data) {
+      var new_row = "<tr id=\"" + client_data.uuid +"\" ><td>"  + client_data.uuid  + "</td><td>";
+      if (client_data.admin) new_row += "admin";
+      else if (client_data.spammer) new_row += "spammer"; 
+      new_row += "</td>";
+      new_row += "<td class='connected_timestamp'>" + makeHumanTime(client_data.connected_timestamp) + "</td>";
+      new_row += "<td class='last_action_timestamp'>" + makeHumanTime(client_data.last_action_timestamp) + "</td>";
+      new_row += "<td class='blocks_created'>" + client_data.blocks_created + "</td>";
+      new_row += "<td class='blocks_removed'>" + client_data.blocks_created + "</td>";
+      new_row + "</tr>";
+      $('#admin_table tr:last').after(new_row);
+    }
+  
+    PUBNUB.events.bind("got_from_server_new_client", function(message) {
+      var new_row =  addNewRow(message.data);
+      clients[message.data.uuid] = message.data;
+      console.log(clients);
+    });
+
+    PUBNUB.events.bind("got_from_server_client_disconnected", function(message) {
+      $('#' + message.data).remove();
+      delete clients[message.data];
+    });
+
+    PUBNUB.events.bind("got_from_server_update", function(message) {
+      for (c in message.data) {
+        client_update = message.data[c];  
+        console.log(client_update);
+        if (clients[client_update.uuid] == undefined) {
+          addNewRow(client_update);
+        }
+        clients[client_update.uuid] = client_update;
+        $("#" + client_update.uuid + " .blocks_created").text(client_update.blocks_created);
+        $("#" + client_update.uuid + " .blocks_removed").text(client_update.blocks_removed);
+      }
+    });
+
+    setInterval( function() {
+      for (c in clients) {
+        var client = clients[c];
+        $("#" + c + " .connected_timestamp").text(makeHumanTime(client.connected_timestamp));
+        $("#" + c + " .last_action_timestamp").text(makeHumanTime(client.last_action_timestamp));
+      }
+    }, 1000);
+
+  </script>
+
+
+
+</div>
+

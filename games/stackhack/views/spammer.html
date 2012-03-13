@@ -1,0 +1,66 @@
+{{layout "base"}}
+
+<div id="non_webgl_container">
+  <script src="http://cdn.pubnub.com/media/js/presence.js"></script>
+
+  <form id="spam_form">
+    Placement
+    <select id='placement' name="placement">   
+      <option>random</option>
+    </select><br/>
+    Repeat
+    <select id='repeat' name="repeat">  
+      <option value="1">1 sec</option>
+      <option value="2">2 sec</option>
+      <option value="5">5 sec</option>
+      <option value="60">1 min</option>
+    </select> <br/>
+    <input type="submit" value="go" id="spam_submit" />
+  </form>
+  <input type="submit" value="stop" id="spam_stop" />
+      
+  <script type="text/javascript">
+
+    PUBNUB.events.bind("got_from_server_already_taken", function(message) {
+      requestNewBlock(message.data.loc[0], message.data.loc[1] + 50, message.data.loc[2], message.data.color);    
+    });
+
+    function requestNewRandomBlock() {
+      var x = (Math.floor(Math.random()*20) - 10) * 50 + 25;
+      var y = 25;
+      var z = (Math.floor(Math.random()*20) - 10) * 50 + 25;
+      var c = parseInt('0x' + Math.floor(Math.random()*16777215).toString(16));
+
+      requestNewBlock(x, y, z, c);
+    }
+
+    function requestNewBlock(x, y, z, c) {
+      PUBNUB.events.fire("send_to_server", {
+        "name": "create",
+        "data": { "loc": [x, y, z], "color": c  }
+      });
+    }
+
+    var spam_interval;
+    $("#spam_stop").click( function(e) {
+      if (spam_interval !== undefined) {
+        clearInterval(spam_interval);
+      }
+    });
+
+    $("#spam_form").submit( function(e) {
+      e.preventDefault();
+
+      if (spam_interval !== undefined) {
+        clearInterval(spam_interval);
+      }
+
+      
+      var ms = parseInt($("#repeat").val()) * 1000;
+      spam_interval = setInterval( function() {
+        requestNewRandomBlock();    
+      }, ms);
+    });
+  </script>
+</div>
+

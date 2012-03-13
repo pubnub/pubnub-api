@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>StackHack</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <div
+      id=pubnub
+      pub-key=pub-7dbb570c-16fa-4bb7-8478-b632bb510472
+      sub-key=sub-c9ce8494-d8b6-11e0-9367-bbbbf064f5b3
+      ssl=off
+      origin=pubsub.pubnub.com
+    ></div>
+    <script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+
+    {{if debug}}
+      <link href="/media/css/style.css" type="text/css" rel="stylesheet" media="screen" />
+
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+      <script>window.jQuery || document.write('<script src="/media/js/jquery-1.7.1.min.js"><\/script>')</script>
+
+      <script src="/media/js/jquery-ui-1.8.18.custom.min.js"></script>
+      <link href="/media/css/custom-theme/jquery-ui-1.8.18.custom.css" type="text/css" rel="stylesheet" media="screen" />
+    {{else}}
+      <link href="http://pubnub.s3.amazonaws.com/media/css/style.css" type="text/css" rel="stylesheet" media="screen" />
+
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+      <script>window.jQuery || document.write('<script src="http://pubnub.s3.amazonaws.com/media/js/jquery-1.7.1.min.js"><\/script>')</script>
+
+      <script src="http://pubnub.s3.amazonaws.com/media/js/jquery-ui-1.8.18.custom.min.js"></script>
+      <link href="http://pubnub.s3.amazonaws.com/media/css/custom-theme/jquery-ui-1.8.18.custom.css" type="text/css" rel="stylesheet" media="screen" />
+    {{/if}}
+
+    <script>
+      var muted = {}; 
+      $(document).data("uuid", "${uuid}");
+      {{if debug}}
+        var channel = "stackhack_debug";
+      {{else}}
+        var channel = "stackhack_public";
+      {{/if}}
+
+      PUBNUB.subscribe({
+        channel  : channel,
+        callback : function(message) { 
+          if ((muted[message.client] != undefined) && ((message.name =="create") || (message.name == "remove"))) {
+            {{if debug}}
+              console.log("Ignoring: got_message_" + message.name + ": " + JSON.stringify(message));
+            {{/if}}
+            return;
+          }
+          {{if debug}}
+            console.log("got_message_" + message.name + ": " + JSON.stringify(message));
+          {{/if}}
+          PUBNUB.events.fire("got_message_" + message.name, message);
+        },
+        error    : function(e) {
+          console.log(e);
+        }
+      });
+
+      PUBNUB.events.bind('send_message', function(message) {
+        message.client = "${uuid}";     
+        {{if debug}}
+          console.log("send_message_" + message.name + ": " + JSON.stringify(message));
+        {{/if}}
+        PUBNUB.publish({
+          channel  : channel,
+          message  : message,
+          error    : function(e) {
+            console.log(e);
+          }
+        });
+      });
+
+      PUBNUB.subscribe({
+        channel  : "stackhack_${uuid}",
+        callback : function(message) { 
+          {{if debug}}
+            console.log("got_from_server_message_" + message.name + ": " + JSON.stringify(message));
+          {{/if}} 
+          PUBNUB.events.fire("got_from_server_message_" + message.name, message);
+        },
+        error    : function(e) {
+          console.log(e);
+        }
+      });
+
+      PUBNUB.events.bind('got_from_server_message_mute_client', function(message) {
+        muted[message.data.muted_player] = message.data.muted_player;
+      });
+
+      PUBNUB.events.bind("got_from_server_message_status", function(message) {
+        for (var i = 0; i < message.data.muted.length; i++) {
+          var muted_player = message.data.muted[i];
+          muted[muted_player] = muted_player;
+        } 
+      });
+
+
+    </script>
+
+	</head>
+	<body>
+    <div id="banner">
+      <h1>StackHack</h1>
+      <p>powered by</p>
+      <a href="http://www.pubnub.com"><img src="http://cdn.pubnub.com/media/img/pubnub.png" /></a><br/>     
+      <a href="http://www.pubnub.com/blog/stackhack">(the eff is this thing?)</a><br/><br/>
+      <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://stackhack.com" data-text="Check out this multiplayer block game" data-via="PubNub">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    </div>
+    {{html body}}
+    {{if !debug}}
+    <script>
+      var _gaq=[['_setAccount','UA-16927549-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+    {{/if}}
+
+	</body>
+</html>
+
