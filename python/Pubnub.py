@@ -9,10 +9,8 @@
 ## PubNub 3.0 Real-time Push Cloud API
 ## -----------------------------------
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
+try: import json
+except ImportError: import simplejson as json
 
 import time
 import hashlib
@@ -80,8 +78,7 @@ class Pubnub():
         """
         ## Fail if bad input.
         if not (args['channel'] and args['message']) :
-            print('Missing Channel or Message')
-            return False
+            return [ 0, 'Missing Channel or Message' ]
 
         ## Capture User Input
         channel = args['channel']
@@ -98,11 +95,6 @@ class Pubnub():
             ])).hexdigest()
         else :
             signature = '0'
-
-        ## Fail if message too long.
-        if len(message) > self.limit :
-            print('Message TOO LONG (' + str(self.limit) + ' LIMIT)')
-            return [ 0, 'Message Too Long.' ]
 
         ## Send Message
         return self._request([
@@ -139,14 +131,15 @@ class Pubnub():
         })
 
         """
+
         ## Fail if missing channel
         if not 'channel' in args :
-            print('Missing Channel.')
+            raise Exception('Missing Channel.')
             return False
 
         ## Fail if missing callback
         if not 'callback' in args :
-            print('Missing Callback.')
+            raise Exception('Missing Callback.')
             return False
 
         ## Capture User Input
@@ -157,7 +150,6 @@ class Pubnub():
         while True :
 
             timetoken = 'timetoken' in args and args['timetoken'] or 0
-
             try :
                 ## Wait for Message
                 response = self._request([
@@ -185,6 +177,7 @@ class Pubnub():
 
         return True
 
+
     def history( self, args ) :
         """
         #**
@@ -210,7 +203,7 @@ class Pubnub():
 
         ## Fail if bad input.
         if not channel :
-            print('Missing Channel')
+            raise Exception('Missing Channel')
             return False
 
         ## Get History
@@ -222,42 +215,6 @@ class Pubnub():
             str(limit)
         ]);
 
-    def analytics( self, args ) :
-        """
-        #**
-        #* Analytics
-        #*
-        #* Channel Analytics.
-        #*
-        #* @return dictionary keyed by datetimes
-        #*
-
-        ## Channel Analytics Example
-        analytics = pubnub.analytics({
-            'channel'  : 'channel-name-here', ## Leave blank for all channels
-            'limit'    : 100,                 ## aggregation range
-            'ago'      : 0,                   ## minutes ago to look backward
-            'duration' : 100                  ## minutes offset
-        })
-        print(analytics)
-
-        """
-
-        ## Capture User Input
-        channel  = args.has_key('channel')  and args['channel']       or ''
-        limit    = args.has_key('limit')    and int(args['limit'])    or 100
-        ago      = args.has_key('ago')      and int(args['ago'])      or 0
-        duration = args.has_key('duration') and int(args['duration']) or 100
-        protocol = self.ssl                 and 'https'               or 'http'
-
-        return self._request( ['&'.join([
-            'analytics-channel?sub-key=' + self.subscribe_key,
-            'pub-key='                   + self.publish_key,
-            'channel='                   + ''.join(self._encode([channel])),
-            'limit='                     + str(limit),
-            'ago='                       + str(ago),
-            'duration='                  + str(duration)
-        ])], protocol + '://pubnub-prod.appspot.com', False )
 
     def time(self) :
         """
@@ -279,12 +236,14 @@ class Pubnub():
             '0'
         ])[0]
 
+
     def _encode( self, request ) :
         return [
             "".join([ ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.find(ch) > -1 and
                 hex(ord(ch)).replace( '0x', '%' ).upper() or
                 ch for ch in list(bit)
             ]) for bit in request]
+
 
     def _request( self, request, origin = None, encode = True ) :
         ## Build URL
@@ -294,12 +253,11 @@ class Pubnub():
 
         ## Send Request Expecting JSONP Response
         try:
-            # timeout added in 2.6
-            usock = urllib2.urlopen( url, None, 200 )
-        except TypeError:
-            usock = urllib2.urlopen( url, None )
+            try: usock = urllib2.urlopen( url, None, 200 )
+            except TypeError: usock = urllib2.urlopen( url, None )
+            response = usock.read()
+            usock.close()
+            return json.loads( response )
+        except:
+            return None
 
-        response = usock.read()
-        usock.close()
-
-        return json.loads( response )

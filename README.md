@@ -18,7 +18,8 @@ The current version number for communication with PubNub Cloud is `3.1`.
 
 - Twitter: http://twitter.com/PubNub
 - Website: http://www.pubnub.com
-- Videos: http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF
+- YouTube: http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF
+- Vimeo: https://vimeo.com/pubnub
 - Socket.IO: https://github.com/pubnub/pubnub-api/tree/master/socket.io
 - Showcase: http://www.pubnub.com/blog
 - Interview: http://techzinglive.com/?p=227
