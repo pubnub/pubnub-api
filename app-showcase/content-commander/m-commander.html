@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>
+        </title>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+        <style>
+            /* App custom styles */
+        </style>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
+        </script>
+        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
+        </script>
+    </head>
+    <body>
+        <div data-role="page" id="page1">
+            <div data-role="content">
+                <h2>
+                    Commander
+                </h2>
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true" >
+                        <h3>
+                            YouTube
+                        </h3>
+                        <div data-role="fieldcontain" id="youtube_box">
+                            <fieldset data-role="controlgroup">
+                                <label for="search_query">
+                                    Search
+                                </label>
+                                <input id="search_query" placeholder="" value="" type="text" />
+                                <input id="search_submit" type="button" value="Search" data-inline="true" />
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+      <!-- PUBNUB -->
+
+      <div pub-key="pub-550ff6a3-aa50-466c-a2c7-55a6c3fa3345" sub-key="sub-f3307e99-6a4a-11e1-870f-affeca838b29" ssl="off" origin="pubsub.pubnub.com" id="pubnub"></div>
+      <div style="display:none" id="uuid"></div>
+      <script src="http://cdn.pubnub.com/pubnub-3.1.min.js"></script>
+      <script>(function(){
+        PUBNUB.subscribe({
+          channel    : "content_commander", 
+          restore    : false,      
+          callback   : function(message) {
+            if (message.name) {
+              PUBNUB.events.fire(message.name, message);
+            }
+          },
+          disconnect : function() { 
+            console.log("Connection Lost.");
+          },
+          reconnect  : function() { 
+            console.log("And we're Back!");
+          }
+        });
+
+        var channel = "content_commander_" + $("#uuid").text(); 
+        console.log("channel:");
+        console.log(channel);
+        PUBNUB.subscribe({
+          channel    : channel, 
+          restore    : false,      
+          callback   : function(message) {
+            if (message.name) {
+              console.log('private_message!');
+              PUBNUB.events.fire(message.name, message);
+            }
+          },
+          disconnect : function() { 
+            console.log("Connection Lost.");
+          },
+          reconnect  : function() { 
+            console.log("And we're Back!");
+          }
+        });
+      })();</script>
+
+      <script>
+        function newYoutubeDiv(video_id, title) {
+          return "<div class='youtube_div' id='" + video_id + "'><h4>" + title + "</h4><div><img src='http://img.youtube.com/vi/" + video_id + "/1.jpg' /></div><hr/><div>";
+        }
+
+        $("#search_submit").bind('click', function(e, ui) {
+          e.preventDefault();
+
+          var query = $("#search_query").val();
+          if ((query == undefined) || (query.length == 0)) { return; }
+
+          console.log('publishing');
+          PUBNUB.publish({ 
+            channel : "content_commander", 
+            message : {
+              "name"   : "search",
+              "uuid"   : $("#uuid").text(),
+              "data"   : {
+                "query"   : query
+              }
+            }
+          });
+        });
+
+        PUBNUB.events.bind("youtube_results", function(message) {
+          console.log(JSON.stringify(message));
+          console.log("message.data.video_ids:");  
+          console.log(message.data.video_ids);  
+          for (var i=0; i < message.data.video_ids.length; i++) {
+            $("#youtube_box").append(newYoutubeDiv(message.data.video_ids[i][0], 
+                                                   message.data.video_ids[i][1]));
+          }  
+          $(".youtube_div").bind('click', function(e) {
+            e.preventDefault();
+            console.log('here!');
+
+            PUBNUB.publish({ 
+              channel : "content_commander", 
+              message : {
+                "name"   : "youtube_link",
+                "data"   : {
+                  "video_id"   : $(this).attr('id')
+                }
+              }
+            });
+
+          });
+        });
+
+      </script>
+    </body>
+</html>

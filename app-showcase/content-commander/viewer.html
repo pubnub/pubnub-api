@@ -63,6 +63,8 @@
       channel    : "content_commander", 
       callback   : function(message) {
         if (message.name) {
+          console.log('message.name');
+          console.log(message.name);
           PUBNUB.events.fire(message.name, message.data);
         }
       }
@@ -74,7 +76,9 @@
       $("#content").remove();
       $("#viewer_box").append("<div id='content'>"+ data.html + "</div>");
     });
+
   </script>
+  <script src="js/youtube.js"></script>
 
 
   <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->

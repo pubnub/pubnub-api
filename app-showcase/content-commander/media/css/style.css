@@ -219,9 +219,12 @@ td { vertical-align: top; }
    ========================================================================== */
 .box {
     display: block;
-    width: 48%;
+    width: 295px;
     margin: 5px;
     padding: 5px;
+    background: #eee;
+    min-height: 300px;
+    border: 2px solid #333;
 }
 
 .left {

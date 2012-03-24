@@ -10,7 +10,7 @@ function onPlayerReady(event) {
   event.target.playVideo();
 }
 
-PUBNUB.events.bind("new_video", function(data) {
+PUBNUB.events.bind("youtube_link", function(data) {
   $("#content").remove();
   $("#viewer_box").append("<div id='content'></div>");
 
