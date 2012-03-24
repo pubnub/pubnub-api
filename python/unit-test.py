@@ -63,17 +63,6 @@ timestamp = pubnub.time()
 test( timestamp > 0, 'PubNub Server Time: ' + str(timestamp) )
 
 ## -----------------------------------------------------------------------
-## Channel Analytics Example
-## -----------------------------------------------------------------------
-analytics = pubnub.analytics({
-    'channel'  : 'channel-name-here', ## Leave blank for all channels
-    'limit'    : 100,                 ## aggregation range
-    'ago'      : 0,                   ## minutes ago to look backward
-    'duratoin' : 100                  ## minutes offset
-})
-test( analytics.has_key('results'), 'PubNub Channel Analytics' )
-
-## -----------------------------------------------------------------------
 ## Subscribe Example
 ## -----------------------------------------------------------------------
 def receive(message) :
