@@ -27,6 +27,31 @@
 		63E4A0E61339DEAD00861572 /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0DB1339DEAD00861572 /* SBJsonStreamWriterState.m */; };
 		63E4A0E71339DEAD00861572 /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0DD1339DEAD00861572 /* SBJsonTokeniser.m */; };
 		63E4A0E81339DEAD00861572 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0DF1339DEAD00861572 /* SBJsonWriter.m */; };
+		84C3AB06150FAEA900F133D6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		84C3AB11150FAEC500F133D6 /* JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0CD1339DEAD00861572 /* JSON.h */; };
+		84C3AB12150FAEC500F133D6 /* NSObject+JSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0CE1339DEAD00861572 /* NSObject+JSON.h */; };
+		84C3AB13150FAEC500F133D6 /* NSObject+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0CF1339DEAD00861572 /* NSObject+JSON.m */; };
+		84C3AB14150FAEC500F133D6 /* SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0D01339DEAD00861572 /* SBJsonParser.h */; };
+		84C3AB15150FAEC500F133D6 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0D11339DEAD00861572 /* SBJsonParser.m */; };
+		84C3AB16150FAEC500F133D6 /* SBJsonStreamParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0D21339DEAD00861572 /* SBJsonStreamParser.h */; };
+		84C3AB17150FAEC500F133D6 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0D31339DEAD00861572 /* SBJsonStreamParser.m */; };
+		84C3AB18150FAEC500F133D6 /* SBJsonStreamParserAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0D41339DEAD00861572 /* SBJsonStreamParserAdapter.h */; };
+		84C3AB19150FAEC500F133D6 /* SBJsonStreamParserAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0D51339DEAD00861572 /* SBJsonStreamParserAdapter.m */; };
+		84C3AB1A150FAEC500F133D6 /* SBJsonStreamParserState.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0D61339DEAD00861572 /* SBJsonStreamParserState.h */; };
+		84C3AB1B150FAEC500F133D6 /* SBJsonStreamParserState.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0D71339DEAD00861572 /* SBJsonStreamParserState.m */; };
+		84C3AB1C150FAEC500F133D6 /* SBJsonStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0D81339DEAD00861572 /* SBJsonStreamWriter.h */; };
+		84C3AB1D150FAEC500F133D6 /* SBJsonStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0D91339DEAD00861572 /* SBJsonStreamWriter.m */; };
+		84C3AB1E150FAEC500F133D6 /* SBJsonStreamWriterState.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0DA1339DEAD00861572 /* SBJsonStreamWriterState.h */; };
+		84C3AB1F150FAEC500F133D6 /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0DB1339DEAD00861572 /* SBJsonStreamWriterState.m */; };
+		84C3AB20150FAEC500F133D6 /* SBJsonTokeniser.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0DC1339DEAD00861572 /* SBJsonTokeniser.h */; };
+		84C3AB21150FAEC500F133D6 /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0DD1339DEAD00861572 /* SBJsonTokeniser.m */; };
+		84C3AB22150FAEC500F133D6 /* SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0DE1339DEAD00861572 /* SBJsonWriter.h */; };
+		84C3AB23150FAEC500F133D6 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0DF1339DEAD00861572 /* SBJsonWriter.m */; };
+		84C3AB24150FAECC00F133D6 /* CEPubnub.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0C21339DE4300861572 /* CEPubnub.h */; };
+		84C3AB25150FAECC00F133D6 /* CEPubnub.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0C31339DE4300861572 /* CEPubnub.m */; };
+		84C3AB26150FAECC00F133D6 /* CEPubnubRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0C51339DE4300861572 /* CEPubnubRequest.h */; };
+		84C3AB27150FAECC00F133D6 /* CEPubnubRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4A0C61339DE4300861572 /* CEPubnubRequest.m */; };
+		84C3AB28150FAECC00F133D6 /* CEPubnubDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E4A0C41339DE4300861572 /* CEPubnubDelegate.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +94,7 @@
 		63E4A0DD1339DEAD00861572 /* SBJsonTokeniser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonTokeniser.m; sourceTree = "<group>"; };
 		63E4A0DE1339DEAD00861572 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		63E4A0DF1339DEAD00861572 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		84C3AB05150FAEA900F133D6 /* libpubnub.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpubnub.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D1107310486CEB800E47090 /* PubNubLib-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PubNubLib-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,6 +109,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		84C3AB02150FAEA900F133D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C3AB06150FAEA900F133D6 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -90,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* PubNubLib.app */,
+				84C3AB05150FAEA900F133D6 /* libpubnub.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -199,6 +234,29 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		84C3AB03150FAEA900F133D6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C3AB11150FAEC500F133D6 /* JSON.h in Headers */,
+				84C3AB12150FAEC500F133D6 /* NSObject+JSON.h in Headers */,
+				84C3AB14150FAEC500F133D6 /* SBJsonParser.h in Headers */,
+				84C3AB16150FAEC500F133D6 /* SBJsonStreamParser.h in Headers */,
+				84C3AB18150FAEC500F133D6 /* SBJsonStreamParserAdapter.h in Headers */,
+				84C3AB1A150FAEC500F133D6 /* SBJsonStreamParserState.h in Headers */,
+				84C3AB1C150FAEC500F133D6 /* SBJsonStreamWriter.h in Headers */,
+				84C3AB1E150FAEC500F133D6 /* SBJsonStreamWriterState.h in Headers */,
+				84C3AB20150FAEC500F133D6 /* SBJsonTokeniser.h in Headers */,
+				84C3AB22150FAEC500F133D6 /* SBJsonWriter.h in Headers */,
+				84C3AB24150FAECC00F133D6 /* CEPubnub.h in Headers */,
+				84C3AB26150FAECC00F133D6 /* CEPubnubRequest.h in Headers */,
+				84C3AB28150FAECC00F133D6 /* CEPubnubDelegate.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		1D6058900D05DD3D006BFB54 /* PubNubLib */ = {
 			isa = PBXNativeTarget;
@@ -216,6 +274,23 @@
 			productName = PubNubLib;
 			productReference = 1D6058910D05DD3D006BFB54 /* PubNubLib.app */;
 			productType = "com.apple.product-type.application";
+		};
+		84C3AB04150FAEA900F133D6 /* pubnub */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84C3AB0F150FAEA900F133D6 /* Build configuration list for PBXNativeTarget "pubnub" */;
+			buildPhases = (
+				84C3AB01150FAEA900F133D6 /* Sources */,
+				84C3AB02150FAEA900F133D6 /* Frameworks */,
+				84C3AB03150FAEA900F133D6 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = pubnub;
+			productName = pubnub;
+			productReference = 84C3AB05150FAEA900F133D6 /* libpubnub.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -237,6 +312,7 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* PubNubLib */,
+				84C3AB04150FAEA900F133D6 /* pubnub */,
 			);
 		};
 /* End PBXProject section */
@@ -276,6 +352,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		84C3AB01150FAEA900F133D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84C3AB13150FAEC500F133D6 /* NSObject+JSON.m in Sources */,
+				84C3AB15150FAEC500F133D6 /* SBJsonParser.m in Sources */,
+				84C3AB17150FAEC500F133D6 /* SBJsonStreamParser.m in Sources */,
+				84C3AB19150FAEC500F133D6 /* SBJsonStreamParserAdapter.m in Sources */,
+				84C3AB1B150FAEC500F133D6 /* SBJsonStreamParserState.m in Sources */,
+				84C3AB1D150FAEC500F133D6 /* SBJsonStreamWriter.m in Sources */,
+				84C3AB1F150FAEC500F133D6 /* SBJsonStreamWriterState.m in Sources */,
+				84C3AB21150FAEC500F133D6 /* SBJsonTokeniser.m in Sources */,
+				84C3AB23150FAEC500F133D6 /* SBJsonWriter.m in Sources */,
+				84C3AB25150FAECC00F133D6 /* CEPubnub.m in Sources */,
+				84C3AB27150FAECC00F133D6 /* CEPubnubRequest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -309,6 +403,48 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = PubNubLib;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		84C3AB0D150FAEA900F133D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/pubnub.dst;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		84C3AB0E150FAEA900F133D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DSTROOT = /tmp/pubnub.dst;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -350,6 +486,15 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84C3AB0F150FAEA900F133D6 /* Build configuration list for PBXNativeTarget "pubnub" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84C3AB0D150FAEA900F133D6 /* Debug */,
+				84C3AB0E150FAEA900F133D6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
