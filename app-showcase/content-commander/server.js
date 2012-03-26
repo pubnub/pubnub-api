@@ -107,7 +107,7 @@ function search_youtube(query, uuid) {
 
   https.get( {
     host: 'gdata.youtube.com',
-    path: '/feeds/api/videos?q=' + query + '&alt=json&orderby=relevance',
+    path: '/feeds/api/videos?q=' + escape(query) + '&alt=json&orderby=relevance',
     method: 'GET'
   }, function(response) {
     response.setEncoding('utf8');
