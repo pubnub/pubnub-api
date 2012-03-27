@@ -34,11 +34,25 @@
               </h3>
               <div data-role="fieldcontain" id="youtube_box">
                 <fieldset data-role="controlgroup">
-                  <label for="search_query">
+                  <label for="youtube_search_query">
                     Search
                   </label>
-                  <input id="search_query" placeholder="" value="" type="text" />
-                  <input id="search_submit" type="button" value="Search" data-inline="true" />
+                  <input id="youtube_search_query" placeholder="" value="" type="text" />
+                  <input id="youtube_search_submit" type="button" value="Search" data-inline="true" />
+                </fieldset>
+              </div><!-- /fieldcontain -->
+            </div><!-- /collapsible -->
+            <div data-role="collapsible" data-collapsed="true" >
+              <h3>
+                SoundCloud
+              </h3>
+              <div data-role="fieldcontain" id="soundcloud_box">
+                <fieldset data-role="controlgroup">
+                  <label for="soundcloud_search_query">
+                    Search
+                  </label>
+                  <input id="soundcloud_search_query" placeholder="" value="" type="text" />
+                  <input id="soundcloud_search_submit" type="button" value="Search" data-inline="true" />
                 </fieldset>
               </div><!-- /fieldcontain -->
             </div><!-- /collapsible -->
@@ -47,21 +61,36 @@
       </div><!-- /page #main -->
 
 
-        <div data-role="page" id="popup">
+        <div data-role="page" id="youtube_popup">
           <div data-role="header" data-theme="a">
             <h1>Confirm Push</h1>
           </div><!-- /header -->
 
           <div data-role="content" data-theme="a">	
-            <p>Do you really want to push the following video to your followers?</p>		
+            <p>Do you really want to push the following video to the viewers?</p>		
             <p id="youtube_confirm">
             <p>
-            <p>
-              <a href="#main" data-rel="back" data-role="button" data-inline="true" data-icon="delete" id="push_no">No</a>
-              <a href="#main" data-role="button" data-inline="true" data-icon="arrow-r" id="push_yes">Yes</a>
+              <a href="#main" data-rel="back" data-role="button" data-inline="true" data-icon="delete" id="youtube_push_no">No</a>
+              <a href="#main" data-role="button" data-inline="true" data-icon="arrow-r" id="youtube_push_yes">Yes</a>
             </p>	
           </div><!-- /content -->
-        </div><!-- /page popup -->
+        </div><!-- /page youtube_popup -->
+
+
+        <div data-role="page" id="soundcloud_popup">
+          <div data-role="header" data-theme="a">
+            <h1>Confirm Push</h1>
+          </div><!-- /header -->
+
+          <div data-role="content" data-theme="a">	
+            <p>Do you really want to push the following song to the viewers?</p>		
+            <p id="soundcloud_confirm">
+            <p>
+              <a href="#main" data-rel="back" data-role="button" data-inline="true" data-icon="delete" id="soundcloud_push_no">No</a>
+              <a href="#main" data-role="button" data-inline="true" data-icon="arrow-r" id="soundcloud_push_yes">Yes</a>
+            </p>	
+          </div><!-- /content -->
+        </div><!-- /page soundcloud_popup -->
     
       <!-- PUBNUB -->
 
@@ -105,20 +134,43 @@
 
       <script>
         function newYoutubeDiv(video_id, title) {
-          return "<div class='youtube_div' id='" + video_id + "'><div class='youtube_body'><h4>" + title + "</h4><img src='http://img.youtube.com/vi/" + video_id + "/0.jpg' class='youtube_img' /></div><a href='#popup' class='youtube_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
+          return "<div class='youtube_div' id='" + video_id + "'><div class='youtube_body'><h4>" + title + "</h4><img src='http://img.youtube.com/vi/" + video_id + "/0.jpg' class='youtube_img' /></div><a href='#youtube_popup' class='youtube_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
         }
 
-        $("#search_submit").bind('click', function(e, ui) {
+        function newSoundcloudDiv(song_id, title) {
+          return "<div class='soundcloud_div' id='" + song_id + "'><div class='soundcloud_body'><h4>" + title + "</h4></div><a href='#soundcloud_popup' class='soundcloud_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
+        }
+
+        $("#youtube_search_submit").bind('click', function(e, ui) {
           e.preventDefault();
 
-          var query = $("#search_query").val();
+          var query = $("#youtube_search_query").val();
           if ((query == undefined) || (query.length == 0)) { return; }
 
           console.log('publishing');
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {
-              "name"   : "search",
+              "name"   : "youtube_search",
+              "uuid"   : $("#uuid").text(),
+              "data"   : {
+                "query"   : query
+              }
+            }
+          });
+        });
+
+        $("#soundcloud_search_submit").bind('click', function(e, ui) {
+          e.preventDefault();
+
+          var query = $("#soundcloud_search_query").val();
+          if ((query == undefined) || (query.length == 0)) { return; }
+
+          console.log('publishing');
+          PUBNUB.publish({ 
+            channel : "content_commander", 
+            message : {
+              "name"   : "soundcloud_search",
               "uuid"   : $("#uuid").text(),
               "data"   : {
                 "query"   : query
@@ -140,7 +192,21 @@
             });
         });
 
-        $("#push_yes").bind('click', function(e) {
+        PUBNUB.events.bind("soundcloud_results", function(message) {
+          for (var i=0; i < message.data.song_ids.length; i++) {
+            $("#soundcloud_box").append(newSoundcloudDiv(message.data.song_ids[i][0], 
+                                                         message.data.song_ids[i][1]));
+          }  
+          $(".soundcloud_button")
+            .button()
+            .bind('click', function(e) {
+              $("#soundcloud_confirm").append($(this).parent().children('.soundcloud_body').html());
+              $(document).data('selected_song', $(this).parent().attr('id'));
+            });
+        });
+
+
+        $("#youtube_push_yes").bind('click', function(e) {
           console.log('pushing!');
           PUBNUB.publish({ 
             channel : "content_commander", 
@@ -153,7 +219,21 @@
           });
         });
 
+        $("#soundcloud_push_yes").bind('click', function(e) {
+          console.log('pushing soundcloud!');
+          PUBNUB.publish({ 
+            channel : "content_commander", 
+            message : {
+              "name"   : "soundcloud_link",
+              "data"   : {
+                "song_id" : $(document).data('selected_song')
+              }
+            }
+          });
+        });
+
       </script>
       <script src="js/youtube.js"></script>
+      <script src="js/soundcloud.js"></script>
     </body>
 </html>

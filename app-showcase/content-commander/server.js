@@ -7,7 +7,8 @@ var flatiron = require('flatiron'),
     events  = new (require('events').EventEmitter)(),
     settings = require('./settings.js'),
     uuid = require('node-uuid'),
-    https  = require('https');
+    https  = require('https'),
+    http  = require('http');
 
 var app = flatiron.app;
 app.config.file({ file: path.join(__dirname, 'config', 'config.json') });
@@ -95,14 +96,19 @@ function sendPrivateMessage(uuid, name, data) {
   });
 }
 
-events.on("search", function(message) {
-  console.log("search:");
+events.on("youtube_search", function(message) {
+  console.log("youtube_search:");
   console.log(message.data.query);
   search_youtube(message.data.query, message.uuid);
 });
 
+events.on("soundcloud_search", function(message) {
+  console.log("soundcloud_search:");
+  console.log(message.data.query);
+  search_soundcloud(message.data.query, message.uuid);
+});
+
 function search_youtube(query, uuid) {
-  //     title: { '$t': 'Washed Out - Feel it all around', type: 'text' },
   var body = '';
 
   https.get( {
@@ -132,9 +138,36 @@ function search_youtube(query, uuid) {
   });
 }
 
+function search_soundcloud(query, uuid) {
+  var body = '';
+  var path = '/tracks?q=' + escape(query) + '&format=json&client_id=' + settings.SOUNDCLOUD_CLIENT_ID; 
+  console.log(path);
 
-      /*
 
-      // console.log( JSON.parse(body).feed.entry[0]);//.link[0].href);
-      // thumbnail like this: http://img.youtube.com/vi/-DkslcOhytU/default.jpg    
-      */
+  http.get( {
+    host: 'api.soundcloud.com',
+    path: '/tracks?q=' + escape(query) + '&format=json&client_id=' + settings.SOUNDCLOUD_CLIENT_ID, 
+    method: 'GET'
+  }, function(response) {
+    response.setEncoding('utf8');
+    response.on( 'error', fail );
+    response.on( 'data', function (chunk) {
+        if (chunk) body += chunk;
+    });
+    response.on( 'end', function () {
+
+      console.log(body);
+      var entries = JSON.parse(body), 
+          song_ids = [];
+
+      entries.forEach( function(entry) {
+        song_ids.push([entry.id, entry.title]);
+      });
+
+      console.log("song_ids:");
+      console.log(song_ids);
+      sendPrivateMessage(uuid, "soundcloud_results", {"song_ids": song_ids.slice(0,9)});   
+      
+    });
+  });
+}
