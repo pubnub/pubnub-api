@@ -108,6 +108,12 @@ events.on("soundcloud_search", function(message) {
   search_soundcloud(message.data.query, message.uuid);
 });
 
+events.on("flickr_search", function(message) {
+  console.log("flickr_search:");
+  console.log(message.data.query);
+  search_flickr(message.data.query, message.uuid);
+});
+
 function search_youtube(query, uuid) {
   var body = '';
 
@@ -140,8 +146,6 @@ function search_youtube(query, uuid) {
 
 function search_soundcloud(query, uuid) {
   var body = '';
-  var path = '/tracks?q=' + escape(query) + '&format=json&client_id=' + settings.SOUNDCLOUD_CLIENT_ID; 
-  console.log(path);
 
 
   http.get( {
@@ -171,3 +175,36 @@ function search_soundcloud(query, uuid) {
     });
   });
 }
+
+
+function search_flickr(query, uuid) {
+  var body = '';
+
+  http.get( {
+    host: 'api.flickr.com',
+    path: '/services/rest/?method=flickr.photos.search&api_key=' + settings.FLICKR_KEY + 
+          '&text=' + escape(query) + '&format=json&nojsoncallback=1',
+    method: 'GET'
+  }, function(response) {
+    response.setEncoding('utf8');
+    response.on( 'error', fail );
+    response.on( 'data', function (chunk) {
+        if (chunk) body += chunk;
+    });
+    response.on( 'end', function () {
+
+      console.log(body);
+      var entries = JSON.parse(body).photos.photo, 
+          photo_ids = [];
+
+      entries.forEach( function(entry) {
+        photo_ids.push([entry.farm, entry.server, entry.id, entry.secret, entry.title]);
+      });
+
+      console.log("photo_ids:");
+      console.log(photo_ids);
+      sendPrivateMessage(uuid, "flickr_results", {"photo_ids": photo_ids.slice(0,4)});   
+    });
+  });
+}
+

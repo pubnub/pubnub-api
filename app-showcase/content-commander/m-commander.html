@@ -42,6 +42,7 @@
                 </fieldset>
               </div><!-- /fieldcontain -->
             </div><!-- /collapsible -->
+
             <div data-role="collapsible" data-collapsed="true" >
               <h3>
                 SoundCloud
@@ -53,6 +54,21 @@
                   </label>
                   <input id="soundcloud_search_query" placeholder="" value="" type="text" />
                   <input id="soundcloud_search_submit" type="button" value="Search" data-inline="true" />
+                </fieldset>
+              </div><!-- /fieldcontain -->
+            </div><!-- /collapsible -->
+
+            <div data-role="collapsible" data-collapsed="true" >
+              <h3>
+                Flickr
+              </h3>
+              <div data-role="fieldcontain" id="flickr_box">
+                <fieldset data-role="controlgroup">
+                  <label for="flickr_search_query">
+                    Search
+                  </label>
+                  <input id="flickr_search_query" placeholder="" value="" type="text" />
+                  <input id="flickr_search_submit" type="button" value="Search" data-inline="true" />
                 </fieldset>
               </div><!-- /fieldcontain -->
             </div><!-- /collapsible -->
@@ -91,6 +107,22 @@
             </p>	
           </div><!-- /content -->
         </div><!-- /page soundcloud_popup -->
+
+
+        <div data-role="page" id="flickr_popup">
+          <div data-role="header" data-theme="a">
+            <h1>Confirm Push</h1>
+          </div><!-- /header -->
+
+          <div data-role="content" data-theme="a">	
+            <p>Do you really want to push the following song to the viewers?</p>		
+            <p id="flickr_confirm">
+            <p>
+              <a href="#main" data-rel="back" data-role="button" data-inline="true" data-icon="delete" id="flickr_push_no">No</a>
+              <a href="#main" data-role="button" data-inline="true" data-icon="arrow-r" id="flickr_push_yes">Yes</a>
+            </p>	
+          </div><!-- /content -->
+        </div><!-- /page flickr_popup -->
     
       <!-- PUBNUB -->
 
@@ -141,6 +173,12 @@
           return "<div class='soundcloud_div' id='" + song_id + "'><div class='soundcloud_body'><h4>" + title + "</h4></div><a href='#soundcloud_popup' class='soundcloud_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
         }
 
+        function newFlickrDiv(farm, server, id, secret, title) {
+          var new_img = '<img src="http://farm' + farm +  '.staticflickr.com/' + server  + '/' + id + '_' + secret + '.jpg" width="300" alt="' + title + '" />';
+          console.log(new_img);
+          return "<div class='flickr_div' id='" + id + "'><div class='flickr_body'><h4>" + title + "</h4>" + new_img + "</div><a href='#flickr_popup' class='flickr_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
+        }
+
         $("#youtube_search_submit").bind('click', function(e, ui) {
           e.preventDefault();
 
@@ -179,6 +217,25 @@
           });
         });
 
+        $("#flickr_search_submit").bind('click', function(e, ui) {
+          e.preventDefault();
+
+          var query = $("#flickr_search_query").val();
+          if ((query == undefined) || (query.length == 0)) { return; }
+
+          console.log('publishing');
+          PUBNUB.publish({ 
+            channel : "content_commander", 
+            message : {
+              "name"   : "flickr_search",
+              "uuid"   : $("#uuid").text(),
+              "data"   : {
+                "query"   : query
+              }
+            }
+          });
+        });
+
         PUBNUB.events.bind("youtube_results", function(message) {
           for (var i=0; i < message.data.video_ids.length; i++) {
             $("#youtube_box").append(newYoutubeDiv(message.data.video_ids[i][0], 
@@ -206,6 +263,34 @@
         });
 
 
+        PUBNUB.events.bind("flickr_results", function(message) {
+          for (var i=0; i < message.data.photo_ids.length; i++) {
+            $("#flickr_box").append(newFlickrDiv(message.data.photo_ids[i][0], 
+                                                 message.data.photo_ids[i][1],
+                                                 message.data.photo_ids[i][2],
+                                                 message.data.photo_ids[i][3],
+                                                 message.data.photo_ids[i][4]));
+
+            $("#" + message.data.photo_ids[i][2]).data('farm', message.data.photo_ids[i][0]); 
+            $("#" + message.data.photo_ids[i][2]).data('server', message.data.photo_ids[i][1]); 
+            $("#" + message.data.photo_ids[i][2]).data('secret', message.data.photo_ids[i][3]); 
+            $("#" + message.data.photo_ids[i][2]).data('title', message.data.photo_ids[i][4]); 
+            // LOL
+          }  
+          $(".flickr_button")
+            .button()
+            .bind('click', function(e) {
+              $("#flickr_confirm").append($(this).parent().children('.flickr_body').html());
+              var id = $(this).parent().attr('id');
+              $(document).data('selected_photo', 
+                { 'farm'   : $("#" + id).data('farm'),
+                  'server' : $("#" + id).data('server'),
+                  'id'     : id,
+                  'secret' : $("#" + id).data('secret'),
+                  'title'  : $("#" + id).data('title')});
+            });
+        });
+
         $("#youtube_push_yes").bind('click', function(e) {
           console.log('pushing!');
           PUBNUB.publish({ 
@@ -232,8 +317,20 @@
           });
         });
 
+        $("#flickr_push_yes").bind('click', function(e) {
+          console.log('pushing flickr!');
+          PUBNUB.publish({ 
+            channel : "content_commander", 
+            message : {
+              "name"   : "flickr_link",
+              "data"   : $(document).data('selected_photo')
+            }
+          });
+        });
+
       </script>
       <script src="js/youtube.js"></script>
       <script src="js/soundcloud.js"></script>
+      <script src="js/flickr.js"></script>
     </body>
 </html>
