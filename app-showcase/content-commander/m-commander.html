@@ -3,11 +3,12 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>
-        </title>
+        <title>Content Commander </title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
         <style>
-            /* App custom styles */
+          .youtube_img {
+              width: 275px;
+          }
         </style>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
         </script>
@@ -15,29 +16,52 @@
         </script>
     </head>
     <body>
-        <div data-role="page" id="page1">
-            <div data-role="content">
-                <h2>
-                    Commander
-                </h2>
-                <div data-role="collapsible-set" data-theme="" data-content-theme="">
-                    <div data-role="collapsible" data-collapsed="true" >
-                        <h3>
-                            YouTube
-                        </h3>
-                        <div data-role="fieldcontain" id="youtube_box">
-                            <fieldset data-role="controlgroup">
-                                <label for="search_query">
-                                    Search
-                                </label>
-                                <input id="search_query" placeholder="" value="" type="text" />
-                                <input id="search_submit" type="button" value="Search" data-inline="true" />
-                            </fieldset>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div data-role="page" id="main">
+        <div data-theme="a" data-role="header">
+          <h3>
+            Content Commander
+          </h3>
+        </div><!-- /header -->
+        <div data-role="content" id="viewer_box" class="box left">
+          <div id="content"></div>
+        </div><!-- /content #viewer_box" -->
+
+        <div data-role="content">
+          <div data-role="collapsible-set" data-theme="a" data-content-theme="">
+            <div data-role="collapsible" data-collapsed="true" >
+              <h3>
+                YouTube
+              </h3>
+              <div data-role="fieldcontain" id="youtube_box">
+                <fieldset data-role="controlgroup">
+                  <label for="search_query">
+                    Search
+                  </label>
+                  <input id="search_query" placeholder="" value="" type="text" />
+                  <input id="search_submit" type="button" value="Search" data-inline="true" />
+                </fieldset>
+              </div><!-- /fieldcontain -->
+            </div><!-- /collapsible -->
+          </div><!-- /collapsible-set -->
+        </div><!-- /content -->
+      </div><!-- /page #main -->
+
+
+        <div data-role="page" id="popup">
+          <div data-role="header" data-theme="a">
+            <h1>Confirm Push</h1>
+          </div><!-- /header -->
+
+          <div data-role="content" data-theme="a">	
+            <p>Do you really want to push the following video to your followers?</p>		
+            <p id="youtube_confirm">
+            <p>
+            <p>
+              <a href="#main" data-rel="back" data-role="button" data-inline="true" data-icon="delete" id="push_no">No</a>
+              <a href="#main" data-role="button" data-inline="true" data-icon="arrow-r" id="push_yes">Yes</a>
+            </p>	
+          </div><!-- /content -->
+        </div><!-- /page popup -->
     
       <!-- PUBNUB -->
 
@@ -50,7 +74,7 @@
           restore    : false,      
           callback   : function(message) {
             if (message.name) {
-              PUBNUB.events.fire(message.name, message);
+              PUBNUB.events.fire(message.name, message.data);
             }
           },
           disconnect : function() { 
@@ -62,14 +86,11 @@
         });
 
         var channel = "content_commander_" + $("#uuid").text(); 
-        console.log("channel:");
-        console.log(channel);
         PUBNUB.subscribe({
           channel    : channel, 
           restore    : false,      
           callback   : function(message) {
             if (message.name) {
-              console.log('private_message!');
               PUBNUB.events.fire(message.name, message);
             }
           },
@@ -84,7 +105,7 @@
 
       <script>
         function newYoutubeDiv(video_id, title) {
-          return "<div class='youtube_div' id='" + video_id + "'><h4>" + title + "</h4><div><img src='http://img.youtube.com/vi/" + video_id + "/1.jpg' /></div><hr/><div>";
+          return "<div class='youtube_div' id='" + video_id + "'><div class='youtube_body'><h4>" + title + "</h4><img src='http://img.youtube.com/vi/" + video_id + "/0.jpg' class='youtube_img' /></div><a href='#popup' class='youtube_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
         }
 
         $("#search_submit").bind('click', function(e, ui) {
@@ -107,30 +128,32 @@
         });
 
         PUBNUB.events.bind("youtube_results", function(message) {
-          console.log(JSON.stringify(message));
-          console.log("message.data.video_ids:");  
-          console.log(message.data.video_ids);  
           for (var i=0; i < message.data.video_ids.length; i++) {
             $("#youtube_box").append(newYoutubeDiv(message.data.video_ids[i][0], 
                                                    message.data.video_ids[i][1]));
           }  
-          $(".youtube_div").bind('click', function(e) {
-            e.preventDefault();
-            console.log('here!');
-
-            PUBNUB.publish({ 
-              channel : "content_commander", 
-              message : {
-                "name"   : "youtube_link",
-                "data"   : {
-                  "video_id"   : $(this).attr('id')
-                }
-              }
+          $(".youtube_button")
+            .button()
+            .bind('click', function(e) {
+              $("#youtube_confirm").append($(this).parent().children('.youtube_body').html());
+              $(document).data('selected_video', $(this).parent().attr('id'));
             });
+        });
 
+        $("#push_yes").bind('click', function(e) {
+          console.log('pushing!');
+          PUBNUB.publish({ 
+            channel : "content_commander", 
+            message : {
+              "name"   : "youtube_link",
+              "data"   : {
+                "video_id" : $(document).data('selected_video')
+              }
+            }
           });
         });
 
       </script>
+      <script src="js/youtube.js"></script>
     </body>
 </html>
