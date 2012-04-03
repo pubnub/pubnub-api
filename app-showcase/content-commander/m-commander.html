@@ -7,7 +7,10 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
         <style>
           .youtube_img {
-              width: 275px;
+            width: 275px;
+          }
+          body {
+            width: 100%; 
           }
         </style>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
@@ -40,6 +43,8 @@
                   <input id="youtube_search_query" placeholder="" value="" type="text" />
                   <input id="youtube_search_submit" type="button" value="Search" data-inline="true" />
                 </fieldset>
+                <div id="youtube_results">
+                </div>
               </div><!-- /fieldcontain -->
             </div><!-- /collapsible -->
 
@@ -55,6 +60,8 @@
                   <input id="soundcloud_search_query" placeholder="" value="" type="text" />
                   <input id="soundcloud_search_submit" type="button" value="Search" data-inline="true" />
                 </fieldset>
+                <div id="soundcloud_results">
+                </div>
               </div><!-- /fieldcontain -->
             </div><!-- /collapsible -->
 
@@ -70,6 +77,8 @@
                   <input id="flickr_search_query" placeholder="" value="" type="text" />
                   <input id="flickr_search_submit" type="button" value="Search" data-inline="true" />
                 </fieldset>
+                <div id="flickr_results">
+                </div>
               </div><!-- /fieldcontain -->
             </div><!-- /collapsible -->
           </div><!-- /collapsible-set -->
@@ -127,9 +136,10 @@
       <!-- PUBNUB -->
 
       <div pub-key="pub-550ff6a3-aa50-466c-a2c7-55a6c3fa3345" sub-key="sub-f3307e99-6a4a-11e1-870f-affeca838b29" ssl="off" origin="pubsub.pubnub.com" id="pubnub"></div>
-      <div style="display:none" id="uuid"></div>
       <script src="http://cdn.pubnub.com/pubnub-3.1.min.js"></script>
       <script>(function(){
+        $(document).data('uuid', (((1+Math.random())*0x10000)|0).toString(16).substring(1));
+
         PUBNUB.subscribe({
           channel    : "content_commander", 
           restore    : false,      
@@ -146,7 +156,7 @@
           }
         });
 
-        var channel = "content_commander_" + $("#uuid").text(); 
+        var channel = "content_commander_" + $(document).data("uuid"); 
         PUBNUB.subscribe({
           channel    : channel, 
           restore    : false,      
@@ -185,12 +195,13 @@
           var query = $("#youtube_search_query").val();
           if ((query == undefined) || (query.length == 0)) { return; }
 
-          console.log('publishing');
+          console.log('publishing yt search');
+          console.log(query);
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {
               "name"   : "youtube_search",
-              "uuid"   : $("#uuid").text(),
+              "uuid"   : $(document).data("uuid"),
               "data"   : {
                 "query"   : query
               }
@@ -209,7 +220,7 @@
             channel : "content_commander", 
             message : {
               "name"   : "soundcloud_search",
-              "uuid"   : $("#uuid").text(),
+              "uuid"   : $(document).data("uuid"),
               "data"   : {
                 "query"   : query
               }
@@ -228,7 +239,7 @@
             channel : "content_commander", 
             message : {
               "name"   : "flickr_search",
-              "uuid"   : $("#uuid").text(),
+              "uuid"   : $(document).data("uuid"),
               "data"   : {
                 "query"   : query
               }
@@ -237,35 +248,40 @@
         });
 
         PUBNUB.events.bind("youtube_results", function(message) {
+          $("#youtube_results").empty();
           for (var i=0; i < message.data.video_ids.length; i++) {
-            $("#youtube_box").append(newYoutubeDiv(message.data.video_ids[i][0], 
+            $("#youtube_results").append(newYoutubeDiv(message.data.video_ids[i][0], 
                                                    message.data.video_ids[i][1]));
           }  
           $(".youtube_button")
             .button()
             .bind('click', function(e) {
-              $("#youtube_confirm").append($(this).parent().children('.youtube_body').html());
+              $("#youtube_confirm").empty()
+                .append($(this).parent().children('.youtube_body').html());
               $(document).data('selected_video', $(this).parent().attr('id'));
             });
         });
 
         PUBNUB.events.bind("soundcloud_results", function(message) {
+          $("#soundcloud_results").empty();
           for (var i=0; i < message.data.song_ids.length; i++) {
-            $("#soundcloud_box").append(newSoundcloudDiv(message.data.song_ids[i][0], 
+            $("#soundcloud_results").append(newSoundcloudDiv(message.data.song_ids[i][0], 
                                                          message.data.song_ids[i][1]));
           }  
           $(".soundcloud_button")
             .button()
             .bind('click', function(e) {
-              $("#soundcloud_confirm").append($(this).parent().children('.soundcloud_body').html());
+              $("#soundcloud_confirm").empty()
+                .append($(this).parent().children('.soundcloud_body').html());
               $(document).data('selected_song', $(this).parent().attr('id'));
             });
         });
 
 
         PUBNUB.events.bind("flickr_results", function(message) {
+          $("#flickr_results").empty();
           for (var i=0; i < message.data.photo_ids.length; i++) {
-            $("#flickr_box").append(newFlickrDiv(message.data.photo_ids[i][0], 
+            $("#flickr_results").append(newFlickrDiv(message.data.photo_ids[i][0], 
                                                  message.data.photo_ids[i][1],
                                                  message.data.photo_ids[i][2],
                                                  message.data.photo_ids[i][3],
@@ -280,7 +296,8 @@
           $(".flickr_button")
             .button()
             .bind('click', function(e) {
-              $("#flickr_confirm").append($(this).parent().children('.flickr_body').html());
+              $("#flickr_confirm").empty()
+                .append($(this).parent().children('.flickr_body').html());
               var id = $(this).parent().attr('id');
               $(document).data('selected_photo', 
                 { 'farm'   : $("#" + id).data('farm'),
@@ -292,7 +309,6 @@
         });
 
         $("#youtube_push_yes").bind('click', function(e) {
-          console.log('pushing!');
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {
@@ -305,7 +321,6 @@
         });
 
         $("#soundcloud_push_yes").bind('click', function(e) {
-          console.log('pushing soundcloud!');
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {
@@ -318,7 +333,6 @@
         });
 
         $("#flickr_push_yes").bind('click', function(e) {
-          console.log('pushing flickr!');
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {

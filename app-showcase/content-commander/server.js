@@ -6,7 +6,6 @@ var flatiron = require('flatiron'),
     pubnub = require('pubnub'),
     events  = new (require('events').EventEmitter)(),
     settings = require('./settings.js'),
-    uuid = require('node-uuid'),
     https  = require('https'),
     http  = require('http');
 
@@ -20,10 +19,8 @@ app.router.get('/viewer', function () {
   console.log('/viewer');
   var flat = this;
   fs.readFile('viewer.html', function(err, buffer) {
-    //console.log(file);
     var html = buffer.toString();
-    var data = { "test": "New Value" };
-    var output = plates.bind(html, data); 
+    var output = plates.bind(html, {}); 
 
     flat.res.writeHead(200, { 'Content-Type': 'text/html' });
     flat.res.end(output);
@@ -34,10 +31,9 @@ app.router.get('/commander', function () {
   console.log('/commander');
   var flat = this;
   fs.readFile('m-commander.html', function(err, buffer) {
-    //console.log(file);
     var html = buffer.toString();
-    var data = { "uuid": uuid.v4() };
-    var output = plates.bind(html, data); 
+    //var data = { "uuid": uuid.v4() };
+    var output = plates.bind(html, {}); 
 
     flat.res.writeHead(200, { 'Content-Type': 'text/html' });
     flat.res.end(output);
@@ -52,7 +48,6 @@ app.http.before = [
 function fail() {
   console.log('fail');
 }
-
 
 
 var PORT = 3000;
@@ -147,7 +142,6 @@ function search_youtube(query, uuid) {
 function search_soundcloud(query, uuid) {
   var body = '';
 
-
   http.get( {
     host: 'api.soundcloud.com',
     path: '/tracks?q=' + escape(query) + '&format=json&client_id=' + settings.SOUNDCLOUD_CLIENT_ID, 
@@ -171,7 +165,6 @@ function search_soundcloud(query, uuid) {
       console.log("song_ids:");
       console.log(song_ids);
       sendPrivateMessage(uuid, "soundcloud_results", {"song_ids": song_ids.slice(0,9)});   
-      
     });
   });
 }
