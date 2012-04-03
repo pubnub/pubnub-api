@@ -21,5 +21,21 @@ Running via node.js
 6. navigate to `http://localhost:3000/commander`
 
 
+Running via HTML
+-------------------
+
+1. create `settings.js` file with the following lines: 
+
+        exports.PUBNUB_PUBLISH_KEY = "insert your publish key from pubnub here"; 
+        exports.PUBNUB_SUBSCRIBE_KEY = "insert your subscribe key from pubnub here";
+        exports.PUBNUB_SECRET_KEY = "insert your secret key from pubnub here";
+        exports.SOUNDCLOUD_CLIENT_ID = "for soundcloud functionality, insert soundcloud api id here"; 
+        exports.FLICKR_KEY = "for flickr functionality key, insert flickr api key here";
+
+2. cd into directory
+3. run `ln -s media/* .`
+4. navigate to `/path/to/repo/app-showcase/content-commander/m-commander.html`
+
+
 
 
