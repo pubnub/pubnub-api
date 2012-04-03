@@ -8,6 +8,11 @@ function addLeadingZero(n) {
   }
 }
 
+// initial load
+if ($(document).data("time_til_wipe") != undefined) {
+  wipe_in = (+new Date) + $(document).data("time_til_wipe");
+}
+
 PUBNUB.events.bind( "got_from_server_message_status", function(message) {
   wipe_in = (+new Date) + message.data.time_til_wipe;
 });

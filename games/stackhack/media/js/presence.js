@@ -13,4 +13,8 @@ PUBNUB.events.bind( "got_message_still_here", function(message) {
   num_online += 1;
 });
 
+PUBNUB.events.bind( "got_from_server_message_status", function(message) {
+  num_online = message.data.num_clients;    
+  $("#num_online").text(num_online);
+});
 

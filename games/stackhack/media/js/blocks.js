@@ -381,3 +381,7 @@ function render() {
   renderer.render( scene, camera );
 }
 
+for (i in $(document).data("initial_blocks")) {
+  var block_to_add = $(document).data("initial_blocks")[i];  
+  createBlock(block_to_add.x, block_to_add.y, block_to_add.z, block_to_add.c, 1);   
+}

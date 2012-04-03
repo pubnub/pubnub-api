@@ -98,6 +98,18 @@
         } 
       });
 
+      $(document).data("initial_blocks", []);
+      {{each block_array}}
+        $(document).data("initial_blocks").push( 
+        { 'x': ${$value.x},
+          'y': ${$value.y},
+          'z': ${$value.z},
+          'c': ${$value.color} });
+      {{/each}}
+
+      $(document).data("time_til_wipe", ${time_til_wipe});
+
+
 
     </script>
 
@@ -107,7 +119,7 @@
       <h1>StackHack</h1>
       <p>powered by</p>
       <a href="http://www.pubnub.com"><img src="http://cdn.pubnub.com/media/img/pubnub.png" /></a><br/>     
-      <a href="http://www.pubnub.com/blog/stackhack">(the eff is this thing?)</a><br/><br/>
+      <a href="http://www.pubnub.com/blog/stackhack-revisited">What I learned making this</a><br/><br/>
       <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://stackhack.com" data-text="Check out this multiplayer block game" data-via="PubNub">Tweet</a>
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
     </div>
