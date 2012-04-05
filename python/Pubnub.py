@@ -82,7 +82,7 @@ class Pubnub():
 
         ## Capture User Input
         channel = args['channel']
-        message = json.dumps(args['message'])
+        message = json.dumps(args['message'], separators=(',',':'))
 
         ## Sign Message
         if self.secret_key :

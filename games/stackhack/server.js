@@ -6,7 +6,7 @@ var app = require('express').createServer(),
     events  = new (require('events').EventEmitter)(),
     uuid = require('node-uuid'),
     mongoose = require('mongoose')
-    settings = require('settings');
+    settings = require('./settings.js');
 
 
 var ClientInfoSchema = new mongoose.Schema({
@@ -40,14 +40,12 @@ var block_index = {},
     updated = {},
     muted = {},
     wipe, 
-    debug = true,
+    debug,
     channel;
 
 if (debug == true) {
-  channel = "stackhack_debug";
 }
 else {
-  channel = "stackhack_public";
 }
 
 
@@ -89,6 +87,8 @@ app.configure("development", function() {
   global.PORT = 7777;
   console.log("Starting under development settings...");
   mongoose.connect(settings.DEBUG_MONGODB_URL);
+  channel = "stackhack_debug";
+  debug = true;
 });
 
 app.configure("production", function() {
@@ -96,6 +96,8 @@ app.configure("production", function() {
   global.PORT = 80;
   console.log("Starting under production settings...");
   mongoose.connect(settings.PROD_MONGODB_URL);
+  channel = "stackhack_public";
+  debug = false;
 });
 
 app.get('/favicon.ico', function(req, res) {
@@ -105,13 +107,15 @@ app.get('/favicon.ico', function(req, res) {
 app.get('/', function(req, res) {
 
   console.log('/');
-  var new_client = addClient(uuid.v4());
+  var new_client = addClient(uuid.v4()),
+      block_array = objectToArray(block_index);
 
+  console.log(block_array);
   res.render('main', {'debug': debug,
                       'layout': true, 
                       'uuid':   new_client.info.uuid,
-                      'time_til_wipe':   getTimeTilWipe() });
-  setTimeout(sendStatus, 3000, new_client.info.uuid); 
+                      'time_til_wipe':   getTimeTilWipe(),
+                      'block_array': block_array });
 });
 
 function addClient(uuid, client_info) {
@@ -368,7 +372,8 @@ function sendStatus(uuid, mini) {
   var block_array = objectToArray(block_index),
       muted_array = objectToArray(muted),
       i, j, k, temp_array, chunk = 20, timestamp = +new Date(), 
-      time_til_wipe = getTimeTilWipe();
+      time_til_wipe = getTimeTilWipe(),
+      num_clients = Object.keys(clients).length;
 
   console.log("time_til_wipe:");
   console.log(time_til_wipe);
@@ -379,7 +384,8 @@ function sendStatus(uuid, mini) {
     "blocks": [],
     "time_til_wipe": time_til_wipe,
     "timestamp": timestamp, 
-    "muted": muted_array }); 
+    "muted": muted_array,
+    "num_clients": num_clients }); 
     return;
   }
 
@@ -404,7 +410,8 @@ function sendStatus(uuid, mini) {
       "blocks": temp_array,
       "time_til_wipe": time_til_wipe,
       "timestamp": timestamp,
-      "muted": muted_array }); 
+      "muted": muted_array,
+      "num_clients": num_clients }); 
   }
 }
 
