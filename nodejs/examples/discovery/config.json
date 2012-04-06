@@ -1,0 +1,8 @@
+{
+    "interval": "-1",
+    "delayBeforeShutdown": "3000",
+    "pubnub": {
+        "publish_key": "demo",
+        "subscribe_key": "demo"
+    }
+}

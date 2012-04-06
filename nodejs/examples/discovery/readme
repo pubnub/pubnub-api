@@ -1,0 +1,12 @@
+Simple framework for pubnub.
+
+1. Switch to termile and run 'boot'. This action just run discovery service.
+2. Switch to other terminal and run 'loader.js'. This action run all constollers.
+3. Switch to other terminal and run 'loader.js'. 
+...
+So we have 1 instance for discovery service and 2 instances for each controllers (echo, time and translate).
+...
+4. Switch to other terminal and run from ./clients folder all tests.
+
+
+Yaroslav Gaponov (yaroslav.gaponov@gmail.com)
