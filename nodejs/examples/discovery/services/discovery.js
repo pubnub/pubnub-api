@@ -17,10 +17,6 @@ discovery.prototype.onTick = function(callback) {
     return callback();
 }
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 discovery.prototype.onReceipt = function(message, callback) {
     try {
         switch (message.op) {        
@@ -34,9 +30,10 @@ discovery.prototype.onReceipt = function(message, callback) {
                 
             case 'get':
                 if ((this.db[message.name]) && (this.db[message.name].length > 0)) {
-                   var rand = getRandomInt(0, this.db[message.name].length - 1);
                    console.log('%s\tprocessed a search request for %s service.', new Date().toTimeString(), message.name);                
-                   return callback(null, this.db[message.name][rand])
+                   var ctrl = this.db[message.name].shift();
+                   this.db[message.name].push(ctrl);
+                   return callback(null, ctrl)
                 }           
                 return callback(util.format("service %s isn't found", message.name), null);
                 

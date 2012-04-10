@@ -21,7 +21,7 @@ var obj_channel = [];
 // create controllers list
 var service_list = process.argv.slice(2);    
 if ((!service_list) || (!service_list.length)) {
-    service_list = ['echo', 'time', 'translate'];
+    service_list = ['ip', 'echo', 'time', 'translate'];
 }
 
 // load controllers
