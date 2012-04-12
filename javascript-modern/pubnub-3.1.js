@@ -253,7 +253,7 @@ function xdr( setup ) {
 /* =-====================================================================-= */
 /* =-====================================================================-= */
 
-function PUBNUB(setup) {
+function PN(setup) {
     var CHANNELS      = {}
     ,   PUBLISH_KEY   = setup['publish_key']   || ''
     ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
@@ -469,5 +469,7 @@ function PUBNUB(setup) {
 
     return SELF;
 }
+
+typeof module !== 'undefined' && (module.exports = PN) || (PUBNUB = PN);
 
 })();
