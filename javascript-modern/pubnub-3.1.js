@@ -37,7 +37,7 @@ function unique() { return'x'+ ++NOW+''+(+new Date) }
 function rnow() { return+new Date }
 
 /**
- * LOCAL STORAGE OR COOKIE
+ * LOCAL STORAGE
  */
 var db = (function(){
     var ls = localStorage;
@@ -53,10 +53,8 @@ var db = (function(){
  * UTIL LOCALS
  */
 var NOW    = 1
-,   REPL   = /{([\w\-]+)}/g
 ,   URLBIT = '/'
-,   XHRTME = 140000
-,   SECOND = 1000;
+,   XHRTME = 140000;
 
 /**
  * NEXTORIGIN
@@ -414,7 +412,7 @@ function PN(setup) {
                             disconnected = 1;
                             disconnect();
                         }
-                        timeout( pubnub, SECOND );
+                        timeout( pubnub, 1000 );
                         SELF['time'](function(success){
                             success || error();
                         });
@@ -470,6 +468,6 @@ function PN(setup) {
     return SELF;
 }
 
-typeof module !== 'undefined' && (module.exports = PN) || (PUBNUB = PN);
+module && (module.exports = PN) || (PUBNUB = PN);
 
 })();
