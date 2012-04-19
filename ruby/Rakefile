@@ -8,7 +8,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/pubnub/pubnub-api/tree/master/ruby"
   gem.license = "MIT"
   gem.summary = %Q{PubNub unofficial gem}
-  gem.description = %Q{Simply Pubnub.rb in gem format, require "pubnub" - ask @rubynerd for upgrades} 
+  gem.description = %Q{Simply Pubnub.rb in gem format, require "pubnub"} 
   gem.email = "stephen@pubnub.com"
   gem.authors = ["Stephen Blum"]
   gem.files = FileList['lib/**/*.rb', 'examples/**/*.rb', 'tests/**/*.rb'] 
