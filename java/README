@@ -38,6 +38,7 @@ Java: (Init)
         "demo",  // PUBLISH_KEY
         "demo",  // SUBSCRIBE_KEY
         "",      // SECRET_KEY
+        "",      // CIPHER_KEY
         false    // SSL_ON?
     );
 
@@ -51,11 +52,13 @@ Java: (Publish)
     try { message.put( "some_key", "Hello World!" ); }
     catch (org.json.JSONException jsonError) {}
 
+    // Create HashMap parameter
+	HashMap<String, Object> args = new HashMap<String, Object>(2);
+	args.put("channel", "hello_world");		// Channel Name
+	args.put("message", message);			// JSON Message
+    
     // Publish Message
-    JSONArray info = pubnub.publish(
-        "hello_world", // Channel Name
-        message        // JSON Message
-    );
+    JSONArray info = pubnub.publish( args );
 
     // Print Response from PubNub JSONP REST Service
     System.out.println(info);
@@ -79,23 +82,27 @@ Java: (Subscribe)
 
     // Create a new Message Receiver
     Receiver message_receiver = new Receiver();
-
+    
+    // Create HashMap parameter
+    HashMap<String, Object> args = new HashMap<String, Object>(2);
+	args.put("channel", "hello_world");			// Channel Name
+	args.put("callback", message_receiver);		// Receiver Callback Class
+    
     // Listen for Messages (Subscribe)
-    pubnub.subscribe(
-        "hello_world",   // Channel Name
-        message_receiver // Receiver Callback Class
-    );
+    pubnub.subscribe( args );
 
 
 -------------------------------------------------------------------------------
 Java: (History)
 -------------------------------------------------------------------------------
 
+	// Create HashMap parameter
+    HashMap<String, Object> args = new HashMap<String, Object>(2);
+	args.put("channel", "hello_world");		// Channel Name
+	args.put("limit", 1);					// Limit
+	
     // Get History
-    JSONArray response = pubnub.history(
-        "hello_world", // Channel Name
-        1              // Limit
-    );
+    JSONArray response = pubnub.history( args );
 
     // Print Response from PubNub JSONP REST Service
     System.out.println(response);

@@ -1,4 +1,4 @@
-package pubnub;
+package com.fbt;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -8,19 +8,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.Request;
-import com.ning.http.client.RequestBuilder;
-import com.ning.http.client.Response;
-import com.ning.http.client.AsyncHttpClientConfig.Builder;
+import pubnub.PubnubCrypto;
 /**
  * PubNub 3.0 Real-time Push Cloud API
  *
@@ -125,19 +127,19 @@ public class Pubnub {
         String cipher_key,
         boolean ssl_on
     ) {
-       	this.PUBLISH_KEY   = publish_key;
-       	this.SUBSCRIBE_KEY = subscribe_key;
-       	this.SECRET_KEY    = secret_key;
-       	this.CIPHER_KEY	= cipher_key;
-       	this.SSL           = ssl_on;
-        	
-       	// SSL On?
-       	if (this.SSL) {
-           	this.ORIGIN = "https://" + this.ORIGIN;
-       	}
-       	else {
-      	 	this.ORIGIN = "http://" + this.ORIGIN;
-   	 	}
+        this.PUBLISH_KEY   = publish_key;
+        this.SUBSCRIBE_KEY = subscribe_key;
+        this.SECRET_KEY    = secret_key;
+    	this.CIPHER_KEY	= cipher_key;
+        this.SSL           = ssl_on;
+
+        // SSL On?
+        if (this.SSL) {
+            this.ORIGIN = "https://" + this.ORIGIN;
+        }
+        else {
+            this.ORIGIN = "http://" + this.ORIGIN;
+        }
     }
 
     /**
@@ -165,10 +167,10 @@ public class Pubnub {
      * @return JSONArray.
      */
     public JSONArray publish( HashMap<String, Object> args ) {
-    	
+
     	String channel = (String) args.get("channel");
     	JSONObject message = (JSONObject) args.get("message");
-    	
+
     	// Generate String to Sign
         String signature = "0";
         
@@ -204,7 +206,7 @@ public class Pubnub {
         url.add(channel);
         url.add("0");
         url.add(message.toString());
-        
+
         // Return JSONArray
         return _request(url);
     }
@@ -396,55 +398,29 @@ public class Pubnub {
                 catch (Exception jsone) {}
             return jsono;
         }
-        AsyncHttpClient ahc = null;
+        
         try {
-        	// Prepare Asynchronous HTTP Request
-            Builder cb = new AsyncHttpClientConfig.Builder();
-            cb.setRequestTimeoutInMs(-1);
-            //cb.setMaximumConnectionsPerHost(3);
-            //cb.setMaximumConnectionsTotal(3);
-            AsyncHttpClientConfig config = cb.build();
-            ahc = new AsyncHttpClient(config);
-        	RequestBuilder rb = new RequestBuilder("GET");
-        	rb.setUrl(url.toString());
-        	rb.addHeader("V", "3.1");
-        	rb.addHeader("User-Agent", "Java");
-        	rb.addHeader("Accept-Encoding", "gzip");
-            Request request = rb.build();
+            PubnubHttpRequest request = new PubnubHttpRequest(url.toString());
+            FutureTask<String> task = new FutureTask<String>(request);
+            Thread t = new Thread(task);
+            t.start();
+            try
+            {
+               json = task.get();
+            }
+            catch (Exception e)
+            {
+            	JSONArray jsono = new JSONArray();
+
+                try { jsono.put("Failed to Concurrent HTTP Request."); }
+                catch (Exception jsone) {}
+
+                e.printStackTrace();
+                System.out.println(e);
+
+                return jsono;
+            }
             
-            //Execute Request
-            Future<String> f = ahc.executeRequest(request, new AsyncCompletionHandler<String>(){
-				
-        		@Override
-        		public String onCompleted(Response r) throws Exception{
-					
-        			String ce = r.getHeader("Content-Encoding");
-        			InputStream resulting_is = null;
-        			InputStream is = r.getResponseBodyAsStream();
-        			
-        			if (ce != null && ce.equalsIgnoreCase("gzip")) {
-        				// Decoding using 'gzip'
-        				resulting_is = new GZIPInputStream(is);
-    				}
-    				else {
-    					// Default (encoding is null OR 'identity')
-    					resulting_is = is;
-    				}
-        			
-					String line = "", json = "";
-					BufferedReader reader = new BufferedReader(new InputStreamReader(resulting_is));
-					
-					// Read JSON Message
-					while ((line = reader.readLine()) != null) { json += line; }
-					
-					reader.close();
-					
-					return json;
-        		}
-        	});
-			json = f.get();
-			ahc.close();
-			
         } catch (Exception e) {
 
             JSONArray jsono = new JSONArray();
@@ -454,10 +430,6 @@ public class Pubnub {
 
             e.printStackTrace();
             System.out.println(e);
-            
-            if(ahc != null) {
-            	ahc.close();
-            }
 
             return jsono;
         }
@@ -477,8 +449,54 @@ public class Pubnub {
             return jsono;
         }
     }
+
+	private class PubnubHttpRequest implements Callable<String> {
+
+		String url;
+		
+		public PubnubHttpRequest(String url){
+			this.url = url;
+		}
+		
+		@Override
+		public String call() throws Exception {
+			// Prepare request
+			String     line    = "", json = "";
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpUriRequest request = new HttpGet(url);
+			request.setHeader("V", "3.1");
+			request.setHeader("User-Agent", "Android");
+			request.setHeader("Accept-Encoding", "gzip");
+
+			// Execute request
+			HttpResponse response;
+			response = httpclient.execute(request);
+
+	        HttpEntity entity = response.getEntity();
+	        if (entity != null) {
+	        	
+	        	// A Simple JSON Response Read
+	        	InputStream instream = entity.getContent();
+	            BufferedReader reader = null;
+	            
+	        	// Gzip decoding
+	        	Header contentEncoding = response.getFirstHeader("Content-Encoding");
+	        	if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
+	        		reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(instream)));
+	        	} else {
+	        		reader = new BufferedReader(new InputStreamReader(instream));
+	        	}
+                
+                // Read JSON Message
+                while ((line = reader.readLine()) != null) { json += line; }
+                reader.close();
+	        }
+
+			return json;
+		}
+	}
 	
-	private String _encodeURIcomponent(String s) {
+    private String _encodeURIcomponent(String s) {
         StringBuilder o = new StringBuilder();
         for (char ch : s.toCharArray()) {
             if (isUnsafe(ch)) {
