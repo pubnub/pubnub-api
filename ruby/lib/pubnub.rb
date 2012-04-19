@@ -29,7 +29,7 @@ class Pubnub
     #* @param string secret_key required key to sign messages.
     #* @param boolean ssl required for 2048 bit encrypted messages.
     #*
-    def initialize( publish_key, subscribe_key, secret_key, ssl_on )
+    def initialize( publish_key, subscribe_key, secret_key, ssl_on = false)
         @publish_key   = publish_key
         @subscribe_key = subscribe_key
         @secret_key    = secret_key
@@ -44,7 +44,9 @@ class Pubnub
         end
 
         uri         = URI.parse(@origin)
-        @connection = Net::HTTP.start(uri.host, uri.port)
+        http        = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = ssl_on
+        @connection = http.start()
     end
 
     #**
