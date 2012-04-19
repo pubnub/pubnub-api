@@ -8,10 +8,10 @@ Gem::Specification.new do |s|
   s.version = "0.0.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Luke Carpenter"]
+  s.authors = ["Stephen Blum"]
   s.date = "2012-04-19"
   s.description = "Simply Pubnub.rb in gem format, require \"pubnub\" - ask @rubynerd for upgrades"
-  s.email = "x@rubynerd.net"
+  s.email = "stephen@pubnub.com"
   s.files = [
     "examples/history-example.rb",
     "examples/publish-example.rb",
