@@ -87,6 +87,12 @@ For example, This means that PHP and Ruby will always be able
 communicate via Publish/Subscribe.
 Same goes for Python and JavaScript and every other language.
 
+## Coding Convetions
+
+ - No Tabs, use 4 spaces to indent.
+ - Organized Code and Comments.
+ - Good Coding Design Example: https://github.com/pubnub/pubnub-api/blob/master/python/Pubnub.py
+
 ## IMPORT LIBS
 
 There are support libs that are needed in order to provide
