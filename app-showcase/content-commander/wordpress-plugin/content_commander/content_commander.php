@@ -6,7 +6,7 @@
 /*
 Plugin Name: Content Commander
 Plugin URI: http://github.com/pubnub
-Description: Push Content. Set up your api keys <a href="plugins.php?page=cc-config">here</a>.
+Description: Push any content you want to your users, in real-time, powered by <a href="http://www.pubnub.com">PubNub</a>.  --1.) Sign up for an account <a href="https://pubnub-prod.appspot.com/register">here</a>.  --2.) Copy and paste your publish and subscribe keys from <a href="https://pubnub-prod.appspot.com/account">here</a> to <a href="plugins.php?page=cc-config">here</a>.  --3.) Now you're ready to <a href="plugins.php?page=commander">push content</a>!
 Author: Philip Deschaine
 Version: 0.1
 Author URI: http://pubnub.com
@@ -14,9 +14,12 @@ Author URI: http://pubnub.com
 
 
 function init_pubnub_viewer() {
-    echo "
+    $sub_key =  get_option('pubnub_subscribe_key');
+    if ($sub_key == NULL) $sub_key = "";
+
+    echo sprintf("
       <!-- PUBNUB -->
-      <div sub-key='sub-f3307e99-6a4a-11e1-870f-affeca838b29' ssl='off' origin='pubsub.pubnub.com' id='pubnub'></div>
+      <div sub-key='%s' ssl='off' origin='pubsub.pubnub.com' id='pubnub'></div>
       <script src='http://cdn.pubnub.com/pubnub-3.1.min.js'></script>
       <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
       <script>(function(){
@@ -40,7 +43,7 @@ function init_pubnub_viewer() {
           $('#cc_content').html('<div id=\'cc_content\'>'+ data.html + '</div>');
         });
       })();</script>
-	";
+	", $sub_key);
 }
 
 function init_pubnub_commander() {
@@ -86,12 +89,6 @@ add_action( 'wp_footer', 'init_pubnub_viewer' );
 add_action( 'admin_footer', 'init_pubnub_commander' );
 add_action( 'loop_start', 'cc_content_box' );
 
-function logo() {
-    //$logo_url =  get_option('siteurl') + "/wp-content/plugins/content_commander/pubnub-logo-200.png";
-	//echo "<img src='" + $logo_url + "' id='content_commander_logo'/ >";
-	echo "<a href='plugins.php?page=commander'><img src='/wordpress/wp-content/plugins/content_commander/pubnub-logo-200.png' id='content_commander_logo'/ ></a>";
-}
-add_action( 'admin_notices', 'logo' );
 
 
 // We need some CSS to position the paragraph
