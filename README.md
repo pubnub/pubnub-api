@@ -87,6 +87,12 @@ For example, This means that PHP and Ruby will always be able
 communicate via Publish/Subscribe.
 Same goes for Python and JavaScript and every other language.
 
+## Coding Convetions
+
+ - No Tabs, use 4 spaces to indent.
+ - Organized Code and Comments.
+ - Good Coding Design Example: https://github.com/pubnub/pubnub-api/blob/master/python/Pubnub.py
+
 ## IMPORT LIBS
 
 There are support libs that are needed in order to provide
@@ -235,7 +241,7 @@ Make use of the design patterns shown here when implementing a
 PubNub Client Library.  However you must follow directly
 the Interface shown in this Doc when utilizing
 AES Encryption.
-Search for `cipher\_key` to find interface guide.
+Search for `cipher_key` to find interface guide.
 
 http://pubnub.github.com/pubnub-api/crypto/index.html
 
@@ -247,8 +253,12 @@ and receipt.
 Establishing a socket pool is simple when using
 socket loop libraries such as `Ruby::EventMachine`
 or `C LibEvent`.
-The following Pseudocode will guide you when
-create a socket connection pool:
+
+**As an alternative, you may use an Async::HTTP Lib
+which provides socket pooling functionality for you.**
+
+The following Pseudocode will provide insight
+into the requirement for socket connection pooling:
 
 ```python
 def create_socket_pool():
@@ -306,26 +316,31 @@ However, when accessing Amazon SimpleDB using a REST request, you must provide t
 
 Include these *required* headers with each reqeust to the
 PubNub HTTP REST interface.
-Exclude all other headers where possible.
 
 ```
 V: Version-Number
 User-Agent: NAME-OF-THE-CLIENT-INTERFACE
-
+Accept: */*
 ```
+
+IMPORTANT: **Exclude all other headers where possible.**
+
 ##### Example Headers:
 
 ```
 V: 3.1
 User-Agent: PHP
+Accept: */*
 ```
 
 ##### FULL HTTP Request Example:
 
 ```
 GET /time/0 HTTP/1.1
+Host: pubsub.pubnub.com
 V: 3.1
-User-Agent: Ruby
+User-Agent: Java-Android
+Accept: */*
 ```
 
 There are may possible `User-Agent`'s.
