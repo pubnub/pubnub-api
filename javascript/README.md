@@ -78,8 +78,7 @@ business collaborative solutions, and more.
 
 ```html
 <div id=pubnub ssl=on></div>
-<script src=https://pubnub.s3.amazonaws.com/pubnub-3.1.min.js></script>
-<!-- <script src=https://dh15atwfs066y.cloudfront.net/pubnub-3.1.min.js></script> -->
+<script src=https://pubnub.a.ssl.fastly.net/pubnub-3.1.min.js></script>
 <script>(function(){
 
     var pubnub = PUBNUB({
