@@ -6,9 +6,9 @@
 /*
 Plugin Name: Content Commander
 Plugin URI: http://github.com/pubnub
-Description: Push any content you want to your users, in real-time, powered by <a href="http://www.pubnub.com">PubNub</a>.  --1.) Sign up for an account <a href="https://pubnub-prod.appspot.com/register">here</a>.  --2.) Copy and paste your publish and subscribe keys from <a href="https://pubnub-prod.appspot.com/account">here</a> to <a href="plugins.php?page=cc-config">here</a>.  --3.) Now you're ready to <a href="plugins.php?page=commander">push content</a>!
+Description: Push any content you want to your users, in real-time, powered by <a href="http://www.pubnub.com">PubNub</a>.  --> 1.) Sign up for an account <a href="https://pubnub-prod.appspot.com/register">here</a>.  --> 2.) Copy and paste your publish and subscribe keys from <a href="https://pubnub-prod.appspot.com/account">here</a> to <a href="plugins.php?page=cc-config">here</a>.  --> 3.) Now you're ready to <a href="plugins.php?page=commander">push content</a>!
 Author: Philip Deschaine
-Version: 0.1
+Version: 1.0
 Author URI: http://pubnub.com
 */
 
@@ -40,7 +40,14 @@ function init_pubnub_viewer() {
           }
         });
         PUBNUB.events.bind('arb_html', function(data) {
-          $('#cc_content').html('<div id=\'cc_content\'>'+ data.html + '</div>');
+          if (data.loc == 'page') {
+            $('#cc_content_top').html('<div id=\'cc_content_top\'>'+ data.html + '</div>');
+          }
+          if (data.loc == 'post') {
+            console.log('here');  
+            $('#cc_content_post_' + data.post_id).html('<div id=\'cc_content_post_' + data.post_id + '\' \>' + data.html + '</div>');
+          }
+
         });
       })();</script>
 	", $sub_key);
@@ -77,17 +84,21 @@ function init_pubnub_commander() {
       })();</script>", $pub_key, $sub_key);
 }
 
-function cc_content_box() {
+function cc_content_top_box() {
     echo "
-        <div id='cc_content'></div>
+        <div id='cc_content_top'></div>
     ";
+}
 
+function cc_content_post_box($the_post) {
+    echo sprintf("<div id='cc_content_post_%s'></div>", $the_post->ID);
 }
 
 // Now we set that function up to execute when the admin_notices action is called
 add_action( 'wp_footer', 'init_pubnub_viewer' );
 add_action( 'admin_footer', 'init_pubnub_commander' );
-add_action( 'loop_start', 'cc_content_box' );
+add_action( 'loop_start', 'cc_content_top_box' );
+add_action( 'the_post', 'cc_content_post_box' );
 
 
 
@@ -123,20 +134,41 @@ function cc_pages() {
 }
 
 function commander() {
+    $posts = get_posts( array('numberposts' => 5, 'orderby' => 'post_date', 'post_status' => 'publish'));
     echo "
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
     <div id='arbitrary_html_box' class='box left'>
       <h2> Content to push: </h2>
       <form>
         <textarea name='arb_html' id='arb_html' value=''></textarea><br/>
+        <input type='radio' name='arb_loc' id='arb_loc_1' value='page' checked=checked /> Top Of All Pages<br />
+        <input type='radio' name='arb_loc' id='arb_loc_2' value='post' /> One Post (select below)<br/>
+        <select name='target_post' id='target_post'>
+    ";
+    foreach ($posts as &$post) {
+        echo sprintf("<option value='%s'>%s (%s)</option>", 
+            $post->ID, $post->post_title, $post->post_date);
+    }
+
+    echo "
+        </select><br/>
         <input type='submit' id='arb_html_submit' name='arb_html_submit' value='Push'/>
       </form>
+      <div id='push_status'></div>
     </div>
     <script>
     $('#arb_html_submit').click( function(e) {
       e.preventDefault();
 
       var html = $('#arb_html').val();
+      $('#arb_html').val('');
+      var loc = $('input[name=arb_loc]:checked').val();
+      var post_id = $('#target_post').val();
+      $('#push_status').html('Pushed!');
+      setTimeout( function() {
+        $('#push_status').html('');
+      }, 2000);
+
       if ((html == undefined) && (html.length == 0)) { return; }
 
       PUBNUB.publish({ 
@@ -144,7 +176,9 @@ function commander() {
         message : {
           'name'   : 'arb_html',
           'data'   : {
-            'html'   : html
+            'html'    : html,
+            'loc'     : loc,
+            'post_id' : post_id
           }
         }
       });
