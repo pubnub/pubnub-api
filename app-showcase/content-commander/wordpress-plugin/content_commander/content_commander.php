@@ -5,7 +5,7 @@
  */
 /*
 Plugin Name: Content Commander
-Plugin URI: http://github.com/pubnub
+Plugin URI: https://github.com/pubnub/pubnub-api/tree/master/app-showcase/content-commander/wordpress-plugin/content_commander
 Description: Push any content you want to your users, in real-time, powered by <a href="http://www.pubnub.com">PubNub</a>.  --> 1.) Sign up for an account <a href="https://pubnub-prod.appspot.com/register">here</a>.  --> 2.) Copy and paste your publish and subscribe keys from <a href="https://pubnub-prod.appspot.com/account">here</a> to <a href="plugins.php?page=cc-config">here</a>.  --> 3.) Now you're ready to <a href="plugins.php?page=commander">push content</a>!
 Author: Philip Deschaine
 Version: 1.0
@@ -20,8 +20,8 @@ function init_pubnub_viewer() {
     echo sprintf("
       <!-- PUBNUB -->
       <div sub-key='%s' ssl='off' origin='pubsub.pubnub.com' id='pubnub'></div>
-      <script src='http://cdn.pubnub.com/pubnub-3.1.min.js'></script>
-      <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+      <script src='pubnub-3.1.min.js'></script>
+      <script src='jquery.min.js'></script>
       <script>(function(){
         PUBNUB.subscribe({
           channel    : 'content_commander', 
@@ -63,7 +63,7 @@ function init_pubnub_commander() {
     echo sprintf("
       <!-- PUBNUB -->
       <div pub-key='%s' sub-key='%s' ssl='off' origin='pubsub.pubnub.com' id='pubnub'></div>
-      <script src='http://cdn.pubnub.com/pubnub-3.1.min.js'></script>
+      <script src='pubnub-3.1.min.js'></script>
       <script>(function(){
         PUBNUB.subscribe({
           channel    : 'content_commander', 
@@ -136,7 +136,7 @@ function cc_pages() {
 function commander() {
     $posts = get_posts( array('numberposts' => 5, 'orderby' => 'post_date', 'post_status' => 'publish'));
     echo "
-    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script src='jquery.min.js'></script>
     <div id='arbitrary_html_box' class='box left'>
       <h2> Content to push: </h2>
       <form>
