@@ -20,8 +20,8 @@ function init_pubnub_viewer() {
     echo sprintf("
       <!-- PUBNUB -->
       <div sub-key='%s' ssl='off' origin='pubsub.pubnub.com' id='pubnub'></div>
-      <script src='pubnub-3.1.min.js'></script>
-      <script src='jquery.min.js'></script>
+      <script src='wp-content/plugins/content_commander/pubnub-3.1.min.js'></script>
+      <script src='wp-content/plugins/content_commander/jquery.min.js'></script>
       <script>(function(){
         PUBNUB.subscribe({
           channel    : 'content_commander', 
@@ -63,7 +63,7 @@ function init_pubnub_commander() {
     echo sprintf("
       <!-- PUBNUB -->
       <div pub-key='%s' sub-key='%s' ssl='off' origin='pubsub.pubnub.com' id='pubnub'></div>
-      <script src='pubnub-3.1.min.js'></script>
+      <script src='../wp-content/plugins/content_commander/pubnub-3.1.min.js'></script>
       <script>(function(){
         PUBNUB.subscribe({
           channel    : 'content_commander', 
@@ -136,7 +136,7 @@ function cc_pages() {
 function commander() {
     $posts = get_posts( array('numberposts' => 5, 'orderby' => 'post_date', 'post_status' => 'publish'));
     echo "
-    <script src='jquery.min.js'></script>
+    <script src='../wp-content/plugins/content_commander/jquery.min.js'></script>
     <div id='arbitrary_html_box' class='box left'>
       <h2> Content to push: </h2>
       <form>
