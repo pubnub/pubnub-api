@@ -81,6 +81,24 @@
                 </div>
               </div><!-- /fieldcontain -->
             </div><!-- /collapsible -->
+
+            <div data-role="collapsible" data-collapsed="true" >
+              <h3>
+                Anything You Want
+              </h3>
+              <div data-role="fieldcontain" id="arb_box">
+                <fieldset data-role="controlgroup">
+                  <label for="arb_html">
+                      Content
+                  </label>
+                  <textarea id="arb_html" placeholder="">
+                  </textarea>
+                  <input id="arb_submit" type="button" value="Push" data-inline="true" />
+                </fieldset>
+              </div><!-- /fieldcontain -->
+            </div><!-- /collapsible -->
+
+
           </div><!-- /collapsible-set -->
         </div><!-- /content -->
       </div><!-- /page #main -->
@@ -370,17 +388,6 @@
           $(".flickr_button")
             .button()
             .bind('click', function(e) {
-              /*
-              $("#flickr_confirm").empty()
-                .append($(this).parent().children('.flickr_body').html());
-              var id = $(this).parent().attr('id');
-              $(document).data('selected_photo', 
-                { 'farm'   : $("#" + id).data('farm'),
-                  'server' : $("#" + id).data('server'),
-                  'id'     : id,
-                  'secret' : $("#" + id).data('secret'),
-                  'title'  : $("#" + id).data('title')});
-              */
               var id = $(this).parent().attr('id'), 
                   selected_photo = 
                   { 'farm'   : $("#" + id).data('farm'),
@@ -400,43 +407,24 @@
             });
         });
 
-        $("#youtube_push_yes").bind('click', function(e) {
+        $("#arb_submit").bind('click', function(e) {
+
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {
-              "name"   : "youtube_link",
+              "name"   : "arb_html",
               "data"   : {
-                "video_id" : $(document).data('selected_video')
+                "html"   : $("#arb_html").val()
               }
             }
           });
-        });
 
-        $("#soundcloud_push_yes").bind('click', function(e) {
-          PUBNUB.publish({ 
-            channel : "content_commander", 
-            message : {
-              "name"   : "soundcloud_link",
-              "data"   : {
-                "song_id" : $(document).data('selected_song')
-              }
-            }
-          });
-        });
-
-        $("#flickr_push_yes").bind('click', function(e) {
-          PUBNUB.publish({ 
-            channel : "content_commander", 
-            message : {
-              "name"   : "flickr_link",
-              "data"   : $(document).data('selected_photo')
-            }
-          });
         });
 
       </script>
       <script src="js/youtube.js"></script>
       <script src="js/soundcloud.js"></script>
       <script src="js/flickr.js"></script>
+      <script src="js/arb.js"></script>
     </body>
 </html>
