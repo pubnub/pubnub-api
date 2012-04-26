@@ -436,7 +436,7 @@ GET /subscribe/demo/my-channel/0/0 HTTP/1.1
 GET /subscribe/demo/my-channel/0/7529152783414 HTTP/1.1
 ```
 
-##### Response When Message Published: 
+##### Response When Message Transmitted: 
 
 ```javascript
 [[MSG,MSG,MSG],"75291527861853"]
@@ -465,7 +465,7 @@ GET /publish/demo/demo/e0991b12871de57b333fd0c992f7d3112577cf62/my-channel/0/{"m
 ##### Response: 
 
 ```javascript
-[1,"D"]
+[1,"Demo"]
 ```
 
 ##### Response Codes:
@@ -480,7 +480,7 @@ in the second element of the response array.
 ##### Successful Transmission: 
 
 ```javascript
-[1,"D"]
+[1,"Sent"]
 ```
 
 ##### Failed Transmission: 
