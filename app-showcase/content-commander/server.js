@@ -91,6 +91,12 @@ function sendPrivateMessage(uuid, name, data) {
   });
 }
 
+// clients can check if the server is there 
+events.on("yo", function(message) {
+  sendPrivateMessage(message.uuid, "sup", {});
+});
+
+
 events.on("youtube_search", function(message) {
   console.log("youtube_search:");
   console.log(message.data.query);
@@ -108,6 +114,7 @@ events.on("flickr_search", function(message) {
   console.log(message.data.query);
   search_flickr(message.data.query, message.uuid);
 });
+
 
 function search_youtube(query, uuid) {
   var body = '';

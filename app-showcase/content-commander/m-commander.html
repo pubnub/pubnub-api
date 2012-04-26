@@ -132,6 +132,34 @@
             </p>	
           </div><!-- /content -->
         </div><!-- /page flickr_popup -->
+
+        <div data-role="page" id="1popup">
+          <div data-role="header" data-theme="a">
+            <h1>Confirm Push</h1>
+          </div><!-- /header -->
+
+          <div data-role="content" data-theme="a">	
+            <p>Do you really want to push the following song to the viewers?</p>		
+            <p id="flickr_confirm">
+            <p>
+              <a href="#main" data-rel="back" data-role="button" data-inline="true" data-icon="delete" id="flickr_push_no">No</a>
+              <a href="#main" data-role="button" data-inline="true" data-icon="arrow-r" id="flickr_push_yes">Yes</a>
+            </p>	
+          </div><!-- /content -->
+        </div><!-- /page flickr_popup -->
+
+        <div data-role="page" id="server_not_there_popup">
+          <div data-role="header" data-theme="a">
+            <h1>Uh-oh.</h1>
+          </div><!-- /header -->
+
+          <div data-role="content" data-theme="a">	
+            <p>The YouTube, SoundCloud and Flickr searches are done server-side on a node.js process that isn't currently running.  Follow the instructions <a href="https://github.com/pubnub/pubnub-api/tree/master/app-showcase/content-commander">here</a> to get it working. </p>		
+            <p>
+              <a href="#main" data-rel="back" data-role="button" data-inline="true" data-icon="delete" id="server_not_there_ok">OK</a>
+            </p>	
+          </div><!-- /content -->
+        </div><!-- /page server_not_there_popup -->
     
       <!-- PUBNUB -->
 
@@ -154,6 +182,7 @@
           reconnect  : function() { 
             console.log("And we're Back!");
           }
+
         });
 
         var channel = "content_commander_" + $(document).data("uuid"); 
@@ -170,23 +199,57 @@
           },
           reconnect  : function() { 
             console.log("And we're Back!");
+          },
+          connect  : function() { 
+            $(document).data("is_server_there", false); 
+            PUBNUB.publish({ 
+              channel : "content_commander", 
+              message : {
+                "name"   : "yo",
+                "uuid"   : $(document).data("uuid"),
+                "data"   : {}
+              }
+            });
+            setTimeout( function() {
+              if ($(document).data("is_server_there") == false) {
+                $.mobile.changePage('#server_not_there_popup', { transition: 'pop'});
+              }
+            }, 1000 );
           }
         });
       })();</script>
 
       <script>
+        PUBNUB.events.bind("sup", function(message) {
+          $(document).data("is_server_there", true);
+        });
+
         function newYoutubeDiv(video_id, title) {
-          return "<div class='youtube_div' id='" + video_id + "'><div class='youtube_body'><h4>" + title + "</h4><img src='http://img.youtube.com/vi/" + video_id + "/0.jpg' class='youtube_img' /></div><a href='#youtube_popup' class='youtube_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
+          return "<div class='youtube_div' id='" + video_id + 
+                 "'><div class='youtube_body'><h4>" + title + 
+                 "</h4><img src='http://img.youtube.com/vi/" + video_id + 
+                 "/0.jpg' class='youtube_img' /></div><a href='/#' " +
+                 " class='youtube_button' data-role='button' data-rel='dialog' " +
+                 " data-transition='pop'>Push</a></div><hr/> ";
         }
 
         function newSoundcloudDiv(song_id, title) {
-          return "<div class='soundcloud_div' id='" + song_id + "'><div class='soundcloud_body'><h4>" + title + "</h4></div><a href='#soundcloud_popup' class='soundcloud_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
+          return "<div class='soundcloud_div' id='" + song_id + 
+                 "'><div class='soundcloud_body'><h4>" + title + 
+                 "</h4></div><a href='/#' " + 
+                 "class='soundcloud_button' data-role='button' " +
+                 "data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
         }
 
         function newFlickrDiv(farm, server, id, secret, title) {
-          var new_img = '<img src="http://farm' + farm +  '.staticflickr.com/' + server  + '/' + id + '_' + secret + '.jpg" width="300" alt="' + title + '" />';
-          console.log(new_img);
-          return "<div class='flickr_div' id='" + id + "'><div class='flickr_body'><h4>" + title + "</h4>" + new_img + "</div><a href='#flickr_popup' class='flickr_button' data-role='button' data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
+          var new_img = '<img src="http://farm' + farm +  
+                        '.staticflickr.com/' + server  + '/' + id + '_' +
+                        secret + '.jpg" width="300" alt="' + title + '" />';
+          return "<div class='flickr_div' id='" + id + 
+                 "'><div class='flickr_body'><h4>" + title + 
+                 "</h4>" + new_img + "</div><a href='#' " +
+                 "class='flickr_button' data-role='button' data-rel='dialog' " +
+                 "data-transition='pop'>Push</a></div><hr/> ";
         }
 
         $("#youtube_search_submit").bind('click', function(e, ui) {
@@ -195,8 +258,6 @@
           var query = $("#youtube_search_query").val();
           if ((query == undefined) || (query.length == 0)) { return; }
 
-          console.log('publishing yt search');
-          console.log(query);
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {
@@ -215,7 +276,6 @@
           var query = $("#soundcloud_search_query").val();
           if ((query == undefined) || (query.length == 0)) { return; }
 
-          console.log('publishing');
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {
@@ -234,7 +294,6 @@
           var query = $("#flickr_search_query").val();
           if ((query == undefined) || (query.length == 0)) { return; }
 
-          console.log('publishing');
           PUBNUB.publish({ 
             channel : "content_commander", 
             message : {
@@ -256,9 +315,17 @@
           $(".youtube_button")
             .button()
             .bind('click', function(e) {
-              $("#youtube_confirm").empty()
-                .append($(this).parent().children('.youtube_body').html());
-              $(document).data('selected_video', $(this).parent().attr('id'));
+              var selected_video = $(this).parent().attr('id');
+
+              PUBNUB.publish({ 
+                channel : "content_commander", 
+                message : {
+                  "name"   : "youtube_link",
+                  "data"   : {
+                    "video_id" : selected_video 
+                  }
+                }
+              });
             });
         });
 
@@ -271,9 +338,16 @@
           $(".soundcloud_button")
             .button()
             .bind('click', function(e) {
-              $("#soundcloud_confirm").empty()
-                .append($(this).parent().children('.soundcloud_body').html());
-              $(document).data('selected_song', $(this).parent().attr('id'));
+              var selected_song = $(this).parent().attr('id');
+              PUBNUB.publish({ 
+                channel : "content_commander", 
+                message : {
+                  "name"   : "soundcloud_link",
+                  "data"   : {
+                    "song_id" : selected_song 
+                  }
+                }
+              });
             });
         });
 
@@ -296,6 +370,7 @@
           $(".flickr_button")
             .button()
             .bind('click', function(e) {
+              /*
               $("#flickr_confirm").empty()
                 .append($(this).parent().children('.flickr_body').html());
               var id = $(this).parent().attr('id');
@@ -305,6 +380,23 @@
                   'id'     : id,
                   'secret' : $("#" + id).data('secret'),
                   'title'  : $("#" + id).data('title')});
+              */
+              var id = $(this).parent().attr('id'), 
+                  selected_photo = 
+                  { 'farm'   : $("#" + id).data('farm'),
+                    'server' : $("#" + id).data('server'),
+                    'id'     : id,
+                    'secret' : $("#" + id).data('secret'),
+                    'title'  : $("#" + id).data('title')};
+
+              PUBNUB.publish({ 
+                channel : "content_commander", 
+                message : {
+                  "name"   : "flickr_link",
+                  "data"   : selected_photo
+                }
+              });
+
             });
         });
 
