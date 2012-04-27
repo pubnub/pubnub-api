@@ -42,9 +42,21 @@ function rnow() { return+new Date }
 var db = (function(){
     var ls = localStorage;
     return {
-        get : function(key) {return ls.getItem(key)},
+        get : function(key) {
+            try {
+                if (ls) return ls.getItem(key);
+                if (document.cookie.indexOf(key) == -1) return null;
+                return ((document.cookie||'').match(
+                    RegExp(key+'=([^;]+)')
+                )||[])[1] || null;
+            } catch(e) { return }
+        },
         set : function( key, value ) {
-            if (ls) return ls.setItem( key, value ) && 0;
+            try {
+                if (ls) return ls.setItem( key, value ) && 0;
+                document.cookie = key + '=' + value +
+                    '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
+            } catch(e) { return }
         }
     };
 })();
@@ -455,6 +467,7 @@ function PN(setup) {
         },
 
         // Expose PUBNUB Functions
+        'init'     : PN,
         'xdr'      : xdr,
         'db'       : db,
         'each'     : each,
@@ -468,6 +481,6 @@ function PN(setup) {
     return SELF;
 }
 
-module && (module.exports = PN) || (PUBNUB = PN);
+typeof module !== 'undefined' && (module.exports = PN) || (PUBNUB = PN);
 
 })();
