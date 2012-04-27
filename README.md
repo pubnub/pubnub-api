@@ -14,6 +14,14 @@ to millions of web and mobile clients simultaneously.
 
 The current version number for communication with PubNub Cloud is `3.1`.
 
+## Process for Announcing New/Updated API.
+When a PubNub Client API is updated or a brand new PubNub Client
+API becomes available, tell everyone!:
+
+- Tweet to [@PubNub](https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fwww.pubnub.com%2Fcontact&related=pubnub&screen_name=PubNub)
+- Facebook to [PubNub Facebook Wall](http://www.facebook.com/PubNub)
+- Email to [hello@pubnub.com](mailto:hello@pubnub.com)
+
 ## Quick Links
 
 - Twitter: http://twitter.com/PubNub
