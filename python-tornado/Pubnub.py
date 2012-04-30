@@ -205,11 +205,6 @@ class Pubnub():
                 if not self.subscriptions[channel]['connected']:
                     return
 
-                ## CONNECTED CALLBACK
-                if not self.subscriptions[channel]['first'] :
-                    self.subscriptions[channel]['first'] = True
-                    connectcb()
-
                 ## PROBLEM?
                 if not response:
                     def time_callback(_time):
@@ -221,6 +216,11 @@ class Pubnub():
 
                     ## ENSURE CONNECTED (Call Time Function)
                     return self.time({ 'callback' : time_callback })
+
+                ## CONNECTED CALLBACK
+                if not self.subscriptions[channel]['first'] :
+                    self.subscriptions[channel]['first'] = True
+                    connectcb()
 
                 self.subscriptions[channel]['timetoken'] = response[1]
                 substabizel()
