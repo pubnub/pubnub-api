@@ -37,11 +37,13 @@
               </h3>
               <div data-role="fieldcontain" id="youtube_box">
                 <fieldset data-role="controlgroup">
-                  <label for="youtube_search_query">
-                    Search
-                  </label>
-                  <input id="youtube_search_query" placeholder="" value="" type="text" />
-                  <input id="youtube_search_submit" type="button" value="Search" data-inline="true" />
+                  <form id="youtube_search_form" data-ajax="false"> 
+                    <label for="youtube_search_query">
+                      Search
+                    </label>
+                    <input id="youtube_search_query" placeholder="" value="" type="text" />
+                    <input id="youtube_search_submit" type="submit" value="Search" data-inline="true" />
+                  </form>
                 </fieldset>
                 <div id="youtube_results">
                 </div>
@@ -54,11 +56,13 @@
               </h3>
               <div data-role="fieldcontain" id="soundcloud_box">
                 <fieldset data-role="controlgroup">
-                  <label for="soundcloud_search_query">
-                    Search
-                  </label>
-                  <input id="soundcloud_search_query" placeholder="" value="" type="text" />
-                  <input id="soundcloud_search_submit" type="button" value="Search" data-inline="true" />
+                  <form id="soundcloud_search_form" data-ajax="false"> 
+                    <label for="soundcloud_search_query">
+                      Search
+                    </label>
+                    <input id="soundcloud_search_query" placeholder="" value="" type="text" />
+                    <input id="soundcloud_search_submit" type="submit" value="Search" data-inline="true" />
+                  </form>
                 </fieldset>
                 <div id="soundcloud_results">
                 </div>
@@ -71,11 +75,13 @@
               </h3>
               <div data-role="fieldcontain" id="flickr_box">
                 <fieldset data-role="controlgroup">
-                  <label for="flickr_search_query">
-                    Search
-                  </label>
-                  <input id="flickr_search_query" placeholder="" value="" type="text" />
-                  <input id="flickr_search_submit" type="button" value="Search" data-inline="true" />
+                  <form id="flickr_search_form" data-ajax="false"> 
+                    <label for="flickr_search_query">
+                      Search
+                    </label>
+                    <input id="flickr_search_query" placeholder="" value="" type="text" />
+                    <input id="flickr_search_submit" type="submit" value="Search" data-inline="true" />
+                  </form>
                 </fieldset>
                 <div id="flickr_results">
                 </div>
@@ -91,8 +97,7 @@
                   <label for="arb_html">
                       Content
                   </label>
-                  <textarea id="arb_html" placeholder="">
-                  </textarea>
+                  <textarea id="arb_html" placeholder=""></textarea>
                   <input id="arb_submit" type="button" value="Push" data-inline="true" />
                 </fieldset>
               </div><!-- /fieldcontain -->
@@ -232,7 +237,7 @@
               if ($(document).data("is_server_there") == false) {
                 $.mobile.changePage('#server_not_there_popup', { transition: 'pop'});
               }
-            }, 1000 );
+            }, 5000 );
           }
         });
       })();</script>
@@ -243,35 +248,26 @@
         });
 
         function newYoutubeDiv(video_id, title) {
-          return "<div class='youtube_div' id='" + video_id + 
-                 "'><div class='youtube_body'><h4>" + title + 
-                 "</h4><img src='http://img.youtube.com/vi/" + video_id + 
-                 "/0.jpg' class='youtube_img' /></div><a href='/#' " +
-                 " class='youtube_button' data-role='button' data-rel='dialog' " +
-                 " data-transition='pop'>Push</a></div><hr/> ";
+          var new_img  = "<img src='http://img.youtube.com/vi/" + video_id + "/0.jpg' class='youtube_img' />",
+              new_link = "<a href='/#' class='youtube_button' data-role='button' data-rel='dialog'  data-transition='pop' id='" + video_id  + "'>Push</a>";
+
+          var new_div =  "<div class='youtube_div'><div class='youtube_body'><h4>" + title + 
+                         "</h4>" + new_img  + " </div>" + new_link + "</div><hr/>";
+          return new_div;
         }
 
         function newSoundcloudDiv(song_id, title) {
-          return "<div class='soundcloud_div' id='" + song_id + 
-                 "'><div class='soundcloud_body'><h4>" + title + 
-                 "</h4></div><a href='/#' " + 
-                 "class='soundcloud_button' data-role='button' " +
-                 "data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
+          return "<div class='soundcloud_div' id='" + song_id + "'><div class='soundcloud_body'><h4>" + title + "</h4></div><a href='/#' " + "class='soundcloud_button' data-role='button' " + "data-rel='dialog' data-transition='pop'>Push</a></div><hr/> ";
         }
 
         function newFlickrDiv(farm, server, id, secret, title) {
-          var new_img = '<img src="http://farm' + farm +  
-                        '.staticflickr.com/' + server  + '/' + id + '_' +
-                        secret + '.jpg" width="300" alt="' + title + '" />';
-          return "<div class='flickr_div' id='" + id + 
-                 "'><div class='flickr_body'><h4>" + title + 
-                 "</h4>" + new_img + "</div><a href='#' " +
-                 "class='flickr_button' data-role='button' data-rel='dialog' " +
-                 "data-transition='pop'>Push</a></div><hr/> ";
+          var new_img = '<img src="http://farm' + farm +  '.staticflickr.com/' + server  + '/' + id + '_' + secret + '.jpg" width="300" alt="' + title + '" />';
+          return "<div class='flickr_div' id='" + id + "'><div class='flickr_body'><h4>" + title + "</h4>" + new_img + "</div><a href='#' " + "class='flickr_button' data-role='button' data-rel='dialog' " + "data-transition='pop'>Push</a></div><hr/> ";
         }
 
-        $("#youtube_search_submit").bind('click', function(e, ui) {
+        $("#youtube_search_form").bind('submit', function(e, ui) {
           e.preventDefault();
+          
 
           var query = $("#youtube_search_query").val();
           if ((query == undefined) || (query.length == 0)) { return; }
@@ -288,7 +284,7 @@
           });
         });
 
-        $("#soundcloud_search_submit").bind('click', function(e, ui) {
+        $("#soundcloud_search_form").bind('submit', function(e, ui) {
           e.preventDefault();
 
           var query = $("#soundcloud_search_query").val();
@@ -306,7 +302,7 @@
           });
         });
 
-        $("#flickr_search_submit").bind('click', function(e, ui) {
+        $("#flickr_search_form").bind('submit', function(e, ui) {
           e.preventDefault();
 
           var query = $("#flickr_search_query").val();
@@ -333,7 +329,7 @@
           $(".youtube_button")
             .button()
             .bind('click', function(e) {
-              var selected_video = $(this).parent().attr('id');
+              var selected_video = $(this).attr('id');
 
               PUBNUB.publish({ 
                 channel : "content_commander", 

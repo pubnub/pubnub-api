@@ -15,6 +15,18 @@ app.use(flatiron.plugins.http);
 
 var debug = true;
 
+app.router.get('/', function () {
+  console.log('/');
+  var flat = this;
+  fs.readFile('splash.html', function(err, buffer) {
+    var html = buffer.toString();
+    var output = plates.bind(html, {}); 
+
+    flat.res.writeHead(200, { 'Content-Type': 'text/html' });
+    flat.res.end(output);
+  });
+});
+
 app.router.get('/viewer', function () {
   console.log('/viewer');
   var flat = this;
