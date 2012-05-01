@@ -1,6 +1,6 @@
 {
   "description": "a little demo",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "dependencies": {
     "union": "0.1.7",
     "flatiron": "0.1.11",
