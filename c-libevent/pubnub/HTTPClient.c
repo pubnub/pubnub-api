@@ -54,7 +54,7 @@ struct evbuffer *request_url(
 
 	evhttp_add_header(ctx->req->output_headers, "Host", evhttp_uri_get_host(ctx->uri));
 	evhttp_add_header(ctx->req->output_headers,"V", "3.1");
-	evhttp_add_header(ctx->req->output_headers,"User-Agent",  "C");
+	evhttp_add_header(ctx->req->output_headers,"User-Agent",  "C-LibEvent");
 	evhttp_add_header(ctx->req->output_headers,"Accept-Encoding",  "gzip");
 
 	evhttp_connection_set_timeout(ctx->cn,-1);
@@ -65,7 +65,6 @@ struct evbuffer *request_url(
 	struct evbuffer *retData = 0;
 	if (ctx->ok)
 	{
-
 		retData = ctx->buffer;
 		ctx->buffer = 0;
 	}

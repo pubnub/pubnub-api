@@ -32,7 +32,7 @@ typedef enum {true=1,false=0} bool;
 typedef enum object_type {
   String=1,
   Array=2,
-  Json_objet=3
+  JSON_Object=3
 }object_type;
 
 

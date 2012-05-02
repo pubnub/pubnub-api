@@ -6,7 +6,7 @@ char random[32];
 
 /* Function prototypes */
 void init(string, string, string, string, bool);
-void _requestPublish(string * url_components, int size);
+void _requestPublish(string * url_components, int size,void (*callback1)(json_object *));
 void _requestHistory(string * url_components, int size);
 void _requestSubcribe(string * url_components, int size);
 double _requestTime(string * url_components, int size);
@@ -152,15 +152,15 @@ static void _commonCallback(struct evhttp_request *req, void *arg) {
 }
 
 void strip(char *s) {
-    char *p2 = s;
-    while(*s != '\0') {
-        if(*s != '\t' && *s != '\n') {
-                *p2++ = *s++;
-        } else {
-                ++s;
-        }
-    }
-    *p2 = '\0';
+	char *p2 = s;
+	while(*s != '\0') {
+		if(*s != '\t' && *s != '\n' && *s != '\\') {
+			*p2++ = *s++;
+		} else {
+			++s;
+		}
+	}
+	*p2 = '\0';
 }
 
 /**
@@ -171,7 +171,7 @@ void strip(char *s) {
  * @param struct struct_publish *args.
  */
 void publish(struct struct_publish *args) {
-	callback = args->cb;
+	//callback = args->cb;
 	string signature = "0";
 	string url[7];
 	string msg;
@@ -180,7 +180,8 @@ void publish(struct struct_publish *args) {
 			char* string1=encryptString(pubnub.CIPHER_KEY,args->message);
 			json_object *obj=json_object_new_string(string1);
 			char* temp = json_object_get_string(obj);
-			sprintf(msg,"\"%s\"",temp);
+			msg=strconcat("\"",temp);
+			msg=strconcat(msg,"\"");
 		}else{
 			msg = json_object_get_string(json_object_new_string(args->message));
 			msg=strconcat("\"",msg);
@@ -197,8 +198,7 @@ void publish(struct struct_publish *args) {
 		if (strlen(pubnub.CIPHER_KEY) > 0) {
 			json_object *obj =encryptJSONObject(pubnub.CIPHER_KEY,args->message);
 			msg = json_object_get_string(obj);
-		}else
-		{
+		}else{
 			msg = json_object_get_string(args->message);
 		}
 	}
@@ -225,17 +225,15 @@ void publish(struct struct_publish *args) {
 	url[5] = "0";
 	url[6] = msg;
 
-	_requestPublish(url, 7);
+	_requestPublish(url, 7,args->cb);
 }
 
 /**
  * Subscribe
  *
- * This function is BLOCKING.
  * Listen for a message on a channel.
  *
- * @param String channel name.
-
+ * @param struct struct_subscribe *args.
  */
 void subscribe(struct struct_subscribe *args) {
 	callback = args->cb;
@@ -251,8 +249,6 @@ void subscribe(struct struct_subscribe *args) {
 
 		// Wait for Message
 		_requestSubcribe(url, 5);
-
-		//printf("\nTimeToken::%s", timeToken);
 	}
 }
 /**
@@ -260,9 +256,7 @@ void subscribe(struct struct_subscribe *args) {
  *
  * Load history from a channel.
  *
- * @param String channel name.
- * @param int limit history count response.
- * @return JSONArray of history.
+ * @param struct struct_history *args.
  */
 void history(struct struct_history * args) {
 	callback = args->cb;
@@ -316,10 +310,10 @@ string uuid() {
 /**
  * _requestPublish
  *
- * @param string * url_components.
+ * @param string* url_components.
  * @param int size.
  */
-void _requestPublish(string * url_components, int size) {
+void _requestPublish(string * url_components, int size,void (*callback1)(json_object *)) {
 	string url;
 	int i;
 	url = "/";
@@ -334,7 +328,6 @@ void _requestPublish(string * url_components, int size) {
 		if(i != size-1)
 			url=strconcat(url,"/");
 	}
-
 	struct evbuffer *data = request_url(pubnub.ORIGIN, 80, url, _commonCallback);
 
 	if (data) {
@@ -342,18 +335,19 @@ void _requestPublish(string * url_components, int size) {
 
 		json_object * obj = json_tokener_parse(joined1);
 
-		if (callback != NULL)
+		if (callback1 != NULL)
 		{
-			callback(obj);
+			callback1(json_object_get(obj));
 		}
 		evbuffer_free(data);
+
 	}
 }
 
 /**
  * _requestSubcribe
  *
- * @param string * url_components.
+ * @param string* url_components.
  * @param int size.
  */
 void _requestSubcribe(string * url_components, int size) {
@@ -391,10 +385,17 @@ void _requestSubcribe(string * url_components, int size) {
 		s1[strlen(time)] = '\0';
 		timeToken = malloc(sizeof(char) * strlen(s1));
 		timeToken = strconcat(s1, "");
-
+		json_object * encrypted  = json_object_new_object();
+		if(strlen(pubnub.CIPHER_KEY) > 0)
+		{
+			encrypted = decrypt(pubnub.CIPHER_KEY,meg);
+		}else
+		{
+			encrypted=meg;
+		}
 		if (callback != NULL)
 		{
-			callback(meg);
+			callback(encrypted);
 		}
 		evbuffer_free(data);
 	}
@@ -426,6 +427,12 @@ void _requestHistory(string * url_components, int size) {
 	if (data) {
 		const char *joined1 = evbuffer_pullup(data, -1);
 		json_object * obj = json_tokener_parse(joined1);
+
+		if(strlen(pubnub.CIPHER_KEY) > 0)
+		{
+			obj = decryptHistry(pubnub.CIPHER_KEY,obj);
+		}
+
 		if (callback != NULL)
 		{
 			callback(obj);
@@ -502,9 +509,7 @@ char* getHMacSHA256(string secret_key,string input)
 	{
 		sprintf(&(sig[i*2]), "%02x", result[i]);
 	}
-
 	return sig;
-	//return res_hexstring;
 }
 
 char rfc3986[256] = { 0 };
@@ -554,11 +559,13 @@ void encodeURL(char url[], char enc[]) {
  * @param string s2.
  */
 string strconcat(string s1, string s2) {
+
 	size_t old_size;
 	string t;
 	old_size = strlen(s1);
 	t = malloc(old_size + strlen(s2) + 1);
 	strcpy(t, s1);
+
 	strcpy(t + old_size, s2);
 	return t;
 }

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "Pubnub.h"
+#include "../pubnub/Pubnub.h"
 
 int main() {
 
@@ -12,7 +12,7 @@ int main() {
 	return (1);
 #endif
 
-	// call constructor with cipher key
+	// initialize Pubnub state
 	Pubnub_overload1("demo", "demo", "", "", false);
 
 	printf("UUID:::%s", uuid());
