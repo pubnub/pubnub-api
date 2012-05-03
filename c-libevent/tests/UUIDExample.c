@@ -5,17 +5,17 @@
 int main() {
 
 #ifdef _WIN32
-	WSADATA WSAData;
-	WSAStartup(0x101, &WSAData);
+    WSADATA WSAData;
+    WSAStartup(0x101, &WSAData);
 #else
-	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
-	return (1);
+    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
+    return (1);
 #endif
 
-	// initialize Pubnub state
-	Pubnub_overload1("demo", "demo", "", "", false);
+    // initialize Pubnub state
+    Pubnub_overload1("demo", "demo", "", "", false);
 
-	printf("UUID:::%s", uuid());
+    printf("UUID:::%s", uuid());
 
-	return 0;
+    return 0;
 }

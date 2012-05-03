@@ -5,7 +5,6 @@
 #define PUBNUB_H_
 
 #include <stdio.h>
-#include <conio.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -45,10 +44,10 @@ typedef enum object_type {
  */
 
 typedef struct struct_publish {
-	string channel;
-	void* message;
-	void (* cb)(json_object *);
-	enum object_type type;
+    string channel;
+    void* message;
+    void (* cb)(json_object *);
+    enum object_type type;
 }struct_publish;
 
 /**
@@ -59,8 +58,8 @@ typedef struct struct_publish {
  */
 
 typedef struct struct_subscribe {
-	string  channel;
-	void (* cb)(json_object *);
+    string  channel;
+    void (* cb)(json_object *);
 }struct_subscribe;
 
 
@@ -73,9 +72,9 @@ typedef struct struct_subscribe {
  */
 
 typedef struct struct_history {
-	char* channel;
-	int limit;
-	void (*cb)(json_object *);
+    char* channel;
+    int limit;
+    void (*cb)(json_object *);
 }struct_history;
 
 /**
@@ -89,12 +88,12 @@ typedef struct struct_history {
  * @param int ok.
  */
 typedef struct request_context {
-	struct evhttp_uri *uri;
-	struct event_base *base;
-	struct evhttp_connection *cn;
-	struct evhttp_request *req;
-	struct evbuffer *buffer;
-	int ok;
+    struct evhttp_uri *uri;
+    struct event_base *base;
+    struct evhttp_connection *cn;
+    struct evhttp_request *req;
+    struct evbuffer *buffer;
+    int ok;
 }request_context;
 
 /**
@@ -109,13 +108,13 @@ typedef struct request_context {
  */
 
 typedef struct Pubnub {
-	string ORIGIN;
-	string PUBLISH_KEY;
-	string SUBSCRIBE_KEY;
-	string SECRET_KEY;
-	string  CIPHER_KEY;
-	int LIMIT;
-	bool SSL;
+    string ORIGIN;
+    string PUBLISH_KEY;
+    string SUBSCRIBE_KEY;
+    string SECRET_KEY;
+    string  CIPHER_KEY;
+    int LIMIT;
+    bool SSL;
 }PUBNUB;
 
 // Method declarations
