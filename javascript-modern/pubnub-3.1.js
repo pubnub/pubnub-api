@@ -40,7 +40,7 @@ function rnow() { return+new Date }
  * LOCAL STORAGE
  */
 var db = (function(){
-    var ls = localStorage;
+    var ls = typeof localStorage != 'undefined' && localStorage;
     return {
         get : function(key) {
             try {
