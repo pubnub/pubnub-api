@@ -4,40 +4,14 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <EditText 
-        android:id="@+id/editText1"
+    <Button android:text="Subscribe"
+        android:id="@+id/subscribe"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
-        
-    <Button android:text="Publish"
-        android:id="@+id/publishBtn"
+    
+    <Button android:text="Unsubscribe"
+        android:id="@+id/unsubscribe"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
-        
-    <TableLayout 
-    	android:layout_span="2" 
-    	android:stretchColumns="*" 
-    	android:layout_width="wrap_content" 
-    	android:layout_height="wrap_content">
-    	
-	    <TableRow>
-	    
-			<Button android:text="History"
-        		android:id="@+id/historyBtn"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content" />
-        
-	        <Button android:text="UUID"
-        		android:id="@+id/uuidBtn"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content" />
-        	
-        	<Button android:text="Time"
-        		android:id="@+id/timeBtn"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content" />
-        		
-	    </TableRow>
-	</TableLayout>
 
 </LinearLayout>
