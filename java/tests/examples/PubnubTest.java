@@ -67,16 +67,31 @@ class PubnubTest {
         // Callback Interface when a Message is Received
         class Receiver implements Callback {
             @SuppressWarnings("unchecked")
-			public boolean execute(JSONObject message) {
+			public boolean execute(Object message) {
 
-            	// Print Received Message
-		        //System.out.println(message);
-		    	try {
-					Iterator keys = message.keys();
-					while (keys.hasNext()) {
-						System.out.print(message.get( keys.next().toString() ) +" ");
-					}
-					System.out.println();
+            	try {
+		    		if(message instanceof JSONObject)
+		    		{
+		    			JSONObject obj=(JSONObject)message;
+		    			Iterator keys = obj.keys();
+		    			while (keys.hasNext()) {
+		    				System.out.print(obj.get( keys.next().toString() ) +" ");
+		    			}
+		    			System.out.println();
+		    		}else if(message instanceof String )
+		    		{
+		    			String obj=(String)message;
+		    			System.out.print( obj  +" ");
+		    			System.out.println();
+		    		}else if(message instanceof JSONArray)
+		    		{
+		    			JSONArray obj=(JSONArray)message;
+		    			
+		    			
+		    			System.out.print(obj.toString()  +" ");
+		    			System.out.println();
+		    		
+		    		}
 		    	} catch (Exception e) {
 		    		e.printStackTrace();
 		    	}
