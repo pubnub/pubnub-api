@@ -15,7 +15,7 @@ Pubnub is an iOS Objective-C library wrapper for the Pubnub realtime messaging s
 
 3. Make your class follow the PubNubDelegate protocol
 
-        @interface iPhoneTest : UIViewController <CEPubnubDelegate>
+        @interface iPhoneTest : UIViewController  <CEPubnubDelegate>
 
 4. Implement the CEPubnubDelegate methods (they are all optional):
 
