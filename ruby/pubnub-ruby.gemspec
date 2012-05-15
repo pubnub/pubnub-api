@@ -4,14 +4,17 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "pubnub-ruby"
-  s.version = "0.0.7"
+  s.name = %q{pubnub-ruby}
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Stephen Blum"]
-  s.date = "2012-04-19"
-  s.description = "Simply Pubnub.rb in gem format, require \"pubnub\""
-  s.email = "stephen@pubnub.com"
+  s.authors = ["Luke Carpenter"]
+  s.date = %q{2011-05-28}
+  s.description = %q{Simply Pubnub.rb in gem format, :require => "pubnub" - ask @rubynerd for upgrades}
+  s.email = %q{orlyowlizere@gmail.com}
+  s.extra_rdoc_files = [
+    "README"
+  ]
   s.files = [
     "examples/history-example.rb",
     "examples/publish-example.rb",
@@ -20,11 +23,11 @@ Gem::Specification.new do |s|
     "lib/pubnub.rb",
     "tests/unit-test.rb"
   ]
-  s.homepage = "http://github.com/pubnub/pubnub-api/tree/master/ruby"
+  s.homepage = %q{http://github.com/rubynerd/pubnub}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.11"
-  s.summary = "PubNub unofficial gem"
+  s.rubygems_version = %q{1.7.2}
+  s.summary = %q{PubNub unofficial gem}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
