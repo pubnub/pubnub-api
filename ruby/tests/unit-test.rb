@@ -8,72 +8,68 @@
 ## -----------------------------------
 ## PubNub 3.0 Real-time Push Cloud API
 ## -----------------------------------
-require 'Pubnub'
 
-publish_key   = ARGV[0] || 'demo'
-subscribe_key = ARGV[1] || 'demo'
-secret_key    = ARGV[2] || ''
-ssl_on        = !!ARGV[3]
+##including required libraries
+require 'rubygems'   
+require './lib/pubnub.rb' 
+
+##declaring publish_key, subscribe_key, secret_key, cipher_key, message, ssl_on
+          publish_key   = ARGV[0] || 'demo'
+          subscribe_key = ARGV[1] || 'demo'
+          secret_key    = ARGV[2] || 'demo'
+          cipher_key    = ARGV[3]||'demo'
+          message       ='hellounit'
+          ssl_on        = !!ARGV[4]
 
 
 ## ---------------------------------------------------------------------------
 ## Create Pubnub Client API (INITIALIZATION)
 ## ---------------------------------------------------------------------------
-pubnub  = Pubnub.new( publish_key, subscribe_key, secret_key, ssl_on )
-channel = 'ruby-unit-test-' + rand().to_s
+          pubnub  = Pubnub.new( publish_key, subscribe_key, secret_key,cipher_key, ssl_on=false )
+          channel = 'HelloWorld' + rand().to_s
 
 
 ## ---------------------------------------------------------------------------
 ## Unit Test Function
 ## ---------------------------------------------------------------------------
-def test( trial, name )
-    trial ? puts('PASS: ' + name) : puts('FAIL: ' + name)
-end
+          def test( trial, name )
+          trial ? puts('PASS: ' + name) : puts('FAIL: ' + name)
+          end
 
 
 ## ---------------------------------------------------------------------------
 ## PubNub Server Time
 ## ---------------------------------------------------------------------------
-timestamp = pubnub.time()
-test( timestamp > 0, 'PubNub Server Time: ' + timestamp.to_s )
+          timestamp = pubnub.time()
+          test( timestamp > 0, 'PubNub Server Time: ' + timestamp.to_s )
 
 
 ## ---------------------------------------------------------------------------
 ## PUBLISH
 ## ---------------------------------------------------------------------------
-first_message  = 'Hi. (顶顅Ȓ)'
-pubish_success = pubnub.publish({
-    'channel' => channel,
-    'message' => first_message
-})
-test( pubish_success[0] == 1, 'Publish First Message Success' )
-
-crazy_channel  = ' ~`!@#$%^&*(顶顅Ȓ)+=[]\\{}|;\':",./<>?abcd'
-pubish_success = pubnub.publish({
-    'channel' => crazy_channel,
-    'message' => crazy_channel
-})
-test( pubish_success[0] == 1, 'Publish First Message Success' )
-
+          first_message  = 'Hi. (顶顅Ȓ)'
+          pubish_success = pubnub.publish({'channel' => 'HelloWorld' ,'message' => message})
+          test( pubish_success[0] == 1, 'Publish First Message Success' )
 
 ## ---------------------------------------------------------------------------
-## Request Past Publishes (HISTORY)
+## HISTORY
 ## ---------------------------------------------------------------------------
-history = pubnub.history({
-    'channel' => crazy_channel,
-    'limit'   => 1
-})
-test( history.length == 1, 'History Length 2' )
-test( history[0] == crazy_channel, 'History Message UTF8: '  + history[0] )
-
+          history = pubnub.history({
+          'channel' => 'HelloWorld',
+          'limit'   => 20
+          })
+          puts(history)
+          test( history.length >= 1, 'Display History' )
 
 ## ---------------------------------------------------------------------------
 ## Subscribe
 ## ---------------------------------------------------------------------------
-pubnub.subscribe({
-    'channel'  => crazy_channel,
-    'callback' => lambda do |message|
-        puts(message) ## print message
-        return true ## keep listening?
-    end
-})
+          puts('Listening for new messages with subscribe() Function')
+          puts('Press CTRL+C to quit.')
+          pubnub.subscribe({
+          'channel'  => 'HelloWorld',
+          'callback' => lambda do |message|
+          puts(message) ## print message
+          return true   ## keep listening?
+          end
+          })
