@@ -12,12 +12,11 @@ public class PublishExample {
 
         String pub_key = "demo", sub_key = "demo";
         String secret_key = "demo", cipher_key = "demo";
-        String channel = "c2dmalt";    // "c2dmalt"; "androidsample"; 
+        String channel = "hello_world_1234";    // "c2dmalt"; "androidsample"; 
 
         int publish_messages_count = 1;
 
-        Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key,
-                true);
+        Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key, true);
         int count = 0;
         while (true) {
             if (count < publish_messages_count) {
@@ -26,8 +25,7 @@ public class PublishExample {
                 // Create JSON Message
                 JSONObject message = new JSONObject();
                 try {
-                    message.put("some_val", "Hello World! --> ɂ顶@#$%^&*()!"
-                            + count);
+                    message.put("some_val", "Hello World! --> ɂ顶@#$%^&*()!"+ count);
                     /*
                      * message.put( "title", "Android PubNub"); message.put(
                      * "text", "This is a push to all users! woot!");

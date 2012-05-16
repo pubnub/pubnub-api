@@ -33,7 +33,8 @@ public class HistoryExample {
                 for (int i = 0; i < response.length(); i++) {
                     JSONObject jsono = response.optJSONObject(i);
                     if (jsono != null) {
-                        Iterator keys = jsono.keys();
+                        @SuppressWarnings("rawtypes")
+						Iterator keys = jsono.keys();
                         while (keys.hasNext()) {
                             System.out.print(jsono.get(keys.next().toString())
                                     + " ");
