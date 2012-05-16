@@ -1,6 +1,6 @@
 require "Json"
 require "crypto"
-
+pcall(require,"BinDecHex")
 pubnub      = {}
 local LIMIT = 1700
 
@@ -28,13 +28,14 @@ function pubnub.new(init)
 
         -- SIGN PUBLISHED MESSAGE?
         if self.secret_key then
-            signature = crypto.digest( crypto.md5, table.concat( {
+            signature = crypto.hmac( crypto.sha256,"demo", table.concat( {
                 self.publish_key,
                 self.subscribe_key,
                 self.secret_key,
                 channel,
                 message
             }, "/" ) )
+			
         end
 
         -- MESSAGE TOO LONG?
@@ -66,7 +67,6 @@ function pubnub.new(init)
         local channel   = args.channel
         local callback  = callback or args.callback
         local errorback = args['errorback'] or function() end
-        local connectcb = args['connect'] or function() end
         local timetoken = 0
 
         if not channel then return print("Missing Channel") end
@@ -83,7 +83,6 @@ function pubnub.new(init)
         end
 
         subscriptions[channel].connected = 1
-        subscriptions[channel].first     = nil
 
         -- SUBSCRIPTION RECURSION 
         local function substabizel()
@@ -95,12 +94,6 @@ function pubnub.new(init)
                 callback = function(response)
                     -- STOP CONNECTION?
                     if not subscriptions[channel].connected then return end
-
-                    -- CONNECTED CALLBACK
-                    if not subscriptions[channel].first then
-                        subscriptions[channel].first = true
-                        connectcb()
-                    end
 
                     -- PROBLEM?
                     if not response then
@@ -144,7 +137,6 @@ function pubnub.new(init)
 
         -- DISCONNECT
         subscriptions[channel].connected = nil
-        subscriptions[channel].first  = nil
     end
 
     function self:history(args)
@@ -152,9 +144,9 @@ function pubnub.new(init)
             return print("Missing History Callback and/or Channel")
         end
 
-        local limit    = args.limit
-        local channel  = args.channel
-        local callback = args.callback
+        limit    = args.limit
+        channel  = args.channel
+        callback = args.callback
 
         if not limit then limit = 10 end
 
@@ -174,7 +166,7 @@ function pubnub.new(init)
         if not args.callback then
             return print("Missing Time Callback")
         end
-
+		
         self:_request({
             request  = { "time", "0" },
             callback = function(response)
@@ -190,15 +182,15 @@ function pubnub.new(init)
         -- APPEND PUBNUB CLOUD ORIGIN 
         table.insert( args.request, 1, self.origin )
 
-        local url = table.concat( args.request, "/" )
-
+        local url = table.concat( args.request, "/" )		
         network.request( url, "GET", function(event)
             if (event.isError) then
                 return args.callback(nil)
             end
 
             status, message = pcall( Json.Decode, event.response )
-
+			--print(event.response)
+			print(args.callback(message))
             if status then
                 return args.callback(message)
             else
@@ -222,6 +214,39 @@ function pubnub.new(init)
         return new_array
     end
 
+	function self:UUID()
+
+		return GenerateUUID()
+	end	
+	
+local Hex2Dec, BMOr, BMAnd, Dec2Hex
+if(BinDecHex)then
+        Hex2Dec, BMOr, BMAnd, Dec2Hex = BinDecHex.Hex2Dec, BinDecHex.BMOr, BinDecHex.BMAnd, BinDecHex.Dec2Hex
+end
+
+function GenerateUUID()
+        local chars = {"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"}
+        local uuid = {[9]="-",[14]="-",[15]="4",[19]="-",[24]="-"}
+        local r, index
+        for i = 1,36 do
+                if(uuid[i]==nil)then
+                        -- r = 0 | Math.random()*16;
+                        r = math.random (36)
+                        if(i == 20 and BinDecHex)then 
+                                -- (r & 0x3) | 0x8
+                                index = tonumber(Hex2Dec(BMOr(BMAnd(Dec2Hex(r), Dec2Hex(3)), Dec2Hex(8))))
+                                if(index < 1 or index > 36)then 
+                                        print("WARNING Index-19:",index)
+                                        return UUID() -- should never happen - just try again if it does ;-)
+                                end
+                        else
+                                index = r
+                        end
+                        uuid[i] = chars[index]
+                end
+        end
+        return table.concat(uuid)
+end
     -- RETURN NEW PUBNUB OBJECT
     return self
 end
