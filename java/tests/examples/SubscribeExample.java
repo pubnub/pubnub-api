@@ -13,23 +13,23 @@ public class SubscribeExample {
 
         String pub_key = "demo", sub_key = "demo";
         String secret_key = "demo", cipher_key = "demo";
-        String channel = "hello_world";
+        String channel = "hello_world_1234";
 
         Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key,
                 true);
 
         // Callback Interface when a Message is Received
         class Receiver implements Callback {
-            @SuppressWarnings("unchecked")
+        	
             public boolean execute(Object message) {
-
+            	
                 try {
                     if (message instanceof JSONObject) {
                         JSONObject obj = (JSONObject) message;
-                        Iterator keys = obj.keys();
+                        @SuppressWarnings("rawtypes")
+						Iterator keys = obj.keys();
                         while (keys.hasNext()) {
-                            System.out.print(obj.get(keys.next().toString())
-                                    + " ");
+                            System.out.print(obj.get(keys.next().toString()) + " ");
                         }
                         System.out.println();
                     } else if (message instanceof String) {
