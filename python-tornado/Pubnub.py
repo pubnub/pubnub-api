@@ -15,9 +15,17 @@ import hashlib
 import urllib2
 import tornado.httpclient
 import sys
-
+import uuid
+try:
+    from hashlib import sha256
+    digestmod = sha256
+except ImportError:
+    import Crypto.Hash.SHA256 as digestmod
+    sha256 = digestmod.new
+import hmac
 import tornado.ioloop
 ioloop = tornado.ioloop.IOLoop.instance()
+from PubnubCrypto import PubnubCrypto
 
 class Pubnub():
     def __init__(
@@ -25,6 +33,7 @@ class Pubnub():
         publish_key,
         subscribe_key,
         secret_key = False,
+        cipher_key = False,
         ssl_on = False,
         origin = 'pubsub.pubnub.com'
     ) :
@@ -50,6 +59,7 @@ class Pubnub():
         self.publish_key   = publish_key
         self.subscribe_key = subscribe_key
         self.secret_key    = secret_key
+        self.cipher_key    = cipher_key
         self.ssl           = ssl_on
         self.subscriptions = {}
 
@@ -90,7 +100,27 @@ class Pubnub():
 
         ## Capture User Input
         channel = args['channel']
-        message = json.dumps(args['message'])
+        message = args['message']
+
+        if self.cipher_key :
+            pc = PubnubCrypto()
+            out = []
+            if type( message ) == type(list()):
+                for item in message:
+                    encryptItem = pc.encrypt(self.cipher_key, item ).rstrip()
+                    out.append(encryptItem)
+                message = json.dumps(out)
+            elif type( message ) == type(dict()):
+                outdict = {}
+                for k, item in message.iteritems():
+                    encryptItem = pc.encrypt(self.cipher_key, item ).rstrip()
+                    outdict[k] = encryptItem
+                    out.append(outdict)
+                message = json.dumps(out[0])
+            else:
+                message = json.dumps(pc.encrypt(self.cipher_key, message).rstrip())
+        else :
+            message = json.dumps(args['message'])
 
         ## Capture Callback
         if args.has_key('callback') :
@@ -100,16 +130,20 @@ class Pubnub():
 
         ## Sign Message
         if self.secret_key :
-            signature = hashlib.md5('/'.join([
-                self.publish_key,
-                self.subscribe_key,
-                self.secret_key,
-                channel,
-                message
-            ])).hexdigest()
+            hashObject = sha256()
+            hashObject.update(self.secret_key)
+            hashedSecret = hashObject.hexdigest()
+            hash = hmac.HMAC(hashedSecret, '/'.join([
+                    self.publish_key,
+                    self.subscribe_key,
+                    self.secret_key,
+                    channel,
+                    message
+                ]), digestmod=digestmod)
+            signature = hash.hexdigest()        
         else :
             signature = '0'
-
+        
         ## Fail if message too long.
         if len(message) > self.limit :
             print('Message TOO LONG (' + str(self.limit) + ' LIMIT)')
@@ -205,6 +239,11 @@ class Pubnub():
                 if not self.subscriptions[channel]['connected']:
                     return
 
+                ## CONNECTED CALLBACK
+                if not self.subscriptions[channel]['first'] :
+                    self.subscriptions[channel]['first'] = True
+                    connectcb()
+
                 ## PROBLEM?
                 if not response:
                     def time_callback(_time):
@@ -217,16 +256,29 @@ class Pubnub():
                     ## ENSURE CONNECTED (Call Time Function)
                     return self.time({ 'callback' : time_callback })
 
-                ## CONNECTED CALLBACK
-                if not self.subscriptions[channel]['first'] :
-                    self.subscriptions[channel]['first'] = True
-                    connectcb()
-
                 self.subscriptions[channel]['timetoken'] = response[1]
                 substabizel()
 
+                pc = PubnubCrypto()
+                out = []
                 for message in response[0]:
-                    callback(message)
+                     if self.cipher_key :
+                          if type( message ) == type(list()):
+                              for item in message:
+                                  encryptItem = pc.decrypt(self.cipher_key, item )
+                                  out.append(encryptItem)
+                              message = out
+                          elif type( message ) == type(dict()):
+                              outdict = {}
+                              for k, item in message.iteritems():
+                                  encryptItem = pc.decrypt(self.cipher_key, item )
+                                  outdict[k] = encryptItem
+                                  out.append(outdict)
+                              message = out[0]
+                          else:
+                              message = pc.decrypt(self.cipher_key, message )
+                          
+                     callback(message)
 
             ## CONNECT TO PUBNUB SUBSCRIBE SERVERS
             try :
@@ -317,6 +369,22 @@ class Pubnub():
             'time',
             '0'
         ], complete )
+        
+    def uuid(self) :
+        """
+        #**
+        #* uuid
+        #*
+        #* Generate a UUID
+        #*
+        #* @return  UUID.
+        #*
+
+        ## PubNub UUID Example
+        uuid = pubnub.uuid()
+        print(uuid)
+        """
+        return uuid.uuid1()
 
     def _request( self, request, callback ) :
         ## Build URL
@@ -326,10 +394,41 @@ class Pubnub():
                 ch for ch in list(bit)
             ]) for bit in request])
 
+        requestType = request[0]
+
         def complete(response) :
             if response.error:
                 return callback(None)
-            callback(json.loads(response.buffer.getvalue()))
+            obj = json.loads(response.buffer.getvalue())
+            pc = PubnubCrypto()
+            out = []
+            if self.cipher_key :
+                if requestType == "history" :
+                    if type(obj) == type(list()):
+                        for item in obj:
+                            if type(item) == type(list()):
+                                for subitem in item:
+                                    encryptItem = pc.decrypt(self.cipher_key, subitem )
+                                    out.append(encryptItem)
+                            elif type(item) == type(dict()):
+                                outdict = {}
+                                for k, subitem in item.iteritems():
+                                    encryptItem = pc.decrypt(self.cipher_key, subitem )
+                                    outdict[k] = encryptItem
+                                    out.append(outdict)
+                            else :         
+                                encryptItem = pc.decrypt(self.cipher_key, item )
+                                out.append(encryptItem)
+                        callback(out)
+                    elif type( obj ) == type(dict()):
+                        for k, item in obj.iteritems():
+                            encryptItem = pc.decrypt(self.cipher_key, item )
+                            out.append(encryptItem)
+                        callback(out)    
+                else :
+                    callback(obj)
+            else :        
+                callback(obj)        
 
         ## Send Request Expecting JSON Response
         http = tornado.httpclient.AsyncHTTPClient()
