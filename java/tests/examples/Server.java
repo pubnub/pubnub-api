@@ -1,3 +1,4 @@
+package examples;
 
 
 import java.util.HashMap;
@@ -5,7 +6,7 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import src.pubnub.Pubnub;
+import pubnub.Pubnub;
 
 public class Server {
     @SuppressWarnings("static-access")
