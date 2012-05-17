@@ -15,14 +15,15 @@ from twisted.internet import reactor
 
 publish_key   = len(sys.argv) > 1 and sys.argv[1] or 'demo'
 subscribe_key = len(sys.argv) > 2 and sys.argv[2] or 'demo'
-secret_key    = len(sys.argv) > 3 and sys.argv[3] or None
-ssl_on        = len(sys.argv) > 4 and bool(sys.argv[4]) or False
+secret_key    = len(sys.argv) > 3 and sys.argv[3] or 'demo'
+cipher_key    = len(sys.argv) > 4 and sys.argv[4] or 'demo'
+ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or False
 
 ## -----------------------------------------------------------------------
 ## Initiat Class
 ## -----------------------------------------------------------------------
-pubnub = Pubnub( publish_key, subscribe_key, secret_key, ssl_on )
-crazy  = ' ~`!@#$%^&*(顶顅Ȓ)+=[]\\{}|;\':",./<>?abcd'
+pubnub = Pubnub( publish_key, subscribe_key, secret_key, cipher_key, ssl_on )
+crazy  = 'hello_world'
 
 ## ---------------------------------------------------------------------------
 ## Unit Test Function
@@ -61,9 +62,7 @@ def publish_complete(info):
 
 pubnub.publish({
     'channel' : crazy,
-    'message' : {
-        'some_text' : 'Hello World!'
-    },
+    'message' :  {'one': 'Hello World! --> ɂ顶@#$%^&*()!', 'two': 'hello2'},
     'callback' : publish_complete
 })
 

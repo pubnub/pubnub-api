@@ -32,8 +32,9 @@
 pubnub = Pubnub(
     "demo",  ## PUBLISH_KEY
     "demo",  ## SUBSCRIBE_KEY
-    "",      ## SECRET_KEY
-    False    ## SSL_ON?
+    "demo",  ## SECRET_KEY
+    "demo",  ## CIPHER_KEY
+	 False   ## SSL_ON?
 )
 
 ## -----------------------------------------------------------------------
@@ -91,6 +92,13 @@ pubnub.history( {
     'limit'    : 10,
     'callback' : history_complete
 })
+
+## -----------------------------------------------------------------------
+## UUID Example
+## -----------------------------------------------------------------------
+uuid = pubnub.uuid()
+print "UUID"
+print uuid
 
 ## -----------------------------------------------------------------------
 ## IO Event Loop
