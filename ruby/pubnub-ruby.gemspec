@@ -5,13 +5,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{pubnub-ruby}
-  s.version = "0.0.3"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Luke Carpenter"]
+  s.authors = ["Luke Carpenter / PubNub.com"]
   s.date = %q{2011-05-28}
-  s.description = %q{Simply Pubnub.rb in gem format, :require => "pubnub" - ask @rubynerd for upgrades}
-  s.email = %q{orlyowlizere@gmail.com}
+  s.description = %q{Simply Pubnub.rb in gem format, :require => "pubnub" - ask @PubNub for upgrades.}
+  s.email = %q{stephen@pubnub.com}
   s.extra_rdoc_files = [
     "README"
   ]
@@ -23,11 +23,11 @@ Gem::Specification.new do |s|
     "lib/pubnub.rb",
     "tests/unit-test.rb"
   ]
-  s.homepage = %q{http://github.com/rubynerd/pubnub}
+  s.homepage = %q{http://github.com/pubnub/pubnub-api}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.7.2}
-  s.summary = %q{PubNub unofficial gem}
+  s.summary = %q{PubNub Official GEM}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
