@@ -5,12 +5,14 @@ require "openssl"
 require 'digest/MD5'
 require 'base64'
 require 'rubygems'
-
+require 'json'
+require 'active_support'
+require 'httparty' 
 
 class PubnubCrypto
 
   # Initialization of cipher key,iv and algorithm type of aes
-  
+      
   def initialize(cipher_key)
     @@alg = "AES-128-CBC"
     digest = Digest::MD5.new
@@ -24,15 +26,74 @@ class PubnubCrypto
   #* @param plain text(message)
   #* @return cipher text (encrypted text)
   #
+  def encryptObject(message)
+      params = Hash.new
+      if message.is_a? String
+          return encrypt(message)
+      else
+          message.each do |key,value|
+              case(key)
+              when(key)  
+              params[key] = encrypt(value).chop.reverse.chop.reverse(); 
+             end
+          end
+          params = params.to_json  
+          return params          
+      end 
+  end
   
-  def encrypt(message)
+  def decryptObject(cipher_Object)
+      params = {};
+          if cipher_Object.is_a? String           
+              return decrypt(cipher_Object)
+          else
+              cipher_Object.each do |key,value|
+                  case(key)
+                  when(key)     
+                      params[key] = decrypt(value);  
+                  end 
+              end 
+              return params           
+          end   
+  end
+  
+  def encryptArray(message)
+      params = [] 
+      i=0       
+      message.each do |val|
+          case(val)
+          when(val) 
+              params[i] = encrypt(val).chop.reverse.chop.reverse(); 
+              i = i+1   
+          end 
+      end  
+      params = params.to_json
+      return params 
+  end
+  
+  def decryptArray(message)
+      params = [] 
+      i=0       
+      message.each do |val|
+          case(val)
+          when(val)   
+              params[i] = decrypt(val); 
+              i = i+1  
+          end 
+      end  
+      return params     
+  end
+  
+  def encrypt(message)         
     aes = OpenSSL::Cipher::Cipher.new(@@alg)
     aes.encrypt
     aes.key = @@key
     aes.iv = @@iv
     @@cipher = aes.update(message)
     @@cipher << aes.final
-    @@ciphertext = [@@cipher].pack('m')
+    @@ciphertext = [@@cipher].pack('m')   
+    @@ciphertext =  @@ciphertext.strip
+    @@ciphertext = '"' + @@ciphertext + '"'
     return @@ciphertext
   end
   

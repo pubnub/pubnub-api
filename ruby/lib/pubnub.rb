@@ -26,7 +26,8 @@ require './lib/PubnubCrypto.rb'
 class Pubnub
     MAX_RETRIES = 3
 retries=0
-    
+
+    #**
     #* Pubnub
     #*
     #* Init the Pubnub Client API
@@ -56,51 +57,35 @@ retries=0
         http        = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = ssl_on
         @connection = http.start()
-        
-        puts('Connection done')
-        
     end
-
     
-    #* UUID
-    #*
-    #* Unique identifier generation
-    #* @Return Unique Identifier
-    #*    
-    def UUID()
-        uuid=SecureRandom.base64(32).gsub("/","_").gsub(/=+$/,"")
-    end
-
-    
+    #**
     #* Publish
     #*
     #* Send a message to a channel.
     #*
     #* @param array args with channel and message.
     #* @return array success information.
-    
+    #*
     def publish(args)
-    
-      ## Fail if bad input.
-      if !(args['channel'] && args['message'])
-          puts('Missing Channel or message')
-          return false
-      end
+        ## Fail if bad input.
+        if !(args['channel'] && args['message'])
+            puts('Missing Channel or Message')
+            return false
+        end
 
-      ## Capture User Input
-          channel = args['channel']
-          message = args['message'].to_json
-          puts message
-        
+        ## Capture User Input
+        channel = args['channel']
+        message = args['message']
+         
         #encryption of message
        if @cipher_key.length > 0
-            pubnubcrypto=PubnubCrypto.new('cipher_key')
-            message=message.chop.reverse.chop.reverse()
-            puts('message is->'+message)
-            message=pubnubcrypto.encrypt(message)
-            puts('Encrypted message->'+message)
-            message = message.strip
-            message = '"' +message+ '"'
+            pubnubcrypto=PubnubCrypto.new(@cipher_key)
+            if message.is_a? Array
+              message=pubnubcrypto.encryptArray(message)
+            else              
+                message=pubnubcrypto.encryptObject(message)
+              end
        end   
        
         ## Sign message using HMAC
@@ -113,27 +98,25 @@ retries=0
             hmac = OpenSSL::HMAC.hexdigest(digest, key.pack("H*"), signature)
             signature = hmac
          end
-            puts "signature >> "+signature
-  
-            
             ##If message length is greater than limit output fails              
           if message.length > @limit
             puts('message TOO LONG (' + @limit.to_s + ' LIMIT)')
           return [ 0, 'message Too Long.' ]
           end
 
-          ## Send message
-          return self._request([
+        ## Send Message
+        return self._request([
             'publish',
             @publish_key,
             @subscribe_key,
             signature,
             channel,
             '0',
-            message,])
-   end
-  
-     
+            message
+        ])
+    end
+
+    #**
     #* Subscribe
     #*
     #* This is BLOCKING.
@@ -143,10 +126,10 @@ retries=0
     #* @return false on fail, array on success.
     #*
     def subscribe(args)
-       ## Capture User Input
+        ## Capture User Input
         channel   = args['channel']
         callback  = args['callback']
-          
+
         ## Fail if missing channel
         if !channel
             puts "Missing Channel."
@@ -158,42 +141,47 @@ retries=0
             puts "Missing Callback."
             return false
         end
-        
+
         ## Begin Subscribe
         loop do
             begin
                 timetoken = args['timetoken'] ? args['timetoken'] : 0
 
-                ## Wait for message
+                ## Wait for Message
                 response = self._request([
                     'subscribe',
                     @subscribe_key,
                     channel,
                     '0',
-                    timetoken.to_s])
-                    messages          = response[0]
-                    args['timetoken'] = response[1]
-   
+                    timetoken.to_s
+                ])
+
+                messages          = response[0]
+                args['timetoken'] = response[1]
                 ## If it was a timeout
                 next if !messages.length
 
                 ## Run user Callback and Reconnect if user permits.
                 ##Capture the message and encrypt it
-                    messages.each do |message|
-                    pc = PubnubCrypto.new('cipher_key')
-                    message = pc.decrypt(message)
+              pc = PubnubCrypto.new(@cipher_key)
+                    messages.each do |message|                    
+                      if message.is_a? Array
+                             message=pc.decryptArray(message)
+                           else              
+                               message=pc.decryptObject(message)
+                             end       
                     if !callback.call(message)
                         return 
                     end
                 end
             rescue  Timeout::Error
             rescue
-                    sleep(1)
-                    end
+                sleep(1)
+            end
         end
     end
-    
-    
+
+    #**
     #* History
     #*
     #* Load history from a channel.
@@ -202,11 +190,11 @@ retries=0
     #* @return mixed false on fail, array on success.
     #*
     def history(args)
-            ## Capture User Input
+        ## Capture User Input
         limit   = +args['limit'] ? +args['limit'] : 15
         channel = args['channel']
-         
-          ## Fail if bad input.
+
+        ## Fail if bad input.
         if (!channel)
             puts 'Missing Channel.'
             return false
@@ -216,13 +204,18 @@ retries=0
           response = self._request([ 'history', @subscribe_key,channel,'0',limit.to_s])
           myarr=Array.new()
           response.each do |message|
-          pc = PubnubCrypto.new('cipher_key')
-          message = pc.decrypt(message)
+          pc = PubnubCrypto.new(@cipher_key)   
+          if message.is_a? Array
+              message=pc.decryptArray(message)
+            else              
+              message=pc.decryptObject(message)
+            end       
           myarr.push(message)
         end
       return myarr
     end
-   
+
+    #**
     #* Time
     #*
     #* Timestamp from PubNub Cloud.
@@ -235,7 +228,8 @@ retries=0
             '0'
         ])[0]
     end
-
+    
+    #**
     #* Request URL
     #*
     #* @param array request of url directories.
@@ -247,15 +241,23 @@ retries=0
             ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
             '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
         }.join('') }.join('/')
-      
-        puts(' URL==> '+url)
-        
-        response = send_with_retries(url,MAX_RETRIES )
+
+        response = send_with_retries(url, MAX_RETRIES)
         JSON.parse(response)
     end
-
+    
+    #* UUID
+    #*
+    #* Unique identifier generation
+    #* @Return Unique Identifier
+    #*    
+    def UUID()
+        uuid=SecureRandom.base64(32).gsub("/","_").gsub(/=+$/,"")
+    end
+    
     private
-      def send_with_retries(url, retries)
+        
+    def send_with_retries(url, retries)
       tries = 0
 
       begin
@@ -265,6 +267,5 @@ retries=0
         tries += 1
         tries < retries ? retry : raise
       end
-
     end
 end

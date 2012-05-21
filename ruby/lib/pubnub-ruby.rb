@@ -1,1 +1,1 @@
-require "pubnub.rb"
+require "./pubnub.rb"
