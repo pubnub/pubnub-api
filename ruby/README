@@ -19,11 +19,33 @@ pubnub = Pubnub.new(
     "demo",  ## PUBLISH_KEY
     "demo",  ## SUBSCRIBE_KEY
     "",      ## SECRET_KEY
+    "",		 ## CIPHER_KEY
     false    ## SSL_ON?
 )
 
 # -------
-# PUBLISH
+# PUBLISH STRING MESSAGE
+# -------
+# Send Message
+info = pubnub.publish({
+    'channel' => 'hello_world',
+    'message' => 'hey what is up?'
+})
+puts(info)
+
+
+# -------
+# PUBLISH ARRAY OF MESSAGES
+# -------
+# Send Message
+info = pubnub.publish({
+    'channel' => 'hello_world',
+    'message' => { ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"] }
+})
+puts(info)
+
+# -------
+# PUBLISH OBJECT OF STRING MESSAGE
 # -------
 # Send Message
 info = pubnub.publish({
@@ -53,3 +75,11 @@ messages = pubnub.history({
     'limit'   => 10
 })
 puts(messages)
+
+
+# -------
+# UUID
+# -------  
+# Generate Unique identifier
+uuid = pubnub.UUID()
+puts(uuid)
