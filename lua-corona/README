@@ -1,14 +1,14 @@
-
+--
 -- Corona Multiplayer Networking and Push Notifications
 -- Copy "pubnub.lua" and "Json.lua" into your Project Directory.
-
+--
 
 require "pubnub"
 
-
+--
 -- GET YOUR PUBNUB KEYS HERE:
 -- http://www.pubnub.com/account#api-keys
-
+--
 multiplayer = pubnub.new({
     publish_key   = "demo",             -- YOUR PUBLISH KEY
     subscribe_key = "demo",             -- YOUR SUBSCRIBE KEY
@@ -17,9 +17,9 @@ multiplayer = pubnub.new({
     origin        = "pubsub.pubnub.com" -- PUBNUB CLOUD ORIGIN
 })
 
-
+--
 -- PUBNUB PUBLISH MESSAGE (SEND A MESSAGE)
-
+--
 multiplayer:publish({
     channel  = "lua-corona-demo-channel",
     message  = { "1234", 2, 3, 4 },
@@ -35,9 +35,9 @@ multiplayer:publish({
     end
 })
 
-
+--
 -- PUBNUB SUBSCRIBE CHANNEL (RECEIVE MESSAGES)
-
+--
 multiplayer:subscribe({
     channel  = "lua-corona-demo-channel",
     callback = function(message)
@@ -49,16 +49,16 @@ multiplayer:subscribe({
     end
 })
 
-
+--
 -- PUBNUB UN-SUBSCRIBE CHANNEL (STOP RECEIVING MESSAGES)
-
+--
 multiplayer:unsubscribe({
     channel = "lua-corona-demo-channel"
 })
 
-
+--
 -- PUBNUB LOAD MESSAGE HISTORY
-
+--
 multiplayer:history({
     channel  = "lua-corona-demo-channel",
     limit    = 10,
@@ -80,9 +80,9 @@ multiplayer:history({
 })
 
 
-
+--
 -- PUBNUB SERVER TIME
-
+--
 multiplayer:time({
     callback = function(time)
         -- PRINT TIME
