@@ -12,7 +12,7 @@ public class PublishExample {
 
         String pub_key = "demo", sub_key = "demo";
         String secret_key = "demo", cipher_key = "demo";
-        String channel = "hello_world_1234";    // "c2dmalt"; "androidsample"; 
+        String channel = "hello_world";    // "c2dmalt"; "androidsample"; 
 
         int publish_messages_count = 1;
 

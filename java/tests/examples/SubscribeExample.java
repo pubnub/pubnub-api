@@ -13,7 +13,7 @@ public class SubscribeExample {
 
         String pub_key = "demo", sub_key = "demo";
         String secret_key = "demo", cipher_key = "demo";
-        String channel = "hello_world_1234";
+        String channel = "hello_world";
 
         Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key,
                 true);
@@ -22,7 +22,7 @@ public class SubscribeExample {
         class Receiver implements Callback {
         	
             public boolean execute(Object message) {
-            	
+
                 try {
                     if (message instanceof JSONObject) {
                         JSONObject obj = (JSONObject) message;

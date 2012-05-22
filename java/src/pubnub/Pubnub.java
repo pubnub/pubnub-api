@@ -32,7 +32,6 @@ import com.ning.http.client.Response;
  */
 public class Pubnub {
     private String ORIGIN        = "pubsub.pubnub.com";
-    private int    LIMIT         = 1800;
     private String PUBLISH_KEY   = "";
     private String SUBSCRIBE_KEY = "";
     private String SECRET_KEY    = "";
@@ -135,12 +134,12 @@ public class Pubnub {
         this.SSL           = ssl_on;
 
         // SSL On?
-                if (this.SSL) {
-                    this.ORIGIN = "https://" + this.ORIGIN;
-                }
-                else {
-                    this.ORIGIN = "http://" + this.ORIGIN;
-                }
+        if (this.SSL) {
+            this.ORIGIN = "https://" + this.ORIGIN;
+        }
+        else {
+            this.ORIGIN = "http://" + this.ORIGIN;
+        }
     }
 
     /**
@@ -193,7 +192,6 @@ public class Pubnub {
                 try {
                     message = pc.encrypt(obj);
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }else
@@ -489,16 +487,6 @@ public class Pubnub {
             }
         }
 
-        // Fail if string too long
-        if (url.length() > this.LIMIT) {
-            JSONArray jsono = new JSONArray();
-            try { 
-                jsono.put(0); 
-                jsono.put("Message Too Long."); 
-            }
-            catch (Exception jsone) {}
-            return jsono;
-        }
         AsyncHttpClient ahc = null;
         try {
             // Prepare Asynchronous HTTP Request
