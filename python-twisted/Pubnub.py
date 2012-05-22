@@ -25,8 +25,10 @@ from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 from twisted.internet.protocol import Protocol
 from twisted.web.client import Agent
+from twisted.web.http_headers import Headers
 from PubnubCrypto import PubnubCrypto
-
+import gzip
+import zlib
 
 class Pubnub():
     def __init__(
@@ -56,7 +58,6 @@ class Pubnub():
 
         """
         self.origin        = origin
-        self.limit         = 1800
         self.publish_key   = publish_key
         self.subscribe_key = subscribe_key
         self.secret_key    = secret_key
@@ -120,10 +121,10 @@ class Pubnub():
                     out.append(outdict)
                 message = json.dumps(out[0])
             else:
-                message = json.dumps(pc.encrypt(self.cipher_key, message).rstrip())
+                message = json.dumps(pc.encrypt(self.cipher_key, message).replace('\n',''))
         else :
             message = json.dumps(args['message'])
-        
+
         ## Capture Callback
         if args.has_key('callback') :
             callback = args['callback']
@@ -146,11 +147,6 @@ class Pubnub():
         else :
             signature = '0'
     
-        ## Fail if message too long.
-        if len(message) > self.limit :
-            print('Message TOO LONG (' + str(self.limit) + ' LIMIT)')
-            return [ 0, 'Message Too Long.' ]
-
         ## Send Message
         return self._request([
             'publish',
@@ -400,20 +396,34 @@ class Pubnub():
             ]) for bit in request])
 
         requestType = request[0]
-
-        agent   = Agent(reactor)
-        request = agent.request( 'GET', url, None )
         
+        agent   = Agent(reactor)
+        request = agent.request( 'GET', url, Headers({'V':['3.1'],'User-Agent': ['python'],'Accept-Encoding': ['gzip']}),None )
+
+        self.resulting_is = str()
         def received(response):
+            headerlist = list(response.headers.getAllRawHeaders())
+            for item in headerlist:
+                if( item[0] == "Content-Encoding"):
+                    if type(item[1]) == type(list()):
+                        for subitem in item[1]:
+                            self.resulting_is = subitem
+                    elif type(item[1]) == type(str()):
+                        self.resulting_is = item[1]
+                        
             finished = Deferred()
-           
             response.deliverBody(PubNubResponse(finished))
             return finished
 
         def complete(data):
+            if ( type(data) == type(str()) ):
+                if self.resulting_is:
+                    d = zlib.decompressobj(16+zlib.MAX_WBITS)
+                    data = d.decompress(data)
+                
             try    : obj = json.loads(data)
             except : obj = None
-
+            
             pc = PubnubCrypto()
             out = []
             if self.cipher_key :

@@ -16,6 +16,18 @@
 ## This is a cloud-based service for broadcasting Real-time messages
 ## to thousands of web and mobile clients simultaneously.
 
+## ----------------------------------------------------
+## Third Party Libraries Dependency
+## ----------------------------------------------------
+## You must download and install,
+##
+## 1. pyopenssl
+## Download from https://launchpad.net/pyopenssl
+##
+## 2. pycrypto
+## Download from https://github.com/dlitz/pycrypto OR
+## from http://code.google.com/p/uploadprj/downloads/detail?name=pycrypto-2.3.win32-py2.7.zip&can=2&q
+
 ## ---------------
 ## Python Push API
 ## ---------------
@@ -24,7 +36,7 @@ pubnub = Pubnub(
     "demo",  ## SUBSCRIBE_KEY
     "demo",  ## SECRET_KEY
     "demo",  ## CIPHER_KEY
-	 False    ## SSL_ON?
+	 False   ## SSL_ON?
 )
 
 ## -----------------------------------------------------------------------

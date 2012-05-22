@@ -55,7 +55,6 @@ class Pubnub():
 
         """
         self.origin        = origin
-        self.limit         = 1800
         self.publish_key   = publish_key
         self.subscribe_key = subscribe_key
         self.secret_key    = secret_key
@@ -118,7 +117,7 @@ class Pubnub():
                     out.append(outdict)
                 message = json.dumps(out[0])
             else:
-                message = json.dumps(pc.encrypt(self.cipher_key, message).rstrip())
+                message = json.dumps(pc.encrypt(self.cipher_key, message).replace('\n',''))
         else :
             message = json.dumps(args['message'])
 
@@ -144,11 +143,6 @@ class Pubnub():
         else :
             signature = '0'
         
-        ## Fail if message too long.
-        if len(message) > self.limit :
-            print('Message TOO LONG (' + str(self.limit) + ' LIMIT)')
-            return [ 0, 'Message Too Long.' ]
-
         ## Send Message
         return self._request([
             'publish',
@@ -432,8 +426,10 @@ class Pubnub():
 
         ## Send Request Expecting JSON Response
         http = tornado.httpclient.AsyncHTTPClient()
+        request =  tornado.httpclient.HTTPRequest( url, 'GET', dict({'V':'3.1','User-Agent': 'python-tornado','Accept-Encoding': 'gzip'}) ) 
+        
         http.fetch(
-            url,
+            request,
             callback=complete,
             connect_timeout=200,
             request_timeout=200

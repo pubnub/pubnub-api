@@ -26,6 +26,18 @@
 ## > sudo python setup.py install
 ## 
 
+## ----------------------------------------------------
+## Third Party Libraries Dependency
+## ----------------------------------------------------
+## You must download and install,
+##
+## 1. pyopenssl
+## Download from https://launchpad.net/pyopenssl
+##
+## 2. pycrypto
+## Download from https://github.com/dlitz/pycrypto OR
+## from http://code.google.com/p/uploadprj/downloads/detail?name=pycrypto-2.3.win32-py2.7.zip&can=2&q
+
 ## ---------------
 ## Python Push API
 ## ---------------

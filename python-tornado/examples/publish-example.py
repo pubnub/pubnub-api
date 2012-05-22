@@ -9,9 +9,11 @@
 ## PubNub 3.0 Real-time Push Cloud API
 ## -----------------------------------
 
-from Pubnub import Pubnub
 import sys
-from twisted.internet import reactor
+import tornado
+sys.path.append('../')
+from Pubnub import Pubnub
+
 
 publish_key   = len(sys.argv) > 1 and sys.argv[1] or 'demo'
 subscribe_key = len(sys.argv) > 2 and sys.argv[2] or 'demo'
@@ -22,8 +24,10 @@ ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or False
 ## -----------------------------------------------------------------------
 ## Initiat Class
 ## -----------------------------------------------------------------------
-pubnub = Pubnub( publish_key, subscribe_key, secret_key, cipher_key, ssl_on )
+pubnub = Pubnub( publish_key, subscribe_key, secret_key,cipher_key, ssl_on )
 crazy  = 'hello_world'
+
+
 
 ## -----------------------------------------------------------------------
 ## Publish Example
@@ -42,4 +46,4 @@ pubnub.publish({
 ## -----------------------------------------------------------------------
 ## IO Event Loop
 ## -----------------------------------------------------------------------
-reactor.run()
+tornado.ioloop.IOLoop.instance().start()
