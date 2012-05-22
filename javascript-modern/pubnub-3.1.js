@@ -66,7 +66,7 @@ var db = (function(){
  */
 var NOW    = 1
 ,   URLBIT = '/'
-,   XHRTME = 140000;
+,   XHRTME = 310000;
 
 /**
  * NEXTORIGIN

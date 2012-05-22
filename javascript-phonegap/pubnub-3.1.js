@@ -79,7 +79,7 @@ var NOW    = 1
 ,   REPL   = /{([\w\-]+)}/g
 ,   ASYNC  = 'async'
 ,   URLBIT = '/'
-,   XHRTME = 140000
+,   XHRTME = 310000
 ,   SECOND = 1000
 ,   UA     = navigator.userAgent
 ,   XORIGN = UA.indexOf('MSIE 6') == -1;
