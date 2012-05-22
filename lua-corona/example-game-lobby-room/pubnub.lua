@@ -2,7 +2,6 @@ require "Json"
 require "crypto"
 pcall(require,"BinDecHex")
 pubnub      = {}
-local LIMIT = 1700
 
 function pubnub.new(init)
     local self          = init
@@ -35,11 +34,6 @@ function pubnub.new(init)
                 channel,
                 message
             }, "/" ) )			
-        end
-
-        -- MESSAGE TOO LONG?
-        if string.len(message) > LIMIT then
-            return callback({ nil, "Message Too Long (" .. LIMIT .. ")" })
         end
 
         -- PUBLISH MESSAGE
