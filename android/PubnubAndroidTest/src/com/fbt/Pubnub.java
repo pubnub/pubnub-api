@@ -1,4 +1,4 @@
-package com.aimx.androidpubnub;
+package com.fbt;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -31,7 +31,6 @@ import pubnub.PubnubCrypto;
  */
 public class Pubnub {
     private String ORIGIN        = "pubsub.pubnub.com";
-    private int    LIMIT         = 1800;
     private String PUBLISH_KEY   = "";
     private String SUBSCRIBE_KEY = "";
     private String SECRET_KEY    = "";
@@ -487,17 +486,6 @@ public class Pubnub {
             }
         }
 
-        // Fail if string too long
-        if (url.length() > this.LIMIT) {
-            JSONArray jsono = new JSONArray();
-                try { 
-                    jsono.put(0); 
-                    jsono.put("Message Too Long."); 
-                }
-                catch (Exception jsone) {}
-            return jsono;
-        }
-        
         try {
             PubnubHttpRequest request = new PubnubHttpRequest(url.toString());
             FutureTask<String> task = new FutureTask<String>(request);
