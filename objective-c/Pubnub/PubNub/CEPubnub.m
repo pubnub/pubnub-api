@@ -18,7 +18,6 @@
 
 
 #define kDefaultOrigin @"pubsub.pubnub.com"
-#define kMaxMessageLength 1800  // From documentation
 #define kMaxHistorySize 100  // From documentation
 #define kConnectionTimeOut 200.0  // From https://github.com/jazzychad/CEPubnub/blob/master/CEPubnub/CEPubnubRequest.m
 #define kMinRetryInterval 5.0
@@ -277,23 +276,16 @@ typedef enum {
     
     
     NSString* json = JSONWriteString(msg);
-    //   NSLog(@"JSON:::%@",json); 
-    if ([json lengthOfBytesUsingEncoding:NSUTF8StringEncoding] > kMaxMessageLength) {
-        NSLog(@"PubNub message too long: %i bytes", json.length);
-    }
     
     NSString* signature;
     if (_secretKey) {
-            //signature = MD5HashedString([NSString stringWithFormat:@"%@/%@/%@/%@/%@", _publishKey, _subscribeKey, _secretKey,         channel, json]);
-        
         signature =[CommonFunction HMAC_SHA256withKey:[NSString stringWithFormat:@"%@",_secretKey] Input:[NSString stringWithFormat:@"%@/%@/%@/%@/%@", _publishKey, _subscribeKey, _secretKey,channel, json] ];
     } else {
         signature = @"0";
     }
     NSString* url = [NSString stringWithFormat:@"%@/publish/%@/%@/%@/%@/0/%@", _host, _publishKey, _subscribeKey, signature,
                      [channel urlEscapedString], [json urlEscapedString]];
-        // NSLog(@"URL::%@",url);
-    //   NSLog(@"signature=== %@",signature);
+    
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_SendMessage
@@ -331,7 +323,7 @@ typedef enum {
 }
 
 - (void) unsubscribeFromChannel:(NSString*)channel {
-    for (PubNubConnection* connection in _connections) {
+    for (PubNubConnection* connection in [[_connections copy]autorelease]) {
         if ((connection.command == kCommand_ReceiveMessage) && (!channel || [connection.channel isEqualToString:channel])) {
             NSLog(@"Did unsubscribe from PubNub channel \"%@\"", connection.channel);
             [connection cancel];

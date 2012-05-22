@@ -30,12 +30,9 @@
 
 - (NSData *) transform:(CCOperation) encryptOrDecrypt data:(NSData *) inputData {  
     
-        // kCCKeySizeAES128 = 16 bytes  
-        // CC_MD5_DIGEST_LENGTH = 16 bytes  
-    
-         NSData* secretKey = [Cipher md5:cipherKey];  
-    
-        // NSData* secretKey = [cipherKey dataUsingEncoding:NSUTF8StringEncoding];
+    // kCCKeySizeAES128 = 16 bytes
+    // CC_MD5_DIGEST_LENGTH = 16 bytes
+    NSData* secretKey = [Cipher md5:cipherKey];
     
     CCCryptorRef cryptor = NULL;  
     CCCryptorStatus status = kCCSuccess;  
@@ -62,7 +59,7 @@
         return nil;  
     }  
     
-    size_t bufsize = CCCryptorGetOutputLength(cryptor, (size_t)[inputData length], true);   
+    size_t bufsize = CCCryptorGetOutputLength(cryptor, (size_t)[inputData length], true);
     
     void * buf = malloc(bufsize * sizeof(uint8_t));  
     memset(buf, 0x0, bufsize);  
@@ -93,7 +90,7 @@
     
     CCCryptorRelease(cryptor);  
     
-    return [NSData dataWithBytesNoCopy:buf length:bytesTotal]; 
+    return [NSData dataWithBytesNoCopy:buf length:bytesTotal];
 }  
 
 + (NSData *) md5:(NSString *) stringToHash {  

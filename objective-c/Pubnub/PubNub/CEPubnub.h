@@ -35,7 +35,7 @@
 @end
 
 // All operations happen on the main thread
-// Messages must be JSON compatible and less than 1800 bytes once serialized
+// Messages must be JSON compatible
 @interface CEPubnub : NSObject {
 @private
   id<CEPubnubDelegate> _delegate;
