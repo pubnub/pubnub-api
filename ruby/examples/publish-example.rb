@@ -10,9 +10,9 @@ cipher_key = 'demo'
 channel = 'hello_world'
 ssl_on        = !!ARGV[4]
 
-strMessage = "hey what is up?"
-arrMessage =  ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
-objMessage ={"desc"=>"someKey","main_item"=>"item1"}  #{"name"=>"Jhon","Age"=>"23"}
+strMessage = "Hello World"
+arrMessage = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+objMessage = {"Name"=>"John","Age"=>"23"}
 
 ## Print usage if missing info.
 if !strMessage && arrMessage && objMessage

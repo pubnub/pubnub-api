@@ -17,8 +17,8 @@ require './lib/pubnub.rb'
           publish_key   = ARGV[0] || 'demo'
           subscribe_key = ARGV[1] || 'demo'
           secret_key    = ARGV[2] || 'demo'
-          cipher_key    = ARGV[3]||'demo'
-          message       ='hellounit'
+          cipher_key    = ARGV[3] || 'demo'
+          message       = 'Hello World'
           ssl_on        = !!ARGV[4]
 
 
@@ -26,7 +26,7 @@ require './lib/pubnub.rb'
 ## Create Pubnub Client API (INITIALIZATION)
 ## ---------------------------------------------------------------------------
           pubnub  = Pubnub.new( publish_key, subscribe_key, secret_key,cipher_key, ssl_on=false )
-          channel = 'HelloWorld' + rand().to_s
+          channel = 'hello_world' + rand().to_s
 
 
 ## ---------------------------------------------------------------------------
@@ -48,15 +48,15 @@ require './lib/pubnub.rb'
 ## PUBLISH
 ## ---------------------------------------------------------------------------
           first_message  = 'Hi. (顶顅Ȓ)'
-          pubish_success = pubnub.publish({'channel' => 'HelloWorld' ,'message' => message})
+          pubish_success = pubnub.publish({'channel' => 'hello_world' ,'message' => message})
           test( pubish_success[0] == 1, 'Publish First Message Success' )
 
 ## ---------------------------------------------------------------------------
 ## HISTORY
 ## ---------------------------------------------------------------------------
           history = pubnub.history({
-          'channel' => 'HelloWorld',
-          'limit'   => 20
+          'channel' => 'hello_world',
+          'limit'   => 5
           })
           puts(history)
           test( history.length >= 1, 'Display History' )
@@ -67,7 +67,7 @@ require './lib/pubnub.rb'
           puts('Listening for new messages with subscribe() Function')
           puts('Press CTRL+C to quit.')
           pubnub.subscribe({
-          'channel'  => 'HelloWorld',
+          'channel'  => 'hello_world',
           'callback' => lambda do |message|
           puts(message) ## print message
           return true   ## keep listening?

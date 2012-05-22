@@ -21,7 +21,7 @@ require 'pp'
 require 'rubygems'
 require 'securerandom'
 require 'digest'
-require './lib/PubnubCrypto.rb'
+require './lib/pubnubCrypto.rb'
 
 class Pubnub
     MAX_RETRIES = 3
@@ -45,7 +45,6 @@ retries=0
         @cipher_key    = cipher_key
         @ssl           = ssl_on
         @origin        = 'pubsub.pubnub.com'
-        @limit         = 1800
 
         if @ssl
             @origin = 'https://' + @origin
@@ -80,16 +79,16 @@ retries=0
          
         #encryption of message
        if @cipher_key.length > 0
-            pubnubcrypto=PubnubCrypto.new(@cipher_key)
+            pc=PubnubCrypto.new(@cipher_key)
             if message.is_a? Array
-              message=pubnubcrypto.encryptArray(message)
+              message=pc.encryptArray(message)
             else              
-                message=pubnubcrypto.encryptObject(message)
+                message=pc.encryptObject(message)
               end
        end   
        
         ## Sign message using HMAC
-            String signature = '0'
+         String signature = '0'
 
          if @secret_key.length > 0
             signature = "{@publish_key,@subscribe_key,@secret_key,channel,message}" 
@@ -98,11 +97,6 @@ retries=0
             hmac = OpenSSL::HMAC.hexdigest(digest, key.pack("H*"), signature)
             signature = hmac
          end
-            ##If message length is greater than limit output fails              
-          if message.length > @limit
-            puts('message TOO LONG (' + @limit.to_s + ' LIMIT)')
-          return [ 0, 'message Too Long.' ]
-          end
 
         ## Send Message
         return self._request([

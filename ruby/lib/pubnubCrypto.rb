@@ -6,8 +6,6 @@ require 'digest/MD5'
 require 'base64'
 require 'rubygems'
 require 'json'
-require 'active_support'
-require 'httparty' 
 
 class PubnubCrypto
 
