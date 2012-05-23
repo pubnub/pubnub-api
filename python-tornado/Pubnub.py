@@ -426,7 +426,7 @@ class Pubnub():
 
         ## Send Request Expecting JSON Response
         http = tornado.httpclient.AsyncHTTPClient()
-        request =  tornado.httpclient.HTTPRequest( url, 'GET', dict({'V':'3.1','User-Agent': 'python-tornado','Accept-Encoding': 'gzip'}) ) 
+        request =  tornado.httpclient.HTTPRequest( url, 'GET', dict({'V':'3.1','User-Agent': 'Python-Tornado','Accept-Encoding': 'gzip'}) ) 
         
         http.fetch(
             request,

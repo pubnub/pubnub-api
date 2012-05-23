@@ -398,7 +398,7 @@ class Pubnub():
         requestType = request[0]
         
         agent   = Agent(reactor)
-        request = agent.request( 'GET', url, Headers({'V':['3.1'],'User-Agent': ['python'],'Accept-Encoding': ['gzip']}),None )
+        request = agent.request( 'GET', url, Headers({'V':['3.1'],'User-Agent': ['Python-Twisted'],'Accept-Encoding': ['gzip']}),None )
 
         self.resulting_is = str()
         def received(response):
