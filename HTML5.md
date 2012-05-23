@@ -23,9 +23,9 @@ You must reduce DOM/CSS parse time to < 1 second.
  10. Other nodes which do no appear frequently
     are also okay to use as selectors.
 
-Here are some examples.
+Follow these examples. Use only the GOOD CSS Selectors:
 
-### GOOD (fastest to slowest):
+### GOOD (Fastest to slowest):
 
  - `#status-area {}`
  - `#user-actions {}`
@@ -49,7 +49,7 @@ Here are some examples.
  - `html body div em {}`
  - `h1.lame {}`
 
-### Updated requirements regarding PubNub HTML5 requirements:
+### More Requirements for PubNub HTML5 Guide:
 
  - 100% A-Grade Browser Compliant
  - 100% Mobile Compliant.
@@ -80,18 +80,20 @@ Here are some examples.
 Keeping in the spirits of a fully fluid page design,
 all buttons and expandable assets must be able
 to fit variable amounts of browser rendered text.
+Use `display:inline-block` CSS for Buttons.
 
  - Example: `<div class="expandable-button">Real-time Button</div>`
  - Example: `<ul class="main-navigation"> <li>Real-time Economy</li> </ul>`
  - Example: `<a href="http://pubnub.com/">PubNub</a>`
 
-## Use PEP-8 for coding conventions.
+## Use PEP-8 Coding Conventions
 
 The important conventions are listed here:
 
  - Code is read more frequently than it is written,
    and therefore needs to be well built.
  - **Use 4 spaces for indentation.**
+ - **NO TABS**
  - Use Hyphens in CSS Class Names and Element Tags
      - Example: `<div id="my-div" class="top-nav"></div>`
  - Use Underscores in Form Element Names.
