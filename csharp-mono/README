@@ -1,0 +1,142 @@
+## ---------------------------------------------------
+## UPDATE! UPDATE! UPDATE! UPDATE!
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account
+##
+## ----------------------------------------------------
+
+## ----------------------------------------------
+## PubNub 3.0 Web Data Push Cloud-Hosted API - C#
+## ----------------------------------------------
+##
+## PubNub is a Massively Scalable Web Push Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting messages
+## to thousands of web and mobile clients simultaneously.
+
+## -------------------------------------------
+## ARE YOU COMPILING WITH .NET OLDER THAN 3.5?
+## -------------------------------------------
+## YOU MUST USE System.Web.Extensions.dll included in this directory.
+## YOU MUST HAVE MONO INSTALL ON YOUR MACHINE
+##
+## TO USE THIS FOLLOW THE STEPS IN mono-build FILE WHICH IS INCLUDED IN THIS DIRECTORY.
+
+===============================================================================
+PubNub C# Client API Boiler Plate
+===============================================================================
+
+-------------------------------------------------------------------------------
+C#: (Init)
+-------------------------------------------------------------------------------
+
+    pubnub objPubnub = new pubnub(
+		"demo",  // PUBLISH_KEY
+		"demo",  // SUBSCRIBE_KEY
+		"demo",  // SECRET_KEY
+		"demo",  //CIPHER_KEY   
+		false    // SSL_ON?
+    );
+	
+-------------------------------------------------------------------------------
+C#: (Publish)
+-------------------------------------------------------------------------------
+
+	string channel = "test_channel"; //channel name
+	
+	// Publish String
+    Dictionary<string, object> args = new Dictionary<string, object>();
+	args.Add("channel", channel);
+	args.Add("message", "Hello Csharp - mono");
+
+	List<object> info = objPubnub.Publish(args);
+	
+	// Publish Response
+    Console.WriteLine(info[0]); // 1
+    Console.WriteLine(info[1]); // 'Demo' or "Error Message"
+	Console.WriteLine(info[2]); // timetoken
+	
+	//Publish Array Of Messages
+	args = new Dictionary<string, object>();
+	string[] objArr = new string[7];
+
+	objArr[0] = "Sunday";
+	objArr[1] = "Monday";
+	objArr[2] = "Tuesday";
+	objArr[3] = "Wednesday";
+	objArr[4] = "Thrusday";
+	objArr[5] = "Friday";
+	objArr[6] = "Saterday";
+
+	args.Add("channel", channel);
+	args.Add("message", objArr);
+	info = objPubnub.Publish(args);
+	
+	// Publish Response
+	Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+	
+	// Publish Message In Object Format
+	args = new Dictionary<string, object>();
+	Dictionary<string, object> objDict = new Dictionary<string, object>();
+
+	objDict.Add("Name", "Jhon");            
+	objDict.Add("Age", "25");
+
+	args.Add("channel", channel);
+	args.Add("message", objDict);
+	info = objPubnub.Publish(args);
+	Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+
+	Console.ReadKey();
+
+-------------------------------------------------------------------------------
+C#: (Subscribe)
+-------------------------------------------------------------------------------
+
+	string channel = "test_channel"; //channel name
+
+	objPubnub.Subscribe(
+		channel,
+		delegate(object message)
+		{
+			Console.WriteLine("Message - " + message); // Print Received Message
+			return true; // Keep Listening?
+		}
+    );
+
+-------------------------------------------------------------------------------
+C#: (History)
+-------------------------------------------------------------------------------
+
+	string channel = "test_channel";
+	
+	// History	
+	Dictionary<string, string> args = new Dictionary<string, string>();
+	args.Add("channel", channel);
+	args.Add("limit", 3.ToString()); //limit of messages to receive
+	List<object> history = objPubnub.History(args);
+	foreach (object history_message in history)
+	{
+		Console.Write("History Message: ");
+		Console.WriteLine(history_message);
+	}
+	Console.ReadKey();
+	
+	// Get PubNub Server Time
+
+-------------------------------------------------------------------------------
+C#: (Time)
+-------------------------------------------------------------------------------	
+	object timestamp = objPubnub.Time();
+	Console.WriteLine("Server Time: " + timestamp.ToString());
+	
+-------------------------------------------------------------------------------
+C#: (UUID)
+-------------------------------------------------------------------------------
+	
+	string channel = "test_channel"; // channel name
+	
+	// Print Unique identifier
+	Console.WriteLine("UUID - " + objPubnub.UUID());
+	Console.ReadKey();

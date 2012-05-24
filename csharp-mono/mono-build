@@ -1,0 +1,14 @@
+
+1 . install mono 
+2 . open two command promp of mono for publish and subscribe
+
+3 .cd to the code folder on both command prompt
+4. on 1st command prompt run the following command
+
+> gmcs SubscriberExample.cs -r:System.Web.Extensions.dll -r:Newtonsoft.Json.dll -r:System.Runtime.Serialization.Json.dll -r:PubnubCrypto.dll -r:Pubnub.dll
+> mono --debug SubscriberExample.exe
+
+5. on 2nd command prompt run the following command
+
+>gmcs PublishExample.cs -r:System.Web.Extensions.dll -r:Newtonsoft.Json.dll -r:System.Runtime.Serialization.Json.dll -r:PubnubCrypto.dll -r:Pubnub.dll
+>mono --debug PublishExample.exe

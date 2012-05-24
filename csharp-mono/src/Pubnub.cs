@@ -1,0 +1,453 @@
+using System;
+using System.IO;
+using System.Net;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Web.Script.Serialization;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.ComponentModel;
+using Newtonsoft.Json;
+using PubnubCrypto;
+
+/**
+ * PubNub 3.0 Real-time Push Cloud API
+ *
+ * @author Stephen Blum
+ * @package pubnub
+ */
+namespace Pubnub
+{
+    public class pubnub
+    {
+        private string ORIGIN = "pubsub.pubnub.com";
+        private string PUBLISH_KEY = "";
+        private string SUBSCRIBE_KEY = "";
+        private string SECRET_KEY = "";
+        private string CIPHER_KEY = "";
+        private bool SSL = false;
+        public delegate bool Procedure(object message);
+
+        /**
+         * PubNub 3.0 with cipher key
+         *
+         * Prepare PubNub Class State.
+         *
+         * @param string Publish Key.
+         * @param string Subscribe Key.
+         * @param string Secret Key.
+         * @param string Cipher Key.
+         * @param bool SSL Enabled.
+         */
+        public pubnub(
+            string publish_key,
+            string subscribe_key,
+            string secret_key,
+            string cipher_key,
+            bool ssl_on
+        )
+        {
+            this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
+        }
+
+        /**
+         * PubNub 3.0
+         *
+         * Prepare PubNub Class State.
+         *
+         * @param string Publish Key.
+         * @param string Subscribe Key.
+         * @param string Secret Key.
+         * @param bool SSL Enabled.
+         */
+        public pubnub(
+            string publish_key,
+            string subscribe_key,
+            string secret_key,
+            bool ssl_on
+        )
+        {
+            this.init(publish_key, subscribe_key, secret_key, "", ssl_on);
+        }
+
+        /**
+         * PubNub 2.0 Compatibility
+         *
+         * Prepare PubNub Class State.
+         *
+         * @param string Publish Key.
+         * @param string Subscribe Key.
+         */
+        public pubnub(
+            string publish_key,
+            string subscribe_key
+        )
+        {
+            this.init(publish_key, subscribe_key, "", "", false);
+        }
+
+        /**
+         * PubNub 3.0 without SSL
+         *
+         * Prepare PubNub Class State.
+         *
+         * @param string Publish Key.
+         * @param string Subscribe Key.
+         * @param string Secret Key.
+         */
+        public pubnub(
+            string publish_key,
+            string subscribe_key,
+            string secret_key
+        )
+        {
+            this.init(publish_key, subscribe_key, secret_key, "", false);
+        }
+
+        /**
+         * Init
+         *
+         * Prepare PubNub Class State.
+         *
+         * @param string Publish Key.
+         * @param string Subscribe Key.
+         * @param string Secret Key.
+         * @param string Cipher Key.
+         * @param bool SSL Enabled.
+         */
+        public void init(
+            string publish_key,
+            string subscribe_key,
+            string secret_key,
+            string cipher_key,
+            bool ssl_on
+        )
+        {
+            this.PUBLISH_KEY = publish_key;
+            this.SUBSCRIBE_KEY = subscribe_key;
+            this.SECRET_KEY = secret_key;
+            this.CIPHER_KEY = cipher_key;
+            this.SSL = ssl_on;
+
+            // SSL On?
+            if (this.SSL)
+            {
+                this.ORIGIN = "https://" + this.ORIGIN;
+            }
+            else
+            {
+                this.ORIGIN = "http://" + this.ORIGIN;
+            }
+        }
+
+        /**
+         * Publish
+         *
+         * Send a message to a channel.
+         *
+         * @param Dictionary<string, object> args 
+         * args is string channel name and object message
+         * @return List<object> info.
+         */
+        public List<object> Publish(Dictionary<string, object> args)
+        {
+            string channel = args["channel"].ToString();
+            object message = args["message"];
+
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
+
+            if (this.CIPHER_KEY.Length > 0)
+            {
+                if (message.GetType() == typeof(string))
+                {
+                    message = pc.encrypt(message.ToString());
+                }
+                else if (message.GetType() == typeof(Dictionary<string, object>))
+                {
+                    Dictionary<string, object> dict = (Dictionary<string, object>)message;
+                    message = pc.encrypt(dict);
+                }
+                else if (message.GetType() == typeof(string[]))
+                {
+                    message = (object)pc.encrypt((object[])message);
+                }
+            }
+
+            // Generate String to Sign
+            string signature = "0";
+            if (this.SECRET_KEY.Length > 0)
+            {
+                StringBuilder string_to_sign = new StringBuilder();
+                string_to_sign
+                    .Append(this.PUBLISH_KEY)
+                    .Append('/')
+                    .Append(this.SUBSCRIBE_KEY)
+                    .Append('/')
+                    .Append(this.SECRET_KEY)
+                    .Append('/')
+                    .Append(channel)
+                    .Append('/')
+                    .Append(serializer.Serialize(message));
+
+                // Sign Message
+                signature = getHMACSHA256(string_to_sign.ToString());
+            }
+
+            // Build URL
+            List<string> url = new List<string>();
+            url.Add("publish");
+            url.Add(this.PUBLISH_KEY);
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add(signature);
+            url.Add(channel);
+            url.Add("0");
+            url.Add(serializer.Serialize(message));
+
+            // Return JSONArray
+            return _request(url);
+        }
+
+        /**
+         * Subscribe
+         *
+         * This function is BLOCKING.
+         * Listen for a message on a channel.
+         *
+         * @param string channel name.
+         * @param Procedure function callback.
+         */
+        public void Subscribe(string channel, Procedure callback)
+        {
+            Dictionary<string, object> args = new Dictionary<string, object>();
+            args.Add("channel", channel);
+            args.Add("callback", callback);
+            args.Add("timestamp", 0);
+            this._subscribe(args);
+        }
+
+        /**
+          * _subscribe - Private Interface
+          *
+          * @param Dictionary<string, object> args
+         *  args is channel name and Procedure function callback and timetoken
+          * @param Procedure function callback.
+          * @param string timetoken.
+          */
+        private void _subscribe(Dictionary<string, object> args)
+        {
+            clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
+
+            string channel = args["channel"].ToString();
+            Procedure callback = (Procedure)args["callback"];
+            object timetoken = args["timestamp"];
+            //  Begin Recusive Subscribe
+            try
+            {
+                // Build URL
+                List<string> url = new List<string>();
+                url.Add("subscribe");
+                url.Add(this.SUBSCRIBE_KEY);
+                url.Add(channel);
+                url.Add("0");
+                url.Add(timetoken.ToString());
+
+                // Wait for Message
+                List<object> response = _request(url);
+
+                // Update TimeToken
+                if (response[1].ToString().Length > 0)
+                    timetoken = (object)response[1];
+
+                // Run user Callback and Reconnect if user permits.
+                object message = "";
+                foreach (object msg in (object[])response[0])
+                {
+                    if (this.CIPHER_KEY.Length > 0)
+                    {
+                        if (msg.GetType() == typeof(string))
+                        {
+                            message = pc.decrypt(msg.ToString());
+                        }
+                        else if (msg.GetType() == typeof(object[]))
+                        {
+                            message = pc.decrypt((object[])msg);
+                        }
+                        else if (msg.GetType() == typeof(Dictionary<string, object>))
+                        {
+                            Dictionary<string, object> dict = (Dictionary<string, object>)msg;
+                            message = pc.decrypt(dict);
+                        }
+                    }
+                    if (!callback(message)) return;
+                }
+
+                // Keep listening if Okay.
+                args["channel"] = channel;
+                args["callback"] = callback;
+                args["timestamp"] = timetoken;
+                this._subscribe(args);
+            }
+            catch
+            {
+                System.Threading.Thread.Sleep(1000);
+                this._subscribe(args);
+            }
+        }
+
+        /**
+         * Request URL
+         *
+         * @param List<string> request of url directories.
+         * @return List<object> from JSON response.
+         */
+        private List<object> _request(List<string> url_components)
+        {
+            string temp = null;
+            int count = 0;
+            byte[] buf = new byte[8192];
+            StringBuilder url = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
+
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+
+            // Add Origin To The Request
+            url.Append(this.ORIGIN);
+
+            // Generate URL with UTF-8 Encoding
+            foreach (string url_bit in url_components)
+            {
+                url.Append("/");
+                url.Append(_encodeURIcomponent(url_bit));
+            }
+
+            // Create Request
+            HttpWebRequest request = (HttpWebRequest)
+                WebRequest.Create(url.ToString());
+
+            // Set Timeout
+            request.Timeout = 200000;
+            request.ReadWriteTimeout = 200000;
+
+            // Receive Response
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream resStream = response.GetResponseStream();
+
+            // Read
+            do
+            {
+                count = resStream.Read(buf, 0, buf.Length);
+                if (count != 0)
+                {
+                    temp = Encoding.UTF8.GetString(buf, 0, count);
+                    sb.Append(temp);
+                }
+            } while (count > 0);
+
+            // Parse Response
+            string message = sb.ToString();
+
+            return serializer.Deserialize<List<object>>(message);
+        }
+
+        /**
+         * Time
+         *
+         * Timestamp from PubNub Cloud.
+         *
+         * @return object timestamp.
+         */
+        public object Time()
+        {
+            List<string> url = new List<string>();
+
+            url.Add("time");
+            url.Add("0");
+
+            List<object> response = _request(url);
+            return response[0];
+        }
+
+        /**
+        * History
+        *
+        * Load history from a channel.
+        *
+        * @param Dictionary<string, string> args
+        * args is channel name and int limit history count response.
+        * @return List<object> of history.
+        */
+        public List<object> History(Dictionary<string, string> args)
+        {
+            string channel = args["channel"];
+            int limit = Convert.ToInt32(args["limit"]);
+            List<string> url = new List<string>();
+
+            url.Add("history");
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add(channel);
+            url.Add("0");
+            url.Add(limit.ToString());
+            if (this.CIPHER_KEY.Length > 0)
+            {
+                clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
+                return pc.decrypt(_request(url));
+            }
+            else
+            {
+                return _request(url);
+            }
+        }
+
+        private string _encodeURIcomponent(string s)
+        {
+            StringBuilder o = new StringBuilder();
+            foreach (char ch in s.ToCharArray())
+            {
+                if (isUnsafe(ch))
+                {
+                    o.Append('%');
+                    o.Append(toHex(ch / 16));
+                    o.Append(toHex(ch % 16));
+                }
+                else o.Append(ch);
+            }
+            return o.ToString();
+        }
+
+        private char toHex(int ch)
+        {
+            return (char)(ch < 10 ? '0' + ch : 'A' + ch - 10);
+        }
+
+        private bool isUnsafe(char ch)
+        {
+            return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?".IndexOf(ch) >= 0;
+        }
+
+        private static string getHMACSHA256(string text)
+        {
+            HMACSHA256 sha256 = new HMACSHA256();
+            byte[] data = Encoding.Default.GetBytes(text);
+            byte[] hash = sha256.ComputeHash(data);
+            string hexaHash = "";
+            foreach (byte b in hash) hexaHash += String.Format("{0:x2}", b);
+            return hexaHash;
+        }
+
+        /**
+        * UUID
+        * @return string unique identifier         
+        */
+        public string UUID()
+        {
+            return Guid.NewGuid().ToString();
+        }
+    }
+
+}
+ 
