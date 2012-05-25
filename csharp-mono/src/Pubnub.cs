@@ -12,10 +12,12 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using System.Threading;
+using System.IO.Compression;
 using PubnubCrypto;
 
 /**
- * PubNub 3.0 Real-time Push Cloud API
+ * PubNub 3.1 Real-time Push Cloud API
  *
  * @author Stephen Blum
  * @package pubnub
@@ -30,10 +32,13 @@ namespace Pubnub
         private string SECRET_KEY = "";
         private string CIPHER_KEY = "";
         private bool SSL = false;
+
+        private ManualResetEvent webRequestDone;
+        volatile private bool abort;
         public delegate bool Procedure(object message);
 
         /**
-         * PubNub 3.0 with cipher key
+         * PubNub 3.1 with cipher key
          *
          * Prepare PubNub Class State.
          *
@@ -51,11 +56,11 @@ namespace Pubnub
             bool ssl_on
         )
         {
-            this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
+            this.init( publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
         }
 
         /**
-         * PubNub 3.0
+         * PubNub 3.0 Compatibility
          *
          * Prepare PubNub Class State.
          *
@@ -142,6 +147,7 @@ namespace Pubnub
             {
                 this.ORIGIN = "http://" + this.ORIGIN;
             }
+            webRequestDone = new ManualResetEvent(true);
         }
 
         /**
@@ -166,15 +172,15 @@ namespace Pubnub
                 if (message.GetType() == typeof(string))
                 {
                     message = pc.encrypt(message.ToString());
+                }                
+                else if (message.GetType() == typeof(object[]))
+                {
+                    message = pc.encrypt((object[])message);
                 }
                 else if (message.GetType() == typeof(Dictionary<string, object>))
                 {
                     Dictionary<string, object> dict = (Dictionary<string, object>)message;
                     message = pc.encrypt(dict);
-                }
-                else if (message.GetType() == typeof(string[]))
-                {
-                    message = (object)pc.encrypt((object[])message);
                 }
             }
 
@@ -283,6 +289,32 @@ namespace Pubnub
                             message = pc.decrypt(dict);
                         }
                     }
+                    else
+                    {
+                        if (msg.GetType() == typeof(object[]))
+                        {
+                            object[] obj = (object[])msg;
+                            JArray jArr = new JArray();
+                            for (int i = 0; i < obj.Count(); i++)
+                            {
+                                jArr.Add(obj[i]);
+                            }
+                            message = jArr;
+                        }
+                        else if (msg.GetType() == typeof(Dictionary<string, object>))
+                        {
+                            JObject jobj = new JObject();
+                            foreach (KeyValuePair<string, object> pair in (Dictionary<string, object>)msg)
+                            {
+                                jobj.Add(pair.Key, pair.Value.ToString());
+                            }
+                            message = jobj;
+                        }
+                        else
+                        {
+                            message = msg;
+                        }
+                    }
                     if (!callback(message)) return;
                 }
 
@@ -326,32 +358,66 @@ namespace Pubnub
             }
 
             // Create Request
-            HttpWebRequest request = (HttpWebRequest)
-                WebRequest.Create(url.ToString());
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
 
             // Set Timeout
-            request.Timeout = 200000;
-            request.ReadWriteTimeout = 200000;
+            request.Timeout = 310000;
+            request.ReadWriteTimeout = 310000;
+
+            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip");
+            request.Headers.Add("V", "3.1");
+            request.UserAgent = "C#-Mono";
+
+            webRequestDone.Reset();
+            IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback(requestCallBack), null);
+            webRequestDone.WaitOne();
+            if (abort)
+            {
+                return new List<object>();
+            }
 
             // Receive Response
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream resStream = response.GetResponseStream();
+            HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(asyncResult);
 
             // Read
-            do
+            using (Stream stream = response.GetResponseStream())
             {
-                count = resStream.Read(buf, 0, buf.Length);
-                if (count != 0)
+                Stream resStream = stream;
+                if (response.ContentEncoding.ToLower().Contains("gzip"))
                 {
-                    temp = Encoding.UTF8.GetString(buf, 0, count);
-                    sb.Append(temp);
+                    resStream = new GZipStream(stream, CompressionMode.Decompress);
                 }
-            } while (count > 0);
+                else
+                {
+                    resStream = stream;
+                }
+                do
+                {
+                    count = resStream.Read(buf, 0, buf.Length);
+                    if (count != 0)
+                    {
+                        temp = Encoding.UTF8.GetString(buf, 0, count);
+                        sb.Append(temp);
+                    }
+                } while (count > 0);
+            }
 
             // Parse Response
             string message = sb.ToString();
 
             return serializer.Deserialize<List<object>>(message);
+        }
+
+        private void requestCallBack(IAsyncResult result)
+        {
+            // release thread block
+            webRequestDone.Set();
+        }
+
+        public void Abort()
+        {
+            abort = true;
+            webRequestDone.Set();
         }
 
         /**
@@ -370,6 +436,15 @@ namespace Pubnub
 
             List<object> response = _request(url);
             return response[0];
+        }
+
+        /**
+        * UUID
+        * @return string unique identifier         
+        */
+        public string UUID()
+        {
+            return Guid.NewGuid().ToString();
         }
 
         /**
@@ -399,7 +474,35 @@ namespace Pubnub
             }
             else
             {
-                return _request(url);
+               List<object> objTop = _request(url);
+               List<object> result = new List<object>();
+               foreach (object o in objTop)
+               {
+                   if(o.GetType() == typeof(Dictionary<string,object>))
+                   {
+                       JObject jobj = new JObject();
+                       foreach (KeyValuePair<string, object> pair in (Dictionary<string, object>)o)
+                       {
+                           jobj.Add(pair.Key, pair.Value.ToString());
+                       }
+                       result.Add(jobj);
+                   }
+                   else if (o.GetType() == typeof(object[]))
+                   {
+                       object[] obj = (object[])o;
+                       JArray jArr = new JArray();
+                       for (int i = 0; i < obj.Count(); i++)
+                       {
+                           jArr.Add(obj[i]);
+                       }
+                       result.Add(jArr);
+                   }
+                   else
+                   {
+                       result.Add(o);
+                   }
+               }
+                return result;
             }
         }
 
@@ -438,16 +541,6 @@ namespace Pubnub
             foreach (byte b in hash) hexaHash += String.Format("{0:x2}", b);
             return hexaHash;
         }
-
-        /**
-        * UUID
-        * @return string unique identifier         
-        */
-        public string UUID()
-        {
-            return Guid.NewGuid().ToString();
-        }
     }
-
 }
- 
+

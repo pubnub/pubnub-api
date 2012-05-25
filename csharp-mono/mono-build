@@ -5,10 +5,18 @@
 3 .cd to the code folder on both command prompt
 4. on 1st command prompt run the following command
 
-> gmcs SubscriberExample.cs -r:System.Web.Extensions.dll -r:Newtonsoft.Json.dll -r:System.Runtime.Serialization.Json.dll -r:PubnubCrypto.dll -r:Pubnub.dll
-> mono --debug SubscriberExample.exe
+> gmcs SubscribeExample.cs -r:dll/System.Web.Extensions.dll -r:dll/Newtonsoft.Json.dll -r:dll/System.Runtime.Serialization.Json.dll -r:dll/PubnubCrypto.dll -r:dll/Pubnub.dll
+> mono --debug SubscribeExample.exe
 
 5. on 2nd command prompt run the following command
 
 >gmcs PublishExample.cs -r:System.Web.Extensions.dll -r:Newtonsoft.Json.dll -r:System.Runtime.Serialization.Json.dll -r:PubnubCrypto.dll -r:Pubnub.dll
 >mono --debug PublishExample.exe
+
+
+for history and PubnubTest
+>gmcs HistoryExample.cs -r:System.Web.Extensions.dll -r:Newtonsoft.Json.dll -r:System.Runtime.Serialization.Json.dll -r:PubnubCrypto.dll -r:Pubnub.dll
+>mono --debug HistoryExample.exe
+
+>gmcs PubnubTest.cs -r:System.Web.Extensions.dll -r:Newtonsoft.Json.dll -r:System.Runtime.Serialization.Json.dll -r:PubnubCrypto.dll -r:Pubnub.dll
+>mono --debug PubnubTest.exe

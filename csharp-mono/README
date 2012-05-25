@@ -7,9 +7,9 @@
 ##
 ## ----------------------------------------------------
 
-## ----------------------------------------------
-## PubNub 3.0 Web Data Push Cloud-Hosted API - C#
-## ----------------------------------------------
+## ---------------------------------------------------
+## PubNub 3.1 Web Data Push Cloud-Hosted API - C#-Mono
+## ---------------------------------------------------
 ##
 ## PubNub is a Massively Scalable Web Push Service for Web and Mobile Games.
 ## This is a cloud-based service for broadcasting messages
@@ -19,9 +19,9 @@
 ## ARE YOU COMPILING WITH .NET OLDER THAN 3.5?
 ## -------------------------------------------
 ## YOU MUST USE System.Web.Extensions.dll included in this directory.
-## YOU MUST HAVE MONO INSTALL ON YOUR MACHINE
+## YOU MUST HAVE MONO ON YOUR MACHINE
 ##
-## TO USE THIS FOLLOW THE STEPS IN mono-build FILE WHICH IS INCLUDED IN THIS DIRECTORY.
+## TO USE THIS FOLLOW THE STEPS IN 'mono-build', INCLUDED IN THIS DIRECTORY.
 
 ===============================================================================
 PubNub C# Client API Boiler Plate
@@ -35,7 +35,7 @@ C#: (Init)
 		"demo",  // PUBLISH_KEY
 		"demo",  // SUBSCRIBE_KEY
 		"demo",  // SECRET_KEY
-		"demo",  //CIPHER_KEY   
+		"demo",  // CIPHER_KEY   
 		false    // SSL_ON?
     );
 	
@@ -43,7 +43,7 @@ C#: (Init)
 C#: (Publish)
 -------------------------------------------------------------------------------
 
-	string channel = "test_channel"; //channel name
+	string channel = "test_channel"; // channel name
 	
 	// Publish String
     Dictionary<string, object> args = new Dictionary<string, object>();
@@ -57,7 +57,7 @@ C#: (Publish)
     Console.WriteLine(info[1]); // 'Demo' or "Error Message"
 	Console.WriteLine(info[2]); // timetoken
 	
-	//Publish Array Of Messages
+	// Publish Array Of Messages
 	args = new Dictionary<string, object>();
 	string[] objArr = new string[7];
 
@@ -65,9 +65,9 @@ C#: (Publish)
 	objArr[1] = "Monday";
 	objArr[2] = "Tuesday";
 	objArr[3] = "Wednesday";
-	objArr[4] = "Thrusday";
+	objArr[4] = "Thursday";
 	objArr[5] = "Friday";
-	objArr[6] = "Saterday";
+	objArr[6] = "Saturday";
 
 	args.Add("channel", channel);
 	args.Add("message", objArr);
@@ -94,7 +94,7 @@ C#: (Publish)
 C#: (Subscribe)
 -------------------------------------------------------------------------------
 
-	string channel = "test_channel"; //channel name
+	string channel = "test_channel"; // channel name
 
 	objPubnub.Subscribe(
 		channel,
@@ -123,11 +123,10 @@ C#: (History)
 	}
 	Console.ReadKey();
 	
-	// Get PubNub Server Time
-
 -------------------------------------------------------------------------------
 C#: (Time)
 -------------------------------------------------------------------------------	
+    // Get PubNub Server Time
 	object timestamp = objPubnub.Time();
 	Console.WriteLine("Server Time: " + timestamp.ToString());
 	

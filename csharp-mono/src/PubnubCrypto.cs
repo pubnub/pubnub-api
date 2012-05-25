@@ -14,6 +14,10 @@ namespace PubnubCrypto
         {
             this.CIPHER_KEY = cipher_key;            
         }
+
+        // encrypt or decrypt a string
+        // for encrypt type=true
+        // for decrypt type=false
         public string EncryptOrDecrypt(bool type,string plainStr)   
         {
             RijndaelManaged aesEncryption = new RijndaelManaged();   
@@ -37,34 +41,54 @@ namespace PubnubCrypto
                 return ASCIIEncoding.UTF8.GetString(decrypto.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
             }
         }
+
+        //encrypt string
         public string encrypt(string plainStr)
         {
             return EncryptOrDecrypt(true, plainStr);
         }
+
+        //decrypt string
         public string decrypt(string cipherStr)
         {
             return EncryptOrDecrypt(false, cipherStr);
         }
 
+        // encrypt array of objects
         public object encrypt(object[] plainArr)
         {
             object[] cipherArr = new object[plainArr.Count()];
             for (int i = 0; i < plainArr.Count(); i++)
             {
-                cipherArr[i] = EncryptOrDecrypt(true, (string)plainArr[i]);
+                cipherArr[i] = encrypt((string)plainArr[i]);
             }
             return cipherArr;
         }
+
+        // decrypt array of objects
         public JArray decrypt(object[] cipherArr)
         {
             JArray plainArr = new JArray();
+
             for (int i = 0; i < cipherArr.Count(); i++)
             {
-                plainArr.Add(EncryptOrDecrypt(false, (string)cipherArr[i]));
+                if (cipherArr[i].GetType() == typeof(object[]))
+                {
+                    plainArr.Add(decrypt((List<object>)cipherArr[i]));
+                }
+                else if (cipherArr[i].GetType() == typeof(string))
+                {
+                    plainArr.Add(decrypt((string)cipherArr[i]));
+                }
+                else
+                {
+                    plainArr.Add(decrypt((Dictionary<string, object>)cipherArr[i]));
+                }
             }
             return plainArr;
         }
 
+        // decrypt list of objects for history function
         public List<object> decrypt(List<object> cipherArr)
         {
             List<object> lstObj = new List<object>();
@@ -86,6 +110,7 @@ namespace PubnubCrypto
             return lstObj;
         }
 
+        // encrypt object with key value pair <string,object> format
         public Dictionary<string, object> encrypt(Dictionary<string, object> plainObj)
         {
             Dictionary<string, object> newDict = new Dictionary<string, object>();
@@ -97,47 +122,37 @@ namespace PubnubCrypto
                 }
                 else
                 {
-                    newDict.Add(pair.Key, encrypt((Dictionary<string, string>)pair.Value));
+                    newDict.Add(pair.Key, encrypt((Dictionary<string, object>)pair.Value));
                 }
             }
             return newDict;
         }
+
+        // decrypt object with key value pair <string,object> format
         public JObject decrypt(Dictionary<string, object> cipherObj)
         {
             JObject objPlain = new JObject();
 
             foreach (KeyValuePair<string, object> pair in cipherObj)
             {
-                objPlain.Add(pair.Key, decrypt(pair.Value.ToString()));
-            }
-            return objPlain;
-        }
-        public Dictionary<string, string> encrypt(Dictionary<string, string> plainObj)
-        {
-            Dictionary<string, string> newDict = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, string> pair in plainObj)
-            {
-                newDict.Add(pair.Key, encrypt(pair.Value.ToString()));                
-            }
-            return newDict;
-        }        
-        public JObject decrypt(Dictionary<string, string> cipherObj)
-        {
-            JObject objPlain = new JObject();
-
-            foreach (KeyValuePair<string, string> pair in cipherObj)
-            { 
-                objPlain.Add(pair.Key, decrypt(pair.Value.ToString()));
+                if (pair.Value.GetType() == typeof(string))
+                {
+                    objPlain.Add(pair.Key, decrypt(pair.Value.ToString()));
+                }
+                else
+                {
+                    objPlain.Add(pair.Key, decrypt((Dictionary<string, object>)pair.Value));
+                }
             }
             return objPlain;
         }
 
+       //md5 used for AES encryption key
         private static byte[] md5(string cipher_key)
         {
             MD5 obj = new MD5CryptoServiceProvider();
             byte[] data = Encoding.Default.GetBytes(cipher_key);
             return obj.ComputeHash(data);
         }
-
     }
 }
