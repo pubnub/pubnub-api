@@ -2,7 +2,7 @@ Pubnub - http://github/pubnub/pubnub-api
 @poptartinc on Twitter, @poptart on Github
 
 ## ------------------------------------------
-## PubNub 3.0 Real-time Cloud Push API - RUBY
+## PubNub 3.1 Real-time Cloud Push API - RUBY
 ## ------------------------------------------
 ##
 ## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
@@ -18,8 +18,8 @@ Pubnub - http://github/pubnub/pubnub-api
 pubnub = Pubnub.new(
     "demo",  ## PUBLISH_KEY
     "demo",  ## SUBSCRIBE_KEY
-    "",      ## SECRET_KEY
-    "",		 ## CIPHER_KEY
+    "demo",  ## SECRET_KEY
+    "demo",	 ## CIPHER_KEY
     false    ## SSL_ON?
 )
 
@@ -32,7 +32,6 @@ info = pubnub.publish({
     'message' => 'hey what is up?'
 })
 puts(info)
-
 
 # -------
 # PUBLISH ARRAY OF MESSAGES
@@ -57,7 +56,7 @@ puts(info)
 # ---------
 # SUBSCRIBE
 # ---------
-# Listen for Messages *BLOCKING*
+# Listen for Messages *NON-BLOCKING*
 pubnub.subscribe({
     'channel'  => 'hello_world',
     'callback' => lambda do |message|
@@ -76,10 +75,9 @@ messages = pubnub.history({
 })
 puts(messages)
 
-
 # -------
 # UUID
-# -------  
-# Generate Unique identifier
+# -------
+# Generate UUID
 uuid = pubnub.UUID()
 puts(uuid)

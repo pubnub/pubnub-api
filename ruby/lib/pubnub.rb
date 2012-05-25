@@ -262,8 +262,6 @@ class Pubnub
     url = @origin + url
     http_response = ''
 
-    puts 'URL :: '
-    
     EventMachine.run do
       Fiber.new{
         http = async_fetch(url)
@@ -280,12 +278,10 @@ class Pubnub
 
     request_options = {
       :timeout => 310,  # set request timeout
-      :query => {'V' => '3.1', 'User-Agent' => 'Ruby', 'Accept-Encoding' => 'gzip'} || {},  # set request headers
+      :query => {'V' => '3.1', 'User-Agent' => 'Ruby', 'Accept-Encoding' => 'gzip'},  # set request headers
     }
 
     http = EventMachine::HttpRequest.new(url).get request_options
-    puts 'content encoding'
-    puts http.response_header["CONTENT_ENCODING"]
     http.callback { f.resume(http) }
     http.errback  { f.resume(http) }
 

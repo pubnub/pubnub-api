@@ -11,7 +11,7 @@ publish_key   = 'demo'
 subscribe_key = 'demo'
 secret_key    = 'demo'
 cipher_key    = 'demo'
-ssl_on = true
+ssl_on        = false
 
 ## Print usage if missing info.
 if !subscribe_key
@@ -26,14 +26,13 @@ if !subscribe_key
 end
 
 ## Create Pubnub Client API (INITIALIZATION)
-puts('Initialize new Pubnub state')
+puts('Initializing new Pubnub state')
 pubnub = Pubnub.new(publish_key,subscribe_key,secret_key,cipher_key,ssl_on)
 
 ## Request Past Publishes (HISTORY)
 puts('Requesting History with history() Function')
-message = pubnub.history(
-{
+message = pubnub.history({
   'channel' => 'hello_world',
-  'limit'   => 3
+  'limit'   => 5
 })
 puts(message)

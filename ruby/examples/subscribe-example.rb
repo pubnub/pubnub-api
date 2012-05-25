@@ -28,12 +28,12 @@ if !subscribe_key
 end
 
 ## Create Pubnub Client API (INITIALIZATION)
-puts('Initialize new Pubnub state')
+puts('Initializing new Pubnub state')
 pubnub = Pubnub.new(publish_key,subscribe_key,secret_key,cipher_key,ssl_on)
 
 ## Listen for Messages (SUBSCRIBE)
 puts('Listening for new messages with subscribe() Function')
-#puts('Press CTRL+C to quit.')
+puts('Press CTRL+C to quit.')
 pubnub.subscribe({
   'channel'  => channel,
   'callback' => lambda do |message|

@@ -119,6 +119,7 @@ class PubnubCrypto
     @@cipher << aes.final
     @@ciphertext = [@@cipher].pack('m')
     @@ciphertext =  @@ciphertext.strip
+    @@ciphertext =  @@ciphertext.gsub(/\n/,"")
     @@ciphertext = '"' + @@ciphertext + '"'
     return @@ciphertext
   end

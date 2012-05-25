@@ -14,7 +14,7 @@ cipher_key    = 'demo'
 ssl_on        = false
 channel       = 'hello_world'
 
-strMessage = "Hello World"
+strMessage = "Hi. (顶顅Ȓ)"
 arrMessage = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 objMessage = {"Name"=>"John","Age"=>"23"}
 
@@ -32,20 +32,29 @@ if !strMessage && arrMessage && objMessage
 end
 
 ## Pubnub state initialization (INITIALIZATION)
-puts('Initialize new Pubnub state')
+puts('Initializing new Pubnub state')
 pubnub = Pubnub.new(publish_key,subscribe_key,secret_key,cipher_key,ssl_on)
 
 ## Send Message (PUBLISH) -- String
-puts("\nSending message in String format")
-info = pubnub.publish({'channel' => channel ,'message' => strMessage})
+puts("\nSending message in String format with publish() Function")
+info = pubnub.publish({
+  'channel' => channel,
+  'message' => strMessage
+})
 puts(info)
 
 ## Send Message (PUBLISH) -- Array
-puts("\nSending message in Array format")
-info = pubnub.publish({'channel' => channel ,'message' => arrMessage})
+puts("\nSending message in Array format with publish() Function")
+info = pubnub.publish({
+  'channel' => channel,
+  'message' => arrMessage
+})
 puts(info)
 
 ## Send Message (PUBLISH) -- Object (Dictionary)
-puts("\nSending message in Dictionary Object format")
-info = pubnub.publish({'channel' => channel ,'message' => objMessage})
+puts("\nSending message in Dictionary Object format with publish() Function")
+info = pubnub.publish({
+  'channel' => channel,
+  'message' => objMessage
+})
 puts(info)
