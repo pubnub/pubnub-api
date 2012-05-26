@@ -7,7 +7,7 @@
   "scripts": {
     "start": "server.js"
   },
-  "version": "0.3.6",
+  "version": "0.4.2",
   "dependencies": {
     "jqtpl": "1.0.x",
     "mime": "1.2.x",
