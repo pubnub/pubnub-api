@@ -9,8 +9,35 @@
         </script>
         <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
         </script>
+        <style>
+          #subscribe,
+          #publish {
+            font-size: 42px;
+            color: rgb(211,0,31);
+            color: #fff;
+            font-family: sans-serif; 
+            position: fixed;  
+            z-index: 10;
+            border-radius: 8px;
+            display: none;
+            background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(70,64,66) 33%);
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+          }
+
+          #publish {
+            left: 18%;
+            top: 93%;  
+          }
+
+          #subscribe {
+            right: 18%;
+            top: 92.5%;  
+          }
+        </style>
     </head>
     <body>
+      <div id='publish'> &nbsp;Published ⇀ &nbsp;</div>
+      <div id='subscribe'> &nbsp;↼ Received &nbsp;</div>
       <div data-role="page" id="main">
         <div data-theme="a" data-role="header">
           <h3>
@@ -34,6 +61,7 @@
           callback   : function(message) {
             if (message.name) {
               PUBNUB.events.fire(message.name, message.data);
+              flash_subscribe();
             }
           },
           disconnect : function() { 
@@ -46,8 +74,61 @@
         });
 
       })();</script>
+        <div id="demo_info" style= "bottom: 0px; left: 0px; position: fixed; margin-top: 0px; margin-left: 10px; margin-right: 10px; margin-bottom: 0px;  display: block;">
+          <div id="demo_info_button" style="cursor: pointer;">+</div>
+          <div id="demo_info_expand" style="display: none">
+            <ol>
+              <li>This app allows you to push content of any kind, in real-time </li>
+              <li>You can search and push youtube, soundcloud, and flickr; you can type any arbitrary html you want in the last box</li>
+              <li>Copy and paste any embed code in that last box</li>
+              <li>if you have an audience of a hundred people, using this you can keep everyone is sync</li>
+              <li>there's a minimal node.js server that does the searching of youtube, soundcloud, and flickr</li>
+              <li>open source <a href="https://github.com/pubnub/pubnub-api/tree/master/app-showcase/content-commander">here</a></li>
+            </ol>
+          </div>
+        </div>
+
+        <div id="notifications" style= "bottom: 0px; right: 0px; position: fixed; margin-top: 0px; margin-left: 10px; margin-right: 10px; margin-bottom: 0px;  display: block;">
+          <div id="notifications_button" style="cursor: pointer;">⇄</div>
+        </div>
+        <script type="text/javascript">
+          function flash_subscribe() {
+            if ($(document).data('notifications') == true) {
+              $('#subscribe').show('fast');
+              setTimeout( function() {
+                $('#subscribe').hide('fast');
+              }, 500);
+            }
+          }
+
+          function toggleDemoInfo(e) {
+            e.preventDefault();
+            $("#demo_info_expand").toggle();  
+          }
+
+          // initially seed at false
+          $(document).data('notifications', false);
+
+          function toggleNotifications(e) {
+            e.preventDefault();
+            if ($(document).data('notifications') == true) {
+              $(document).data('notifications', false);
+              $("#notifications_button").css('color', 'black'); 
+            }
+            else {
+              $(document).data('notifications', true);
+              $("#notifications_button").css('color', 'red'); 
+            }
+          }
+
+          $("#demo_info_button").click( toggleDemoInfo ); 
+          $("#notifications_button").click( toggleNotifications ); 
+
+          $("#demo_info_button").touchUp( toggleDemoInfo ); 
+          $("#notifications_button").touchUp( toggleNotifications ); 
 
       </script>
+
       <script src="js/youtube.js"></script>
       <script src="js/soundcloud.js"></script>
       <script src="js/flickr.js"></script>

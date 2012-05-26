@@ -1,9 +1,9 @@
-var num_online = 1;
+var num_online = 2;
 PUBNUB.events.bind( "got_from_server_message_still_there", respondToPresenceCheck); 
 
 function respondToPresenceCheck() {
   PUBNUB.events.fire("send_message", { "name": "still_here" });
-  num_online = 0;
+  num_online = 1;
   setTimeout( function() {
     $("#num_online").text(num_online);
   }, 2000);

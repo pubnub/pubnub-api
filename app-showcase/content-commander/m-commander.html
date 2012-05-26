@@ -12,6 +12,29 @@
           body {
             width: 100%; 
           }
+          #subscribe,
+          #publish {
+            font-size: 42px;
+            color: rgb(211,0,31);
+            color: #fff;
+            font-family: sans-serif; 
+            position: fixed;  
+            z-index: 10;
+            border-radius: 8px;
+            display: none;
+            background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(70,64,66) 33%);
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+          }
+
+          #publish {
+            left: 18%;
+            top: 93%;  
+          }
+
+          #subscribe {
+            right: 18%;
+            top: 92.5%;  
+          }
         </style>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
         </script>
@@ -19,6 +42,8 @@
         </script>
     </head>
     <body>
+      <div id='publish'> &nbsp;Published ⇀ &nbsp;</div>
+      <div id='subscribe'> &nbsp;↼ Received &nbsp;</div>
       <div data-role="page" id="main">
         <div data-theme="a" data-role="header">
           <h3>
@@ -107,6 +132,69 @@
           </div><!-- /collapsible-set -->
           <a href="/viewer" data-role="button" rel="external" target="_blank">Go To Viewer</a>
         </div><!-- /content -->
+
+        <div id="demo_info" style= "bottom: 0px; left: 0px; position: fixed; margin-top: 0px; margin-left: 10px; margin-right: 10px; margin-bottom: 0px;  display: block;">
+          <div id="demo_info_button" style="cursor: pointer;">+</div>
+          <div id="demo_info_expand" style="display: none">
+            <ol>
+              <li>This app allows you to push content of any kind, in real-time </li>
+              <li>You can search and push youtube, soundcloud, and flickr; you can type any arbitrary html you want in the last box</li>
+              <li>Copy and paste any embed code in that last box</li>
+              <li>if you have an audience of a hundred people, using this you can keep everyone is sync</li>
+              <li>there's a minimal node.js server that does the searching of youtube, soundcloud, and flickr</li>
+              <li>open source <a href="https://github.com/pubnub/pubnub-api/tree/master/app-showcase/content-commander">here</a></li>
+            </ol>
+          </div>
+        </div>
+        <div id="notifications" style= "bottom: 0px; right: 0px; position: fixed; margin-top: 0px; margin-left: 10px; margin-right: 10px; margin-bottom: 0px;  display: block;">
+          <div id="notifications_button" style="cursor: pointer;">⇄</div>
+        </div>
+        <script type="text/javascript">
+          function flash_publish() {
+            if ($(document).data('notifications') == true) {
+              $('#publish').show('fast');
+              setTimeout( function() {
+                $('#publish').hide('fast');
+              }, 500);
+            }
+          }
+
+          function flash_subscribe() {
+            if ($(document).data('notifications') == true) {
+              $('#subscribe').show('fast');
+              setTimeout( function() {
+                $('#subscribe').hide('fast');
+              }, 500);
+            }
+          }
+
+          function toggleDemoInfo(e) {
+            e.preventDefault();
+            $("#demo_info_expand").toggle();  
+          }
+
+          // initially seed at false
+          $(document).data('notifications', false);
+
+          function toggleNotifications(e) {
+            e.preventDefault();
+            if ($(document).data('notifications') == true) {
+              $(document).data('notifications', false);
+              $("#notifications_button").css('color', 'black'); 
+            }
+            else {
+              $(document).data('notifications', true);
+              $("#notifications_button").css('color', 'red'); 
+            }
+          }
+
+          $("#demo_info_button").click( toggleDemoInfo ); 
+          $("#notifications_button").click( toggleNotifications ); 
+
+          $("#demo_info_button").touchUp( toggleDemoInfo ); 
+          $("#notifications_button").touchUp( toggleNotifications ); 
+        </script>
+
       </div><!-- /page #main -->
 
 
@@ -190,6 +278,7 @@
       <div pub-key="pub-550ff6a3-aa50-466c-a2c7-55a6c3fa3345" sub-key="sub-f3307e99-6a4a-11e1-870f-affeca838b29" ssl="off" origin="pubsub.pubnub.com" id="pubnub"></div>
       <script src="http://cdn.pubnub.com/pubnub-3.1.min.js"></script>
       <script>(function(){
+        
         $(document).data('uuid', (((1+Math.random())*0x10000)|0).toString(16).substring(1));
 
         PUBNUB.subscribe({
@@ -198,6 +287,7 @@
           callback   : function(message) {
             if (message.name) {
               PUBNUB.events.fire(message.name, message.data);
+              flash_subscribe(); 
             }
           },
           disconnect : function() { 
@@ -216,6 +306,7 @@
           callback   : function(message) {
             if (message.name) {
               PUBNUB.events.fire(message.name, message);
+              flash_subscribe(); 
             }
           },
           disconnect : function() { 
@@ -232,7 +323,8 @@
                 "name"   : "yo",
                 "uuid"   : $(document).data("uuid"),
                 "data"   : {}
-              }
+              },
+              callback: flash_publish
             });
             setTimeout( function() {
               if ($(document).data("is_server_there") == false) {
@@ -281,7 +373,8 @@
               "data"   : {
                 "query"   : query
               }
-            }
+            },
+            callback: flash_publish
           });
         });
 
@@ -299,7 +392,8 @@
               "data"   : {
                 "query"   : query
               }
-            }
+            },
+            callback: flash_publish
           });
         });
 
@@ -317,7 +411,8 @@
               "data"   : {
                 "query"   : query
               }
-            }
+            },
+            callback: flash_publish
           });
         });
 
@@ -339,7 +434,8 @@
                   "data"   : {
                     "video_id" : selected_video 
                   }
-                }
+                },
+                callback: flash_publish
               });
             });
         });
@@ -361,7 +457,8 @@
                   "data"   : {
                     "song_id" : selected_song 
                   }
-                }
+                },
+                callback: flash_publish
               });
             });
         });
@@ -398,7 +495,8 @@
                 message : {
                   "name"   : "flickr_link",
                   "data"   : selected_photo
-                }
+                },
+                callback: flash_publish
               });
 
             });
@@ -413,7 +511,8 @@
               "data"   : {
                 "html"   : $("#arb_html").val()
               }
-            }
+            },
+            callback: flash_publish
           });
 
         });

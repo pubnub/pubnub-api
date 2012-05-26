@@ -54,6 +54,7 @@
             console.log("got_message_" + message.name + ": " + JSON.stringify(message));
           {{/if}}
           PUBNUB.events.fire("got_message_" + message.name, message);
+          flash_subscribe();
         },
         error    : function(e) {
           console.log(e);
@@ -70,7 +71,8 @@
           message  : message,
           error    : function(e) {
             console.log(e);
-          }
+          },
+          callback : flash_publish 
         });
       });
 
@@ -109,6 +111,25 @@
 
       $(document).data("time_til_wipe", ${time_til_wipe});
 
+      function flash_publish() {
+        console.log('fp');
+        if ($(document).data('notifications') == true) {
+          $('#publish').show('fast');
+          setTimeout( function() {
+            $('#publish').hide('fast');
+          }, 500);
+        }
+      }
+
+      function flash_subscribe() {
+        console.log('fs');
+        if ($(document).data('notifications') == true) {
+          $('#subscribe').show('fast');
+          setTimeout( function() {
+            $('#subscribe').hide('fast');
+          }, 500);
+        }
+      }
 
 
     </script>
@@ -133,6 +154,50 @@
     </script>
     {{/if}}
 
+  <div id='publish'> &nbsp;Published ⇀ &nbsp;</div>
+  <div id='subscribe'> &nbsp;↼ Received &nbsp;</div>
+  <div id="demo_info" style= "bottom: 0px; left: 0px; position: fixed; margin-top: 0px; margin-left: 10px; margin-right: 10px; margin-bottom: 0px;  display: block; cursor: pointer;">
+    <div id="demo_info_button">+</div>
+    <div id="demo_info_expand" style="display: none">
+      <ol>
+        <li>this game made with three.js, a framework for making 3D graphics with JavaScript   </li>
+        <li>made massively-muliplayer with pubnub - there are no game rooms or lobbies.  everyone sees the same thing, world-wide </li>
+        <li>it has a central server but it doesn't act as a central node</li>
+        <li>the server only interferes if a client begins acting up</li>
+        <li>completely open-source, <a href="https://github.com/pubnub/pubnub-api/tree/master/games/stackhack">here</a></li>
+      </ol>
+    </div>
+  </div>
+  <div id="notifications" style= "bottom: 0px; right: 0px; position: fixed; margin-top: 0px; margin-left: 10px; margin-right: 10px; margin-bottom: 0px;  display: block;">
+    <div id="notifications_button" style="cursor: pointer;">⇄</div>
+  </div>
+  <script type="text/javascript">
+    function toggleDemoInfo(e) {
+      e.preventDefault();
+      $("#demo_info_expand").toggle();  
+    }
+    // initially seed at false
+    $(document).data('notifications', false);
+
+    function toggleNotifications(e) {
+      e.preventDefault();
+      if ($(document).data('notifications') == true) {
+        $(document).data('notifications', false);
+        $("#notifications_button").css('color', 'black'); 
+      }
+      else {
+        $(document).data('notifications', true);
+        $("#notifications_button").css('color', 'red'); 
+      }
+    }
+
+    $("#demo_info_button").click( toggleDemoInfo ); 
+    $("#notifications_button").click( toggleNotifications ); 
+
+    $("#demo_info_button").touchUp( toggleDemoInfo ); 
+    $("#notifications_button").touchUp( toggleNotifications ); 
+    
+  </script>
 	</body>
 </html>
 

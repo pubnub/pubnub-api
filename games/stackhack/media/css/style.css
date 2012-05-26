@@ -98,3 +98,27 @@ td {
   margin: 5px;    
   margin-top: 150px;    
 }
+
+#subscribe,
+#publish {
+  font-size: 42px;
+  color: rgb(211,0,31);
+  color: #fff;
+  font-family: sans-serif; 
+  position: fixed;  
+  z-index: 10;
+  border-radius: 8px;
+  display: none;
+  background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(70,64,66) 33%);
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+#publish {
+  left: 18%;
+  top: 93%;  
+}
+
+#subscribe {
+  right: 18%;
+  top: 92.5%;  
+}
