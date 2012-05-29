@@ -33,7 +33,7 @@
 #out, #channels-tests, #commands {
     margin: 10px;
     padding: 10px;
-    height: 440px;
+    height: 480px;
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     -ms-border-radius: 6px;
@@ -87,8 +87,8 @@ button {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
 }
 #message {
-    width: 310px;
-    height: 80px;
+    width: 200px;
+    height: 90px;
     padding: 4px;
     margin: 0;
     font-size: 12px;
@@ -119,21 +119,21 @@ button {
     </div>
     <div class=clear></div>
 
-    <input type="radio" id="literal" name="render" value="literal" checked>
+    <input style=width:30px type="radio" id="literal" name="render" value="literal" checked>
       Display message text literally
     <br>
-    <input type="radio" id="asHtml" name="render" value="asHtml">
+    <input style=width:30px type="radio" id="asHtml" name="render" value="asHtml">
       Render message text as HTML
     <br>
     <div class=clear></div>
 
     <table>
-    <tr><td>JSON Message</td> <td><textarea id=message >{
-    "text" : "hey"
-}</textarea></td></tr>
+    <tr><td style=text-align:center>
+        <button id=send-message disabled>Send</button><br>
+        JSON Message
+    </td> <td><textarea id=message>{ "text":"hey" }</textarea></td></tr>
     </table>
 
-    <button id=send-message disabled>Send Message</button>
     <div class=clear></div>
 </div>
 
