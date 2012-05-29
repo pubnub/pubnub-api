@@ -33,7 +33,7 @@
 #out, #channels-tests, #commands {
     margin: 10px;
     padding: 10px;
-    height: 400px;
+    height: 440px;
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     -ms-border-radius: 6px;
@@ -119,6 +119,14 @@ button {
     </div>
     <div class=clear></div>
 
+    <input type="radio" id="literal" name="render" value="literal" checked>
+      Display message text literally
+    <br>
+    <input type="radio" id="asHtml" name="render" value="asHtml">
+      Render message text as HTML
+    <br>
+    <div class=clear></div>
+
     <table>
     <tr><td>JSON Message</td> <td><textarea id=message >{
     "text" : "hey"
@@ -157,10 +165,19 @@ function log( msg, color ) {
     if (paused) return;
 
     var color = color || '';
+
+    // Convert the message into JSON text
+    var msgText = JSON.stringify(msg);
+
+    // Were we requested to convert tags to literal (displayable) text?
+    if (document.getElementById("literal").checked) {
+      // Yup. Arrange for HTML entities and tags not to be treated as such.
+      msgText = msgText.replace(/\&/g, "&amp;").replace(/</g, "&lt;");
+    }
     out.innerHTML = ((log.l++)+'000').slice(0,4) +
                     ": " +
                     '<span style=color:'+color+'>' +
-                    JSON.stringify(msg) +
+                    msgText +
                     '</span>' +
                     "<br/>" +
                     out.innerHTML;
