@@ -6,7 +6,7 @@
 ## ----------------------------------------------------
 
 ## ----------------------------------------------------
-## PubNub 3.0 Real-time Cloud Push API - PYTHON TORNADO
+## PubNub 3.1 Real-time Cloud Push API - PYTHON TORNADO
 ## ----------------------------------------------------
 ##
 ## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
@@ -36,7 +36,7 @@ pubnub = Pubnub(
     "demo",  ## SUBSCRIBE_KEY
     "demo",  ## SECRET_KEY
     "demo",  ## CIPHER_KEY
-	 False   ## SSL_ON?
+     False   ## SSL_ON?
 )
 
 ## -----------------------------------------------------------------------
@@ -106,6 +106,3 @@ print uuid
 ## IO Event Loop
 ## -----------------------------------------------------------------------
 tornado.ioloop.IOLoop.instance().start()
-
-
-

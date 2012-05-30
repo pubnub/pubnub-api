@@ -6,7 +6,7 @@
 ## http://www.pubnub.com/
 
 ## -----------------------------------
-## PubNub 3.0 Real-time Push Cloud API
+## PubNub 3.1 Real-time Push Cloud API
 ## -----------------------------------
 
 from Crypto.Cipher import AES
@@ -22,7 +22,7 @@ class PubnubCrypto() :
     #*
     #**
 
-    ## Initiat Class
+    ## Initiate Class
     pc = PubnubCrypto
 
     """
