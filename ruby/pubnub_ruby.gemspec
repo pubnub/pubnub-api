@@ -4,7 +4,7 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{pubnub-ruby}
+  s.name = %q{pubnub_ruby}
   s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -16,12 +16,14 @@ Gem::Specification.new do |s|
     "README"
   ]
   s.files = [
-    "examples/history-example.rb",
-    "examples/publish-example.rb",
-    "examples/subscribe-example.rb",
-    "lib/pubnub-ruby.rb",
-    "lib/pubnub.rb",
-    "tests/unit-test.rb"
+    "examples/history_example.rb",
+    "examples/publish_example.rb",
+    "examples/subscribe_example.rb",
+    "examples/uuid_example.rb",
+    "lib/pubnub_ruby.rb",
+    "lib/pubnub_ruby/pubnub.rb",
+    "lib/pubnub_ruby/pubnub_crypto.rb",
+    "tests/unit_test.rb"
   ]
   s.homepage = %q{http://github.com/pubnub/pubnub-api}
   s.licenses = ["MIT"]
@@ -31,7 +33,9 @@ Gem::Specification.new do |s|
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
-
+    s.add_dependency "eventmachine", ">= 1.0.0.beta.4.1"
+	s.add_dependency "em-http-request", ">= 1.0.2"
+	
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<json>, [">= 0"])
     else
@@ -41,4 +45,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<json>, [">= 0"])
   end
 end
-

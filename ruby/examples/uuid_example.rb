@@ -4,9 +4,7 @@
 
 ## including required libraries
 require 'rubygems'
-require 'eventmachine'
-require './lib/pubnub.rb'
-require 'securerandom'
+require 'pubnub_ruby/pubnub'
 
 ## Generating UUID String
 pubnub=Pubnub.new("","","","",false)

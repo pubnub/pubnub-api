@@ -4,7 +4,7 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "pubnub-ruby"
+  gem.name = "pubnub_ruby"
   gem.homepage = "http://github.com/rubynerd/pubnub"
   gem.license = "MIT"
   gem.summary = %Q{PubNub unofficial gem}
@@ -14,5 +14,7 @@ Jeweler::Tasks.new do |gem|
   gem.files = FileList['lib/**/*.rb', 'examples/**/*.rb', 'tests/**/*.rb'] 
   # dependencies defined in Gemfile
   gem.add_dependency "json"
+  gem.add_dependency "eventmachine"
+  gem.add_dependency "em-http-request"
 end
 Jeweler::RubygemsDotOrgTasks.new
