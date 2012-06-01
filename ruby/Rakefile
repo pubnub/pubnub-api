@@ -10,7 +10,8 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{Simply Pubnub.rb in gem format, :require => "pubnub" - ask @pubnub for upgrades} 
   gem.email = "stephen@pubnub.com"
   gem.authors = ["Luke Carpenter","Stephen Blum"]
-  gem.files = FileList['lib/**/*.rb', 'examples/**/*.rb', 'tests/**/*.rb'] 
+  gem.files = FileList['lib/*.rb', 'examples/**/*.rb', 'tests/**/*.rb'] 
+
   # dependencies defined in Gemfile
   gem.add_dependency "json"
   gem.add_dependency "eventmachine"
