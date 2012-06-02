@@ -9,6 +9,7 @@
     ,   median                  = 1
     ,   latest                  = 1
     ,   max                     = 1
+    ,   start_time              = 0
     ,   monitor_button          = p.$('start')
     ,   delay                   = p.$('delay')
     ,   blink                   = p.$('latency-bar')
@@ -23,15 +24,18 @@
     function range(val) { return Array(val).join(',').split(',') }
     function add_result(ms) {
         latency_results.unshift(ms);
-        latency_results_med.unshift(ms);
+        ms > 10 && latency_results_med.unshift(ms);
         display_latency();
     }
     var display_latency = p.updater( function() {
         calc_median();
 
-        latency_last.innerHTML    = latest+'ms'
         latency_average.innerHTML = median+'ms'
         latency_max.innerHTML     = max+'ms'
+        latency_last.innerHTML    = Math.ceil(
+            latency_results.length /
+            ((+new Date - start_time) / 1000)
+        );
 
         latency_matrix.innerHTML = range(200).map(function( _, n ) {
             var lat   = +(latency_results[n] || 1)
@@ -112,6 +116,7 @@
             clearTimeout(check.ival);
             p.css( blink, { width : '0' } )
             check.used = 0;
+            start_time = +new Date;
         }
     } );
     
