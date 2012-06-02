@@ -4,7 +4,7 @@
 
 ## including required libraries
 require 'rubygems'
-require 'pubnub_ruby/pubnub'
+require 'pubnub'
 
 ## Generating UUID String
 pubnub=Pubnub.new("","","","",false)
