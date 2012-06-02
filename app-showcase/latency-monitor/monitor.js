@@ -6,6 +6,7 @@
         subscribe_key : 'demo'
     }), channel                 = 'latency-' + Math.random()
     ,   avg                     = 1
+    ,   median                  = 1
     ,   latest                  = 1
     ,   max                     = 1
     ,   monitor_button          = p.$('start')
@@ -15,15 +16,21 @@
     ,   latency_average         = p.$('latency-avg')
     ,   latency_max             = p.$('latency-max')
     ,   latency_results         = []
+    ,   latency_results_med     = []
     ,   latency_matrix          = p.$('latency-matrix')
     ,   latency_matrix_template = p.$('latency-matrix-template').innerHTML;
 
     function range(val) { return Array(val).join(',').split(',') }
-    function add_result(ms) { latency_results.unshift(ms); display_latency() }
+    function add_result(ms) {
+        latency_results.unshift(ms);
+        latency_results_med.unshift(ms);
+        display_latency();
+    }
     var display_latency = p.updater( function() {
+        calc_median();
 
         latency_last.innerHTML    = latest+'ms'
-        latency_average.innerHTML = avg+'ms'
+        latency_average.innerHTML = median+'ms'
         latency_max.innerHTML     = max+'ms'
 
         latency_matrix.innerHTML = range(200).map(function( _, n ) {
@@ -38,6 +45,13 @@
             } );
         } ).join('');
     }, 250 );
+
+    var calc_median = p.updater( function() {
+        latency_results_med.sort();
+        median = latency_results_med[
+            Math.floor(latency_results_med.length/2)
+        ];
+    }, 1000 );
 
     function set_class( elm, name ) {
         elm.className = name;
