@@ -54,17 +54,27 @@ Ext.application({
           });
         }
 
+        function scrollToBottom() {
+            messageList.getScrollable().getScroller().scrollToEnd();
+        }
+
         pubnub.subscribe({
           channel  : 'sencha_chat',
           callback : function(message) {
             if (message.name && (message.name == 'chat_message')) {
+              var prev_length = messageList.getStore().length;
               messageList.getStore().add({
                   user: (message.data.user || nobody),
                   message: message.data.message 
               });
+
+              scrollToBottom();
               setTimeout( function() {
-                messageList.getScrollable().getScroller().scrollToEnd();
+                scrollToBottom();
               }, 10);
+              setTimeout( function() {
+                scrollToBottom();
+              }, 50);
             }
           }    
         });
@@ -78,7 +88,10 @@ Ext.application({
             placeHolder: 'type chat here',
             flex: 7,
             listeners: {
-              action: sendMessage
+              action: sendMessage,
+              focus:  function() {
+                messageList.getScrollable().getScroller().scrollToEnd();
+              }
             }
         });
 
@@ -170,6 +183,9 @@ Ext.application({
                 message: message.data.message 
             });
           }
+          setTimeout( function() {
+            scrollToBottom();
+          }, 100);
         }); 
     }
 });
