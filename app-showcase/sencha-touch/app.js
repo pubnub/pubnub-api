@@ -1,6 +1,6 @@
 //<debug>
 Ext.Loader.setPath({
-    'Ext': '../sdk/src'
+    'Ext': '../sencha-sdk/src'
 });
 //</debug>
 
@@ -125,16 +125,20 @@ Ext.application({
                     xtype: 'toolbar',
                     flex: 1,
                     items: [
-                        { xtype: 'spacer' },
-                        {
-                            xtype  : 'panel',
-                            html   : '<img src="https://pubnub.s3.amazonaws.com/2012/pubnub-large.png"/>',
+                        { 
+                            xtype: 'spacer'
                         },
                         {
                             xtype  : 'panel',
-                            html   : '<img src="http://www.theberryfix.com/wp-content/uploads/sencha_logo.png" />',
+                            html   : '<img style="height:25px;" src="https://pubnub.s3.amazonaws.com/2012/pubnub-large.png"/>',
                         },
-                        { xtype: 'spacer' }
+                        {
+                            xtype  : 'panel',
+                            html   : '<img style="height:60px;" src="http://www.theberryfix.com/wp-content/uploads/sencha_logo.png" />',
+                        },
+                        { 
+                            xtype: 'spacer' 
+                        }
                     ]
                 },
                 {

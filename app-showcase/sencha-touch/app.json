@@ -2,7 +2,7 @@
     /**
      * The application's namespace, used by Sencha Command to generate classes
      */
-    "name": "GS",
+    "name": "PubNub-SenchaTouch",
 
     /**
      * List of all JavaScript assets in the right execution order.
@@ -22,7 +22,7 @@
             "path": "resources/js/pubnub-3.1.min.js"
         },
         {
-            "path": "../sdk/sencha-touch.js"
+            "path": "../sencha-sdk/sencha-touch.js"
         },
         {
             "path": "app.js",
