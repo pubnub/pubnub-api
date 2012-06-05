@@ -5,7 +5,7 @@ Ext.Loader.setPath({
 //</debug>
 
 Ext.application({
-    name: 'GS',
+    "name": "PubNub-SenchaTouch",
     // Setup your icon and startup screens
     phoneStartupScreen: 'resources/loading/Homescreen.jpg',
     tabletStartupScreen: 'resources/loading/Homescreen~ipad.jpg',
@@ -54,17 +54,27 @@ Ext.application({
           });
         }
 
+        function scrollToBottom() {
+            messageList.getScrollable().getScroller().scrollToEnd();
+        }
+
         pubnub.subscribe({
           channel  : 'sencha_chat',
           callback : function(message) {
             if (message.name && (message.name == 'chat_message')) {
+              var prev_length = messageList.getStore().length;
               messageList.getStore().add({
                   user: (message.data.user || nobody),
                   message: message.data.message 
               });
+
+              scrollToBottom();
               setTimeout( function() {
-                messageList.getScrollable().getScroller().scrollToEnd();
+                scrollToBottom();
               }, 10);
+              setTimeout( function() {
+                scrollToBottom();
+              }, 50);
             }
           }    
         });
@@ -78,7 +88,10 @@ Ext.application({
             placeHolder: 'type chat here',
             flex: 7,
             listeners: {
-              action: sendMessage
+              action: sendMessage,
+              focus:  function() {
+                messageList.getScrollable().getScroller().scrollToEnd();
+              }
             }
         });
 
@@ -114,23 +127,17 @@ Ext.application({
             fullscreen: true,
             layout: 'vbox',
             items: [
-                /*
                 {
                     xtype: 'toolbar',
-                    flex: 1,
-                    html: '<span id="header_toolbar"> "<img id="pubnub_logo" src="https://pubnub.s3.amazonaws.com/2012/pubnub-large.png"/> <img id="sencha_logo" src="http://www.theberryfix.com/wp-content/uploads/sencha_logo.png"/></span> '
-                },
-                */
-                {
-                    xtype: 'toolbar',
-                    flex: 1,
+                    flex: 1.5,
                     items: [
                         { 
                             xtype: 'spacer'
                         },
                         {
                             xtype  : 'panel',
-                            html   : '<img style="height:25px;" src="https://pubnub.s3.amazonaws.com/2012/pubnub-large.png"/>',
+                            html   : '<img style="height:25px; margin-top:15px; margin-bottom:15px;" src="https://pubnub.s3.amazonaws.com/2012/pubnub-large.png"/>',
+                            height : 60
                         },
                         {
                             xtype  : 'panel',
@@ -144,7 +151,6 @@ Ext.application({
                 {
                     
                     xtype: 'panel',
-                    html: 'lol',
                     layout: 'fit',
                     flex: 7,
                     items: [
@@ -153,7 +159,7 @@ Ext.application({
                 },
                 {
                     xtype: 'toolbar',
-                    flex: 1,
+                    flex: 1.5,
                     items: [
                         nameField,
                         chatField,
@@ -177,6 +183,9 @@ Ext.application({
                 message: message.data.message 
             });
           }
+          setTimeout( function() {
+            scrollToBottom();
+          }, 100);
         }); 
     }
 });

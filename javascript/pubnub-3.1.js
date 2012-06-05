@@ -213,7 +213,7 @@ function rnow() { return+new Date }
 var db = (function(){
     var ls = window['localStorage'];
     return {
-        get : function(key) {
+        'get' : function(key) {
             try {
                 if (ls) return ls.getItem(key);
                 if (document.cookie.indexOf(key) == -1) return null;
@@ -222,7 +222,7 @@ var db = (function(){
                 )||[])[1] || null;
             } catch(e) { return }
         },
-        set : function( key, value ) {
+        'set' : function( key, value ) {
             try {
                 if (ls) return ls.setItem( key, value ) && 0;
                 document.cookie = key + '=' + value +
@@ -797,7 +797,14 @@ var PDIV          = $('pubnub') || {}
                         }
                         timeout( pubnub, SECOND );
                         SELF['time'](function(success){
-                            success || error();
+                            // Reconnect
+                            if (success && disconnected) {
+                                disconnected = 0;
+                                reconnect();
+                            }
+                            else {
+                                error();
+                            }
                         });
                     },
                     success : function(messages) {
