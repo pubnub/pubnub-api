@@ -33,7 +33,7 @@ browsers=$browsers',safari/5.1'
 
 echo -e "Testing: $browsers"
 
-noinstrument='pubnub-3.1.js'
+noinstrument='pubnub-3.1.js,test.js'
 
 tar -cf- test.js ../pubnub-3.1.js | \
     curl -u $1 -sSNT- \

@@ -404,6 +404,11 @@ function PN(setup) {
                         }
                         timeout( pubnub, 1000 );
                         SELF['time'](function(success){
+                            // Reconnect
+                            if (success && disconnected) {
+                                disconnected = 0;
+                                reconnect();
+                            }
                             success || error();
                         });
                     },

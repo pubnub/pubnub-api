@@ -24,7 +24,7 @@ test('PUBNUB JavaScript API', function (test) {
             message  : { test : "test" },
             callback : function(response) {
                 test.ok(response[0]);
-                test.equal( response[1], 'D' );
+                test.equal( response[1], 'Sent' );
             }
         });
     }
