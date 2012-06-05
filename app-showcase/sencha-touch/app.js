@@ -159,7 +159,7 @@ Ext.application({
                 },
                 {
                     xtype: 'toolbar',
-                    flex: 1,
+                    flex: 1.5,
                     items: [
                         nameField,
                         chatField,
