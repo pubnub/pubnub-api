@@ -84,28 +84,6 @@ var nextorigin = (function() {
 })();
 
 /**
- * UPDATER
- * ======
- * var timestamp = unique();
- */
-function updater( fun, rate ) {
-    var timeout
-    ,   last   = 0
-    ,   runnit = function() {
-        if (last + rate > rnow()) {
-            clearTimeout(timeout);
-            timeout = setTimeout( runnit, rate );
-        }
-        else {
-            last = rnow();
-            fun();
-        }
-    };
-
-    return runnit;
-}
-
-/**
  * EACH
  * ====
  * each( [1,2,3], function(item) { console.log(item) } )
@@ -467,20 +445,17 @@ function PN(setup) {
         },
 
         // Expose PUBNUB Functions
-        'init'     : PN,
-        'xdr'      : xdr,
-        'db'       : db,
-        'each'     : each,
-        'map'      : map,
-        'now'      : rnow,
-        'unique'   : unique,
-        'events'   : events,
-        'updater'  : updater
+        'xdr'    : xdr,
+        'db'     : db,
+        'each'   : each,
+        'map'    : map,
+        'events' : events
     };
 
     return SELF;
 }
 
-typeof module !== 'undefined' && (module.exports = PN) || (PUBNUB = PN);
+typeof module  !== 'undefined' && (module.exports = PN) ||
+typeof exports !== 'undefined' && (exports.PN = PN)     || (PUBNUB = PN);
 
 })();

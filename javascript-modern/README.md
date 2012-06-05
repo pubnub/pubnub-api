@@ -19,7 +19,7 @@ Library which is `CommonJS` and HTML5 `WebWorker` Ready.
     // ----------------------------------
     // INIT PUBNUB
     // ----------------------------------
-    var pubnub = PUBNUB.init({
+    var pubnub = PUBNUB({
         publish_key   : 'PUBLISH_KEY_HERE',
         subscribe_key : 'SUBSCRIBE_KEY_HERE',
         ssl           : false,

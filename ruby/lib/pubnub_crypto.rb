@@ -2,7 +2,7 @@
 
 ## including required libraries
 require "openssl"
-require 'digest/MD5'
+require 'digest'
 require 'base64'
 require 'rubygems'
 require 'json'
