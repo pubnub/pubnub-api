@@ -24,7 +24,8 @@ Ext.application({
         'Ext.field.Search',
         'Ext.field.Select',
         'Ext.Button',
-        'Ext.List'
+        'Ext.List',
+        'Ext.Img'
     ],
 
     launch: function() {
@@ -113,12 +114,35 @@ Ext.application({
             fullscreen: true,
             layout: 'vbox',
             items: [
+                /*
+                {
+                    xtype: 'toolbar',
+                    flex: 1,
+                    html: '<span id="header_toolbar"> "<img id="pubnub_logo" src="https://pubnub.s3.amazonaws.com/2012/pubnub-large.png"/> <img id="sencha_logo" src="http://www.theberryfix.com/wp-content/uploads/sencha_logo.png"/></span> '
+                },
+                */
+                {
+                    xtype: 'toolbar',
+                    flex: 1,
+                    items: [
+                        { xtype: 'spacer' },
+                        {
+                            xtype  : 'panel',
+                            html   : '<img src="https://pubnub.s3.amazonaws.com/2012/pubnub-large.png"/>',
+                        },
+                        {
+                            xtype  : 'panel',
+                            html   : '<img src="http://www.theberryfix.com/wp-content/uploads/sencha_logo.png" />',
+                        },
+                        { xtype: 'spacer' }
+                    ]
+                },
                 {
                     
                     xtype: 'panel',
                     html: 'lol',
                     layout: 'fit',
-                    flex: 8,
+                    flex: 7,
                     items: [
                         messageList,
                     ]
@@ -138,9 +162,10 @@ Ext.application({
         // preload prev chats 
         pubnub.history({
           channel : 'sencha_chat',
-          limit : 100
+          limit : 10 
         }, function(messages) {
           messageList.getStore().removeAt(0); //remove dummy
+          console.log(messages);
           for (m in messages) {
             var message = messages[m];
             messageList.getStore().add({
