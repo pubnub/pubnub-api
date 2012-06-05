@@ -6,7 +6,7 @@
 ## http://www.pubnub.com/
 
 ## -----------------------------------
-## PubNub 3.0 Real-time Push Cloud API
+## PubNub 3.1 Real-time Push Cloud API
 ## -----------------------------------
 
 import sys
@@ -21,7 +21,7 @@ cipher_key    = len(sys.argv) > 4 and sys.argv[4] or 'demo'
 ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or False
 
 ## -----------------------------------------------------------------------
-## Initiat Class
+## Initiate Pubnub State
 ## -----------------------------------------------------------------------
 pubnub = Pubnub( publish_key, subscribe_key, secret_key,cipher_key, ssl_on )
 crazy  = 'hello_world'
@@ -44,9 +44,6 @@ pubnub.subscribe({
     'callback' : message_received
 })
 
-def message_received(message):
-    print(message)
-    
 ## -----------------------------------------------------------------------
 ## IO Event Loop
 ## -----------------------------------------------------------------------

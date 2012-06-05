@@ -81,7 +81,7 @@ class Pubnub():
             return [ 0, 'Missing Channel or Message' ]
 
         ## Capture User Input
-        channel = args['channel']
+        channel = str(args['channel'])
         message = json.dumps(args['message'], separators=(',',':'))
 
         ## Sign Message
@@ -143,7 +143,7 @@ class Pubnub():
             return False
 
         ## Capture User Input
-        channel   = args['channel']
+        channel   = str(args['channel'])
         callback  = args['callback']
 
         ## Begin Subscribe
@@ -199,7 +199,7 @@ class Pubnub():
         """
         ## Capture User Input
         limit   = args.has_key('limit') and int(args['limit']) or 10
-        channel = args['channel']
+        channel = str(args['channel'])
 
         ## Fail if bad input.
         if not channel :

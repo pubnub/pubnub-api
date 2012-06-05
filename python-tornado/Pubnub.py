@@ -6,7 +6,7 @@
 ## http://www.pubnub.com/
 
 ## -----------------------------------
-## PubNub 3.0 Real-time Push Cloud API
+## PubNub 3.1 Real-time Push Cloud API
 ## -----------------------------------
 
 import json
@@ -98,7 +98,7 @@ class Pubnub():
             return False
 
         ## Capture User Input
-        channel = args['channel']
+        channel = str(args['channel'])
         message = args['message']
 
         if self.cipher_key :
@@ -198,7 +198,7 @@ class Pubnub():
             return False
 
         ## Capture User Input
-        channel   = args['channel']
+        channel   = str(args['channel'])
         callback  = args['callback']
         connectcb = args['connect']
 
@@ -292,7 +292,7 @@ class Pubnub():
 
 
     def unsubscribe( self, args ):
-        channel = args['channel']
+        channel = str(args['channel'])
         if not (channel in self.subscriptions):
             return False
 
@@ -323,7 +323,7 @@ class Pubnub():
         """
         ## Capture User Input
         limit   = args.has_key('limit') and int(args['limit']) or 10
-        channel = args['channel']
+        channel = str(args['channel'])
 
         ## Fail if bad input.
         if not channel :

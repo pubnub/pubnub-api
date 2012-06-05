@@ -1,6 +1,6 @@
 from Pubnub import Pubnub
 
-## Initiat Class
+## Initiate Class
 pubnub = Pubnub( 'demo', 'demo', None, False )
 
 ## Publish Example

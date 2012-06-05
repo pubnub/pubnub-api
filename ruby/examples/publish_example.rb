@@ -3,8 +3,8 @@
 ## -----------------------------------
 
 ## including required libraries
-require './lib/pubnub.rb'
-require 'json'
+require 'rubygems'
+require 'pubnub'
 
 ## declaring publish_key, subscribe_key, secret_key, cipher_key, channel, ssl flag, messages
 publish_key   = 'demo'
