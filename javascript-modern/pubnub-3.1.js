@@ -145,6 +145,14 @@ function encode(path) {
 }
 
 /**
+ * LOG
+ * ===
+ * var list = grep( [1,2,3], function(item) { return item % 2 } )
+ */
+var log = function(){};
+
+
+/**
  * EVENTS
  * ======
  * PUBNUB.events.bind( 'you-stepped-on-flower', function(message) {
@@ -214,7 +222,7 @@ function xdr( setup ) {
 
     // Send
     try {
-        xhr = window.XDomainRequest &&
+        xhr = typeof XDomainRequest !== 'undefined' && 
               new XDomainRequest()  ||
               new XMLHttpRequest();
 
@@ -272,7 +280,7 @@ function PN(setup) {
                     0, limit
                 ],
                 success  : function(response) { callback(response) },
-                fail     : function(response) { log(response) }
+                fail     : function(response) { callback(response) }
             });
         },
 
