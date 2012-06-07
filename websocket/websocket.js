@@ -9,7 +9,7 @@ WebSocket = function( url, protocols ) {
     ,   protocols = protocols
     ,   bits      = url.split('/')
     ,   setup     = {
-         ssl           : bits[0] === 'wss'
+         ssl           : bits[0] === 'wss:'
         ,origin        : bits[2]
         ,publish_key   : bits[3]
         ,subscribe_key : bits[4]
