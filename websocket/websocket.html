@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head> 
+    <title>PubNub JavaScript CommonJS</title>
+    <link
+        rel=stylesheet
+        href=http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css
+    >
+</head>
+<body><div class=container>
+
+</div>
+<script src=../javascript/pubnub-3.1.js></script>
+<script src=websocket.js></script>
+<script>(function() {
+
+    "use strict"
+
+    /* 'wss://ORIGIN/PUBLISH_KEY/SUBSCRIBE_KEY/CHANNEL' */
+    var socket = new WebSocket('wss://pubsub.pubnub.com/demo/demo/my_channel')
+
+    socket.onmessage = function(evt) {
+        console.log('socket receive');
+        console.log(evt.data);
+    }
+
+    socket.onclose = function() {
+        console.log('socket closed');
+    }
+    socket.onerror = function() {
+        console.log('socket error');
+    }
+    socket.onopen = function(evt) {
+        console.log('socket open');
+        socket.send('hello world!');
+    }
+    socket.onsend = function(evt) {
+        console.log('socket send');
+        console.log(evt);
+    }
+
+    console.log(socket)
+
+})();</script>
+</body>
+</html>
+
