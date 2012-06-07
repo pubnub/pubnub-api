@@ -5,16 +5,14 @@
 
 Gem::Specification.new do |s|
   s.name = %q{pubnub}
-  s.version = "0.1.8"
+  s.version = "0.1.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Luke Carpenter / PubNub.com"]
-  s.date = %q{2011-05-28}
+  s.date = %q{2012-06-07}
   s.description = %q{Simply Pubnub.rb in gem format, :require => "pubnub" - ask @PubNub for upgrades.}
   s.email = %q{stephen@pubnub.com}
-  s.extra_rdoc_files = [
-    "README"
-  ]
+  s.extra_rdoc_files = ["README"]
   s.files = [
     "examples/history_example.rb",
     "examples/publish_example.rb",
