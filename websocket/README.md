@@ -4,7 +4,7 @@ PubNub offers full RFC 6455 Support for WebSocket Client Specification.
 PubNub WebSockets enables any browser (modern or not) to support
 the HTML5 WebSocket standard APIs.
 Use the WebSocket Client Directly in your Browser that
-Now you can use ```javascript new WebSocket``` anywhere!
+Now you can use `new WebSocket` anywhere!
 
 Here is a quick example:
 
@@ -61,6 +61,24 @@ The following example opens a `new WebSocket` in
     }
 
     console.log(socket)
+
+})();</script>
+```
+
+To Disable SSL WSS Secure Sockets:
+
+```javascript
+<!-- NON-SSL Import PubNub Core Lib -->
+<script src="http://pubnub.a.ssl.fastly.net/pubnub-3.1.min.js"></script>
+
+<!-- NON-SSL Import WebSocket Emulation Lib -->
+<script src="websocket.js"></script>
+
+<!-- NON-SSL Use WebSocket Constructor for a New Socket Connection -->
+<script>(function() {
+
+    // Note "ws://" rather than "wss://"
+    var socket = new WebSocket('ws://pubsub.pubnub.com/demo/demo/my_channel')
 
 })();</script>
 ```
