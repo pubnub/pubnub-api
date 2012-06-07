@@ -20,7 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Pubnub cryptography
+ * PubNub 3.1 Cryptography
  * 
  */
 

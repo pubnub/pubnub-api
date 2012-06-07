@@ -25,7 +25,7 @@ import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
 
 /**
- * PubNub 3.0 Real-time Push Cloud API
+ * PubNub 3.1 Real-time Push Cloud API
  *
  * @author Stephen Blum
  * @package pubnub
@@ -491,7 +491,7 @@ public class Pubnub {
         try {
             // Prepare Asynchronous HTTP Request
             Builder cb = new AsyncHttpClientConfig.Builder();
-            cb.setRequestTimeoutInMs(-1);
+            cb.setRequestTimeoutInMs(310000);
             AsyncHttpClientConfig config = cb.build();
             ahc = new AsyncHttpClient(config);
             RequestBuilder rb = new RequestBuilder("GET");
