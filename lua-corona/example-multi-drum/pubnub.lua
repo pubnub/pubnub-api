@@ -1,3 +1,14 @@
+-- www.pubnub.com - PubNub realtime push service in the cloud.
+-- https://github.com/pubnub/pubnub-api/tree/master/lua-corona - lua-Corona Push API
+
+-- PubNub Real Time Push APIs and Notifications Framework
+-- Copyright (c) 2010 Stephen Blum
+-- http://www.pubnub.com/
+
+-- -----------------------------------
+-- PubNub 3.1 Real-time Push Cloud API
+-- -----------------------------------
+
 require "Json"
 require "crypto"
 pcall(require,"BinDecHex")
@@ -185,6 +196,9 @@ function pubnub.new(init)
         table.insert( args.request, 1, self.origin )
 
         local url = table.concat( args.request, "/" )
+		local params = {}
+        params["V"] = "3.1"
+		params["User-Agent"] = "Corona"
 		
         network.request( url, "GET", function(event)
             if (event.isError) then
@@ -198,7 +212,7 @@ function pubnub.new(init)
             else
                 return args.callback(nil)
             end
-        end )
+        end, params)
     end
 
     function self:_encode(str)
@@ -240,10 +254,10 @@ function pubnub.new(init)
         return table.concat(uuid)
 	end	
 	
-local Hex2Dec, BMOr, BMAnd, Dec2Hex
-if(BinDecHex)then
+	local Hex2Dec, BMOr, BMAnd, Dec2Hex
+	if(BinDecHex)then
         Hex2Dec, BMOr, BMAnd, Dec2Hex = BinDecHex.Hex2Dec, BinDecHex.BMOr, BinDecHex.BMAnd, BinDecHex.Dec2Hex
-end
+	end
 
     -- RETURN NEW PUBNUB OBJECT
     return self

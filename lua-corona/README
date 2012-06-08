@@ -1,7 +1,21 @@
---
--- Corona Multiplayer Networking and Push Notifications
--- Copy "pubnub.lua" and "Json.lua" into your Project Directory.
---
+## --------------------------------------------
+## PubNub 3.1 Real-time Cloud Push API - Corona
+## --------------------------------------------
+##
+## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
+
+## ---------------
+## Corona Push API
+## ---------------
+
+##
+## Corona Multiplayer Networking and Push Notifications
+## Copy "pubnub.lua" and "Json.lua" into your Project Directory.
+##
 
 require "pubnub"
 
@@ -90,11 +104,15 @@ multiplayer:time({
     end
 })
 
+--
+-- PUBNUB UUID
+--
+uuid = multiplayer:UUID()
+print("PUBNUB UUID: ", uuid)
+
 local screenW, screenH = display.contentWidth, display.contentHeight
 
 local ball = display.newCircle( 0, 0, 40 )
 ball:setFillColor(255, 255, 255, 255)
 ball.x = screenW * 0.5
 ball.y = ball.height
-
-
