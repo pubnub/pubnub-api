@@ -4,11 +4,11 @@
 // WEBSOCKET INTERFACE
 // ---------------------------------------------------------------------------
 WebSocket = function( url, protocols ) {
-    var self      = this
-    ,   url       = self.url = url || ''
-    ,   protocols = protocols
-    ,   bits      = url.split('/')
-    ,   setup     = {
+    var self     = this
+    ,   url      = self.url      = url || ''
+    ,   protocol = self.protocol = protocols || 'Sec-WebSocket-Protocol'
+    ,   bits     = url.split('/')
+    ,   setup    = {
          ssl           : bits[0] === 'wss:'
         ,origin        : bits[2]
         ,publish_key   : bits[3]
@@ -39,8 +39,9 @@ WebSocket = function( url, protocols ) {
     // Attributes
     self.binaryType     = '';
     self.extensions     = '';
-    self.protocol       = '';
     self.bufferedAmount = 0;
+    self.trasnmitting   = false;
+    self.buffer         = [];
     self.readyState     = self.CONNECTING;
 
     // Close if no setup.
@@ -61,28 +62,65 @@ WebSocket = function( url, protocols ) {
     self.pubnub.subscribe({
         restore    : false,
         channel    : setup.channel,
+        disconnect : self.onerror,
+        reconnect  : self.onopen,
+        error      : funciton() {
+            self.onclose({
+                code     : self.CLOSE_ABNORMAL,
+                reason   : 'Missing URL',
+                wasClean : false
+            });
+        },
         callback   : function(message) {
             self.onmessage({ data : message });
         },
         connect    : function() {
             self.readyState = self.OPEN;
             self.onopen();
-        },
-        error      : self.onclose,
-        disconnect : self.onerror,
-        reconnect  : self.onopen
+        }
     });
 };
 
 // ---------------------------------------------------------------------------
 // WEBSOCKET SEND
 // ---------------------------------------------------------------------------
+var buffer = [];
+
+function stream() {
+    var socket = buffer.pop();
+
+    /*
+    if (socket.buffer.length) {
+        socket.pubnub.publish(deliverable);
+    }
+    else {
+        sending = 0;
+    }
+    */
+}
+
 WebSocket.prototype.send = function(data) {
     var self = this;
+
+    buffer.push({
+        channel  : self.setup.channel.value,
+        message  : data,
+        callback : function(response) {
+            self.onsend({ data : response });
+            stream();
+        }
+    });
+
+    if (!sending) {
+        sending = 1;
+        stream(socket);
+    }
     self.pubnub.publish({
         channel  : self.pubnub.setup.channel,
         message  : data,
-        callback : function(response) { self.onsend({ data : response }); }
+        callback : function(response) {
+            self.onsend({ data : response });
+        }
     });
 };
 
