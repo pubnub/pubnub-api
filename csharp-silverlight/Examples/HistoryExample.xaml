@@ -1,0 +1,18 @@
+﻿<navigation:Page x:Class="silverlight_demo_new.HistoryExample" 
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           mc:Ignorable="d"
+           xmlns:navigation="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Navigation"
+           d:DesignWidth="640" d:DesignHeight="480"
+           Title="HistoryExample Page">
+    <Grid x:Name="LayoutRoot">
+    <StackPanel>
+            <TextBlock Text=" * Example to get history of published messages * " Margin="10,10,10,10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="12"></TextBlock>
+            <Button x:Name="History" Content="Show History" Click="History_Click" Height="30" Width="100" Margin="10,10,10,10" HorizontalAlignment="Center" ></Button>
+            <TextBlock Text="History Messages - >" Margin="0,100,0,0"></TextBlock>
+            <ListBox Name="lHistory"></ListBox>
+        </StackPanel>
+    </Grid>
+</navigation:Page>
