@@ -10,7 +10,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace silverlight_demo_new
+namespace silverlight
 {
     public static class UIThread
     {

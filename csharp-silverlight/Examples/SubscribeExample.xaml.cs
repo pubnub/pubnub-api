@@ -11,17 +11,17 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Navigation;
 
-namespace silverlight_demo_new
+namespace silverlight
 {
     public partial class SubscribeExample : Page
     {
-        string channel = "test_channel1";
-        // Initialize Pubnub State
+        string channel = "hello-world";
+        // Initialize pubnub state
         pubnub objPubnub = new pubnub(
             "demo",  // PUBLISH_KEY
             "demo",  // SUBSCRIBE_KEY
             "demo",  // SECRET_KEY
-            "demo",  //CIPHER_KEY
+            "demo",  // CIPHER_KEY
             false    // SSL_ON?
         );
         public SubscribeExample()
@@ -36,15 +36,15 @@ namespace silverlight_demo_new
 
         private void Subscribe_Click(object sender, RoutedEventArgs e)
         {
-            objPubnub.Subscribe(
-                channel,
-                delegate(object message)
+            lblSubscribe.Text = "Subscribe to the channel " + channel;
+            pubnub.ResponseCallback respCallback = delegate(object message)
                 {
                     object[] messages = (object[])message;
                     UIThread.Invoke(() =>
                     {
                         if (messages != null && messages.Count() > 0)
                         {
+                            subMessage.Visibility = Visibility.Visible;
                             for (int i = 0; i < messages.Count(); i++)
                             {
                                 if (!(lSubscribe.Items.Contains(messages[i].ToString())))
@@ -54,9 +54,11 @@ namespace silverlight_demo_new
                             }
                         }
                     });
-                }
-            );
+                };
+            Dictionary<string, object> args = new Dictionary<string, object>();
+            args.Add("channel", channel);
+            args.Add("callback", respCallback);
+            objPubnub.Subscribe(args);
         }
-
     }
 }

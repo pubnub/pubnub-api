@@ -11,19 +11,18 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Navigation;
 
-namespace silverlight_demo_new
+namespace silverlight
 {
     public partial class UUIDExample : Page
     {
-        string channel = "test_channel1";
-        // Initialize the Pubnub class -- 1
+        // Initialize pubnub state
         pubnub objPubnub = new pubnub(
-                                                "demo",  // PUBLISH_KEY
-                                                "demo",  // SUBSCRIBE_KEY
-                                                "demo",  // SECRET_KEY
-                                                "demo",    //CIPHER_KEY
-                                                false    // SSL_ON?
-                                                );
+        		"demo",  // PUBLISH_KEY
+                "demo",  // SUBSCRIBE_KEY
+                "demo",  // SECRET_KEY
+                "demo",  //CIPHER_KEY
+                false    // SSL_ON?
+                );
         public UUIDExample()
         {
             InitializeComponent();

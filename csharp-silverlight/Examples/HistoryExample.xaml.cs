@@ -12,17 +12,17 @@ using System.Windows.Shapes;
 using System.Windows.Navigation;
 using System.Text;
 
-namespace silverlight_demo_new
+namespace silverlight
 {
     public partial class HistoryExample : Page
     {
-        string channel = "test_channel1";
+        string channel = "hello-world";
         // Initialize Pubnub state
         pubnub objPubnub = new pubnub(
             "demo",  // PUBLISH_KEY
             "demo",  // SUBSCRIBE_KEY
             "demo",  // SECRET_KEY
-            "demo",  //CIPHER_KEY
+            "demo",  // CIPHER_KEY
             false    // SSL_ON?
         );
         public HistoryExample()
@@ -37,18 +37,14 @@ namespace silverlight_demo_new
 
         private void History_Click(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, object> args = new Dictionary<string, object>();
-            args.Add("channel", channel);
-            args.Add("limit", 3.ToString());
-            objPubnub.History(args, historyDelegate);           
-        }
-        private void historyDelegate(object response)
-        {
-            List<object> result = (List<object>)response;
-            UIThread.Invoke(() =>
+            pubnub.ResponseCallback respCallback = delegate(object response)
+            {
+                List<object> result = (List<object>)response;
+                UIThread.Invoke(() =>
                 {
                     if (result != null && result.Count() > 0)
                     {
+                        histMessages.Visibility = Visibility.Visible;
                         for (int i = 0; i < result.Count(); i++)
                         {
 
@@ -59,7 +55,13 @@ namespace silverlight_demo_new
                         }
                     }
                 });
-        }
+            };
 
+            Dictionary<string, object> args = new Dictionary<string, object>();
+            args.Add("channel", channel);
+            args.Add("limit", 3.ToString());
+            args.Add("callback", respCallback);
+            objPubnub.History(args);           
+        }
     }
 }

@@ -14,17 +14,17 @@ using System.Windows.Threading;
 using Newtonsoft.Json.Linq;
 using System.Threading;
 
-namespace silverlight_demo_new
+namespace silverlight
 {
     public partial class PublishExample : Page
     {
-        string channel = "test_channel1";
+        string channel = "hello-world";
         // Initialize Pubnub State
         pubnub objPubnub = new pubnub(
             "demo",  // PUBLISH_KEY
             "demo",  // SUBSCRIBE_KEY
             "demo",  // SECRET_KEY
-            "demo",  //CIPHER_KEY
+            "demo",  // CIPHER_KEY
             false    // SSL_ON?
         );
         public PublishExample()
@@ -40,11 +40,7 @@ namespace silverlight_demo_new
 
         private void Publish_Click(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, object> strArgs = new Dictionary<string, object>();
-            string message = "Hello Silverlight";
-            strArgs.Add("channel", channel);
-            strArgs.Add("message", message);
-            objPubnub.Publish(strArgs, delegate(object response)
+            pubnub.ResponseCallback respCallback = delegate(object response)
             {
                 List<object> result = (List<object>)response;
 
@@ -56,7 +52,14 @@ namespace silverlight_demo_new
                         lblPublish.Text += "\n[" + result[0].ToString() + "," + result[1].ToString() + "," + result[2].ToString() + "]";
                     }
                 });
-            });
+            };
+
+            Dictionary<string, object> strArgs = new Dictionary<string, object>();
+            string message = "Hello Silverlight";
+            strArgs.Add("channel", channel);
+            strArgs.Add("message", message);
+            strArgs.Add("callback", respCallback);
+            objPubnub.Publish(strArgs);
 
             Dictionary<string, object> arrArgs = new Dictionary<string, object>();
             JArray jarr = new JArray();
@@ -70,19 +73,8 @@ namespace silverlight_demo_new
 
             arrArgs.Add("channel", channel);
             arrArgs.Add("message", jarr);
-            objPubnub.Publish(arrArgs, delegate(object response)
-            {
-                List<object> result = (List<object>)response;
-
-                UIThread.Invoke(() =>
-                {
-                    if (result != null && result.Count() > 0)
-                    {
-                        lblPublish.Text += "\n[" + result[0].ToString() + "," + result[1].ToString() + "," + result[2].ToString() + "]";
-                    }
-                });
-            });
-
+            arrArgs.Add("callback", respCallback);
+            objPubnub.Publish(arrArgs);
             Dictionary<string, object> objArgs = new Dictionary<string, object>();
             
             JObject obj = new JObject();
@@ -91,18 +83,8 @@ namespace silverlight_demo_new
 
             objArgs.Add("channel", channel);
             objArgs.Add("message", obj);
-            objPubnub.Publish(objArgs, delegate(object response)
-            {
-                List<object> result = (List<object>)response;
-
-                UIThread.Invoke(() => 
-                    {
-                    if (result != null && result.Count() > 0)
-                    {
-                        lblPublish.Text += "\n[" + result[0].ToString() + "," + result[1].ToString() + "," + result[2].ToString() + "]";
-                    }
-                    });
-            });
+            objArgs.Add("callback", respCallback);
+            objPubnub.Publish(objArgs);
             
         }
     }

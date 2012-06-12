@@ -14,7 +14,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace silverlight_demo_new
+namespace silverlight
 {
     public class clsPubnubCrypto
     {
@@ -32,13 +32,11 @@ namespace silverlight_demo_new
             byte[] InitialVectorBytes = aesEncryption.IV;
 
             aesEncryption.KeySize = aesEncryption.LegalKeySizes[0].MaxSize;// 256;             
-            aesEncryption.BlockSize = aesEncryption.LegalBlockSizes[0].MaxSize;// 128;             
+            aesEncryption.BlockSize = aesEncryption.LegalBlockSizes[0].MaxSize;// 128; 
             aesEncryption.IV = UTF8Encoding.UTF8.GetBytes("0123456789012345");
             aesEncryption.Key = md5(this.CIPHER_KEY);
             if (type)
             {
-
-
                 byte[] plainText = UTF8Encoding.UTF8.GetBytes(plainStr);
                 ICryptoTransform crypto = aesEncryption.CreateEncryptor();
                 MemoryStream MemStream = new MemoryStream();
@@ -224,7 +222,6 @@ namespace silverlight_demo_new
             //Create a new instance of ASCIIEncoding to 
             //convert the string into an array of Unicode bytes.
             UTF8Encoding enc = new UTF8Encoding();
-            //            ASCIIEncoding enc = new ASCIIEncoding();
 
             //Convert the string into an array of bytes.
             byte[] buffer = enc.GetBytes(source);

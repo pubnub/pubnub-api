@@ -18,7 +18,7 @@ using System.Threading;
 using System.Windows.Threading;
 using System.Net.Browser;
 
-namespace silverlight_demo_new
+namespace silverlight
 {
    
     public class pubnub
@@ -38,8 +38,7 @@ namespace silverlight_demo_new
         private string CIPHER_KEY = "";
         private bool SSL = false;
         const int BUFFER_SIZE = 1024;
-        private ManualResetEvent webRequestDone;
-        public delegate void ResponseCallback(object response);        
+        public delegate void ResponseCallback(object response);
 
         private List<object> _Subscribe = new List<object>();
         public List<object> subscribe
@@ -52,7 +51,6 @@ namespace silverlight_demo_new
             {
                 clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
                 object message = "";
-                string type = value[0].GetType().ToString();
                 JArray val = (JArray)value[0];
                 object[] valObj = new object[val.Count];
                 for (int i = 0; i < val.Count; i++)
@@ -222,10 +220,17 @@ namespace silverlight_demo_new
             {
                 this.ORIGIN = "http://" + this.ORIGIN;
             }
-            webRequestDone = new ManualResetEvent(true);
         }
-        
-        private void _publish(Dictionary<string, object> args)
+        /**
+         * Publish
+         *
+         * Send a message to a channel.
+         *
+         * @param Dictionary<string, object> args 
+         * args is string channel name and object message 
+         * and callback to the response back i.e list of history messages
+         */
+        public void Publish(Dictionary<string, object> args)
         {
             string channel = args["channel"].ToString();
             object message = args["message"];
@@ -287,36 +292,16 @@ namespace silverlight_demo_new
         }
 
         /**
-         * Publish
-         *
-         * Send a message to a channel.
-         *
-         * @param Dictionary<string, object> args 
-         * args is string channel name and object message
-         * @respCallback is a delegate to get response back
-         * @return List<object> info.
-         */
-        public void Publish(Dictionary<string, object> args, ResponseCallback respCallback)
-        {
-            args.Add("callback", respCallback);
-            _publish(args);
-        }
-
-        /**
          * Subscribe
          *
-         * This function is BLOCKING.
+         * This function is NON BLOCKING.
          * Listen for a message on a channel.
          *
-         * @param string channel name.
-         * @respCallback is a delegate to get response back
-         * @param Procedure function callback.
+         * @param Dictionary<string, object> args .
+         *  args contains channel name and a delegate to get response back
          */
-        public void Subscribe(string channel, ResponseCallback callback)
+        public void Subscribe(Dictionary<string, object> args)
         {
-            Dictionary<string, object> args = new Dictionary<string, object>();
-            args.Add("channel", channel);
-            args.Add("callback", callback);
             args.Add("timestamp", 0);
             this._subscribe(args);
         }
@@ -325,8 +310,7 @@ namespace silverlight_demo_new
           * _subscribe - Private Interface
           *
           * @param Dictionary<string, object> args
-         *  args is channel name and Procedure function callback and timetoken
-          * @param string timetoken.
+         *  args contains channel name and Procedure function callback and timetoken
           */
         private void _subscribe(Dictionary<string, object> args)
         {
@@ -380,8 +364,11 @@ namespace silverlight_demo_new
                 myRequestState.request = request;
                 myRequestState.cb = respCallback;
                 myRequestState.respType = type;
-                myRequestState.channel = url_components[2];
-                request.Method = "POST";
+                if (url_components.Count > 2)
+                {
+                    myRequestState.channel = url_components[2];
+                }
+                request.Method = "GET";
                 IAsyncResult result = (IAsyncResult)request.BeginGetResponse(requestCallBack, myRequestState);               
             }
             catch (Exception)
@@ -393,16 +380,12 @@ namespace silverlight_demo_new
         {
             // State of request is asynchronous.
             RequestState myRequestState = (RequestState)asyncResult.AsyncState;
-            HttpWebRequest myHttpWebRequest2 = myRequestState.request;
-            //asyncResult.AsyncWaitHandle.WaitOne();
+            HttpWebRequest myHttpWebRequest2 = myRequestState.request;            
             myRequestState.response = (HttpWebResponse)myHttpWebRequest2.EndGetResponse(asyncResult);
-
             // Read the response into a Stream object.
-            Stream responseStream = myRequestState.response.GetResponseStream();
-            myRequestState.streamResponse = responseStream;
-
+            myRequestState.streamResponse = myRequestState.response.GetResponseStream();
             // Begin the Reading of the contents of the HTML page and print it to the console.
-            IAsyncResult asynchronousInputRead = responseStream.BeginRead(myRequestState.BufferRead, 0, BUFFER_SIZE, ReadCallBack, myRequestState);
+            IAsyncResult asynchronousInputRead = myRequestState.streamResponse.BeginRead(myRequestState.BufferRead, 0, BUFFER_SIZE, ReadCallBack, myRequestState);
         }
 
         private void ReadCallBack(IAsyncResult asyncResult)
@@ -461,15 +444,9 @@ namespace silverlight_demo_new
         *
         * @param Dictionary<string, string> args
         * args is channel name and int limit history count response.
-        * @param respCallback gets the response back i.e list of history messages
+        * and callback to the response back i.e list of history messages
         */
-        public void History(Dictionary<string, object> args, ResponseCallback respCallback)
-        {
-            args.Add("callback", respCallback);
-            _history(args);
-
-        }
-        private void _history(Dictionary<string, object> args)
+        public void History(Dictionary<string, object> args)
         {
             string channel = args["channel"].ToString();
             int limit = Convert.ToInt32(args["limit"].ToString());
