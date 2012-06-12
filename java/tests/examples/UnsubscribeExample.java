@@ -7,18 +7,16 @@ import org.json.JSONObject;
 import pubnub.Callback;
 import pubnub.Pubnub;
 
-public class SubscribeExample {
+public class UnsubscribeExample {
 
     public static void main(String[] params) {
 
-        String pub_key = "demo", sub_key = "demo";
+    	String pub_key = "demo", sub_key = "demo";
         String secret_key = "demo", cipher_key = "demo";
-        String channel = "hello_world";
+        final String channel = "hello_world";
+    	final Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key, true);
 
-        Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key,
-                true);
-
-        // Callback Interface when a Message is Received
+    	// Callback Interface when a Message is Received
         class Receiver implements Callback {
 
             public boolean execute(Object message) {
@@ -33,7 +31,7 @@ public class SubscribeExample {
                         }
                         System.out.println();
                     } else if (message instanceof String) {
-                        String obj = (String) message;
+                    	String obj = (String) message;
                         System.out.print(obj + " ");
                         System.out.println();
                     } else if (message instanceof JSONArray) {
@@ -44,7 +42,11 @@ public class SubscribeExample {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                // Continue Listening?
+
+                // Unsubscribe/disconnect
+                HashMap<String, Object> args = new HashMap<String, Object>(1);
+            	args.put("channel", channel);
+            	pubnub.unsubscribe(args);
                 return true;
             }
         }
@@ -55,6 +57,13 @@ public class SubscribeExample {
 			@Override
 			public boolean execute(Object message) {
 				System.out.println(message.toString());
+				
+				String msg = "Hello World!!!";
+                HashMap<String, Object> args = new HashMap<String, Object>(2);
+                args.put("channel", channel);
+                args.put("message", msg);
+                pubnub.publish(args);
+
 				return false;
 			}
         }

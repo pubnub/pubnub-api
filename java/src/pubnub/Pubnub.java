@@ -37,10 +37,16 @@ public class Pubnub {
     private String SECRET_KEY    = "";
     private String CIPHER_KEY    = "";
     private boolean SSL          = false;
+    private class Channel_status {
+        String channel; 
+        boolean connected, first;
+    }
+    private List<Channel_status> subscriptions;
 
     /**
-     * Added constructor to share cipher_key
-     * With cipher_key (plaintext)
+     * PubNub 3.1 with Cipher Key
+     *
+     * Prepare PubNub State.
      * 
      * @param String Publish Key.
      * @param String Subscribe Key.
@@ -194,15 +200,12 @@ public class Pubnub {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else
-            {
-            message=obj;
+            } else {
+                message=obj;
             }
-            
             message="\""+message+"\"";
             
-        }else if(message instanceof JSONArray)
-        {
+        }else if(message instanceof JSONArray) {
             JSONArray obj=(JSONArray)message;
             
             if(this.CIPHER_KEY.length() > 0){
@@ -266,6 +269,7 @@ public class Pubnub {
         args.put("callback", callback);
         subscribe( args );
     }
+
     /**
      * Subscribe
      *
@@ -288,24 +292,63 @@ public class Pubnub {
     private void _subscribe( HashMap<String, Object> args ) {
 
         String   channel = (String) args.get("channel");
-        Callback callback = (Callback) args.get("callback");
-        String   timetoken = (String) args.get("timetoken");
+        String timetoken = (String) args.get("timetoken");
+        Callback callback, connect_cb, disconnect_cb, reconnect_cb, error_cb;
 
-        if(channel == null||channel== "")
-        {
-            JSONArray jsono = new JSONArray();
-
-            try { jsono.put("Invalid Channel."); }
-            catch (Exception jsone) {}
+        // Validate Arguments
+        if (args.get("callback") != null) {
+            callback = (Callback) args.get("callback");
+        } else {
+            System.out.println("Invalid Callback.");
             return;
         }
-        if(callback == null)
-        {
-            JSONArray jsono = new JSONArray();
+        if (args.get("connect_cb") != null)
+            connect_cb = (Callback) args.get("connect_cb");
+        else
+            connect_cb = new TempCallback();
+        if (args.get("disconnect_cb") != null)
+            disconnect_cb = (Callback) args.get("disconnect_cb");
+        else
+            disconnect_cb = new TempCallback();
+        if (args.get("reconnect_cb") != null)
+            reconnect_cb = (Callback) args.get("reconnect_cb");
+        else
+            reconnect_cb = new TempCallback();
+        if (args.get("error_cb") != null)
+            error_cb = (Callback) args.get("error_cb");
+        else
+            error_cb = (Callback) args.get("callback");
 
-            try { jsono.put("Invalid Callback."); }
-            catch (Exception jsone) {}
+        if (channel == null || channel.equals("")) {
+            error_cb.execute("Invalid Channel.");
             return;
+        }
+
+        // Ensure Single Connection
+        if (subscriptions != null && subscriptions.size() > 0) {
+            boolean channel_exist = false;
+            for (Channel_status it : subscriptions) {
+                if(it.channel.equals(channel)) {
+                    channel_exist = true;
+                    break;
+                }
+            }
+            if (!channel_exist) {
+                Channel_status cs = new Channel_status();
+                cs.channel = channel;
+                cs.connected = true;
+                subscriptions.add(cs);
+            } else {
+                error_cb.execute("Already Connected");
+                return;
+            }
+        } else {
+            // New Channel
+            Channel_status cs = new Channel_status();
+            cs.channel = channel;
+            cs.connected = true;
+            subscriptions = new ArrayList<Pubnub.Channel_status>();
+            subscriptions.add(cs);
         }
 
         while (true) {
@@ -315,8 +358,72 @@ public class Pubnub {
                         "subscribe", this.SUBSCRIBE_KEY, channel, "0", timetoken
                         );
 
+                // Stop Connection?
+                boolean is_disconnect = false;
+                for (Channel_status it : subscriptions) {
+                    if (it.channel.equals(channel)) {
+                        if(!it.connected) {
+                            disconnect_cb.execute("Disconnected from channel : "+channel);
+                            is_disconnect = true;
+                            break;
+                        }
+                    }
+                }
+                if (is_disconnect)
+                    return;
+
                 // Wait for Message
                 JSONArray response = _request(url);
+
+                // Stop Connection?
+                for (Channel_status it : subscriptions) {
+                    if (it.channel.equals(channel)) {
+                        if (!it.connected) {
+                            disconnect_cb.execute("Disconnected from channel : "+channel);
+                            is_disconnect = true;
+                            break;
+                        }
+                        // Connection Callback
+                        if (!it.first) {
+                            it.first = true;
+                            connect_cb.execute("Connected to channel : "+channel);
+                            break;
+                        }
+                    }
+                }
+
+                if (is_disconnect)
+                    return;
+
+                // Problem?
+                if (response == null) {
+                    // Disconnect
+                    is_disconnect = false;
+                    for (Channel_status it : subscriptions) {
+                        if (it.channel.equals(channel)) {
+                            if(it.connected) {
+                                it.connected = false;
+                                disconnect_cb.execute("Disconnected to channel : "+channel);
+                            }
+                            is_disconnect = true;
+                            break;
+                        }
+                    }
+                    // Ensure Connected (Call Time Function)
+                    double time_token = this.time();
+                    if (time_token == 0) {
+                        error_cb.execute("Lost Network Connection.");
+                        return;
+                    } else {
+                        // Reconnect
+                        if(!is_disconnect) {
+                            reconnect_cb.execute("Reconnecting...");
+                            Thread.sleep(5000);
+                            this._subscribe(args);
+                        }
+                    }
+                    return;
+                }
 
                 JSONArray messages = response.optJSONArray(0);
 
@@ -324,60 +431,39 @@ public class Pubnub {
                 if (response.optString(1).length() > 0)
                     timetoken = response.optString(1);
 
-                // Run user Callback and Reconnect if user permits. If
-                // there's a timeout then messages.length() == 0.
-
                 for ( int i = 0; messages.length() > i; i++ ) {
                     JSONObject message = messages.optJSONObject(i);
+                    if(message != null) {
 
-                    if(message == null)
-                    {
-                        JSONArray arr=    messages.optJSONArray(i);
-                        if(arr == null)
-                        {
-                            String msgs=messages.getString(0);
-
-                            if(this.CIPHER_KEY.length() > 0){
-                                PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-                                msgs=pc.decrypt(msgs); 
-
-                            }
-                            if(callback !=null)
-                            {
-                                callback.execute(msgs);
-                            }
-                        }
-                        else
-                        {
-                            if(this.CIPHER_KEY.length() > 0){
-                                PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-
-                                // System.out.println("ARRAY::"+arr.toString());
-                                arr=pc.decryptJSONArray(arr); ;
-                            }
-                            if(callback !=null)
-                            {
-                                callback.execute(arr);
-                            }
-
-                        }
-
-                    }else
-                    {
                         if(this.CIPHER_KEY.length() > 0){
                             // Decrypt Message
                             PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
                             message = pc.decrypt(message);
                         }
                         if(callback !=null)
-                        {
                             callback.execute(message);
+                    } else {
+
+                        JSONArray arr = messages.optJSONArray(i);
+                        if(arr != null) {
+                            if(this.CIPHER_KEY.length() > 0) {
+                                PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+                                arr=pc.decryptJSONArray(arr); ;
+                            }
+                            if(callback !=null)
+                                callback.execute(arr);
+                        } else {
+                            String msgs=messages.getString(0);
+                            if(this.CIPHER_KEY.length() > 0) {
+                                PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+                                msgs=pc.decrypt(msgs); 
+                            }
+                            if(callback !=null)
+                                callback.execute(msgs);
                         }
                     }
-
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 try { Thread.sleep(1000); }
                 catch(InterruptedException ie) {}
             }
@@ -460,6 +546,24 @@ public class Pubnub {
     }
 
     /**
+     * Unsubscribe
+     *
+     * Unsubscribe/Disconnect to channel.
+     *
+     * @param HashMap<String, Object> containing channel name.
+     */
+    public void unsubscribe( HashMap<String, Object> args ) {
+        String channel = (String) args.get("channel");
+        for (Channel_status it : subscriptions) {
+            if(it.channel.equals(channel) && it.connected) {
+                it.connected = false;
+                it.first = false;
+                break;
+            }
+        }
+    }
+
+    /**
      * Request URL
      *
      * @param List<String> request of url directories.
@@ -502,10 +606,10 @@ public class Pubnub {
             Request request = rb.build();
 
             //Execute Request
-            Future<String> f = ahc.executeRequest(request, new AsyncCompletionHandler<String>(){
+            Future<String> f = ahc.executeRequest(request, new AsyncCompletionHandler<String>() {
 
                 @Override
-                public String onCompleted(Response r) throws Exception{
+                public String onCompleted(Response r) throws Exception {
 
                     String ce = r.getHeader("Content-Encoding");
                     InputStream resulting_is = null;
@@ -586,5 +690,15 @@ public class Pubnub {
 
     private boolean isUnsafe(char ch) {
         return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?ɂ顶".indexOf(ch) >= 0;
+    }
+
+    // Temporary callback, using if optional callback not provided
+    private class TempCallback implements Callback {
+
+        @Override
+        public boolean execute(Object message) {
+            // DO NOTHING
+            return false;
+        }
     }
 }
