@@ -1,1 +1,109 @@
-http://www.wikiflashed.com/wiki/PubNub - Flash AS3 Example
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account
+##
+## ----------------------------------------------------
+
+## -------------------------------------------------------------
+## PubNub 3.1 Real-time Cloud Push API - Flash - Action Script 3
+## -------------------------------------------------------------
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
+
+## This is based on CS 5.0
+==================================================================================
+TUTORIAL: HOW TO USE
+==================================================================================
+
+##  --------------------------------------------------------------------------------
+## 	Flash AS3 : (Init)
+## 	------------
+
+		//set the channel
+		var channelName:String = "hello-world";
+
+        // Initialize pubnub state
+        var pubnub:PubNub = PubNub.getInstance(); 
+		var config:Object = {	
+			push_interval:10,
+			publish_key:"demo",
+			sub_key:"demo",
+			secret_key:"demo",
+			cipher_key:"demo"
+		}	
+		pubnub.init(config);	
+##  ------------------------------------------------------------------------------------
+##  Flash AS3 : (Publish)
+##  ---------------
+
+		//Publish the messages of type String, json array, and json object
+		pubnub.addEventListener(PubNubEvent.INIT, onPubInit);
+		function onPubInit(event:PubNubEvent):void
+		{
+			var msgArr:Array = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+			var msgObj:Object = {"Name":"Jhon","Age":"25"};
+			
+			PubNub.publish( { callback:onPublishHandler, channel:channelName, message:"Hello AS3"} ); //string message
+			PubNub.publish( { callback:onPublishHandler, channel:channelName, message:msgArr} ); // array
+			PubNub.publish( { callback:onPublishHandler, channel:channelName, message:msgObj} ); //object
+		}
+		function onPublishHandler(evt:PubNubEvent):void
+		{
+			trace("[" + evt.data.result[0] + " ," + evt.data.result[1]+ " ," + evt.data.result[2] + "]");
+		}
+
+			
+##  ------------------------------------------------------------------------------------
+##  Flash AS3 : (Subscribe)
+##  -----------------
+		//Subscribe messages of type string,json array and json object
+		pubnub.addEventListener(PubNubEvent.INIT, onSubInit);
+		function onSubInit(event:PubNubEvent):void
+		{
+			PubNub.subscribe( { callback:onSubscribeHandler, channel:channelName } );
+		}
+		function onSubscribeHandler(evt:PubNubEvent):void
+		{  
+			trace("[Subscribed data] : " + evt.data.result[1]);
+		}
+
+##  ------------------------------------------------------------------------------------
+##  Flash AS3 : (History)
+##  ---------------
+		//Get the history of messages which has published and it depends on limit
+		pubnub.addEventListener(PubNubEvent.INIT, onHistInit);
+		function onHistInit(event:PubNubEvent):void
+		{
+			PubNub.history({ callback:onHistoryHandler, channel:channelName, limit:"3"});
+		}
+		function onHistoryHandler(evt:PubNubEvent):void
+		{  
+			trace("[History data] : " + evt.data.result[1]);
+		}
+        
+
+##  ------------------------------------------------------------------------------------
+##  Flash AS3 : (Time)
+##  ------------
+		//Get the time
+		pubnub.addEventListener(PubNubEvent.INIT, onTimeInit);
+		function onTimeInit(event:PubNubEvent):void
+		{
+			PubNub.time({ callback:onTimeHandler});
+		}
+		function onTimeHandler(evt:PubNubEvent):void
+		{  
+			trace("[Time] : " + evt.data.result[0]);
+		}
+	
+##  ------------------------------------------------------------------------------------
+##  Flash AS3 : (UUID)
+##  ------------
+		// Get UUID
+		var uid:String = pubnub._uid();		
+		trace("Generated UUID is :" + uid);
+
+=========================================================================================

@@ -22,7 +22,6 @@ package
         { 
             data = d;
             super(type, bubbles, cancelable);
- 
         } 
  
         public override function clone():Event 

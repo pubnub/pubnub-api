@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: WikiFlashed
  * Released under: MIT or whatever license allowed by PubNub.
  * Use of this file at your own risk. WikiFlashed holds no responsibility or liability to what you do with this.
@@ -76,40 +76,40 @@ package
          * ??
          * Hash Array
          * origin = https:// or http://
-         * @param       config
+         * @param config
          */
         public function init(config:Object):void
         {
-            if(config.ssl && config.origin) 
+            if(config.ssl && config.origin)
             {
                 origin = "https://" + config.origin;
-            } 
-            else if (config.origin) 
+            }
+            else if (config.origin)
             {
                 origin = "http://" + config.origin;
             }
  
-            if(config.publish_key) 
+            if(config.publish_key)
             {
                 publish_key = config.publish_key;
             }
  
-            if(config.sub_key) 
+            if(config.sub_key)
             {
                 sub_key = config.sub_key;
             }
  
-            if(config.secret_key) 
+            if(config.secret_key)
             {
                 secret_key = config.secret_key;
             }
 			
-			if(config.cipher_key) 
+			if(config.cipher_key)
 			{
                 this.cipher_key = config.cipher_key;
             }
  
-            if (config.push_interval) 
+            if (config.push_interval)
             {
                 interval = config.push_interval;
             }
@@ -117,22 +117,22 @@ package
             queue = [];
             subscriptions = [];
  
-            function timeHandler( evt:Event ):void 
+            function timeHandler( evt:Event ):void
             {
               
                 var node:Object = queue["init"];
                 var loader:URLLoader = node.loader;
-                if ( evt.type == Event.COMPLETE ) 
+                if ( evt.type == Event.COMPLETE )
                 {
-                    try 
+                    try
                     {
                         var result:Object = JSON.decode(loader.data);		
                         start_time_token = result[0];
-                    } catch (e:*) 
+                    } catch (e:*)
                     {
                         trace("[PubNub] Bad JSON Content");
                     }
-                    initialized = true; 
+                    initialized = true;
                     dispatchEvent(new PubNubEvent(PubNubEvent.INIT));
                 }
             }
@@ -149,7 +149,7 @@ package
         public static function publish(args:Object):void
         {
 			
-            if (!INSTANCE.initialized) 
+            if (!INSTANCE.initialized)
             {
                 throw("[PUBNUB] Not initialized yet");
             }                   
@@ -164,9 +164,9 @@ package
          */
         public function _publish(args:Object):void
         {
-            var onResult:Function       = args.callback || dispatchEvent;
+            var onResult:Function = args.callback || dispatchEvent;
  
-            if (!args.channel || !args.message) 
+            if (!args.channel || !args.message)
             {
                 onResult(new PubNubEvent(PubNubEvent.PUBLISH, { channel:channel, result:[-1,"Channel Not Given and/or Message"], timeout:1000 } ));
                 return;
@@ -183,7 +183,7 @@ package
 				// Sign message using HmacSHA256
 				signature = HMAC.hash(secret_key, concat,SHA256);		
             }
-			if(this.cipher_key.length > 0) 
+			if(this.cipher_key.length > 0)
 			{
 				var pubnubcrypto:PubnubCrypto = new PubnubCrypto();
 				message = pubnubcrypto.encrypt(this.cipher_key,message);	
@@ -192,23 +192,23 @@ package
 			message = JSON.encode(message);
             var uid:String = _uid();
  			
-            function publishHandler( evt:Event ):void 
+            function publishHandler( evt:Event ):void
             {
 				var node:Object = queue[uid];
                 var loader:URLLoader = node.loader;
-                if ( evt.type == Event.COMPLETE ) 
+                if ( evt.type == Event.COMPLETE )
                 {
-                    try 
+                    try
                     {
                         var result:Object = JSON.decode(loader.data);                           
                         onResult(new PubNubEvent(PubNubEvent.PUBLISH, { channel:channel, result:result, timeout:1 } ));
-					} 
-					catch (e:*) 
+					}
+					catch (e:*)
 					{
                         trace("[PubNub] Bad Data Content Ignored");
                     }
-                } 
-                else 
+                }
+                else
                 {
                     onResult(new PubNubEvent(PubNubEvent.PUBLISH, { channel:channel, result:[-1,"Connection Issue"], timeout:1000 } ));
                 }
@@ -226,7 +226,7 @@ package
          */
         public static function subscribe(args:Object):void
         {
-            if (!INSTANCE.initialized) 
+            if (!INSTANCE.initialized)
             {
                 throw("[PUBNUB] Not initialized yet");
             }
@@ -239,17 +239,17 @@ package
          * @param       args
          */
         public function _subscribe(args:Object):void
-        {	
+        {
         	var pubnubcrypto:PubnubCrypto = new PubnubCrypto();
 			var onResult:Function = args.callback || dispatchEvent;
  
-            if (!args.callback) 
+            if (!args.callback)
             {
                 throw("[PubNub] Missing Callback Function");
                 return;
             }
  
-            if (!args.channel) 
+            if (!args.channel)
             {
                 onResult(new PubNubEvent(PubNubEvent.PUBLISH, { channel:channel, result:[-1,"Channel Not Given"], timeout:1000 } ));
                 return;
@@ -257,12 +257,12 @@ package
  
             var channel:String = args.channel; 			
             var time:Number = 0;
-            if (!subscriptions[channel]) 
+            if (!subscriptions[channel])
             {
                 subscriptions[channel] = {}
             }
  
-            if (subscriptions[channel].connected) 
+            if (subscriptions[channel].connected)
             {
                 onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { channel:channel, result:[-1, "Already Connected"], timeout:1000 } ));
                 return;
@@ -274,12 +274,12 @@ package
 		   
             var uid:String = _uid();
  
-            function subHandler( evt:Event ):void 
+            function subHandler( evt:Event ):void
             {
 				var node:Object = queue[uid];
                 var loader:URLLoader = node.loader;
  
-                if (!subscriptions[channel].connected) 
+                if (!subscriptions[channel].connected)
                 {
                     // Stops the connection or any further listening loops
                     loader.close();
@@ -296,11 +296,11 @@ package
                 if ( evt.type == Event.COMPLETE )
 				{
 					
-                    try 
+                    try
                     {						
 						var result:Object = JSON.decode(loader.data);	
 						time = result[1];
-                        if(result is Array) 
+                        if(result is Array)
                         {							
 							if (time == 0)
 							{
@@ -328,8 +328,8 @@ package
 							}
 							time = result[1];
                         } 
-                    } 
-                    catch (e:Error) 
+                    }
+                    catch (e:Error)
                     {						
                         trace("[PubNub] Bad Data Content Ignored");
                     }
@@ -340,21 +340,21 @@ package
                     	_request({ url:url, channel:channel, handler:subHandler, uid:uid, timetoken:time });
                     });
                     timer.start();
-                } 
-                else 
+                }
+                else
                 {
                     // Possibly Network Issue, then try again after 1 second.
                     onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { channel:channel, result:[ -1, "Connection Issue"], timeout:1000 } ));                               
                   	node.tries++;
                     
-                    if (node.tries == 30) 
+                    if (node.tries == 30)
                     {
                         // After 30 tries, seeming the network is now dead after 30 seconds.
                         // Dispatches error event
                         _unsubscribe({ channel:channel, uid:uid });
                         dispatchEvent(new PubNubEvent(PubNubEvent.ERROR, { channel:channel, message:"Channel Dropped" } ));
-                    } 
-                    else 
+                    }
+                    else
                     {
                         timer = new Timer(1000, 1);
                         timer.addEventListener(TimerEvent.TIMER_COMPLETE, function():void {
@@ -370,7 +370,7 @@ package
  		public static function history(args:Object):void
         {
 			
-            if (!INSTANCE.initialized) 
+            if (!INSTANCE.initialized)
             {
                 throw("[PUBNUB] Not initialized yet");
             }                   
@@ -380,16 +380,16 @@ package
         {
 			var onResult:Function = args.callback || dispatchEvent;
 			
-			if (!args.channel || !args.limit) 
+			if (!args.channel || !args.limit)
 			{
                 onResult(new PubNubEvent(PubNubEvent.HISTORY, { channel:channel, result:[-1,"Channel Not Given and/or Limit"], timeout:1000 } ));
                 return;
             }
 			var channel:String   = args.channel;
-            var limit:String   = args.limit;	
+            var limit:String   = args.limit;
 			var uid:String = _uid();
             var url:String = origin + "/" + "history" + "/" + sub_key + "/" + _encode(channel) + "/" + 0 + "/" +_encode(limit);			 
-			function HistoryHandler( evt:Event ):void 
+			function HistoryHandler( evt:Event ):void
 			{
 				var node:Object = queue[uid];
                 var loader:URLLoader = node.loader;
@@ -414,7 +414,7 @@ package
 							}
 						}
 					}
-					catch (e:*) 
+					catch (e:*)
 					{
                         trace("[PubNub history] Bad Data Content Ignored");
 					}
@@ -431,10 +431,10 @@ package
 		}
 		public static function time(args:Object):void
         {
-           	if (!INSTANCE.initialized) 
+           	if (!INSTANCE.initialized)
            	{
                	throw("[PUBNUB] Not initialized yet");
-           	}                   
+           	}
            	INSTANCE._time(args);
         }
 		public function _time(args:Object):void
@@ -457,7 +457,7 @@ package
 							onResult(new PubNubEvent(PubNubEvent.TIME, {result:[JSON.encode(result[0])],timeout:1 } )); 
 						}
 					}
-					catch (e:*) 
+					catch (e:*)
 					{
                         trace("[PubNub time] Bad Data Content Ignored");
 					}
@@ -478,7 +478,7 @@ package
          */
         public static function unsubscribe(args:Object):void
         {
-            if (!INSTANCE.initialized) 
+            if (!INSTANCE.initialized)
             {
                 throw("[PUBNUB] Not initialized yet");
             }                   
@@ -494,7 +494,7 @@ package
         {
             var onResult:Function       = args.callback || dispatchEvent;                       
  
-            if (!args.channel) 
+            if (!args.channel)
             {
                 onResult(new PubNubEvent(PubNubEvent.UNSUBSCRIBE, { channel:channel, result:[-1,"Channel Not Given"], timeout:1000 } ));
                 return;
@@ -527,11 +527,11 @@ package
 
             var loader:URLLoader = node.loader;
             var url:String = args.url;
-            if (args.timetoken != null) 
+            if (args.timetoken != null)
             {                               
                 url += "/" + args.timetoken;
             }
-            if (!loader) 
+            if (!loader)
             {
 				
                 node.loader = loader = new URLLoader();                 
