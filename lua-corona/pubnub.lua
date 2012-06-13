@@ -44,7 +44,7 @@ function pubnub.new(init)
                 self.secret_key,
                 channel,
                 message
-            }, "/" ) )			
+            }, "/" ) )
         end
 
         -- PUBLISH MESSAGE
@@ -71,7 +71,7 @@ function pubnub.new(init)
         local channel   = args.channel
         local callback  = callback or args.callback
         local errorback = args['errorback'] or function() end
-		local connectcb = args['connect'] or function() end
+        local connectcb = args['connect'] or function() end
         local timetoken = 0
 
         if not channel then return print("Missing Channel") end
@@ -88,7 +88,7 @@ function pubnub.new(init)
         end
 
         subscriptions[channel].connected = 1
-		subscriptions[channel].first     = nil
+        subscriptions[channel].first     = nil
 
         -- SUBSCRIPTION RECURSION 
         local function substabizel()
@@ -101,12 +101,12 @@ function pubnub.new(init)
                     -- STOP CONNECTION?
                     if not subscriptions[channel].connected then return end
 
-					-- CONNECTED CALLBACK
+                    -- CONNECTED CALLBACK
                     if not subscriptions[channel].first then
                         subscriptions[channel].first = true
                         connectcb()
                     end
-					
+
                     -- PROBLEM?
                     if not response then
                         -- ENSURE CONNECTED
@@ -149,7 +149,7 @@ function pubnub.new(init)
 
         -- DISCONNECT
         subscriptions[channel].connected = nil
-		subscriptions[channel].first     = nil
+        subscriptions[channel].first     = nil
     end
 
     function self:history(args)
@@ -196,17 +196,17 @@ function pubnub.new(init)
         table.insert( args.request, 1, self.origin )
 
         local url = table.concat( args.request, "/" )
-		local params = {}
+        local params = {}
         params["V"] = "3.1"
-		params["User-Agent"] = "Corona"
-		
+        params["User-Agent"] = "Corona"
+
         network.request( url, "GET", function(event)
             if (event.isError) then
                 return args.callback(nil)
             end
 
             status, message = pcall( Json.Decode, event.response )
-			
+
             if status then
                 return args.callback(message)
             else
@@ -230,8 +230,8 @@ function pubnub.new(init)
         return new_array
     end
 
-	function self:UUID()
-		local chars = {"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"}
+     function self:UUID()
+        local chars = {"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"}
         local uuid = {[9]="-",[14]="-",[15]="4",[19]="-",[24]="-"}
         local r, index
         for i = 1,36 do
@@ -252,12 +252,12 @@ function pubnub.new(init)
                 end
         end
         return table.concat(uuid)
-	end	
-	
-	local Hex2Dec, BMOr, BMAnd, Dec2Hex
-	if(BinDecHex)then
+     end
+
+     local Hex2Dec, BMOr, BMAnd, Dec2Hex
+     if(BinDecHex)then
         Hex2Dec, BMOr, BMAnd, Dec2Hex = BinDecHex.Hex2Dec, BinDecHex.BMOr, BinDecHex.BMAnd, BinDecHex.Dec2Hex
-	end
+     end
 
     -- RETURN NEW PUBNUB OBJECT
     return self
