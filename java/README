@@ -6,7 +6,7 @@
 ## ----------------------------------------------------
 
 ## ------------------------------------------
-## PubNub 3.0 Real-time Cloud Push API - JAVA
+## PubNub 3.1 Real-time Cloud Push API - JAVA
 ## ------------------------------------------
 ##
 ## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
@@ -19,16 +19,6 @@
 ===============================================================================
 PubNub Java Client API Boiler Plate
 ===============================================================================
- 
--------------------------------------------------------------------------------
-JavaScript: (Subscribe)
--------------------------------------------------------------------------------
-
-    PUBNUB.subscribe( { channel : "hello_world" } , function(message) {
-        console.log(JSON.stringify(message));
-        alert(JSON.stringify(message));
-    } );
-
 
 -------------------------------------------------------------------------------
 Java: (Init)
@@ -91,8 +81,7 @@ Java: (Subscribe)
     // Listen for Messages (Subscribe)
     pubnub.subscribe( args );
 
-
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 Java: (History)
 -------------------------------------------------------------------------------
 
@@ -108,3 +97,28 @@ Java: (History)
     System.out.println(response);
     System.out.println(response.optJSONObject(0).optString("some_key"));
 
+-------------------------------------------------------------------------------
+Java: (Unsubscribe)
+-------------------------------------------------------------------------------
+
+	// Create HashMap parameter
+    HashMap<String, Object> args = new HashMap<String, Object>(2);
+	args.put("channel", "hello_world");		// Channel Name
+		
+    // Unsubscribe/Disconnect
+    pubnub.unsubscribe( args );
+
+-------------------------------------------------------------------------------
+Java: (Time)
+-------------------------------------------------------------------------------
+
+	// Get server time
+	double time = pubnub.time();
+    System.out.println("Time : "+time);
+
+-------------------------------------------------------------------------------
+Java: (UUID)
+-------------------------------------------------------------------------------
+
+	// Get UUID
+	System.out.println("UUID : "+Pubnub.uuid());
