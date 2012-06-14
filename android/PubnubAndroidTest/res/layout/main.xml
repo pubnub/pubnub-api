@@ -22,6 +22,11 @@
     	
 	    <TableRow>
 	    
+	    	<Button android:text="Unsubscribe"
+        		android:id="@+id/unsubscribeBtn"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content" />
+	    
 			<Button android:text="History"
         		android:id="@+id/historyBtn"
         		android:layout_width="wrap_content"
@@ -39,13 +44,11 @@
         		
 	    </TableRow>
 	</TableLayout>
-
-    <Button
+    <Button
         android:id="@+id/button1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="AllMessageClick"
         android:text="All Message Publish" />
-
 
 </LinearLayout>

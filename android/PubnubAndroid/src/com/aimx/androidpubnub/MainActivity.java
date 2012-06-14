@@ -101,7 +101,6 @@ public class MainActivity extends Activity {
         } catch (Exception ex){
             //just eat it
         }
-        
     }
     
     private void killService() {
@@ -128,7 +127,6 @@ public class MainActivity extends Activity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }
