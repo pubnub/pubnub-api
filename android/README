@@ -9,7 +9,7 @@ Garett Rogers - [@GarettRogers](http://twitter.com/garettrogers)
 
 http://www.pubnub.com/account
 
-## PubNub 3.0 Real-time Cloud Push API - ANDROID
+## PubNub 3.1 Real-time Cloud Push API - ANDROID
 
 http://www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/tutorial/java-push-api
@@ -123,6 +123,17 @@ Caveats:
     
 ```
 
+## Java: (Unsubscribe)
+
+```java
+    // Create HashMap parameter
+    HashMap<String, Object> args = new HashMap<String, Object>(2);
+	args.put("channel", "hello_world");		// Channel Name
+	
+    // Get Unsubscribe
+    pubnub.unsubscribe( args );
+
+```
 
 ## Java: (History)
 
@@ -138,5 +149,20 @@ Caveats:
     // Print Response from PubNub JSONP REST Service
     System.out.println(response);
     System.out.println(response.optJSONObject(0).optString("some_key"));
+
+```
+
+## Java: (Time)
+
+```java
+    Pubnub pubnub = new Pubnub("demo", "demo");
+	System.out.println(" Time: "+pubnub.time());
+
+```
+
+## Java: (UUID)
+
+```java
+	System.out.println(" UUID: "+Pubnub.uuid());
 
 ```
