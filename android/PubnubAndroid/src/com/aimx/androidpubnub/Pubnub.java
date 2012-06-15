@@ -611,7 +611,6 @@ public class Pubnub {
             try { jsono.put("Failed JSONP HTTP Request."); }
             catch (Exception jsone) {}
 
-            e.printStackTrace();
             System.out.println(e);
 
             return jsono;
@@ -648,7 +647,7 @@ public class Pubnub {
             HttpClient httpclient = new DefaultHttpClient();
             HttpUriRequest request = new HttpGet(url);
             request.setHeader("V", "3.1");
-            request.setHeader("User-Agent", "Android");
+            request.setHeader("User-Agent", "Java-Android");
             request.setHeader("Accept-Encoding", "gzip");
             httpclient.getParams().setParameter("http.connection.timeout", 310000);
 

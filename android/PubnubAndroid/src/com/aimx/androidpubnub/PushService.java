@@ -66,13 +66,10 @@ public class PushService extends Service {
 
             // Launch new Intent to view a new contact added
             Intent notificationIntent = new Intent(Intent.ACTION_VIEW, uri);
-            PendingIntent contentIntent = PendingIntent.getActivity(
-                    getApplicationContext(), 0, notificationIntent, 0);
-            notification.setLatestEventInfo(getApplicationContext(), title,
-                    message, contentIntent);
+            PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+            notification.setLatestEventInfo(getApplicationContext(), title, message, contentIntent);
 
-            NotificationManager nm = (NotificationManager) context
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             nm.notify(1, notification);
 
         }
@@ -82,9 +79,9 @@ public class PushService extends Service {
                 if(message instanceof JSONObject)
                 {
                     JSONObject message1 =(JSONObject)message;
-                generateNotification(getApplicationContext(),
-                        message1.getString("title"), message1.getString("text"),
-                        Uri.parse(message1.getString("url")));
+                    generateNotification(getApplicationContext(),
+                    message1.getString("title"), message1.getString("text"),
+                    Uri.parse(message1.getString("url")));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -99,53 +96,53 @@ public class PushService extends Service {
         protected Boolean doInBackground(String... params) {
             {
                 try {
-                	// Callback Interface when a channel is connected
+                    // Callback Interface when a channel is connected
                     class ConnectCallback implements Callback {
 
-            			@Override
-            			public boolean execute(Object message) {
-            				System.out.println(message.toString());
-            				return false;
-            			}
+                        @Override
+                        public boolean execute(Object message) {
+                            System.out.println(message.toString());
+                            return false;
+                        }
                     }
 
                     // Callback Interface when a channel is disconnected
                     class DisconnectCallback implements Callback {
 
-            			@Override
-            			public boolean execute(Object message) {
-            				System.out.println(message.toString());
-            				return false;
-            			}
+                        @Override
+                        public boolean execute(Object message) {
+                            System.out.println(message.toString());
+                            return false;
+                        }
                     }
 
                     // Callback Interface when a channel is reconnected
                     class ReconnectCallback implements Callback {
 
-            			@Override
-            			public boolean execute(Object message) {
-            				System.out.println(message.toString());
-            				return false;
-            			}
+                        @Override
+                        public boolean execute(Object message) {
+                            System.out.println(message.toString());
+                            return false;
+                        }
                     }
 
                     // Callback Interface when error occurs
                     class ErrorCallback implements Callback {
 
-            			@Override
-            			public boolean execute(Object message) {
-            				System.out.println(message.toString());
-            				return false;
-            			}
+                        @Override
+                        public boolean execute(Object message) {
+                            System.out.println(message.toString());
+                            return false;
+                        }
                     }
-                	
-                	HashMap<String, Object> args = new HashMap<String, Object>(2);
+
+                    HashMap<String, Object> args = new HashMap<String, Object>(2);
                     args.put("channel", params[0]);
                     args.put("callback", mPushReceiver);
-                    args.put("connect_cb", new ConnectCallback());			// callback to get connect event
-                    args.put("disconnect_cb", new DisconnectCallback());	// callback to get disconnect event
-                    args.put("reconnect_cb", new ReconnectCallback());		// callback to get reconnect event
-                    args.put("error_cb", new ErrorCallback());				// callback to get error event
+                    args.put("connect_cb", new ConnectCallback());            // callback to get connect event
+                    args.put("disconnect_cb", new DisconnectCallback());      // callback to get disconnect event (optional)
+                    args.put("reconnect_cb", new ReconnectCallback());        // callback to get reconnect event (optional)
+                    args.put("error_cb", new ErrorCallback());                // callback to get error event (optional)
                     pubnub.subscribe(args);
                 } catch (Exception e) {
                     e.printStackTrace();

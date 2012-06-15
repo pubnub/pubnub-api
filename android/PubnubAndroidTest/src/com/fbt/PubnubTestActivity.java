@@ -24,10 +24,9 @@ public class PubnubTestActivity extends Activity {
     /** Called when the activity is first created. */
     
     Pubnub pubnub;
-    String myMessage="";
+    String myMessage = "", channel = "hello_world";
     EditText ed;
     RefreshHandler r = new RefreshHandler();
-    String channel = "hello_world_rp3";
     int limit = 1;
     
     @Override
@@ -52,8 +51,8 @@ public class PubnubTestActivity extends Activity {
                 // Create JSON Message
                 JSONObject message = new JSONObject();
                 try { 
-                	if(ed.getText().toString() != null && !ed.getText().toString().equals(""))
-                	message.put( "Message", ed.getText().toString()); 
+                    if(ed.getText().toString() != null && !ed.getText().toString().equals(""))
+                        message.put( "Message", ed.getText().toString()); 
                 }
                 catch (org.json.JSONException jsonError) {}
 
@@ -79,9 +78,9 @@ public class PubnubTestActivity extends Activity {
                 Android: (Unsubscribe/disconnect)
                 -------------------------------------------------------------------------------*/
                 
-            	HashMap<String, Object> args = new HashMap<String, Object>(1);
-            	args.put("channel", channel);
-            	pubnub.unsubscribe( args );
+                HashMap<String, Object> args = new HashMap<String, Object>(1);
+                args.put("channel", channel);
+                pubnub.unsubscribe( args );
             }
         
         });
@@ -105,15 +104,13 @@ public class PubnubTestActivity extends Activity {
                 JSONArray response = pubnub.history( args );
 
                 // Print Response from PubNub JSONP REST Service
-                //System.out.println(response);
-                
                 try {
                     if(response != null){
                         for (int i = 0; i < response.length(); i++) {
                              JSONObject jsono = response.optJSONObject(i);
                              if(jsono != null){
                                  @SuppressWarnings("rawtypes")
-                                Iterator keys = jsono.keys();
+                                 Iterator keys = jsono.keys();
                                  while (keys.hasNext()) {
                                      System.out.print(jsono.get( keys.next().toString() ) +" ");
                                  }
@@ -201,6 +198,7 @@ public class PubnubTestActivity extends Activity {
         response = pubnub.publish(args);
         System.out.println(response);
     }
+
     class RefreshHandler extends Handler {
         @Override  
         public void handleMessage(Message msg) {
@@ -263,51 +261,51 @@ public class PubnubTestActivity extends Activity {
                 // Callback Interface when a channel is connected
                 class ConnectCallback implements Callback {
 
-        			@Override
-        			public boolean execute(Object message) {
-        				System.out.println(message.toString());
-        				return false;
-        			}
+                    @Override
+                    public boolean execute(Object message) {
+                        System.out.println(message.toString());
+                        return false;
+                    }
                 }
 
                 // Callback Interface when a channel is disconnected
                 class DisconnectCallback implements Callback {
 
-        			@Override
-        			public boolean execute(Object message) {
-        				System.out.println(message.toString());
-        				return false;
-        			}
+                    @Override
+                    public boolean execute(Object message) {
+                        System.out.println(message.toString());
+                        return false;
+                    }
                 }
 
                 // Callback Interface when a channel is reconnected
                 class ReconnectCallback implements Callback {
 
-        			@Override
-        			public boolean execute(Object message) {
-        				System.out.println(message.toString());
-        				return false;
-        			}
+                    @Override
+                    public boolean execute(Object message) {
+                        System.out.println(message.toString());
+                        return false;
+                    }
                 }
 
                 // Callback Interface when error occurs
                 class ErrorCallback implements Callback {
 
-        			@Override
-        			public boolean execute(Object message) {
-        				System.out.println(message.toString());
-        				return false;
-        			}
+                    @Override
+                    public boolean execute(Object message) {
+                        System.out.println(message.toString());
+                        return false;
+                    }
                 }
                 
                 // Listen for Messages (Subscribe)
                 HashMap<String, Object> args = new HashMap<String, Object>(2);
-                args.put("channel", channel);            				// Channel Name
-                args.put("callback", new Receiver());     				// callback to get response
-                args.put("connect_cb", new ConnectCallback());			// callback to get connect event
-                args.put("disconnect_cb", new DisconnectCallback());	// callback to get disconnect event
-                args.put("reconnect_cb", new ReconnectCallback());		// callback to get reconnect event
-                args.put("error_cb", new ErrorCallback());				// callback to get error event
+                args.put("channel", channel);                             // Channel Name
+                args.put("callback", new Receiver());                     // callback to get response
+                args.put("connect_cb", new ConnectCallback());            // callback to get connect event
+                args.put("disconnect_cb", new DisconnectCallback());      // callback to get disconnect event (optional)
+                args.put("reconnect_cb", new ReconnectCallback());        // callback to get reconnect event (optional)
+                args.put("error_cb", new ErrorCallback());                // callback to get error event (optional)
                 pubnub.subscribe( args );
 
             } catch (Exception e) {
@@ -325,7 +323,6 @@ public class PubnubTestActivity extends Activity {
 
         protected void onPostExecute(Boolean result) {
             // result is the value returned from doInBackground
-            
         }
     }
 }

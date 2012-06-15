@@ -83,9 +83,9 @@ Caveats:
 
     // Publish Message
     // Create HashMap parameter
-	HashMap<String, Object> args = new HashMap<String, Object>(2);
-	args.put("channel", "hello_world");		// Channel Name
-	args.put("message", message);			// JSON Message
+    HashMap<String, Object> args = new HashMap<String, Object>(2);
+    args.put("channel", "hello_world");        // Channel Name
+    args.put("message", message);              // JSON Message
     
     // Publish Message
     JSONArray info = pubnub.publish( args );
@@ -115,8 +115,8 @@ Caveats:
 
     // Create HashMap parameter
     HashMap<String, Object> args = new HashMap<String, Object>(2);
-	args.put("channel", "hello_world");			// Channel Name
-	args.put("callback", message_receiver);		// Receiver Callback Class
+    args.put("channel", "hello_world");            // Channel Name
+    args.put("callback", message_receiver);        // Receiver Callback Class
     
     // Listen for Messages (Subscribe)
     pubnub.subscribe( args );
@@ -127,9 +127,9 @@ Caveats:
 
 ```java
     // Create HashMap parameter
-    HashMap<String, Object> args = new HashMap<String, Object>(2);
-	args.put("channel", "hello_world");		// Channel Name
-	
+    HashMap<String, Object> args = new HashMap<String, Object>(1);
+    args.put("channel", "hello_world");        // Channel Name
+    
     // Get Unsubscribe
     pubnub.unsubscribe( args );
 
@@ -140,9 +140,9 @@ Caveats:
 ```java
     // Create HashMap parameter
     HashMap<String, Object> args = new HashMap<String, Object>(2);
-	args.put("channel", "hello_world");		// Channel Name
-	args.put("limit", 1);					// Limit
-	
+    args.put("channel", "hello_world");        // Channel Name
+    args.put("limit", 1);                      // Limit
+    
     // Get History
     JSONArray response = pubnub.history( args );
 
@@ -156,13 +156,13 @@ Caveats:
 
 ```java
     Pubnub pubnub = new Pubnub("demo", "demo");
-	System.out.println(" Time: "+pubnub.time());
+    System.out.println(" Time: "+pubnub.time());
 
 ```
 
 ## Java: (UUID)
 
 ```java
-	System.out.println(" UUID: "+Pubnub.uuid());
+    System.out.println(" UUID: "+Pubnub.uuid());
 
 ```
