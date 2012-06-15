@@ -43,9 +43,9 @@ Java: (Publish)
     catch (org.json.JSONException jsonError) {}
 
     // Create HashMap parameter
-	HashMap<String, Object> args = new HashMap<String, Object>(2);
-	args.put("channel", "hello_world");		// Channel Name
-	args.put("message", message);			// JSON Message
+    HashMap<String, Object> args = new HashMap<String, Object>(2);
+    args.put("channel", "hello_world");        // Channel Name
+    args.put("message", message);              // JSON Message
     
     // Publish Message
     JSONArray info = pubnub.publish( args );
@@ -75,8 +75,8 @@ Java: (Subscribe)
     
     // Create HashMap parameter
     HashMap<String, Object> args = new HashMap<String, Object>(2);
-	args.put("channel", "hello_world");			// Channel Name
-	args.put("callback", message_receiver);		// Receiver Callback Class
+    args.put("channel", "hello_world");            // Channel Name
+    args.put("callback", message_receiver);        // Receiver Callback Class
     
     // Listen for Messages (Subscribe)
     pubnub.subscribe( args );
@@ -85,11 +85,11 @@ Java: (Subscribe)
 Java: (History)
 -------------------------------------------------------------------------------
 
-	// Create HashMap parameter
+    // Create HashMap parameter
     HashMap<String, Object> args = new HashMap<String, Object>(2);
-	args.put("channel", "hello_world");		// Channel Name
-	args.put("limit", 1);					// Limit
-	
+    args.put("channel", "hello_world");        // Channel Name
+    args.put("limit", 1);                      // Limit
+    
     // Get History
     JSONArray response = pubnub.history( args );
 
@@ -101,10 +101,10 @@ Java: (History)
 Java: (Unsubscribe)
 -------------------------------------------------------------------------------
 
-	// Create HashMap parameter
-    HashMap<String, Object> args = new HashMap<String, Object>(2);
-	args.put("channel", "hello_world");		// Channel Name
-		
+    // Create HashMap parameter
+    HashMap<String, Object> args = new HashMap<String, Object>(1);
+    args.put("channel", "hello_world");        // Channel Name
+        
     // Unsubscribe/Disconnect
     pubnub.unsubscribe( args );
 
@@ -112,13 +112,13 @@ Java: (Unsubscribe)
 Java: (Time)
 -------------------------------------------------------------------------------
 
-	// Get server time
-	double time = pubnub.time();
+    // Get server time
+    double time = pubnub.time();
     System.out.println("Time : "+time);
 
 -------------------------------------------------------------------------------
 Java: (UUID)
 -------------------------------------------------------------------------------
 
-	// Get UUID
-	System.out.println("UUID : "+Pubnub.uuid());
+    // Get UUID
+    System.out.println("UUID : "+Pubnub.uuid());
