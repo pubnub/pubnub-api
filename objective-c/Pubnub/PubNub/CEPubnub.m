@@ -516,7 +516,7 @@ typedef enum {
                         }
                         
                     }else if ([message isKindOfClass:[NSString class]]) {
-                        if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveArray:onChannel:)]) {
+                        if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveString:onChannel:)]) {
                             NSString * str=[self getDecryptedString:(NSString *)message];
                             
                             [_delegate pubnub:self subscriptionDidReceiveString:str onChannel:connection.channel];
