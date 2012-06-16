@@ -37,7 +37,7 @@ var NOW    = 1
 ,   http   = require('http')
 ,   https  = require('https')
 ,   URLBIT = '/'
-,   XHRTME = 140000
+,   XHRTME = 310000
 ,   XORIGN = 1;
 
 /**
