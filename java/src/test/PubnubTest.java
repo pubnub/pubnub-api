@@ -12,10 +12,10 @@ import pubnub.Pubnub;
 class PubnubTest {
     public static void main(String args[]) {
     	//PubnubTest.test_uuid();
-       	//PubnubTest.test_time();
+       	PubnubTest.test_time();
     	//PubnubTest.test_history();
     	//PubnubTest.test_publish();
-        PubnubTest.test_subscribe();
+        //PubnubTest.test_subscribe();
     }
     
     public static void test_uuid() {
