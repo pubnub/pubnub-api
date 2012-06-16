@@ -41,11 +41,11 @@ test( count($history), 0, 'Initial Empty History' );
 ## ---------------------------------------------------------------------------
 ## PUBLISH
 ## ---------------------------------------------------------------------------
-$pubish_success = $pubnub->publish(array(
+$publish_success = $pubnub->publish(array(
     'channel' => $channel,
     'message' => 'Hi. (顶顅Ȓ)'
 ));
-test( $pubish_success[0], 1, 'Publish First Message' );
+test( $publish_success[0], 1, 'Publish First Message' );
 
 
 ## ---------------------------------------------------------------------------
@@ -62,11 +62,11 @@ test( $history[0], 'Hi. (顶顅Ȓ)', 'History Message Text == "Hi. (顶顅Ȓ)"' 
 ## ---------------------------------------------------------------------------
 ## PUBLISH 2
 ## ---------------------------------------------------------------------------
-$pubish_success = $pubnub->publish(array(
+$publish_success = $pubnub->publish(array(
     'channel' => $channel,
     'message' => 'Hi Again.'
 ));
-test( $pubish_success[0], 1, 'Publish Second Message' );
+test( $publish_success[0], 1, 'Publish Second Message' );
 
 
 ## ---------------------------------------------------------------------------
@@ -98,11 +98,11 @@ test( $timestamp, true, 'Timestamp API Test: ' . $timestamp );
 ## PUBLISH Special Characters
 ## ---------------------------------------------------------------------------
 $craziness      = 'crazy -> ~!@#$%^&*()_+`-=\\][{}\'";:,./<>?顶頴ģŃՃ';
-$pubish_success = $pubnub->publish(array(
+$publish_success = $pubnub->publish(array(
     'channel' => $craziness,
     'message' => $craziness
 ));
-test( $pubish_success[0], 1, 'Publish Crazy Channel/Message' );
+test( $publish_success[0], 1, 'Publish Crazy Channel/Message' );
 
 $history = $pubnub->history(array(
     'channel' => $craziness,
