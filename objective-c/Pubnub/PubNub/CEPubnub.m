@@ -19,7 +19,7 @@
 
 #define kDefaultOrigin @"pubsub.pubnub.com"
 #define kMaxHistorySize 100  // From documentation
-#define kConnectionTimeOut 200.0  // From https://github.com/jazzychad/CEPubnub/blob/master/CEPubnub/CEPubnubRequest.m
+#define kConnectionTimeOut 310.0  // From https://github.com/jazzychad/CEPubnub/blob/master/CEPubnub/CEPubnubRequest.m
 #define kMinRetryInterval 5.0
 #define kInitialTimeToken @"0"
 
