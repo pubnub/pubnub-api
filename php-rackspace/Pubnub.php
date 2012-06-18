@@ -8,7 +8,6 @@
  */
 class Pubnub {
     private $ORIGIN        = 'pubsub.pubnub.com';
-    private $LIMIT         = 1800;
     private $PUBLISH_KEY   = 'demo';
     private $SUBSCRIBE_KEY = 'demo';
     private $SECRET_KEY    = false;
@@ -73,12 +72,6 @@ class Pubnub {
 
         ## Sign Message
         $signature = $this->SECRET_KEY ? md5($string_to_sign) : '0';
-
-        ## Fail if message too long.
-        if (strlen($message) > $this->LIMIT) {
-            echo('Message TOO LONG (' . $this->LIMIT . ' LIMIT)');
-            return array( 0, 'Message Too Long.' );
-        }
 
         ## Send Message
         return $this->_request(array(
