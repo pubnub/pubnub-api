@@ -1,3 +1,4 @@
+# encoding: utf-8
 ## -----------------------------------
 ## PubNub Ruby API Publish Example
 ## -----------------------------------
@@ -10,7 +11,7 @@ require 'pubnub'
 publish_key   = 'demo'
 subscribe_key = 'demo'
 secret_key    = 'demo'
-cipher_key    = 'demo'
+cipher_key    = ''
 ssl_on        = false
 channel       = 'hello_world'
 
