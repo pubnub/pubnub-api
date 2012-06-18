@@ -1,4 +1,4 @@
-package examples;
+package test;
 
 import java.util.HashMap;
 import java.util.Iterator;
