@@ -8,11 +8,11 @@ package
      */
     public class PubNubEvent extends Event 
     {
-		public static const SUBSCRIBE_CONNECTED:String = "SubscribeConnected";
+        public static const SUBSCRIBE_CONNECTED:String = "SubscribeConnected";
         public static const PUBLISH:String = "Publish";
         public static const SUBSCRIBE:String = "Subscribe";
-		public static const HISTORY:String = "History";
-		public static const TIME:String="Time";
+        public static const HISTORY:String = "History";
+        public static const TIME:String="Time";
         public static const UNSUBSCRIBE:String = "Unsubscribe";
         public static const ERROR:String = "Error";
         public static const INIT:String = "Init";
