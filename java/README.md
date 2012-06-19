@@ -1,13 +1,9 @@
-##### -----------------------------------------------
-
 ##### YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 ##### http://www.pubnub.com/account
 
-##### -----------------------------------------------
-
-## ------------------------------------------
+----------------------------------------------
 ## PubNub 3.1 Real-time Cloud Push API - JAVA
-## ------------------------------------------
+----------------------------------------------
 
 ##### www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 ##### http://www.pubnub.com/tutorial/java-push-api
@@ -17,7 +13,7 @@
  to thousands of web and mobile clients simultaneously.
 
 ===============================================================================
-PubNub Java Client API Boiler Plate
+##### PubNub Java Client API Boiler Plate
 ===============================================================================
 
 -------------------------------------------------------------------------------
