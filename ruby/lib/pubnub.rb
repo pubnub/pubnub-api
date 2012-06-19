@@ -29,7 +29,7 @@ class Pubnub
   MAX_RETRIES = 3
   retries=0
   #**
-  #* Pubnub
+  #* Pubnub 3.1 with Cipher Key
   #*
   #* Init the Pubnub Client API
   #*
@@ -54,6 +54,54 @@ class Pubnub
     end
   end
 
+  #**
+  #* Pubnub 3.0 Compatibility
+  #*
+  #* Init the Pubnub Client API
+  #*
+  #* @param string publish_key required key to send messages.
+  #* @param string subscribe_key required key to receive messages.
+  #* @param string secret_key required key to sign messages.
+  #* @param boolean ssl required for 2048 bit encrypted messages.
+  #*
+  def initialize( publish_key, subscribe_key, secret_key, ssl_on )
+    @publish_key   = publish_key
+    @subscribe_key = subscribe_key
+    @secret_key    = secret_key
+    @cipher_key    = ''
+    @ssl           = ssl_on
+    @origin        = 'pubsub.pubnub.com'
+ 
+    if @ssl     
+      @origin = 'https://' + @origin
+    else
+      @origin = 'http://'  + @origin
+    end
+  end
+  
+  #**
+  #* Pubnub 2.0 Compatibility
+  #*
+  #* Init the Pubnub Client API
+  #*
+  #* @param string publish_key required key to send messages.
+  #* @param string subscribe_key required key to receive messages.
+  #*
+  def initialize( publish_key, subscribe_key )
+    @publish_key   = publish_key
+    @subscribe_key = subscribe_key
+    @secret_key    = ''
+    @cipher_key    = ''
+    @ssl           = false
+    @origin        = 'pubsub.pubnub.com'
+ 
+    if @ssl
+      @origin = 'https://' + @origin
+    else
+      @origin = 'http://'  + @origin
+    end
+  end
+  
   #**
   #* Publish
   #*
@@ -269,7 +317,9 @@ class Pubnub
         EventMachine.stop
       }.resume
     end
-    JSON.parse(http_response)
+    if(http_response != '')
+      JSON.parse(http_response)
+    end
   end
 
   ## Non-blocking IO using EventMachine
