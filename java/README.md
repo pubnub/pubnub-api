@@ -1,20 +1,20 @@
-## ---------------------------------------------------
-##
-## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
-## http://www.pubnub.com/account
-##
-## ----------------------------------------------------
+##### -----------------------------------------------
+
+##### YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+##### http://www.pubnub.com/account
+
+##### -----------------------------------------------
 
 ## ------------------------------------------
 ## PubNub 3.1 Real-time Cloud Push API - JAVA
 ## ------------------------------------------
-##
-## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
-## http://www.pubnub.com/tutorial/java-push-api
-##
-## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
-## This is a cloud-based service for broadcasting Real-time messages
-## to thousands of web and mobile clients simultaneously.
+
+##### www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+##### http://www.pubnub.com/tutorial/java-push-api
+
+ PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+ This is a cloud-based service for broadcasting Real-time messages
+ to thousands of web and mobile clients simultaneously.
 
 ===============================================================================
 PubNub Java Client API Boiler Plate
@@ -24,11 +24,12 @@ PubNub Java Client API Boiler Plate
 Java: (Init)
 -------------------------------------------------------------------------------
 
+    // Initialize Pubnub State
     Pubnub pubnub = new Pubnub(
         "demo",  // PUBLISH_KEY
         "demo",  // SUBSCRIBE_KEY
-        "",      // SECRET_KEY
-        "",      // CIPHER_KEY
+        "",      // SECRET_KEY (optional)
+        "",      // CIPHER_KEY (optional)
         false    // SSL_ON?
     );
 
