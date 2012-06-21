@@ -4,26 +4,26 @@ using System.Linq;
 using System.Text;
 using Pubnub;
 
-namespace pubnub_pub
+namespace csharp
 {
     class PubnubTest
     {
         static public void Main()
         {
 
-            // Init Pubnub Class            
+            // Initialize pubnub state
             pubnub objPubnub = new pubnub(
                 "demo",  // PUBLISH_KEY
                 "demo",  // SUBSCRIBE_KEY
                 "demo",  // SECRET_KEY
-                "demo",  //CIPHER_KEY   
+                "",      // CIPHER_KEY   (Cipher key is Optional)
                 false    // SSL_ON?
             );
 
-            // define channel
-            string channel = "test_channel";
+            //define channel
+            string channel = "hello-world";
 
-            // Publish String Message            
+            // Publish string message            
             Dictionary<string, object> args = new Dictionary<string, object>();
             args.Add("channel", channel);
             args.Add("message", "Hello Csharp - mono");
@@ -32,9 +32,9 @@ namespace pubnub_pub
             info = objPubnub.Publish(args);
             Console.WriteLine("[ " + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
 
-            // Publish Message in array format            
+            // Publish message in array format            
             args = new Dictionary<string, object>();
-            string[] objArr = new string[7];
+            object[] objArr = new object[7];
             objArr[0] = "Sunday";
             objArr[1] = "Monday";
             objArr[2] = "Tuesday";
@@ -46,6 +46,7 @@ namespace pubnub_pub
             args.Add("channel", channel);
             args.Add("message", objArr);
 
+            // publish Response
             info = objPubnub.Publish(args);
             Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
 
@@ -66,13 +67,13 @@ namespace pubnub_pub
             argsHist.Add("channel", channel);
             argsHist.Add("limit", 3.ToString());
             List<object> history = objPubnub.History(argsHist);
+            Console.Write("History Messages: ");
             foreach (object history_message in history)
             {
-                Console.Write("History Message: ");
                 Console.WriteLine(history_message);
             }
 
-            // Get UUID
+            //Get UUID
             string uuid = objPubnub.UUID();
             Console.WriteLine("UUID - " + uuid);
 
@@ -80,17 +81,20 @@ namespace pubnub_pub
             object timestamp = objPubnub.Time();
             Console.WriteLine("\nServer Time: " + timestamp.ToString());
 
-            // Subscribe messages
-            objPubnub.Subscribe(
-                channel,
-                delegate(object message)
-                {
-                    Console.WriteLine("\nMessage - " + message);
-                    return true;
-                }
-            );
+            //Subscribe messages
+            pubnub.Procedure callback = delegate(object message)
+            {
+                Console.WriteLine("Messages - " + message);
+                return true;
+            };
+            args = new Dictionary<string, object>();
+            args.Add("channel", channel);
+            args.Add("callback", callback);
+
+            objPubnub.Subscribe(args);
 
             Console.ReadKey();
         }
+
     }
 }

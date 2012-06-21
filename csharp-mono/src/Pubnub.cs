@@ -56,7 +56,7 @@ namespace Pubnub
             bool ssl_on
         )
         {
-            this.init( publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
+            this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
         }
 
         /**
@@ -224,14 +224,11 @@ namespace Pubnub
          * This function is BLOCKING.
          * Listen for a message on a channel.
          *
-         * @param string channel name.
-         * @param Procedure function callback.
+         * @param Dictionary<string,object> args.
+         * args contains  channel name and Procedure function callback.
          */
-        public void Subscribe(string channel, Procedure callback)
+        public void Subscribe(Dictionary<string, object> args)
         {
-            Dictionary<string, object> args = new Dictionary<string, object>();
-            args.Add("channel", channel);
-            args.Add("callback", callback);
             args.Add("timestamp", 0);
             this._subscribe(args);
         }
@@ -240,9 +237,8 @@ namespace Pubnub
           * _subscribe - Private Interface
           *
           * @param Dictionary<string, object> args
-         *  args is channel name and Procedure function callback and timetoken
-          * @param Procedure function callback.
-          * @param string timetoken.
+		  *  args is channel name and Procedure function callback and timetoken
+          * 
           */
         private void _subscribe(Dictionary<string, object> args)
         {
@@ -359,7 +355,7 @@ namespace Pubnub
 
             // Create Request
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
-
+            
             // Set Timeout
             request.Timeout = 310000;
             request.ReadWriteTimeout = 310000;

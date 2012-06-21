@@ -6,7 +6,7 @@ using Pubnub;
 
 namespace csharp
 {
-    class UUIDExample
+    class TimeExample
     {
         static public void Main()
         {
@@ -15,11 +15,14 @@ namespace csharp
                 "demo",  // PUBLISH_KEY
                 "demo",  // SUBSCRIBE_KEY
                 "demo",  // SECRET_KEY
-                "",  // CIPHER_KEY   [Cipher key is Optional]
+                "",      // CIPHER_KEY   (Cipher key is Optional)
                 false    // SSL_ON?
             );
-            Console.WriteLine("UUID - " + objPubnub.UUID());
+            // Get PubNub Server Time
+            object timestamp = objPubnub.Time();
+            Console.WriteLine("\nServer Time: " + timestamp.ToString());
             Console.ReadKey();
         }
+
     }
 }

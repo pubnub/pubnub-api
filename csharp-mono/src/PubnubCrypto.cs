@@ -14,8 +14,7 @@ namespace PubnubCrypto
         {
             this.CIPHER_KEY = cipher_key;            
         }
-
-        // encrypt or decrypt a string
+        // Basic function for encrypt or decrypt a string 
         // for encrypt type=true
         // for decrypt type=false
         public string EncryptOrDecrypt(bool type,string plainStr)   
