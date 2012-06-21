@@ -11,12 +11,12 @@ public class HistoryExample {
     public static void main(String[] params) {
 
         String pub_key = "demo", sub_key = "demo";
-        String secret_key = "demo", cipher_key = "demo";
+        String secret_key = "demo", cipher_key = "";
         String channel = "hello_world";
         int limit = 4;
 
         Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key,
-                true);
+                true); //(Cipher key is Optional)
 
         HashMap<String, Object> args = new HashMap<String, Object>(2);
         args.put("channel", channel);

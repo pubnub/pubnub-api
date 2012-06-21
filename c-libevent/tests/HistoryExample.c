@@ -29,7 +29,7 @@ int main() {
     struct struct_history args = { .channel = "hello_world", .limit = 2, .cb = history_callback };
 
     // initialize Pubnub state
-    Pubnub_overload1("demo", "demo", "demo", "0123456789012345", false);
+    Pubnub_overload1("demo", "demo", "demo", "", false);//[Cipher key is Optional]
 
     // call history function
     history(&args);

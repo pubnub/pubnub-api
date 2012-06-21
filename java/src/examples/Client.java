@@ -12,7 +12,7 @@ import pubnub.Pubnub;
 
 public class Client {
     public static void main(String [] params) {
-    	Pubnub pn  = new Pubnub( "demo", "demo", "demo", "demo", true );
+    	Pubnub pn  = new Pubnub( "demo", "demo", "demo", "", true );// (Cipher key is Optional)
         Receiver rcv = new Receiver();
         System.out.println("Subscribed to 'hello_world' Channel ");
         

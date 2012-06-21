@@ -20,7 +20,7 @@ int main() {
 
     struct struct_subscribe args = { .channel = "hello_world", .cb = subscribe_callback };
     // initialize Pubnub state
-    Pubnub_overload1("demo", "demo", "demo", "demo", true);
+    Pubnub_overload1("demo", "demo", "demo", "", true);//[Cipher key is Optional]
 
     // call subscribe function
     subscribe(&args);

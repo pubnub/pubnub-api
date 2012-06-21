@@ -22,7 +22,7 @@ int main() {
 #endif
 
     // initialize Pubnub state
-    Pubnub_overload1("demo", "demo", "demo", "demo", true);
+    Pubnub_overload1("demo", "demo", "demo", "", true);//[Cipher key is Optional]
 
 
     // publish json_object

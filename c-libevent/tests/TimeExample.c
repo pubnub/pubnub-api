@@ -13,7 +13,7 @@ int main() {
 #endif
 
     // initialize Pubnub state
-    Pubnub_overload1("demo", "demo", "", "", false);
+    Pubnub_overload1("demo", "demo", "", "", false);//[Cipher key is Optional]
 
     double dob = getTime();
     printf("Time:::%lf", dob);

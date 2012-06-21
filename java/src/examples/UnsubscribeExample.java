@@ -12,9 +12,9 @@ public class UnsubscribeExample {
     public static void main(String[] params) {
 
     	String pub_key = "demo", sub_key = "demo";
-        String secret_key = "demo", cipher_key = "demo";
+        String secret_key = "demo", cipher_key = "";
         final String channel = "hello_world";
-    	final Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key, true);
+    	final Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key, true);//(Cipher key is Optional)
 
     	// Callback Interface when a Message is Received
         class Receiver implements Callback {
