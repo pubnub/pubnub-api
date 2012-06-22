@@ -13,11 +13,11 @@
 require 'rubygems'
 require 'pubnub'
 
-## declaring publish_key, subscribe_key, secret_key, cipher_key, message, ssl_on
+## declaring publish_key, subscribe_key, secret_key, cipher_key, message, ssl_on (Cipher key is Optional)
 publish_key   = ARGV[0] || 'demo'
 subscribe_key = ARGV[1] || 'demo'
 secret_key    = ARGV[2] || 'demo'
-cipher_key    = ARGV[3] || 'demo'
+cipher_key    = ARGV[3] || ''
 ssl_on        = false
 channel       = 'hello_world'
 message       = 'Hi. (顶顅Ȓ)'

@@ -132,8 +132,8 @@ public class MessageService extends Service {
         pubnub = new Pubnub("demo", // PUBLISH_KEY
                 "demo", // SUBSCRIBE_KEY
                 "demo", // SECRET_KEY
-                "demo", // CIPHER_KEY
-                true // SSL_ON?
+                "",     // CIPHER_KEY (Cipher key is Optional)
+                true    // SSL_ON?
         );
         
     }

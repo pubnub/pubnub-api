@@ -6,11 +6,11 @@
 require 'rubygems'
 require 'pubnub'
 
-## declaring publish_key, subscribe_key, secret_key, cipher_key and ssl flag
+## declaring publish_key, subscribe_key, secret_key, cipher_key and ssl flag (Cipher key is Optional)
 publish_key   = 'demo'
 subscribe_key = 'demo'
 secret_key    = 'demo'
-cipher_key    = 'demo'
+cipher_key    = ''     
 ssl_on        = false
 
 ## Print usage if missing info.

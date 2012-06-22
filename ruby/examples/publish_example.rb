@@ -1,4 +1,3 @@
-# encoding: utf-8
 ## -----------------------------------
 ## PubNub Ruby API Publish Example
 ## -----------------------------------
@@ -7,7 +6,7 @@
 require 'rubygems'
 require 'pubnub'
 
-## declaring publish_key, subscribe_key, secret_key, cipher_key, channel, ssl flag, messages
+## declaring publish_key, subscribe_key, secret_key, cipher_key, channel, ssl flag, messages (Cipher key is Optional)
 publish_key   = 'demo'
 subscribe_key = 'demo'
 secret_key    = 'demo'
