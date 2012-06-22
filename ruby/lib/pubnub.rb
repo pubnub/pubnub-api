@@ -112,16 +112,17 @@ class Pubnub
   #*
   def publish(args)
     ## Fail if bad input.
-    if !(args['channel'] && args['message'])
-      puts('Missing Channel or Message')
+    if !(args['channel'] && args['message'] && args['callback'])
+      puts('Missing Channel or Message or Callback')
       return false
     end
 
     ## Capture User Input
     channel = args['channel']
     message = args['message']
+    callback = args['callback']
 
-    #encryption of message
+    # Encryption of message
     if @cipher_key.length > 0
       pc=PubnubCrypto.new(@cipher_key)
       if message.is_a? Array
@@ -144,15 +145,10 @@ class Pubnub
     end
 
     ## Send Message
-    return _request([
-      'publish',
-      @publish_key,
-      @subscribe_key,
-      signature,
-      channel,
-      '0',
-      message
-    ])
+    request = [ 'publish', @publish_key, @subscribe_key, signature, channel, '0', message ]
+    args['request'] = request
+    args['callback'] = callback
+    _request(args)
   end
 
   #**
@@ -181,51 +177,12 @@ class Pubnub
       return false
     end
 
-    ## Begin Subscribe
-    loop do
-      begin
-        timetoken = args['timetoken'] ? args['timetoken'] : 0
-
-        ## Wait for Message
-        response = _request([
-          'subscribe',
-          @subscribe_key,
-          channel,
-          '0',
-          timetoken.to_s
-        ])
-
-        messages          = response[0]
-        args['timetoken'] = response[1]
-
-        ## If it was a timeout
-        next if !messages.length
-
-        ## Run user Callback and Reconnect if user permits.
-        ## Capture the message and encrypt it
-        if @cipher_key.length > 0
-          pc = PubnubCrypto.new(@cipher_key)
-          messages.each do |message|
-            if message.is_a? Array
-              message=pc.decryptArray(message)
-            else
-              message=pc.decryptObject(message)
-            end
-            if !callback.call(message)
-              return
-            end
-          end
-        else
-          messages.each do |message|
-            if !callback.call(message)
-              return
-            end
-          end
-        end
-      rescue  Timeout::Error
-      rescue
-        sleep(1)
-      end
+    ## EventMachine loop
+    EventMachine.run do
+      timetoken = 0
+      request = [ 'subscribe', @subscribe_key, channel, '0', timetoken.to_s ]
+      args['request'] = request
+      _subscribe(args)
     end
   end
 
@@ -241,30 +198,22 @@ class Pubnub
     ## Capture User Input
     limit   = +args['limit'] ? +args['limit'] : 5
     channel = args['channel']
+    callback = args['callback']
 
     ## Fail if bad input.
     if (!channel)
       puts 'Missing Channel.'
       return false
     end
+    if (!callback)
+      puts 'Missing Callback.'
+      return false
+    end
 
     ## Get History
-    response = _request([ 'history', @subscribe_key, channel, '0', limit.to_s])
-    if @cipher_key.length > 0
-      myarr=Array.new()
-      response.each do |message|
-        pc=PubnubCrypto.new(@cipher_key)
-        if message.is_a? Array
-          message=pc.decryptArray(message)
-        else
-          message=pc.decryptObject(message)
-        end
-        myarr.push(message)
-      end
-      return myarr
-    else
-      return response
-    end
+    request = [ 'history', @subscribe_key, channel, '0', limit.to_s ]
+    args['request'] = request
+    _request(args)
   end
 
   #**
@@ -274,11 +223,10 @@ class Pubnub
   #*
   #* @return int timestamp.
   #*
-  def time()
-    return _request([
-      'time',
-      '0'
-    ])[0]
+  def time(args)
+    request = [ 'time', '0' ]
+    args['request'] = request
+    _request(args)
   end
 
   #**
@@ -295,53 +243,114 @@ class Pubnub
   private
 
   #**
+  #* Request URL for subscribe
+  #*
+  #* @param array request of url directories.
+  #* @return array from JSON response.
+  #*
+  def _subscribe(args)
+    channel = args['channel']
+    callback = args['callback']
+    request = args['request']
+
+    # Construct Request
+    url = encode_URL(request);
+    url = @origin + url
+
+    # Execute Request
+    http = EventMachine::HttpRequest.new(url, :connect_timeout => 310, :inactivity_timeout => 0).get
+    http.callback {
+      http_response = JSON.parse(http.response)
+      messages = http_response[0]
+      timetoken = http_response[1]
+
+      next if !messages.length
+
+      ## Run user Callback and Reconnect if user permits.
+      ## Capture the message and encrypt it
+      if @cipher_key.length > 0
+        pc = PubnubCrypto.new(@cipher_key)
+        messages.each do |message|
+          if message.is_a? Array
+            message=pc.decryptArray(message)
+          else
+            message=pc.decryptObject(message)
+          end
+          if !callback.call(message)
+            return
+          end
+        end
+      else
+        messages.each do |message|
+          if !callback.call(message)
+            return
+          end
+        end
+      end
+
+      request = [ 'subscribe', @subscribe_key, channel, '0', timetoken.to_s ]
+      args['request'] = request
+      # Recusive call to _subscribe
+      _subscribe(args)
+    }
+    http.errback  {
+      http.error
+      # TODO: check for time function and reconnect
+    }
+  end
+
+  #**
   #* Request URL
   #*
   #* @param array request of url directories.
   #* @return array from JSON response.
   #*
-  def _request(request)
+  def _request(args)
+    request = args['request']
+    callback = args['callback']
+    url = encode_URL(request)
+    url = @origin + url
+    EventMachine.run {
+      # Execute Request
+      http = EventMachine::HttpRequest.new(url, :connect_timeout => 310, :inactivity_timeout => 0).get
+      http.callback {
+        if request[0] == 'history'
+          response = JSON.parse(http.response)
+          if @cipher_key.length > 0
+            myarr=Array.new()
+            response.each do |message|
+              pc=PubnubCrypto.new(@cipher_key)
+              if message.is_a? Array
+                message=pc.decryptArray(message)
+              else
+                message=pc.decryptObject(message)
+              end
+              myarr.push(message)
+            end
+            callback.call(myarr)
+          else
+            callback.call(reponse)
+          end
+        elsif request[0] == 'publish'
+          callback.call(JSON.parse(http.response))
+        else
+          callback.call(JSON.parse(http.response))
+        end
+        EventMachine.stop
+      }
+      http.errback  {
+        puts http.error
+        EventMachine.stop
+      }
+    }
+  end
+
+  def encode_URL(request)
     ## Construct Request URL
     url = '/' + request.map{ |bit| bit.split('').map{ |ch|
         ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
         '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
       }.join('') }.join('/')
-
-    url = @origin + url
-    http_response = ''
-
-    EventMachine.run do
-      Fiber.new{
-        http = async_fetch(url)
-        http_response = http.response
-        EventMachine.stop
-      }.resume
-    end
-    if(http_response != '')
-      JSON.parse(http_response)
-    end
+    return url
   end
-
-  ## Non-blocking IO using EventMachine
-  def async_fetch(url)
-    f = Fiber.current
-
-    request_options = {
-      :timeout => 310,  # set request timeout
-      :query => {'V' => '3.1', 'User-Agent' => 'Ruby', 'Accept-Encoding' => 'gzip'},  # set request headers
-    }
-
-    http = EventMachine::HttpRequest.new(url).get request_options
-    http.callback { f.resume(http) }
-    http.errback  { f.resume(http) }
-
-    Fiber.yield
-
-    if http.error
-      p [:HTTP_ERROR, http.error]
-    end
-
-    http
-  end
-
 end

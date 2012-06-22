@@ -10,7 +10,7 @@ require 'pubnub'
 publish_key   = 'demo'
 subscribe_key = 'demo'
 secret_key    = 'demo'
-cipher_key    = ''
+cipher_key    = ''    # (Cipher key is Optional)
 ssl_on        = false
 channel       = 'hello_world'
 
