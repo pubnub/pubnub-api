@@ -27,8 +27,8 @@ TUTORIAL: HOW TO USE
 ## directory to your project and use functions from them as follows.
 
 ##  --------------------------------------------------------------------------------
-##     C#-WP7 : (Init)
-##     ---------------
+##  C#-WP7 : (Init)
+##  ---------------
 
         //Channel name
         string channel = "hello_world";

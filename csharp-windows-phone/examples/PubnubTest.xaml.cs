@@ -44,7 +44,7 @@ namespace CSharp_WP7
                 }
             };
 
-			// Publish string  message			
+            // Publish string  message            
             Dictionary<string, object> strArgs = new Dictionary<string, object>();
             string message = "Hello Windows Phone 7";
             strArgs.Add("channel", channel);
@@ -52,7 +52,7 @@ namespace CSharp_WP7
             strArgs.Add("callback", respCallback);
             pubnub.Publish(strArgs);
 
-			// Publish message in array format
+            // Publish message in array format
             Dictionary<string, object> arrArgs = new Dictionary<string, object>();
             JArray jarr = new JArray();
             jarr.Add("Sunday");
@@ -68,12 +68,12 @@ namespace CSharp_WP7
             arrArgs.Add("callback", respCallback);
             pubnub.Publish(arrArgs);
 
-			// Publish message in Dictionary format
+            // Publish message in Dictionary format
             Dictionary<string, object> objArgs = new Dictionary<string, object>();
             JObject obj = new JObject();
             obj.Add("Name", "Jhon");
             obj.Add("age", "25");
-			
+            
             objArgs.Add("channel", channel);
             objArgs.Add("message", obj);
             objArgs.Add("callback", respCallback);
@@ -95,7 +95,7 @@ namespace CSharp_WP7
                     }
                 }
             };
-			//Subscribe messages
+            //Subscribe messages
             Dictionary<string, object> args = new Dictionary<string, object>();
             args.Add("channel", channel);
             args.Add("callback", respCallback);

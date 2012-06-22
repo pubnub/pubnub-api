@@ -237,7 +237,7 @@ namespace Pubnub
           * _subscribe - Private Interface
           *
           * @param Dictionary<string, object> args
-		  *  args is channel name and Procedure function callback and timetoken
+          *  args is channel name and Procedure function callback and timetoken
           * 
           */
         private void _subscribe(Dictionary<string, object> args)

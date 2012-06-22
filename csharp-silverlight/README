@@ -15,7 +15,7 @@
 
 ## This tutorial is based on Silverlight 3.0.
 ===============================================================================
-TUTORIAL: HOW TO USE
+## TUTORIAL: HOW TO USE
 ===============================================================================
 ## Create a new silverlight application
 
@@ -27,8 +27,8 @@ TUTORIAL: HOW TO USE
 ## and use functions from them as follows.
 
 ##  ------------------------------------------------------------------------------------
-##     C#-Silverlight : (Init)
-##     -----------------------
+##  C#-Silverlight : (Init)
+##  -----------------------
 
         //Set the channel
         string channel = "hello-world";

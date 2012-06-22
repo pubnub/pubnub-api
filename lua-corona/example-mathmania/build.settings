@@ -3,15 +3,15 @@
 -- Copyright © 2011 Raphael Salgado for BeyondtheTech. All Rights Reserved.
 
 settings = {
-	orientation =
-	{
-		--default = "landscapeRight",
-	},
-	iphone =
-	{
-		plist=
-		{
-			--UIStatusBarHidden=true,
-		},
-	},
+    orientation =
+    {
+        --default = "landscapeRight",
+    },
+    iphone =
+    {
+        plist=
+        {
+            --UIStatusBarHidden=true,
+        },
+    },
 }
