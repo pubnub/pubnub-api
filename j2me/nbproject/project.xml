@@ -6,5 +6,6 @@
             <name>Punnub-JavaME</name>
             <minimum-ant-version>1.6</minimum-ant-version>
         </data>
+        <references xmlns="http://www.netbeans.org/ns/ant-project-references/2"/>
     </configuration>
 </project>

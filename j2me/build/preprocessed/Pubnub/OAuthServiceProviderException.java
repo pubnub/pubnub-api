@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package Pubnub;
 
 public class OAuthServiceProviderException extends Exception {
+
     private int http_response_code;
     private String http_response_body;
-    
+
     public OAuthServiceProviderException() {
         super();
     }
@@ -31,19 +31,18 @@ public class OAuthServiceProviderException extends Exception {
     public OAuthServiceProviderException(String message, Throwable cause) {
         super(message); //, cause);
     }
-    
+
     public OAuthServiceProviderException(String message, int http_response_code, String http_response_body) {
         super(message);
-        this.http_response_code=http_response_code;
-        this.http_response_body=http_response_body;
+        this.http_response_code = http_response_code;
+        this.http_response_body = http_response_body;
     }
-    
+
     public int getHTTPResponseCode() {
         return http_response_code;
     }
-    
+
     public String getHTTPResponse() {
         return http_response_body;
     }
- 
 }

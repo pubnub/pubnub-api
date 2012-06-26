@@ -1,8 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Pubnub;
+
+import Pubnub.crypto.GZIP;
+import Pubnub.crypto.PubnubCrypto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -10,15 +9,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.Vector;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.ShortBufferException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
-import javax.microedition.io.HttpsConnection;
-import json.me.JSONArray;
-import json.me.JSONException;
-import json.me.JSONObject;
+
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.json.me.JSONArray;
+import org.json.me.JSONException;
+import org.json.me.JSONObject;
 
 public class Pubnub {
+
 	private String ORIGIN = "pubsub.pubnub.com";
 	private String PUBLISH_KEY = "";
 	private String SUBSCRIBE_KEY = "";
@@ -54,7 +60,7 @@ public class Pubnub {
 	}
 
 	/**
-	 * PubNub 3.0
+	 * PubNub 3.0 with SSL
 	 * 
 	 * Prepare PubNub Class State.
 	 * 
@@ -72,7 +78,7 @@ public class Pubnub {
 	}
 
 	/**
-	 * PubNub 2.0 Compatibility
+	 * PubNub 2.0 without Secret Key and SSL
 	 * 
 	 * Prepare PubNub Class State.
 	 * 
@@ -167,14 +173,22 @@ public class Pubnub {
 		if (message instanceof JSONObject) {
 			JSONObject obj = (JSONObject) message;
 			if (this.CIPHER_KEY.length() > 0) {
-				// TODO: Encrypt Message
+				// Encrypt Message
+				PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+				message = pc.encrypt(obj);
 			} else {
 				message = obj;
 			}
 		} else if (message instanceof String) {
 			String obj = (String) message;
 			if (this.CIPHER_KEY.length() > 0) {
-				// TODO: Encrypt Message
+				// Encrypt Message
+				PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+				try {
+					message = pc.encrypt(obj);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			} else {
 				message = obj;
 			}
@@ -184,7 +198,9 @@ public class Pubnub {
 			JSONArray obj = (JSONArray) message;
 
 			if (this.CIPHER_KEY.length() > 0) {
-				// TODO: Encrypt Message
+				// Encrypt Message
+				PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+				message = pc.encryptJSONArray(obj);
 			} else {
 				message = obj;
 			}
@@ -195,7 +211,15 @@ public class Pubnub {
 		String signature = "0";
 
 		if (this.SECRET_KEY.length() > 0) {
-			// TODO: Sign Message
+			StringBuffer string_to_sign = new StringBuffer();
+			string_to_sign.append(this.PUBLISH_KEY).append('/')
+					.append(this.SUBSCRIBE_KEY).append('/')
+					.append(this.SECRET_KEY).append('/').append(channel)
+					.append('/').append(message.toString());
+
+			// Sign Message
+			signature = PubnubCrypto.getHMacSHA256(this.SECRET_KEY,
+					string_to_sign.toString());
 		}
 
 		// Build URL
@@ -247,22 +271,26 @@ public class Pubnub {
 			System.out.println("Invalid Callback.");
 			return;
 		}
-		if (args.get("connect_cb") != null)
+		if (args.get("connect_cb") != null) {
 			connect_cb = (Callback) args.get("connect_cb");
-		else
+		} else {
 			connect_cb = new TempCallback();
-		if (args.get("disconnect_cb") != null)
+		}
+		if (args.get("disconnect_cb") != null) {
 			disconnect_cb = (Callback) args.get("disconnect_cb");
-		else
+		} else {
 			disconnect_cb = new TempCallback();
-		if (args.get("reconnect_cb") != null)
+		}
+		if (args.get("reconnect_cb") != null) {
 			reconnect_cb = (Callback) args.get("reconnect_cb");
-		else
+		} else {
 			reconnect_cb = new TempCallback();
-		if (args.get("error_cb") != null)
+		}
+		if (args.get("error_cb") != null) {
 			error_cb = (Callback) args.get("error_cb");
-		else
+		} else {
 			error_cb = (Callback) args.get("callback");
+		}
 
 		if (channel == null || channel.equals("")) {
 			error_cb.execute("Invalid Channel.");
@@ -322,8 +350,9 @@ public class Pubnub {
 						}
 					}
 				}
-				if (is_disconnect)
+				if (is_disconnect) {
 					return;
+				}
 
 				// Wait for Message
 				JSONArray response = _request(url);
@@ -341,8 +370,9 @@ public class Pubnub {
 					}
 				}
 
-				if (is_disconnect)
+				if (is_disconnect) {
 					return;
+				}
 
 				// Problem?
 				if (response == null || response.optInt(1) == 0) {
@@ -392,34 +422,43 @@ public class Pubnub {
 				JSONArray messages = response.optJSONArray(0);
 
 				// Update TimeToken
-				if (response.optString(1).length() > 0)
+				if (response.optString(1).length() > 0) {
 					timetoken = response.optString(1);
+				}
 
 				for (int i = 0; messages.length() > i; i++) {
 					JSONObject message = messages.optJSONObject(i);
 					if (message != null) {
 
 						if (this.CIPHER_KEY.length() > 0) {
-							// TODO: Decrypt Message
+							// Decrypt Message
+							PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+							message = pc.decrypt(message);
 						}
-						if (callback != null)
+						if (callback != null) {
 							callback.execute(message);
+						}
 					} else {
-
 						JSONArray arr = messages.optJSONArray(i);
 						if (arr != null) {
 							if (this.CIPHER_KEY.length() > 0) {
-								// TODO: Decrypt Message
+								PubnubCrypto pc = new PubnubCrypto(
+										this.CIPHER_KEY);
+								arr = pc.decryptJSONArray(arr);
 							}
-							if (callback != null)
+							if (callback != null) {
 								callback.execute(arr);
+							}
 						} else {
 							String msgs = messages.getString(0);
 							if (this.CIPHER_KEY.length() > 0) {
-								// TODO: Decrypt Message
+								PubnubCrypto pc = new PubnubCrypto(
+										this.CIPHER_KEY);
+								msgs = pc.decrypt(msgs);
 							}
-							if (callback != null)
+							if (callback != null) {
 								callback.execute(msgs);
+							}
 						}
 					}
 				}
@@ -462,10 +501,18 @@ public class Pubnub {
 	 * @return String uuid.
 	 */
 	public static String uuid() {
-		// TODO: UUID genetaration
-//		String str = new String(System.currentTimeMillis() + "");
-//		System.out.println("Length::" + str.length());
-		return "";
+		int count, length = 32;
+		Random random = new Random();
+		StringBuffer buf = new StringBuffer();
+		for (count = 0; count < length;) {
+			buf.append((char) ((random.nextInt(9) % 26) + 97)).append("");
+			buf.append((char) ((random.nextInt(9) % 10) + 48)).append("");
+			if (buf.length() < 32) {
+				buf.append((char) ((random.nextInt(9) % 26) + 65)).append("");
+			}
+			count = buf.length();
+		}
+		return buf.toString();
 	}
 
 	/**
@@ -501,7 +548,6 @@ public class Pubnub {
 		Integer limit = (Integer) args.get("limit");
 
 		Vector url = new Vector();
-
 		url.addElement("history");
 		url.addElement(this.SUBSCRIBE_KEY);
 		url.addElement(channel);
@@ -509,12 +555,16 @@ public class Pubnub {
 		url.addElement(limit.toString());
 
 		JSONArray response = _request(url);
-
 		if (this.CIPHER_KEY.length() > 0) {
-			// TODO: Decrpyt Messages
+			try {
+				// Decrpyt Messages
+				PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+				return pc.decryptJSONArray(response);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
 		return response;
-
 	}
 
 	/**
@@ -569,8 +619,8 @@ public class Pubnub {
 			}
 		}
 		try {
-			String _responce = getViaHttpsConnection(url.toString());
-			return new JSONArray(_responce);
+			String _response = getViaHttpsConnection(url.toString());
+			return new JSONArray(_response);
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		} catch (IOException ex) {
@@ -578,7 +628,6 @@ public class Pubnub {
 		} catch (OAuthServiceProviderException ex) {
 			ex.printStackTrace();
 		}
-
 		return new JSONArray();
 	}
 
@@ -591,8 +640,9 @@ public class Pubnub {
 				o.append('%');
 				o.append(toHex(ch / 16));
 				o.append(toHex(ch % 16));
-			} else
+			} else {
 				o.append(ch);
+			}
 		}
 		return o.toString();
 	}
@@ -602,7 +652,7 @@ public class Pubnub {
 	}
 
 	private boolean isUnsafe(char ch) {
-		return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?É‚é¡¶".indexOf(ch) >= 0;
+		return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?ɂ顶".indexOf(ch) >= 0;
 	}
 
 	public static final String getViaHttpsConnection(String url)
@@ -611,7 +661,6 @@ public class Pubnub {
 		DataInputStream dis = null;
 		OutputStream os = null;
 		int rc;
-
 		String respBody = new String(""); // return empty string on bad things
 		// TODO -- better way to handle unexpected responses
 		try {
@@ -619,11 +668,14 @@ public class Pubnub {
 					false);
 			c.setRequestMethod(HttpConnection.GET);
 			c.setRequestProperty("V", "3.1");
-			c.setRequestProperty("User-Agent", "J2ME");
+			c.setRequestProperty("User-Agent", "Java");
+			c.setRequestProperty("Accept-Encoding", "gzip");
+			// Getting the response code will open the connection,
+			// send the request, and read the HTTP response headers.
+			// The headers are stored until requested.
 			rc = c.getResponseCode();
 			// Get the length and process the data
 			int len = c.getHeaderFieldInt("Content-Length", 0);
-			System.out.println("content-length=" + len);
 			dis = c.openDataInputStream();
 
 			byte[] data = null;
@@ -634,14 +686,24 @@ public class Pubnub {
 			}
 			data = tmp.toByteArray();
 			respBody = new String(data);
-			System.out.println("Temp respBody data ::" + respBody);
+
+			if ("gzip".equals(c.getEncoding())) {
+				byte[] decompressed = GZIP.inflate(respBody.toString()
+						.getBytes("ISO-8859-1"));
+				StringBuffer _response = new StringBuffer(new String(
+						decompressed, "ISO-8859-1"));
+				respBody = _response.toString();
+			}
+
 		} catch (ClassCastException e) {
 			throw new IllegalArgumentException("Not an HTTP URL");
 		} finally {
-			if (dis != null)
+			if (dis != null) {
 				dis.close();
-			if (c != null)
+			}
+			if (c != null) {
 				c.close();
+			}
 		}
 		if (rc != HttpConnection.HTTP_OK) {
 			throw new OAuthServiceProviderException(
@@ -658,5 +720,4 @@ public class Pubnub {
 			return false;
 		}
 	}
-
 }

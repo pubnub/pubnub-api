@@ -6,9 +6,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
-import json.me.JSONArray;
-import json.me.JSONException;
-import json.me.JSONObject;
+import org.json.me.JSONArray;
+import org.json.me.JSONException;
+import org.json.me.JSONObject;
 
 public class PubnubTestMidlet extends MIDlet implements CommandListener {
 
@@ -16,10 +16,10 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 
 	private Command exitCommand;
 	private Command publishCommand;
-	private Command subcribeCommand;
+	private Command subscribeCommand;
 	private Command timeCommand;
 	private Command historyCommand;
-	private Command unsubcribeCommand;
+	private Command unsubscribeCommand;
 	private Form form;
 	private StringItem stringItem;
 
@@ -27,16 +27,13 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	}
 
 	private void initialize() {
-
 	}
 
 	/**
 	 * Performs an action assigned to the Mobile Device - MIDlet Started point.
 	 */
 	public void startMIDlet() {
-
 		switchDisplayable(null, getForm());
-
 	}
 
 	/**
@@ -58,14 +55,12 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	 *            the Displayable to be set
 	 */
 	public void switchDisplayable(Alert alert, Displayable nextDisplayable) {
-
 		Display display = getDisplay();
 		if (alert == null) {
 			display.setCurrent(nextDisplayable);
 		} else {
 			display.setCurrent(alert, nextDisplayable);
 		}
-
 	}
 
 	/**
@@ -77,31 +72,22 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	 * @param displayable
 	 *            the Displayable where the command was invoked
 	 */
-	public void commandAction(Command command, Displayable displayable) {// GEN-END:|7-commandAction|0|7-preCommandAction
-
+	public void commandAction(Command command, Displayable displayable) {
 		if (displayable == form) {
 			if (command == exitCommand) {
-
 				exitMIDlet();
-
 			} else if (command == historyCommand) {
 				History();
-
 			} else if (command == publishCommand) {
 				Publish();
-
-			} else if (command == subcribeCommand) {
+			} else if (command == subscribeCommand) {
 				Subcribe();
-
 			} else if (command == timeCommand) {
 				Time();
-
-			} else if (command == unsubcribeCommand) {
+			} else if (command == unsubscribeCommand) {
 				UnSubcribe();
-
 			}
 		}
-
 	}
 
 	/**
@@ -111,9 +97,7 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	 */
 	public Command getExitCommand() {
 		if (exitCommand == null) {
-
 			exitCommand = new Command("Exit", Command.EXIT, 0);
-
 		}
 		return exitCommand;
 	}
@@ -125,16 +109,14 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	 */
 	public Form getForm() {
 		if (form == null) {
-
-			form = new Form("Welcome", new Item[] { getStringItem() });// GEN-BEGIN:|14-getter|1|14-postInit
+			form = new Form("Welcome", new Item[] { getStringItem() });
 			form.addCommand(getExitCommand());
 			form.addCommand(getPublishCommand());
-			form.addCommand(getSubcribeCommand());
+			form.addCommand(getSubscribeCommand());
 			form.addCommand(getTimeCommand());
 			form.addCommand(getHistoryCommand());
-			form.addCommand(getUnsubcribeCommand());
+			form.addCommand(getUnsubscribeCommand());
 			form.setCommandListener(this);
-
 		}
 		return form;
 	}
@@ -146,9 +128,7 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	 */
 	public StringItem getStringItem() {
 		if (stringItem == null) {
-
 			stringItem = new StringItem("Hello", "Hello, World!", Item.PLAIN);
-
 		}
 		return stringItem;
 	}
@@ -160,25 +140,21 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	 */
 	public Command getPublishCommand() {
 		if (publishCommand == null) {
-
 			publishCommand = new Command("Publish", "<null>", Command.SCREEN, 1);
-
 		}
 		return publishCommand;
 	}
 
 	/**
-	 * Returns an initiliazed instance of subcribeCommand component.
+	 * Returns an initiliazed instance of subscribeCommand component.
 	 * 
 	 * @return the initialized component instance
 	 */
-	public Command getSubcribeCommand() {
-		if (subcribeCommand == null) {
-
-			subcribeCommand = new Command("Subcribe", Command.ITEM, 0);
-
+	public Command getSubscribeCommand() {
+		if (subscribeCommand == null) {
+			subscribeCommand = new Command("Subcribe", Command.ITEM, 0);
 		}
-		return subcribeCommand;
+		return subscribeCommand;
 	}
 
 	/**
@@ -188,9 +164,8 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	 */
 	public Command getTimeCommand() {
 		if (timeCommand == null) {
-
 			timeCommand = new Command("Time", Command.ITEM, 0);// GEN-LINE:|27-getter|1|27-postInit
-
+			// GEN-LINE:|7-commandAction|13|7-postCommandAction
 		}
 		return timeCommand;
 	}
@@ -202,25 +177,21 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	 */
 	public Command getHistoryCommand() {
 		if (historyCommand == null) {
-
 			historyCommand = new Command("History", Command.ITEM, 0);
-
 		}
 		return historyCommand;
 	}
 
 	/**
-	 * Returns an initiliazed instance of unsubcribeCommand component.
+	 * Returns an initiliazed instance of unsubscribeCommand component.
 	 * 
 	 * @return the initialized component instance
 	 */
-	public Command getUnsubcribeCommand() {
-		if (unsubcribeCommand == null) {
-
-			unsubcribeCommand = new Command("Unsubcribe", Command.ITEM, 0);
-
+	public Command getUnsubscribeCommand() {
+		if (unsubscribeCommand == null) {
+			unsubscribeCommand = new Command("Unsubscribe", Command.ITEM, 0);
 		}
-		return unsubcribeCommand;
+		return unsubscribeCommand;
 	}
 
 	/**
@@ -272,7 +243,7 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 	public void destroyApp(boolean unconditional) {
 	}
 
-	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "demo", false);
+	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "", false);
 
 	public void Publish() {
 		try {
@@ -280,45 +251,40 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 			JSONObject message = new JSONObject();
 			// Create HashMap parameter
 			message.put("some_key", "Hello World!");
-
 			Hashtable args = new Hashtable(2);
 			args.put("channel", "hello_world"); // Channel Name
 			args.put("message", message); // JSON Message
-			JSONArray responece = _pubnub.publish(args);
+			JSONArray response = _pubnub.publish(args);
 			// Print Response from PubNub JSONP REST Service
-			System.out.println(responece.toString());
+			System.out.println(response.toString());
 			stringItem.setLabel("Publish::");
-			stringItem.setText(responece + "");
+			stringItem.setText(response + "");
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	Hashtable subcribeThreads = new Hashtable();
-
 	public void Subcribe() {
-
 		String channel = "hello_world";
 		Thread t = new Thread() {
-
 			public void run() {
 				Hashtable args = new Hashtable(6);
 				args.put("channel", "hello_world");
-				args.put("callback", new Receiver());                  // callback to get response
-				args.put("connect_cb", new ConnectCallback());         // callback to get connect event
-				args.put("disconnect_cb", new DisconnectCallback());   // callback to get disconnect event
-				args.put("reconnect_cb", new ReconnectCallback());     // callback to get reconnect event
-				args.put("error_cb", new ErrorCallback());             // callback to get error event
+				args.put("callback", new Receiver());                // callback to get response
+				args.put("connect_cb", new ConnectCallback());       // callback to get connect event
+				args.put("disconnect_cb", new DisconnectCallback()); // callback to get disconnect event (optional)
+				args.put("reconnect_cb", new ReconnectCallback());   // callback to get reconnect event (optional)
+				args.put("error_cb", new ErrorCallback());           // callback to get error event (optional)
+
 				// Listen for Messages (Subscribe)
 				_pubnub.subscribe(args);
 			}
 		};
-
 		t.start();
 		if (!subcribeThreads.containsKey(channel)) {
 			subcribeThreads.put(channel, t);
 		}
-
 	}
 
 	public void UnSubcribe() {
@@ -332,14 +298,13 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 			t.interrupt();
 			subcribeThreads.remove(channel);
 		}
-		System.out.println("UnSubcribe sucessfully");
+		System.out.println("UnSubscribed sucessfully");
 	}
 
 	// Callback Interface when a Message is Received
 	class Receiver implements Callback {
 
 		public boolean execute(Object message) {
-
 			try {
 				if (message instanceof JSONObject) {
 					JSONObject obj = (JSONObject) message;
@@ -369,7 +334,6 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 					Alert a = new Alert("Received", obj.toString(), null, null);
 					a.setTimeout(Alert.FOREVER);
 					getDisplay().setCurrent(a, form);
-
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -417,18 +381,18 @@ public class PubnubTestMidlet extends MIDlet implements CommandListener {
 
 	public void Time() {
 		System.out.println("Time::" + _pubnub.time());
-		double responece = _pubnub.time();
+		double response = _pubnub.time();
 		stringItem.setLabel("Time::");
-		stringItem.setText(responece + "");
+		stringItem.setText(response + "");
 	}
 
 	public void History() {
 		Hashtable args = new Hashtable(2);
 		args.put("channel", "hello_world");
 		args.put("limit", new Integer(2));
-		JSONArray responece = _pubnub.history(args);
-		System.out.println("History" + responece);
+		JSONArray response = _pubnub.history(args);
+		System.out.println("History" + response);
 		stringItem.setLabel("History");
-		stringItem.setText("" + responece.toString());
+		stringItem.setText("" + response.toString());
 	}
 }

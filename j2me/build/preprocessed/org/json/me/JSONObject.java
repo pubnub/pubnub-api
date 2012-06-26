@@ -1,4 +1,4 @@
-package json.me;
+package org.json.me;
 
 /*
 Copyright (c) 2002 JSON.org
@@ -85,7 +85,7 @@ import java.util.Vector;
  */
 public class JSONObject {
     
-//#if CLDC=="1.0"
+//#ifdef polish.cldc1.0
 //#     public static final Boolean TRUE = new Boolean(true);
 //#     public static final Boolean FALSE = new Boolean(false);
 //#endif    
@@ -314,7 +314,7 @@ public class JSONObject {
 //#     }
 //#endif
 
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
     /**
      * Produce a string from a double. The string "null" will be returned if
      * the number is not finite.
@@ -368,7 +368,7 @@ public class JSONObject {
      */
     public boolean getBoolean(String key) throws JSONException {
         Object o = get(key);
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
         if (o.equals(Boolean.FALSE) ||
 //#else
 //#         if (o.equals(FALSE) ||
@@ -376,7 +376,7 @@ public class JSONObject {
                 (o instanceof String &&
                 ((String)o).toLowerCase().equals("false"))) {
             return false;
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
         } else if (o.equals(Boolean.TRUE) ||
 //#else
 //#         } else if (o.equals(TRUE) ||
@@ -389,7 +389,7 @@ public class JSONObject {
                 "] is not a Boolean.");
     }
 
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
     /**
      * Get the double value associated with a key.
      * @param key   A key string.
@@ -444,7 +444,7 @@ public class JSONObject {
             return ((Integer)o).intValue();
         } else if (o instanceof Long) {
             return (int) ((Long)o).longValue();
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
         } else if (o instanceof Float) {
             return (int) ((Float)o).floatValue();
         } else if (o instanceof Double) {
@@ -511,7 +511,7 @@ public class JSONObject {
             return ((Integer)o).intValue();
         } else if (o instanceof Long) {
             return ((Long)o).longValue();
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
         } else if (o instanceof Float) {
             return (long) ((Float)o).floatValue();
         } else if (o instanceof Double) {
@@ -678,7 +678,7 @@ public class JSONObject {
     }
 
     
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
     /**
      * Get an optional double associated with a key,
      * or NaN if there is no such key or if its value is not a number.
@@ -693,7 +693,7 @@ public class JSONObject {
     }
 //#endif
 
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
     /**
      * Get an optional double associated with a key, or the
      * defaultValue if there is no such key or if its value is not a number.
@@ -844,7 +844,7 @@ public class JSONObject {
      * @throws JSONException If the key is null.
      */
     public JSONObject put(String key, boolean value) throws JSONException {
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
         put(key, value ? Boolean.TRUE : Boolean.FALSE);
 //#else
 //#         put(key, value ? TRUE : FALSE);
@@ -853,7 +853,7 @@ public class JSONObject {
     }
 
 
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
     /**
      * Put a key/double pair in the JSONObject.
      *
@@ -1033,7 +1033,7 @@ public class JSONObject {
      */
     static void testValidity(Object o) throws JSONException {
         if (o != null) {
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
             if (o instanceof Double) {
                 if (((Double)o).isInfinite() || ((Double)o).isNaN()) {
                     throw new JSONException(
@@ -1208,7 +1208,7 @@ public class JSONObject {
 	        }
             throw new JSONException("Bad value from toJSONString: " + o);
         }
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
         if (value instanceof Float || value instanceof Double ||
 //#else
 //#         if (
@@ -1254,7 +1254,7 @@ public class JSONObject {
         } catch (Exception e) {
         	/* forget about it */
         }
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
         if (value instanceof Float || value instanceof Double ||
 //#else
 //#         if (

@@ -1,4 +1,4 @@
-package json.me;
+package org.json.me;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -283,7 +283,7 @@ public class JSONWriter {
         return this.append(b ? "true" : "false");
     }
 
-//#if CLDC!="1.0"
+//#ifndef polish.cldc1.0
     /**
      * Append a double value.
      * @param d A double.

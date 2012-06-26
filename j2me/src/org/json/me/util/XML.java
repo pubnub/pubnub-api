@@ -1,9 +1,9 @@
-package json.me.util;
+package org.json.me.util;
 
 import java.util.Enumeration;
-import json.me.JSONArray;
-import json.me.JSONException;
-import json.me.JSONObject;
+import org.json.me.JSONArray;
+import org.json.me.JSONException;
+import org.json.me.JSONObject;
 
 /*
 Copyright (c) 2002 JSON.org

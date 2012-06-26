@@ -1,8 +1,8 @@
-package json.me.util;
+package org.json.me.util;
 
-import json.me.JSONException;
-import json.me.JSONObject;
-import json.me.JSONTokener;
+import org.json.me.JSONException;
+import org.json.me.JSONObject;
+import org.json.me.JSONTokener;
 
 /*
 Copyright (c) 2002 JSON.org
@@ -185,10 +185,10 @@ public class XMLTokener extends JSONTokener {
                     throw syntaxError("Unterminated string.");
                 }
                 if (c == q) {
-//#if CLDC!="1.0"
-                    return Boolean.TRUE;
+//#ifndef polish.cldc1.0
+//#                     return Boolean.TRUE;
 //#else
-//#                     return JSONObject.TRUE;
+                    return JSONObject.TRUE;
 //#endif
                 }
             }
@@ -196,10 +196,10 @@ public class XMLTokener extends JSONTokener {
             for (;;) {
                 c = next();
                 if (isWhitespace(c)) {
-//#if CLDC!="1.0"
-                    return Boolean.TRUE;
+//#ifndef polish.cldc1.0
+//#                     return Boolean.TRUE;
 //#else
-//#                     return JSONObject.TRUE;
+                    return JSONObject.TRUE;
 //#endif
                 }
                 switch (c) {
@@ -213,10 +213,10 @@ public class XMLTokener extends JSONTokener {
                 case '"':
                 case '\'':
                     back();
-//#if CLDC!="1.0"
-                    return Boolean.TRUE;
+//#ifndef polish.cldc1.0
+//#                     return Boolean.TRUE;
 //#else
-//#                     return JSONObject.TRUE;
+                    return JSONObject.TRUE;
 //#endif
                 }
             }
