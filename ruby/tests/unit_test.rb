@@ -1,3 +1,4 @@
+# encoding: utf-8
 ## www.pubnub.com - PubNub realtime push service in the cloud.
 ## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog
 

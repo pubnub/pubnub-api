@@ -10,100 +10,178 @@
 ## -----------------------------------
 
 import sys
-import tornado
 sys.path.append('../')
 from Pubnub import Pubnub
 
 publish_key   = len(sys.argv) > 1 and sys.argv[1] or 'demo'
 subscribe_key = len(sys.argv) > 2 and sys.argv[2] or 'demo'
 secret_key    = len(sys.argv) > 3 and sys.argv[3] or 'demo' 
-cipher_key    = len(sys.argv) > 4 and sys.argv[4] or ''   ##(Cipher key is Optional)
-ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or False
+cipher_key    = len(sys.argv) > 4 and sys.argv[4] or ''
+ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or True
 
 ## -----------------------------------------------------------------------
-## Initiat Class
+## Command Line Options Supplied PubNub
 ## -----------------------------------------------------------------------
-pubnub = Pubnub( publish_key, subscribe_key, secret_key,cipher_key, ssl_on )
+pubnub_user_supplied_options = Pubnub(
+    publish_key,   ## OPTIONAL (supply None to disable)
+    subscribe_key, ## REQUIRED
+    secret_key,    ## OPTIONAL (supply None to disable)
+    cipher_key,    ## OPTIONAL (supply None to disable)
+    ssl_on         ## OPTIONAL (supply None to disable)
+)
+
+## -----------------------------------------------------------------------
+## High Security PubNub
+## -----------------------------------------------------------------------
+pubnub_high_security = Pubnub(
+    'pub-c-a30c030e-9f9c-408d-be89-d70b336ca7a0',
+    'sub-c-387c90f3-c018-11e1-98c9-a5220e0555fd',
+    'sec-c-MTliNDE0NTAtYjY4Ni00MDRkLTllYTItNDhiZGE0N2JlYzBl',
+    'YWxzamRmbGFqZHM3NXRBSVVXV1dXR1JLSkZFR0pEU0FLTGRzaXVhYXB0b2pzZGZgo',
+    True
+)
+
+## -----------------------------------------------------------------------
+## Channel | Message Test Data (UTF-8)
+## -----------------------------------------------------------------------
 crazy  = ' ~`â¦â§!@#$%^&*(顶顅Ȓ)+=[]\\{}|;\':",./<>?abcd'
+many_channels = [ str(x) + '-many_channel_test' for x in range(10) ]
 
-## ---------------------------------------------------------------------------
+## -----------------------------------------------------------------------
 ## Unit Test Function
-## ---------------------------------------------------------------------------
+## -----------------------------------------------------------------------
 def test( trial, name ) :
-    if trial :
-        print( 'PASS: ' + name )
-    else :
-        print( 'FAIL: ' + name )
+    if trial : print( 'PASS: ' + name )
+    else :     print( '- FAIL - ' + name )
 
-## -----------------------------------------------------------------------
-## Time Example
-## -----------------------------------------------------------------------
-def time_complete(timestamp):
-    print(timestamp)
+def test_pubnub(pubnub):
+    ## -----------------------------------------------------------------------
+    ## Many Channels
+    ## -----------------------------------------------------------------------
+    def phase2():
+        status = {
+            'sent' : 0,
+            'received' : 0,
+            'connections' : 0
+        }
 
-pubnub.time({ 'callback' : time_complete })
+        def received( message, chan ):
+            test( status['received'] <= status['sent'], 'many sends' )
+            status['received'] += 1
+            pubnub.unsubscribe({ 'channel' : chan })
+            if status['received'] == len(many_channels): pubnub.stop()
 
-## -----------------------------------------------------------------------
-## History Example
-## -----------------------------------------------------------------------
-def history_complete(messages):
-    print(messages)
+        def publish_complete( info, chan ):
+            status['sent'] += 1
+            test( info, 'publish complete' )
+            test( info and len(info) > 2, 'publish response' )
+            if not info[0]: sendit(chan)
 
-pubnub.history( {
-    'channel'  : crazy,
-    'limit'    : 10,
-    'callback' : history_complete
-})
+        def sendit(chan):
+            tchan = chan
+            pubnub.publish({
+                'channel'  : chan,
+                'message'  : "Hello World",
+                'callback' : (lambda msg:publish_complete( msg, tchan ))
+            })
 
-## -----------------------------------------------------------------------
-## Publish Example
-## -----------------------------------------------------------------------
-def publish_complete(info):
-    print(info)
+        def connected(chan):
+            status['connections'] += 1
+            sendit(chan)
 
-pubnub.publish({
-    'channel' : crazy,
-    'message' : "Hello World",
-    'callback' : publish_complete
-})
+        def delivered(info):
+            if info and info[0]: status['sent'] += 1
 
-## -----------------------------------------------------------------------
-## Subscribe Example
-## -----------------------------------------------------------------------
-def message_received(message):
-    print(message)
-    print('Disconnecting...')
-    pubnub.unsubscribe({ 'channel' : crazy })
+        def subscribe(chan):
+            pubnub.subscribe({
+                'channel'  : chan,
+                'connect'  : (lambda:connected(chan+'')),
+                'callback' : (lambda msg:received( msg, chan ))
+            })
 
-    def done() :
-        print('final connection, done :)')
+        ## Subscribe All Channels
+        for chan in many_channels: subscribe(chan)
+        
+    ## -----------------------------------------------------------------------
+    ## Time Example
+    ## -----------------------------------------------------------------------
+    def time_complete(timestamp):
+        test( timestamp, 'timetoken fetch' )
+
+    pubnub.time({ 'callback' : time_complete })
+
+    ## -----------------------------------------------------------------------
+    ## Publish Example
+    ## -----------------------------------------------------------------------
+    def publish_complete(info):
+        test( info, 'publish complete' )
+        test( info and len(info) > 2, 'publish response' )
+
+        pubnub.history( {
+            'channel'  : crazy,
+            'limit'    : 10,
+            'callback' : history_complete
+        })
+
+    ## -----------------------------------------------------------------------
+    ## History Example
+    ## -----------------------------------------------------------------------
+    def history_complete(messages):
+        test( messages and len(messages) > 0, 'history' )
+        test( messages, 'history' )
+
+
+    pubnub.publish({
+        'channel'  : crazy,
+        'message'  : "Hello World",
+        'callback' : publish_complete
+    })
+
+    ## -----------------------------------------------------------------------
+    ## Subscribe Example
+    ## -----------------------------------------------------------------------
+    def message_received(message):
+        test( message, 'message received' )
         pubnub.unsubscribe({ 'channel' : crazy })
-        tornado.ioloop.IOLoop.instance().stop()
 
-    def dumpster(message) :
-        print('never see this')
-        print(message)
+        def done() :
+            pubnub.unsubscribe({ 'channel' : crazy })
+            pubnub.publish({
+                'channel'  : crazy,
+                'message'  : "Hello World",
+                'callback' : (lambda x:x)
+            })
+            phase2()
 
-    print('reconnecting...')
+        def dumpster(message) :
+            test( 0, 'never see this' )
+
+        pubnub.subscribe({
+            'channel'  : crazy,
+            'connect'  : done,
+            'callback' : dumpster
+        })
+
+    def connected() :
+        pubnub.publish({
+            'channel' : crazy,
+            'message' : { 'Info' : 'Connected!' }
+        })
+
     pubnub.subscribe({
         'channel'  : crazy,
-        'connect'  : done,
-        'callback' : dumpster
+        'connect'  : connected,
+        'callback' : message_received
     })
 
-def connected() :
-    pubnub.publish({
-        'channel' : crazy,
-        'message' : { 'Info' : 'Connected!' }
-    })
-
-pubnub.subscribe({
-    'channel'  : crazy,
-    'connect'  : connected,
-    'callback' : message_received
-})
+    ## -----------------------------------------------------------------------
+    ## IO Event Loop
+    ## -----------------------------------------------------------------------
+    pubnub.start()
 
 ## -----------------------------------------------------------------------
-## IO Event Loop
+## Run Tests
 ## -----------------------------------------------------------------------
-tornado.ioloop.IOLoop.instance().start()
+test_pubnub(pubnub_user_supplied_options)
+test_pubnub(pubnub_high_security)
+
