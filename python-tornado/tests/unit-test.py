@@ -5,6 +5,14 @@
 ## Copyright (c) 2010 Stephen Blum
 ## http://www.pubnub.com/
 
+## TODO Tests
+##
+## - wait 20 minutes, send a message
+## - 
+## - 
+## 
+## 
+
 ## -----------------------------------
 ## PubNub 3.1 Real-time Push Cloud API
 ## -----------------------------------
@@ -34,10 +42,28 @@ pubnub_user_supplied_options = Pubnub(
 ## High Security PubNub
 ## -----------------------------------------------------------------------
 pubnub_high_security = Pubnub(
+    ## Publish Key
     'pub-c-a30c030e-9f9c-408d-be89-d70b336ca7a0',
+
+    ## Subscribe Key
     'sub-c-387c90f3-c018-11e1-98c9-a5220e0555fd',
+
+    ## Secret Key
     'sec-c-MTliNDE0NTAtYjY4Ni00MDRkLTllYTItNDhiZGE0N2JlYzBl',
-    'YWxzamRmbGFqZHM3NXRBSVVXV1dXR1JLSkZFR0pEU0FLTGRzaXVhYXB0b2pzZGZgo',
+
+    ## Ciper Key
+    'YWxzamRmbVjFaa05HVnGFqZHM3NXRBS73jxmhVMkjiwVVXV1d5UrXR1JLSkZFRr'+
+    'WVd4emFtUm1iR0TFpUZvbiBoYXMgYmVlbxWkhNaF3uUi8kM0YkJTEVlZYVFjBYi'+
+    'jFkWFIxSkxTa1pGUjd874hjklaTFpUwRVuIFNob3VsZCB5UwRkxUR1J6YVhlQWa'+
+    'V1ZkNGVH32mDkdho3pqtRnRVbTFpUjBaeGUgYXNrZWQtZFoKjda40ZWlyYWl1eX'+
+    'U4RkNtdmNub2l1dHE2TTA1jd84jkdJTbFJXYkZwWlZtRnKkWVrSRhhWbFpZVmFz'+
+    'c2RkZmTFpUpGa1dGSXhTa3hUYTFwR1Vpkm9yIGluZm9ybWFNfdsWQdSiiYXNWVX'+
+    'RSblJWYlRGcFVqQmFlRmRyYUU0MFpXbHlZV2wxZVhVNFJrTnR51YjJsMWRIRTJU'+
+    'W91ciBpbmZvcm1hdGliBzdWJtaXR0ZWQb3UZSBhIHJlc3BvbnNlLCB3ZWxsIHJl'+
+    'VEExWdHVybiB0am0aW9uIb24gYXMgd2UgcG9zc2libHkgY2FuLuhcFe24ldWVns'+
+    'dSaTFpU3hVUjFKNllWaFdhRmxZUWpCaQo34gcmVxdWlGFzIHNveqQl83snBfVl3',
+
+    ## 2048bit SSL ON - ENABLED TRUE
     True
 )
 

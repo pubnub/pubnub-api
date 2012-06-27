@@ -25,10 +25,15 @@ from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 from twisted.internet.protocol import Protocol
 from twisted.web.client import Agent
+from twisted.web.client import HTTPConnectionPool
 from twisted.web.http_headers import Headers
 from PubnubCrypto import PubnubCrypto
 import gzip
 import zlib
+
+pnconn_pool = HTTPConnectionPool(reactor)
+pnconn_pool.maxPersistentPerHost    = 100
+pnconn_pool.cachedConnectionTimeout = 310
 
 class Pubnub():
     def __init__(
@@ -388,6 +393,8 @@ class Pubnub():
         return uuid.uuid1()
 
     def _request( self, request, callback ) :
+        global pnconn_pool
+
         ## Build URL
         url = self.origin + '/' + "/".join([
             "".join([ ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.find(ch) > -1 and
@@ -395,10 +402,15 @@ class Pubnub():
                 ch for ch in list(bit)
             ]) for bit in request])
 
+        print(url)
+
         requestType = request[0]
-        
-        agent   = Agent(reactor)
-        request = agent.request( 'GET', url, Headers({'V':['3.1'],'User-Agent': ['Python-Twisted'],'Accept-Encoding': ['gzip']}),None )
+        agent       = Agent( reactor, pnconn_pool, connectTimeout=30 )
+        request     = agent.request( 'GET', url, Headers({
+            'V' : ['3.1'],
+            'User-Agent' : ['Python-Twisted'],
+            'Accept-Encoding' : ['gzip']
+        }), None )
 
         self.resulting_is = str()
         def received(response):
