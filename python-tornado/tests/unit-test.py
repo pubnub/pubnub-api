@@ -7,7 +7,7 @@
 
 ## TODO Tests
 ##
-## - wait 20 minutes, send a message
+## - wait 20 minutes, send a message, receive and success.
 ## - 
 ## - 
 ## 

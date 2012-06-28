@@ -402,8 +402,6 @@ class Pubnub():
                 ch for ch in list(bit)
             ]) for bit in request])
 
-        print(url)
-
         requestType = request[0]
         agent       = Agent( reactor, pnconn_pool, connectTimeout=30 )
         request     = agent.request( 'GET', url, Headers({
