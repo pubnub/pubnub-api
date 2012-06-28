@@ -1,4 +1,3 @@
-# encoding: utf-8
 ## -----------------------------------
 ## PubNub Ruby API Publish Example
 ## -----------------------------------
@@ -7,11 +6,11 @@
 require 'rubygems'
 require 'pubnub'
 
-## declaring publish_key, subscribe_key, secret_key, cipher_key, channel, ssl flag, messages
+## declaring publish_key, subscribe_key, secret_key, cipher_key, channel, ssl flag, messages (Cipher key is Optional)
 publish_key   = 'demo'
 subscribe_key = 'demo'
 secret_key    = 'demo'
-cipher_key    = ''
+cipher_key    = ''    # (Cipher key is Optional)
 ssl_on        = false
 channel       = 'hello_world'
 
@@ -40,22 +39,31 @@ pubnub = Pubnub.new(publish_key,subscribe_key,secret_key,cipher_key,ssl_on)
 puts("\nSending message in String format with publish() Function")
 info = pubnub.publish({
   'channel' => channel,
-  'message' => strMessage
+  'message' => strMessage,
+  'callback' => lambda do |message|
+    puts(message)
+  end
 })
 puts(info)
 
 ## Send Message (PUBLISH) -- Array
 puts("\nSending message in Array format with publish() Function")
-info = pubnub.publish({
+pubnub.publish({
   'channel' => channel,
-  'message' => arrMessage
+  'message' => arrMessage,
+  'callback' => lambda do |message|
+    puts(message)
+  end
 })
-puts(info)
+#puts(info)
 
 ## Send Message (PUBLISH) -- Object (Dictionary)
 puts("\nSending message in Dictionary Object format with publish() Function")
-info = pubnub.publish({
+pubnub.publish({
   'channel' => channel,
-  'message' => objMessage
+  'message' => objMessage,
+  'callback' => lambda do |message|
+    puts(message)
+  end
 })
-puts(info)
+#puts(info)

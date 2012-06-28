@@ -11,12 +11,12 @@ public class PublishExample {
     public static void main(String[] params) {
 
         String pub_key = "demo", sub_key = "demo";
-        String secret_key = "demo", cipher_key = "demo";
+        String secret_key = "demo", cipher_key = ""; //(Cipher key is Optional)
         String channel = "hello_world";    // "c2dmalt"; "androidsample"; 
 
         int publish_messages_count = 1;
 
-        Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key, true);
+        Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key, true); //(Cipher key is Optional)
         int count = 0;
         while (true) {
             if (count < publish_messages_count) {

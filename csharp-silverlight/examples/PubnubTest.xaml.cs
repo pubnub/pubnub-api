@@ -22,7 +22,7 @@ namespace silverlight
             "demo",  // PUBLISH_KEY
             "demo",  // SUBSCRIBE_KEY
             "demo",  // SECRET_KEY
-            "demo",  // CIPHER_KEY
+            "",      // CIPHER_KEY (Cipher key is Optional)
             false    // SSL_ON?
             );
         

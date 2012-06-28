@@ -21,15 +21,15 @@ pubnub_obj = pubnub.new({
 local textoutline = 1
 local function textout( text )
     
-	if textoutline > 24 then textoutline = 1 end
-	if textoutline == 1 then
-		local background = display.newRect(
-			0, 0,
-			display.contentWidth,
-			display.contentHeight
-		)
-		background:setFillColor(254,254,254)
-	end
+    if textoutline > 24 then textoutline = 1 end
+    if textoutline == 1 then
+        local background = display.newRect(
+            0, 0,
+            display.contentWidth,
+            display.contentHeight
+        )
+        background:setFillColor(254,254,254)
+    end
 
     local myText = display.newText( text, 0, 0, nil, display.contentWidth/23 )
 
@@ -37,8 +37,8 @@ local function textout( text )
     myText.x = math.floor(display.contentWidth/2)
     myText.y = (display.contentWidth/19) * textoutline - 5
 
-	textoutline = textoutline + 1
-	print(text)
+    textoutline = textoutline + 1
+    print(text)
 end
 
 -- 
@@ -60,10 +60,10 @@ function subscribe( channel, donecb )
         channel = channel,
         connect = function()
             textout('Connected to channel ')
-			textout(channel)
+            textout(channel)
         end,
         callback = function(message)
-			textout(message)
+            textout(message)
             timer.performWithDelay( 500, donecb )
         end,
         errorback = function()

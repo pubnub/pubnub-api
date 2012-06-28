@@ -17,7 +17,7 @@ namespace csharp_webApp
                 "demo",  // PUBLISH_KEY
                 "demo",  // SUBSCRIBE_KEY
                 "",      // SECRET_KEY
-                "",      // CIPHER_KEY   
+                "",      // CIPHER_KEY   (Cipher key is Optional)
                 false    // SSL_ON?
             );
             Debug.WriteLine("");

@@ -12,11 +12,11 @@ public class SubscribeExample {
     public static void main(String[] params) {
 
         String pub_key = "demo", sub_key = "demo";
-        String secret_key = "demo", cipher_key = "demo";
+        String secret_key = "demo", cipher_key = "";
         String channel = "hello_world";
 
         Pubnub pubnub = new Pubnub(pub_key, sub_key, secret_key, cipher_key,
-                true);
+                true);//(Cipher key is Optional)
 
         // Callback Interface when a Message is Received
         class Receiver implements Callback {

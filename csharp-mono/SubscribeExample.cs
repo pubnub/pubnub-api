@@ -4,31 +4,35 @@ using System.Linq;
 using System.Text;
 using Pubnub;
 
-namespace pubnub_pub
+namespace csharp
 {
     class SubscribeExample
     {
         static public void Main()
         {
-            // Init Pubnub Class
+            //Initialize pubnub state
             pubnub objPubnub = new pubnub(
                 "demo",  // PUBLISH_KEY
                 "demo",  // SUBSCRIBE_KEY
                 "demo",  // SECRET_KEY
-                "demo",  // CIPHER_KEY
+                "",      // CIPHER_KEY (Cipher key is Optional)
                 false    // SSL_ON?
             );
-            string channel = "test_channel";
+            //channel name
+            string channel = "hello-world";
 
-            // Subscribe to the channel
-            objPubnub.Subscribe(
-                channel,
-                delegate(object message)
-                {
-                    Console.WriteLine("Message - " + message);
-                    return true;
-                }
-            );
+            pubnub.Procedure callback = delegate(object message)
+            {
+                Console.WriteLine("Message - " + message);
+                return true;
+            };
+
+            Dictionary<string, object> args = new Dictionary<string, object>();
+            args.Add("channel", channel);
+            args.Add("callback", callback);
+
+            //Subscribe messages
+            objPubnub.Subscribe(args);
         }
     }
 }

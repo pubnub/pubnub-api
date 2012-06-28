@@ -1,3 +1,4 @@
+# encoding: utf-8
 ## www.pubnub.com - PubNub realtime push service in the cloud.
 ## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog
 
@@ -13,11 +14,11 @@
 require 'rubygems'
 require 'pubnub'
 
-## declaring publish_key, subscribe_key, secret_key, cipher_key, message, ssl_on
+## declaring publish_key, subscribe_key, secret_key, cipher_key, message, ssl_on (Cipher key is Optional)
 publish_key   = ARGV[0] || 'demo'
 subscribe_key = ARGV[1] || 'demo'
 secret_key    = ARGV[2] || 'demo'
-cipher_key    = ARGV[3] || 'demo'
+cipher_key    = ARGV[3] || ''    # (Cipher key is Optional)
 ssl_on        = false
 channel       = 'hello_world'
 message       = 'Hi. (顶顅Ȓ)'
@@ -38,33 +39,41 @@ end
 ## ---------------------------------------------------------------------------
 ## UUID generation
 ## ---------------------------------------------------------------------------
-uuid=pubnub.UUID()
+uuid = pubnub.UUID()
 test( uuid.length > 0, 'PubNub Client API UUID: ' + uuid )
 
 ## ---------------------------------------------------------------------------
 ## PubNub Server Time
 ## ---------------------------------------------------------------------------
-timestamp = pubnub.time()
-test( timestamp > 0, 'PubNub Server Time: ' + timestamp.to_s )
+pubnub.time({'callback' => lambda do |message|
+     print 'PubNub Server Time: ', message ## print message
+  end
+})
 
 ## ---------------------------------------------------------------------------
 ## PUBLISH
 ## ---------------------------------------------------------------------------
-pubish_success = pubnub.publish({
+pubnub.publish({
   'channel' => channel,
-   'message' => message
+  'message' => message,
+  'callback' => lambda do |message|
+    puts(message)
+  end
 })
-test( pubish_success[0] == 1, 'Publish First Message Success' )
+#test( pubish_success[0] == 1, 'Publish First Message Success' )
 
 ## ---------------------------------------------------------------------------
 ## HISTORY
 ## ---------------------------------------------------------------------------
-history = pubnub.history({
+pubnub.history({
   'channel' => channel,
-  'limit'   => 5
+  'limit'   => 5,
+  'callback' => lambda do |message|
+    puts(message)
+  end
 })
-puts(history)
-test( history.length >= 1, 'Display History' )
+#puts(history)
+#test( history.length >= 1, 'Display History' )
 
 ## ---------------------------------------------------------------------------
 ## Subscribe

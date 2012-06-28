@@ -11,7 +11,7 @@ import pubnub.Pubnub;
 public class Server {
     @SuppressWarnings("static-access")
 	public static void main(String [] params) {
-    	Pubnub pn  = new Pubnub( "demo", "demo", "demo", "demo", true );
+    	Pubnub pn  = new Pubnub( "demo", "demo", "demo", "", true ); //(Cipher key is Optional)
         int count = 0;
 
         while (true) {

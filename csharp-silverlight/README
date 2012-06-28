@@ -15,7 +15,7 @@
 
 ## This tutorial is based on Silverlight 3.0.
 ===============================================================================
-TUTORIAL: HOW TO USE
+## TUTORIAL: HOW TO USE
 ===============================================================================
 ## Create a new silverlight application
 
@@ -27,10 +27,10 @@ TUTORIAL: HOW TO USE
 ## and use functions from them as follows.
 
 ##  ------------------------------------------------------------------------------------
-##     C#-Silverlight : (Init)
-##     -----------------------
+##  C#-Silverlight : (Init)
+##  -----------------------
 
-        //set the channel
+        //Set the channel
         string channel = "hello-world";
 
         // Initialize pubnub state
@@ -38,7 +38,7 @@ TUTORIAL: HOW TO USE
             "demo",  // PUBLISH_KEY
             "demo",  // SUBSCRIBE_KEY
             "demo",  // SECRET_KEY
-            "demo",  // CIPHER_KEY
+            "",      // CIPHER_KEY (Cipher key is Optional)
             false    // SSL_ON?
             );
             
@@ -124,7 +124,7 @@ TUTORIAL: HOW TO USE
 ##  ------------------------------------------------------------------------------------
 ##  C#-Silverlight : (History)
 ##  --------------------------
-        //Get the history of messages depend on limit. 
+        //Get the history of messages depending on limit. 
         pubnub.ResponseCallback respCallback = delegate(object response)
         {
             List<object> result = (List<object>)response;

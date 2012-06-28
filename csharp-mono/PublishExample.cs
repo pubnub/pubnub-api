@@ -8,22 +8,23 @@ using Newtonsoft.Json.Linq;
 using System.Web.Script.Serialization;
 using Pubnub;
 
-namespace pubnub_pub
+namespace csharp
 {
     class PublishExample
     {
         static public void Main()
         {
-            // Init Pubnub Class
+            //Initialize pubnub state
             pubnub objPubnub = new pubnub(
                 "demo",  // PUBLISH_KEY
                 "demo",  // SUBSCRIBE_KEY
                 "demo",  // SECRET_KEY
-                "demo",  // CIPHER_KEY   
+                "",  // CIPHER_KEY  [Cipher key is Optional] 
                 false    // SSL_ON?
             );
 
-            string channel = "test_channel";
+            //channel name
+            string channel = "hello-world";
 
             // Publish String Message
             Dictionary<string, object> args = new Dictionary<string, object>();
@@ -31,6 +32,7 @@ namespace pubnub_pub
             args.Add("message", "Hello Csharp - mono");
             List<object> info = null;
 
+            // publish Response
             info = objPubnub.Publish(args);
             Console.WriteLine("[ " + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
 
@@ -49,10 +51,11 @@ namespace pubnub_pub
             args.Add("channel", channel);
             args.Add("message", objArr);
 
+            // publish Response
             info = objPubnub.Publish(args);
             Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
 
-            // Publish Message in Dictionary format
+            // Publish message in Dictionary format
             args = new Dictionary<string, object>();
             Dictionary<string, object> objDict = new Dictionary<string, object>();
             Dictionary<string, object> val1 = new Dictionary<string, object>();
@@ -64,6 +67,7 @@ namespace pubnub_pub
             args.Add("channel", channel);
             args.Add("message", objDict);
 
+            // publish Response
             info = objPubnub.Publish(args);
             Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
 

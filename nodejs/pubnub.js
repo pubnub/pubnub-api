@@ -149,7 +149,6 @@ exports.init = function(setup) {
     ,   SECRET_KEY    = setup.secret_key    || false
     ,   SSL           = setup.ssl
     ,   ORIGIN        = setup.origin || 'pubsub.pubnub.com'
-    ,   LIMIT         = 1800
     ,   CHANNELS      = {}
     ,   PN            = {
         /*
@@ -212,9 +211,6 @@ exports.init = function(setup) {
 
             // If trying to send Object
             message = JSON['stringify'](message);
-
-            // Make sure message is small enough.
-            if (message.length > LIMIT) return log('Message Too Big');
 
             // Send Message
             xdr({

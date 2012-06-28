@@ -34,7 +34,7 @@ The Attached Android App provides you Two new Abilities/Examples:
 Subscribe + UnSubscribe to a PubNub Channel.
 Provides a superior alternative to C2DM for broadcasting messages to entire user base.
 
-### How to Get Stared with Sub/UnSub Methods:
+### How to Get Started with Sub/UnSub Methods:
 
 - Just click subscribe or unsubscribe.  The sample included provides a sample UI which interacts with the new Sub/UnSub methodology.
 - While subscribed, sending any message to "androidsample" will show a popup in the app saying that it received a message.
@@ -54,11 +54,11 @@ Provides a superior alternative to C2DM for broadcasting messages to entire user
 ```
 
 - You will see a push notification in the Android Notification Bar with your message!
-- This is MUCH preferred to than the C2DM slow network that Google provides you. C2DM is hard to implement, it's imposes artificial limits you reach very quickly.  C2DM is not recommended to use it as a "broadcast" mechanism according to Google.  C2DM is Slow.  Google forces you to send a single message at a time (1 http connection per message).
+- This is MUCH preferred to than the C2DM slow network that Google provides you. C2DM is hard to implement, it imposes artificial limits for you to reach very quickly.  C2DM is not recommended to use as it is a "broadcast" mechanism according to Google.  C2DM is Slow.  Google forces you to send a single message at a time (1 http connection per message).
 
 Caveats:
 - The method of unsubscribing is harsh yet swift, all resources are cleared associated to the connections.
-- The C2DM alternative will work as long as they have an internet connection or can re-connect before the queue has been freed.  PubNub is reliable this way.  In the case where the user may be between network signals, or their phone is off for extended period of time.  They will not receive the message.
+- The C2DM alternative will work as long as they have an internet connection or can re-connect before the queue has been freed.  PubNub is reliable this way.  In the case where the user may be between network signals, or their phone is switched off for extended period of time, they will not receive the message.
 
 ## Java: (Init)
 
@@ -67,7 +67,7 @@ Caveats:
         "demo",  // PUBLISH_KEY
         "demo",  // SUBSCRIBE_KEY
         "",      // SECRET_KEY
-        "",      // CIPHER_KEY
+        "",      // CIPHER_KEY [Cipher key is Optional]
         false    // SSL_ON?
     );
 ```

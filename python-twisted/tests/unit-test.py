@@ -10,14 +10,13 @@
 ## -----------------------------------
 
 import sys
-from twisted.internet import reactor
 sys.path.append('../')
 from Pubnub import Pubnub
 
 publish_key   = len(sys.argv) > 1 and sys.argv[1] or 'demo'
 subscribe_key = len(sys.argv) > 2 and sys.argv[2] or 'demo'
 secret_key    = len(sys.argv) > 3 and sys.argv[3] or 'demo'
-cipher_key    = len(sys.argv) > 4 and sys.argv[4] or 'demo'
+cipher_key    = len(sys.argv) > 4 and sys.argv[4] or ''      ##(Cipher key is Optional)
 ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or False
 
 ## -----------------------------------------------------------------------
@@ -78,7 +77,7 @@ def message_received(message):
     def done() :
         print('final connection, done :)')
         pubnub.unsubscribe({ 'channel' : crazy })
-        reactor.stop()
+        pubnub.stop()
 
     def dumpster(message) :
         print('never see this')
@@ -105,4 +104,4 @@ pubnub.subscribe({
 ## -----------------------------------------------------------------------
 ## IO Event Loop
 ## -----------------------------------------------------------------------
-reactor.run()
+pubnub.start()

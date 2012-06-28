@@ -17,7 +17,7 @@
 ## Copy "pubnub.lua" and "Json.lua" into your Project Directory.
 ##
 
-require "pubnub"
+Require "pubnub"
 
 --
 -- GET YOUR PUBNUB KEYS HERE:

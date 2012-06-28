@@ -19,8 +19,8 @@ TUTORIAL: HOW TO USE
 ==================================================================================
 
 ##  --------------------------------------------------------------------------------
-##     Flash AS3 : (Init)
-##     ------------
+##  Flash AS3 : (Init)
+##  ------------------
 
         //set the channel
         var channelName:String = "hello-world";
@@ -37,7 +37,7 @@ TUTORIAL: HOW TO USE
         pubnub.init(config);    
 ##  ------------------------------------------------------------------------------------
 ##  Flash AS3 : (Publish)
-##  ---------------
+##  ---------------------
 
         //Publish the messages of type String, json array, and json object
         pubnub.addEventListener(PubNubEvent.INIT, onPubInit);
@@ -58,7 +58,7 @@ TUTORIAL: HOW TO USE
             
 ##  ------------------------------------------------------------------------------------
 ##  Flash AS3 : (Subscribe)
-##  -----------------
+##  -----------------------
         //Subscribe messages of type string,json array and json object
         pubnub.addEventListener(PubNubEvent.INIT, onSubInit);
         function onSubInit(event:PubNubEvent):void
@@ -72,7 +72,7 @@ TUTORIAL: HOW TO USE
 
 ##  ------------------------------------------------------------------------------------
 ##  Flash AS3 : (History)
-##  ---------------
+##  ---------------------
         //Get the history of messages which has published and it depends on limit
         pubnub.addEventListener(PubNubEvent.INIT, onHistInit);
         function onHistInit(event:PubNubEvent):void
@@ -87,7 +87,7 @@ TUTORIAL: HOW TO USE
 
 ##  ------------------------------------------------------------------------------------
 ##  Flash AS3 : (Time)
-##  ------------
+##  ------------------
         //Get the time
         pubnub.addEventListener(PubNubEvent.INIT, onTimeInit);
         function onTimeInit(event:PubNubEvent):void
@@ -101,7 +101,7 @@ TUTORIAL: HOW TO USE
     
 ##  ------------------------------------------------------------------------------------
 ##  Flash AS3 : (UUID)
-##  ------------
+##  ------------------
         // Get UUID
         var uid:String = pubnub._uid();        
         trace("Generated UUID is :" + uid);

@@ -32,7 +32,7 @@ public class PushService extends Service {
         pubnub = new Pubnub("demo", // PUBLISH_KEY
                 "demo", // SUBSCRIBE_KEY
                 "demo", // SECRET_KEY
-                "demo", // CIPHER_KEY
+                "",     // CIPHER_KEY [Optional]
                 true    // SSL_ON?
         );
     }

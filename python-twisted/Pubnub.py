@@ -25,12 +25,21 @@ from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 from twisted.internet.protocol import Protocol
 from twisted.web.client import Agent
+from twisted.web.client import HTTPConnectionPool
 from twisted.web.http_headers import Headers
 from PubnubCrypto import PubnubCrypto
 import gzip
 import zlib
 
+pnconn_pool = HTTPConnectionPool(reactor)
+pnconn_pool.maxPersistentPerHost    = 100
+pnconn_pool.cachedConnectionTimeout = 310
+
 class Pubnub():
+
+    def start(self): reactor.run()
+    def stop(self):  reactor.stop()
+
     def __init__(
         self,
         publish_key,
@@ -95,11 +104,14 @@ class Pubnub():
         })
 
         """
+        ## Capture Callback
+        if args.has_key('callback'): callback = args['callback']
+        else: callback = lambda x : x
+
         ## Fail if bad input.
-        if not (args['channel'] and args['message']) :
-            print('Missing Channel or Message')
+        if not (args['channel'] and args['message']):
+            callback([ 0, 'Missing Channel or Message', 0 ])
             return False
-        
 
         ## Capture User Input
         channel = str(args['channel'])
@@ -125,11 +137,8 @@ class Pubnub():
         else :
             message = json.dumps(args['message'])
 
-        ## Capture Callback
-        if args.has_key('callback') :
-            callback = args['callback']
-        else :
-            callback = lambda x : x
+        def publish_response(info):
+            callback(info or [0, 'Disconnected', 0]);
 
         ## Sign Message
         if self.secret_key :
@@ -156,7 +165,7 @@ class Pubnub():
             channel,
             '0',
             message
-        ], callback )
+        ], publish_response )
 
 
     def subscribe( self, args ) :
@@ -193,13 +202,11 @@ class Pubnub():
         """
         ## Fail if missing channel
         if not 'channel' in args :
-            print('Missing Channel.')
-            return False
+            return 'Missing Channel.'
 
         ## Fail if missing callback
         if not 'callback' in args :
-            print('Missing Callback.')
-            return False
+            return 'Missing Callback.'
 
         ## Capture User Input
         channel   = str(args['channel'])
@@ -221,8 +228,7 @@ class Pubnub():
 
         ## Ensure Single Connection
         if self.subscriptions[channel]['connected'] :
-            print("Already Connected")
-            return False
+            return "Already Connected"
 
         self.subscriptions[channel]['connected'] = 1
 
@@ -333,8 +339,8 @@ class Pubnub():
 
         ## Fail if bad input.
         if not channel :
-            print('Missing Channel')
-            return False
+            return 'Missing Channel'
+
         ## Get History
         pc = PubnubCrypto()
         return self._request( [
@@ -388,6 +394,8 @@ class Pubnub():
         return uuid.uuid1()
 
     def _request( self, request, callback ) :
+        global pnconn_pool
+
         ## Build URL
         url = self.origin + '/' + "/".join([
             "".join([ ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.find(ch) > -1 and
@@ -396,9 +404,16 @@ class Pubnub():
             ]) for bit in request])
 
         requestType = request[0]
-        
-        agent   = Agent(reactor)
-        request = agent.request( 'GET', url, Headers({'V':['3.1'],'User-Agent': ['Python-Twisted'],'Accept-Encoding': ['gzip']}),None )
+        agent       = Agent(
+            reactor,
+            self.ssl and None or pnconn_pool,
+            connectTimeout=30
+        )
+        request     = agent.request( 'GET', url, Headers({
+            'V'               : ['3.1'],
+            'User-Agent'      : ['Python-Twisted'],
+            'Accept-Encoding' : ['gzip']
+        }), None )
 
         self.resulting_is = str()
         def received(response):
@@ -465,7 +480,4 @@ class PubNubResponse(Protocol):
 
     def dataReceived( self, bytes ):
             self.finished.callback(bytes)
-
-    #def connectionLost( self, reason ):
-        #print 'Finished receiving body:', reason.getErrorMessage()
 

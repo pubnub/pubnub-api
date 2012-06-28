@@ -16,18 +16,25 @@ import urllib2
 import tornado.httpclient
 import sys
 import uuid
+
 try:
     from hashlib import sha256
     digestmod = sha256
 except ImportError:
     import Crypto.Hash.SHA256 as digestmod
     sha256 = digestmod.new
+
 import hmac
 import tornado.ioloop
-ioloop = tornado.ioloop.IOLoop.instance()
 from PubnubCrypto import PubnubCrypto
 
+ioloop = tornado.ioloop.IOLoop.instance()
+
 class Pubnub():
+
+    def stop(self): ioloop.stop()
+    def start(self): ioloop.start()
+        
     def __init__(
         self,
         publish_key,
@@ -357,7 +364,7 @@ class Pubnub():
 
         """
         def complete(response) :
-            args['callback'](response[0])
+            args['callback'](response and response[0])
 
         self._request( [
             'time',
@@ -425,13 +432,17 @@ class Pubnub():
                 callback(obj)        
 
         ## Send Request Expecting JSON Response
-        http = tornado.httpclient.AsyncHTTPClient()
-        request =  tornado.httpclient.HTTPRequest( url, 'GET', dict({'V':'3.1','User-Agent': 'Python-Tornado','Accept-Encoding': 'gzip'}) ) 
+        http = tornado.httpclient.AsyncHTTPClient(max_clients=100)
+        request = tornado.httpclient.HTTPRequest( url, 'GET', dict({
+            'V' : '3.1',
+            'User-Agent' : 'Python-Tornado',
+            'Accept-Encoding' : 'gzip'
+        }) ) 
         
         http.fetch(
             request,
             callback=complete,
-            connect_timeout=200,
-            request_timeout=200
+            connect_timeout=310,
+            request_timeout=310
         )
 
