@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!-- Consider specifying the language of your content by adding the `lang` attribute to <html> -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+         More info: h5bp.com/i/378 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Secure Chat</title>
+    <meta name="description" content="">
+
+    <!-- Mobile viewport optimized: h5bp.com/viewport -->
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+    <link rel="stylesheet" href="css/main.css">
+
+    <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+
+    <!-- All JavaScript at the bottom, except this Modernizr build.
+         Modernizr enables HTML5 elements & feature detects for optimal performance.
+         Create your own custom Modernizr build: www.modernizr.com/download/ -->
+    <script src="js/vendor/modernizr-2.5.3.min.js"></script>
+</head>
+<body>
+    <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
+         chromium.org/developers/how-tos/chrome-frame-getting-started -->
+    <!--[if lt IE 7]><p class="chromeframe">Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+    <!-- Add your site or application content here -->
+
+    <h1>Secure Chat </h1>
+  
+    <style>
+      #chat_box {
+        width: 90%;
+        margin: 10px;
+        padding: 10px;
+        min-height: 300px;
+        background: rgb(232,232,232);
+      }
+      #chat_input {
+        margin: 10px;
+        width: 90%;
+      }
+    </style>
+
+    <div id='chat_box'></div>
+    <form id="chat_form">
+      <input type="text" id='chat_input'/> 
+      <input type="submit" val='send' id='send'/> 
+    </form>
+
+
+
+
+    <!-- JavaScript at the bottom for fast page loading: http://developer.yahoo.com/performance/rules.html#js_bottom -->
+
+    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.7.2.min.js"><\/script>')</script>
+
+    <!-- scripts concatenated and minified via build script -->
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+
+    <script src="http://cdn.pubnub.com/pubnub-3.1.min.js"></script>
+    <script src="http://pubnub.github.com/pubnub-api/crypto/crypto.js"></script>
+    <script src="http://pubnub.github.com/pubnub-api/crypto/encrypt-pubnub.js"></script>
+
+    <script>
+      var cipher_key = 
+"SkQjKkhZR1NKRExLRkhVNGF0eTdhdHIgcGpvYXRyZWggZlNEQU9VIFlGVyRZV15FR1UgcGhpIGZzcG9oaSB0ZWktPXNlZj0tYXNmZGppbyBmc2Rnb3kgRFNGVVlBRlUgT0dSIElVUElPRkVGSHVER0hTbGtqaCBsa2d1aXVhc2ZoeUYgREpLU1lZVFIkXlRVSUhUS0VKSEpMS0YgT0lVRlQmT1EjVVBJVE8mKnk0ODc1NDU3OF4mQSYkUmZGREtTTEogYWRnaHMjKiNqa3NobGt0NGpsa2FpdWFoNHR1aEZLSkRT"
+
+      var secure_pubnub = PUBNUB.secure({
+        publish_key   : "pub-c-f537d314-4e1e-4c49-81b5-2825ebe8548c",
+        subscribe_key : "sub-c-a890aae1-c13f-11e1-8c1d-b3b3f2232a46",
+        origin        : "pubsub.pubnub.com",
+        ssl           : true,
+        cipher_key    : cipher_key 
+      });
+
+      secure_pubnub.subscribe({
+          channel    : "secure_chat", 
+          callback   : function(message) {
+            if (message.name) {
+              PUBNUB.events.fire(message.name, message.data);
+            }
+          }
+      });
+
+      $('#chat_form').submit( function(e) {
+        e.preventDefault();  
+        secure_pubnub.publish({
+          channel : "secure_chat",
+          message : { 'name'    : 'secure_chat_message' ,
+                      'data': { 'message' : $("#chat_input").val() }},
+          callback : function() {
+            $("#chat_input").val("");
+          }
+        });
+
+      });
+
+      PUBNUB.events.bind('secure_chat_message', function(data) {
+        $('#chat_box').append("<p>" + data.message + "</p>");
+      });
+
+
+    </script>
+    <!-- end scripts -->
+
+    <!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID.
+         mathiasbynens.be/notes/async-analytics-snippet -->
+    <script>
+        var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+        (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+        g.src=('https:'==location.protocol?'//ssl':'http://www')+'.google-analytics.com/ga.js';
+        s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+</body>
+</html>
