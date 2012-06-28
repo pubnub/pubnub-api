@@ -64,7 +64,7 @@ pubnub_high_security = Pubnub(
     'dSaTFpU3hVUjFKNllWaFdhRmxZUWpCaQo34gcmVxdWlGFzIHNveqQl83snBfVl3',
 
     ## 2048bit SSL ON - ENABLED TRUE
-    False
+    True
 )
 
 ## -----------------------------------------------------------------------
