@@ -10,7 +10,6 @@
 ## -----------------------------------
 
 import sys
-from twisted.internet import reactor
 sys.path.append('../')
 from Pubnub import Pubnub
 
@@ -78,7 +77,7 @@ def message_received(message):
     def done() :
         print('final connection, done :)')
         pubnub.unsubscribe({ 'channel' : crazy })
-        reactor.stop()
+        pubnub.stop()
 
     def dumpster(message) :
         print('never see this')
@@ -105,4 +104,4 @@ pubnub.subscribe({
 ## -----------------------------------------------------------------------
 ## IO Event Loop
 ## -----------------------------------------------------------------------
-reactor.run()
+pubnub.start()
