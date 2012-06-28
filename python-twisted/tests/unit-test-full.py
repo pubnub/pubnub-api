@@ -144,8 +144,9 @@ def test_pubnub(pubnub):
     ## -----------------------------------------------------------------------
     ## Time Example
     ## -----------------------------------------------------------------------
-    def time_complete(timestamp):
-        test( timestamp, 'timetoken fetch' )
+    def time_complete(timetoken):
+        test( timetoken, 'timetoken fetch' )
+        test( isinstance( timetoken, int ), 'timetoken int type' )
 
     pubnub.time({ 'callback' : time_complete })
 
