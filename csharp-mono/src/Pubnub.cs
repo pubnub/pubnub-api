@@ -24,6 +24,11 @@ using PubnubCrypto;
  */
 namespace Pubnub
 {
+    public class Channel_status 
+    {
+        public string channel;
+        public bool connected, first;
+    }
     public class pubnub
     {
         private string ORIGIN = "pubsub.pubnub.com";
@@ -36,6 +41,7 @@ namespace Pubnub
         private ManualResetEvent webRequestDone;
         volatile private bool abort;
         public delegate bool Procedure(object message);
+        private List<Channel_status> subscriptions;
 
         /**
          * PubNub 3.1 with cipher key
@@ -242,87 +248,235 @@ namespace Pubnub
           */
         private void _subscribe(Dictionary<string, object> args)
         {
+            Procedure callback=null, connect_cb, disconnect_cb, reconnect_cb, error_cb;
             clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
 
             string channel = args["channel"].ToString();
-            Procedure callback = (Procedure)args["callback"];
             object timetoken = args["timestamp"];
-            //  Begin Recusive Subscribe
-            try
+            // Validate Arguments
+            if (args["callback"] != null)
             {
-                // Build URL
-                List<string> url = new List<string>();
-                url.Add("subscribe");
-                url.Add(this.SUBSCRIBE_KEY);
-                url.Add(channel);
-                url.Add("0");
-                url.Add(timetoken.ToString());
-
-                // Wait for Message
-                List<object> response = _request(url);
-
-                // Update TimeToken
-                if (response[1].ToString().Length > 0)
-                    timetoken = (object)response[1];
-
-                // Run user Callback and Reconnect if user permits.
-                object message = "";
-                foreach (object msg in (object[])response[0])
+                callback = (Procedure)args["callback"];
+            }
+            else 
+            {
+                Console.WriteLine("Invalid Callback.");
+            }
+            if(args.ContainsKey("connect_cb") && args["connect_cb"] != null)            
+                connect_cb = (Procedure)args["connect_cb"];
+            else
+                connect_cb = new Procedure(doNothing);
+            if (args.ContainsKey("disconnect_cb") && args["disconnect_cb"] != null)
+                disconnect_cb = (Procedure)args["disconnect_cb"];
+            else
+                disconnect_cb = new Procedure(doNothing);
+            if (args.ContainsKey("reconnect_cb") && args["reconnect_cb"] != null)
+                reconnect_cb = (Procedure)args["reconnect_cb"];
+            else
+                reconnect_cb = new Procedure(doNothing);
+            if (args.ContainsKey("error_cb") && args["error_cb"] != null)
+                error_cb = (Procedure)args["error_cb"];
+            else
+                error_cb = (Procedure)args["callback"];
+            if (channel == null || channel =="")
+            {
+                error_cb("Invalid Channel.");
+                return;
+            }
+            // Ensure Single Connection
+            if (subscriptions != null && subscriptions.Count > 0)
+            {
+                bool channel_exist = false;
+                foreach (Channel_status cs in subscriptions)
                 {
-                    if (this.CIPHER_KEY.Length > 0)
+                    if (cs.channel == channel)
                     {
-                        if (msg.GetType() == typeof(string))
+                        channel_exist = true;
+                        break;
+                    }
+                }
+                if (!channel_exist)
+                {
+                    Channel_status cs = new Channel_status();
+                    cs.channel = channel;
+                    cs.connected = true;
+                    subscriptions.Add(cs);
+                }
+                else
+                {
+                    error_cb("Already Connected");
+                    return;
+                }
+            }
+            else
+            {
+                // New Channel
+                Channel_status cs = new Channel_status();
+                cs.channel = channel;
+                cs.connected = true;
+                subscriptions = new List<Channel_status>();
+                subscriptions.Add(cs);
+            }
+
+            bool is_reconnected = false;
+            //  Begin Recusive Subscribe
+            while (true)
+            {
+                try
+                {
+                    // Build URL
+                    List<string> url = new List<string>();
+                    url.Add("subscribe");
+                    url.Add(this.SUBSCRIBE_KEY);
+                    url.Add(channel);
+                    url.Add("0");
+                    url.Add(timetoken.ToString());
+
+                    // Stop Connection?
+                    bool is_disconnect = false;
+                    foreach (Channel_status cs in subscriptions)
+                    {
+                        if (cs.channel == channel)
                         {
-                            message = pc.decrypt(msg.ToString());
+                            if (!cs.connected)
+                            {
+                                disconnect_cb("Disconnected to channel : " + channel);
+                                is_disconnect = true;
+                                break;
+                            }
                         }
-                        else if (msg.GetType() == typeof(object[]))
+                    }
+                    if (is_disconnect)
+                        return;
+
+                    // Wait for Message
+                    List<object> response = _request(url);
+
+                    // Stop Connection?
+                    foreach (Channel_status cs in subscriptions)
+                    {
+                        if (cs.channel == channel)
                         {
-                            message = pc.decrypt((object[])msg);
+                            if (!cs.connected)
+                            {
+                                disconnect_cb("Disconnected to channel : " + channel);
+                                is_disconnect = true;
+                                break;
+                            }
                         }
-                        else if (msg.GetType() == typeof(Dictionary<string, object>))
+                    }
+                    if (is_disconnect)
+                        return;
+                    // Problem?
+                    if (response == null || response[1].ToString() == "0")
+                    {
+                        
+                        for (int i = 0; i < subscriptions.Count(); i++)
                         {
-                            Dictionary<string, object> dict = (Dictionary<string, object>)msg;
-                            message = pc.decrypt(dict);
+                            Channel_status cs = subscriptions[i];
+                            if (cs.channel == channel)
+                            {
+                                subscriptions.RemoveAt(i);
+                                disconnect_cb("Disconnected to channel : " + channel);
+                            }
+                        }
+
+                        // Ensure Connected (Call Time Function)
+                        while (true)
+                        {
+                            string time_token = Time().ToString();
+                            if (time_token == "0")
+                            {
+                                // Reconnect Callback
+                                reconnect_cb("Reconnecting to channel : " + channel);
+                                Thread.Sleep(5000);
+                            }
+                            else
+                            {
+                                is_reconnected = true;
+                                break;
+                            }
+                        }
+                        if (is_reconnected)
+                        {
+                            break;
                         }
                     }
                     else
                     {
-                        if (msg.GetType() == typeof(object[]))
+                        foreach (Channel_status cs in subscriptions)
                         {
-                            object[] obj = (object[])msg;
-                            JArray jArr = new JArray();
-                            for (int i = 0; i < obj.Count(); i++)
+                            if (cs.channel == channel)
                             {
-                                jArr.Add(obj[i]);
+                                // Connect Callback
+                                if (!cs.first)
+                                {
+                                    cs.first = true;
+                                    connect_cb("Connected to channel : " + channel);
+                                    break;
+                                }
                             }
-                            message = jArr;
                         }
-                        else if (msg.GetType() == typeof(Dictionary<string, object>))
+                    }
+                    // Update TimeToken
+                    if (response[1].ToString().Length > 0)
+                        timetoken = (object)response[1];
+
+                    // Run user Callback and Reconnect if user permits.
+                    object message = "";
+                    foreach (object msg in (object[])response[0])
+                    {
+                        if (this.CIPHER_KEY.Length > 0)
                         {
-                            JObject jobj = new JObject();
-                            foreach (KeyValuePair<string, object> pair in (Dictionary<string, object>)msg)
+                            if (msg.GetType() == typeof(string))
                             {
-                                jobj.Add(pair.Key, pair.Value.ToString());
+                                message = pc.decrypt(msg.ToString());
                             }
-                            message = jobj;
+                            else if (msg.GetType() == typeof(object[]))
+                            {
+                                message = pc.decrypt((object[])msg);
+                            }
+                            else if (msg.GetType() == typeof(Dictionary<string, object>))
+                            {
+                                Dictionary<string, object> dict = (Dictionary<string, object>)msg;
+                                message = pc.decrypt(dict);
+                            }
                         }
                         else
                         {
-                            message = msg;
+                            if (msg.GetType() == typeof(object[]))
+                            {
+                                object[] obj = (object[])msg;
+                                JArray jArr = new JArray();
+                                for (int i = 0; i < obj.Count(); i++)
+                                {
+                                    jArr.Add(obj[i]);
+                                }
+                                message = jArr;
+                            }
+                            else if (msg.GetType() == typeof(Dictionary<string, object>))
+                            {
+                                message = extractObject((Dictionary<string, object>)msg);                                
+                            }
+                            else
+                            {
+                                message = msg;
+                            }
                         }
+                        if (!callback(message)) return;
                     }
-                    if (!callback(message)) return;
                 }
-
-                // Keep listening if Okay.
+                catch
+                {
+                    System.Threading.Thread.Sleep(1000);
+                }
+            }
+            if (is_reconnected)
+            {
+                // Reconnect Callback
                 args["channel"] = channel;
                 args["callback"] = callback;
                 args["timestamp"] = timetoken;
-                this._subscribe(args);
-            }
-            catch
-            {
-                System.Threading.Thread.Sleep(1000);
                 this._subscribe(args);
             }
         }
@@ -335,73 +489,99 @@ namespace Pubnub
          */
         private List<object> _request(List<string> url_components)
         {
-            string temp = null;
-            int count = 0;
-            byte[] buf = new byte[8192];
-            StringBuilder url = new StringBuilder();
-            StringBuilder sb = new StringBuilder();
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-
-            // Add Origin To The Request
-            url.Append(this.ORIGIN);
-
-            // Generate URL with UTF-8 Encoding
-            foreach (string url_bit in url_components)
+            try
             {
-                url.Append("/");
-                url.Append(_encodeURIcomponent(url_bit));
-            }
 
-            // Create Request
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
-            
-            // Set Timeout
-            request.Timeout = 310000;
-            request.ReadWriteTimeout = 310000;
+                string temp = null;
+                int count = 0;
+                byte[] buf = new byte[8192];
+                StringBuilder url = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
 
-            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip");
-            request.Headers.Add("V", "3.1");
-            request.UserAgent = "C#-Mono";
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
 
-            webRequestDone.Reset();
-            IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback(requestCallBack), null);
-            webRequestDone.WaitOne();
-            if (abort)
-            {
-                return new List<object>();
-            }
+                // Add Origin To The Request
+                url.Append(this.ORIGIN);
 
-            // Receive Response
-            HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(asyncResult);
-
-            // Read
-            using (Stream stream = response.GetResponseStream())
-            {
-                Stream resStream = stream;
-                if (response.ContentEncoding.ToLower().Contains("gzip"))
+                // Generate URL with UTF-8 Encoding
+                foreach (string url_bit in url_components)
                 {
-                    resStream = new GZipStream(stream, CompressionMode.Decompress);
+                    url.Append("/");
+                    url.Append(_encodeURIcomponent(url_bit));
                 }
-                else
+                // Create Request
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
+
+                // Set Timeout
+                request.Timeout = 310000;
+                request.ReadWriteTimeout = 310000;
+
+                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip");
+                request.Headers.Add("V", "3.1");
+                request.UserAgent = "C#-Mono";
+
+                webRequestDone.Reset();
+                IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback(requestCallBack), null);
+                webRequestDone.WaitOne();
+                if (abort)
                 {
-                    resStream = stream;
+                    return new List<object>();
                 }
-                do
+
+                // Receive Response
+                HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(asyncResult);
+
+                // Read
+                using (Stream stream = response.GetResponseStream())
                 {
-                    count = resStream.Read(buf, 0, buf.Length);
-                    if (count != 0)
+                    Stream resStream = stream;
+                    if (response.ContentEncoding.ToLower().Contains("gzip"))
                     {
-                        temp = Encoding.UTF8.GetString(buf, 0, count);
-                        sb.Append(temp);
+                        resStream = new GZipStream(stream, CompressionMode.Decompress);
                     }
-                } while (count > 0);
+                    else
+                    {
+                        resStream = stream;
+                    }
+                    do
+                    {
+                        count = resStream.Read(buf, 0, buf.Length);
+                        if (count != 0)
+                        {
+                            temp = Encoding.UTF8.GetString(buf, 0, count);
+                            sb.Append(temp);
+                        }
+                    } while (count > 0);
+                }
+
+                // Parse Response
+                string message = sb.ToString();
+
+                return serializer.Deserialize<List<object>>(message);
             }
-
-            // Parse Response
-            string message = sb.ToString();
-
-            return serializer.Deserialize<List<object>>(message);
+            catch (Exception ex)
+            {
+                List<object> error = new List<object>();
+                if (url_components[0] == "time")
+                {
+                    error.Add("0");
+                }
+                else if (url_components[0] == "history")
+                {
+                    error.Add("Error: Failed JSONP HTTP Request.");
+                }
+                else if (url_components[0] == "publish")
+                {
+                    error.Add("0");
+                    error.Add("Error: Failed JSONP HTTP Request.");
+                }
+                else if (url_components[0] == "subscribe")
+                {
+                    error.Add("0");
+                    error.Add("0");
+                }
+                return error;
+            }
         }
 
         private void requestCallBack(IAsyncResult result)
@@ -502,6 +682,27 @@ namespace Pubnub
             }
         }
 
+       /**
+        * Unsubscribe
+        *
+        * Unsubscribe/Disconnect to channel.
+        *
+        * @param Dictionary<String, Object> containing channel name.
+        */
+        public void Unsubscribe(Dictionary<String, Object> args)
+        {
+            String channel = args["channel"].ToString();
+            foreach (Channel_status cs in subscriptions)
+            {
+                if (cs.channel == channel && cs.connected)
+                {
+                    cs.connected = false;
+                    cs.first = false;
+                    break;
+                }
+            }
+        }
+
         private string _encodeURIcomponent(string s)
         {
             StringBuilder o = new StringBuilder();
@@ -536,6 +737,28 @@ namespace Pubnub
             string hexaHash = "";
             foreach (byte b in hash) hexaHash += String.Format("{0:x2}", b);
             return hexaHash;
+        }
+        private JObject extractObject(Dictionary<string, object> msg)
+        {
+            JObject jobj = new JObject();
+            foreach (KeyValuePair<string, object> pair in (Dictionary<string, object>)msg)
+            {
+                if (pair.Value.GetType() == typeof(Dictionary<string, object>))
+                {
+                    JObject tempObj = extractObject((Dictionary<string, object>)pair.Value);
+                    jobj.Add(pair.Key, tempObj);
+                }
+                else
+                {
+                    jobj.Add(pair.Key, pair.Value.ToString());
+                }
+            }
+            return jobj;
+        }
+        private bool doNothing(object result)
+        {
+            // do nothing
+            return false;
         }
     }
 }

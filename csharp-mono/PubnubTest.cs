@@ -30,7 +30,21 @@ namespace csharp
             List<object> info = null;
 
             info = objPubnub.Publish(args);
-            Console.WriteLine("[ " + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+           if (info != null)
+            {
+                if (info.Count == 3) //success
+                {
+                    Console.WriteLine("[ " + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+                }
+                else if (info.Count == 2) //error
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + "]");
+                }
+            }
+            else 
+            {
+                Console.WriteLine("Error in network connection");
+            }
 
             // Publish message in array format            
             args = new Dictionary<string, object>();
@@ -48,52 +62,104 @@ namespace csharp
 
             // publish Response
             info = objPubnub.Publish(args);
-            Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+			if (info != null)
+            {
+                if (info.Count == 3)
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+                }
+                else if (info.Count == 2)
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + "]");
+                }
+            }
+            else 
+            {
+                Console.WriteLine("Error in network connection");
+            }
 
-            args = new Dictionary<string, object>();
-            Dictionary<string, object> objDict = new Dictionary<string, object>();
+           args = new Dictionary<string, object>();
+           Dictionary<string, object> objDict = new Dictionary<string, object>();
 
-            objDict.Add("Name", "Jhon");
+            objDict.Add("Name", "John");
             objDict.Add("Age", "25");
 
             args.Add("channel", channel);
             args.Add("message", objDict);
 
-            info = objPubnub.Publish(args);
-            Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
-
-            // History
-            Dictionary<string, string> argsHist = new Dictionary<string, string>();
-            argsHist.Add("channel", channel);
-            argsHist.Add("limit", 3.ToString());
-            List<object> history = objPubnub.History(argsHist);
-            Console.Write("History Messages: ");
-            foreach (object history_message in history)
+           info = objPubnub.Publish(args);
+           if (info != null)
             {
-                Console.WriteLine(history_message);
+                if (info.Count == 3)
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+                }
+                else if (info.Count == 2)
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + "]");
+                }
+            }
+            else 
+            {
+                Console.WriteLine("Error in network connection");
             }
 
-            //Get UUID
-            string uuid = objPubnub.UUID();
-            Console.WriteLine("UUID - " + uuid);
+           // History
+           Dictionary<string, string> argsHist = new Dictionary<string, string>();
+           argsHist.Add("channel", channel);
+           argsHist.Add("limit", 3.ToString());
+           List<object> history = objPubnub.History(argsHist);
+           Console.Write("History Messages: ");
+           foreach (object history_message in history)
+           {
+               Console.WriteLine(history_message);
+           }
 
-            // Get PubNub Server Time
-            object timestamp = objPubnub.Time();
-            Console.WriteLine("\nServer Time: " + timestamp.ToString());
+           //Get UUID
+           string uuid = objPubnub.UUID();
+           Console.WriteLine("UUID - " + uuid);
 
-            //Subscribe messages
-            pubnub.Procedure callback = delegate(object message)
+           // Get PubNub Server Time
+           object timestamp = objPubnub.Time();
+           Console.WriteLine("\nServer Time: " + timestamp.ToString());
+
+           //Subscribe messages
+           pubnub.Procedure Receiver = delegate(object message)
             {
-                Console.WriteLine("Messages - " + message);
+                Console.WriteLine("Message - " + message);
                 return true;
             };
-            args = new Dictionary<string, object>();
-            args.Add("channel", channel);
-            args.Add("callback", callback);
+            pubnub.Procedure ConnectCallback = delegate(object message)
+            {
+                Console.WriteLine(message);
+                return true;
+            };
+            pubnub.Procedure DisconnectCallback = delegate(object message)
+            {
+                Console.WriteLine(message);
+                return true;
+            };
+            pubnub.Procedure ReconnectCallback = delegate(object message)
+            {
+                Console.WriteLine(message);
+                return true;
+            };
+            pubnub.Procedure ErrorCallback = delegate(object message)
+            {
+                Console.WriteLine(message);
+                return true;
+            };
+			args = new Dictionary<string, object>();
+			args.Add("channel", channel);
+			args.Add("callback", Receiver);                 // callback to get response
+			args.Add("connect_cb", ConnectCallback);        // callback to get connect event
+			args.Add("disconnect_cb", DisconnectCallback);  // callback to get disconnect event
+			args.Add("reconnect_cb", ReconnectCallback);    // callback to get reconnect event
+			args.Add("error_cb", ErrorCallback);            // callback to get error event
 
-            objPubnub.Subscribe(args);
+			objPubnub.Subscribe(args);
 
-            Console.ReadKey();
+           Console.ReadKey();
         }
 
     }

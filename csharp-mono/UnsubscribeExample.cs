@@ -6,7 +6,7 @@ using Pubnub;
 
 namespace csharp
 {
-    class SubscribeExample
+    class UnsubscribeExample
     {
         static public void Main()
         {
@@ -24,11 +24,24 @@ namespace csharp
             pubnub.Procedure Receiver = delegate(object message)
             {
                 Console.WriteLine("Message - " + message);
+
+                Dictionary<string, object> arg = new Dictionary<string, object>();
+                arg.Add("channel", channel);
+                //Unsubscribe messages
+                objPubnub.Unsubscribe(arg);
                 return true;
             };
             pubnub.Procedure ConnectCallback = delegate(object message)
             {
                 Console.WriteLine(message);
+
+                // Publish String Message
+                Dictionary<string, object> publish = new Dictionary<string, object>();
+                publish.Add("channel", channel);
+                publish.Add("message", "Hello World!!!!"); 
+
+                // publish Response
+                objPubnub.Publish(publish);
                 return true;
             };
             pubnub.Procedure DisconnectCallback = delegate(object message)
@@ -57,6 +70,7 @@ namespace csharp
 
             //Subscribe messages
             objPubnub.Subscribe(args);
+            Console.ReadKey();
         }
     }
 }

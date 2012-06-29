@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Diagnostics;
 
 namespace csharp_webApp
 {
@@ -22,18 +23,42 @@ namespace csharp_webApp
                false    // SSL_ON?
            );
 
-            System.Diagnostics.Debug.WriteLine("Subscribe to channel " + channel);
-            pubnub.Procedure callback = delegate(object message)
+            pubnub.Procedure Receiver = delegate(object message)
             {
-                System.Diagnostics.Debug.WriteLine(message);
+                Debug.WriteLine(message);
+                return true;
+            };
+            pubnub.Procedure ConnectCallback = delegate(object message)
+            {
+                Debug.WriteLine(message);
+                return true;
+            };
+            pubnub.Procedure DisconnectCallback = delegate(object message)
+            {
+                Debug.WriteLine(message);
+                return true;
+            };
+            pubnub.Procedure ReconnectCallback = delegate(object message)
+            {
+                Debug.WriteLine(message);
+                return true;
+            };
+            pubnub.Procedure ErrorCallback = delegate(object message)
+            {
+                Debug.WriteLine(message);
                 return true;
             };
 
             Dictionary<string, object> args = new Dictionary<string, object>();
             args.Add("channel", channel);
-            args.Add("callback", callback);
+            args.Add("callback", Receiver);                 // callback to get response
+            args.Add("connect_cb", ConnectCallback);        // callback to get connect event
+            args.Add("disconnect_cb", DisconnectCallback);  // callback to get disconnect event
+            args.Add("reconnect_cb", ReconnectCallback);    // callback to get reconnect event
+            args.Add("error_cb", ErrorCallback);            // callback to get error event
 
-            // Subscribe to channel
+
+            // Subscribe messages
             objPubnub.Subscribe(args);
         }
     }

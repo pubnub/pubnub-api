@@ -34,7 +34,21 @@ namespace csharp
 
             // publish Response
             info = objPubnub.Publish(args);
-            Console.WriteLine("[ " + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+            if (info != null)
+            {
+                if (info.Count == 3) //success
+                {
+                    Console.WriteLine("[ " + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+                }
+                else if (info.Count == 2) //error
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + "]");
+                }
+            }
+            else 
+            {
+                Console.WriteLine("Error in network connection");
+            }
 
             // Publish Message in array format
             args = new Dictionary<string, object>();
@@ -53,7 +67,21 @@ namespace csharp
 
             // publish Response
             info = objPubnub.Publish(args);
-            Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+            if (info != null)
+            {
+                if (info.Count == 3) //success
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+                }
+                else if (info.Count == 2) //error
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + "]");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error in network connection");
+            }
 
             // Publish message in Dictionary format
             args = new Dictionary<string, object>();
@@ -69,7 +97,21 @@ namespace csharp
 
             // publish Response
             info = objPubnub.Publish(args);
-            Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+            if (info != null)
+            {
+                if (info.Count == 3) //success
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] + ", " + info[2] + "]");
+                }
+                else if (info.Count == 2) //error
+                {
+                    Console.WriteLine("[" + info[0].ToString() + ", " + info[1] +  "]");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error in network connection");
+            }
 
             Console.ReadKey();
         }
