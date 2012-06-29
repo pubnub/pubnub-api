@@ -37,11 +37,11 @@ public class Pubnub {
     private String SECRET_KEY    = "";
     private String CIPHER_KEY    = "";
     private boolean SSL          = false;
-    private class Channel_status {
+    private class ChannelStatus {
         String channel; 
         boolean connected, first;
     }
-    private List<Channel_status> subscriptions;
+    private List<ChannelStatus> subscriptions;
 
     /**
      * PubNub 3.1 with Cipher Key
@@ -286,7 +286,7 @@ public class Pubnub {
 
         String   channel = (String) args.get("channel");
         String timetoken = (String) args.get("timetoken");
-        Callback callback, connect_cb, disconnect_cb, reconnect_cb, error_cb;
+        Callback callback;
 
         // Validate Arguments
         if (args.get("callback") != null) {
@@ -295,52 +295,36 @@ public class Pubnub {
             System.out.println("Invalid Callback.");
             return;
         }
-        if (args.get("connect_cb") != null)
-            connect_cb = (Callback) args.get("connect_cb");
-        else
-            connect_cb = new TempCallback();
-        if (args.get("disconnect_cb") != null)
-            disconnect_cb = (Callback) args.get("disconnect_cb");
-        else
-            disconnect_cb = new TempCallback();
-        if (args.get("reconnect_cb") != null)
-            reconnect_cb = (Callback) args.get("reconnect_cb");
-        else
-            reconnect_cb = new TempCallback();
-        if (args.get("error_cb") != null)
-            error_cb = (Callback) args.get("error_cb");
-        else
-            error_cb = (Callback) args.get("callback");
 
         if (channel == null || channel.equals("")) {
-            error_cb.execute("Invalid Channel.");
+        	callback.errorCallback(channel,"Invalid Channel.");
             return;
         }
 
         // Ensure Single Connection
         if (subscriptions != null && subscriptions.size() > 0) {
             boolean channel_exist = false;
-            for (Channel_status it : subscriptions) {
+            for (ChannelStatus it : subscriptions) {
                 if(it.channel.equals(channel)) {
                     channel_exist = true;
                     break;
                 }
             }
             if (!channel_exist) {
-                Channel_status cs = new Channel_status();
+                ChannelStatus cs = new ChannelStatus();
                 cs.channel = channel;
                 cs.connected = true;
                 subscriptions.add(cs);
             } else {
-                error_cb.execute("Already Connected");
+            	callback.errorCallback(channel,"Already Connected");
                 return;
             }
         } else {
             // New Channel
-            Channel_status cs = new Channel_status();
+            ChannelStatus cs = new ChannelStatus();
             cs.channel = channel;
             cs.connected = true;
-            subscriptions = new ArrayList<Pubnub.Channel_status>();
+            subscriptions = new ArrayList<Pubnub.ChannelStatus>();
             subscriptions.add(cs);
         }
 
@@ -353,10 +337,10 @@ public class Pubnub {
 
                 // Stop Connection?
                 boolean is_disconnect = false;
-                for (Channel_status it : subscriptions) {
+                for (ChannelStatus it : subscriptions) {
                     if (it.channel.equals(channel)) {
                         if(!it.connected) {
-                            disconnect_cb.execute("Disconnected to channel : "+channel);
+                            callback.disconnectCallback(channel);
                             is_disconnect = true;
                             break;
                         }
@@ -369,10 +353,10 @@ public class Pubnub {
                 JSONArray response = _request(url);
 
                 // Stop Connection?
-                for (Channel_status it : subscriptions) {
+                for (ChannelStatus it : subscriptions) {
                     if (it.channel.equals(channel)) {
                         if (!it.connected) {
-                            disconnect_cb.execute("Disconnected to channel : "+channel);
+                        	callback.disconnectCallback(channel);
                             is_disconnect = true;
                             break;
                         }
@@ -384,11 +368,17 @@ public class Pubnub {
 
                 // Problem?
                 if (response == null || response.optInt(1) == 0) {
-                	for (Channel_status it : subscriptions) {
+                	for (ChannelStatus it : subscriptions) {
                         if (it.channel.equals(channel)) {
-                        	subscriptions.remove(it);
-                        	disconnect_cb.execute("Disconnected to channel : "+channel);
+                        	 if(it.connected && it.first){
+                                 subscriptions.remove(it);
+                                 callback.disconnectCallback(channel);
+                             }else{
+                                 subscriptions.remove(it);
+                                 callback.errorCallback(channel,"Lost Network Connection");
+                             }
                         }
+                       
                     }
                     // Ensure Connected (Call Time Function)
                 	boolean is_reconnected = false;
@@ -396,7 +386,7 @@ public class Pubnub {
                     	double time_token = this.time();
                     	if (time_token == 0.0) {
                             // Reconnect Callback
-                            reconnect_cb.execute("Reconnecting to channel : "+channel);
+                            callback.reconnectCallback(channel);
                             Thread.sleep(5000);
                         } else {
                         	this._subscribe(args);
@@ -408,12 +398,13 @@ public class Pubnub {
                     	break;
                     }
                 } else {
-                	for (Channel_status it : subscriptions) {
+                	for (ChannelStatus it : subscriptions) {
                         if (it.channel.equals(channel)) {
                             // Connect Callback
                             if (!it.first) {
                                 it.first = true;
-                                connect_cb.execute("Connected to channel : "+channel);
+                                callback.connectCallback(channel);
+                             
                                 break;
                             }
                         }
@@ -436,7 +427,7 @@ public class Pubnub {
                             message = pc.decrypt(message);
                         }
                         if(callback !=null)
-                            callback.execute(message);
+                            callback.subscribeCallback(channel, message);
                     } else {
 
                         JSONArray arr = messages.optJSONArray(i);
@@ -446,7 +437,7 @@ public class Pubnub {
                                 arr=pc.decryptJSONArray(arr); ;
                             }
                             if(callback !=null)
-                                callback.execute(arr);
+                                callback.subscribeCallback(channel,arr);
                         } else {
                             String msgs=messages.getString(0);
                             if(this.CIPHER_KEY.length() > 0) {
@@ -454,7 +445,7 @@ public class Pubnub {
                                 msgs=pc.decrypt(msgs); 
                             }
                             if(callback !=null)
-                                callback.execute(msgs);
+                                callback.subscribeCallback(channel,msgs);
                         }
                     }
                 }
@@ -552,7 +543,7 @@ public class Pubnub {
      */
     public void unsubscribe( HashMap<String, Object> args ) {
         String channel = (String) args.get("channel");
-        for (Channel_status it : subscriptions) {
+        for (ChannelStatus it : subscriptions) {
             if(it.channel.equals(channel) && it.connected) {
                 it.connected = false;
                 it.first = false;
@@ -698,13 +689,5 @@ public class Pubnub {
         return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?ɂ顶".indexOf(ch) >= 0;
     }
 
-    // Temporary callback, using if optional callback not provided
-    private class TempCallback implements Callback {
 
-        @Override
-        public boolean execute(Object message) {
-            // DO NOTHING
-            return false;
-        }
-    }
 }

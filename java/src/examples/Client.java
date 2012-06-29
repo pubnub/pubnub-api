@@ -26,7 +26,7 @@ public class Client {
 
 class Receiver implements Callback {
 	@Override
-    public boolean execute(Object message) {
+	public boolean subscribeCallback(String channel, Object message) {
     	// Print Received Message
         //System.out.println(message);
     	try {
@@ -54,6 +54,29 @@ class Receiver implements Callback {
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
-        return true;
+
+    	return true;
     }
+
+
+	@Override
+	public void errorCallback(String channel, Object message) {
+		System.err.println("Channel:" + channel + "-" + message.toString());
+	}
+
+	@Override
+	public void connectCallback(String channel) {
+		System.out.println("Connected to channel :" + channel);
+
+	}
+
+	@Override
+	public void reconnectCallback(String channel) {
+		System.out.println("Reconnected to channel :" + channel);
+	}
+
+	@Override
+	public void disconnectCallback(String channel) {
+		System.out.println("Disconnected to channel :" + channel);
+	}
 }

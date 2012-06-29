@@ -21,7 +21,7 @@ public class SubscribeExample {
         // Callback Interface when a Message is Received
         class Receiver implements Callback {
 
-            public boolean execute(Object message) {
+        	public boolean subscribeCallback(String channel, Object message) {
 
                 try {
                     if (message instanceof JSONObject) {
@@ -45,57 +45,35 @@ public class SubscribeExample {
                     e.printStackTrace();
                 }
                 // Continue Listening?
-                return true;
+              return true;
             }
-        }
-
-        // Callback Interface when a channel is connected
-        class ConnectCallback implements Callback {
 
 			@Override
-			public boolean execute(Object message) {
-				System.out.println(message.toString());
-				return false;
+			public void errorCallback(String channel, Object message) {
+				System.err.println("Channel:" + channel + "-" + message.toString());
+				
 			}
-        }
-
-        // Callback Interface when a channel is disconnected
-        class DisconnectCallback implements Callback {
 
 			@Override
-			public boolean execute(Object message) {
-				System.out.println(message.toString());
-				return false;
+			public void connectCallback(String channel) {
+				System.out.println("Connected to channel :" + channel);
+
 			}
-        }
-
-        // Callback Interface when a channel is reconnected
-        class ReconnectCallback implements Callback {
 
 			@Override
-			public boolean execute(Object message) {
-				System.out.println(message.toString());
-				return false;
+			public void reconnectCallback(String channel) {
+				System.out.println("Reconnected to channel :" + channel);
 			}
-        }
-
-        // Callback Interface when error occurs
-        class ErrorCallback implements Callback {
 
 			@Override
-			public boolean execute(Object message) {
-				System.out.println(message.toString());
-				return false;
+			public void disconnectCallback(String channel) {
+				System.out.println("Disconnected to channel :" + channel);
 			}
         }
 
         HashMap<String, Object> args = new HashMap<String, Object>(6);
         args.put("channel", channel);
         args.put("callback", new Receiver());					// callback to get response
-        args.put("connect_cb", new ConnectCallback());			// callback to get connect event
-        args.put("disconnect_cb", new DisconnectCallback());	// callback to get disconnect event
-        args.put("reconnect_cb", new ReconnectCallback());		// callback to get reconnect event
-        args.put("error_cb", new ErrorCallback());				// callback to get error event
 
         // Listen for Messages (Subscribe)
         pubnub.subscribe(args);
