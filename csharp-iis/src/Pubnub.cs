@@ -13,6 +13,11 @@ using System.IO.Compression;
 
 namespace csharp_webApp
 {
+    public class Channel_status
+    {
+        public string channel;
+        public bool connected, first;
+    }
     public class pubnub
     {
         private string ORIGIN = "pubsub.pubnub.com";
@@ -25,6 +30,7 @@ namespace csharp_webApp
         private ManualResetEvent webRequestDone;
         volatile private bool abort;
         public delegate bool Procedure(object message);
+        private List<Channel_status> subscriptions;
 
         /**
          * PubNub 3.1
@@ -233,66 +239,222 @@ namespace csharp_webApp
           */
         private void _subscribe(Dictionary<string, object> args)
         {
+            Procedure callback = null, connect_cb, disconnect_cb, reconnect_cb, error_cb;
             clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
 
-            string channel = args["channel"].ToString();
-            Procedure callback = (Procedure)args["callback"];
             object timetoken = args["timestamp"];
-            //  Begin Recursive Subscribe
-            try
+            string channel = args["channel"].ToString();
+            // Validate Arguments
+            if (args["callback"] != null)
             {
-                // Build URL
-                List<string> url = new List<string>();
-                url.Add("subscribe");
-                url.Add(this.SUBSCRIBE_KEY);
-                url.Add(channel);
-                url.Add("0");
-                url.Add(timetoken.ToString());
-
-                // Wait for Message
-                List<object> response = _request(url);
-
-                // Update TimeToken
-                if (response[1].ToString().Length > 0)
-                    timetoken = (object)response[1];
-
-                // Run user Callback and Reconnect if user permits.
-                object message = "";
-                JArray val = (JArray)response[0];
-                for (int i = 0; i < val.Count; i++)
+                callback = (Procedure)args["callback"];
+            }
+            else 
+            {
+                Console.WriteLine("Invalid Callback.");
+            }
+            if(args.ContainsKey("connect_cb") && args["connect_cb"] != null)            
+                connect_cb = (Procedure)args["connect_cb"];
+            else
+                connect_cb = new Procedure(doNothing);
+            if (args.ContainsKey("disconnect_cb") && args["disconnect_cb"] != null)
+                disconnect_cb = (Procedure)args["disconnect_cb"];
+            else
+                disconnect_cb = new Procedure(doNothing);
+            if (args.ContainsKey("reconnect_cb") && args["reconnect_cb"] != null)
+                reconnect_cb = (Procedure)args["reconnect_cb"];
+            else
+                reconnect_cb = new Procedure(doNothing);
+            if (args.ContainsKey("error_cb") && args["error_cb"] != null)
+                error_cb = (Procedure)args["error_cb"];
+            else
+                error_cb = (Procedure)args["callback"];
+            if (channel == null || channel =="")
+            {
+                error_cb("Invalid Channel.");
+                return;
+            }
+            // Ensure Single Connection
+            if (subscriptions != null && subscriptions.Count > 0)
+            {
+                bool channel_exist = false;
+                foreach (Channel_status cs in subscriptions)
                 {
-                    if (this.CIPHER_KEY.Length > 0)
+                    if (cs.channel == channel)
                     {
-                        if (val[i].Type == JTokenType.String)
+                        channel_exist = true;
+                        break;
+                    }
+                }
+                if (!channel_exist)
+                {
+                    Channel_status cs = new Channel_status();
+                    cs.channel = channel;
+                    cs.connected = true;
+                    subscriptions.Add(cs);
+                }
+                else
+                {
+                    error_cb("Already Connected");
+                    return;
+                }
+            }
+            else
+            {
+                // New Channel
+                Channel_status cs = new Channel_status();
+                cs.channel = channel;
+                cs.connected = true;
+                subscriptions = new List<Channel_status>();
+                subscriptions.Add(cs);
+            }
+
+            bool is_reconnected = false;
+            //  Begin Recusive Subscribe
+            while (true)
+            {
+
+                //  Begin Recursive Subscribe
+                try
+                {
+                    // Build URL
+                    List<string> url = new List<string>();
+                    url.Add("subscribe");
+                    url.Add(this.SUBSCRIBE_KEY);
+                    url.Add(channel);
+                    url.Add("0");
+                    url.Add(timetoken.ToString());
+
+                    // Stop Connection?
+                    bool is_disconnect = false;
+                    foreach (Channel_status cs in subscriptions)
+                    {
+                        if (cs.channel == channel)
                         {
-                            message = pc.decrypt((string)val[i]);
+                            if (!cs.connected)
+                            {
+                                disconnect_cb("Disconnected to channel : " + channel);
+                                is_disconnect = true;
+                                break;
+                            }
                         }
-                        else if (val[i].Type == JTokenType.Object)
+                    }
+                    if (is_disconnect)
+                        return;
+
+                    // Wait for Message
+                    List<object> response = _request(url);
+
+                    // Stop Connection?
+                    foreach (Channel_status cs in subscriptions)
+                    {
+                        if (cs.channel == channel)
                         {
-                            message = pc.decrypt((JObject)val[i]);
+                            if (!cs.connected)
+                            {
+                                disconnect_cb("Disconnected to channel : " + channel);
+                                is_disconnect = true;
+                                break;
+                            }
                         }
-                        else if (val[i].Type == JTokenType.Array)
+                    }
+                    if (is_disconnect)
+                        return;
+                    // Problem?
+                    if (response == null || response[1].ToString() == "0")
+                    {
+
+                        for (int i = 0; i < subscriptions.Count(); i++)
                         {
-                            message = pc.decrypt((JArray)val[i]);
+                            Channel_status cs = subscriptions[i];
+                            if (cs.channel == channel)
+                            {
+                                subscriptions.RemoveAt(i);
+                                disconnect_cb("Disconnected to channel : " + channel);
+                            }
+                        }
+
+                        // Ensure Connected (Call Time Function)
+                        while (true)
+                        {
+                            string time_token = Time().ToString();
+                            if (time_token == "0")
+                            {
+                                // Reconnect Callback
+                                reconnect_cb("Reconnecting to channel : " + channel);
+                                Thread.Sleep(5000);
+                            }
+                            else
+                            {
+                                is_reconnected = true;
+                                break;
+                            }
+                        }
+                        if (is_reconnected)
+                        {
+                            break;
                         }
                     }
                     else
                     {
-                        message = val[i];
+                        foreach (Channel_status cs in subscriptions)
+                        {
+                            if (cs.channel == channel)
+                            {
+                                // Connect Callback
+                                if (!cs.first)
+                                {
+                                    cs.first = true;
+                                    connect_cb("Connected to channel : " + channel);
+                                    break;
+                                }
+                            }
+                        }
                     }
 
-                    if (!callback(message)) return;
-                }
+                    // Update TimeToken
+                    if (response[1].ToString().Length > 0)
+                        timetoken = (object)response[1];
 
-                // Keep listening if Okay.
+                    // Run user Callback and Reconnect if user permits.
+                    object message = "";
+                    JArray val = (JArray)response[0];
+                    for (int i = 0; i < val.Count; i++)
+                    {
+                        if (this.CIPHER_KEY.Length > 0)
+                        {
+                            if (val[i].Type == JTokenType.String)
+                            {
+                                message = pc.decrypt((string)val[i]);
+                            }
+                            else if (val[i].Type == JTokenType.Object)
+                            {
+                                message = pc.decrypt((JObject)val[i]);
+                            }
+                            else if (val[i].Type == JTokenType.Array)
+                            {
+                                message = pc.decrypt((JArray)val[i]);
+                            }
+                        }
+                        else
+                        {
+                            message = val[i];
+                        }
+
+                        if (!callback(message)) return;
+                    }
+                }
+                catch
+                {
+                    System.Threading.Thread.Sleep(1000);
+                }
+            }
+            if (is_reconnected)
+            {
+                // Reconnect Callback
                 args["channel"] = channel;
                 args["callback"] = callback;
                 args["timestamp"] = timetoken;
-                this._subscribe(args);
-            }
-            catch
-            {
-                System.Threading.Thread.Sleep(1000);
                 this._subscribe(args);
             }
         }
@@ -373,9 +535,28 @@ namespace csharp_webApp
                 string message = sb.ToString();
                 return JsonConvert.DeserializeObject<List<object>>(message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                List<object> error = new List<object>();
+                if (url_components[0] == "time")
+                {
+                    error.Add("0");
+                }
+                else if (url_components[0] == "history")
+                {
+                    error.Add("Error: Failed JSONP HTTP Request.");
+                }
+                else if (url_components[0] == "publish")
+                {
+                    error.Add("0");
+                    error.Add("Error: Failed JSONP HTTP Request.");
+                }
+                else if (url_components[0] == "subscribe")
+                {
+                    error.Add("0");
+                    error.Add("0");
+                }
+                return error;
             }
         }
 
@@ -440,6 +621,26 @@ namespace csharp_webApp
             }
         }
 
+       /**
+        *  Unsubscribe
+        *
+        * Unsubscribe/Disconnect to channel.
+        *
+        * @param Dictionary<String, Object> containing channel name.
+        */
+        public void Unsubscribe(Dictionary<String, Object> args)
+        {
+            String channel = args["channel"].ToString();
+            foreach (Channel_status cs in subscriptions)
+            {
+                if (cs.channel == channel && cs.connected)
+                {
+                    cs.connected = false;
+                    cs.first = false;
+                    break;
+                }
+            }
+        }
         private string _encodeURIcomponent(string s)
         {
             StringBuilder o = new StringBuilder();
@@ -483,6 +684,12 @@ namespace csharp_webApp
         public string UUID()
         {
             return Guid.NewGuid().ToString();
+        }
+
+        private bool doNothing(object result)
+        {
+            // do nothing
+            return false;
         }
     }
 }

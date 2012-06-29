@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Diagnostics;
 
 namespace csharp_webApp
 {
@@ -28,11 +29,11 @@ namespace csharp_webApp
             args.Add("channel", channel);
             args.Add("limit", 3.ToString());
             List<object> history = objPubnub.History(args);
-            System.Diagnostics.Debug.WriteLine("");
-            System.Diagnostics.Debug.WriteLine("History messages - > ");
+            Debug.WriteLine("");
+            Debug.WriteLine("History messages - > ");
             foreach (object history_message in history)
             {
-                System.Diagnostics.Debug.WriteLine(history_message);
+                Debug.WriteLine(history_message);
             }
         }
     }

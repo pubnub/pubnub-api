@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace csharp_webApp
 {
-    public partial class SubscribeExample : System.Web.UI.Page
+    public partial class UnsubscribeExample : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -26,11 +26,22 @@ namespace csharp_webApp
             pubnub.Procedure Receiver = delegate(object message)
             {
                 Debug.WriteLine(message);
+                Dictionary<string, object> arg = new Dictionary<string, object>();
+                arg.Add("channel", channel);
+                //Unsubscribe messages
+                objPubnub.Unsubscribe(arg); 
                 return true;
             };
             pubnub.Procedure ConnectCallback = delegate(object message)
             {
                 Debug.WriteLine(message);
+                // Publish String Message
+                Dictionary<string, object> publish = new Dictionary<string, object>();
+                publish.Add("channel", channel);
+                publish.Add("message", "Hello World!!!!");
+
+                // publish Response
+                objPubnub.Publish(publish);
                 return true;
             };
             pubnub.Procedure DisconnectCallback = delegate(object message)

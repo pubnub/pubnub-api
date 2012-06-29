@@ -1,51 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Diagnostics;
+using System.Text;
+using Pubnub;
 
-namespace csharp_webApp
+namespace csharp
 {
-    public partial class SubscribeExample : System.Web.UI.Page
+    class UnsubscribeExample
     {
-        protected void Page_Load(object sender, EventArgs e)
+        static public void Main()
         {
-            // channel name
-            string channel = "test-iis";
-
+            //Initialize pubnub state
             pubnub objPubnub = new pubnub(
-               "demo",  // PUBLISH_KEY
-               "demo",  // SUBSCRIBE_KEY
-               "demo",  // SECRET_KEY
-               "",      // CIPHER_KEY   (Cipher key is Optional)
-               false    // SSL_ON?
-           );
+                "demo",  // PUBLISH_KEY
+                "demo",  // SUBSCRIBE_KEY
+                "demo",  // SECRET_KEY
+                "",      // CIPHER_KEY (Cipher key is Optional)
+                false    // SSL_ON?
+            );
+            //channel name
+            string channel = "hello-world";
 
             pubnub.Procedure Receiver = delegate(object message)
             {
-                Debug.WriteLine(message);
+                Console.WriteLine("Message - " + message);
+
+                Dictionary<string, object> arg = new Dictionary<string, object>();
+                arg.Add("channel", channel);
+                //Unsubscribe messages
+                objPubnub.Unsubscribe(arg);
                 return true;
             };
             pubnub.Procedure ConnectCallback = delegate(object message)
             {
-                Debug.WriteLine(message);
+                Console.WriteLine(message);
+
+                // Publish String Message
+                Dictionary<string, object> publish = new Dictionary<string, object>();
+                publish.Add("channel", channel);
+                publish.Add("message", "Hello World!!!!"); 
+
+                // publish Response
+                objPubnub.Publish(publish);
                 return true;
             };
             pubnub.Procedure DisconnectCallback = delegate(object message)
             {
-                Debug.WriteLine(message);
+                Console.WriteLine(message);
                 return true;
             };
             pubnub.Procedure ReconnectCallback = delegate(object message)
             {
-                Debug.WriteLine(message);
+                Console.WriteLine(message);
                 return true;
             };
             pubnub.Procedure ErrorCallback = delegate(object message)
             {
-                Debug.WriteLine(message);
+                Console.WriteLine(message);
                 return true;
             };
 
@@ -57,9 +68,9 @@ namespace csharp_webApp
             args.Add("reconnect_cb", ReconnectCallback);    // callback to get reconnect event
             args.Add("error_cb", ErrorCallback);            // callback to get error event
 
-
-            // Subscribe messages
+            //Subscribe messages
             objPubnub.Subscribe(args);
+            Console.ReadKey();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Diagnostics;
 
 namespace csharp_webApp
 {
@@ -19,8 +20,8 @@ namespace csharp_webApp
                 "",      // CIPHER_KEY   (Cipher key is Optional)
                 false    // SSL_ON?
             );
-            System.Diagnostics.Debug.WriteLine("");
-            System.Diagnostics.Debug.WriteLine("Server Time - > " + objPubnub.Time());
+            Debug.WriteLine("");
+            Debug.WriteLine("Server Time - > " + objPubnub.Time());
         }
     }
 }
