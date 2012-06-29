@@ -37,14 +37,14 @@ pubnub = Pubnub.new(publish_key,subscribe_key,secret_key,cipher_key,ssl_on)
 
 ## Send Message (PUBLISH) -- String
 puts("\nSending message in String format with publish() Function")
-info = pubnub.publish({
+pubnub.publish({
   'channel' => channel,
   'message' => strMessage,
   'callback' => lambda do |message|
     puts(message)
   end
 })
-puts(info)
+#puts(info)
 
 ## Send Message (PUBLISH) -- Array
 puts("\nSending message in Array format with publish() Function")
