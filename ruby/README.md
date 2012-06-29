@@ -1,20 +1,23 @@
 Pubnub - http://github/pubnub/pubnub-api
 @poptartinc on Twitter, @poptart on Github
 
-##### ---------------------------------------------------------------------------------------------------------
+##### YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+##### http://www.pubnub.com/account
+
 ## PubNub 3.1 Real-time Cloud Push API - RUBY
-##### ---------------------------------------------------------------------------------------------------------
 
-#### www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
-#### http://www.pubnub.com/blog/ruby-push-api
+www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+http://www.pubnub.com/blog/ruby-push-api
 
-##### PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
-##### This is a cloud-based service for broadcasting Real-time messages
-##### to thousands of web and mobile clients simultaneously.
+PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+This is a cloud-based service for broadcasting Real-time messages
+to thousands of web and mobile clients simultaneously.
 
-##### ----------------------------
+----------------------------
 ### Ruby Push API
-##### ----------------------------
+----------------------------
+
+```ruby
 pubnub = Pubnub.new(
     "demo",  ## PUBLISH_KEY
     "demo",  ## SUBSCRIBE_KEY
@@ -22,11 +25,14 @@ pubnub = Pubnub.new(
     "",      ## CIPHER_KEY (Cipher key is Optional)
     false    ## SSL_ON?
 )
+```
 
-##### ------------------------------------------------------
+------------------------------------------------------
 ### PUBLISH STRING MESSAGE
-##### ------------------------------------------------------
+------------------------------------------------------
 ##### Send Message
+
+```
 pubnub.publish({
     'channel' => 'hello_world',
     'message' => 'hey what is up?',
@@ -34,23 +40,29 @@ pubnub.publish({
        puts(message)
      end
 })
+```
 
-##### -------------------------------------------------------------
+-------------------------------------------------------------
 ### PUBLISH ARRAY OF MESSAGES
-##### -------------------------------------------------------------
+-------------------------------------------------------------
 ##### Send Message
+
+```
 pubnub.publish({
     'channel' => 'hello_world',
-    'message' => {         ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"] },
+    'message' => { ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"] },
     'callback' => lambda do |message|
        puts(message)
      end
 })
+```
 
-##### ----------------------------------------------------------------------------
+----------------------------------------------------------------------------
 ### PUBLISH OBJECT OF STRING MESSAGE
-##### ----------------------------------------------------------------------------
+----------------------------------------------------------------------------
 ##### Send Message
+
+```
 pubnub.publish({
     'channel' => 'hello_world',
     'message' => { 'text' => 'some text data' },
@@ -58,11 +70,14 @@ pubnub.publish({
        puts(message)
      end
 })
+```
 
-##### ----------------------
+----------------------
 ### SUBSCRIBE
-##### ----------------------
+----------------------
 ##### Listen for Messages
+
+```
 pubnub.subscribe({
     'channel'  => 'hello_world',
     'callback' => lambda do |message|
@@ -70,11 +85,14 @@ pubnub.subscribe({
         return true   ## keep listening?
     end
 })
+```
 
-##### -------------------
+-------------------
 ### HISTORY
-##### -------------------
+-------------------
 ##### Load Previously Published Messages
+
+```
 pubnub.history({
     'channel' => 'hello_world',
     'limit'   => 10,
@@ -82,10 +100,15 @@ pubnub.history({
        puts(message)
      end
 })
+```
 
-##### -----------
+-----------
 ### UUID
-##### -----------
+-----------
 ##### Generate UUID
+
+```
 uuid = pubnub.UUID()
 puts(uuid)
+```
+
