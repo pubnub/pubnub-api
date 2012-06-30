@@ -20,12 +20,20 @@ subscribe_key = len(sys.argv) > 2 and sys.argv[2] or 'demo'
 secret_key    = len(sys.argv) > 3 and sys.argv[3] or 'demo'
 cipher_key    = len(sys.argv) > 4 and sys.argv[4] or 'demo'
 ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or False
+origin        = len(sys.argv) > 6 and sys.argv[6] or 'pubsub.pubnub.com'
 
 
 ## -----------------------------------------------------------------------
 ## Initiat Class
 ## -----------------------------------------------------------------------
-pubnub = Pubnub( publish_key, subscribe_key, secret_key, cipher_key, ssl_on )
+pubnub = Pubnub(
+    publish_key,
+    subscribe_key,
+    secret_key = secret_key,
+    cipher_key = cipher_key,
+    ssl_on = ssl_on,
+    origin = origin
+)
 crazy  = ' ~`!@#$%^&*( 顶顅 Ȓ)+=[]\\{}|;\':",./<>?abcd'
 
 ## -----------------------------------------------------------------------
@@ -85,4 +93,4 @@ pubnub.subscribe({
 ## -----------------------------------------------------------------------
 ## IO Event Loop
 ## -----------------------------------------------------------------------
-tornado.ioloop.IOLoop.instance().start()
+pubnub.start()
