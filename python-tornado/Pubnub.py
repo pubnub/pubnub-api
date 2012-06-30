@@ -34,6 +34,8 @@ class Pubnub():
 
     def stop(self): ioloop.stop()
     def start(self): ioloop.start()
+    def timeout( self, callback, delay ):
+        ioloop.add_timeout( time.time()+float(delay), callback )
         
     def __init__(
         self,
@@ -432,7 +434,7 @@ class Pubnub():
                 callback(obj)        
 
         ## Send Request Expecting JSON Response
-        http = tornado.httpclient.AsyncHTTPClient(max_clients=100)
+        http = tornado.httpclient.AsyncHTTPClient(max_clients=1000)
         request = tornado.httpclient.HTTPRequest( url, 'GET', dict({
             'V' : '3.1',
             'User-Agent' : 'Python-Tornado',

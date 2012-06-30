@@ -39,6 +39,8 @@ class Pubnub():
 
     def start(self): reactor.run()
     def stop(self):  reactor.stop()
+    def timeout( self, callback, delay ):
+        reactor.callLater( delay, callback )
 
     def __init__(
         self,
@@ -252,10 +254,10 @@ class Pubnub():
                 if not response:
                     def time_callback(_time):
                         if not _time:
-                            reactor.callLater(time.time()+1, substabizel)
+                            reactor.callLater( 1, substabizel )
                             return errorback("Lost Network Connection")
                         else:
-                            reactor.callLater(time.time()+1, substabizel)
+                            reactor.callLater( 1, substabizel )
 
                     ## ENSURE CONNECTED (Call Time Function)
                     return self.time({ 'callback' : time_callback })
@@ -296,7 +298,7 @@ class Pubnub():
                     str(self.subscriptions[channel]['timetoken'])
                 ], sub_callback )
             except :
-                reactor.callLater(time.time()+1, substabizel)
+                reactor.callLater( 1, substabizel )
                 return
 
         ## BEGIN SUBSCRIPTION (LISTEN FOR MESSAGES)

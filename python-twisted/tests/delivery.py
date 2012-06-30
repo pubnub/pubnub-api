@@ -12,6 +12,7 @@
 import sys
 import datetime
 import time
+import math
 
 sys.path.append('../')
 from Pubnub import Pubnub
@@ -25,17 +26,19 @@ secret_key    = len(sys.argv) > 3 and sys.argv[3] or 'demo'
 cipher_key    = len(sys.argv) > 4 and sys.argv[4] or 'demo'
 ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or False
 origin        = len(sys.argv) > 6 and sys.argv[6] or 'pubsub.pubnub.com'
-#origin = '184.72.9.220'
+origin = '184.72.9.220'
 
 ## -----------------------------------------------------------------------
 ## Analytics
 ## -----------------------------------------------------------------------
 analytics = {
-    'publishes'            : 0, ## Total Send Requests
-    'received'             : 0, ## Total Received Messages (Deliveries)
-    'successful_publishes' : 0, ## Confirmed Successful Publish Request
-    'failed_publishes'     : 0, ## Confirmed UNSuccessful Publish Request
-    'failed_deliveries'    : 0  ## (successful_publishes - received)
+    'publishes'            : 0,   ## Total Send Requests
+    'received'             : 0,   ## Total Received Messages (Deliveries)
+    'queued'               : 0,   ## Total Unreceived Queue (UnDeliveries)
+    'successful_publishes' : 0,   ## Confirmed Successful Publish Request
+    'failed_publishes'     : 0,   ## Confirmed UNSuccessful Publish Request
+    'failed_deliveries'    : 0,   ## (successful_publishes - received)
+    'deliverability'       : 0    ## Percentage Delivery
 }
 
 trips = {
@@ -66,13 +69,20 @@ def publish_sent(info = None):
     else:                analytics['failed_publishes']       += 1
 
     analytics['publishes'] += 1
-    pubnub.publish({
-        'channel'  : channel,
-        'callback' : publish_sent,
-        'message'  : "1234567890"
-    })
+    analytics['queued']    += 1
+
+    pubnub.timeout( send, 0.1 )
+
+def send():
+    if analytics['queued'] < 100:
+        pubnub.publish({
+            'channel'  : channel,
+            'callback' : publish_sent,
+            'message'  : "1234567890"
+        })
 
 def received(message):
+    analytics['queued']   -= 1
     analytics['received'] += 1
     current_trip = trips['current'] = str(datetime.datetime.now())[0:19]
     last_trip    = trips['last']    = str(
@@ -94,26 +104,38 @@ def received(message):
     if trips[current_trip] > trips['max'] :
         trips['max'] = trips[current_trip]
 
+def show_status():
     ## Update Failed Deliveries
     analytics['failed_deliveries'] = \
-        analytics['successful_publishes'] - analytics['received']
+        analytics['successful_publishes'] \
+        - analytics['received'] \
+        + analytics['queued'] \
+        + analytics['failed_publishes']
+
+    ## Update Deliverability
+    analytics['deliverability'] = (
+        float(analytics['received']) / \
+        float(analytics['publishes'] or 1.0)
+    ) * 100.0
+
+    """
+    if analytics['deliverability'] > 100.0:
+        analytics['deliverability'] = 100.0
+    """
 
     ## Print Display
     print( (
-       "%(date)s "                           + \
-       "trip: %(total)03d "                  + \
-       "%(date)s Trip: %(total)03d "         + \
-       "max:%(max)03d/sec "                  + \
-       "avg: %(avg)03d/sec "                 + \
-       "pubs:%(publishes)05d "               + \
-       "received:%(received)05d "            + \
-       "spub:%(successful_publishes)05d "    + \
-       "fpub:%(failed_publishes)05d "        + \
-       "failed:%(failed_deliveries)05d "     + \
+       "max:%(max)03d/sec  "                  + \
+       "avg:%(avg)03d/sec  "                  + \
+       "pubs:%(publishes)05d  "               + \
+       "received:%(received)05d  "            + \
+       "spub:%(successful_publishes)05d  "    + \
+       "fpub:%(failed_publishes)05d  "        + \
+       "failed:%(failed_deliveries)05d  "     + \
+       "queued:%(queued)03d  "                + \
+       "delivery:%(deliverability)03f%%  "    + \
        ""
     ) % {
-        'date'                 : current_trip,
-        'total'                : trips[current_trip],
         'max'                  : trips['max'],
         'avg'                  : trips['avg'],
         'publishes'            : analytics['publishes'],
@@ -121,11 +143,17 @@ def received(message):
         'successful_publishes' : analytics['successful_publishes'],
         'failed_publishes'     : analytics['failed_publishes'],
         'failed_deliveries'    : analytics['failed_deliveries'],
-        'publishes'            : analytics['publishes']
+        'publishes'            : analytics['publishes'],
+        'deliverability'       : analytics['deliverability'],
+        'queued'               : analytics['queued']
     } )
+    pubnub.timeout( show_status, 1 )
 
-def connected(): publish_sent([1])
+def connected():
+    show_status()
+    pubnub.timeout( send, 1 )
 
+print( "Connected: %s\n" % origin )
 pubnub.subscribe({
     'channel'  : channel,
     'connect'  : connected,
