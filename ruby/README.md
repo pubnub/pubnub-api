@@ -13,9 +13,7 @@ PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time messages
 to thousands of web and mobile clients simultaneously.
 
-----------------------------
 ### Ruby Push API
-----------------------------
 
 ```ruby
 pubnub = Pubnub.new(
@@ -27,12 +25,11 @@ pubnub = Pubnub.new(
 )
 ```
 
-------------------------------------------------------
 ### PUBLISH STRING MESSAGE
-------------------------------------------------------
+
 ##### Send Message
 
-```
+```ruby
 pubnub.publish({
     'channel' => 'hello_world',
     'message' => 'hey what is up?',
@@ -42,12 +39,11 @@ pubnub.publish({
 })
 ```
 
--------------------------------------------------------------
 ### PUBLISH ARRAY OF MESSAGES
--------------------------------------------------------------
+
 ##### Send Message
 
-```
+```ruby
 pubnub.publish({
     'channel' => 'hello_world',
     'message' => { ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"] },
@@ -57,12 +53,11 @@ pubnub.publish({
 })
 ```
 
-----------------------------------------------------------------------------
 ### PUBLISH OBJECT OF STRING MESSAGE
-----------------------------------------------------------------------------
+
 ##### Send Message
 
-```
+```ruby
 pubnub.publish({
     'channel' => 'hello_world',
     'message' => { 'text' => 'some text data' },
@@ -72,12 +67,11 @@ pubnub.publish({
 })
 ```
 
-----------------------
 ### SUBSCRIBE
-----------------------
+
 ##### Listen for Messages
 
-```
+```ruby
 pubnub.subscribe({
     'channel'  => 'hello_world',
     'callback' => lambda do |message|
@@ -87,12 +81,11 @@ pubnub.subscribe({
 })
 ```
 
--------------------
 ### HISTORY
--------------------
+
 ##### Load Previously Published Messages
 
-```
+```ruby
 pubnub.history({
     'channel' => 'hello_world',
     'limit'   => 10,
@@ -102,13 +95,11 @@ pubnub.history({
 })
 ```
 
------------
 ### UUID
------------
+
 ##### Generate UUID
 
-```
+```ruby
 uuid = pubnub.UUID()
 puts(uuid)
 ```
-
