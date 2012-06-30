@@ -50,6 +50,10 @@ typedef enum {
 - (void) connection:(PubNubConnection*)connection didCompleteWithResponse:(id)response;
 @end
 
+@implementation ChannelStatus
+@synthesize connected,channel,first;
+@end
+
 @implementation PubNubConnection
 
 @synthesize command=_command, channel=_channel, data=_data;
@@ -153,7 +157,6 @@ typedef enum {
     return self;
 }
 
-
 - (CEPubnub*) initWithPublishKey:(NSString*)publishKey
                     subscribeKey:(NSString*)subscribeKey
                        secretKey:(NSString*)secretKey
@@ -162,7 +165,6 @@ typedef enum {
     
     return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:cipherKey origin:kDefaultOrigin];
 }
-
 
 
 - (void) dealloc {
@@ -179,8 +181,6 @@ typedef enum {
     
     [super dealloc];
 }
-
-
 
 -(NSDictionary*) getEncryptedDictionary:(NSDictionary*)message
 {
@@ -215,9 +215,6 @@ typedef enum {
     }
     return returnval;
 }
-
-
-
 
 -(NSArray*) getEncryptedArray:(NSArray*)array
 {
@@ -274,7 +271,6 @@ typedef enum {
         msg=[self getEncryptedDictionary:(NSDictionary *)message ];
     }
     
-    
     NSString* json = JSONWriteString(msg);
     
     NSString* signature;
@@ -287,28 +283,71 @@ typedef enum {
                      [channel urlEscapedString], [json urlEscapedString]];
     
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
-                                                                        url:[NSURL URLWithString:url]
-                                                                    command:kCommand_SendMessage
-                                                                    channel:channel];
+
     [_connections addObject:connection];
     [connection release];
 }
 
-
-
-
-
 - (void) _resubscribeToChannel:(NSString*)channel timeToken:(NSString*)timeToken {
+    
+    BOOL is_disconnect= NO;
+    for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+        if ([it.channel isEqualToString:channel])
+        {   
+            if(!it.connected) {
+                
+                NSLog(@"Disconnected to channel %@",channel);
+                if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:forChannel:)]) {
+                    [_delegate pubnub:self DisconnectToChannel:channel];
+                }
+                
+                is_disconnect = YES;
+                break;
+            }
+        }
+    }
+    
+    if (is_disconnect)
+        return;
+    
     NSString* url = [NSString stringWithFormat:@"%@/subscribe/%@/%@/0/%@", _host, _subscribeKey, [channel urlEscapedString], timeToken];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
-                                                                        url:[NSURL URLWithString:url]
-                                                                    command:kCommand_ReceiveMessage
-                                                                    channel:channel];
+
     [_connections addObject:connection];
     [connection release];
 }
 
 - (void) _resubscribeToChannel:(NSString*)channel {
+        // Ensure Single Connection
+    if (!_subscriptions && [_subscriptions count] > 0) {
+        
+        BOOL channel_exist = NO;
+        
+        for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+            if ([it.channel isEqualToString:channel])
+            { channel_exist = YES;
+                break;
+            }
+        }
+
+        if (!channel_exist) {
+            ChannelStatus *cs = [[ChannelStatus alloc] init];
+            cs.channel = channel;
+            cs.connected = YES;
+            [_subscriptions addObject:cs];
+        } else {
+                // error_cb.execute("Already Connected");
+            return;
+        }
+    } else {
+            // New Channel
+        ChannelStatus *cs = [[ChannelStatus alloc] init];
+        cs.channel = channel;
+        cs.connected = true;
+        _subscriptions = [[NSMutableSet alloc] init];
+        [_subscriptions addObject:cs];
+        
+    }
     [self _resubscribeToChannel:channel timeToken:kInitialTimeToken];
 }
 
@@ -331,6 +370,15 @@ typedef enum {
         }
     }
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
+
+    for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+        if ([it.channel isEqualToString:channel])
+        {                        
+            it.connected=false;
+            it.first=false;
+            break;
+        }
+    }
 }
 
 - (BOOL) isSubscribedToChannel:(NSString*)channel {
@@ -339,6 +387,14 @@ typedef enum {
             return YES;
         }
     }
+    for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+        if ([it.channel isEqualToString:channel])
+        {                        
+            it.connected=false;
+            it.first=false;
+            
+        }
+    }    
     return NO;
 }
 
@@ -352,7 +408,6 @@ typedef enum {
     NSDictionary* disc=  [NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", channel,@"channel",nil];
     [self fetchHistory:disc];
 }
-
 
 - (void) fetchHistory:(NSDictionary * )arg1 {
     int limit;
@@ -377,8 +432,6 @@ typedef enum {
     {
         channel=[arg1 objectForKey:@"channel"];
     }
-    
-    
     
     if (limit > kMaxHistorySize) {
         NSLog(@"PubNub history too large: %i", limit);
@@ -460,20 +513,27 @@ typedef enum {
     return messages;
 }
 
-
-
-
 - (void) connection:(PubNubConnection*)connection didCompleteWithResponse:(id)response {
+    NSDecimalNumber* timeTokanLocal=0;
     switch (connection.command) {
             
         case kCommand_SendMessage: {
             BOOL success = NO;
             NSString* error = nil;
-            if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
-                //  NSLog(@"------>  %@",response);
-                success = [[response objectAtIndex:0] boolValue];
-                if (success == NO) {
-                    error = [response objectAtIndex:1];
+            
+            if(response)
+            {
+                if ([response isKindOfClass:[NSArray class]])
+                {
+                    NSArray *arra= (NSArray*)response;
+                    if([arra count] > 2)
+                    {
+                        success = [[arra objectAtIndex:0] boolValue];
+                        if(success == NO)
+                        {
+                            error = [arra objectAtIndex:1];
+                        }
+                    }
                 }
             }
             if (success) {
@@ -482,8 +542,11 @@ typedef enum {
                     [_delegate pubnub:self didSucceedPublishingMessageToChannel:connection.channel];
                 }
             } else {
-                if (response) {
+                if (error) {
                     NSLog(@"Failed sending message to PubNub channel \"%@\": %@", connection.channel, error);
+                }else {
+                    error=  [NSString stringWithFormat:@"Failed sending message to PubNub channel \"%@\":", connection.channel];
+
                 }
                 if ([_delegate respondsToSelector:@selector(pubnub:didFailPublishingMessageToChannel:error:)]) {
                     [_delegate pubnub:self didFailPublishingMessageToChannel:connection.channel error:error];
@@ -494,6 +557,135 @@ typedef enum {
             
         case kCommand_ReceiveMessage: {
             NSString* timeToken = nil;
+
+                BOOL is_disconnect= NO;
+                for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                    if ([it.channel isEqualToString:connection.channel])
+                    {   
+                        if(!it.connected) {
+                            
+                            NSLog(@"Disconnected to channel %@",connection.channel);
+                            if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
+                                [_delegate pubnub:self DisconnectToChannel:connection.channel];
+                            }
+                            
+                            is_disconnect = YES;
+                            break;
+                        }
+                    }
+                }
+
+                if (is_disconnect)
+                    return;
+                    // timeToken = [response objectAtIndex:1];
+                
+                    // Problem?
+                if (response == nil || [timeToken isEqualToString:@"0"] ) {
+                    for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                        if ([it.channel isEqualToString:connection.channel])
+                        {                        
+                            [_subscriptions removeObject:it];
+                            NSLog(@"_Disconnected to channel %@",connection.channel);
+                            if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
+                                [_delegate pubnub:self DisconnectToChannel:connection.channel];
+                            }
+                        }
+                    }
+
+                    // Ensure Connected (Call Time Function)
+                    BOOL is_reconnected = NO;
+                    while(1) {
+                            //[self getTime];
+                        NSString* url = [NSString stringWithFormat:@"%@/time/0", _host]; 
+                        NSURLRequest * urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+                        NSURLResponse * response1 = nil;
+                        NSError * error = nil;
+                        NSData * data = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&response1 error:&error];
+                        NSLog(@"Responce::%@",response1);
+                        NSLog(@"Data::%@",[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+
+                        NSDecimalNumber* time_token = 0;
+                            //  if(error != nil)
+                        {
+                            NSArray* resp=    (NSArray *)JSONParseData(data);
+                            
+                            
+                            if ([resp isKindOfClass:[NSArray class]] && ([resp count] == 1)) {
+                                NSLog(@"Retrieved PubNub time '%@'", [resp objectAtIndex:0]);
+                                time_token = [resp objectAtIndex:0];
+                            }
+                        }
+
+                    	if (time_token == 0) {
+                                // Reconnect Callback
+                        
+                            if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
+                               NSLog(@"_Reconnecting to channel %@",connection.channel);
+                                [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
+                            }
+                     
+                            [NSThread sleepForTimeInterval:5];
+                           
+                        } else {
+                            
+                            if (!_subscriptions && [_subscriptions count] > 0) {
+                                
+                                BOOL channel_exist = NO;
+                                
+                                for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                                    if ([it.channel isEqualToString:connection.channel])
+                                    { channel_exist = YES;
+                                        break;
+                                    }
+                                }
+
+                                if (!channel_exist) {
+                                    ChannelStatus *cs = [[ChannelStatus alloc] init];
+                                    cs.channel = connection.channel;
+                                    cs.connected = YES;
+                                    [_subscriptions addObject:cs];
+                                } else {
+                                        // error_cb.execute("Already Connected");
+                                    return;
+                                }
+                            } else {
+                                    // New Channel
+                                ChannelStatus *cs = [[ChannelStatus alloc] init];
+                                cs.channel = connection.channel;
+                                cs.connected = true;
+                                _subscriptions = [[NSMutableSet alloc] init];
+                                [_subscriptions addObject:cs];
+                            }
+
+                            [self _resubscribeToChannel:connection.channel timeToken: [[NSString alloc]initWithFormat:@"%d",time_token]];
+                        	is_reconnected = YES;
+                        	break;
+                        }
+                    }
+                    if(is_reconnected) {
+                    	break;
+                    }
+                }
+                else {
+                    for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                        if ([it.channel isEqualToString:connection.channel])
+                        {
+                                // Connect Callback
+                            if (it.first == NO) {
+                                it.first = YES;
+                                    //  connect_cb.execute("Connected to channel : "+channel);
+                               
+                                    //reconnect_cb.execute("Reconnecting to channel : "+connection.channel);
+                                if ([_delegate respondsToSelector:@selector(pubnub:ConnectToChannel:)]) {
+                                     NSLog(@"_Connected to channel %@",connection.channel);
+                                    [_delegate pubnub:self ConnectToChannel:connection.channel];
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                
             if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
                 NSLog(@"Received %i messages from PubNub channel \"%@\"", [[response objectAtIndex:0] count], connection.channel);
                 for (id message in [response objectAtIndex:0]) {
@@ -505,8 +697,7 @@ typedef enum {
                             
                             [_delegate pubnub:self subscriptionDidReceiveDictionary:disc onChannel:connection.channel]; 
                         }
-                        
-                        
+
                     }else if ([message isKindOfClass:[NSArray class]]) {
                         if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveArray:onChannel:)]) {
                             NSArray * arr=[self getDecryptedArray:(NSArray *)message];
@@ -521,6 +712,7 @@ typedef enum {
                             
                             [_delegate pubnub:self subscriptionDidReceiveString:str onChannel:connection.channel];
                         }
+
                     }else {
                         if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidFailWithResponse:onChannel:onChannel:)]) {
                             
@@ -529,8 +721,7 @@ typedef enum {
                         }
                     }
                 }
-                
-                
+
                 timeToken = [response objectAtIndex:1];
             } else if (response) {
                 NSLog(@"Unexpected subscribe response from PubNub");
@@ -569,8 +760,7 @@ typedef enum {
                     }
                     
                 }
-  
-                
+
                 history = mainArray;
             } else if (response) {
                 NSLog(@"Unexpected history response from PubNub");
@@ -586,8 +776,10 @@ typedef enum {
             if ([response isKindOfClass:[NSArray class]] && ([response count] == 1)) {
                 NSLog(@"Retrieved PubNub time '%@'", [response objectAtIndex:0]);
                 number = [response objectAtIndex:0];
+                timeTokanLocal = number;
             } else if (response) {
                 NSLog(@"Unexpected time response from PubNub");
+                timeTokanLocal=0;
             }
             if ([_delegate respondsToSelector:@selector(pubnub:didReceiveTime:)]) {
                 [_delegate pubnub:self didReceiveTime:(number ? [number doubleValue] : NAN)];

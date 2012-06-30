@@ -28,43 +28,46 @@
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveString:(NSString *)message onChannel:(NSString *)channel;
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidFailWithResponse:(NSString *)message onChannel:(NSString *)channel;
 
-
-
 - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel;  // "messages" will be nil on failure
 - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time;  // "time" will be NAN on failure
+
+- (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
+- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
+- (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString*)channel ;
 @end
 
 // All operations happen on the main thread
 // Messages must be JSON compatible
 @interface CEPubnub : NSObject {
 @private
-  id<CEPubnubDelegate> _delegate;
-  NSString* _publishKey;
-  NSString* _subscribeKey;
-  NSString* _secretKey;
-  NSString* _host;
-  NSString* _cipherKey;
-  
-  NSMutableSet* _connections;
+    id<CEPubnubDelegate> _delegate;
+    NSString* _publishKey;
+    NSString* _subscribeKey;
+    NSString* _secretKey;
+    NSString* _host;
+    NSString* _cipherKey;
+    
+    NSMutableSet* _connections;
+    NSMutableSet * _subscriptions;
 }
 @property(nonatomic, assign) id<CEPubnubDelegate> delegate;
 - (CEPubnub*) initWithSubscribeKey:(NSString*)subscribeKey useSSL:(BOOL)useSSL;
 - (CEPubnub*) initWithPublishKey:(NSString*)publishKey
-                  subscribeKey:(NSString*)subscribeKey
-                     secretKey:(NSString*)secretKey
-                        useSSL:(BOOL)useSSL;
+                    subscribeKey:(NSString*)subscribeKey
+                       secretKey:(NSString*)secretKey
+                          useSSL:(BOOL)useSSL;
 - (CEPubnub*) initWithPublishKey:(NSString*)publishKey  // May be nil if -publishMessage:toChannel: is never used
-                  subscribeKey:(NSString*)subscribeKey
-                     secretKey:(NSString*)secretKey  // May be nil if -publishMessage:toChannel: is never used
-                        useSSL:(BOOL)useSSL
-                     cipherKey:(NSString*)cipherKey  
-                        origin:(NSString*)origin;
+                    subscribeKey:(NSString*)subscribeKey
+                       secretKey:(NSString*)secretKey  // May be nil if -publishMessage:toChannel: is never used
+                          useSSL:(BOOL)useSSL
+                       cipherKey:(NSString*)cipherKey
+                          origin:(NSString*)origin;
 
 - (CEPubnub*) initWithPublishKey:(NSString*)publishKey
-                  subscribeKey:(NSString*)subscribeKey
-                     secretKey:(NSString*)secretKey
-                     cipherKey:(NSString*)cipherKey
-                        useSSL:(BOOL)useSSL;
+                    subscribeKey:(NSString*)subscribeKey
+                       secretKey:(NSString*)secretKey
+                       cipherKey:(NSString*)cipherKey
+                          useSSL:(BOOL)useSSL;
 
 //- (void) publishMessage:(id)message toChannel:(NSString*)channel;
 //- (void) fetchHistory:(NSUInteger)limit forChannel:(NSString*)channel;
@@ -79,4 +82,16 @@
 - (void) subscribe:(NSString*)channel;  // Does nothing if already subscribed
 - (void) unsubscribeFromChannel:(NSString*)channel;  // Does nothing if not subscribed
 - (BOOL) isSubscribedToChannel:(NSString*)channel;
+@end
+
+struct ChannelStatus{
+    NSString *channel;
+    BOOL connected;
+    BOOL first;
+};
+
+@interface ChannelStatus :NSObject
+@property(nonatomic, retain) NSString* channel;
+@property(nonatomic, nonatomic) BOOL connected;
+@property(nonatomic, nonatomic) BOOL first;
 @end

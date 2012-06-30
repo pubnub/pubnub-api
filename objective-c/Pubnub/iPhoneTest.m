@@ -22,7 +22,7 @@ CEPubnub *pubnub;
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"demo" useSSL:NO];
+    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"" useSSL:NO];//(Cipher key is Optional)
 	//subscribe to a few channels
 	
 	[pubnub setDelegate:self];
@@ -154,6 +154,23 @@ CEPubnub *pubnub;
     
     [txt setText:[NSString stringWithFormat:@"Time  :- received:\n %f", time]];
 }  // "time" will be NAN on failure
+
+- (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString *)channel{
+    NSLog(@"ConnectToChannel   ");
+    NSLog(@"Connect to Channel:   %@",channel);
+        //   [txt setText:[NSString stringWithFormat:@"Connect to Channel:   %@",channel]];
+}  
+
+- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString *)channel{
+    NSLog(@"DisconnectToChannel   ");
+    NSLog(@"Disconnect to Channel:   %@",channel);
+        //    [txt setText:[NSString stringWithFormat:@"Disconnect to Channel:   %@",channel]];
+} 
+- (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString *)channel{
+    NSLog(@"Re_ConnectToChannel   ");
+    NSLog(@"Re-Connect to Channel:   %@",channel);
+        //[txt setText:[NSString stringWithFormat:@"Connect to Channel:   %@",channel]];
+} 
 
 - (void)dealloc {
     [txt release];

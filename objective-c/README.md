@@ -15,7 +15,7 @@ Pubnub is an iOS Objective-C library wrapper for the Pubnub realtime messaging s
 
 3. Make your class follow the PubNubDelegate protocol
 
-        @interface iPhoneTest : UIViewController  <CEPubnubDelegate>
+        @interface iPhoneTest : UIViewController <CEPubnubDelegate>
 
 4. Implement the CEPubnubDelegate methods (they are all optional):
 
@@ -27,11 +27,14 @@ Pubnub is an iOS Objective-C library wrapper for the Pubnub realtime messaging s
         - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel;
         - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel;
         - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time;
+        - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
+		- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
+		- (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString*)channel ;
        
 
 5. Instantiate Pubnub in your class so you can publish and subscribe to messages and assign delegate:self:
 
-        pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"demo" useSSL:NO];
+        pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"" useSSL:NO];
         [pubnub setDelegate:self];
 
 6. Publish NSString:
@@ -53,9 +56,9 @@ Pubnub is an iOS Objective-C library wrapper for the Pubnub realtime messaging s
 
 9. Subscribe to multiple message channels:
 
-        [pubnub subscribeToChannel: @"hello_world_1"];
-        [pubnub subscribeToChannel: @"hello_world_2"];
-        [pubnub subscribeToChannel: @"hello_world_3"];
+        [pubnub subscribe: @"hello_world_1"];
+        [pubnub subscribe: @"hello_world_2"];
+        [pubnub subscribe: @"hello_world_3"];
 
 10. Get a history of messages on a channel:
 
@@ -69,13 +72,8 @@ Pubnub is an iOS Objective-C library wrapper for the Pubnub realtime messaging s
 
         [pubnub getTime];
         
-12. Get the Unique UUID:
+12. Get UUID:
 
         NSLog(@"UUID::: %@",[CEPubnub getUUID]);
         
 13. That's it! An example iPad app has been included in the project.
-
-## Author
-
-
-
