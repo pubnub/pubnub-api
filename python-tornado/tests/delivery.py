@@ -26,7 +26,6 @@ secret_key    = len(sys.argv) > 3 and sys.argv[3] or 'demo'
 cipher_key    = len(sys.argv) > 4 and sys.argv[4] or 'demo'
 ssl_on        = len(sys.argv) > 5 and bool(sys.argv[5]) or False
 origin        = len(sys.argv) > 6 and sys.argv[6] or 'pubsub.pubnub.com'
-origin = '184.72.9.220'
 
 ## -----------------------------------------------------------------------
 ## Analytics
@@ -74,12 +73,15 @@ def publish_sent(info = None):
     pubnub.timeout( send, 0.1 )
 
 def send():
-    if analytics['queued'] < 100:
-        pubnub.publish({
-            'channel'  : channel,
-            'callback' : publish_sent,
-            'message'  : "1234567890"
-        })
+    if analytics['queued'] > 100:
+        analytics['queued'] -= 10
+        return pubnub.timeout( send, 10 )
+
+    pubnub.publish({
+        'channel'  : channel,
+        'callback' : publish_sent,
+        'message'  : "1234567890"
+    })
 
 def received(message):
     analytics['queued']   -= 1
@@ -108,20 +110,13 @@ def show_status():
     ## Update Failed Deliveries
     analytics['failed_deliveries'] = \
         analytics['successful_publishes'] \
-        - analytics['received'] \
-        + analytics['queued'] \
-        + analytics['failed_publishes']
+        - analytics['received']
 
     ## Update Deliverability
     analytics['deliverability'] = (
         float(analytics['received']) / \
-        float(analytics['publishes'] or 1.0)
+        float(analytics['successful_publishes'] or 1.0)
     ) * 100.0
-
-    """
-    if analytics['deliverability'] > 100.0:
-        analytics['deliverability'] = 100.0
-    """
 
     ## Print Display
     print( (

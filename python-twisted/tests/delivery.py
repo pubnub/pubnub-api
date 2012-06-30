@@ -74,12 +74,15 @@ def publish_sent(info = None):
     pubnub.timeout( send, 0.1 )
 
 def send():
-    if analytics['queued'] < 100:
-        pubnub.publish({
-            'channel'  : channel,
-            'callback' : publish_sent,
-            'message'  : "1234567890"
-        })
+    if analytics['queued'] > 100:
+        analytics['queued'] -= 10
+        return pubnub.timeout( send, 10 )
+
+    pubnub.publish({
+        'channel'  : channel,
+        'callback' : publish_sent,
+        'message'  : "1234567890"
+    })
 
 def received(message):
     analytics['queued']   -= 1
@@ -108,20 +111,13 @@ def show_status():
     ## Update Failed Deliveries
     analytics['failed_deliveries'] = \
         analytics['successful_publishes'] \
-        - analytics['received'] \
-        + analytics['queued'] \
-        + analytics['failed_publishes']
+        - analytics['received']
 
     ## Update Deliverability
     analytics['deliverability'] = (
         float(analytics['received']) / \
-        float(analytics['publishes'] or 1.0)
+        float(analytics['successful_publishes'] or 1.0)
     ) * 100.0
-
-    """
-    if analytics['deliverability'] > 100.0:
-        analytics['deliverability'] = 100.0
-    """
 
     ## Print Display
     print( (
