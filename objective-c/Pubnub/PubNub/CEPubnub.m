@@ -283,7 +283,9 @@ typedef enum {
                      [channel urlEscapedString], [json urlEscapedString]];
     
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
-
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_SendMessage
+                                                                    channel:channel];
     [_connections addObject:connection];
     [connection release];
 }
@@ -312,7 +314,9 @@ typedef enum {
     
     NSString* url = [NSString stringWithFormat:@"%@/subscribe/%@/%@/0/%@", _host, _subscribeKey, [channel urlEscapedString], timeToken];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
-
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_ReceiveMessage
+                                                                    channel:channel];
     [_connections addObject:connection];
     [connection release];
 }
