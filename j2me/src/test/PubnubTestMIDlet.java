@@ -28,7 +28,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     private void initialize() {
         _pubnub.setCallback(this);
     }
-    Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "demo", false);
+    Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "", false);
 
     /**
      * Performs an action assigned to the Mobile Device - MIDlet Started point.
