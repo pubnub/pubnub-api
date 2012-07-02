@@ -1,4 +1,4 @@
-package Pubnub.crypto;
+package pubnub.crypto;
 
 /**
  * Simple base64 encoder, can be implemented in other platforms.

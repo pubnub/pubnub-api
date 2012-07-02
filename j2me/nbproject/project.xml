@@ -3,9 +3,8 @@
     <type>org.netbeans.modules.kjava.j2meproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2me-project">
-            <name>Punnub-JavaME</name>
+            <name>Pubnub-J2me</name>
             <minimum-ant-version>1.6</minimum-ant-version>
         </data>
-        <references xmlns="http://www.netbeans.org/ns/ant-project-references/2"/>
     </configuration>
 </project>

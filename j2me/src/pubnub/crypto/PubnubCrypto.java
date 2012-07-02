@@ -1,11 +1,11 @@
-package Pubnub.crypto;
+package pubnub.crypto;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
+
 import java.util.Enumeration;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -22,40 +22,34 @@ import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.BigInteger;
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 
 /**
  * PubNub 3.1 Cryptography
- * 
+ *
  */
 public class PubnubCrypto {
 
     private final String CIPHER_KEY;
     PaddedBufferedBlockCipher encryptCipher = null;
     PaddedBufferedBlockCipher decryptCipher = null;
-    // Buffer used to transport the bytes from one stream to another
     byte[] buf = new byte[16];              //input buffer
     byte[] obuf = new byte[512];            //output buffer
-    // The key
     byte[] key = null;
-    // The initialization vector needed by the CBC mode
     byte[] IV = null;
-    // The default block size
     public static int blockSize = 16;
 
     public PubnubCrypto(String CIPHER_KEY) {
         this.CIPHER_KEY = CIPHER_KEY;
         key = PubnubCrypto.md5(CIPHER_KEY);
-        //default IV vector with all bytes to 0
         IV = "0123456789012345".getBytes();
         InitCiphers();
     }
 
     public void InitCiphers() {
-        //create the ciphers
-        // AES block cipher in CBC mode with padding
         encryptCipher = new PaddedBufferedBlockCipher(
                 new CBCBlockCipher(new AESEngine()));
 
@@ -96,7 +90,7 @@ public class PubnubCrypto {
 
     /**
      * Decrypt
-     * 
+     *
      * @param String cipherText
      * @return String
      * @throws Exception
@@ -115,10 +109,10 @@ public class PubnubCrypto {
             CBCDecrypt(st, ou);
 
             return new String(ou.toByteArray());
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return "NULL";
+        return cipher_text;
     }
 
     public void CBCEncrypt(InputStream in, OutputStream out)
@@ -129,33 +123,20 @@ public class PubnubCrypto {
             IllegalStateException,
             InvalidCipherTextException,
             IOException {
-        // Bytes written to out will be encrypted
-        // Read in the cleartext bytes from in InputStream and
-        //      write them encrypted to out OutputStream
-
-        //optionaly put the IV at the beggining of the cipher file
-        //out.write(IV, 0, IV.length);
 
         int noBytesRead = 0;        //number of bytes read from input
         int noBytesProcessed = 0;   //number of bytes processed
 
         while ((noBytesRead = in.read(buf)) >= 0) {
-            //System.out.println(noBytesRead +" bytes read");
 
             noBytesProcessed =
                     encryptCipher.processBytes(buf, 0, noBytesRead, obuf, 0);
-            //System.out.println(noBytesProcessed +" bytes processed");
             out.write(obuf, 0, noBytesProcessed);
         }
 
-        //System.out.println(noBytesRead +" bytes read");
         noBytesProcessed = encryptCipher.doFinal(obuf, 0);
-
-        //System.out.println(noBytesProcessed +" bytes processed");
         out.write(obuf, 0, noBytesProcessed);
-
         out.flush();
-
         in.close();
         out.close();
     }
@@ -168,15 +149,6 @@ public class PubnubCrypto {
             IllegalStateException,
             InvalidCipherTextException,
             IOException {
-        // Bytes read from in will be decrypted
-        // Read in the decrypted bytes from in InputStream and and
-        //      write them in cleartext to out OutputStream
-
-        // get the IV from the file
-        // DO NOT FORGET TO reinit the cipher with the IV
-        //in.read(IV,0,IV.length);
-        //this.InitCiphers();
-
         int noBytesRead = 0;        //number of bytes read from input
         int noBytesProcessed = 0;   //number of bytes processed
 
@@ -187,7 +159,9 @@ public class PubnubCrypto {
         }
         noBytesProcessed = decryptCipher.doFinal(obuf, 0);
         out.write(obuf, 0, noBytesProcessed);
+
         out.flush();
+
         in.close();
         out.close();
     }
@@ -204,7 +178,7 @@ public class PubnubCrypto {
 
     /**
      * Encrypt
-     * 
+     *
      * @param JSONObject Message to encrypt
      * @return JSONObject as Encrypted message
      */
@@ -213,9 +187,7 @@ public class PubnubCrypto {
         JSONObject message_encrypted = new JSONObject();
         try {
             Enumeration it = message.keys();
-
             while (it.hasMoreElements()) {
-
                 String key = (String) it.nextElement();
                 String val = message.getString(key);
                 message_encrypted.put(key, encrypt(val));
@@ -235,20 +207,19 @@ public class PubnubCrypto {
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
-
         return message_encrypted;
     }
 
     /**
      * Decrypt
-     * 
+     *
      * @param JSONObject Encrypted message
      * @return JSONObject Message decrypted
      */
     public JSONObject decrypt(JSONObject message_encrypted) {
- 
-            JSONObject message_decrypted = new JSONObject();
-                   try {
+
+        JSONObject message_decrypted = new JSONObject();
+        try {
             Enumeration it = message_encrypted.keys();
 
             while (it.hasMoreElements()) {
@@ -258,7 +229,7 @@ public class PubnubCrypto {
                 decrypted_str = decrypt(encrypted_str);
                 message_decrypted.put(key1, decrypted_str);
             }
-           
+
         } catch (ShortBufferException ex) {
         } catch (IllegalBlockSizeException ex) {
             ex.printStackTrace();
@@ -280,7 +251,7 @@ public class PubnubCrypto {
 
     /**
      * Encrypt JSONArray
-     * 
+     *
      * @param JSONArray - Encrypted JSONArray
      * @return JSONArray - Decrypted JSONArray
      */
@@ -315,6 +286,7 @@ public class PubnubCrypto {
             ex.printStackTrace();
         } catch (InvalidCipherTextException ex) {
             ex.printStackTrace();
+
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
@@ -323,7 +295,7 @@ public class PubnubCrypto {
 
     /**
      * Decrypt JSONArray
-     * 
+     *
      * @param JSONArray - Encrypted JSONArray
      * @return JSONArray - Decrypted JSONArray
      */
@@ -355,15 +327,18 @@ public class PubnubCrypto {
             ex.printStackTrace();
         } catch (InvalidCipherTextException ex) {
             ex.printStackTrace();
+
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
         return jsona_decrypted;
+
+
     }
 
     /**
      * Sign Message
-     * 
+     *
      * @param String input
      * @return String as HashText
      */
@@ -379,7 +354,7 @@ public class PubnubCrypto {
             m.doFinal(mac, 0);
             BigInteger number = new BigInteger(1, mac);
             String hashtext = number.toString(16);
-            signature = hashtext;//new String(base64Encode(mac));	
+            signature = hashtext;	
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -391,8 +366,8 @@ public class PubnubCrypto {
 
     public static final String base64Encode(byte[] in) {
         int iLen = in.length;
-        int oDataLen = (iLen * 4 + 2) / 3;    // output length without padding
-        int oLen = ((iLen + 2) / 3) * 4;      // output length including padding
+        int oDataLen = (iLen * 4 + 2) / 3; // output length without padding
+        int oLen = ((iLen + 2) / 3) * 4;   // output length including padding
         char[] out = new char[oLen];
         int ip = 0;
         int op = 0;
@@ -439,6 +414,7 @@ public class PubnubCrypto {
 
     /**
      * Get MD5
+     *
      * @param string
      * @return
      */

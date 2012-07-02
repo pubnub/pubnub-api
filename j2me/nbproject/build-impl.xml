@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- *** GENERATED FROM project.xml - DO NOT EDIT *** -->
-<project name="Punnub-JavaME-impl" default="jar" basedir="..">
+<project name="Pubnub-J2me-impl" default="jar" basedir="..">
     <!--load-properties-->
     <target name="pre-load-properties">
         <property file="nbproject/private/private.properties"/>
@@ -1153,8 +1153,10 @@
                 <arg value="-Xrunjdwp:transport=dt_socket,address=${active.debug.port},server=y,suspend=y"/>
                 <arg value="-Xdebug"/>
             </exec>
-            <property name="debug.delay" value="500"/>
-            <nb-mobility-debug address="${active.debug.port}" name="${app.codename}" delay="${debug.delay}" timeout="${debug.timeout}" period="2000"/>
+            <sequential>
+                <property name="debug.delay" value="500"/>
+                <nb-mobility-debug address="${active.debug.port}" name="${app.codename}" delay="${debug.delay}" timeout="${debug.timeout}" period="2000"/>
+            </sequential>
         </parallel>
     </target>
     <target name="-post-cdc-hi-debug" if="cdc-hi-platform.trigger"/>
