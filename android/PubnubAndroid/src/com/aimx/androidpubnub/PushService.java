@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.AsyncTask.Status;
+import android.util.Log;
 
 public class PushService extends Service {
     String PUSHCHANNEL = "c2dmalt";
@@ -73,8 +74,8 @@ public class PushService extends Service {
             nm.notify(1, notification);
 
         }
-
-        public boolean execute(Object message) {
+    	@Override
+        public boolean subscribeCallback(String channel, Object message) {
             try {
                 if(message instanceof JSONObject)
                 {
@@ -89,6 +90,26 @@ public class PushService extends Service {
 
             return true;
         }
+
+    	@Override
+		public void errorCallback(String channel, Object message) {
+			 Log.e("ErrorCallback","Channel:" + channel + "-" + message.toString());
+		}
+
+		@Override
+		public void connectCallback(String channel) {
+			 Log.e("ConnectCallback","Connected to channel :" + channel);
+		}
+
+		@Override
+		public void reconnectCallback(String channel) {
+			 Log.e("ReconnectCallback","Reconnected to channel :" + channel);
+		}
+
+		@Override
+		public void disconnectCallback(String channel) {
+			 Log.e("DisconnectCallback","Disconnected to channel :" + channel);
+		}
     }
 
     class PushListener extends AsyncTask<String, Void, Boolean> {
@@ -96,53 +117,12 @@ public class PushService extends Service {
         protected Boolean doInBackground(String... params) {
             {
                 try {
-                    // Callback Interface when a channel is connected
-                    class ConnectCallback implements Callback {
-
-                        @Override
-                        public boolean execute(Object message) {
-                            System.out.println(message.toString());
-                            return false;
-                        }
-                    }
-
-                    // Callback Interface when a channel is disconnected
-                    class DisconnectCallback implements Callback {
-
-                        @Override
-                        public boolean execute(Object message) {
-                            System.out.println(message.toString());
-                            return false;
-                        }
-                    }
-
-                    // Callback Interface when a channel is reconnected
-                    class ReconnectCallback implements Callback {
-
-                        @Override
-                        public boolean execute(Object message) {
-                            System.out.println(message.toString());
-                            return false;
-                        }
-                    }
-
-                    // Callback Interface when error occurs
-                    class ErrorCallback implements Callback {
-
-                        @Override
-                        public boolean execute(Object message) {
-                            System.out.println(message.toString());
-                            return false;
-                        }
-                    }
+                  
+                   
 
                     HashMap<String, Object> args = new HashMap<String, Object>(2);
                     args.put("channel", params[0]);
                     args.put("callback", mPushReceiver);
-                    args.put("connect_cb", new ConnectCallback());            // callback to get connect event
-                    args.put("disconnect_cb", new DisconnectCallback());      // callback to get disconnect event (optional)
-                    args.put("reconnect_cb", new ReconnectCallback());        // callback to get reconnect event (optional)
-                    args.put("error_cb", new ErrorCallback());                // callback to get error event (optional)
                     pubnub.subscribe(args);
                 } catch (Exception e) {
                     e.printStackTrace();

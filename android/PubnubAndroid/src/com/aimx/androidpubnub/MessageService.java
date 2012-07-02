@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 
 public class MessageService extends Service {
     Pubnub pubnub;
@@ -45,7 +46,8 @@ public class MessageService extends Service {
     
     // Callback Interface when a Message is Received
     class MessageReceiver implements Callback {
-        public boolean execute(Object message) {
+    	@Override
+    	public boolean subscribeCallback(String channel, Object message) {
             try {
                 Message m = Message.obtain();
                 Bundle b = new Bundle();
@@ -57,6 +59,26 @@ public class MessageService extends Service {
             }
             return true;
         }
+
+		@Override
+		public void errorCallback(String channel, Object message) {
+			 Log.e("ErrorCallback","Channel:" + channel + "-" + message.toString());
+		}
+
+		@Override
+		public void connectCallback(String channel) {
+			 Log.e("ConnectCallback","Connected to channel :" + channel);
+		}
+
+		@Override
+		public void reconnectCallback(String channel) {
+			 Log.e("ReconnectCallback","Reconnected to channel :" + channel);
+		}
+
+		@Override
+		public void disconnectCallback(String channel) {
+			 Log.e("DisconnectCallback","Disconnected to channel :" + channel);
+		}
     }
     
     class MessageListener extends AsyncTask<String, Void, Boolean> {
@@ -64,53 +86,11 @@ public class MessageService extends Service {
         protected Boolean doInBackground(String... params) {
             {
                 try {
-                	// Callback Interface when a channel is connected
-                    class ConnectCallback implements Callback {
-
-            			@Override
-            			public boolean execute(Object message) {
-            				System.out.println(message.toString());
-            				return false;
-            			}
-                    }
-
-                    // Callback Interface when a channel is disconnected
-                    class DisconnectCallback implements Callback {
-
-            			@Override
-            			public boolean execute(Object message) {
-            				System.out.println(message.toString());
-            				return false;
-            			}
-                    }
-
-                    // Callback Interface when a channel is reconnected
-                    class ReconnectCallback implements Callback {
-
-            			@Override
-            			public boolean execute(Object message) {
-            				System.out.println(message.toString());
-            				return false;
-            			}
-                    }
-
-                    // Callback Interface when error occurs
-                    class ErrorCallback implements Callback {
-
-            			@Override
-            			public boolean execute(Object message) {
-            				System.out.println(message.toString());
-            				return false;
-            			}
-                    }
+                	
                 	
                 	HashMap<String, Object> args = new HashMap<String, Object>(2);
                     args.put("channel", params[0]);
                     args.put("callback", mMessageReceiver);
-                    args.put("connect_cb", new ConnectCallback());			// callback to get connect event
-                    args.put("disconnect_cb", new DisconnectCallback());	// callback to get disconnect event
-                    args.put("reconnect_cb", new ReconnectCallback());		// callback to get reconnect event
-                    args.put("error_cb", new ErrorCallback());				// callback to get error event
                     pubnub.subscribe(args);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -130,12 +110,11 @@ public class MessageService extends Service {
     public void onCreate() {
         super.onCreate();
         pubnub = new Pubnub("demo", // PUBLISH_KEY
-                "demo", // SUBSCRIBE_KEY
-                "demo", // SECRET_KEY
-                "",     // CIPHER_KEY (Cipher key is Optional)
-                true    // SSL_ON?
+                "demo", 			// SUBSCRIBE_KEY
+                "demo", 			// SECRET_KEY
+                "",     			// CIPHER_KEY (Cipher key is Optional)
+                true    			// SSL_ON?
         );
-        
     }
 
     @Override

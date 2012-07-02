@@ -1,7 +1,14 @@
 package com.aimx.androidpubnub;
 
-
-
 public interface Callback {
-    public abstract boolean execute(Object message);
+
+    public abstract boolean subscribeCallback(String channel, Object message);
+
+    public abstract void errorCallback(String channel, Object message);
+
+    public abstract void connectCallback(String channel);
+
+    public abstract void reconnectCallback(String channel);
+
+    public abstract void disconnectCallback(String channel);
 }
