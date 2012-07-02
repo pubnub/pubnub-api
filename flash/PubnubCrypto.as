@@ -58,7 +58,14 @@ package
                      var cipherObj:Object = new Object();
                      for(var s:String in plainObj)
                      {            
-                        cipherObj[s] = encryptString(cipher_key,plainObj[s]);
+                        if(typeof(plainObj[s]) == "object")
+						{
+							cipherObj[s] = encrypt(cipher_key,plainObj[s]);		
+						}
+						else
+						{
+                        	cipherObj[s] = encryptString(cipher_key,plainObj[s]);							
+						}
                      }
                      return cipherObj;
                 }
@@ -89,7 +96,15 @@ package
                      var plainObj:Object = new Object();
                      for(var s:String in cipherObj)
                      {            
-                        plainObj[s] = decryptString(cipher_key,cipherObj[s]);
+                        if(typeof(cipherObj[s]) == "object")
+						{
+							plainObj[s] = decrypt(cipher_key,cipherObj[s]);		
+							plainObj[s] = JSON.decode(plainObj[s].toString());
+						}
+						else
+						{
+                        	plainObj[s] = decryptString(cipher_key,cipherObj[s]);							
+						}
                      }
                      return JSON.encode(plainObj);
                 }
