@@ -15,6 +15,8 @@ to thousands of web and mobile clients simultaneously.
 
 ### Ruby Push API
 
+### Ruby: (Init)
+
 ```ruby
 pubnub = Pubnub.new(
     "demo",  ## PUBLISH_KEY
@@ -25,9 +27,9 @@ pubnub = Pubnub.new(
 )
 ```
 
-### PUBLISH STRING MESSAGE
+### Ruby: (Publish)
 
-##### Send Message
+##### Send Message in String Format
 
 ```ruby
 pubnub.publish({
@@ -39,9 +41,7 @@ pubnub.publish({
 })
 ```
 
-### PUBLISH ARRAY OF MESSAGES
-
-##### Send Message
+##### Send Message in Array Format
 
 ```ruby
 pubnub.publish({
@@ -53,9 +53,7 @@ pubnub.publish({
 })
 ```
 
-### PUBLISH OBJECT OF STRING MESSAGE
-
-##### Send Message
+##### Send Message in Dictionary Format
 
 ```ruby
 pubnub.publish({
@@ -67,7 +65,7 @@ pubnub.publish({
 })
 ```
 
-### SUBSCRIBE
+### Ruby: (Subscribe)
 
 ##### Listen for Messages
 
@@ -75,13 +73,13 @@ pubnub.publish({
 pubnub.subscribe({
     'channel'  => 'hello_world',
     'callback' => lambda do |message|
-        puts(message) ## print message
-        return true   ## keep listening?
+        puts(message)    ## get and print message
+        return true      ## keep listening?
     end
 })
 ```
 
-### HISTORY
+### Ruby: (History)
 
 ##### Load Previously Published Messages
 
@@ -95,7 +93,7 @@ pubnub.history({
 })
 ```
 
-### UUID
+### Ruby: (UUID)
 
 ##### Generate UUID
 
