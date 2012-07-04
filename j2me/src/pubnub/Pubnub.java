@@ -1,12 +1,11 @@
 package pubnub;
 
+
+import com.tinyline.util.GZIPInputStream;
+import java.io.*;
 import pubnub.crypto.PubnubCrypto;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Random;
@@ -24,9 +23,7 @@ import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 import pubnub.util.AsyncHttpManager;
-import pubnub.util.GZIP;
 import pubnub.util.HttpCallback;
-
 
 public class Pubnub {
 
@@ -37,8 +34,9 @@ public class Pubnub {
     private String CIPHER_KEY = "";
     private boolean SSL = false;
     private Callback _callback = null;
+    private String current_timetoken = "0";
 
-    private class Channel_status {
+    private class ChannelStatus {
 
         String channel;
         boolean connected, first;
@@ -253,6 +251,7 @@ public class Pubnub {
         args.put("timetoken", "0");
         _subscribe(args);
 
+
     }
 
     private void _subscribe_base(Hashtable args) {
@@ -269,9 +268,9 @@ public class Pubnub {
 
             // Stop Connection?
             boolean is_disconnect = false;
-            Channel_status it;
+            ChannelStatus it;
             for (int i = 0; i < subscriptions.size(); i++) {
-                it = (Channel_status) subscriptions.elementAt(i);
+                it = (ChannelStatus) subscriptions.elementAt(i);
                 if (it.channel.equals(channel)) {
                     if (!it.connected) {
                         if (_callback != null) {
@@ -313,16 +312,16 @@ public class Pubnub {
         // Ensure Single Connection
         if (subscriptions != null && subscriptions.size() > 0) {
             boolean channel_exist = false;
-            Channel_status it;
+            ChannelStatus it;
             for (int i = 0; i < subscriptions.size(); i++) {
-                it = (Channel_status) subscriptions.elementAt(i);
+                it = (ChannelStatus) subscriptions.elementAt(i);
                 if (it.channel.equals(channel)) {
                     channel_exist = true;
                     break;
                 }
             }
             if (!channel_exist) {
-                Channel_status cs = new Channel_status();
+                ChannelStatus cs = new ChannelStatus();
                 cs.channel = channel;
                 cs.connected = true;
                 subscriptions.addElement(cs);
@@ -339,13 +338,12 @@ public class Pubnub {
             }
         } else {
             // New Channel
-            Channel_status cs = new Channel_status();
+            ChannelStatus cs = new ChannelStatus();
             cs.channel = channel;
             cs.connected = true;
             subscriptions = new Vector();
             subscriptions.addElement(cs);
         }
-
         _subscribe_base(args);
 
     }
@@ -454,9 +452,9 @@ public class Pubnub {
      */
     public void unsubscribe(Hashtable args) {
         String channel = (String) args.get("channel");
-        Channel_status it;
+        ChannelStatus it;
         for (int i = 0; i < subscriptions.size(); i++) {
-            it = (Channel_status) subscriptions.elementAt(i);
+            it = (ChannelStatus) subscriptions.elementAt(i);
             if (it.channel.equals(channel) && it.connected) {
                 it.connected = false;
                 it.first = false;
@@ -474,7 +472,8 @@ public class Pubnub {
         while (url_iterator.hasMoreElements()) {
             try {
                 String url_bit = (String) url_iterator.nextElement();
-                url.append("/").append(_encodeURIcomponent(url_bit));
+                // url.append("/").append(_encodeURIcomponent(url_bit));
+                url.append("/").append(encode(url_bit, "UTF-8"));
             } catch (Exception e) {
                 // e.printStackTrace();
                 JSONArray jsono = new JSONArray();
@@ -500,21 +499,35 @@ public class Pubnub {
     private void _request(Vector url_components, final String channel) {
 
         String request_for = (String) url_components.elementAt(0);
+
+        if (request_for.equals("subscribe")) {
+            current_timetoken = (String) url_components.elementAt(4);
+        }
         String url = getURL(url_components);
         Hashtable _headers = new Hashtable();
         _headers.put("V", "3.1");
         _headers.put("User-Agent", "J2ME");
         _headers.put("Accept-Encoding", "gzip");
 
+        
+
         HttpCallback callback = new HttpCallback(url.toString(), _headers, request_for) {
 
             public void processResponse(HttpConnection conn, Object cookie) throws IOException {
+               
             }
 
-            public void OnComplet(HttpConnection hc, String responce, String req_for) throws IOException {
+            public void OnComplet(HttpConnection hc, String response, String req_for) throws IOException {
                 try {
                     String timetoken = "0";
-                    JSONArray out = new JSONArray(responce);
+                    //response=response.replace('+', ' ');
+                   
+                    JSONArray out = null;
+                    if (response != null) {
+                        out = new JSONArray(response);
+                    } else {
+                        out = null;
+                    }
                     if (_callback != null) {
                         if (req_for != null) {
                             if (req_for.equals("time")) {
@@ -534,21 +547,21 @@ public class Pubnub {
                                 }
 
                             } else if (req_for.equals("publish")) {
-                                if(out == null)
-                                {
-                                    JSONArray arr= new JSONArray();
+
+                                if (out == null) {
+                                    JSONArray arr = new JSONArray();
                                     arr.put("0");
                                     arr.put("Error: Failed JSONP HTTP Request.");
-                                    out=arr;
+                                    out = arr;
                                 }
                                 _callback.publishCallback(channel, out);
                             } else if (req_for.equals("subscribe")) {
 
-                                Channel_status it;
+                                ChannelStatus it;
                                 boolean is_disconnect = false;
                                 // Stop Connection?
                                 for (int i = 0; i < subscriptions.size(); i++) {
-                                    it = (Channel_status) subscriptions.elementAt(i);
+                                    it = (ChannelStatus) subscriptions.elementAt(i);
                                     if (it.channel.equals(channel)) {
                                         if (!it.connected) {
                                             if (_callback != null) {
@@ -564,11 +577,12 @@ public class Pubnub {
                                     return;
                                 }
 
+
                                 // Problem?
-                                if (out == null || out.optInt(1) == 0) {
+                                if (response == null || out.optInt(1) == 0) {
 
                                     for (int i = 0; i < subscriptions.size(); i++) {
-                                        it = (Channel_status) subscriptions.elementAt(i);
+                                        it = (ChannelStatus) subscriptions.elementAt(i);
                                         if (it.channel.equals(channel)) {
                                             subscriptions.removeElement(it);
                                             if (_callback != null) {
@@ -589,7 +603,13 @@ public class Pubnub {
                                         } else {
                                             Hashtable args = new Hashtable();
                                             args.put("channel", channel);
-                                            args.put("timetoken", time_token + "");
+
+                                            if (current_timetoken.equals("0")) {
+                                                args.put("timetoken", time_token + "");
+                                            } else {
+                                                args.put("timetoken", current_timetoken + "");
+
+                                            }
 
                                             _subscribe(args);
                                             is_reconnected = true;
@@ -599,7 +619,7 @@ public class Pubnub {
                                 } else {
 
                                     for (int i = 0; i < subscriptions.size(); i++) {
-                                        it = (Channel_status) subscriptions.elementAt(i);
+                                        it = (ChannelStatus) subscriptions.elementAt(i);
                                         if (it.channel.equals(channel)) {
                                             // Connect Callback
                                             if (!it.first) {
@@ -684,6 +704,8 @@ public class Pubnub {
                     ex.printStackTrace();
                 } catch (JSONException ex) {
                     ex.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         };
@@ -691,34 +713,14 @@ public class Pubnub {
         AsyncHttpManager.getInstance().queue(callback);
     }
 
-    private String _encodeURIcomponent(String s) {
-        StringBuffer o = new StringBuffer();
-        char[] array = s.toCharArray();
-        for (int i = 0; i < array.length; i++) {
-            char ch = array[i];
-            if (isUnsafe(ch)) {
-                o.append('%');
-                o.append(toHex(ch / 16));
-                o.append(toHex(ch % 16));
-            } else {
-                o.append(ch);
-            }
-        }
-        return o.toString();
-    }
-
     private char toHex(int ch) {
         return (char) (ch < 10 ? '0' + ch : 'A' + ch - 10);
-    }
-
-    private boolean isUnsafe(char ch) {
-        return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?É‚é¡¶".indexOf(ch) >= 0;
     }
 
     public final String getViaHttpsConnection(String url)
             throws IOException, ServiceProviderException {
         HttpConnection c = null;
-        DataInputStream dis = null;
+        InputStream dis = null;
         OutputStream os = null;
         int rc;
         String respBody = new String(""); // return empty string on bad things
@@ -736,8 +738,11 @@ public class Pubnub {
             c.setRequestProperty("Accept-Encoding", "gzip");
             rc = c.getResponseCode();
             int len = c.getHeaderFieldInt("Content-Length", 0);
-            dis = c.openDataInputStream();
+            dis = c.openInputStream();
 
+            if ("gzip".equals(c.getEncoding())) 
+                    dis = new GZIPInputStream(dis);
+            
             byte[] data = null;
             ByteArrayOutputStream tmp = new ByteArrayOutputStream();
             int ch;
@@ -745,13 +750,8 @@ public class Pubnub {
                 tmp.write(ch);
             }
             data = tmp.toByteArray();
-            respBody = new String(data);
-            if ("gzip".equals(c.getEncoding())) {
-                byte[] decompressed = GZIP.inflate(respBody.toString().getBytes("ISO-8859-1"));
-                StringBuffer _response = new StringBuffer(new String(
-                        decompressed, "ISO-8859-1"));
-                respBody = _response.toString();
-            }
+            respBody = new String(data, "UTF-8");
+           
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Not an HTTP URL");
         } finally {
@@ -768,4 +768,128 @@ public class Pubnub {
         }
         return respBody;
     }
+
+    public String encode(String s, String enc)
+            throws UnsupportedEncodingException {
+
+        boolean needToChange = false;
+        boolean wroteUnencodedChar = false;
+        int maxBytesPerChar = 10; // rather arbitrary limit, but safe for now
+        StringBuffer out = new StringBuffer(s.length());
+        ByteArrayOutputStream buf = new ByteArrayOutputStream(maxBytesPerChar);
+
+        OutputStreamWriter writer = new OutputStreamWriter(buf, enc);
+
+        for (int i = 0; i < s.length(); i++) {
+            int c = (int) s.charAt(i);
+            //System.out.println("Examining character: " + c);
+            if (dontNeedEncoding(c)) {
+                if (c == ' ') {
+                    out.append('%');
+                    out.append(toHex(c / 16));
+                    out.append(toHex(c % 16));
+
+                    needToChange = true;
+                } else {
+                    //System.out.println("Storing: " + c);
+                    out.append((char) c);
+                    wroteUnencodedChar = true;
+                }
+            } else {
+                // convert to external encoding before hex conversion
+                try {
+                    if (wroteUnencodedChar) { // Fix for 4407610
+                        writer = new OutputStreamWriter(buf, enc);
+                        wroteUnencodedChar = false;
+                    }
+                    writer.write(c);
+                    /*
+                     * If this character represents the start of a Unicode
+                     * surrogate pair, then pass in two characters. It's not
+                     * clear what should be done if a bytes reserved in the
+                     * surrogate pairs range occurs outside of a legal surrogate
+                     * pair. For now, just treat it as if it were any other
+                     * character.
+                     */
+                    if (c >= 0xD800 && c <= 0xDBFF) {
+                        /*
+                         * System.out.println(Integer.toHexString(c) + " is high
+                         * surrogate");
+                         */
+                        if ((i + 1) < s.length()) {
+                            int d = (int) s.charAt(i + 1);
+                            /*
+                             * System.out.println("\tExamining " +
+                             * Integer.toHexString(d));
+                             */
+                            if (d >= 0xDC00 && d <= 0xDFFF) {
+                                /*
+                                 * System.out.println("\t" +
+                                 * Integer.toHexString(d) + " is low
+                                 * surrogate");
+                                 */
+                                writer.write(d);
+                                i++;
+                            }
+                        }
+                    }
+                    writer.flush();
+                } catch (IOException e) {
+                    buf.reset();
+                    continue;
+                }
+                byte[] ba = buf.toByteArray();
+                for (int j = 0; j < ba.length; j++) {
+                    out.append('%');
+                    char ch = CCharacter.forDigit((ba[j] >> 4) & 0xF, 16);
+                    // converting to use uppercase letter as part of
+                    // the hex value if ch is a letter.
+                    //            if (Character.isLetter(ch)) {
+                    //            ch -= caseDiff;
+                    //            }
+                    out.append(ch);
+                    ch = CCharacter.forDigit(ba[j] & 0xF, 16);
+                    //            if (Character.isLetter(ch)) {
+                    //            ch -= caseDiff;
+                    //            }
+                    out.append(ch);
+                }
+                buf.reset();
+                needToChange = true;
+            }
+        }
+
+        return (needToChange ? out.toString() : s);
+    }
+
+    static class CCharacter {
+
+        public static char forDigit(int digit, int radix) {
+            if ((digit >= radix) || (digit < 0)) {
+                return '\0';
+            }
+            if ((radix < Character.MIN_RADIX) || (radix > Character.MAX_RADIX)) {
+                return '\0';
+            }
+            if (digit < 10) {
+                return (char) ('0' + digit);
+            }
+            return (char) ('a' - 10 + digit);
+        }
+    }
+
+    public static boolean dontNeedEncoding(int ch) {
+        int len = _dontNeedEncoding.length();
+        boolean en = false;
+        for (int i = 0; i < len; i++) {
+            if (_dontNeedEncoding.charAt(i) == ch) {
+                en = true;
+                break;
+            }
+        }
+
+        return en;
+    }
+    //private static final int caseDiff = ('a' - 'A');
+    private static String _dontNeedEncoding = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ -_.*";
 }
