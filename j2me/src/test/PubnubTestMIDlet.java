@@ -236,7 +236,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener,Callback
             // Create JSON Message
             JSONObject message = new JSONObject();
             // Create HashMap parameter
-            message.put("some_key", "Hello World! -->  (ɂ顶@$%^&*()!) (d???ri?) ??? ????? ????"");
+            message.put("some_key", "Hello World!");
            
             Hashtable args = new Hashtable(2);
             args.put("channel", Channel); // Channel Name
