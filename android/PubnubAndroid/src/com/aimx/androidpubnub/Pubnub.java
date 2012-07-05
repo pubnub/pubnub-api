@@ -3,6 +3,8 @@ package com.aimx.androidpubnub;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -336,17 +338,17 @@ public class Pubnub {
                         );
 
                 // Stop Connection?
-                boolean is_disconnect = false;
+                boolean isDisconnected = false;
                 for (ChannelStatus it : subscriptions) {
                     if (it.channel.equals(channel)) {
                         if(!it.connected) {
                             callback.disconnectCallback(channel);
-                            is_disconnect = true;
+                            isDisconnected = true;
                             break;
                         }
                     }
                 }
-                if (is_disconnect)
+                if (isDisconnected)
                     return;
 
                 // Wait for Message
@@ -357,13 +359,13 @@ public class Pubnub {
                     if (it.channel.equals(channel)) {
                         if (!it.connected) {
                             callback.disconnectCallback(channel);
-                            is_disconnect = true;
+                            isDisconnected = true;
                             break;
                         }
                     }
                 }
 
-                if (is_disconnect)
+                if (isDisconnected)
                     return;
 
                 // Problem?
@@ -375,12 +377,13 @@ public class Pubnub {
                                  callback.disconnectCallback(channel);
                              }else{
                                  subscriptions.remove(it);
-                                 callback.errorCallback(channel,"Lost Network Connection");
+                                 callback.errorCallback(channel,"No Network Connection");
                              }
+                             break;
                         }
                     }
                     // Ensure Connected (Call Time Function)
-                    boolean is_reconnected = false;
+                    boolean isReconnected = false;
                     while(true) {
                         double time_token = this.time();
                         if (time_token == 0.0) {
@@ -389,11 +392,11 @@ public class Pubnub {
                             Thread.sleep(5000);
                         } else {
                             this._subscribe(args);
-                            is_reconnected = true;
+                            isReconnected = true;
                             break;
                         }
                     }
-                    if(is_reconnected) {
+                    if(isReconnected) {
                         break;
                     }
                 } else {
@@ -565,7 +568,7 @@ public class Pubnub {
         while (url_iterator.hasNext()) {
             try {
                 String url_bit = (String) url_iterator.next();
-                url.append("/").append(_encodeURIcomponent(url_bit));
+                url.append("/").append(_encodeToUTF8(url_bit));
             } catch (Exception e) {
                 e.printStackTrace();
                 JSONArray jsono = new JSONArray();
@@ -674,27 +677,8 @@ public class Pubnub {
         }
     }
 
-    private String _encodeURIcomponent(String s) {
-        StringBuilder o = new StringBuilder();
-        for (char ch : s.toCharArray()) {
-            if (isUnsafe(ch)) {
-                o.append('%');
-                o.append(toHex(ch / 16));
-                o.append(toHex(ch % 16));
-            } else {
-                o.append(ch);
-            }
-        }
-        return o.toString();
+    private String _encodeToUTF8(String s) throws UnsupportedEncodingException {
+    	String enc = URLEncoder.encode(s, "UTF-8").replace("+", "%20");
+    	return enc;
     }
-
-    private char toHex(int ch) {
-        return (char) (ch < 10 ? '0' + ch : 'A' + ch - 10);
-    }
-
-    private boolean isUnsafe(char ch) {
-        return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?ɂ顶".indexOf(ch) >= 0;
-    }
-
- 
 }

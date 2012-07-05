@@ -28,7 +28,7 @@ public class PubnubTestActivity extends Activity {
     String myMessage = "", channel = "hello_world";
     EditText ed;
     RefreshHandler r = new RefreshHandler();
-    int limit = 1;
+    int limit = 5;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +36,18 @@ public class PubnubTestActivity extends Activity {
         setContentView(R.layout.main);
         
         ed = (EditText) findViewById(R.id.editText1);
+        
+        /*-----------------------------------------------------------------------------
+        Android: (Init)
+        -------------------------------------------------------------------------------*/
+
+        pubnub = new Pubnub(
+            "demo",  // PUBLISH_KEY
+            "demo",  // SUBSCRIBE_KEY
+            "demo",  // SECRET_KEY
+            "",      // CIPHER_KEY
+            true     // SSL_ON?
+        );
         
         XMLDownloader d = new XMLDownloader();
         d.execute("xml");
@@ -107,17 +119,21 @@ public class PubnubTestActivity extends Activity {
                 // Print Response from PubNub JSONP REST Service
                 try {
                     if(response != null){
+                    	StringBuffer messages = new StringBuffer("");
                         for (int i = 0; i < response.length(); i++) {
-                             JSONObject jsono = response.optJSONObject(i);
-                             if(jsono != null){
-                                 @SuppressWarnings("rawtypes")
-                                 Iterator keys = jsono.keys();
-                                 while (keys.hasNext()) {
-                                     System.out.print(jsono.get( keys.next().toString() ) +" ");
-                                 }
-                             }
-                             System.out.println();
+                        	 Object o = response.get(i);
+                        	 String message = o.toString()+"\n\n";
+                             messages.append(message);
                         }
+                        final AlertDialog.Builder b = new AlertDialog.Builder(PubnubTestActivity.this);
+                        b.setIcon(android.R.drawable.ic_dialog_alert);
+                        b.setTitle("History: ");
+                        b.setMessage(messages.toString());
+                        b.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        b.show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -135,7 +151,17 @@ public class PubnubTestActivity extends Activity {
                 Android: (UUID)
                 -------------------------------------------------------------------------------*/
                 
-                System.out.println(" UUID: "+Pubnub.uuid());
+            	String uuid = Pubnub.uuid();
+                System.out.println(" UUID: "+uuid);
+                final AlertDialog.Builder b = new AlertDialog.Builder(PubnubTestActivity.this);
+                b.setIcon(android.R.drawable.ic_dialog_alert);
+                b.setTitle("UUID: ");
+                b.setMessage(uuid);
+                b.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                b.show();
             }
 
         });
@@ -149,8 +175,18 @@ public class PubnubTestActivity extends Activity {
                 Android: (Time)
                 -------------------------------------------------------------------------------*/
                 
-                Pubnub pubnub = new Pubnub("demo", "demo");
-                System.out.println(" Time: "+pubnub.time());
+                double time = pubnub.time();
+                System.out.println(" Time: "+Double.toString(time));
+                final AlertDialog.Builder b = new AlertDialog.Builder(PubnubTestActivity.this);
+                b.setIcon(android.R.drawable.ic_dialog_alert);
+                b.setTitle("Time: ");
+                b.setMessage(Double.toString(time));
+                b.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                b.show();
+                
             }
 
         });
@@ -211,7 +247,6 @@ public class PubnubTestActivity extends Activity {
             final AlertDialog.Builder b = new AlertDialog.Builder(PubnubTestActivity.this);
             b.setIcon(android.R.drawable.ic_dialog_alert);
             b.setTitle("PUBNUB");
-            Log.e("Message Recevie In Alert",myMessage);
             b.setMessage(myMessage);
 
             b.setNegativeButton("OK", new DialogInterface.OnClickListener() {
@@ -236,17 +271,6 @@ public class PubnubTestActivity extends Activity {
         @Override
         protected Boolean doInBackground(String... params) {
             try {                    
-                /*  -----------------------------------------------------------------------------
-                Android: (Init)
-                -------------------------------------------------------------------------------*/
-
-                pubnub = new Pubnub(
-                    "demo",  // PUBLISH_KEY
-                    "demo",  // SUBSCRIBE_KEY
-                    "demo",  // SECRET_KEY
-                    "demo",  // CIPHER_KEY
-                    true     // SSL_ON?
-                );
 
                 /* ------------------------------------------------------------------------------
                 Android: (Subscribe)
@@ -254,7 +278,7 @@ public class PubnubTestActivity extends Activity {
                 class Receiver implements Callback {
                     public boolean subscribeCallback(String channel,
                             Object message) {
-                        Log.e("Message Recevie",message.toString());
+                        Log.i("Message Received",message.toString());
                         myMessage = message.toString();
                        
                         r.sendEmptyMessage(0);
@@ -269,17 +293,17 @@ public class PubnubTestActivity extends Activity {
 
                     @Override
                     public void connectCallback(String channel) {
-                         Log.e("ConnectCallback","Connected to channel :" + channel);
+                         Log.i("ConnectCallback","Connected to channel :" + channel);
                     }
 
                     @Override
                     public void reconnectCallback(String channel) {
-                         Log.e("ReconnectCallback","Reconnected to channel :" + channel);
+                         Log.i("ReconnectCallback","Reconnected to channel :" + channel);
                     }
 
                     @Override
                     public void disconnectCallback(String channel) {
-                         Log.e("DisconnectCallback","Disconnected to channel :" + channel);
+                         Log.i("DisconnectCallback","Disconnected to channel :" + channel);
                     }
                 }
 
