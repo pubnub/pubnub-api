@@ -1,54 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
-    <EditText 
-        android:id="@+id/editText1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-        
-    <Button android:text="Publish"
-        android:id="@+id/publishBtn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-        
-    <TableLayout 
-    	android:layout_span="2" 
-    	android:stretchColumns="*" 
-    	android:layout_width="wrap_content" 
-    	android:layout_height="wrap_content">
-    	
-	    <TableRow>
-	    
-	    	<Button android:text="Unsubscribe"
-        		android:id="@+id/unsubscribeBtn"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content" />
-	    
-			<Button android:text="History"
-        		android:id="@+id/historyBtn"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content" />
-        
-	        <Button android:text="UUID"
-        		android:id="@+id/uuidBtn"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content" />
-        	
-        	<Button android:text="Time"
-        		android:id="@+id/timeBtn"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content" />
-        		
-	    </TableRow>
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical" >
+	<EditText
+		android:id="@+id/editText1"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+	<Button
+		android:id="@+id/publishBtn"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="Publish" />
+	<TableLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_span="2"
+		android:stretchColumns="*" >
+		<TableRow>
+			<Button
+				android:id="@+id/unsubscribeBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Unsubscribe" />
+			<Button
+				android:id="@+id/historyBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="History" />
+			<Button
+				android:id="@+id/uuidBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="UUID" />
+			<Button
+				android:id="@+id/timeBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Time" />
+		</TableRow>
 	</TableLayout>
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="AllMessageClick"
-        android:text="All Message Publish" />
-
+	<Button
+		android:id="@+id/button1"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="allMessageClick"
+		android:text="All Message Publish" />
+	<Button
+		android:id="@+id/button2"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:onClick="runUnitTest"
+		android:text="Run Unit-Test" />
 </LinearLayout>
