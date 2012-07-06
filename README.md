@@ -14,10 +14,10 @@ Contact information for support, sales, and general purpose inquiries can found 
 
 #Demo and Webcast Links
 
-    Vimeo: [https://vimeo.com/pubnub](https://vimeo.com/pubnub)
-    YouTube: [http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF](http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF)
-    Showcase: [http://www.pubnub.com/blog](http://www.pubnub.com/blog)
-    Interview: [http://techzinglive.com/?p=227](http://techzinglive.com/?p=227)
+Vimeo: [https://vimeo.com/pubnub](https://vimeo.com/pubnub)<br>
+YouTube: [http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF](http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF)<br>
+Showcase: [http://www.pubnub.com/blog](http://www.pubnub.com/blog)<br>
+Interview: [http://techzinglive.com/?p=227](http://techzinglive.com/?p=227)<br>
 
 
 #Using Encryption with PubNub
@@ -157,6 +157,7 @@ In the case of a successful transmission, the second element will contain **Sent
 * "Message Too Big" - Max message size exceeded.
 * "Invalid Publish Key" - Wrong Publish Key was Used.
 * "Invalid Message Signature" - The message was SHA256 Signed incorrectly.
+
 * * *
 
 #\#.subscribe(options)
