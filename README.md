@@ -80,9 +80,9 @@ Create a new PubNub Entity for Publishing/Subscribing. This entity associates it
 
 > **NOTE**: This class method is only available when using the platform-specific API libraries – it is not available via the REST API.
 
-* * *
-
+<br>
 #\#.time()
+* * *
 This function is a utility only and has not functional value other than a PING to the PubNub Cloud.
 >available in version 1+
 
@@ -101,9 +101,10 @@ This function is a utility only and has not functional value other than a PING t
     GET /time/0 HTTP/1.1
 ###Response
 [7529152783414]
-* * *
 
+<br>
 #\#.uuid()
+* * *
 Utility function for generating a UUID. This is a utility function that is useful for creating random, unique channel IDs on the fly.
 >available in version 1+
 
@@ -115,9 +116,10 @@ Utility function for generating a UUID. This is a utility function that is usefu
 ##Usage Example: RESTful
 
 > **NOTE**: This instance method is only available when using the platform-specific API libraries – it is not available via the REST API.
-* * *
 
+<br>
 #\#.publish(options)
+* * *
 Broadcast a message on a specific channel. options contains channel name, message, and callback values. The message may be any valid JSON type including objects, arrays, strings, and numbers.
 >available in version 1+
 
@@ -158,9 +160,9 @@ In the case of a successful transmission, the second element will contain **Sent
 * "Invalid Publish Key" - Wrong Publish Key was Used.
 * "Invalid Message Signature" - The message was SHA256 Signed incorrectly.
 
-* * *
-
+<br>
 #\#.subscribe(options)
+* * *
 Listen for messages on a specified channel. options contains channel information, and callbacks for receiving messages, connecting, disconnecting, and reconnecting after an unintended disconnect.
 >available in version 1+
 
@@ -224,9 +226,10 @@ If new message(s) are received within this 300 second window, the server will re
  3\. Handle new messages (if present) from the first element of the response array.
  4\. Update the value of **timetoken** with the new value in the second element of the array.
  5\. Repeat from Step 3 to retrieve subsequent message updates.
-* * *
 
+<br>
 #\#.unsubscribe(options)
+* * *
 Listen for messages on a specified channel. options contains the channel name.
 >available in version 1+
 
@@ -238,9 +241,10 @@ Listen for messages on a specified channel. options contains the channel name.
 
 ##RESTful Usage Example
 > **NOTE**: This instance method is only available when using the platform-specific API libraries – it is not available via the REST API.
-* * *
 
+<br>
 #\#.history(options)
+* * *
 Retrieve the last *n* messages published to this channel. **options** contains channel information, history limit, and callback.  Currently you can only fetch the last 100 messages. However, upcoming features will include forever-history fetching.
 >available in version 1+
 
@@ -264,5 +268,4 @@ Retrieve the last *n* messages published to this channel. **options** contains c
     GET /history/demo/my-channel/0/3 HTTP/1.1
 
 ###Response
-[MSG,MSG,MSG]e JSONP callback function. Use the JSONP callback's function name, or **0** if you are not using JSONP.
-* * *
+[MSG,MSG,MSG]
