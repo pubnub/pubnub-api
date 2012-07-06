@@ -67,14 +67,17 @@ Create a new PubNub Entity for Publishing/Subscribing. This entity associates it
 >available in version 1+, cipher_key option available in version 3.1+
 
 ##Usage Example: Native Client
-    var pubnub = PubNub.init({
-        publish_key   : "CUSTOMER_PUBLISH_KEY",
-        subscribe_key : "CUSTOMER_SUBSCRIBE_KEY",
-        secret_key    : "CUSTOMER_SECRET_KEY", # Required only when client publishes.
-        ssl           : true,
-        origin        : "pubsub.pubnub.com",
-        cipher_key    : "AES-Crypto-Cipher-Key" # Optional. Use to enable encryption.
-    })
+
+```javascript
+var pubnub = PubNub.init({
+    publish_key   : "CUSTOMER_PUBLISH_KEY",
+    subscribe_key : "CUSTOMER_SUBSCRIBE_KEY",
+    secret_key    : "CUSTOMER_SECRET_KEY", # Required only when client publishes.
+    ssl           : true,
+    origin        : "pubsub.pubnub.com",
+    cipher_key    : "AES-Crypto-Cipher-Key" # Optional. Use to enable encryption.
+})
+```
 
 ##Usage Example: RESTful
 
