@@ -340,6 +340,7 @@ public class Pubnub {
                 for (ChannelStatus it : subscriptions) {
                     if (it.channel.equals(channel)) {
                         if(!it.connected) {
+                        	subscriptions.remove(it);
                             callback.disconnectCallback(channel);
                             is_disconnect = true;
                             break;
@@ -356,6 +357,7 @@ public class Pubnub {
                 for (ChannelStatus it : subscriptions) {
                     if (it.channel.equals(channel)) {
                         if (!it.connected) {
+                        	subscriptions.remove(it);
                         	callback.disconnectCallback(channel);
                             is_disconnect = true;
                             break;
