@@ -91,9 +91,11 @@ This function is a utility only and has not functional value other than a PING t
 
 ##Usage Example: Native Client
 
-    PubNub.time(function(time){
-        log(time)
-    })
+```javascript
+PubNub.time(function(time){
+    log(time)
+})
+```
 
 ##Usage Example: RESTful
 ###URL Params
@@ -128,11 +130,13 @@ Broadcast a message on a specific channel. options contains channel name, messag
 
 ##Usage Example: Native Client
 
-    PubNub.publish({
-        channel  : "hello_world",
-        message  : "Hi.",
-        callback : function(response) { log(response) }
-    })
+```javascript
+PubNub.publish({
+    channel  : "hello_world",
+    message  : "Hi.",
+    callback : function(response) { log(response) }
+})
+```
 
 ##Usage Example: RESTful
 When this request is made, the server will hold the connection until the message is successfully published.
@@ -171,15 +175,17 @@ Listen for messages on a specified channel. options contains channel information
 
 ##Native Client Usage Example
 
-    PubNub.subscribe({
-        channel    : "my-channel",
-        callback   : function(message) { log(message) },
-        connect    : function() { log("Connected") },
-        disconnect : function() { log("Disconnected") },
-        reconnect  : function() { log("Reconnected") },
-        error      : function() { log("Network Error") },
-        restore    : true # JavaScript only
-    })
+```javascript
+PubNub.subscribe({
+    channel    : "my-channel",
+    callback   : function(message) { log(message) },
+    connect    : function() { log("Connected") },
+    disconnect : function() { log("Disconnected") },
+    reconnect  : function() { log("Reconnected") },
+    error      : function() { log("Network Error") },
+    restore    : true # JavaScript only
+})
+```
 
 ##Connect, disconnect, reconnect callback lifecycles
 Each time the PubNub client subscribes to a channel, a “subscription-based connection” is established to the PubNub cloud. During the lifecycle of this “subscription-based connection”:
@@ -238,9 +244,11 @@ Listen for messages on a specified channel. options contains the channel name.
 
 ##Native ClientUsage Example
 
-    PubNub.unsubscribe({
-        channel : "my-channel"
-    })
+```javascript
+PubNub.unsubscribe({
+    channel : "my-channel"
+})
+```
 
 ##RESTful Usage Example
 > **NOTE**: This instance method is only available when using the platform-specific API libraries – it is not available via the REST API.
@@ -253,11 +261,13 @@ Retrieve the last *n* messages published to this channel. **options** contains c
 
 ##Native Client Usage Example
 
-    PubNub.history({
-        channel  : "my-channel",
-        limit    : 100,
-        callback : (messages) { log(messages) }
-    })
+```javascript
+PubNub.history({
+    channel  : "my-channel",
+    limit    : 100,
+    callback : (messages) { log(messages) }
+})
+```
 
 ##RESTful Usage Example
 ###URL Format
