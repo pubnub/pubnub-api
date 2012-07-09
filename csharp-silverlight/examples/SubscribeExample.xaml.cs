@@ -36,28 +36,10 @@ namespace silverlight
 
         private void Subscribe_Click(object sender, RoutedEventArgs e)
         {
-            lblSubscribe.Text = "Subscribe to the channel " + channel;
-            pubnub.ResponseCallback respCallback = delegate(object message)
-                {
-                    object[] messages = (object[])message;
-                    UIThread.Invoke(() =>
-                    {
-                        if (messages != null && messages.Count() > 0)
-                        {
-                            subMessage.Visibility = Visibility.Visible;
-                            for (int i = 0; i < messages.Count(); i++)
-                            {
-                                if (!(lSubscribe.Items.Contains(messages[i].ToString())))
-                                {
-                                    lSubscribe.Items.Add(messages[i].ToString());
-                                }
-                            }
-                        }
-                    });
-                };
+            lblSubscribe.Text = "Subscribe to the channel " + channel;            
             Dictionary<string, object> args = new Dictionary<string, object>();
             args.Add("channel", channel);
-            args.Add("callback", respCallback);
+            args.Add("callback", new Receiver());
             objPubnub.Subscribe(args);
         }
     }

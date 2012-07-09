@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,12 +11,13 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Navigation;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 
 namespace silverlight
 {
     public partial class PubnubTest : Page
     {
-        string channel = "hello-world";
+        string channel = "hello_world";
         // Initialize Pubnub state
         pubnub objPubnub = new pubnub(
             "demo",  // PUBLISH_KEY
@@ -38,31 +39,13 @@ namespace silverlight
 
         private void Subscribe_Click(object sender, RoutedEventArgs e)
         {
-            lblSubscribe.Text = "Subscribe to the channel " + channel;
-            pubnub.ResponseCallback respCallback = delegate(object message)
-                {
-                    object[] messages = (object[])message;
-                    UIThread.Invoke(() =>
-                    {
-                        if (messages != null && messages.Count() > 0)
-                        {
-                            subMessage.Visibility = Visibility.Visible;
-                            for (int i = 0; i < messages.Count(); i++)
-                            {
-                                if (!(lSubscribe.Items.Contains(messages[i].ToString())))
-                                {
-                                    lSubscribe.Items.Add(messages[i].ToString());
-                                }
-                            }
-                        }
-                    });
-                };
+            lblSubscribe.Text = "Subscribe to the channel " + channel;           
             Dictionary<string, object> args = new Dictionary<string, object>();
             args.Add("channel", channel);            
-            args.Add("callback", respCallback);
+            args.Add("callback", new Receiver());
+           
             objPubnub.Subscribe(args);
         }
-
         private void Publish_Click(object sender, RoutedEventArgs e)
         {
             lblPublish.Text = "";
@@ -104,12 +87,15 @@ namespace silverlight
 
             Dictionary<string, object> objArgs = new Dictionary<string, object>();
 
+            JObject objDict = new JObject();
             JObject obj = new JObject();
-            obj.Add("Name", "Jhon");
+            objDict.Add("Student", "Male");
+            obj.Add("Name", "John");
             obj.Add("age", "25");
+            objDict.Add("Info", obj);
 
             objArgs.Add("channel", channel);
-            objArgs.Add("message", obj);
+            objArgs.Add("message", objDict);
             objArgs.Add("callback", respCallback);
             objPubnub.Publish(objArgs);
         }

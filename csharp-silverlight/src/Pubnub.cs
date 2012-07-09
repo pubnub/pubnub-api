@@ -17,10 +17,16 @@ using System.IO;
 using System.Threading;
 using System.Windows.Threading;
 using System.Net.Browser;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace silverlight
 {
-   
+   public class Channel_status 
+    {
+        public string channel;
+        public bool connected, first;
+   }
     public class pubnub
     {
         public enum ResponseType
@@ -38,7 +44,12 @@ namespace silverlight
         private string CIPHER_KEY = "";
         private bool SSL = false;
         const int BUFFER_SIZE = 1024;
+
         public delegate void ResponseCallback(object response);
+        Callback callback;
+        bool is_reconnected = false, is_disconnect = false;
+        Int64 previousTimeToken = 0;
+        private List<Channel_status> subscriptions = new List<Channel_status>();
 
         private List<object> _Subscribe = new List<object>();
         public List<object> subscribe
@@ -49,43 +60,114 @@ namespace silverlight
             }
             set
             {
+                string channel = value[2].ToString();
                 clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
-                object message = "";
-                JArray val = (JArray)value[0];
-                object[] valObj = new object[val.Count];
-                for (int i = 0; i < val.Count; i++)
+                
+                // Problem?
+                if (value == null || value[1].ToString() == "0")
                 {
-                    if (this.CIPHER_KEY.Length > 0)
+
+                    for (int i = 0; i < subscriptions.Count; i++)
                     {
-                        if (val[i].Type == JTokenType.String)
+                        Channel_status cs = subscriptions[i];
+                        if (cs.channel == channel)
                         {
-                            message = pc.decrypt((string)val[i]);
-                            valObj[i] = message;
-                        }
-                        else if (val[i].Type == JTokenType.Object)
-                        {
-                            message = pc.decrypt((JObject)val[i]);
-                            valObj[i] = message;
-                        }
-                        else if (val[i].Type == JTokenType.Array)
-                        {
-                            message = pc.decrypt((JArray)val[i]);
-                            valObj[i] = message;
+                            subscriptions.RemoveAt(i);
+                            callback.disconnectCallback(channel);
                         }
                     }
-                    else
+
+                    // Ensure Connected (Call Time Function)
+                    while (true)
                     {
-                        valObj[i] = val[i];
+                        string time_token = 0.ToString();
+                        Time(
+                            delegate(object response)
+                            {
+                                List<object> result = (List<object>)response;
+                                time_token = result[0].ToString();
+                            });
+
+                        Thread.Sleep(2000);
+                        if (time_token == "0")
+                        {
+                            // Reconnect Callback
+                            callback.reconnectCallback(channel);
+                            Thread.Sleep(5000);
+                        }
+                        else
+                        {
+                            is_reconnected = true;
+                            break;
+                        }
                     }
                 }
-                value[0] = valObj;
-                _Subscribe = value;
-                Dictionary<string, object> args = new Dictionary<string, object>();
-                args.Add("channel", value[2].ToString());
-                args.Add("timestamp", Int64.Parse(value[1].ToString()) - 1);
-                args.Add("callback",(ResponseCallback)value[3]);
-                if (Int64.Parse(value[1].ToString()) > 0)
-                    _subscribe(args);
+                else
+                {
+                    previousTimeToken = Int64.Parse(value[1].ToString());
+                    foreach (Channel_status cs in subscriptions)
+                    {
+                        if (cs.channel == channel)
+                        {
+                            // Connect Callback
+                            if (!cs.first)
+                            {
+                                cs.first = true;                                
+                                callback.connectCallback(channel);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (is_reconnected)
+                {
+                    is_reconnected = false;
+                    Dictionary<string, object> tempArgs = new Dictionary<string, object>();
+                    tempArgs.Add("channel", channel);
+                    tempArgs.Add("timestamp", "0");
+                    tempArgs.Add("callback", callback);                    
+                    Subscribe(tempArgs);
+                }
+                else
+                {
+                    object message = "";
+                    JArray val = (JArray)value[0];
+                    object[] valObj = new object[val.Count];
+                    for (int i = 0; i < val.Count; i++)
+                    {
+                        if (this.CIPHER_KEY.Length > 0)
+                        {
+                            if (val[i].Type == JTokenType.String)
+                            {
+                                message = pc.decrypt((string)val[i]);
+                                valObj[i] = message;
+                            }
+                            else if (val[i].Type == JTokenType.Object)
+                            {
+                                message = pc.decrypt((JObject)val[i]);
+                                valObj[i] = message;
+                            }
+                            else if (val[i].Type == JTokenType.Array)
+                            {
+                                message = pc.decrypt((JArray)val[i]);
+                                valObj[i] = message;
+                            }
+                        }
+                        else
+                        {
+                            valObj[i] = val[i];
+                        }
+                    }
+                    value[0] = valObj;
+                    _Subscribe = value;
+                    Dictionary<string, object> args = new Dictionary<string, object>();
+                    args.Add("channel", channel);
+                    args.Add("timestamp", Int64.Parse(value[1].ToString()));
+                    args.Add("callback", callback);                   
+                    if (Int64.Parse(value[1].ToString()) > 0)
+                        _subscribe(args);
+                }
+                
             }
         }
         private List<object> _History = new List<object>();
@@ -300,9 +382,66 @@ namespace silverlight
          * @param Dictionary<string, object> args .
          *  args contains channel name and a delegate to get response back
          */
+
         public void Subscribe(Dictionary<string, object> args)
         {
-            args.Add("timestamp", 0);
+            bool is_alreadyConnect = false;
+
+            if(!args.ContainsKey("timestamp"))
+                args.Add("timestamp", 0);
+            string channel = args["channel"].ToString();
+            // Validate Arguments
+            if (args["callback"] != null)
+            {
+                callback = (Callback)args["callback"];
+            }
+            else
+            {
+                Debug.WriteLine("Invalid Callback.");
+            }
+            if (channel == null || channel == "")
+            {
+                callback.errorCallback(channel, "Invalid channel.");
+                return;
+            }            
+
+            // Ensure Single Connection
+            if (subscriptions != null && subscriptions.Count > 0)
+            {
+                bool channel_exist = false;
+                foreach (Channel_status cs in subscriptions)
+                {
+                    if (cs.channel == channel)
+                    {
+                        channel_exist = true;                       
+                            if (!cs.connected)                           
+                                cs.connected = true;                            
+                            else
+                                is_alreadyConnect = true;
+                        break;
+                    }
+                }
+                    if (!channel_exist)
+                    {
+                        Channel_status cs = new Channel_status();
+                        cs.channel = channel;
+                        cs.connected = true;
+                        subscriptions.Add(cs);
+                    }
+                    else if (is_alreadyConnect)
+                    {
+                        callback.errorCallback(channel ," Already Connected");
+                        return;
+                    }
+            }
+            else
+            {
+                // New Channel
+                Channel_status cs = new Channel_status();
+                cs.channel = channel;
+                cs.connected = true;                
+                subscriptions.Add(cs);
+            }
             this._subscribe(args);
         }
 
@@ -314,12 +453,12 @@ namespace silverlight
           */
         private void _subscribe(Dictionary<string, object> args)
         {
-            clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
-
+        	is_disconnect = false;
+            clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);            
             string channel = args["channel"].ToString();
-            ResponseCallback respCallback = (ResponseCallback)args["callback"];
             object timetoken = args["timestamp"];
-            //  Begin Recusive Subscribe
+           
+                //  Begin Subscribe
             try
             {
                 // Build URL
@@ -328,13 +467,13 @@ namespace silverlight
                 url.Add(this.SUBSCRIBE_KEY);
                 url.Add(channel);
                 url.Add("0");
-                url.Add(timetoken.ToString());
-                _request(url, respCallback,ResponseType.Subscribe);
+                url.Add(timetoken.ToString());                
+                _request(url, null, ResponseType.Subscribe);              
+               
             }
             catch
             {
                 System.Threading.Thread.Sleep(1000);
-                this._subscribe(args);
             }
         }
 
@@ -364,12 +503,11 @@ namespace silverlight
                 myRequestState.request = request;
                 myRequestState.cb = respCallback;
                 myRequestState.respType = type;
-                if (url_components.Count > 2)
+                if (type == ResponseType.Subscribe)
                 {
                     myRequestState.channel = url_components[2];
                 }
-                request.Method = "GET";
-                IAsyncResult result = (IAsyncResult)request.BeginGetResponse(requestCallBack, myRequestState);               
+                IAsyncResult result = (IAsyncResult)request.BeginGetResponse(requestCallBack, myRequestState);
             }
             catch (Exception)
             {
@@ -380,42 +518,106 @@ namespace silverlight
         {
             // State of request is asynchronous.
             RequestState myRequestState = (RequestState)asyncResult.AsyncState;
-            HttpWebRequest myHttpWebRequest2 = myRequestState.request;            
-            myRequestState.response = (HttpWebResponse)myHttpWebRequest2.EndGetResponse(asyncResult);
-            // Read the response into a Stream object.
-            myRequestState.streamResponse = myRequestState.response.GetResponseStream();
-            // Begin the Reading of the contents of the HTML page and print it to the console.
-            IAsyncResult asynchronousInputRead = myRequestState.streamResponse.BeginRead(myRequestState.BufferRead, 0, BUFFER_SIZE, ReadCallBack, myRequestState);
+            HttpWebRequest myHttpWebRequest2 = myRequestState.request;
+            try
+            {
+                myRequestState.response = (HttpWebResponse)myHttpWebRequest2.EndGetResponse(asyncResult);
+                // Read the response into a Stream object.
+                myRequestState.streamResponse = myRequestState.response.GetResponseStream();
+                // Begin the Reading of the contents of the HTML page and print it to the console.
+                IAsyncResult asynchronousInputRead = myRequestState.streamResponse.BeginRead(myRequestState.BufferRead, 0, BUFFER_SIZE, ReadCallBack, myRequestState);
+            }
+            catch (Exception)
+            {
+                List<object> error = new List<object>();
+                if (myRequestState.respType == ResponseType.Time)
+                {
+                    error.Add("0");
+                }
+                else if (myRequestState.respType == ResponseType.History)
+                {
+                    error.Add("Error: Failed JSONP HTTP Request.");
+                }
+                else if (myRequestState.respType == ResponseType.Publish)
+                {
+                    error.Add("0");
+                    error.Add("Error: Failed JSONP HTTP Request.");
+                }
+                else if (myRequestState.respType == ResponseType.Subscribe)
+                {
+                    error.Add("0");
+                    error.Add("0");
+                    error.Add(myRequestState.channel);
+                    subscribe = error;
+                }
+            }
         }
 
         private void ReadCallBack(IAsyncResult asyncResult)
         {
             RequestState myRequestState = (RequestState)asyncResult.AsyncState;
             Stream responseStream = myRequestState.streamResponse;
-            int read = responseStream.EndRead(asyncResult);
-            // Read the HTML page and then do something with it
-            if (read > 0)
+            try
             {
-                myRequestState.requestData.Append(Encoding.UTF8.GetString(myRequestState.BufferRead, 0, read));                
-                IAsyncResult asynchronousResult = responseStream.BeginRead(myRequestState.BufferRead, 0, BUFFER_SIZE, ReadCallBack, myRequestState);
-
-                if (myRequestState.respType == ResponseType.History)
+                int read = responseStream.EndRead(asyncResult);
+                // Read the HTML page and then do something with it
+                if (read > 0)
                 {
-                    history = JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString());
-                     myRequestState.cb(history);
+                    myRequestState.requestData.Append(Encoding.UTF8.GetString(myRequestState.BufferRead, 0, read));
+                    IAsyncResult asynchronousResult = responseStream.BeginRead(myRequestState.BufferRead, 0, BUFFER_SIZE, ReadCallBack, myRequestState);
+
+                    if (myRequestState.respType == ResponseType.History)
+                    {
+                        history = JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString());
+                        myRequestState.cb(history);
+                    }
+                    else if (myRequestState.respType == ResponseType.Subscribe)
+                    {
+                        List<object> lstObj = JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString());
+                        lstObj.Add(myRequestState.channel);
+                        foreach (Channel_status cs in subscriptions)
+                        {
+                            if (cs.channel == myRequestState.channel && !cs.connected && !is_disconnect)
+                            {
+                                callback.disconnectCallback(myRequestState.channel);
+                                is_disconnect = true;                                
+                                break;
+                            }
+                        }
+                        if (is_disconnect)
+                            return;
+                            
+                        subscribe = lstObj;
+                        callback.responseCallback(myRequestState.channel, subscribe[0]);                        
+                    }                    
+                    else
+                    {
+                        myRequestState.cb(JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString()));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                List<object> error = new List<object>();
+                if (myRequestState.respType == ResponseType.Time)
+                {
+                    error.Add("0");
+                }
+                else if (myRequestState.respType == ResponseType.History)
+                {
+                    error.Add("Error: Failed JSONP HTTP Request.");
+                }
+                else if (myRequestState.respType == ResponseType.Publish)
+                {
+                    error.Add("0");
+                    error.Add("Error: Failed JSONP HTTP Request.");
                 }
                 else if (myRequestState.respType == ResponseType.Subscribe)
                 {
-                    List<object> lstObj = JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString());
-                    lstObj.Add(myRequestState.channel);
-                    lstObj.Add(myRequestState.cb);
-                    subscribe = lstObj;
-                    myRequestState.cb(subscribe[0]);
+                    error.Add("0");
+                    error.Add("0");
                 }
-                else
-                {
-                    myRequestState.cb(JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString()));
-                }
+                myRequestState.cb(error);
             }
         }
 
@@ -461,6 +663,29 @@ namespace silverlight
             _request(url, respCallback,ResponseType.History);
         }
 
+       /**
+        * Unsubscribe
+        *
+        * Unsubscribe/Disconnect to channel.
+        *
+        * @param Dictionary<String, Object> containing channel name.
+        *
+        **/
+        public void Unsubscribe(Dictionary<String, Object> args)
+        {
+            String channel = args["channel"].ToString();           
+            foreach (Channel_status cs in subscriptions)
+            {
+                if (cs.channel == channel && cs.connected)
+                {
+                    cs.connected = false;
+                    cs.first = false;
+                    callback.disconnectCallback(channel);
+                    is_disconnect = true;
+                    break;
+                }
+            }
+        }
         private string _encodeURIcomponent(string s)
         {
             StringBuilder o = new StringBuilder();
@@ -515,7 +740,7 @@ namespace silverlight
         public HttpWebRequest request;
         public HttpWebResponse response;
         public Stream streamResponse;
-        public pubnub.ResponseCallback cb;
+        public pubnub.ResponseCallback cb;        
         public pubnub.ResponseType respType;
         public string channel;
 
