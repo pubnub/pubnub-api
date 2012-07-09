@@ -176,7 +176,7 @@ namespace CSharp_WP7
                     }
                     else
                     {
-                        cipherObj.Add(((JProperty)jtoken).Name.ToString(), decrypt((JObject)((JProperty)jtoken).Value));
+                        objPlain.Add(((JProperty)jtoken).Name.ToString(), decrypt((JObject)((JProperty)jtoken).Value));
                     }
                     jtoken = jtoken.Next;
                 }

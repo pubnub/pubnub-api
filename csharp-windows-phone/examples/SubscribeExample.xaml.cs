@@ -35,22 +35,10 @@ namespace CSharp_WP7
         private void btnSubscribe_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("Subscribed to channel " + channel);
-            Pubnub.ResponseCallback respCallback = delegate(object message)
-            {
-                object[] messages = (object[])message;
-
-                if (messages != null && messages.Count() > 0)
-                {
-                    for (int i = 0; i < messages.Count(); i++)
-                    {
-                        System.Diagnostics.Debug.WriteLine(messages[i]);
-                    }
-                }
-
-            };
+            
             Dictionary<string, object> args = new Dictionary<string, object>();
             args.Add("channel", channel);
-            args.Add("callback", respCallback);
+            args.Add("callback", new Receiver());
             pubnub.Subscribe(args);
         }
     }
