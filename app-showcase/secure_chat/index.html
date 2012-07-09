@@ -75,10 +75,17 @@
     <script src="http://pubnub.github.com/pubnub-api/crypto/crypto.js"></script>
     <script src="http://pubnub.github.com/pubnub-api/crypto/encrypt-pubnub.js"></script>
 
-    <script>
+    <script>(function(){
+      // Encryption Key (Normally you will get from a Password Database)
       var cipher_key = 
-"SkQjKkhZR1NKRExLRkhVNGF0eTdhdHIgcGpvYXRyZWggZlNEQU9VIFlGVyRZV15FR1UgcGhpIGZzcG9oaSB0ZWktPXNlZj0tYXNmZGppbyBmc2Rnb3kgRFNGVVlBRlUgT0dSIElVUElPRkVGSHVER0hTbGtqaCBsa2d1aXVhc2ZoeUYgREpLU1lZVFIkXlRVSUhUS0VKSEpMS0YgT0lVRlQmT1EjVVBJVE8mKnk0ODc1NDU3OF4mQSYkUmZGREtTTEogYWRnaHMjKiNqa3NobGt0NGpsa2FpdWFoNHR1aEZLSkRT"
+    "SkQjKkhZR1NKRExLRkhVNGF0eTdhdHIgcGpvYXRyZWggZU"+
+    "lNEQU9VIFlGVyRZV15FR1UgcGhpIGZzcG9oaSB0ZWktPXN"+
+    "lZj0tYXNmZGppbyBmc2Rnb3kgRFNGVVlBRlUgT0dSIElVl"+
+    "PRkVGSHVER0hTbGtqaCBsa2d1aXVhc2ZoeUYgREpLU1lVE"+
+    "FIkXlRVSUhUS0VKSEpMS0YgT0lVRlQmT1EjVVBJVE8mKnk"+
+    "0ODc1NDU3OF4mQSYkUmZGREtTTEogYWRnaHMjKiNqa83Z3";
 
+      // Create Secure Connection
       var secure_pubnub = PUBNUB.secure({
         publish_key   : "pub-c-f537d314-4e1e-4c49-81b5-2825ebe8548c",
         subscribe_key : "sub-c-a890aae1-c13f-11e1-8c1d-b3b3f2232a46",
@@ -87,6 +94,7 @@
         cipher_key    : cipher_key 
       });
 
+      // Secure Connection
       secure_pubnub.subscribe({
           channel    : "secure_chat", 
           callback   : function(message) {
@@ -96,23 +104,32 @@
           }
       });
 
+      // Send Message on Submit
       $('#chat_form').submit( function(e) {
-        e.preventDefault();  
-        secure_pubnub.publish({
-          channel : "secure_chat",
-          message : { 'name'    : 'secure_chat_message' ,
-                      'data': { 'message' : $("#chat_input").val() }},
-          callback : function() {
-            $("#chat_input").val("");
-          }
-        });
+          secure_pubnub.publish({
+              channel  : "secure_chat",
+              message  : {
+                  name : 'secure_chat_message' ,
+                  data : { 'message' : $("#chat_input").val() }
+              },
+              callback : function(info) {
+                  if (info && info[0]) {
+                      // Clear Successfully Sent Message
+                      $("#chat_input").val("");
+                  }
+              }
+          });
 
+          e.preventDefault();
+          return false;
       });
 
+      // Update Display (DOM)
       PUBNUB.events.bind('secure_chat_message', function(data) {
         $('#chat_box').append("<p>" + data.message + "</p>");
       });
 
+    })();
 
     </script>
     <!-- end scripts -->
