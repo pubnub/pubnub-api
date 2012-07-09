@@ -248,6 +248,8 @@ namespace Pubnub
           */
         private void _subscribe(Dictionary<string, object> args)
         {
+            bool is_disconnect = false;
+            bool is_alreadyConnect = false;
             Procedure callback=null, connect_cb, disconnect_cb, reconnect_cb, error_cb;
             clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
 
@@ -292,6 +294,12 @@ namespace Pubnub
                     if (cs.channel == channel)
                     {
                         channel_exist = true;
+                        if (!cs.connected)
+                        {
+                            cs.connected = true;
+                        }
+                        else
+                            is_alreadyConnect = true;
                         break;
                     }
                 }
@@ -302,11 +310,12 @@ namespace Pubnub
                     cs.connected = true;
                     subscriptions.Add(cs);
                 }
-                else
+                else if (is_alreadyConnect)
                 {
                     error_cb("Already Connected");
                     return;
                 }
+                
             }
             else
             {
@@ -332,8 +341,8 @@ namespace Pubnub
                     url.Add("0");
                     url.Add(timetoken.ToString());
 
-                    // Stop Connection?
-                    bool is_disconnect = false;
+                    // Stop Connection?     
+                    is_disconnect = false;
                     foreach (Channel_status cs in subscriptions)
                     {
                         if (cs.channel == channel)
