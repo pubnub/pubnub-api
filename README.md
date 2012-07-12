@@ -69,7 +69,7 @@ Create a new PubNub Entity for Publishing/Subscribing. This entity associates it
 ##Usage Example: Native Client
 
 ```javascript
-var pubnub = PubNub.init({
+var pubnub = PUBNUB.init({
     publish_key   : "CUSTOMER_PUBLISH_KEY",
     subscribe_key : "CUSTOMER_SUBSCRIBE_KEY",
     secret_key    : "CUSTOMER_SECRET_KEY", # Required only when client publishes.
@@ -92,7 +92,7 @@ This function is a utility only and has not functional value other than a PING t
 ##Usage Example: Native Client
 
 ```javascript
-PubNub.time(function(time){
+PUBNUB.time(function(time){
     log(time)
 })
 ```
@@ -114,7 +114,7 @@ Utility function for generating a UUID. This is a utility function that is usefu
 >available in version 1+
 
 ##Usage Example: Native Client
-    PubNub.uuid(function(uuid){
+    PUBNUB.uuid(function(uuid){
         log(uuid)
     })
 
@@ -131,7 +131,7 @@ Broadcast a message on a specific channel. options contains channel name, messag
 ##Usage Example: Native Client
 
 ```javascript
-PubNub.publish({
+PUBNUB.publish({
     channel  : "hello_world",
     message  : "Hi.",
     callback : function(response) { log(response) }
@@ -176,7 +176,7 @@ Listen for messages on a specified channel. options contains channel information
 ##Native Client Usage Example
 
 ```javascript
-PubNub.subscribe({
+PUBNUB.subscribe({
     channel    : "my-channel",
     callback   : function(message) { log(message) },
     connect    : function() { log("Connected") },
@@ -245,7 +245,7 @@ Listen for messages on a specified channel. options contains the channel name.
 ##Native ClientUsage Example
 
 ```javascript
-PubNub.unsubscribe({
+PUBNUB.unsubscribe({
     channel : "my-channel"
 })
 ```
@@ -262,7 +262,7 @@ Retrieve the last *n* messages published to this channel. **options** contains c
 ##Native Client Usage Example
 
 ```javascript
-PubNub.history({
+PUBNUB.history({
     channel  : "my-channel",
     limit    : 100,
     callback : (messages) { log(messages) }
