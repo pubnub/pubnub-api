@@ -1,10 +1,10 @@
-//
-//  ViewController.m
-//  Pubnub
-//
-//  Created by itshastra on 17/04/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+    //
+    //  ViewController.m
+    //  Pubnub
+    //
+    //  Created by itshastra on 17/04/12.
+    //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+    //
 
 #import "iPhoneTest.h"
 
@@ -12,32 +12,41 @@
 @interface iPhoneTest ()
 
 @end
+@interface   unitTestDelegates:NSObject<CEPubnubDelegate>
+
+@end
 
 @implementation iPhoneTest
 @synthesize txt;
+
+
+   
+
 
 CEPubnub *pubnub;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+        // Do any additional setup after loading the view, typically from a nib.
     
-    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"" useSSL:NO];//(Cipher key is Optional)
-	//subscribe to a few channels
+    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"demo" useSSL:NO];
+        //subscribe to a few channels
 	
 	[pubnub setDelegate:self];
-	
-    [pubnub subscribe: @"hello_world"];
-    
+	[pubnub subscribe: @"hello_world"];  
+       
+   
 }
 
+
+ 
 - (void)viewDidUnload
 {
     [self setTxt:nil];
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
+        // Release any retained subviews of the main view.
     
-  
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -90,87 +99,137 @@ CEPubnub *pubnub;
     NSLog(@"UUID::: %@",[CEPubnub getUUID]);
 }
 
+- (IBAction)unitTest:(id)sender {
+    [self unitTest];
+
+}
+
+
+    //=========================================================================
+    //Unit-Test
+    //=========================================================================
+
+NSString *publish_key = @"demo", *subscribe_key = @"demo";
+NSString *secret_key = @"demo", *cipher_key = @"";
+BOOL ssl_on = false;
+NSMutableArray *many_channels;
+NSMutableDictionary *status;
+    // -----------------------------------------------------------------------
+	// Command Line Options Supplied PubNub
+	// -----------------------------------------------------------------------
+
+CEPubnub *pubnub_user_supplied_options ;
+
+	// -----------------------------------------------------------------------
+	// High Security PubNub
+	// -----------------------------------------------------------------------
+CEPubnub *pubnub_high_security ;
+CEPubnub *_pubnubtemp;
 
 
 
+- (void)unitTest
+{
+    pubnub_high_security = [[CEPubnub alloc] initWithPublishKey:@"pub-c-a30c030e-9f9c-408d-be89-d70b336ca7a0" subscribeKey:@"sub-c-387c90f3-c018-11e1-98c9-a5220e0555fd" secretKey:@"sec-c-MTliNDE0NTAtYjY4Ni00MDRkLTllYTItNDhiZGE0N2JlYzBl" cipherKey:@"YWxzamRmbVjFaa05HVnGFqZHM3NXRBS73jxmhVMkjiwVVXV1d5UrXR1JLSkZFRrWVd4emFtUm1iR0TFpUZvbiBoYXMgYmVlbxWkhNaF3uUi8kM0YkJTEVlZYVFjBYijFkWFIxSkxTa1pGUjd874hjklaTFpUwRVuIFNob3VsZCB5UwRkxUR1J6YVhlQWaV1ZkNGVH32mDkdho3pqtRnRVbTFpUjBaeGUgYXNrZWQtZFoKjda40ZWlyYWl1eXU4RkNtdmNub2l1dHE2TTA1jd84jkdJTbFJXYkZwWlZtRnKkWVrSRhhWbFpZVmFzc2RkZmTFpUpGa1dGSXhTa3hUYTFwR1Vpkm9yIGluZm9ybWFNfdsWQdSiiYXNWVXRSblJWYlRGcFVqQmFlRmRyYUU0MFpXbHlZV2wxZVhVNFJrTnR51YjJsMWRIRTJUW91ciBpbmZvcm1hdGliBzdWJtaXR0ZWQb3UZSBhIHJlc3BvbnNlLCB3ZWxsIHJlVEExWdHVybiB0am0aW9uIb24gYXMgd2UgcG9zc2libHkgY2FuLuhcFe24ldWVnsdSaTFpU3hVUjFKNllWaFdhRmxZUWpCaQo34gcmVxdWlGFzIHNveqQl83snBfVl3" useSSL:false];
+    
+    pubnub_user_supplied_options = [[CEPubnub alloc] initWithPublishKey:publish_key subscribeKey:subscribe_key secretKey:secret_key   cipherKey:cipher_key useSSL:ssl_on];
+    
+    
+    _pubnubtemp = pubnub_user_supplied_options;
+    
+    
+    many_channels= [[NSMutableArray alloc] init]; 
+    for (int i=0; i<4; i++) {
+        [many_channels addObject:[[NSString alloc]initWithFormat:@"channel_%d",i]];
+    }
+    status=[[NSMutableDictionary alloc] init];
+    [status setObject:[NSNumber numberWithInt:0] forKey:@"sent"];
+    [status  setObject:[NSNumber numberWithInt:0] forKey:@"received"];
+    [status  setObject:[NSNumber numberWithInt:0] forKey:@"connections"];
+    
+    
+    unitTestDelegates *del= [[unitTestDelegates alloc] init] ;
+    [_pubnubtemp setDelegate:del ];
+    
+    
+    for (NSString* channel in many_channels) {
+        [_pubnubtemp subscribe:channel];
+        [NSThread sleepForTimeInterval:5];
+
+    }
+    
+    
+    
+    
+}
+
+    //========================================================================
 #pragma mark -
 #pragma mark CEPubnubDelegate stuff
-- (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel
-{
-}
-- (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error// "error" may be nil
-{
-    NSLog(@"didFailPublishingMessageToChannel   %@",error);
-}
-- (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveDictionary:(NSDictionary *)message onChannel:(NSString *)channel{
-    
-    NSLog(@"subscriptionDidReceiveDictionary   ");
-    [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received:\n %@", channel, message]];
-    
-    NSLog(@"Sescribe   %@",message);
-    
-    
-    NSDictionary* disc=(NSDictionary*)message;
-    for (NSString* key in [disc allKeys]) {
-        //   NSLog(@"Key::%@",key);
-        NSString* val=(NSString*)[disc objectForKey:key];
-        NSLog(@"%@-->   %@",key,val);
+    - (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel
+    {
+        NSLog(@"Sent message to PubNub channel \"%@\" ", channel);   
     }
-}
-
-- (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel{
-    NSLog(@"subscriptionDidReceiveArray   ");
-    NSLog(@"Sescribe   %@",message);
-    [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received\n: %@", channel, message]];
-}
-- (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveString:(NSString *)message onChannel:(NSString *)channel{
-    NSLog(@"subscriptionDidReceiveString   ");
-    NSLog(@"Sescribe   %@",message);
-    [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received:\n %@", channel, message]];
-}   
-
-
-
-- (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel{
-    int i=0;
-    NSLog(@"didFetchHistory");
-    NSMutableString *histry=  [[NSMutableString alloc]init ];
-    for (NSString * object in messages) {
-        NSLog(@"%d \n%@",i,object);
-        [histry appendString:[NSString stringWithFormat:@"----%i\n%@",i,object]];
+    - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error// "error" may be nil
+    {
+        NSLog(@"didFailPublishingMessageToChannel   %@",error);
+    }
+    - (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveDictionary:(NSDictionary *)message onChannel:(NSString *)channel{
         
-        i++;
+        NSLog(@"subscriptionDidReceiveDictionary   ");
+        [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received:\n %@", channel, message]];
         
-    } 
-    [txt setText:[NSString stringWithFormat:@"History on channel (dict) : %@ - received:\n %@", channel, histry]];
-    NSLog(@"Finesh didFetchHistory");
-}  // "messages" will be nil on failure
-
-
-
-
-- (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time{
-    NSLog(@"didReceiveTime   %f",time );
+        NSLog(@"Sescribe   %@",message);
+        
+        
+        NSDictionary* disc=(NSDictionary*)message;
+        for (NSString* key in [disc allKeys]) {
+            NSString* val=(NSString*)[disc objectForKey:key];
+            NSLog(@"%@-->   %@",key,val);
+        }
+    }
     
-    [txt setText:[NSString stringWithFormat:@"Time  :- received:\n %f", time]];
-}  // "time" will be NAN on failure
-
-- (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString *)channel{
-    NSLog(@"ConnectToChannel   ");
-    NSLog(@"Connect to Channel:   %@",channel);
-        //   [txt setText:[NSString stringWithFormat:@"Connect to Channel:   %@",channel]];
-}  
-
-- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString *)channel{
-    NSLog(@"DisconnectToChannel   ");
-    NSLog(@"Disconnect to Channel:   %@",channel);
-        //    [txt setText:[NSString stringWithFormat:@"Disconnect to Channel:   %@",channel]];
-} 
-- (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString *)channel{
-    NSLog(@"Re_ConnectToChannel   ");
-    NSLog(@"Re-Connect to Channel:   %@",channel);
-        //[txt setText:[NSString stringWithFormat:@"Connect to Channel:   %@",channel]];
-} 
+    - (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel{
+        NSLog(@"subscriptionDidReceiveArray   ");
+        NSLog(@"Sescribe   %@",message);
+        [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received\n: %@", channel, message]];
+    }
+    - (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveString:(NSString *)message onChannel:(NSString *)channel{
+        NSLog(@"subscriptionDidReceiveString   ");
+        NSLog(@"Sescribe   %@",message);
+        [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received:\n %@", channel, message]];
+    }   
+    
+    
+    
+    - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel{
+        int i=0;
+        NSLog(@"didFetchHistory");
+        NSMutableString *histry=  [[NSMutableString alloc]init ];
+        for (NSString * object in messages) {
+            NSLog(@"%d \n%@",i,object);
+            [histry appendString:[NSString stringWithFormat:@"----%i\n%@",i,object]];
+            i++;
+        } 
+        [txt setText:[NSString stringWithFormat:@"History on channel (dict) : %@ - received:\n %@", channel, histry]];
+        NSLog(@"Finesh didFetchHistory");
+    }
+    
+    - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time{
+        NSLog(@"didReceiveTime   %f",time );
+        [txt setText:[NSString stringWithFormat:@"Time  :- received:\n %f", time]];
+    }  
+    
+    - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString *)channel{
+        NSLog(@"Connect to Channel:   %@",channel);
+    }  
+    
+    - (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString *)channel{
+        NSLog(@"Disconnect to Channel:   %@",channel);
+    } 
+    - (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString *)channel{
+        NSLog(@"Re-Connect to Channel:   %@",channel);
+    } 
 
 - (void)dealloc {
     [txt release];
@@ -178,3 +237,103 @@ CEPubnub *pubnub;
     [super dealloc];
 }
 @end
+
+
+@implementation unitTestDelegates
+
+
+-(id)init
+{
+    return self ;
+}
+
+
+-(void)test:(BOOL) state message:(NSString*) message
+{
+    if(state)
+    {
+        NSLog(@"PASS - %@",message);
+    }else {
+        NSLog(@" FAIL - %@",message);
+    }
+    
+}
+
+
+- (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel
+{
+    [self test:YES message:[[NSString alloc]initWithFormat:@"Publish of channel:%@",channel]];
+    
+    
+    NSNumber *sent = (NSNumber*) [status objectForKey:@"sent"];
+    [status removeObjectForKey:@"sent"];
+    [status setObject:[NSNumber numberWithInt:sent.intValue +1] forKey:@"sent"];
+    
+}
+- (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error
+{
+    [self test:NO message:[[NSString alloc]initWithFormat:@"Publish of channel:%@",channel]];
+}
+- (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveDictionary:(NSDictionary *)message onChannel:(NSString *)channel{
+    
+   
+    
+    NSNumber *sent = (NSNumber*) [status objectForKey:@"sent"];
+    NSNumber *received = (NSNumber*) [status objectForKey:@"received"];
+    
+    
+    [self test:received.intValue <= sent.intValue message:@"many sends"];
+    [status removeObjectForKey:@"received"];
+    
+    [status setObject:[NSNumber numberWithInt:received.intValue +1] forKey:@"received"];
+    
+    [_pubnubtemp unsubscribeFromChannel:channel];
+    
+    
+    
+    NSInteger limit = 3;
+    NSNumber * aWrappedInt = [NSNumber numberWithInteger:limit];    
+    [_pubnubtemp fetchHistory:[NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", channel,@"channel",nil]];
+    
+    
+}
+
+- (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel{
+    
+    NSLog(@"Sescribe   %@",message);
+}
+- (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveString:(NSString *)message onChannel:(NSString *)channel{
+    
+    NSLog(@"Sescribe   %@",message);
+}   
+
+
+
+- (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel{
+    
+    [self test:YES message:[[NSString alloc]initWithFormat:@"Fech Histry of channel:%@",channel]];
+    
+}
+
+- (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time{
+    NSLog(@"didReceiveTime   %f",time );
+}  
+
+- (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString *)channel{
+    NSLog(@"Connect to Channel:   %@",channel);
+    
+    NSNumber *connections = (NSNumber*) [status objectForKey:@"connections"];
+    [status removeObjectForKey:@"connections"];
+    [status setObject:[NSNumber numberWithInt:connections.intValue +1] forKey:@"connections"];
+    [_pubnubtemp publish:[NSDictionary dictionaryWithObjectsAndKeys:channel,@"channel",[NSDictionary dictionaryWithObjectsAndKeys:@"X-code->ÇÈ°∂@#$%^&*()!",@"Editer",@"Objective-c",@"Language", nil],@"message", nil]];
+}  
+
+- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString *)channel{
+    NSLog(@"Disconnect to Channel:   %@",channel);
+} 
+- (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString *)channel{
+    NSLog(@"Re-Connect to Channel:   %@",channel);
+} 
+@end
+
+
