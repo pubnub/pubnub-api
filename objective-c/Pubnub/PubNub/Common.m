@@ -150,7 +150,12 @@
     
     NSData * dat= [Base64 decode:data];
     
-      NSString *dec=   [[NSString alloc]initWithData:[ci decrypt:dat] encoding:NSUTF8StringEncoding];
+    NSData *decData = [ci decrypt:dat];
+    if(decData == nil)
+    {
+        NSLog(@"Error: Failed to decrypt. Please validate symmetric (cipher) key.");
+    }
+    NSString *dec=   [[NSString alloc]initWithData:decData encoding:NSUTF8StringEncoding];
    return dec;
 }
 

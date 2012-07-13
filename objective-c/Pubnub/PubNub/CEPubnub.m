@@ -662,7 +662,7 @@ NSDecimalNumber* time_token = 0;
                     
                 } else {
                     
-                    if (!_subscriptions && [_subscriptions count] > 0) {
+                    if (_subscriptions && [_subscriptions count] > 0) {
                         
                         BOOL channel_exist = NO;
                         
