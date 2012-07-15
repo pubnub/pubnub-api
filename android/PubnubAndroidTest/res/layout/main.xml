@@ -24,6 +24,19 @@
 				android:layout_height="wrap_content"
 				android:text="Unsubscribe" />
 			<Button
+				android:id="@+id/subscribeBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Subscribe" />
+		</TableRow>
+	</TableLayout>
+	<TableLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_span="2"
+		android:stretchColumns="*" >
+		<TableRow>
+			<Button
 				android:id="@+id/historyBtn"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"

@@ -90,6 +90,17 @@ public class PubnubTestActivity extends Activity {
 			}
 		});
 
+		Button subscribeBtn = (Button) findViewById(R.id.subscribeBtn);
+		subscribeBtn.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+
+				// Android: (Subscribe)
+				XMLDownloader d = new XMLDownloader();
+				d.execute("xml");
+			}
+		});
+
 		Button historyBtn = (Button) findViewById(R.id.historyBtn);
 		historyBtn.setOnClickListener(new OnClickListener() {
 

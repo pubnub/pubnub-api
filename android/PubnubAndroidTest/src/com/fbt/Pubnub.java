@@ -344,6 +344,7 @@ public class Pubnub {
                         if(!it.connected) {
                             callback.disconnectCallback(channel);
                             isDisconnected = true;
+                            subscriptions.remove(it);
                             break;
                         }
                     }
@@ -360,6 +361,7 @@ public class Pubnub {
                         if (!it.connected) {
                             callback.disconnectCallback(channel);
                             isDisconnected = true;
+                            subscriptions.remove(it);
                             break;
                         }
                     }
