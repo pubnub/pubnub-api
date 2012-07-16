@@ -21,8 +21,7 @@ public class MessageService extends Service {
     MessageHandler mMessageHandler = new MessageHandler();
     MessageReceiver mMessageReceiver = new MessageReceiver();
     MessageListener mMessageListener = new MessageListener();
-    
-    private void broadcastMessage(JSONObject message)//this method sends broadcast messages
+    private void broadcastMessage(Object message)//this method sends broadcast messages
     {
         Intent intent = new Intent("com.aimx.androidpubnub.MESSAGE");
         intent.putExtra("message", message.toString());
@@ -34,9 +33,10 @@ public class MessageService extends Service {
         public void handleMessage(Message msg) {
             try {
                 String m = msg.getData().getString("message");
-                JSONObject message = (JSONObject) new JSONTokener(m).nextValue();
-                broadcastMessage(message);
-            } catch (JSONException e) {
+//                JSONObject message = new JSONObject(m);// (JSONObject) new JSONTokener(m).nextValue();
+//                System.out.println("message::"+message.toString());
+                broadcastMessage(m);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -46,8 +46,8 @@ public class MessageService extends Service {
     
     // Callback Interface when a Message is Received
     class MessageReceiver implements Callback {
-    	@Override
-    	public boolean subscribeCallback(String channel, Object message) {
+        @Override
+        public boolean subscribeCallback(String channel, Object message) {
             try {
                 Message m = Message.obtain();
                 Bundle b = new Bundle();
@@ -60,25 +60,25 @@ public class MessageService extends Service {
             return true;
         }
 
-		@Override
-		public void errorCallback(String channel, Object message) {
-			 Log.e("ErrorCallback","Channel:" + channel + "-" + message.toString());
-		}
+        @Override
+        public void errorCallback(String channel, Object message) {
+             Log.e("ErrorCallback","Channel:" + channel + "-" + message.toString());
+        }
 
-		@Override
-		public void connectCallback(String channel) {
-			 Log.e("ConnectCallback","Connected to channel :" + channel);
-		}
+        @Override
+        public void connectCallback(String channel) {
+             Log.e("ConnectCallback","Connected to channel :" + channel);
+        }
 
-		@Override
-		public void reconnectCallback(String channel) {
-			 Log.e("ReconnectCallback","Reconnected to channel :" + channel);
-		}
+        @Override
+        public void reconnectCallback(String channel) {
+             Log.e("ReconnectCallback","Reconnected to channel :" + channel);
+        }
 
-		@Override
-		public void disconnectCallback(String channel) {
-			 Log.e("DisconnectCallback","Disconnected to channel :" + channel);
-		}
+        @Override
+        public void disconnectCallback(String channel) {
+             Log.e("DisconnectCallback","Disconnected to channel :" + channel);
+        }
     }
     
     class MessageListener extends AsyncTask<String, Void, Boolean> {
@@ -86,9 +86,7 @@ public class MessageService extends Service {
         protected Boolean doInBackground(String... params) {
             {
                 try {
-                	
-                	
-                	HashMap<String, Object> args = new HashMap<String, Object>(2);
+                    HashMap<String, Object> args = new HashMap<String, Object>(2);
                     args.put("channel", params[0]);
                     args.put("callback", mMessageReceiver);
                     pubnub.subscribe(args);
@@ -109,22 +107,15 @@ public class MessageService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        pubnub = new Pubnub("demo", // PUBLISH_KEY
-                "demo", 			// SUBSCRIBE_KEY
-                "demo", 			// SECRET_KEY
-                "",     			// CIPHER_KEY (Cipher key is Optional)
-                true    			// SSL_ON?
-        );
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
     }
     
     @Override
     public void onStart(Intent intent, int startid) {
-        super.onStart(intent, startid);
+        pubnub= ApplicationContext.getPubnub();
         if(mMessageListener.getStatus() != Status.RUNNING){
                 mMessageListener.execute(intent.getStringExtra("channel"));
         }

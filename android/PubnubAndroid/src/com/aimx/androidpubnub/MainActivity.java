@@ -1,5 +1,6 @@
 package com.aimx.androidpubnub;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONException;
@@ -28,7 +29,7 @@ public class MainActivity extends Activity {
     Button subscribe = null;
     Button unsubscribe = null;
     Boolean isSubscribed = false;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +92,7 @@ public class MainActivity extends Activity {
         registerReceiver(messageReceiver, messageFilter);
         Intent messageservice = new Intent(this, MessageService.class);
         messageservice.putExtra("channel", channel);
-        startService(messageservice);
+        ApplicationContext.getInstance().startService(messageservice);
     }
     
     private void unsubscribe(){
@@ -104,28 +105,32 @@ public class MainActivity extends Activity {
     }
     
     private void killService() {
-        ActivityManager manager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        HashMap<String, Object> args = new HashMap<String, Object>();
+        args.put("channel", channel);  
+        ApplicationContext.getPubnub().unsubscribe(args);
 
-        List<RunningAppProcessInfo> services = manager.getRunningAppProcesses();
-        for (RunningAppProcessInfo service : services) {
-            if (service.processName.equals("com.aimx.androidpubnub:message")) {
-                int pid = service.pid;
-                android.os.Process.killProcess(pid);
-            }
-        }
+        Intent messageservice = new Intent(this, MessageService.class);
+        messageservice.putExtra("channel", channel);
+        stopService(messageservice);
     }
     
     public class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            JSONObject message = null;
-            try {
-                message = (JSONObject) new JSONTokener(intent.getStringExtra("message")).nextValue();
-                if(message != null){
-                    Toast.makeText(getApplicationContext(), "Received a message", Toast.LENGTH_LONG).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+//            JSONObject message = null;
+//            try {
+//                message = (JSONObject) new JSONTokener(intent.getStringExtra("message")).nextValue();
+//                if(message != null){
+//                    Toast.makeText(getApplicationContext(), "Received a message", Toast.LENGTH_LONG).show();
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+
+            Object message = null;
+            message=intent.getStringExtra("message");
+            if(message != null){
+              Toast.makeText(getApplicationContext(), "Received a message : \n"+message.toString(), Toast.LENGTH_LONG).show();
             }
         }
     }

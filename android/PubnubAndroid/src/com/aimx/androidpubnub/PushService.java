@@ -74,15 +74,14 @@ public class PushService extends Service {
             nm.notify(1, notification);
 
         }
-    	@Override
+        @Override
         public boolean subscribeCallback(String channel, Object message) {
             try {
                 if(message instanceof JSONObject)
                 {
-                    JSONObject message1 =(JSONObject)message;
+                     JSONObject message1 =(JSONObject)message;
                     generateNotification(getApplicationContext(),
-                    message1.getString("title"), message1.getString("text"),
-                    Uri.parse(message1.getString("url")));
+                            message1.optString("title","Pubnub"), message1.optString("text",message1.toString()), Uri.parse(message1.optString("url","")));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -91,25 +90,25 @@ public class PushService extends Service {
             return true;
         }
 
-    	@Override
-		public void errorCallback(String channel, Object message) {
-			 Log.e("ErrorCallback","Channel:" + channel + "-" + message.toString());
-		}
+        @Override
+        public void errorCallback(String channel, Object message) {
+             Log.e("ErrorCallback","Channel:" + channel + "-" + message.toString());
+        }
 
-		@Override
-		public void connectCallback(String channel) {
-			 Log.e("ConnectCallback","Connected to channel :" + channel);
-		}
+        @Override
+        public void connectCallback(String channel) {
+             Log.e("ConnectCallback","Connected to channel :" + channel);
+        }
 
-		@Override
-		public void reconnectCallback(String channel) {
-			 Log.e("ReconnectCallback","Reconnected to channel :" + channel);
-		}
+        @Override
+        public void reconnectCallback(String channel) {
+             Log.e("ReconnectCallback","Reconnected to channel :" + channel);
+        }
 
-		@Override
-		public void disconnectCallback(String channel) {
-			 Log.e("DisconnectCallback","Disconnected to channel :" + channel);
-		}
+        @Override
+        public void disconnectCallback(String channel) {
+             Log.e("DisconnectCallback","Disconnected to channel :" + channel);
+        }
     }
 
     class PushListener extends AsyncTask<String, Void, Boolean> {
@@ -118,8 +117,6 @@ public class PushService extends Service {
             {
                 try {
                   
-                   
-
                     HashMap<String, Object> args = new HashMap<String, Object>(2);
                     args.put("channel", params[0]);
                     args.put("callback", mPushReceiver);

@@ -344,6 +344,7 @@ public class Pubnub {
                         if(!it.connected) {
                             callback.disconnectCallback(channel);
                             isDisconnected = true;
+                            subscriptions.remove(it);
                             break;
                         }
                     }
@@ -360,6 +361,7 @@ public class Pubnub {
                         if (!it.connected) {
                             callback.disconnectCallback(channel);
                             isDisconnected = true;
+                            subscriptions.remove(it);
                             break;
                         }
                     }
@@ -678,7 +680,7 @@ public class Pubnub {
     }
 
     private String _encodeToUTF8(String s) throws UnsupportedEncodingException {
-    	String enc = URLEncoder.encode(s, "UTF-8").replace("+", "%20");
-    	return enc;
+        String enc = URLEncoder.encode(s, "UTF-8").replace("+", "%20");
+        return enc;
     }
 }
