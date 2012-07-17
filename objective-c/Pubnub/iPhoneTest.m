@@ -29,11 +29,11 @@ CEPubnub *pubnub;
     [super viewDidLoad];
         // Do any additional setup after loading the view, typically from a nib.
     
-    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:nil useSSL:NO];       // cipher key is optional, supply nil to disable.
-
-	    // Subscribe to channel
+    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"demo" useSSL:NO];
+        //subscribe to a few channels
+	
 	[pubnub setDelegate:self];
-	[pubnub subscribe: @"hello_world"];  
+	
        
    
 }
@@ -101,16 +101,24 @@ CEPubnub *pubnub;
 
 - (IBAction)unitTest:(id)sender {
     [self unitTest];
-
+  
 }
 
+- (IBAction)Subscribe:(id)sender {
+    [pubnub subscribe: @"hello_world"];  
+}
+
+- (IBAction)Unsubscribe:(id)sender {
+    [pubnub unsubscribeFromChannel: @"hello_world"];  
+    
+}
 
     //=========================================================================
     //Unit-Test
     //=========================================================================
 
 NSString *publish_key = @"demo", *subscribe_key = @"demo";
-NSString *secret_key = @"demo", *cipher_key = @"";
+NSString *secret_key = @"demo", *cipher_key = nil;
 BOOL ssl_on = false;
 NSMutableArray *many_channels;
 NSMutableDictionary *status;

@@ -194,11 +194,11 @@ typedef enum {
     {
         NSDictionary* disc=(NSDictionary*)message;
         for (NSString* key in [disc allKeys]) {
-                //  NSLog(@"Key::%@",key);
+              
             NSString* val=(NSString*)[disc objectForKey:key];
             
             NSString * dec=  [CommonFunction AES128EncryptWithKey:_cipherKey Data:val];
-                //   NSLog(@"enc::%@",dec);
+               
             [msg setObject: dec forKey:key];
         }
     }
@@ -248,7 +248,6 @@ typedef enum {
 }
 
 - (void) publish:(NSDictionary * )arg1{
-        //   - (void) publishMessage:(id)message toChannel:(NSString*)channel {
     NSString * channel;
     id message;
     if (![arg1 objectForKey:@"channel"]) 
@@ -335,7 +334,7 @@ typedef enum {
             [_subscriptions addObject:cs];
         } else {
                 // error_cb.execute("Already Connected");
-            return;
+                //return;
         }
     } else {
             // New Channel
@@ -353,9 +352,6 @@ typedef enum {
     if (![self isSubscribedToChannel:channel]) {
         [self _resubscribeToChannel:channel];
         NSLog(@"Did subscribe to PubNub channel \"%@\"", channel);
-    } else {
-            //   DNOT_REACHED();
-        NSLog(@"subscribeToChanneldidCompleteWithResponse isSubscribedToChannel is return true");
     }
 }
 
@@ -365,22 +361,21 @@ typedef enum {
             NSLog(@"Did unsubscribe from PubNub channel \"%@\"", connection.channel);
             [connection cancel];
             [_connections removeObject:connection];
-            
+            for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                if ([it.channel isEqualToString:connection.channel])
+                {                        
+                    it.connected=false;
+                    it.first=false;
+                    if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
+                        [_delegate pubnub:self DisconnectToChannel:connection.channel];
+                    }
+                    [_subscriptions removeObject:it];
+                    break;
+                }
+            }
         }
     }
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    
-    
-    
-    
-    for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
-        if ([it.channel isEqualToString:channel])
-        {                        
-            it.connected=false;
-            it.first=false;
-            break;
-        }
-    }
 }
 
 - (BOOL) isSubscribedToChannel:(NSString*)channel {
