@@ -29,7 +29,7 @@ CEPubnub *pubnub;
     [super viewDidLoad];
         // Do any additional setup after loading the view, typically from a nib.
     
-    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"demo" useSSL:NO];
+    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:nil useSSL:NO];
         //subscribe to a few channels
 	
 	[pubnub setDelegate:self];
@@ -180,11 +180,17 @@ CEPubnub *_pubnubtemp;
     }
     - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error// "error" may be nil
     {
-        NSLog(@"didFailPublishingMessageToChannel   %@",error);
+        NSLog(@"Publishing Error   %@",error);
     }
-    - (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveDictionary:(NSDictionary *)message onChannel:(NSString *)channel{
+    
+	- (void) pubnub:(CEPubnub*)pubnub subscriptionDidFailWithResponse:(NSString *)message onChannel:(NSString *)channel
+	{
+    	NSLog(@"Subscription Error:  %@",message);
+	}
+
+	- (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveDictionary:(NSDictionary *)message onChannel:(NSString *)channel{
         
-        NSLog(@"subscriptionDidReceiveDictionary   ");
+       
         [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received:\n %@", channel, message]];
         
         NSLog(@"Subscribe   %@",message);
@@ -198,12 +204,12 @@ CEPubnub *_pubnubtemp;
     }
     
     - (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel{
-        NSLog(@"subscriptionDidReceiveArray   ");
+       
         NSLog(@"Subscribe   %@",message);
         [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received\n: %@", channel, message]];
     }
     - (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveString:(NSString *)message onChannel:(NSString *)channel{
-        NSLog(@"subscriptionDidReceiveString   ");
+       
         NSLog(@"Subscribe   %@",message);
         [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received:\n %@", channel, message]];
     }   
@@ -212,15 +218,15 @@ CEPubnub *_pubnubtemp;
     
     - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel{
         int i=0;
-        NSLog(@"didFetchHistory");
+      
         NSMutableString *histry=  [NSMutableString stringWithString: @""];
         for (NSString * object in messages) {
             NSLog(@"%d \n%@",i,object);
-            [histry appendString:[NSString stringWithFormat:@"----%i\n%@",i,object]];
+            [histry appendString:[NSString stringWithFormat:@" %i\n%@",i,object]];
             i++;
         } 
         [txt setText:[NSString stringWithFormat:@"History on channel (dict) : %@ - received:\n %@", channel, histry]];
-        NSLog(@"Finesh didFetchHistory");
+      
     }
     
     - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time{

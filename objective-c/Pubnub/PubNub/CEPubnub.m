@@ -375,7 +375,10 @@ typedef enum {
 - (BOOL) isSubscribedToChannel:(NSString*)channel {
     for (PubNubConnection* connection in _connections) {
         if ((connection.command == kCommand_ReceiveMessage) && [connection.channel isEqualToString:channel]) {
-            return YES;
+            if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidFailWithResponse:onChannel:)]) {
+                [_delegate pubnub:self subscriptionDidFailWithResponse:@"Already Connected" onChannel:channel];
+            }           
+             return YES;
         }
     }
     for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
@@ -458,7 +461,7 @@ NSDecimalNumber* time_token = 0;
     
     [NSURLConnection
      sendAsynchronousRequest:urlRequest
-     queue: [[NSOperationQueue alloc] init]
+      queue:[[[NSOperationQueue alloc] init] autorelease]
      completionHandler:^(NSURLResponse *response2,
                          NSData *data,
                          NSError *error) 
@@ -753,7 +756,7 @@ NSDecimalNumber* time_token = 0;
         }
             
         case kCommand_FetchHistory: {
-            NSMutableArray *mainArray = [NSMutableArray arrayWithCapacity: 20];
+            NSMutableArray *mainArray = [NSMutableArray arrayWithCapacity: 2];
             
             if ([response isKindOfClass:[NSArray class]]) {
                 NSLog(@"Fetched %i history messages from PubNub channel \"%@\"", [response count], connection.channel);

@@ -87,12 +87,6 @@
 - (BOOL) isSubscribedToChannel:(NSString*)channel;
 @end
 
-struct ChannelStatus{
-    NSString *channel;
-    BOOL connected;
-    BOOL first;
-   
-};
 
 @interface ChannelStatus :NSObject
 @property(nonatomic, retain) NSString* channel;

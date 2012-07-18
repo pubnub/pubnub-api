@@ -104,15 +104,19 @@
 
 + (NSString *)AES128DecryptWithKey:(NSString *)key Data:(NSString *)data 
 {
-    Cipher *ci= [[Cipher alloc] initWithKey: key];
+    Cipher *ci= [[Cipher alloc]initWithKey:key];
     [Base64 initialize];
     
-    NSData * dat = [Base64 decode:data];
+    NSData * dat= [Base64 decode:data];
     
-    NSString *dec = [[NSString alloc] initWithData: [ci decrypt: dat] encoding: NSUTF8StringEncoding];
-    [ci release];
+    NSData *decData = [ci decrypt:dat];
+    if(decData == nil)
+    {
+        NSLog(@"Error: Failed to decrypt. Please validate symmetric (cipher) key.");
+    }
     
-    return [dec autorelease];
+    NSString *dec=   [[NSString alloc]initWithData:decData encoding:NSUTF8StringEncoding];
+    return dec;
 }
 
 
