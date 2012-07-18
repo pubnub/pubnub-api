@@ -78,7 +78,7 @@ NSString* JSONWriteString(id object) {
 
 id JSONGetDictionaryValueForKey(NSDictionary* dictionary, NSString* key) {
   //  DCHECK(!dictionary || [dictionary isKindOfClass:[NSDictionary class]]);
-    id value;
+    id value = nil;
     if(!dictionary || [dictionary isKindOfClass:[NSDictionary class]])
     {
      value = [dictionary objectForKey:key];

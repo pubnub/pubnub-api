@@ -45,8 +45,7 @@
     
     CCHmac(kCCHmacAlgSHA256, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
     
-    NSData *HMAC = [[NSData alloc] initWithBytes:cHMAC
-                                          length:sizeof(cHMAC)];
+    NSData *HMAC = [NSData dataWithBytesNoCopy: cHMAC length: sizeof(cHMAC) freeWhenDone: false];
     
     NSString *hash = [HMAC description]; //This line doesn´t make sense
     hash = [hash stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -78,49 +77,42 @@
 }
 
 
-
-
 + (NSString *)AES128EncryptWithKey:(NSString *)key Data:(NSString *)val 
 {
-    //return [self AES128Operation:kCCEncrypt key:key Data:data iv:iv];
-    Cipher *ci= [[Cipher alloc]initWithKey:key];
-    NSData *data=[val dataUsingEncoding:NSUTF8StringEncoding];
-    NSData* enc= [ci encrypt:data];
+    Cipher *ci = [[Cipher alloc] initWithKey: key];
+    NSData *data =[val dataUsingEncoding: NSUTF8StringEncoding];
+    NSData* enc = [ci encrypt: data];
+    [ci release];
+    
     [Base64 initialize];
-    
-    return [Base64 encode:enc]; 
-
-    
+    return [Base64 encode:enc];
 }
 
 + (NSString *)AES128EncryptWithKeyAndData:(NSString *)key Data:(NSData *)val 
 {
     //return [self AES128Operation:kCCEncrypt key:key Data:data iv:iv];
-    Cipher *ci= [[Cipher alloc]initWithKey:key];
-    NSData *data=val ;
-    NSData* enc= [ci encrypt:data];
-    [Base64 initialize];
+    Cipher *ci = [[Cipher alloc] initWithKey:key];
+    NSData *data = val ;
+    NSData* enc = [ci encrypt: data];
+    [ci release];
     
-    return [Base64 encode:enc]; 
+    [Base64 initialize];
+    return [Base64 encode: enc];
     
     
 }
 
 + (NSString *)AES128DecryptWithKey:(NSString *)key Data:(NSString *)data 
 {
- //   return [self AES128Operation:kCCDecrypt key:key Data:data iv:iv];
-     Cipher *ci= [[Cipher alloc]initWithKey:key];
+    Cipher *ci= [[Cipher alloc] initWithKey: key];
     [Base64 initialize];
     
-    NSData * dat= [Base64 decode:data];
+    NSData * dat = [Base64 decode:data];
     
-    NSData *decData = [ci decrypt:dat];
-    if(decData == nil)
-    {
-        NSLog(@"Error: Failed to decrypt. Please validate symmetric (cipher) key.");
-    }
-    NSString *dec=   [[NSString alloc]initWithData:decData encoding:NSUTF8StringEncoding];
-   return dec;
+    NSString *dec = [[NSString alloc] initWithData: [ci decrypt: dat] encoding: NSUTF8StringEncoding];
+    [ci release];
+    
+    return [dec autorelease];
 }
 
 

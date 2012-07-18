@@ -213,7 +213,7 @@ CEPubnub *_pubnubtemp;
     - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel{
         int i=0;
         NSLog(@"didFetchHistory");
-        NSMutableString *histry=  [[NSMutableString alloc]init ];
+        NSMutableString *histry=  [NSMutableString stringWithString: @""];
         for (NSString * object in messages) {
             NSLog(@"%d \n%@",i,object);
             [histry appendString:[NSString stringWithFormat:@"----%i\n%@",i,object]];
@@ -270,7 +270,7 @@ CEPubnub *_pubnubtemp;
 
 - (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel
 {
-    [self test:YES message:[[NSString alloc]initWithFormat:@"Publish of channel:%@",channel]];
+    [self test:YES message:[NSString stringWithFormat:@"Publish of channel:%@",channel]];
     
     
     NSNumber *sent = (NSNumber*) [status objectForKey:@"sent"];
@@ -280,7 +280,7 @@ CEPubnub *_pubnubtemp;
 }
 - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error
 {
-    [self test:NO message:[[NSString alloc]initWithFormat:@"Publish of channel:%@",channel]];
+    [self test:NO message:[NSString stringWithFormat:@"Publish of channel:%@",channel]];
 }
 - (void) pubnub:(CEPubnub*)pubnub subscriptionDidReceiveDictionary:(NSDictionary *)message onChannel:(NSString *)channel{
     
@@ -319,7 +319,7 @@ CEPubnub *_pubnubtemp;
 
 - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel{
     
-    [self test:YES message:[[NSString alloc]initWithFormat:@"Fetch Histry of channel:%@",channel]];
+    [self test:YES message:[NSString stringWithFormat:@"Fetch Histry of channel:%@",channel]];
     
 }
 
