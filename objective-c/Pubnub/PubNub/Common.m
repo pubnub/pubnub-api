@@ -77,44 +77,6 @@
 }
 
 
-
-+ (NSString *)AES128Operation:(CCOperation)operation key:(NSString *)key Data:(NSString *)data iv:(NSString *)iv
-{
-    [Base64 initialize]; 
-    char keyPtr[kCCKeySizeAES128 + 1];
-    memset(keyPtr, 0, sizeof(keyPtr));
-    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
-    
-    char ivPtr[kCCBlockSizeAES128 + 1];
-    memset(ivPtr, 0, sizeof(ivPtr));
-    [iv getCString:ivPtr maxLength:sizeof(ivPtr) encoding:NSUTF8StringEncoding];
-    
-    NSUInteger dataLength = [data length];
-    size_t bufferSize = dataLength + kCCBlockSizeAES128;
-    void *buffer = malloc(bufferSize);
-    
-    size_t numBytesCrypted = 0;
-    CCCryptorStatus cryptStatus = CCCrypt(operation,
-                                          kCCAlgorithmAES128,
-                                          kCCOptionPKCS7Padding,
-                                          keyPtr,
-                                          kCCBlockSizeAES128,
-                                          ivPtr,
-                                          [[data dataUsingEncoding:NSUTF8StringEncoding] bytes],
-                                          dataLength,
-                                          buffer,
-                                          bufferSize,
-                                          &numBytesCrypted);
-    if (cryptStatus == kCCSuccess) {
-        NSData* data =[NSData dataWithBytesNoCopy:buffer length:numBytesCrypted];
-        NSString * strData=  [Base64 encode:data];
-        NSLog(@"EncodedText::%@",[NSString stringWithFormat:@"%@,%@",strData,iv]);
-        return [NSString stringWithFormat:@"%@,%@",strData,iv];
-    }
-    free(buffer);
-    return nil;
-}
-
 + (NSString *)AES128EncryptWithKey:(NSString *)key Data:(NSString *)val 
 {
     Cipher *ci = [[Cipher alloc] initWithKey: key];

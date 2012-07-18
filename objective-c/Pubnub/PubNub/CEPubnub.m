@@ -250,13 +250,14 @@ typedef enum {
     NSString * channel = [arg1 objectForKey: @"channel"];
     id message = [arg1 objectForKey: @"message"];
     
-    if (channel) {
+    if (!channel) {
         NSLog(@"ERROR::Channel name not found.");
+        return;
     }
     
-    if (!message)
-    {
+    if (!message) {
         NSLog(@"ERROR::Message not found.");
+        return;
     }
     
     id msg = nil;
@@ -324,7 +325,7 @@ typedef enum {
             [_subscriptions addObject:cs];
         } else {
                 // error_cb.execute("Already Connected");
-            return;
+            //return;
         }
     } else {
             // New Channel
@@ -344,9 +345,6 @@ typedef enum {
     if (![self isSubscribedToChannel:channel]) {
         [self _resubscribeToChannel:channel];
         NSLog(@"Did subscribe to PubNub channel \"%@\"", channel);
-    } else {
-            //   DNOT_REACHED();
-        NSLog(@"subscribeToChanneldidCompleteWithResponse isSubscribedToChannel is return true");
     }
 }
 
@@ -356,22 +354,22 @@ typedef enum {
             NSLog(@"Did unsubscribe from PubNub channel \"%@\"", connection.channel);
             [connection cancel];
             [_connections removeObject:connection];
-            
+            for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                if ([it.channel isEqualToString:connection.channel])
+                {
+                    it.connected=false;
+                    it.first=false;
+                    if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
+                        [_delegate pubnub:self DisconnectToChannel:connection.channel];
+                    }
+                    [_subscriptions removeObject:it];
+                    break;
+                }
+            }
         }
     }
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    
-    
-    
-    
-    for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
-        if ([it.channel isEqualToString:channel])
-        {                        
-            it.connected=false;
-            it.first=false;
-            break;
-        }
-    }
 }
 
 - (BOOL) isSubscribedToChannel:(NSString*)channel {
@@ -626,7 +624,7 @@ NSDecimalNumber* time_token = 0;
                 }
                 
                     // Ensure Connected (Call Time Function)
-                BOOL is_reconnected = NO;
+                //BOOL is_reconnected = NO;
                 
                 
                 [self getTime1];
