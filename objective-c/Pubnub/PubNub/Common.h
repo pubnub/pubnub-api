@@ -22,7 +22,6 @@
 +(NSString*) HMAC_SHA256withKey:(NSString*)key Input:(NSString*) input;
 + (NSString *)generateUuidString;
 
-  
 + (NSString *)AES128EncryptWithKey:(NSString *)key Data:(NSString *)data ;
 + (NSString *)AES128DecryptWithKey:(NSString *)key Data:(NSString *)data ;
 + (NSString *)AES128EncryptWithKeyAndData:(NSString *)key Data:(NSData *)val;

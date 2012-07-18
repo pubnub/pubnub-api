@@ -222,7 +222,6 @@
 #define JK_ALLOC_SIZE_NON_NULL_ARGS_WARN_UNUSED(as, nn, ...) JK_ATTRIBUTES(warn_unused_result, nonnull(nn, ##__VA_ARGS__))
 #endif // defined (__GNUC__) && (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 3)
 
-
 @class JKArray, JKDictionaryEnumerator, JKDictionary;
 
 enum {
@@ -741,9 +740,18 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 
 - (void)getObjects:(id *)objectsPtr range:(NSRange)range
 {
-  NSParameterAssert((objects != NULL) && (count <= capacity));
-  if((objectsPtr     == NULL)  && (NSMaxRange(range) > 0UL))   { [NSException raise:NSRangeException format:@"*** -[%@ %@]: pointer to objects array is NULL but range length is %lu", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range)];        }
-  if((range.location >  count) || (NSMaxRange(range) > count)) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",                          NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range), count]; }
+    NSParameterAssert((objects != NULL) && (count <= capacity));
+  
+    if((objectsPtr == NULL)  && (NSMaxRange(range) > 0UL))   {
+      [NSException raise: NSRangeException format: @"*** -[%@ %@]: pointer to objects array is NULL but range length is %lu",
+            NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range)];
+  }
+    
+  if ((range.location >  count) || (NSMaxRange(range) > count)) {
+      [NSException raise: NSRangeException format: @"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",
+            NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range), count];
+  }
+    
   memcpy(objectsPtr, objects + range.location, range.length * sizeof(id));
 }
 
