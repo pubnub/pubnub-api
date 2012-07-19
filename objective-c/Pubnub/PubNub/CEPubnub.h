@@ -28,11 +28,8 @@
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveString:(NSString *)message onChannel:(NSString *)channel;
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidFailWithResponse:(NSString *)message onChannel:(NSString *)channel;
 
-
-
 - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel;  // "messages" will be nil on failure
 - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time;  // "time" will be NAN on failure
-
 
 - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
 - (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
@@ -59,6 +56,7 @@
                     subscribeKey:(NSString*)subscribeKey
                        secretKey:(NSString*)secretKey
                           useSSL:(BOOL)useSSL;
+
 - (CEPubnub*) initWithPublishKey:(NSString*)publishKey  // May be nil if -publishMessage:toChannel: is never used
                     subscribeKey:(NSString*)subscribeKey
                        secretKey:(NSString*)secretKey  // May be nil if -publishMessage:toChannel: is never used
@@ -71,9 +69,6 @@
                        secretKey:(NSString*)secretKey
                        cipherKey:(NSString*)cipherKey
                           useSSL:(BOOL)useSSL;
-
-    //- (void) publishMessage:(id)message toChannel:(NSString*)channel;
-    //- (void) fetchHistory:(NSUInteger)limit forChannel:(NSString*)channel;
 
 - (void) publish:(NSDictionary * )arg1;
 - (void) publish:(NSString * )message onChannel:(NSString *) channel;
