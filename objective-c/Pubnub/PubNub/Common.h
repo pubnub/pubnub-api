@@ -16,8 +16,6 @@
 - (BOOL) containsString:(NSString*)string;
 @end
 
-
-
 @interface CommonFunction :NSObject
 +(NSString*) HMAC_SHA256withKey:(NSString*)key Input:(NSString*) input;
 + (NSString *)generateUuidString;

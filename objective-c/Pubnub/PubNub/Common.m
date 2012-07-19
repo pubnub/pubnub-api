@@ -14,8 +14,6 @@
 
 @implementation NSString (Extensions)
 
-
-
 - (NSString*) urlEscapedString {
     return [(id)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)self, NULL, CFSTR(":@/?&=+"),
                                                         kCFStringEncodingUTF8) autorelease];
@@ -36,8 +34,6 @@
 
 +(NSString*) HMAC_SHA256withKey:(NSString*)key Input:(NSString*) input {
     
-    
-    
     const char *cKey  = [key cStringUsingEncoding:NSUTF8StringEncoding];
     const char *cData = [input cStringUsingEncoding:NSUTF8StringEncoding];
     
@@ -51,10 +47,8 @@
     hash = [hash stringByReplacingOccurrencesOfString:@" " withString:@""];
     hash = [hash stringByReplacingOccurrencesOfString:@"<" withString:@""];
     hash = [hash stringByReplacingOccurrencesOfString:@">" withString:@""];
-    
     return hash;
 }
-
 
 // return a new autoreleased UUID string
 + (NSString *)generateUuidString
@@ -75,7 +69,6 @@
     
     return uuidString;
 }
-
 
 + (NSString *)AES128EncryptWithKey:(NSString *)key Data:(NSString *)val 
 {
@@ -98,8 +91,6 @@
     
     [Base64 initialize];
     return [Base64 encode: enc];
-    
-    
 }
 
 + (NSString *)AES128DecryptWithKey:(NSString *)key Data:(NSString *)data 
@@ -108,18 +99,14 @@
     [Base64 initialize];
     
     NSData * dat= [Base64 decode:data];
-    
     NSData *decData = [ci decrypt:dat];
     if(decData == nil)
     {
         NSLog(@"Error: Failed to decrypt. Please validate symmetric (cipher) key.");
     }
-    
     NSString *dec=   [[NSString alloc]initWithData:decData encoding:NSUTF8StringEncoding];
     return dec;
 }
-
-
 
 @end
 
