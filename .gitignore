@@ -2,6 +2,10 @@
 *.swp
 *.pyc
 *.class
+*.iml
+/android/PubnubAndroidTest/gen
+/android/PubnubAndroidTest/bin
+/android/PubnubAndroidTest/out
 .DS_Store
 node_modules
 .idea
