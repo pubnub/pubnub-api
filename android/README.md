@@ -1,3 +1,4 @@
+# Please use PubnubAndroidTest - the example client within PubnubAndroid is now deprecated.
 ##### VIDEO - ANDROID + PUBNUB
 [http://www.youtube.com/watch?v=pkxUYYhwb04](http://www.youtube.com/watch?v=pkxUYYhwb04)
 
