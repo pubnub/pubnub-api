@@ -561,8 +561,8 @@ NSDecimalNumber* time_token = 0;
 
             if (success) {
                 NSLog(@"Sent message :%@", response);
-                if ([_delegate respondsToSelector:@selector(pubnub:didSucceedPublishingMessageToChannel:)]) {
-                    [_delegate pubnub:self didSucceedPublishingMessageToChannel:connection.channel];
+                if ([_delegate respondsToSelector:@selector(pubnub:didSucceedPublishingMessageToChannel:withResponce:)]) {
+                    [_delegate pubnub:self didSucceedPublishingMessageToChannel:connection.channel withResponce:response];
                 }
             } else {
                 if (error) {

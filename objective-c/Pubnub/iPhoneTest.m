@@ -144,7 +144,7 @@ CEPubnub *_pubnubtemp;
     //========================================================================
 #pragma mark -
 #pragma mark CEPubnubDelegate stuff
-    - (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel
+    - (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel withResponce:(id)responce
     {
         NSLog(@"Sent message to PubNub channel \"%@\" ", channel);   
     }
@@ -234,7 +234,7 @@ CEPubnub *_pubnubtemp;
     
 }
 
-- (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel
+- (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel withResponce:(id)responce
 {
     [self test:YES message:[NSString stringWithFormat:@"Publish of channel:%@",channel]];
     
