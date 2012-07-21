@@ -75,17 +75,11 @@ typedef enum {
     return self;
 }
 
-- (void) dealloc {
-    [_channel release];
-    [_response release];
-    [_data release];
-    
-    [super dealloc];
-}
+
 
 - (void) connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
         // DCHECK(_response == nil);
-    _response = (NSHTTPURLResponse*)[response retain];
+    _response = (NSHTTPURLResponse*)[response copy];
 }
 
 - (void) connection:(NSURLConnection*)connection didReceiveData:(NSData*)data {
@@ -134,10 +128,10 @@ typedef enum {
 
 - (void) connection:(NSURLConnection*)connection didFailWithError:(NSError*)error {
     if ([error.domain isEqualToString:NSURLErrorDomain] && (error.code == NSURLErrorNotConnectedToInternet)) {
-        NSLog(@"Network Error: Unable to connect to the Internet");
+        NSLog(@"PubNub request failed due to missing Internet connection");
         switch ([self command]) {
             case kCommand_SendMessage:
-                [_pubNub connection:self didCompleteWithResponse:[NSArray arrayWithObjects:@"0",@"Network Error: Unable to connect to the Internet" ,@"0",  nil]];
+                [_pubNub connection:self didCompleteWithResponse:[NSArray arrayWithObjects:@"0",@"PubNub request failed due to missing Internet connection" ,@"0",  nil]];
                 break;
                 
             default:
@@ -205,14 +199,7 @@ typedef enum {
     for (PubNubConnection* connection in _connections) {
         [connection cancel];
     }
-    [_connections release];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    [_publishKey release];
-    [_subscribeKey release];
-    [_secretKey release];
-    [_host release];
-    [_subscriptions release];
-    [super dealloc];
+    
 }
 
 -(NSDictionary*) getEncryptedDictionary:(NSDictionary*)message
@@ -304,7 +291,6 @@ typedef enum {
                                                                     command:kCommand_SendMessage
                                                                     channel:channel];
     [_connections addObject:connection];
-    [connection release];
 }
 
 - (void) _resubscribeToChannel:(NSString*)channel timeToken:(NSString*)timeToken {
@@ -315,7 +301,7 @@ typedef enum {
                                                                     command:kCommand_ReceiveMessage
                                                                     channel:channel];
     [_connections addObject:connection];
-    [connection release];
+    
 }
 
 - (void) _resubscribeToChannel:(NSString*)channel {
@@ -323,7 +309,7 @@ typedef enum {
     if (_subscriptions && [_subscriptions count] > 0) {
         
         BOOL channel_exist = NO;
-        for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+        for (ChannelStatus* it in [_subscriptions copy]) {
             if ([it.channel isEqualToString:channel])
             {
                 channel_exist = YES;
@@ -332,7 +318,7 @@ typedef enum {
         }
         
         if (!channel_exist) {
-            ChannelStatus *cs = [[[ChannelStatus alloc] init] autorelease];
+            ChannelStatus *cs = [[ChannelStatus alloc] init] ;
             cs.channel = channel;
             cs.connected = YES;
             [_subscriptions addObject:cs];
@@ -342,10 +328,9 @@ typedef enum {
         }
     } else {
             // New Channel
-        ChannelStatus *cs = [[[ChannelStatus alloc] init] autorelease];
+        ChannelStatus *cs = [[ChannelStatus alloc] init] ;
         cs.channel = channel;
         cs.connected = YES;
-        [_subscriptions release];
         _subscriptions = [[NSMutableSet alloc] init];
         [_subscriptions addObject:cs];
     }
@@ -361,12 +346,12 @@ typedef enum {
 }
 
 - (void) unsubscribeFromChannel:(NSString*)channel {
-    for (PubNubConnection* connection in [[_connections copy]autorelease]) {
+    for (PubNubConnection* connection in [_connections copy]) {
         if ((connection.command == kCommand_ReceiveMessage) && (!channel || [connection.channel isEqualToString:channel])) {
             NSLog(@"Did unsubscribe from PubNub channel \"%@\"", connection.channel);
             [connection cancel];
             [_connections removeObject:connection];
-            for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+            for (ChannelStatus* it in [_subscriptions copy]) {
                 if ([it.channel isEqualToString:connection.channel])
                 {
                     it.connected=false;
@@ -393,7 +378,7 @@ typedef enum {
             return YES;
         }
     }
-    for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+    for (ChannelStatus* it in [_subscriptions copy]) {
         if ([it.channel isEqualToString:channel])
         {                        
             it.connected=false;
@@ -444,7 +429,6 @@ typedef enum {
                                                                     command:kCommand_FetchHistory
                                                                     channel:channel];
     [_connections addObject:connection];
-    [connection release];
 }
 
 - (void) getTime {
@@ -454,7 +438,6 @@ typedef enum {
                                                                     command:kCommand_GetTime
                                                                     channel:nil];
     [_connections addObject:connection];
-    [connection release];
 }
 
 NSDecimalNumber* time_token = 0;
@@ -464,7 +447,7 @@ NSDecimalNumber* time_token = 0;
     NSURLRequest * urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     [NSURLConnection
      sendAsynchronousRequest:urlRequest
-     queue:[[[NSOperationQueue alloc] init] autorelease]
+     queue:[[NSOperationQueue alloc] init] 
      completionHandler:^(NSURLResponse *response2,
                          NSData *data,
                          NSError *error) 
@@ -580,7 +563,7 @@ NSDecimalNumber* time_token = 0;
             
         case kCommand_ReceiveMessage: {
             NSString* timeToken = nil;
-            for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+            for (ChannelStatus* it in [_subscriptions copy]) {
                 if ([it.channel isEqualToString:connection.channel])
                 {   
                     if(!it.connected) {
@@ -594,7 +577,7 @@ NSDecimalNumber* time_token = 0;
             }
                 // Problem?
             if (response == nil || [timeToken isEqualToString:@"0"] ) {
-                for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                for (ChannelStatus* it in [_subscriptions copy]) {
                     if ([it.channel isEqualToString:connection.channel])
                     {                        
                         [_subscriptions removeObject:it];
@@ -620,7 +603,7 @@ NSDecimalNumber* time_token = 0;
                     
                     if (!_subscriptions && [_subscriptions count] > 0) {
                         BOOL channel_exist = NO;
-                        for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                        for (ChannelStatus* it in [_subscriptions copy]) {
                             if ([it.channel isEqualToString:connection.channel])
                             { channel_exist = YES;
                                 break;
@@ -628,7 +611,7 @@ NSDecimalNumber* time_token = 0;
                         }
                         
                         if (!channel_exist) {
-                            ChannelStatus *cs = [[[ChannelStatus alloc] init] autorelease];
+                            ChannelStatus *cs = [[ChannelStatus alloc] init] ;
                             cs.channel = connection.channel;
                             cs.connected = YES;
                             [_subscriptions addObject:cs];
@@ -638,10 +621,9 @@ NSDecimalNumber* time_token = 0;
                         }
                     } else {
                             // New Channel
-                        ChannelStatus *cs = [[[ChannelStatus alloc] init] autorelease];
+                        ChannelStatus *cs = [[ChannelStatus alloc] init] ;
                         cs.channel = connection.channel;
                         cs.connected = true;
-                        [_subscriptions release];
                         _subscriptions = [[NSMutableSet alloc] init];
                         [_subscriptions addObject:cs];
                     }
@@ -651,7 +633,7 @@ NSDecimalNumber* time_token = 0;
                 }
             }
             else {
-                for (ChannelStatus* it in [[_subscriptions copy]autorelease]) {
+                for (ChannelStatus* it in [_subscriptions copy]) {
                     if ([it.channel isEqualToString:connection.channel])
                     {
                             // Connect Callback

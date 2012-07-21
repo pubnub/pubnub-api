@@ -42,11 +42,7 @@
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
-- (void)dealloc {
-    [messageText release];
-    [responceText release];
-    [super dealloc];
-}
+
 - (IBAction)continueClick:(id)sender {
      [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:@"hello_world",@"channel",[NSDictionary dictionaryWithObjectsAndKeys:@"X-code!",@"Editer",@"Objective-c",@"Language", nil],@"message", nil]];
 }

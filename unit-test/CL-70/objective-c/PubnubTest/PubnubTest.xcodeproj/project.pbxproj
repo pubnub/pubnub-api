@@ -11,8 +11,8 @@
 		C8F6538A15B98D2C008535CE /* CEPubnub.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F6537E15B98D2C008535CE /* CEPubnub.m */; };
 		C8F6538B15B98D2C008535CE /* Cipher.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F6538015B98D2C008535CE /* Cipher.m */; };
 		C8F6538C15B98D2C008535CE /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F6538215B98D2C008535CE /* Common.m */; };
-		C8F6538D15B98D2C008535CE /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F6538415B98D2C008535CE /* JSON.m */; };
-		C8F6538E15B98D2C008535CE /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F6538615B98D2C008535CE /* JSONKit.m */; };
+		C8F6538D15B98D2C008535CE /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F6538415B98D2C008535CE /* JSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		C8F6538E15B98D2C008535CE /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F6538615B98D2C008535CE /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C8F6538F15B98D2C008535CE /* UnitTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F6538815B98D2C008535CE /* UnitTestController.m */; };
 		C8FD6F4B15B93F9C00A299E6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FD6F4A15B93F9B00A299E6 /* UIKit.framework */; };
 		C8FD6F4D15B93F9C00A299E6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FD6F4C15B93F9C00A299E6 /* Foundation.framework */; };
@@ -245,7 +245,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -270,7 +270,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

@@ -40,7 +40,7 @@
     // Messages must be JSON compatible
 @interface CEPubnub : NSObject {
 @private
-    id<CEPubnubDelegate> _delegate;
+    __unsafe_unretained id<CEPubnubDelegate> _delegate;
     NSString* _publishKey;
     NSString* _subscribeKey;
     NSString* _secretKey;
