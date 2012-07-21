@@ -1,7 +1,8 @@
 # Pubnub
 ---
 
-Pubnub is an iOS Objective-C library wrapper for the Pubnub realtime messaging service [Pubnub.com](http://www.pubnub.com/).
+Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime messaging service [Pubnub.com](http://www.pubnub.com/).
+
 
 ## Using Pubnub in your project
 

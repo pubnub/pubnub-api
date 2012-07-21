@@ -12,8 +12,10 @@
 @interface iPhoneTest ()
 
 @end
-@interface   unitTestDelegates:NSObject<CEPubnubDelegate>
+@interface unitTestDelegates:NSObject<CEPubnubDelegate>
+    @property (strong) id<CEPubnubDelegate> delHolder;
 
+-(id)getDelegate;
 @end
 
 @implementation iPhoneTest
@@ -26,7 +28,7 @@ CEPubnub *pubnub;
     [super viewDidLoad];
         // Do any additional setup after loading the view, typically from a nib.
     
-    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:nil useSSL:NO];
+    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"demo" useSSL:NO];
         //subscribe to a few channels
 	
 	[pubnub setDelegate:self];
@@ -131,7 +133,7 @@ CEPubnub *_pubnubtemp;
     
     
     unitTestDelegates *del= [[unitTestDelegates alloc] init] ;
-    [_pubnubtemp setDelegate:del ];
+    [_pubnubtemp setDelegate:[del getDelegate] ];
     
     
     for (NSString* channel in many_channels) {
@@ -208,18 +210,21 @@ CEPubnub *_pubnubtemp;
         NSLog(@"Re-Connect to Channel:   %@",channel);
     } 
 
-- (void)dealloc {
-    [txt release];
-    [txt release];
-    [super dealloc];
-}
+
 @end
 
 
 @implementation unitTestDelegates
+@synthesize delHolder;
+
+-(id)getDelegate
+{
+    return delHolder;
+}
 
 -(id)init
 {
+    delHolder=self;
     return self ;
 }
 

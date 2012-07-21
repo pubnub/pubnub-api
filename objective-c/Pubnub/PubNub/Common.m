@@ -15,13 +15,13 @@
 @implementation NSString (Extensions)
 
 - (NSString*) urlEscapedString {
-    return [(id)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)self, NULL, CFSTR(":@/?&=+"),
-                                                        kCFStringEncodingUTF8) autorelease];
+    return (__bridge id)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)self, NULL, CFSTR(":@/?&=+"),
+                                                        kCFStringEncodingUTF8) ;
 }
 
 - (NSString*) unescapeURLString {
-    return [(id)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (CFStringRef)self, CFSTR(""),
-                                                                        kCFStringEncodingUTF8) autorelease];
+    return (__bridge id)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (__bridge CFStringRef)self, CFSTR(""),
+                                                                        kCFStringEncodingUTF8) ;
 }
 - (BOOL) containsString:(NSString*)string {
     NSRange range = [self rangeOfString:string];
@@ -58,12 +58,9 @@
     
     // create a new CFStringRef (toll-free bridged to NSString)
     // that you own
-    NSString *uuidString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    NSString *uuidString = (__bridge NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
     
-    // transfer ownership of the string
-    // to the autorelease pool
-    [uuidString autorelease];
-    
+        
     // release the UUID
     CFRelease(uuid);
     
@@ -75,7 +72,7 @@
     Cipher *ci = [[Cipher alloc] initWithKey: key];
     NSData *data =[val dataUsingEncoding: NSUTF8StringEncoding];
     NSData* enc = [ci encrypt: data];
-    [ci release];
+  
     
     [Base64 initialize];
     return [Base64 encode:enc];
@@ -87,7 +84,7 @@
     Cipher *ci = [[Cipher alloc] initWithKey:key];
     NSData *data = val ;
     NSData* enc = [ci encrypt: data];
-    [ci release];
+ 
     
     [Base64 initialize];
     return [Base64 encode: enc];
@@ -95,7 +92,7 @@
 
 + (NSString *)AES128DecryptWithKey:(NSString *)key Data:(NSString *)data 
 {
-    Cipher *ci= [[[Cipher alloc]initWithKey:key] autorelease];
+    Cipher *ci= [[Cipher alloc]initWithKey:key] ;
     [Base64 initialize];
     
     NSData * dat= [Base64 decode:data];
@@ -105,7 +102,7 @@
         NSLog(@"Error: Failed to decrypt. Please validate symmetric (cipher) key.");
     }
     NSString *dec=   [[NSString alloc]initWithData:decData encoding:NSUTF8StringEncoding] ;
-    return [dec autorelease];
+    return dec ;
 }
 
 @end
