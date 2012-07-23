@@ -287,7 +287,7 @@ public class PubnubTestActivity extends Activity {
 
 					@Override
 					public void reconnectCallback(String channel) {
-						Log.i("ReconnectCallback", "Reconnected to channel :"
+						Log.i("ReconnectCallback", "Reconnecting to channel :"
 								+ channel);
 					}
 

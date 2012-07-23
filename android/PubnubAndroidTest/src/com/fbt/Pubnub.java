@@ -21,6 +21,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -574,7 +577,9 @@ public class Pubnub {
             } catch (Exception e) {
                 e.printStackTrace();
                 JSONArray jsono = new JSONArray();
-                try { jsono.put("Failed UTF-8 Encoding URL."); }
+                try {
+                	jsono.put(0);
+                	jsono.put("Failed UTF-8 Encoding URL."); }
                 catch (Exception jsone) {}
                 return jsono;
             }
@@ -592,12 +597,12 @@ public class Pubnub {
                 JSONArray jsono = new JSONArray();
 
                 try {
-                    jsono.put("Failed to Concurrent HTTP Request.");
+                	jsono.put(0);
+                    jsono.put("Request failed due to missing Internet connection.");
                 } catch (Exception jsone) {
                 }
 
-                e.printStackTrace();
-                System.out.println(e);
+                System.out.println(e.getMessage());
 
                 return jsono;
             }
@@ -606,10 +611,12 @@ public class Pubnub {
 
             JSONArray jsono = new JSONArray();
 
-            try { jsono.put("Failed JSONP HTTP Request."); }
+            try {
+            	jsono.put(0);
+            	jsono.put("Failed JSONP HTTP Request."); }
             catch (Exception jsone) {}
 
-            System.out.println(e);
+            System.out.println(e.getMessage());
 
             return jsono;
         }
@@ -619,11 +626,12 @@ public class Pubnub {
         catch (Exception e) {
             JSONArray jsono = new JSONArray();
 
-            try { jsono.put("Failed JSON Parsing."); }
+            try {
+            	jsono.put(0);
+            	jsono.put("Failed JSON Parsing."); }
             catch (Exception jsone) {}
 
-            e.printStackTrace();
-            System.out.println(e);
+            System.out.println(e.getMessage());
 
             // Return Failure to Parse
             return jsono;
@@ -642,12 +650,14 @@ public class Pubnub {
         public String call() throws Exception {
             // Prepare request
             String line = "", json = "";
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
+            HttpConnectionParams.setSoTimeout(httpParams, 310000);
+            HttpClient httpclient = new DefaultHttpClient(httpParams);
             HttpUriRequest request = new HttpGet(url);
             request.setHeader("V", "3.1");
             request.setHeader("User-Agent", "Java-Android");
             request.setHeader("Accept-Encoding", "gzip");
-            httpclient.getParams().setParameter("http.connection.timeout", 310000);
 
             // Execute request
             HttpResponse response;
