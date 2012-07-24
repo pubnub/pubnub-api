@@ -176,10 +176,18 @@
         } );
 
         // STANFORD CRYPTO LIBRARY WITH AES ENCRYPTION
-        pubnub_setup.password = '12345678';
+        var pubnub_setup_secret = {
+            channel       : 'my_mobile_app_secret',
+            publish_key   : 'demo',
+            subscribe_key : 'demo',
+            password      : '12345678', // Encrypt with Password
+            presence      : false,      // Disable Presence
+            ssl           : false,      // Use SSL
+            geo           : false       // Include Geo Data (Lat/Lng)
+        };
         var encrypted = io.connect(
             'http://pubsub.pubnub.com/secret',
-            pubnub_setup
+            pubnub_setup_secret
         );
 
         encrypted.on( 'connect', function() {
@@ -194,8 +202,9 @@
         } );
 
         // CUSTOM USER DATA ON PRESENCE EVENTS
-        var pubnub_setup = {
+        var pubnub_setup_custom = {
             channel       : 'my_mobile_app',
+            presence      : false,      // Disable Presence
             publish_key   : 'demo',
             subscribe_key : 'demo',
             user          : { name : "John" }
@@ -204,7 +213,7 @@
         // Multi-plexing Single Connection
         var cpresence = io.connect(
             'http://pubsub.pubnub.com/custom-presence',
-            pubnub_setup
+            pubnub_setup_custom
         );
 
     }

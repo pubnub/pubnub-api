@@ -4,7 +4,6 @@
     // PubNub Socket.IO
     // =====================================================================
     var p          = PUBNUB
-    ,   standard   = 'standard'
     ,   uuid       = PUBNUB.db.get('uuid') || p.uuid(function(id){
             PUBNUB.db.set( 'uuid', uuid = id )
         })
@@ -12,7 +11,7 @@
     ,   namespaces = {}
     ,   users      = {}
     ,   io         = window.io = {
-        connected : false,
+        connected : {},
         connect   : function( host, setup ) {
 
             // PARSE SETUP and HOST
@@ -21,24 +20,25 @@
             ,   cuser     = setup['user'] || {}
             ,   presence  = 'presence' in setup ? setup['presence'] : true
             ,   origin    = urlbits[2]
-            ,   namespace = urlbits[3] || standard
-            ,   socket    = create_socket(namespace);
+            ,   namespace = (urlbits[3] || 'standard') + '-' + setup.channel
+            ,   channel   = setup.channel
+            ,   socket    = get_socket(namespace);
 
             // PASSWORD ENCRYPTION
             socket.password = 'sjcl' in window && setup.password;
 
             // PUBNUB ALREADY SETUP?
-            if (io.connected) return socket;
-            io.connected = true;
+            if (namespace in io.connected) return socket;
+            io.connected[namespace] = true;
 
             // GEO LOCATION
             if (setup.geo) setInterval( locate, 15000 ) && locate();
 
             // SETUP PUBNUB
             setup.origin   = origin;
-            p              = p.init(setup);
+            var p          = socket.p = PUBNUB.init(setup);
             p.disconnected = 0;
-            p.channel      = setup.channel || standard;
+            p.channel      = socket.channel = setup.channel;
 
             // DISCONNECTED
             function dropped() {
@@ -57,7 +57,9 @@
                 connect : function() {
                     p.disconnected = 0;
                     p.each( namespaces, function(ns) {
-                        p.events.fire( ns + 'connect', {} ) 
+                        if (get_socket(ns).connected) return;
+                        get_socket(ns).connected = true;
+                        p.events.fire( ns + 'connect', {} );
                     } );
                 },
                 callback : function(evt) {
@@ -108,8 +110,8 @@
             if (presence)
                 p.tcpKeepAlive = setInterval( p.updater( function() {
                     var nss = p.map( namespaces, function(ns) { return ns } );
-                    send( 'ping', standard, { nss : nss, cuser : cuser } );
-                }, 2500 ), 500 );
+                    send( 'ping', namespace, { nss : nss, cuser : cuser } );
+                }, 3000 ), 500 );
 
             // RETURN SOCKET
             return socket;
@@ -120,8 +122,6 @@
     // Advanced User Presence
     // =====================================================================
     setInterval( function() {
-        if (p.disconnected) return;
-
         p.each( users, function(namespace) {
             p.each( users[namespace], function(uid) {
                 var user = users[namespace][uid];
@@ -152,8 +152,8 @@
     // Stanford Crypto Library with AES Encryption
     // =====================================================================
     function encrypt( namespace, data ) {
-        var namespace = namespace || standard
-        ,   socket    = namespaces[namespace];
+        var namespace = namespace
+        ,   socket    = get_socket(namespace);
 
         return 'password' in socket && socket.password && sjcl.encrypt(
            socket.password, JSON.stringify(data)+''
@@ -161,8 +161,8 @@
     }
 
     function decrypt( namespace, data ) {
-        var namespace = namespace || standard
-        ,   socket    = namespaces[namespace];
+        var namespace = namespace
+        ,   socket    = get_socket(namespace);
 
         if (!socket.password) return data;
         try { return JSON.parse(
@@ -175,11 +175,13 @@
     // PUBLISH A MESSAGE + Retry if Failed with fallback
     // =====================================================================
     function send( event, namespace, data, wait, cb ) {
+        var p = get_socket(namespace).p;
+        console.log('PUBNUB->',p,namespace,data,event);
         p.publish({
             channel : p.channel,
             message : {
                 name : event,
-                ns   : namespace || standard,
+                ns   : namespace,
                 data : encrypt( namespace, data || {} ),
                 uuid : uuid,
                 geo  : p.location || [ 0, 0 ]
@@ -212,38 +214,40 @@
     // =====================================================================
     // CREATE SOCKET
     // =====================================================================
-    function create_socket(namespace) {
-        if ( namespace !== standard &&
-             !(standard in namespaces)
-        ) create_socket(standard);
+    function get_socket(namespace) {
+        var namespace = namespace
+        ,   socket    = namespaces[namespace] || (function(){
+                return namespaces[namespace] = {
+                    namespace      : namespace,
+                    connected      : false,
+                    users          : users[namespace] = {},
+                    user_count     : 1,
+                    get_user_list  : function(){
+                        return namespaces[namespace].users;
+                    },
+                    get_user_count : function(){
+                        return namespaces[namespace].user_count;
+                    },
+                    emit : function( event, data, receipt ) {
+                        send( event, namespace, data, 0, receipt );
+                    },
+                    send : function( data, receipt ) {
+                        send( 'message', namespace, data, 0, receipt );
+                    },
+                    on : function( event, fn ) {
+                        if (typeof event === 'string')
+                            p.events.bind( namespace + event, fn );
+                        else if (typeof event === 'object')
+                            p.each( event, function(evt) {
+                                p.events.bind( namespace + evt, fn );
+                            } );
+                    },
+                    disconnect : function() {
+                        delete namespaces[namespace];
+                    }
+                };
+            })();
 
-        return namespaces[namespace] = {
-            namespace      : namespace,
-            users          : users[namespace] = {},
-            user_count     : 1,
-            get_user_list  : function(){
-                return namespaces[namespace].users;
-            },
-            get_user_count : function(){
-                return namespaces[namespace].user_count;
-            },
-            emit : function( event, data, receipt ) {
-                send( event, namespace, data, 0, receipt );
-            },
-            send : function( data, receipt ) {
-                send( 'message', namespace, data, 0, receipt );
-            },
-            on : function( event, fn ) {
-                if (typeof event === 'string')
-                    p.events.bind( namespace + event, fn );
-                else if (typeof event === 'object')
-                    p.each( event, function(evt) {
-                        p.events.bind( namespace + evt, fn );
-                    } );
-            },
-            disconnect : function() {
-                delete namespaces[namespace];
-            }
-        };
+        return socket;
     }
 })();
