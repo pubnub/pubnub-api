@@ -59,8 +59,9 @@
     Start Test
     ====================================================================== */
     p.bind( 'mousedown,touchstart', start_button, start_test );
+
     function start_test() {
-        test.plan = 15; // # of tests
+        test.plan = 16; // # of tests
         test.pass = 0;  // 0 passes so far
         test.fail = 0;  // 0 failes so far
         test.done = 0;  // 0 tests done so far
@@ -86,6 +87,16 @@
             geo           : false   // Include Geo Data (Lat/Lng)
         };
 
+        var pubnub_setup_2 = {
+            channel       : 'my_mobile_app2',
+            publish_key   : 'demo',
+            subscribe_key : 'demo',
+            password      : '',     // Encrypt with Password
+            ssl           : false,  // Use SSL
+            geo           : false,  // Include Geo Data (Lat/Lng)
+            presence      : false
+        };
+
         // Multi-plexing Single Connection
         var feed = io.connect(
             'http://pubsub.pubnub.com/feed',
@@ -93,14 +104,14 @@
         );
         var chat = io.connect(
             'http://pubsub.pubnub.com/chat',
-            pubnub_setup
+            pubnub_setup_2
         );
 
         // Ordinary Socket
         var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
 
         socket.on( 'connect', function() {
-            test( feed, 'Socket Connection Estabilshed.' );
+            test( feed, 'Socket Connection Estabilshed' );
             socket.send('sock');
 
             // Connected Users
@@ -111,7 +122,7 @@
                 'important-message',
                 { data : true },
                 function (receipt) {
-                    test( receipt, 'Acknowledgement Receipt Confirmation.' );
+                    test( receipt, 'Acknowledgement Receipt Confirmation' );
                 }
             );
         } );
@@ -123,7 +134,7 @@
 
         // CONNECTION ESTABLISHED
         feed.on( 'connect', function() {
-            test( feed, 'Feed Connection Estabilshed.' );
+            test( feed, 'Feed Connection Estabilshed' );
             feed.send({ title : 'Update', body : 'Text Body' });
             feed.emit( 'my-custom-event', 123456 );
         } );
@@ -138,21 +149,22 @@
         } );
 
         chat.on( 'connect', function() {
-            test( chat, 'Chat Connection Estabilshed.' );
+            test( chat, 'Chat Connection Estabilshed' );
             chat.send("Hi");
         } );
 
         // MESSAGE SEND/RECEIVE
         chat.on( 'message', function(message) {
             test( message === "Hi", 'Chat Message Received' );
+            test( message, 'SECOND Connection Send/Receive Successfully Completed' );
         } );
 
         // CONNECTION LOST/RESTORED
         feed.on( 'disconnect', function() {
-            console.log('Error, Lost Connection.');
+            console.log('Error, Lost Connection');
         } );
         feed.on( 'reconnect', function() {
-            console.log('Connection Restored.');
+            console.log('Connection Restored');
         } );
 
         // USER JOINS/PARTS CHAT
@@ -181,8 +193,7 @@
             );
         } );
 
-
-        // CUSTOMER USER DATA ON PRESENCE EVENTS
+        // CUSTOM USER DATA ON PRESENCE EVENTS
         var pubnub_setup = {
             channel       : 'my_mobile_app',
             publish_key   : 'demo',
