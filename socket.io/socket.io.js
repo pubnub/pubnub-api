@@ -27,16 +27,22 @@
             // PASSWORD ENCRYPTION
             socket.password = 'sjcl' in window && setup.password;
 
-            // PUBNUB ALREADY SETUP?
-            if (namespace in io.connected) return socket;
-            io.connected[namespace] = true;
+            // PUBNUB ALREADY CONNECTED?
+            if (channel in io.connected) {
+                socket.p = io.connected[channel];
+                return socket;
+            }
 
             // GEO LOCATION
             if (setup.geo) setInterval( locate, 15000 ) && locate();
 
             // SETUP PUBNUB
-            setup.origin   = origin;
-            var p          = socket.p = PUBNUB.init(setup);
+            setup.origin = origin;
+            var p                     =
+                socket.p              =
+                io.connected[channel] =
+                PUBNUB.init(setup);
+
             p.disconnected = 0;
             p.channel      = socket.channel = setup.channel;
 
@@ -176,7 +182,6 @@
     // =====================================================================
     function send( event, namespace, data, wait, cb ) {
         var p = get_socket(namespace).p;
-        console.log('PUBNUB->',p,namespace,data,event);
         p.publish({
             channel : p.channel,
             message : {

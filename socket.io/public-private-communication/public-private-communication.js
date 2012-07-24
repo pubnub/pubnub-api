@@ -104,6 +104,20 @@
             public_setup
         );
 
+        var public2 = io.connect(
+            'http://pubsub.pubnub.com/public2',
+            public_setup
+        );
+
+        var public3 = io.connect(
+            'http://pubsub.pubnub.com/public3',
+            public_setup
+        );
+        var public4 = io.connect(
+            'http://pubsub.pubnub.com/public4',
+            public_setup
+        );
+
         public_socket.on( 'connect', function() {
             test( 1, 'Public Socket Connected (SOCKET 1)' );
             public_socket.send('public');
