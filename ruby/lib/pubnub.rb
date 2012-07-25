@@ -211,7 +211,7 @@ class Pubnub
     loop do
       begin
 
-        open(url, 'r', :read_timeout => 3) do |f|
+        open(url, 'r', :read_timeout => 300) do |f|
           http_response = JSON.parse(f.read)
           messages = http_response[0]
           timetoken = http_response[1]
@@ -248,7 +248,7 @@ class Pubnub
         end
 
       rescue Timeout::Error => e
-        puts "#{Time.now}: Caught #{e.message}"
+        logger.debug "Caught #{e.message}, restarting connection."
         retry
 
       end
