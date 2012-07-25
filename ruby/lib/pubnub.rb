@@ -208,40 +208,53 @@ class Pubnub
     url = @origin + url
 
     # Execute Request
-    open(url) do |f| 
-      http_response = JSON.parse(f.read)
-      messages = http_response[0]
-      timetoken = http_response[1]
+    loop do
+      begin
 
-      next if !messages.length
+        open(url, 'r', :read_timeout => 3) do |f|
+          http_response = JSON.parse(f.read)
+          messages = http_response[0]
+          timetoken = http_response[1]
 
-      ## Run user Callback and Reconnect if user permits.
-      ## Capture the message and encrypt it
-      if @cipher_key.length > 0
-        pc = PubnubCrypto.new(@cipher_key)
-        messages.each do |message|
-          if message.is_a? Array
-            message=pc.decryptArray(message)
+          next if !messages.length
+
+          ## Run user Callback and Reconnect if user permits.
+          ## Capture the message and encrypt it
+          if @cipher_key.length > 0
+            pc = PubnubCrypto.new(@cipher_key)
+            messages.each do |message|
+              if message.is_a? Array
+                message=pc.decryptArray(message)
+              else
+                message=pc.decryptObject(message)
+              end
+              if !callback.call(message)
+                return
+              end
+            end
           else
-            message=pc.decryptObject(message)
+            messages.each do |message|
+              if !callback.call(message)
+                return
+              end
+            end
           end
-          if !callback.call(message)
-            return
-          end
+
+          request = ['subscribe', @subscribe_key, channel, '0', timetoken.to_s]
+          args['request'] = request
+          # Recusive call to _subscribe
+          _subscribe(args)
+          
         end
-      else
-        messages.each do |message|
-          if !callback.call(message)
-            return
-          end
-        end
+
+      rescue Timeout::Error => e
+        puts "#{Time.now}: Caught #{e.message}"
+        retry
+
       end
 
-      request = [ 'subscribe', @subscribe_key, channel, '0', timetoken.to_s ]
-      args['request'] = request
-      # Recusive call to _subscribe
-      _subscribe(args)
     end
+
   end
 
   #**
