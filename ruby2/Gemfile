@@ -21,6 +21,7 @@ end
 
 group :test, :development do
   gem 'rspec-rails', "~> 2.0"
+  gem 'ruby-debug-base19'
 end
 
 #gem 'jquery-rails'
