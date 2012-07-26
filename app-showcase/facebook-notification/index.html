@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Let's be friends http://twitter.com/pubnub -->
+    <meta charset="utf-8">
+    <title>PubNub Notification Example</title>
+    <meta name="description" content="PubNub Notification Example">
+    <meta name="author" content="PubNub">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href=bootstrap.css rel=stylesheet>
+    <style type=text/css> body { padding-top: 60px; } </style>
+
+  </head>
+
+  <body>
+
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="#">PubNub Notification Example</a>
+          <ul class="nav">
+            <li class="active"><a href="#">PubNub</a></li>
+            <li><a href="#about">PubNub</a></li>
+            <li><a href="#contact">PubNub</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h1>PubNub Notification</h1>
+        <p></p>
+        <p>
+            <button
+                id="simulate-notification"
+                class="btn primary large danger"
+            > Simulate a Notification </button>
+        </p>
+      </div>
+
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="span-one-third">
+          <h2>PubNub</h2>
+          <p>Etiam porta sem malesuada magna mollis euismod. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
+          <p><a class="btn" href="#">View PubNub &raquo;</a></p>
+        </div>
+        <div class="span-one-third">
+          <h2>PubNub</h2>
+           <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p><a class="btn" href="#">View PubNub &raquo;</a></p>
+       </div>
+        <div class="span-one-third">
+          <h2>PubNub</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <p><a class="btn" href="#">View PubNub &raquo;</a></p>
+        </div>
+      </div>
+
+      <footer> <p>PubNub 2012</p> </footer>
+
+    </div>
+
+
+    <!-- SAMPLE MODAL CONTENT -->
+    <div id="new-alert" class="modal hide fade">
+        <div class="modal-header">
+            <a href="#" class="close">&times;</a>
+            <h3>PubNub Notification Heading</h3>
+        </div>
+        <div class="modal-body">
+            <p>You have a new <strong>Message</strong>. (Sent Via PubNub)</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn primary">Read Now</a>
+            <a href="#" class="btn secondary">Later</a>
+        </div>
+    </div>
+
+    <script src=https://pubnub.s3.amazonaws.com/pubnub-3.1.min.js></script>
+    <script src=http://code.jquery.com/jquery-1.5.2.min.js></script>
+    <script src=bootstrap-modal.js></script>
+    <script>(function(){
+
+        // EXLUDE PUBLISH KEY IN PRODUCTION FOR SECURITY PURPOSES
+        var pubnub = PUBNUB.init({
+            publish_key   : 'demo', // REMOVE (For Security)
+            subscribe_key : 'demo',
+            ssl           : false
+        });
+
+        // Setup New Data Push Connectoin via PubNub
+        pubnub.subscribe({
+            restore  : true,
+            channel  : 'example-user-id-1234',
+            callback : show_notification
+        });
+
+        // Setup Alert Window
+        $('#new-alert').modal({
+            keyboard : true
+        }).bind( 'shown', function() {
+            console.log('Alert Message is Visible to the user Now.');
+        } );
+
+        // Simulate Notificaiton
+        $('#simulate-notification').bind( 'mousedown', function() {
+            pubnub.publish({
+                channel : 'example-user-id-1234',
+                message : 'alert'
+            });
+            return false;
+        } );
+
+        function show_notification(message) {
+            $('#new-alert').modal('show');
+        }
+
+    })();</script>
+
+  </body>
+</html>
