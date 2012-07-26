@@ -24,12 +24,10 @@ describe "initialize" do
     end
 
     context "when named" do
-
       context "and there are exactly 5 arguments" do
         before do
           @pn = Pubnub.new("demo_pub_key", "demo_sub_key", "demo_md5_key", "demo_cipher_key", false)
         end
-
         it_behaves_like "successful initialization"
       end
 
@@ -40,7 +38,6 @@ describe "initialize" do
     end
 
     context "when passed with optional parameters in a hash" do
-
       context "when the hash key is a symbol" do
         before do
           @pn = Pubnub.new(:publish_key => @publish_key,
@@ -49,10 +46,26 @@ describe "initialize" do
                            :cipher_key => @cipher_key,
                            :ssl => @ssl_enabled)
         end
-
         it_behaves_like "successful initialization"
+      end
+    end
+  end
+
+  describe ".verify_config" do
+
+    context "subscribe_key" do
+
+      it "should not throw an exception if present" do
+        pn = Pubnub.new(:subscribe_key => "demo")
+        lambda { pn.verify_config }.should_not raise_error
+      end
+
+      it "should not throw an exception if present" do
+        pn = Pubnub.new(:subscribe_key => :bar)
+        lambda { pn.verify_config }.should_not raise_error
       end
 
     end
+
   end
 end

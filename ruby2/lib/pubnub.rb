@@ -46,19 +46,19 @@ class Pubnub
 
       if args.size == 5
 
-        publish_key = args[0]
-        subscribe_key = args[1]
-        secret_key = args[2]
-        cipher_key = args[3]
-        ssl_on = args[4]
+        @publish_key = args[0].to_s
+        @subscribe_key = args[1].to_s
+        @secret_key = args[2].to_s
+        @cipher_key = args[3].to_s
+        @ssl = args[4]
 
       elsif args.size == 1 && args[0].class == Hash
 
-        publish_key = args[0][:publish_key]
-        subscribe_key = args[0][:subscribe_key]
-        secret_key = args[0][:secret_key]
-        cipher_key = args[0][:cipher_key]
-        ssl_on = args[0][:ssl]
+        @publish_key = args[0][:publish_key].to_s
+        @subscribe_key = args[0][:subscribe_key].to_s
+        @secret_key = args[0][:secret_key].to_s
+        @cipher_key = args[0][:cipher_key].to_s
+        @ssl = args[0][:ssl]
 
       else
         raise "Initialize with either a hash of options, or exactly 5 named parameters."
@@ -66,15 +66,20 @@ class Pubnub
 
     # publish_key and cipher_key are both optional.
 
-    @publish_key   = publish_key
-    @subscribe_key = subscribe_key
-    @secret_key    = secret_key
-    @cipher_key    = cipher_key
-    @ssl           = ssl_on
-
-
-
     @origin = (@ssl.present? ? 'https://' : 'http://') + ORIGIN_HOST
+
+  end
+
+  def verify_config
+    Rails.logger.debug("verifying configuration...")
+
+    @subscribe_key.blank? ? raise("subscribe_key is a mandatory parameter.") :  Rails.logger.debug("subscribe_key set to #{@subscribe_key}")
+
+    Rails.logger.debug(@publish_key.present? ? "publish_key set to #{@publish_key}" : "publish_key not set.")
+    Rails.logger.debug(@cipher_key.present? ? "cipher_key set to #{@cipher_key}. AES encryption enabled." : "cipher_key not set. AES encryption disabled.")
+    Rails.logger.debug(@secret_key.present? ? "secret_key set to #{@secret_key}. HMAC message signing enabled." : "secret_key not set. HMAC signing disabled.")
+    Rails.logger.debug(@ssl.present? ? "ssl is enabled." : "ssl is disabled.")
+
 
   end
 
