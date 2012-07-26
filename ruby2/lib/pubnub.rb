@@ -30,18 +30,6 @@ class Pubnub
   MAX_RETRIES = 3
   ORIGIN_HOST = 'pubsub.pubnub.com'
 
-  #**
-  #* Pubnub 3.1 with Cipher Key
-  #*
-  #* Init the Pubnub Client API
-  #*
-  #* @param string publish_key required key to send messages.
-  #* @param string subscribe_key required key to receive messages.
-  #* @param string secret_key required key to sign messages.
-  #* @param string cipher_key required to encrypt messages.
-  #* @param boolean ssl required for 2048 bit encrypted messages.
-  #*
-
   def initialize(*args)
 
     if args.size == 5 # passing in named parameters

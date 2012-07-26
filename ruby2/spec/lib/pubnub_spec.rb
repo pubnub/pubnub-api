@@ -104,19 +104,16 @@ describe Pubnub do
         mock(@pn)._request({"callback" => @my_callback, "request" => ["time", "0"]}) {}
         @pn.time("callback" => @my_callback)
       end
-
     end
 
     it "should return the current time" do
 
-      mock(Rails.logger).debug([13433410952661319]) {}
+      mock(@my_callback).call([13433410952661319]) {}
 
       VCR.use_cassette("time", :record => :none) do
         @pn.time("callback" => @my_callback)
       end
-
     end
-
   end
 
 end
