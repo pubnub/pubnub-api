@@ -15,36 +15,36 @@ Try it **LIVE!** - [http://pubnub-demo.s3.amazonaws.com/chat-with-sounds/chat.ht
 ### See Source Code:
 
 ```html
-    <div><input id=input placeholder=chat-here></div>
-    <code>Chat Output</code>
-    <div id=box></div>
-    <div id=pubnub pub-key=demo sub-key=demo></div>
-    <script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
-    <script src=sound.js></script>
-    <script>(function(){
-        var box = PUBNUB.$('box'), input = PUBNUB.$('input'), channel = 'chatlllll';
-        PUBNUB.subscribe({
-            channel : channel,
-            callback : function(text) { 
-                // PLAY SOUND HERE
-                sounds.play('chat');
+<div><input id=input placeholder=chat-here></div>
+<code>Chat Output</code>
+<div id=box></div>
+<div id=pubnub pub-key=demo sub-key=demo></div>
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+<script src=sound.js></script>
+<script>(function(){
+    var box = PUBNUB.$('box'), input = PUBNUB.$('input'), channel = 'chatlllll';
+    PUBNUB.subscribe({
+        channel : channel,
+        callback : function(text) { 
+            // PLAY SOUND HERE
+            sounds.play('chat');
 
-                // UPDATE TEXT OUTPUT HERE
-                box.innerHTML = 
-                    (''+text).replace( /[<>]/g, '' ) +
-                    '<br>' +
-                    box.innerHTML; 
-            }
-        });
-        PUBNUB.bind( 'keyup', input, function(e) {
+            // UPDATE TEXT OUTPUT HERE
+            box.innerHTML = 
+                (''+text).replace( /[<>]/g, '' ) +
+                '<br>' +
+                box.innerHTML; 
+        }
+    });
+    PUBNUB.bind( 'keyup', input, function(e) {
 
-           (e.keyCode || e.charCode) === 13 && PUBNUB.publish({
-               channel : channel, 
-               message : input.value, 
-               x       : (input.value='')
-           });
+       (e.keyCode || e.charCode) === 13 && PUBNUB.publish({
+           channel : channel, 
+           message : input.value, 
+           x       : (input.value='')
        });
-    })();</script>
+   });
+})();</script>
 ```
 
 **Download Source Code on GitHub**
