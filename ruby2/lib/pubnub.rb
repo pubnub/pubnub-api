@@ -24,8 +24,12 @@ require 'digest'
 require 'pubnub_crypto'
 
 class Pubnub
+
+  attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl, :channel, :origin
+
   MAX_RETRIES = 3
-  retries=0
+  ORIGIN_HOST = 'pubsub.pubnub.com'
+
   #**
   #* Pubnub 3.1 with Cipher Key
   #*
@@ -37,19 +41,41 @@ class Pubnub
   #* @param string cipher_key required to encrypt messages.
   #* @param boolean ssl required for 2048 bit encrypted messages.
   #*
-  def initialize( publish_key, subscribe_key, secret_key, cipher_key, ssl_on )
+
+  def initialize(*args)
+
+      if args.size == 5
+
+        publish_key = args[0]
+        subscribe_key = args[1]
+        secret_key = args[2]
+        cipher_key = args[3]
+        ssl_on = args[4]
+
+      elsif args.size == 1 && args[0].class == Hash
+
+        publish_key = args[0][:publish_key]
+        subscribe_key = args[0][:subscribe_key]
+        secret_key = args[0][:secret_key]
+        cipher_key = args[0][:cipher_key]
+        ssl_on = args[0][:ssl]
+
+      else
+        raise "Initialize with either a hash of options, or exactly 5 named parameters."
+      end
+
+    # publish_key and cipher_key are both optional.
+
     @publish_key   = publish_key
     @subscribe_key = subscribe_key
     @secret_key    = secret_key
     @cipher_key    = cipher_key
     @ssl           = ssl_on
-    @origin        = 'pubsub.pubnub.com'
 
-    if @ssl
-      @origin = 'https://' + @origin
-    else
-      @origin = 'http://'  + @origin
-    end
+
+
+    @origin = (@ssl.present? ? 'https://' : 'http://') + ORIGIN_HOST
+
   end
 
   #**

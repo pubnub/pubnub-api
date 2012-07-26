@@ -1,3 +1,5 @@
+require "pubnub"
+
 class PNClient
 
   attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl_enabled, :channel
@@ -5,9 +7,9 @@ class PNClient
 
   def initialize
     puts "running init..."
-    @publish_key = "pub-bfe6270e-d3a4-4aa0-aae8-17c638d6bf50"
-    @subscribe_key = "sub-1679a957-9d72-11e1-adcd-63711b3a7d48"
-    @secret_key = "sec-MmNlMmFjMDQtZTRkYy00OGEzLTg4OWEtMDY3MjQ2Y2VjZWUx"
+    @publish_key = "demo"
+    @subscribe_key = "demo"
+    @secret_key = ""
     @cipher_key = ""
     @ssl_enabled = false
     @channel = "gcohen_1234"
