@@ -44,7 +44,7 @@ class Pubnub
 
   def initialize(*args)
 
-      if args.size == 5
+      if args.size == 5 # passing in named parameters
 
         @publish_key = args[0].to_s
         @subscribe_key = args[1].to_s
@@ -52,7 +52,7 @@ class Pubnub
         @cipher_key = args[3].to_s
         @ssl = args[4]
 
-      elsif args.size == 1 && args[0].class == Hash
+      elsif args.size == 1 && args[0].class == Hash # passing in an options hash
 
         @publish_key = args[0][:publish_key].to_s
         @subscribe_key = args[0][:subscribe_key].to_s
@@ -79,8 +79,6 @@ class Pubnub
     Rails.logger.debug(@cipher_key.present? ? "cipher_key set to #{@cipher_key}. AES encryption enabled." : "cipher_key not set. AES encryption disabled.")
     Rails.logger.debug(@secret_key.present? ? "secret_key set to #{@secret_key}. HMAC message signing enabled." : "secret_key not set. HMAC signing disabled.")
     Rails.logger.debug(@ssl.present? ? "ssl is enabled." : "ssl is disabled.")
-
-
   end
 
   #**
@@ -204,10 +202,11 @@ class Pubnub
   #*
   #* @return int timestamp.
   #*
-  def time(args)
-    request = [ 'time', '0' ]
-    args['request'] = request
-    _request(args)
+  def time(options)
+    options = HashWithIndifferentAccess.new(options)
+
+    options['request'] = [ 'time', '0' ]
+    options['callback'].blank? ? raise("You must supply a callback.") : _request(options)
   end
 
   #**
@@ -294,9 +293,9 @@ class Pubnub
   #* @param array request of url directories.
   #* @return array from JSON response.
   #*
-  def _request(args)
-    request  = args['request']
-    callback = args['callback']
+  def _request(options)
+    request  = options['request']
+    callback = options['callback']
     url = encode_URL(request)
     url = @origin + url
       open(url) do |f|

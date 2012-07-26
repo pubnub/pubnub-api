@@ -1,17 +1,19 @@
 require 'spec_helper'
+require 'rr'
+require 'vcr'
 
-describe "initialize" do
+describe Pubnub do
 
-  before do
-    @publish_key = "demo_pub_key"
-    @subscribe_key = "demo_sub_key"
-    @secret_key = "demo_md5_key"
-    @cipher_key = "demo_cipher_key"
-    @ssl_enabled = false
-    @channel = "pn_test"
-  end
+  describe ".initialize" do
 
-  context "parameters" do
+    before do
+      @publish_key = "demo_pub_key"
+      @subscribe_key = "demo_sub_key"
+      @secret_key = "demo_md5_key"
+      @cipher_key = "demo_cipher_key"
+      @ssl_enabled = false
+      @channel = "pn_test"
+    end
 
     shared_examples_for "successful initialization" do
       it "should initialize" do
@@ -38,6 +40,7 @@ describe "initialize" do
     end
 
     context "when passed with optional parameters in a hash" do
+
       context "when the hash key is a symbol" do
         before do
           @pn = Pubnub.new(:publish_key => @publish_key,
@@ -48,13 +51,15 @@ describe "initialize" do
         end
         it_behaves_like "successful initialization"
       end
+
+      context "when the hash key is named"
+
+
     end
   end
 
   describe ".verify_config" do
-
     context "subscribe_key" do
-
       it "should not throw an exception if present" do
         pn = Pubnub.new(:subscribe_key => "demo")
         lambda { pn.verify_config }.should_not raise_error
@@ -64,8 +69,43 @@ describe "initialize" do
         pn = Pubnub.new(:subscribe_key => :bar)
         lambda { pn.verify_config }.should_not raise_error
       end
+    end
+  end
+
+  describe "#time" do
+    before do
+      @pn = Pubnub.new(:publish_key => :demo)
+      @my_callback = lambda { |message| Rails.logger.debug(message) }
+    end
+
+    context "should enforce a callback parameter" do
+
+      it "should raise with no callback parameter" do
+        lambda { @pn.time(:foo => :bar) }.should raise_error
+      end
+
+      it "should allow for a symbol" do
+        mock(@pn)._request({"callback" => @my_callback, "request" => ["time", "0"]}) {}
+        @pn.time(:callback => @my_callback)
+      end
+
+      it "should allow for a string" do
+        mock(@pn)._request({"callback" => @my_callback, "request" => ["time", "0"]}) {}
+        @pn.time("callback" => @my_callback)
+      end
+
+    end
+
+    it "should return the current time" do
+
+      mock(Rails.logger).debug([13433410952661319]) { }
+
+      VCR.use_cassette("time", :record => :none) do
+        @pn.time("callback" => @my_callback)
+      end
 
     end
 
   end
+
 end
