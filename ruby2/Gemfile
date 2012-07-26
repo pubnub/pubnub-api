@@ -23,6 +23,8 @@ group :test, :development do
   gem 'rspec-rails', "~> 2.0"
   gem 'ruby-debug-base19'
   gem 'rr'
+  gem 'vcr'
+  gem 'webmock'
 end
 
 #gem 'jquery-rails'
