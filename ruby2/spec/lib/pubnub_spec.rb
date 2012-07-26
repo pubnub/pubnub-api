@@ -52,7 +52,18 @@ describe Pubnub do
         it_behaves_like "successful initialization"
       end
 
-      context "when the hash key is named"
+      context "when the hash key is named" do
+
+        before do
+          @pn = Pubnub.new("publish_key" => @publish_key,
+                           "subscribe_key" => @subscribe_key,
+                           "secret_key" => @secret_key,
+                           "cipher_key" => @cipher_key,
+                           "ssl" => @ssl_enabled)
+        end
+        it_behaves_like "successful initialization"
+
+      end
 
 
     end
@@ -98,7 +109,7 @@ describe Pubnub do
 
     it "should return the current time" do
 
-      mock(Rails.logger).debug([13433410952661319]) { }
+      mock(Rails.logger).debug([13433410952661319]) {}
 
       VCR.use_cassette("time", :record => :none) do
         @pn.time("callback" => @my_callback)

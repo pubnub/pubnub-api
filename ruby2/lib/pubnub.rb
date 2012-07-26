@@ -44,36 +44,36 @@ class Pubnub
 
   def initialize(*args)
 
-      if args.size == 5 # passing in named parameters
+    if args.size == 5 # passing in named parameters
 
-        @publish_key = args[0].to_s
-        @subscribe_key = args[1].to_s
-        @secret_key = args[2].to_s
-        @cipher_key = args[3].to_s
-        @ssl = args[4]
+      @publish_key = args[0].to_s
+      @subscribe_key = args[1].to_s
+      @secret_key = args[2].to_s
+      @cipher_key = args[3].to_s
+      @ssl = args[4]
 
-      elsif args.size == 1 && args[0].class == Hash # passing in an options hash
+    elsif args.size == 1 && args[0].class == Hash # passing in an options hash
 
-        @publish_key = args[0][:publish_key].to_s
-        @subscribe_key = args[0][:subscribe_key].to_s
-        @secret_key = args[0][:secret_key].to_s
-        @cipher_key = args[0][:cipher_key].to_s
-        @ssl = args[0][:ssl]
+      options_hash = HashWithIndifferentAccess.new(args[0])
+      @publish_key = options_hash[:publish_key].to_s
+      @subscribe_key = options_hash[:subscribe_key].to_s
+      @secret_key = options_hash[:secret_key].to_s
+      @cipher_key = options_hash[:cipher_key].to_s
+      @ssl = options_hash[:ssl]
 
-      else
-        raise "Initialize with either a hash of options, or exactly 5 named parameters."
-      end
-
-    # publish_key and cipher_key are both optional.
+    else
+      raise "Initialize with either a hash of options, or exactly 5 named parameters."
+    end
 
     @origin = (@ssl.present? ? 'https://' : 'http://') + ORIGIN_HOST
 
   end
 
   def verify_config
+    # publish_key and cipher_key are both optional.
     Rails.logger.debug("verifying configuration...")
 
-    @subscribe_key.blank? ? raise("subscribe_key is a mandatory parameter.") :  Rails.logger.debug("subscribe_key set to #{@subscribe_key}")
+    @subscribe_key.blank? ? raise("subscribe_key is a mandatory parameter.") : Rails.logger.debug("subscribe_key set to #{@subscribe_key}")
 
     Rails.logger.debug(@publish_key.present? ? "publish_key set to #{@publish_key}" : "publish_key not set.")
     Rails.logger.debug(@cipher_key.present? ? "cipher_key set to #{@cipher_key}. AES encryption enabled." : "cipher_key not set. AES encryption disabled.")
@@ -118,13 +118,13 @@ class Pubnub
     if @secret_key.length > 0
       signature = "{@publish_key,@subscribe_key,@secret_key,channel,message}"
       digest = OpenSSL::Digest.new("sha256")
-      key = [ @secret_key ]
+      key = [@secret_key]
       hmac = OpenSSL::HMAC.hexdigest(digest, key.pack("H*"), signature)
       signature = hmac
     end
 
     ## Send Message
-    request = [ 'publish', @publish_key, @subscribe_key, signature, channel, '0', message ]
+    request = ['publish', @publish_key, @subscribe_key, signature, channel, '0', message]
     args['request'] = request
     args['callback'] = callback
     _request(args)
@@ -141,8 +141,8 @@ class Pubnub
   #*
   def subscribe(args)
     ## Capture User Input
-    channel   = args['channel']
-    callback  = args['callback']
+    channel = args['channel']
+    callback = args['callback']
 
     ## Fail if missing channel
     if !channel
@@ -158,10 +158,10 @@ class Pubnub
 
     ## EventMachine loop
     #EventMachine.run do
-      timetoken = 0
-      request = [ 'subscribe', @subscribe_key, channel, '0', timetoken.to_s ]
-      args['request'] = request
-      _subscribe(args)
+    timetoken = 0
+    request = ['subscribe', @subscribe_key, channel, '0', timetoken.to_s]
+    args['request'] = request
+    _subscribe(args)
     #end
   end
 
@@ -175,7 +175,7 @@ class Pubnub
   #*
   def history(args)
     ## Capture User Input
-    limit   = +args['limit'] ? +args['limit'] : 5
+    limit = +args['limit'] ? +args['limit'] : 5
     channel = args['channel']
     callback = args['callback']
 
@@ -190,7 +190,7 @@ class Pubnub
     end
 
     ## Get History
-    request = [ 'history', @subscribe_key, channel, '0', limit.to_s ]
+    request = ['history', @subscribe_key, channel, '0', limit.to_s]
     args['request'] = request
     _request(args)
   end
@@ -205,7 +205,7 @@ class Pubnub
   def time(options)
     options = HashWithIndifferentAccess.new(options)
 
-    options['request'] = [ 'time', '0' ]
+    options['request'] = ['time', '0']
     options['callback'].blank? ? raise("You must supply a callback.") : _request(options)
   end
 
@@ -217,7 +217,7 @@ class Pubnub
   #* @return Unique Identifier
   #*
   def UUID()
-    uuid=SecureRandom.base64(32).gsub("/","_").gsub(/=+$/,"")
+    uuid=SecureRandom.base64(32).gsub("/", "_").gsub(/=+$/, "")
   end
 
   private
@@ -274,7 +274,7 @@ class Pubnub
           args['request'] = request
           # Recusive call to _subscribe
           _subscribe(args)
-          
+
         end
 
       rescue Timeout::Error => e
@@ -294,42 +294,42 @@ class Pubnub
   #* @return array from JSON response.
   #*
   def _request(options)
-    request  = options['request']
+    request = options['request']
     callback = options['callback']
     url = encode_URL(request)
     url = @origin + url
-      open(url) do |f|
-        response = JSON.parse(f.read)
-        if request[0] == 'history'
-          if @cipher_key.length > 0
-            myarr=Array.new()
-            response.each do |message|
-              pc=PubnubCrypto.new(@cipher_key)
-              if message.is_a? Array
-                message=pc.decryptArray(message)
-              else
-                message=pc.decryptObject(message)
-              end
-              myarr.push(message)
+    open(url) do |f|
+      response = JSON.parse(f.read)
+      if request[0] == 'history'
+        if @cipher_key.length > 0
+          myarr=Array.new()
+          response.each do |message|
+            pc=PubnubCrypto.new(@cipher_key)
+            if message.is_a? Array
+              message=pc.decryptArray(message)
+            else
+              message=pc.decryptObject(message)
             end
-            callback.call(myarr)
-          else
-            callback.call(response)
+            myarr.push(message)
           end
-        elsif request[0] == 'publish'
-          callback.call(response)
+          callback.call(myarr)
         else
           callback.call(response)
         end
+      elsif request[0] == 'publish'
+        callback.call(response)
+      else
+        callback.call(response)
       end
+    end
   end
 
   def encode_URL(request)
     ## Construct Request URL
-    url = '/' + request.map{ |bit| bit.split('').map{ |ch|
-        ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
+    url = '/' + request.map { |bit| bit.split('').map { |ch|
+      ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
         '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
-      }.join('') }.join('/')
+    }.join('') }.join('/')
     return url
   end
 end
