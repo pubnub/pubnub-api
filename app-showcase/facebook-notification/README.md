@@ -1,10 +1,9 @@
-# PubNub Facebook Notification Window Example
+# PubNub Facebook Notification
 
 This is an example of a Facebook-like
-Window Box that notifies your user with a
-custom message via PubNub.
+Window Box that notifies your user with a custom message via PubNub.
 You can send updates to your users on their Mobile Phone or Browser.
-This will show your user a notification; any notificaiton you.
+This will show your user a notification; any notification you.
 
 Using PubNub allows Data Push via WebSockets, BOSH, Comet and other Mechanisms
 to be used in your application providing you the ability to send data
@@ -21,8 +20,8 @@ with the example link above before you begin.
 
 #### Setup Your Page
 
-First include the FBootstrap resources in order to provide the 
-look and feel of the notificatoin window.
+First include the **FBootstrap** resources in order to provide the 
+look and feel of the notification window.
 Add these Styles to your HTML file.
 
 ```html
@@ -62,7 +61,7 @@ add rules for what to do with the data once it is received.
         $('#new-alert').modal('show');
     }
 
-    // Simulate Notificaiton
+    // Simulate Notification
     $('#simulate-notification').bind( 'mousedown', function() {
         pubnub.publish({
             channel : 'example-user-id-1234',
@@ -72,4 +71,26 @@ add rules for what to do with the data once it is received.
     } );
 
 })();</script>
+```
+
+#### Python Push Example
+
+Next you will want to add this `python` code
+to your Django or any other framework.
+You can add this to the `message post` code in your app.
+This will post a notification to your user.
+This specific example will cause a notification to appear
+inside the Facebook Notification page.
+
+```python
+## PubNub Setup
+from Pubnub import Pubnub
+pubnub = Pubnub( 'demo', 'demo', None, False )
+
+## Push Notice to 'example-user-id-1234'
+info = pubnub.publish({
+    'channel' : 'example-user-id-1234',
+    'message' : { 'your-data' : 'any-data-here' }
+})
+print(info)
 ```
