@@ -120,40 +120,85 @@ describe Pubnub do
     before do
 
       @my_callback = lambda { |message| Rails.logger.debug(message) }
-      @my_pub_key = "demo"
-      @my_sub_key = "demo"
-      @my_message = "hello world!"
-      @my_channel = "demo"
+      @my_pub_key = "demo_pub_key"
+      @my_sub_key = "demo_sub_key"
+      @my_message = "hello_world!"
+      @my_channel = "demo_channel"
 
       @pn = Pubnub.new(:subscribe_key => @my_sub_key)
 
     end
 
     context "required parameters" do
+      it "should raise when channel is missing" do
+        lambda { @pn.publish(:message => @my_message) }.should raise_error(Pubnub::PublishError, "channel is a required parameter.")
+      end
 
-        it "should raise when channel is missing" do
-          lambda { @pn.publish(:message => @my_message) }.should raise_error(Pubnub::PublishError, "channel is a required parameter.")
-        end
+      it "should raise when callback is missing" do
+        lambda { @pn.publish(:message => @my_message, :channel => @my_channel) }.should raise_error(Pubnub::PublishError, "callback is a required parameter.")
+      end
 
-        it "should raise when callback is missing" do
-          lambda { @pn.publish(:message => @my_message, :channel => @my_channel) }.should raise_error(Pubnub::PublishError, "callback is a required parameter.")
-        end
+      it "should raise when callback is invalid" do
+        lambda { @pn.publish(:message => @my_message, :channel => @my_channel, :callback => :blah) }.should raise_error(Pubnub::PublishError, "callback is invalid.")
+      end
 
-        it "should raise when callback is invalid" do
-          lambda { @pn.publish(:message => @my_message, :channel => @my_channel, :callback => :blah ) }.should raise_error(Pubnub::PublishError, "callback is invalid.")
-        end
-
-        it "should raise when message is missing" do
-          lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback ) }.should raise_error(Pubnub::PublishError, "message is a required parameter.")
-        end
-
-
+      it "should raise when message is missing" do
+        lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback) }.should raise_error(Pubnub::PublishError, "message is a required parameter.")
+      end
     end
 
     context "publish key" do
-      it "should let you override an existing instantiated publish key"
-      it "should let you define a publish key at publish time if it was not instantiated with one"
-      it "should throw an failure json response if you publish without a publish key"
+      it "should let you override an existing instantiated publish key" do
+
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+
+        @request = [] << "publish" << @my_pub_key << @my_sub_key << "0" << @my_channel << "0" << (@my_message.to_json)
+        @alt_pub_key = "alt_pub_key"
+
+        @options = HashWithIndifferentAccess.new({"channel" => @my_channel,
+                                                  "callback" => @my_callback,
+                                                  "message" => @my_message,
+                                                  "publish_key" => @alt_pub_key,
+                                                  "request" => @request})
+
+        mock(@pn)._request(@options) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key)
+      end
+
+      it "should let you define a publish key at publish time if it was not instantiated with one" do
+
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+
+        @request = [] << "publish" << "" << @my_sub_key << "0" << @my_channel << "0" << (@my_message.to_json)
+        @alt_pub_key = "alt_pub_key"
+
+        @options = HashWithIndifferentAccess.new({"channel" => @my_channel,
+                                                  "callback" => @my_callback,
+                                                  "message" => @my_message,
+                                                  "publish_key" => @alt_pub_key,
+                                                  "request" => @request})
+
+        mock(@pn)._request(@options) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key)
+
+      end
+
+      it "should throw if you publish without a publish key" do
+
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+
+        @request = [] << "publish" << "" << @my_sub_key << "0" << @my_channel << "0" << (@my_message.to_json)
+
+        @options = HashWithIndifferentAccess.new({"channel" => @my_channel,
+                                                  "callback" => @my_callback,
+                                                  "message" => @my_message,
+                                                  "publish_key" => "",
+                                                  "request" => @request})
+
+        lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key) }.should raise_error(Pubnub::PublishError, "publish_key is a required parameter.")
+      end
+
+
     end
 
     context "secret key" do

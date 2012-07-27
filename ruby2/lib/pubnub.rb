@@ -83,7 +83,6 @@ class Pubnub
   def publish(options)
     options = HashWithIndifferentAccess.new(options)
 
-
     if options[:channel].blank?
       raise(PublishError, "channel is a required parameter.")
     elsif options[:callback].blank?
@@ -92,6 +91,8 @@ class Pubnub
       raise(PublishError, "message is a required parameter.")
     elsif !options[:callback].try(:respond_to?, "call")
       raise(PublishError, "callback is invalid.")
+    elsif options[:publish_key].blank?
+      raise(PublishError, "publish_key is a required parameter.")
     end
 
     if !(options['channel'] && options['message'] && options['callback'])
