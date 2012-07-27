@@ -107,13 +107,65 @@ describe Pubnub do
     end
 
     it "should return the current time" do
-
       mock(@my_callback).call([13433410952661319]) {}
 
       VCR.use_cassette("time", :record => :none) do
         @pn.time("callback" => @my_callback)
       end
     end
+  end
+
+  describe "#publish" do
+
+    before do
+
+      @my_callback = lambda { |message| Rails.logger.debug(message) }
+      @my_pub_key = "demo"
+      @my_sub_key = "demo"
+      @my_message = "hello world!"
+      @my_channel = "demo"
+
+      @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+
+    end
+
+    context "required parameters" do
+
+        it "should raise when channel is missing" do
+          lambda { @pn.publish(:message => @my_message) }.should raise_error(Pubnub::PublishError, "channel is a required parameter.")
+        end
+
+        it "should raise when callback is missing" do
+          lambda { @pn.publish(:message => @my_message, :channel => @my_channel) }.should raise_error(Pubnub::PublishError, "callback is a required parameter.")
+        end
+
+        it "should raise when callback is invalid" do
+          lambda { @pn.publish(:message => @my_message, :channel => @my_channel, :callback => :blah ) }.should raise_error(Pubnub::PublishError, "callback is invalid.")
+        end
+
+        it "should raise when message is missing" do
+          lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback ) }.should raise_error(Pubnub::PublishError, "message is a required parameter.")
+        end
+
+
+    end
+
+    context "publish key" do
+      it "should let you override an existing instantiated publish key"
+      it "should let you define a publish key at publish time if it was not instantiated with one"
+      it "should throw an failure json response if you publish without a publish key"
+    end
+
+    context "secret key" do
+      it "should let you override an existing instantiated secret key"
+      it "should let you define a publish key at publish time if it was not instantiated with one"
+      it "should publish without signing the message if you publish without a secret key"
+    end
+
+    context "ssl" do
+      it "should default to false if not defined"
+    end
+
   end
 
 end

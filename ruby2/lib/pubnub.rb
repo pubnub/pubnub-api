@@ -25,6 +25,9 @@ require 'pubnub_crypto'
 
 class Pubnub
 
+  class PublishError < RuntimeError; end
+  class InitError < RuntimeError; end
+
   attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl, :channel, :origin
 
   MAX_RETRIES = 3
@@ -50,7 +53,7 @@ class Pubnub
       @ssl = options_hash[:ssl]
 
     else
-      raise "Initialize with either a hash of options, or exactly 5 named parameters."
+      raise(InitError, "Initialize with either a hash of options, or exactly 5 named parameters.")
     end
 
     @origin = (@ssl.present? ? 'https://' : 'http://') + ORIGIN_HOST
@@ -61,7 +64,7 @@ class Pubnub
     # publish_key and cipher_key are both optional.
     Rails.logger.debug("verifying configuration...")
 
-    @subscribe_key.blank? ? raise("subscribe_key is a mandatory parameter.") : Rails.logger.debug("subscribe_key set to #{@subscribe_key}")
+    @subscribe_key.blank? ? raise(InitError, "subscribe_key is a mandatory parameter.") : Rails.logger.debug("subscribe_key set to #{@subscribe_key}")
 
     Rails.logger.debug(@publish_key.present? ? "publish_key set to #{@publish_key}" : "publish_key not set.")
     Rails.logger.debug(@cipher_key.present? ? "cipher_key set to #{@cipher_key}. AES encryption enabled." : "cipher_key not set. AES encryption disabled.")
@@ -77,17 +80,29 @@ class Pubnub
   #* @param array args with channel and message.
   #* @return array success information.
   #*
-  def publish(args)
-    ## Fail if bad input.
-    if !(args['channel'] && args['message'] && args['callback'])
+  def publish(options)
+    options = HashWithIndifferentAccess.new(options)
+
+
+    if options[:channel].blank?
+      raise(PublishError, "channel is a required parameter.")
+    elsif options[:callback].blank?
+      raise(PublishError, "callback is a required parameter.")
+    elsif options[:message].blank?
+      raise(PublishError, "message is a required parameter.")
+    elsif !options[:callback].try(:respond_to?, "call")
+      raise(PublishError, "callback is invalid.")
+    end
+
+    if !(options['channel'] && options['message'] && options['callback'])
       puts('Missing Channel or Message or Callback')
       return false
     end
 
     ## Capture User Input
-    channel = args['channel']
-    message = args['message']
-    callback = args['callback']
+    channel = options['channel']
+    message = options['message']
+    callback = options['callback']
 
     # Encryption of message
     if @cipher_key.length > 0
@@ -98,7 +113,7 @@ class Pubnub
         message=pc.encryptObject(message)
       end
     else
-      message = args['message'].to_json();
+      message = options['message'].to_json();
     end
 
     ## Sign message using HMAC
@@ -113,9 +128,9 @@ class Pubnub
 
     ## Send Message
     request = ['publish', @publish_key, @subscribe_key, signature, channel, '0', message]
-    args['request'] = request
-    args['callback'] = callback
-    _request(args)
+    options['request'] = request
+    options['callback'] = callback
+    _request(options)
   end
 
   #**
@@ -194,7 +209,7 @@ class Pubnub
     options = HashWithIndifferentAccess.new(options)
 
     options['request'] = ['time', '0']
-    options['callback'].blank? ? raise("You must supply a callback.") : _request(options)
+    options['callback'].blank? ? raise(PubNubRuntimeError, "You must supply a callback.") : _request(options)
   end
 
   #**
