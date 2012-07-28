@@ -165,11 +165,7 @@ describe Pubnub do
       it "should not let you override an existing instantiated publish key" do
 
         @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
-
         @alt_pub_key = "alt_pub_key"
-
-        @request = [] << "publish" << @alt_pub_key << @my_sub_key << "0" << @my_channel << "0" << (@my_message.to_json)
-        @options = HashWithIndifferentAccess.new({"callback" => @my_callback, "request" => @request})
 
         lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key) }.
           should raise_error(Pubnub::PublishError, "existing publish_key demo_pub_key cannot be overridden at publish-time." )
@@ -187,10 +183,6 @@ describe Pubnub do
       end
 
       it "should throw if you publish without a publish key" do
-
-        @request = [] << "publish" << "" << @my_sub_key << "0" << @my_channel << "0" << (@my_message.to_json)
-        @options = HashWithIndifferentAccess.new({"callback" => @my_callback, "request" => @request})
-
         lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key) }.should raise_error(Pubnub::PublishError, "publish_key is a required parameter.")
       end
 
