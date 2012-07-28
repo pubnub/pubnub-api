@@ -22,11 +22,14 @@ require 'rubygems'
 require 'securerandom'
 require 'digest'
 require 'pubnub_crypto'
+require 'pubnub_request'
 
 class Pubnub
 
-  class PublishError < RuntimeError; end
-  class InitError < RuntimeError; end
+  class PublishError < RuntimeError;
+  end
+  class InitError < RuntimeError;
+  end
 
   attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl, :channel, :origin
 
@@ -46,21 +49,23 @@ class Pubnub
     elsif args.size == 1 && args[0].class == Hash # passing in an options hash
 
       options_hash = HashWithIndifferentAccess.new(args[0])
-      @publish_key = options_hash[:publish_key].to_s
-      @subscribe_key = options_hash[:subscribe_key].to_s
-      @secret_key = options_hash[:secret_key].to_s
-      @cipher_key = options_hash[:cipher_key].to_s
-      @ssl = options_hash[:ssl]
+      @publish_key = options_hash[:publish_key].blank? ? nil : options_hash[:publish_key].to_s
+      @subscribe_key = options_hash[:subscribe_key].blank? ? nil : options_hash[:subscribe_key].to_s
+      @secret_key = options_hash[:secret_key].blank? ? nil : options_hash[:secret_key].to_s
+      @cipher_key = options_hash[:cipher_key].blank? ? nil : options_hash[:cipher_key].to_s
+      @ssl = options_hash[:ssl].blank? ? false : true
 
     else
       raise(InitError, "Initialize with either a hash of options, or exactly 5 named parameters.")
     end
 
+    verify_init
     @origin = (@ssl.present? ? 'https://' : 'http://') + ORIGIN_HOST
+
 
   end
 
-  def verify_config
+  def verify_init
     # publish_key and cipher_key are both optional.
     Rails.logger.debug("verifying configuration...")
 
@@ -82,56 +87,65 @@ class Pubnub
   #*
   def publish(options)
     options = HashWithIndifferentAccess.new(options)
+    publish_request = PubnubRequest.new(:operation => :publish, :subscribe_key => @subscribe_key)
 
+    # set channel
     if options[:channel].blank?
       raise(PublishError, "channel is a required parameter.")
-    elsif options[:callback].blank?
+    else
+      publish_request.channel = options[:channel]
+    end
+
+    # set callback
+    if options[:callback].blank?
       raise(PublishError, "callback is a required parameter.")
-    elsif options[:message].blank?
-      raise(PublishError, "message is a required parameter.")
     elsif !options[:callback].try(:respond_to?, "call")
       raise(PublishError, "callback is invalid.")
-    elsif options[:publish_key].blank?
-      raise(PublishError, "publish_key is a required parameter.")
-    end
-
-    if !(options['channel'] && options['message'] && options['callback'])
-      puts('Missing Channel or Message or Callback')
-      return false
-    end
-
-    ## Capture User Input
-    channel = options['channel']
-    message = options['message']
-    callback = options['callback']
-
-    # Encryption of message
-    if @cipher_key.length > 0
-      pc=PubnubCrypto.new(@cipher_key)
-      if message.is_a? Array
-        message=pc.encryptArray(message)
-      else
-        message=pc.encryptObject(message)
-      end
     else
-      message = options['message'].to_json();
+      publish_request.callback = options[:callback]
     end
+
+    # set message
+    if options[:message].blank? && options[:message] != ""
+      raise(PublishError, "message is a required parameter.")
+    else
+
+      # Encryption of message
+      if @cipher_key.present?
+        pc=PubnubCrypto.new(@cipher_key)
+        if options[:message].is_a? Array
+          publish_request.message = pc.encryptArray(options[:message])
+        else
+          publish_request.message = pc.encryptObject(options[:message])
+        end
+      else
+        publish_request.message = options[:message].to_json();
+      end
+
+
+    end
+
+    # set Publish Key
+    if options[:publish_key].blank? && self.publish_key.blank?
+      raise(PublishError, "publish_key is a required parameter.")
+    elsif self.publish_key.present? && options['publish_key'].present?
+      raise(PublishError, "existing publish_key #{self.publish_key} cannot be overridden at publish-time.")
+    else
+      publish_request.publish_key = self.publish_key || options[:publish_key]
+    end
+
 
     ## Sign message using HMAC
     String signature = '0'
-    if @secret_key.length > 0
+    if @secret_key.present?
       signature = "{@publish_key,@subscribe_key,@secret_key,channel,message}"
       digest = OpenSSL::Digest.new("sha256")
       key = [@secret_key]
       hmac = OpenSSL::HMAC.hexdigest(digest, key.pack("H*"), signature)
-      signature = hmac
+      publish_request.hmac_signature = hmac
     end
 
-    ## Send Message
-    request = ['publish', @publish_key, @subscribe_key, signature, channel, '0', message]
-    options['request'] = request
-    options['callback'] = callback
-    _request(options)
+        _request(publish_request)
   end
 
   #**
