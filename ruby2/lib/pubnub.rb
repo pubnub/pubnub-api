@@ -81,20 +81,16 @@ class Pubnub
     options = HashWithIndifferentAccess.new(options)
     publish_request = PubnubRequest.new(:operation => :publish, :subscribe_key => @subscribe_key)
 
-    set_channel(options, publish_request)
-    set_callback(options, publish_request)
-    set_message(options, publish_request)
+    set_request_channel(options, publish_request)
+    set_request_callback(options, publish_request)
+    set_request_message(options, publish_request)
+    set_request_publish_key(options, publish_request)
+    set_request_secret_key(options, publish_request)
 
+    _request(publish_request)
+  end
 
-    if options[:publish_key].blank? && self.publish_key.blank?
-      raise(PublishError, "publish_key is a required parameter.")
-    elsif self.publish_key.present? && options['publish_key'].present?
-      raise(PublishError, "existing publish_key #{self.publish_key} cannot be overridden at publish-time.")
-    else
-      publish_request.publish_key = self.publish_key || options[:publish_key]
-    end
-
-    # set secret key
+  def set_request_secret_key(options, publish_request)
     if self.secret_key.present? && options['secret_key'].present?
       raise(PublishError, "existing secret_key #{self.secret_key} cannot be overridden at publish-time.")
     elsif secret_key = (self.secret_key.present? || options[:secret_key])
@@ -106,11 +102,23 @@ class Pubnub
     else
       publish_request.secret_key = "0"
     end
-
-    _request(publish_request)
   end
 
-  def set_message(options, publish_request)
+  private :set_request_secret_key
+
+  def set_request_publish_key(options, publish_request)
+    if options[:publish_key].blank? && self.publish_key.blank?
+      raise(PublishError, "publish_key is a required parameter.")
+    elsif self.publish_key.present? && options['publish_key'].present?
+      raise(PublishError, "existing publish_key #{self.publish_key} cannot be overridden at publish-time.")
+    else
+      publish_request.publish_key = self.publish_key || options[:publish_key]
+    end
+  end
+
+  private :set_request_publish_key
+
+  def set_request_message(options, publish_request)
     if options[:message].blank? && options[:message] != ""
       raise(PublishError, "message is a required parameter.")
     else
@@ -128,7 +136,9 @@ class Pubnub
     end
   end
 
-  def set_callback(options, publish_request)
+  private :set_request_message
+
+  def set_request_callback(options, publish_request)
     if options[:callback].blank?
       raise(PublishError, "callback is a required parameter.")
     elsif !options[:callback].try(:respond_to?, "call")
@@ -138,13 +148,17 @@ class Pubnub
     end
   end
 
-  def set_channel(options, publish_request)
+  private :set_request_callback
+
+  def set_request_channel(options, publish_request)
     if options[:channel].blank?
       raise(PublishError, "channel is a required parameter.")
     else
       publish_request.channel = options[:channel]
     end
   end
+
+  private :set_request_channel
 
   #**
   #* Subscribe
