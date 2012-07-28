@@ -81,30 +81,15 @@ class Pubnub
     options = HashWithIndifferentAccess.new(options)
     publish_request = PubnubRequest.new(:operation => :publish, :subscribe_key => @subscribe_key)
 
-    # set channel
-    if options[:channel].blank?
-      raise(PublishError, "channel is a required parameter.")
-    else
-      publish_request.channel = options[:channel]
-    end
+    set_channel(options, publish_request)
+    set_callback(options, publish_request)
 
-    # set callback
-    if options[:callback].blank?
-      raise(PublishError, "callback is a required parameter.")
-    elsif !options[:callback].try(:respond_to?, "call")
-      raise(PublishError, "callback is invalid.")
-    else
-      publish_request.callback = options[:callback]
-    end
-
-    # set message
     if options[:message].blank? && options[:message] != ""
       raise(PublishError, "message is a required parameter.")
     else
 
-      # Encryption of message
-      if @cipher_key.present?
-        pc=PubnubCrypto.new(@cipher_key)
+      if cipher_key = (options[:cipher_key] || self.cipher_key )
+        pc = PubnubCrypto.new(cipher_key)
         if options[:message].is_a? Array
           publish_request.message = pc.encryptArray(options[:message])
         else
@@ -113,8 +98,6 @@ class Pubnub
       else
         publish_request.message = options[:message].to_json();
       end
-
-
     end
 
     # set Publish Key
@@ -140,6 +123,24 @@ class Pubnub
     end
 
     _request(publish_request)
+  end
+
+  def set_callback(options, publish_request)
+    if options[:callback].blank?
+      raise(PublishError, "callback is a required parameter.")
+    elsif !options[:callback].try(:respond_to?, "call")
+      raise(PublishError, "callback is invalid.")
+    else
+      publish_request.callback = options[:callback]
+    end
+  end
+
+  def set_channel(options, publish_request)
+    if options[:channel].blank?
+      raise(PublishError, "channel is a required parameter.")
+    else
+      publish_request.channel = options[:channel]
+    end
   end
 
   #**
