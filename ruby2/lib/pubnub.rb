@@ -124,15 +124,19 @@ class Pubnub
     else
 
       if cipher_key = (options[:cipher_key] || self.cipher_key)
-        pc = PubnubCrypto.new(cipher_key)
-        if options[:message].is_a? Array
-          publish_request.message = pc.encryptArray(options[:message])
-        else
-          publish_request.message = pc.encryptObject(options[:message])
-        end
+        aes_encrypt(cipher_key, options, publish_request)
       else
         publish_request.message = options[:message].to_json();
       end
+    end
+  end
+
+  def aes_encrypt(cipher_key, options, publish_request)
+    pc = PubnubCrypto.new(cipher_key)
+    if options[:message].is_a? Array
+      publish_request.message = pc.encryptArray(options[:message])
+    else
+      publish_request.message = pc.encryptObject(options[:message])
     end
   end
 
