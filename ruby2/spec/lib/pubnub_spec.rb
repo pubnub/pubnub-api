@@ -191,17 +191,40 @@ describe Pubnub do
 
     context "secret key" do
 
-      #it "should let you define a secret key at publish time if it was not instantiated with one" do
-      #  @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
-      #
-      #  @request = [] << "publish" << @my_pub_key << @my_sub_key << @alt_sec_key << @my_channel << "0" << (@my_message.to_json)
-      #  @options = HashWithIndifferentAccess.new({"callback" => @my_callback, "request" => @request})
-      #
-      #  mock(@pn)._request(@options) {}
-      #  @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :secret_key => @alt_sec_key)
-      #end
+      it "should not let you override an existing instantiated secret key" do
 
-      it "should publish without signing the message if you publish without a secret key"
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :secret_key => @my_sec_key)
+        @alt_sec_key = "alt_sec_key"
+
+        lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :secret_key => @alt_sec_key) }.
+          should raise_error(Pubnub::PublishError, "existing secret_key my_sec_key cannot be overridden at publish-time." )
+      end
+
+
+
+      it "should let you define a secret key at publish time if it was not instantiated with one" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
+                                            :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
+                                            :secret_key => @my_sec_key)
+
+        mock(@pn)._request(mock_publish_request) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :secret_key => @my_sec_key)
+      end
+
+
+
+      it "should publish without signing the message if you publish without a secret key" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
+                                            :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key)
+
+        mock(@pn)._request(mock_publish_request) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
+      end
+
     end
 
     context "cipher key" do

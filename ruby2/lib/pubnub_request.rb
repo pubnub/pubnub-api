@@ -1,5 +1,5 @@
 class PubnubRequest
-  attr_accessor :callback, :operation, :callback, :publish_key, :subscribe_key, :hmac_signature, :channel, :jsonp, :message
+  attr_accessor :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message
 
   def initialize(args = {})
     args = HashWithIndifferentAccess.new(args)
@@ -8,10 +8,10 @@ class PubnubRequest
     @callback = args[:callback]
     @publish_key = args[:publish_key]
     @subscribe_key = args[:subscribe_key]
-    @hmac_signature = args[:hmac_signature]
     @channel = args[:channel]
     @jsonp = args[:jsonp].present? ? "1" : "0"
     @message = args[:message]
+    @secret_key = args[:secret_key] || "0"
   end
 
   def ==(another)

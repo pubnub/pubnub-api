@@ -77,14 +77,6 @@ class Pubnub
     Rails.logger.debug(@ssl.present? ? "ssl is enabled." : "ssl is disabled.")
   end
 
-  #**
-  #* Publish
-  #*
-  #* Send a message to a channel.
-  #*
-  #* @param array args with channel and message.
-  #* @return array success information.
-  #*
   def publish(options)
     options = HashWithIndifferentAccess.new(options)
     publish_request = PubnubRequest.new(:operation => :publish, :subscribe_key => @subscribe_key)
@@ -134,18 +126,20 @@ class Pubnub
       publish_request.publish_key = self.publish_key || options[:publish_key]
     end
 
-
-    ## Sign message using HMAC
-    String signature = '0'
-    if @secret_key.present?
+    # set secret key
+    if self.secret_key.present? && options['secret_key'].present?
+      raise(PublishError, "existing secret_key #{self.secret_key} cannot be overridden at publish-time.")
+    elsif secret_key = (self.secret_key.present? || options[:secret_key])
       signature = "{@publish_key,@subscribe_key,@secret_key,channel,message}"
       digest = OpenSSL::Digest.new("sha256")
-      key = [@secret_key]
+      key = [secret_key]
       hmac = OpenSSL::HMAC.hexdigest(digest, key.pack("H*"), signature)
-      publish_request.hmac_signature = hmac
+      publish_request.secret_key = hmac
+    else
+      publish_request.secret_key = "0"
     end
 
-        _request(publish_request)
+    _request(publish_request)
   end
 
   #**
