@@ -83,24 +83,9 @@ class Pubnub
 
     set_channel(options, publish_request)
     set_callback(options, publish_request)
+    set_message(options, publish_request)
 
-    if options[:message].blank? && options[:message] != ""
-      raise(PublishError, "message is a required parameter.")
-    else
 
-      if cipher_key = (options[:cipher_key] || self.cipher_key )
-        pc = PubnubCrypto.new(cipher_key)
-        if options[:message].is_a? Array
-          publish_request.message = pc.encryptArray(options[:message])
-        else
-          publish_request.message = pc.encryptObject(options[:message])
-        end
-      else
-        publish_request.message = options[:message].to_json();
-      end
-    end
-
-    # set Publish Key
     if options[:publish_key].blank? && self.publish_key.blank?
       raise(PublishError, "publish_key is a required parameter.")
     elsif self.publish_key.present? && options['publish_key'].present?
@@ -123,6 +108,24 @@ class Pubnub
     end
 
     _request(publish_request)
+  end
+
+  def set_message(options, publish_request)
+    if options[:message].blank? && options[:message] != ""
+      raise(PublishError, "message is a required parameter.")
+    else
+
+      if cipher_key = (options[:cipher_key] || self.cipher_key)
+        pc = PubnubCrypto.new(cipher_key)
+        if options[:message].is_a? Array
+          publish_request.message = pc.encryptArray(options[:message])
+        else
+          publish_request.message = pc.encryptObject(options[:message])
+        end
+      else
+        publish_request.message = options[:message].to_json();
+      end
+    end
   end
 
   def set_callback(options, publish_request)
