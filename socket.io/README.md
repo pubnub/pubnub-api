@@ -10,7 +10,7 @@ even more with PubNub.
 
 ## Enhanced Socket.IO with PubNub
 
-![Socket.IO on Pubnub](http://pubnub.s3.amazonaws.com/assets/socket.io-enhanced-with-pubnub.png "Socket.IO on Pubnub")
+![Socket.IO on PubNub](http://pubnub.s3.amazonaws.com/assets/socket.io-enhanced-with-pubnub.png "Socket.IO on PubNub")
 
 We enhanced Socket.IO with PubNub.
 Faster JavaScript, Smaller Footprint, Faster Cloud Network and 
@@ -400,10 +400,10 @@ using other PubNub libraries.  We are using the simple syntax of `Python`
 here for the example:
 
 ```python
-from Pubnub import Pubnub
+from PubNub import PubNub
 
 ## Create a PubNub Object
-pubnub = Pubnub( 'demo', 'demo', None, False )
+pubnub = PubNub( 'demo', 'demo', None, False )
 
 ## Publish To Socket.IO
 pubnub.publish({
@@ -451,7 +451,7 @@ Copyright (c) 2011 PubNub Inc.
 
 Copyright (c) 2011 Guillermo Rauch <guillermo@learnboost.com>
 
-![Socket.IO on Pubnub](http://pubnub.s3.amazonaws.com/assets/socket.io-on-pubnub-2.png "Socket.IO on Pubnub")
+![Socket.IO on PubNub](http://pubnub.s3.amazonaws.com/assets/socket.io-on-pubnub-2.png "Socket.IO on PubNub")
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

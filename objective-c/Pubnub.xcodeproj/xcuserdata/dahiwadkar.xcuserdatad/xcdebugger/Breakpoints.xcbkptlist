@@ -8,11 +8,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Pubnub/PubNub/CEPubnub.m"
-         timestampString = "356857407.00364"
+         timestampString = "364545621.168973"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "293"
-         endingLineNumber = "293"
+         startingLineNumber = "280"
+         endingLineNumber = "280"
          landmarkName = "-publish:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -21,12 +21,25 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Pubnub/PubNub/CEPubnub.m"
-         timestampString = "356857512.891134"
+         timestampString = "364545621.168973"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "296"
-         endingLineNumber = "296"
+         startingLineNumber = "283"
+         endingLineNumber = "283"
          landmarkName = "-publish:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Pubnub/PubNub/Common.m"
+         timestampString = "364544944.557154"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "95"
+         endingLineNumber = "95"
+         landmarkName = "+AES128DecryptWithKey:Data:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

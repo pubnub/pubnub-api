@@ -1,6 +1,7 @@
 package pubnub;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -340,6 +341,7 @@ public class Pubnub {
                 for (ChannelStatus it : subscriptions) {
                     if (it.channel.equals(channel)) {
                         if(!it.connected) {
+                        	subscriptions.remove(it);
                             callback.disconnectCallback(channel);
                             is_disconnect = true;
                             break;
@@ -356,6 +358,7 @@ public class Pubnub {
                 for (ChannelStatus it : subscriptions) {
                     if (it.channel.equals(channel)) {
                         if (!it.connected) {
+                        	subscriptions.remove(it);
                         	callback.disconnectCallback(channel);
                             is_disconnect = true;
                             break;
@@ -607,7 +610,15 @@ public class Pubnub {
 
                     if (ce != null && ce.equalsIgnoreCase("gzip")) {
                         // Decoding using 'gzip'
-                        resulting_is = new GZIPInputStream(is);
+                    	
+                        try {
+							resulting_is = new GZIPInputStream(is);
+						}catch (IOException e) {
+							  resulting_is = is;
+						}
+                        catch (Exception e) {
+                        	  resulting_is = is;
+						}
                     }
                     else {
                         // Default (encoding is null OR 'identity')

@@ -1,7 +1,8 @@
 # Pubnub
 ---
 
-Pubnub is an iOS Objective-C library wrapper for the Pubnub realtime messaging service [Pubnub.com](http://www.pubnub.com/).
+Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime messaging service [Pubnub.com](http://www.pubnub.com/).
+
 
 ## Using Pubnub in your project
 
@@ -34,7 +35,7 @@ Pubnub is an iOS Objective-C library wrapper for the Pubnub realtime messaging s
 
 5. Instantiate Pubnub in your class so you can publish and subscribe to messages and assign delegate:self:
 
-        pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"" useSSL:NO];
+        pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo" cipherKey:nil useSSL:NO];   // cipherKey is optional, supply nil to disable.
         [pubnub setDelegate:self];
 
 6. Publish NSString:

@@ -96,22 +96,11 @@ TUTORIAL: HOW TO USE
 ##  --------------------
         //Subscribe messages of type string,json array and json object
         System.Diagnostics.Debug.WriteLine("Subscribed to channel " + channel);
-        Pubnub.ResponseCallback respCallback = delegate(object message)
-        {
-            object[] messages = (object[])message;
-
-            if (messages != null && messages.Count() > 0)
-            {
-                for (int i = 0; i < messages.Count(); i++)
-                {
-                    System.Diagnostics.Debug.WriteLine(messages[i]);
-                }
-            }
-        };
+        
         //Subscribe messages
         Dictionary<string, object> args = new Dictionary<string, object>();
         args.Add("channel", channel);
-        args.Add("callback", respCallback);
+        args.Add("callback", new Receiver());
         pubnub.Subscribe(args);
 
 ##  --------------------------------------------------------------------------------
@@ -155,4 +144,81 @@ TUTORIAL: HOW TO USE
         // Get UUID
         System.Diagnostics.Debug.WriteLine("UUID - > " + pubnub.UUID()); 
 
+
+##  ------------------------------------------------------------------------------------
+##  C#-WP7 : (Unsubscribe)
+##  ----------------------
+        //Subscribe messages of type string,json array and json object   
+             
+        System.Diagnostics.Debug.WriteLine("Subscribed to channel " + channel);
+        Dictionary<string, object> args = new Dictionary<string, object>();
+        args.Add("channel", channel);
+        args.Add("callback", new Receiver());
+        pubnub.Subscribe(args);
+            
+        // Publish string  message            
+        Dictionary<string, object> strArgs = new Dictionary<string, object>();
+        string message = "Hello Windows Phone 7";
+        strArgs.Add("channel", channel);
+        strArgs.Add("message", message);
+        strArgs.Add("callback", respCallback);
+        pubnub.Publish(strArgs);
+        
+        Dictionary<string, object> arg = new Dictionary<string, object>();
+        arg.Add("channel", channel);
+        //Unsubscribe messages
+        pubnub.Unsubscribe(arg);
+        
+ ##  ------------------------------------------------------------------------------------   
+ 
+	//Receiver for callback
+    public class Receiver : Callback
+	{
+        public bool responseCallback(string channel, object message)
+        {
+            object[] messages = (object[])message;
+            
+            if (messages != null && messages.Length > 0)
+            {
+                for (int i = 0; i < messages.Length; i++)
+                {
+                    Debug.WriteLine("[Subscribed data] " + messages[i]);                    
+                }
+            }	            
+            return true;
+        }
+
+        public void errorCallback(string channel, object message)
+        {
+            Debug.WriteLine("Channel:" + channel + "-" + message.ToString());
+        }
+
+        public void connectCallback(string channel)
+        {
+            Debug.WriteLine("Connected to channel :" + channel);
+        }
+
+        public void reconnectCallback(string channel)
+        {
+            Debug.WriteLine("Reconnecting to channel :" + channel);
+        }
+
+        public void disconnectCallback(string channel)
+        {
+            Debug.WriteLine("Disconnected to channel :" + channel);
+        }
+    }
+    
+    public interface Callback
+    {
+        bool responseCallback(string channel, object message);
+
+        void errorCallback(String channel, Object message);
+
+        void connectCallback(String channel);
+
+        void reconnectCallback(String channel);
+
+        void disconnectCallback(String channel);
+    }       
 =====================================================================================

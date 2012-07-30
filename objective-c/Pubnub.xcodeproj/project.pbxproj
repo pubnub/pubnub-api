@@ -18,10 +18,10 @@
 		C8FD4D7A153D469D00D0A418 /* CEPubnub.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D6E153D469D00D0A418 /* CEPubnub.m */; };
 		C8FD4D7B153D469D00D0A418 /* Cipher.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D70153D469D00D0A418 /* Cipher.m */; };
 		C8FD4D7C153D469D00D0A418 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D72153D469D00D0A418 /* Common.m */; };
-		C8FD4D7E153D469D00D0A418 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D76153D469D00D0A418 /* JSON.m */; };
-		C8FD4D7F153D469D00D0A418 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D78153D469D00D0A418 /* JSONKit.m */; };
+		C8FD4D7E153D469D00D0A418 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D76153D469D00D0A418 /* JSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		C8FD4D7F153D469D00D0A418 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D78153D469D00D0A418 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */; };
-		C8FD4D8E153D670200D0A418 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C8FD4D8D153D670200D0A418 /* README.md */; };
+		F8969FEB15B69E2600D12EBD /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F8969FEA15B69E2600D12EBD /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,7 +50,7 @@
 		C8FD4D77153D469D00D0A418 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		C8FD4D78153D469D00D0A418 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow_iPhone.xib; sourceTree = "<group>"; };
-		C8FD4D8D153D670200D0A418 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		F8969FEA15B69E2600D12EBD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +97,7 @@
 		C8FD4D3D153D447200D0A418 /* Pubnub */ = {
 			isa = PBXGroup;
 			children = (
-				C8FD4D8D153D670200D0A418 /* README.md */,
+				F8969FEA15B69E2600D12EBD /* README.md */,
 				C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */,
 				C8FD4D6A153D469D00D0A418 /* PubNub */,
 				C8FD4D46153D447200D0A418 /* AppDelegate.h */,
@@ -191,7 +191,7 @@
 			files = (
 				C8FD4D42153D447200D0A418 /* InfoPlist.strings in Resources */,
 				C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */,
-				C8FD4D8E153D670200D0A418 /* README.md in Resources */,
+				F8969FEB15B69E2600D12EBD /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,7 +233,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -258,7 +258,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

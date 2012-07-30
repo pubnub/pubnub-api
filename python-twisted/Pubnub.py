@@ -75,7 +75,7 @@ class Pubnub():
         self.cipher_key    = cipher_key
         self.ssl           = ssl_on
         self.subscriptions = {}
-       
+
         if self.ssl :
             self.origin = 'https://' + self.origin
         else :
@@ -118,7 +118,7 @@ class Pubnub():
         ## Capture User Input
         channel = str(args['channel'])
         message = args['message']
-        
+
         if self.cipher_key :
             pc = PubnubCrypto()
             out = []
@@ -157,7 +157,7 @@ class Pubnub():
             signature = hash.hexdigest()        
         else :
             signature = '0'
-    
+
         ## Send Message
         return self._request([
             'publish',
@@ -285,7 +285,7 @@ class Pubnub():
                               message = pc.decrypt(self.cipher_key, message )
                      else :
                           message
-                        
+
                      callback(message)
 
             ## CONNECT TO PUBNUB SUBSCRIBE SERVERS
@@ -378,7 +378,7 @@ class Pubnub():
             'time',
             '0'
         ], complete )
-        
+
     def uuid(self) :
         """
         #**
@@ -427,7 +427,7 @@ class Pubnub():
                             self.resulting_is = subitem
                     elif type(item[1]) == type(str()):
                         self.resulting_is = item[1]
-                        
+
             finished = Deferred()
             response.deliverBody(PubNubResponse(finished))
             return finished
@@ -436,11 +436,13 @@ class Pubnub():
             if ( type(data) == type(str()) ):
                 if self.resulting_is:
                     d = zlib.decompressobj(16+zlib.MAX_WBITS)
-                    data = d.decompress(data)
-                
+
+            try     :   data = d.decompress(data) # try/catch here, pass through if except
+            except  :   data = data
+
             try    : obj = json.loads(data)
             except : obj = None
-            
+
             pc = PubnubCrypto()
             out = []
             if self.cipher_key :
@@ -457,7 +459,7 @@ class Pubnub():
                                     encryptItem = pc.decrypt(self.cipher_key, subitem )
                                     outdict[k] = encryptItem
                                     out.append(outdict)
-                            else :         
+                            else :
                                 encryptItem = pc.decrypt(self.cipher_key, item )
                                 out.append(encryptItem)
                         callback(out)
@@ -465,11 +467,11 @@ class Pubnub():
                         for k, item in obj.iteritems():
                             encryptItem = pc.decrypt(self.cipher_key, item )
                             out.append(encryptItem)
-                        callback(out)    
+                        callback(out)
                 else :
                     callback(obj)
-            else :        
-                callback(obj)        
+            else :
+                callback(obj)
 
         request.addCallback(received)
         request.addBoth(complete)

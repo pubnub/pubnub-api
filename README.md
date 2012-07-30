@@ -1,730 +1,284 @@
-# PubNub - Real-time Communications
-- Publish and Subscribe Always-on Socket Cloud
-- One-to-Many / One-to-One / Platform Ubiquitous Cloud
-- Globally Distributed Cloud Network - Many Datacenters World-Wide - Fastest Connections
-- Optimized for Mobile and Web - iPhone, Android, Chrome, Firefox, IE and more.
-- Locksetp Synchronization with Everyone on Earth - Synchronize Mass Audiences.
+#Connecting everyone on Earth in < 0.25s !
+PubNub is a cross-platform client-to-client (1:1 and 1:many) push service in the cloud, capable of broadcasting real-time messages to millions of web and mobile clients simultaneously, in less than a quarter second!
 
-PubNub is a client-to-client push service in the cloud.
-Connect Everything to Everything; literally!
-This is a cloud-based service for broadcasting Real-time messages
-to millions of web and mobile clients simultaneously.
+Optimized for both web and mobile, our scalable, global network of redundant data centers provides lightning-fast, reliable message delivery.  We're up to 100 messages/second faster than possible with WebSockets alone, and **cross-platform compatibility across all phones, tablets, browsers, programming languages, and APIs is always guaranteed!**
 
-## PubNub Version 3.1
+#Current Version
+The current version number for communication with PubNub Cloud is 3.1.
 
-The current version number for communication with PubNub Cloud is `3.1`.
+#Supported Languages and Frameworks
+The current list of supported languages and frameworks can be found on our [github page](http://www.google.com/url?q=https%3A%2F%2Fgithub.com%2Fpubnub%2Fpubnub-api&sa=D&sntz=1&usg=AFQjCNE-eofH-mEn6I8uFXa7P2y72ds02Q).
 
-## Process for Announcing New/Updated API.
-When a PubNub Client API is updated or a brand new PubNub Client
-API becomes available, tell everyone!:
+#Contact Us
+Contact information for support, sales, and general purpose inquiries can found at http://www.pubnub.com/contact-us.
 
-- Tweet to [@PubNub](https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fwww.pubnub.com%2Fcontact&related=pubnub&screen_name=PubNub)
-- Facebook to [PubNub Facebook Wall](http://www.facebook.com/PubNub)
-- Email to [hello@pubnub.com](mailto:hello@pubnub.com)
+#Demo and Webcast Links
 
-## Quick Links
+Vimeo: [https://vimeo.com/pubnub](https://vimeo.com/pubnub)<br>
+YouTube: [http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF](http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF)<br>
+Showcase: [http://www.pubnub.com/blog](http://www.pubnub.com/blog)<br>
+Interview: [http://techzinglive.com/?p=227](http://techzinglive.com/?p=227)<br>
 
-- Twitter: http://twitter.com/PubNub
-- Website: http://www.pubnub.com
-- YouTube: http://www.youtube.com/playlist?p=PLF0BA2B6DAAF4FBBF
-- Vimeo: https://vimeo.com/pubnub
-- Socket.IO: https://github.com/pubnub/pubnub-api/tree/master/socket.io
-- Showcase: http://www.pubnub.com/blog
-- Interview: http://techzinglive.com/?p=227
 
-## PubNub is Optimized for MOBILE and WEB
+#Using Encryption with PubNub
+For higher security applications, PubNub provides SSL and AES-based encryption features to help safeguard your data.  Additional information and higher-level overviews of [Cross-Platform AES Symmetric Key Encryption](http://www.google.com/url?q=http%3A%2F%2Fblog.pubnub.com%2Fpubnub-adds-cross-platform-aes-symmetric-key-encryption%2F&sa=D&sntz=1&usg=AFQjCNF3tjXOJ99EIJLMM-_2Vapd2NJElQ) in general can be found in our blog post.  A lower level diagram which details the [PubNub encryption-communication flow can be found here](http://www.google.com/url?q=http%3A%2F%2Fblog.pubnub.com%2Fwp-content%2Fuploads%2F2012%2F07%2FPubNubACLForPublishAndSubscribeRealTimeSystems-6.png&sa=D&sntz=1&usg=AFQjCNGA908A_y0YNRWU1HQ6XE_K0E4Jrw).
+##HTTPS (SSL) 2048-bit Encryption
+HTTPS is recommended for the highest level of security for REST requests to PubNub. Using REST over HTTPS is not required – however, for secure communication, you should make sure the client or REST toolkit you're using is configured to use SSL. The PubNub Cloud service will continue to support both HTTP and HTTPS.
+##AES Encryption
+To enable AES encryption, instantiate a PubNub instance with the presence of the optional cipher_key attribute. The instance will use the value of the cipher_key attribute as the cipher key.
+##Message Signing with HMAC/SHA256
+If the client is publishing, you must also include the secret_key attribute when instantiating the PubNub instance.  If the client will only be subscribing, you do not need to include the secret_key  attribute. The instance will use the value of the secret_key as the key to sign the message.
+##Secure Key Exchange
+The exchange of the cipher key (and if the client is publishing, the secret key) must occur using a secure communication system, external to PubNub, in order to maintain secrecy of the keys.
 
-- Earth Scale Deployment - Your App scales with ease.
-- Many Datacenters World Wide - High Performance everywhere on Earth.
-- Optimized for Slow and Fast Connections - Fast for mobile 3G, WiFi, 4G and Edge.
-- Reliable Message Delivery on Unreliable connections.
-- Compression and Bundling - Faster than WebSockets - up to 100msg per second faster.
-- PHP, Ruby, JavaScript and more - All Streamlined Platforms Supported.
-- The API FAST! - iPhone, Android and Blackberry phones zip!
-- It's a Breeze for Mobile Phones - Quick and Easy Development.
-- Mass Broadcasting Replication - Send a message to Millions of People in Milliseconds.
-- Platform Ubiquitous Cloud - Every Platform Now has a way to communicate Instantly.
-- Cross Device Communication - Androids and iPhones and Browsers -- all connected.
+For an example of using encryption with the PubNub JavaScript API, check out the [PubNub Javascript Cryptography Demo](http://www.google.com/url?q=http%3A%2F%2Fpubnub.github.com%2Fpubnub-api%2Fcrypto%2Findex.html&sa=D&sntz=1&usg=AFQjCNE9NvQJbOVu6hn4H-FNirbNxxJyjA) page.  The demo shows usage of the Cipher Key + SSL at the same time.  There is not exchange however with a central authority server, which is a recommended step for distributing security keys.  [This example diagram with illustrate the recommended Central Authority Server model for proper Security Key Exchange](http://www.google.com/url?q=http%3A%2F%2Fblog.pubnub.com%2Fwp-content%2Fuploads%2F2012%2F07%2FPubNubACLForPublishAndSubscribeRealTimeSystems-6.png&sa=D&sntz=1&usg=AFQjCNGA908A_y0YNRWU1HQ6XE_K0E4Jrw).
 
-# PubNub API Specification
+#REST API Considerations
+In addition to platform-specific APIs, PubNub also supports a REST API.
+##Mandatory Headers
+When using the REST API, it is **mandatory** to pass the following HTTP headers to the PubNub server for each request:
 
-Use this section of the README to review the current specification for
-PubNub Cloud Client Libraries.
-The pseudocode will guide you in learning how each
-client library must act in order to properly support the
-breadth of features powered by PubNub Cloud.
-Most client libraries are already written!
-So go check out the list of libraries already available.
+**V**: Version-Number<br>
+**User-Agent**: NAME-OF-THE-CLIENT-INTERFACE<br>
+**Accept**: \*/\*<br>
 
-# Rules of PubNub Client Lib
+###Example Headers###
+V: 3.1<br>
+User-Agent: PHP<br>
+Accept: \*/\*<br>
 
-- Must be able to communicate with EVERY other PubNub Client Lib.
-- Must be Non-blocking (Asynchronous) on all I/O.
-- Must use single Dictionary/Object as Parameter for all methods.
-- Must follow guides in this README file including method param patterns.
-- Includes a Full Unit Test with a test of each method.
-- Includes Quick Usage Doc with Example Copy/Paste Code for each Method.
-- The Lib must be only ONE file. (i.e. pubnub.py, Pubnub.java, Pubnub.cs)
-- Okay to include Vendor Files.
+##Selecting a User-agent
+Use one of the following User-Agents, based on your client platform, when making a REST-based request: *PHP, JavaScript, Node.JS, Ruby, Ruby-Rhomobile, Python, Python-Twisted, Python-Tornado, C-LibEV, C-LibEvent, C-Qt, VB, C#, Java, Java-Android, Erlang, Titanium, Corona, C-Arduino, C-Unity, C#-Mono, Lua, Obj-C-iOS, C#-WP7, Cocoa, Perl5, Perl6, Go-Google, Bash, Haskell*
 
-# Robustness of API
+###HTTP Request Example###
+    GET /time/0 HTTP/1.1
+    Host: pubsub.pubnub.com
+    V: 3.1
+    User-Agent: Java-Android
+    Accept: */*
 
-The client must be fault tolerant
-and never throw exceptions or errors.
-If a message was unable to be delivered,
-you must return an unsuccessful value.
-If an error code was returned of any kind from
-the PubNub Cloud, then you must inform the failure
-by returning an unsuccessful response.
-If a connection was lost, the connection
-must continuously attempt to be re-established.
+> **NOTE**: Only the **V**, **User-agent**, and **Accept** headers are recognized by the REST server. It is not recommended to send any other headers -- they will be ignored, and only serve to add latency to the request.
 
-# Ubiquity
+#API Reference
+The following section details usage of native client and RESTful API calls. Native client examples are demonstrated in JavaScript.
 
-All Client APIs must be able to communicate with
-every other Client API in every supported mode including
-but not limited to:
+#\#init(options)
+Create a new PubNub Entity for Publishing/Subscribing. This entity associates itself with account-level credentials and a selected origin. Also Security Options are Specified. **options** is a hash (or similar object, based on platform) which contains initialization parameters, such as your publisher key, encryption options, and channel information.
+>available in version 1+, cipher_key option available in version 3.1+
 
- - AES Encryption
- - Signed HMAC SHA256 messages
- - TCP Sockets
- - HTTPS
- - HTTP
-
-For example, This means that PHP and Ruby will always be able
-communicate via Publish/Subscribe.
-Same goes for Python and JavaScript and every other language.
-
-## Coding Convetions
-
- - No Tabs, use 4 spaces to indent.
- - Organized Code and Comments.
- - Good Coding Design Example: https://github.com/pubnub/pubnub-api/blob/master/python/Pubnub.py
-
-## IMPORT LIBS
-
-There are support libs that are needed in order to provide
-full implementation of a PubNub Client API.
-Here is a list of all needed external imports
-common to most platforms and programming languages.
-
-- Crypto AES - Client Side Encryption/Decryption
-- TLS/SSL 2048bit Support or Better
-- HMAC and SHA256 Hash-Lib
-- Async HTTP/HTTPS or Async TCP Sockets (Non-Blocking)
-- JSON Encode/Decode or Stringify/Parse
-- ZLib for GZIP
-- UUID for Unique ID Generation
-- URL Encode
-- Events Fire/Bind/Unbind
-
-## Public Methods 
-
-- init()
-- time()
-- uuid()
-- publish()
-- subscribe()
-- unsubscribe()
-- history()
-
-### INIT()
-
-Create a new PubNub Entity for Publishing/Subscribing.
-This entity associates itself with account-level credentials
-and a selected origin.
-Also Security Options are Specified.
+##Usage Example: Native Client
 
 ```javascript
-var pubnub = PubNub.init({
+var pubnub = PUBNUB.init({
     publish_key   : "CUSTOMER_PUBLISH_KEY",
     subscribe_key : "CUSTOMER_SUBSCRIBE_KEY",
-    secret_key    : "CUSTOMER_SECRET_KEY",
+    secret_key    : "CUSTOMER_SECRET_KEY", # Required only when client publishes.
     ssl           : true,
-    cipher_key    : "AES-Crypto-Cipher-Key",
-    origin        : "pubsub.pubnub.com"
+    origin        : "pubsub.pubnub.com",
+    cipher_key    : "AES-Crypto-Cipher-Key" # Optional. Use to enable encryption.
 })
 ```
 
-### TIME()
+##Usage Example: RESTful
 
-This function is a utility only and has not functional
-value other than a PING to the PubNub Cloud.
+> **NOTE**: This class method is only available when using the platform-specific API libraries – it is not available via the REST API.
+
+<br>
+#\#.time()
+* * *
+This function is a utility only and has not functional value other than a PING to the PubNub Cloud.
+>available in version 1+
+
+##Usage Example: Native Client
 
 ```javascript
-PubNub.time(function(time){
+PUBNUB.time(function(time){
     log(time)
 })
 ```
 
-### UUID()
+##Usage Example: RESTful
+###URL Params
+/time/**JSONP_CALLBACK**
 
-Utility function for generating a UUID.
+**JSONP_CALLBACK** is the name of the JSONP callback function. Use the JSONP callback's function name, or **0** if you are not using JSONP.
+###Request Example
+    GET /time/0 HTTP/1.1
+###Response
+[7529152783414]
+
+<br>
+#\#.uuid()
+* * *
+Utility function for generating a UUID. This is a utility function that is useful for creating random, unique channel IDs on the fly.
+>available in version 1+
+
+##Usage Example: Native Client
+    PUBNUB.uuid(function(uuid){
+        log(uuid)
+    })
+
+##Usage Example: RESTful
+
+> **NOTE**: This instance method is only available when using the platform-specific API libraries – it is not available via the REST API.
+
+<br>
+#\#.publish(options)
+* * *
+Broadcast a message on a specific channel. options contains channel name, message, and callback values. The message may be any valid JSON type including objects, arrays, strings, and numbers.
+>available in version 1+
+
+##Usage Example: Native Client
 
 ```javascript
-PubNub.uuid(function(uuid){
-    log(uuid)
-})
-```
-
-### PUBLISH()
-
-Broadcast a message on a specific channel.
-The message may be any valid JSON value including:
-
-1. Dictionary (Objects).  ```{"msg":"hi"}```
-2. Arrays.                ```[1,2,3,4]```
-3. Strings.               ```"Hello!"```
-4. Numbers.               ```123456```
-
-```javascript
-PubNub.publish({
+PUBNUB.publish({
     channel  : "hello_world",
     message  : "Hi.",
     callback : function(response) { log(response) }
 })
 ```
 
-### SUBSCRIBE()
+##Usage Example: RESTful
+When this request is made, the server will hold the connection until the message is successfully published.
+###URL Params
+/publish/**PUBLISH_KEY**/**SUBSCRIBE_KEY**/**SECRET_KEY**/**CHANNEL**/**JSONP_CALLBACK**/**JSON_MESSAGE**
 
-Listen for messages on a specified channel.
-Register events for receiving messages, connecting,
-disconnecting and reconnecting after an unintended disconnect.
+**JSONP_CALLBACK** is the name of the JSONP callback function. Use the JSONP callback's function name, or **0** if you are not using JSONP.
 
-Never Fire the `disconnect` event if the network is avaiable.
-Only fire the `disconnect` event if the internet is **unreachable**.
-Note that periodically PubNub will purge connections.
-However it is the duty of the Client API to re-establish the connection
-instnatly when this happens.
-It is wrong to fire the `disconnect` event if PubNub is reacable.
+**SECRET_KEY** is your secret key, available from your portal page. If you wish disable message signing, use **0**.
+
+###Request Example
+    GET /publish/demo/demo/e0991b12871de57b333fd0c992f7d3112577cf62/my-channel/0/{"msg":"hi"} HTTP/1.1
+
+###Response Codes
+The first element of the response array is a status code of type Boolean. **1** represents successful transmission, and **0** represents failed transmission.
+
+In the case of a failed transmission, an explanation of the failure is provided in the second element of the response array.
+
+In the case of a successful transmission, the second element will contain **Sent**, and the third element will contain a timetoken reference for the message.
+
+###Successful Response
+[1, "Sent", "1338832423234"]
+###Failed Response
+[0,"Reason for Failure Shown Here"]
+###Possible Failure Reasons
+* "Disconnected" - The network has gone away.
+* "Message Too Big" - Max message size exceeded.
+* "Invalid Publish Key" - Wrong Publish Key was Used.
+* "Invalid Message Signature" - The message was SHA256 Signed incorrectly.
+
+<br>
+#\#.subscribe(options)
+* * *
+Listen for messages on a specified channel. options contains channel information, and callbacks for receiving messages, connecting, disconnecting, and reconnecting after an unintended disconnect.
+>available in version 1+
+
+##Native Client Usage Example
 
 ```javascript
-PubNub.subscribe({
+PUBNUB.subscribe({
     channel    : "my-channel",
     callback   : function(message) { log(message) },
     connect    : function() { log("Connected") },
     disconnect : function() { log("Disconnected") },
-    reconnect  : function() { log("Reconnected") }
+    reconnect  : function() { log("Reconnected") },
+    error      : function() { log("Network Error") },
+    restore    : true # JavaScript only
 })
 ```
 
-### UNSUBSCRIBE()
+##Connect, disconnect, reconnect callback lifecycles
+Each time the PubNub client subscribes to a channel, a “subscription-based connection” is established to the PubNub cloud. During the lifecycle of this “subscription-based connection”:
 
-Stop Listen for messages on a specified channel.
+1. the callback event will fire each time a message is received.
+1. the disconnect event will fire only once, if and when the connection is lost.
+1. the reconnect event will fire only once, if and when the connection is re-established after a disconnect event.
+
+##RESTful Usage Example
+###Subscribe Process Lifecycle
+In the REST paradigm, **subscribe** serves two purposes.  First, it indicates the client's intention of subscribing to a channel.  Second, it brings back all new messages since the last **subscribe** request was made.
+
+In order for the server to know which messages should be considered new (and therefore sent to the client), a timetoken must be passed in each subsequent **subscribe** request. This timetoken acts as a “last sent” pointer in the channel's message stream.
+
+
+The following is an example of the RESTful **subscribe** lifecycle:
+
+ 1\. The initial subscribe request is made.
+
+###URL Params
+/subscribe/**SUBSCRIBE_KEY**/**CHANNEL**/**JSONP_CALLBACK**/**TIMETOKEN**
+
+**JSONP_CALLBACK** is the name of the JSONP callback function. Use the JSONP callback's function name, or **0** if you are not using JSONP.
+
+If you do not yet have a value for **TIMETOKEN** (i.e., this is your first request), use the value **0**.
+
+###First Request
+    GET /subscribe/subscribe_key/my-channel/0/0 HTTP/1.1
+
+###First Response
+[[], "7529152783414"]
+
+ 2\. Extract the second element in the array, and store it in a variable called timetoken.
+    The subsequent request is made with the newly acquired **timetoken**.
+
+###Subsequent Request
+    GET /subscribe/subscribe_key/my-channel/0/7529152783414 HTTP/1.1
+The connection to the server will remain established for up to 300 seconds while it waits for new messages.  If after 300 seconds no new messages have been received, the server will return an empty message element with a new **timetoken**.
+##Subsequent Response when there are no new messages since last request
+[[],"75291527861853"]
+
+If new message(s) are received within this 300 second window, the server will respond with the new message(s) and a new timetoken.
+
+##Subsequent Response when there are new messages since last request
+[[MSG,MSG,MSG],"75291527861853"]
+
+ 3\. Handle new messages (if present) from the first element of the response array.
+ 4\. Update the value of **timetoken** with the new value in the second element of the array.
+ 5\. Repeat from Step 3 to retrieve subsequent message updates.
+
+<br>
+#\#.unsubscribe(options)
+* * *
+Listen for messages on a specified channel. options contains the channel name.
+>available in version 1+
+
+##Native ClientUsage Example
 
 ```javascript
-PubNub.unsubscribe({
+PUBNUB.unsubscribe({
     channel : "my-channel"
 })
 ```
 
-### HISTORY()
+##RESTful Usage Example
+> **NOTE**: This instance method is only available when using the platform-specific API libraries – it is not available via the REST API.
 
-Retrieve past messages sent through the system.
+<br>
+#\#.history(options)
+* * *
+Retrieve the last *n* messages published to this channel. **options** contains channel information, history limit, and callback.  Currently you can only fetch the last 100 messages. However, upcoming features will include forever-history fetching.
+>available in version 1+
+
+##Native Client Usage Example
 
 ```javascript
-PubNub.history({
+PUBNUB.history({
     channel  : "my-channel",
     limit    : 100,
     callback : (messages) { log(messages) }
 })
 ```
 
-## Cryptography Guide
+##RESTful Usage Example
+###URL Format
+/history/**SUBSCRIBE_KEY**/**CHANNEL**/**JSONP_CALLBACK**/**LIMIT**
 
-##### PubNub Cryptography in JavaScript
+**JSONP_CALLBACK** is the name of the JSONP callback function. Use the JSONP callback's function name, or **0** if you are not using JSONP.
 
-[PubNub Crypto](http://pubnub.github.com/pubnub-api/crypto/index.html)
-demonstrates with PubNub Cryptography for sensitive data.
-Use this page and source code to provide high
-levels of security for data intended to be private
-and unreadable.
+**LIMIT** is the maximum number of messages to return.
 
-The Cipher Key specifies the particular transformation
-of plaintext into ciphertext, or vice versa during decryption.
-The Cipher Key exchange must occur on an external system
-outside of PubNub in order to maintain secrecy of the key.
+###Request Example
+    GET /history/demo/my-channel/0/3 HTTP/1.1
 
-Make use of the design patterns shown here when implementing a
-PubNub Client Library.  However you must follow directly
-the Interface shown in this Doc when utilizing
-AES Encryption.
-Search for `cipher_key` to find interface guide.
-
-http://pubnub.github.com/pubnub-api/crypto/index.html
-
-## Connection Pooling Guide for APIs
-
-As a rule of performance: an always-on socket connection
-pre-established will provide faster message delivery
-and receipt.
-Establishing a socket pool is simple when using
-socket loop libraries such as `Ruby::EventMachine`
-or `C LibEvent`.
-
-**As an alternative, you may use an Async::HTTP Lib
-which provides socket pooling functionality for you.**
-
-The following Pseudocode will provide insight
-into the requirement for socket connection pooling:
-
-```python
-def create_socket_pool():
-    current_socket = -1
-    max_sockets    = 10
-
-    for connection_number in range(max_sockets):
-        socket_pool.append(Socket('pubsub.pubnub.com'))
-
-    def next_socket():
-        current_socket += 1
-        if current_socket >= max_sockets: current_socket = -1
-        return socket_pool[current_socket]
-
-    return next_socket
-
-next_socket = create_socket_pool()
-
-next_socket() ## Get Next Socket.
-```
-
-Each channel connection will get its own dedicated
-socket to which an always-on
-
-## Documentation Rules
-
- - Must fit into a single page README.md file.
- - Must be inside README.md within the API directory.
- - May not be more than one file.
-
-## API Directory Structure Rules
-
- - Must be simple to start with copy/paste easy.
- - Include all required vendor libs in sub-directories.
-
-## HTTPS TLS SSL 2048bit Encryption
-
-HTTPS is recommended for the highest level of security for
-REST requests to PubNub. Using REST over HTTPS is not required. 
-However for secure communication, you should make sure the client or
-REST toolkit you're using is configured to use SSL.
-The PubNub Cloud service will continue to support both HTTP and HTTPS.
-
-## Message Signing Guide with HMAC/SHA256
-
-In order to provide Origin Authenticity and High Level of Security,
-Secret Key
-When accessing Amazon SimpleDB using one of the AWS SDKs, the SDK handles the authentication process for you. For a list of available AWS SDKs supporting Amazon SimpleDB, see Available Libraries.
-
-However, when accessing Amazon SimpleDB using a REST request, you must provide the following items so the request can be authenticated.
-
-## REST Interface
-
-##### HTTP HEADERS
-
-Include these *required* headers with each reqeust to the
-PubNub HTTP REST interface.
-
-```
-V: Version-Number
-User-Agent: NAME-OF-THE-CLIENT-INTERFACE
-Accept: */*
-```
-
-IMPORTANT: **Exclude all other headers where possible.**
-
-##### Example Headers:
-
-```
-V: 3.1
-User-Agent: PHP
-Accept: */*
-```
-
-##### FULL HTTP Request Example:
-
-```
-GET /time/0 HTTP/1.1
-Host: pubsub.pubnub.com
-V: 3.1
-User-Agent: Java-Android
-Accept: */*
-```
-
-There are may possible `User-Agent`'s.
-The following is an accepted style format
-for the value of `User-Agent` header:
-
-- PHP
-- JavaScript
-- Node.JS
-- Ruby
-- Ruby-Rhomobile
-- Python
-- Python-Twisted
-- Python-Tornado
-- C-LibEV
-- C-LibEvent
-- C-Qt
-- VB
-- C#
-- Java
-- Java-Android
-- Erlang
-- Titanium
-- Corona
-- C-Arduino
-- C-Unity
-- C#-Mono
-- Lua
-- Obj-C-iOS
-- C#-WP7
-- Cocoa
-- Perl5
-- Perl6
-- Go-Google
-- Bash
-- Haskell
-
-### TIME()
-
-##### URL Params:
-
-```
-/time/0
-```
-
-##### Request Example: 
-
-```
-GET /time/0 HTTP/1.1
-```
-
-##### Response: 
-
-```javascript
-[7529152783414]
-```
-
-### SUBSCRIBE()
-
-This is a special HTTP Request that holds the connection
-and response until a message is published or the connection timer
-fires a timetoken update.
-
-##### The Subscribe Process Lifecycle 
-
-1. Send First Request.
-2. Receive a snazzy new TimeToken.
-3. Send Second Request with Last Received new snazzy TimeToken.
-4. Receive a response after X Minutes with array of Messages (may be empty) and new TimeToken.
-5. Repeat #2-#5 forever until UNSUBSCRIBE()
-
-##### URL Params:
-
-```
-/subscribe/subscribe_key/channel/0/timetoken
-```
-
-##### First Request: 
-
-```
-GET /subscribe/demo/my-channel/0/0 HTTP/1.1
-```
-
-##### First Response: 
-
-```javascript
-[[],"7529152783414"]
-```
-
-##### Second Request: 
-
-```
-GET /subscribe/demo/my-channel/0/7529152783414 HTTP/1.1
-```
-
-##### Response When Message Transmitted: 
-
-```javascript
-[[MSG,MSG,MSG],"75291527861853"]
-```
-
-##### Response when Timer Update Fires with New TimeToken
-
-```javascript
-[[],"75291527861853"]
-```
-
-### PUBLISH()
-
-##### URL Params:
-
-```
-/publish/pub-key/sub-key/sha256-signature/channel/0/json
-```
-
-##### Request Example: 
-
-```
-GET /publish/demo/demo/e0991b12871de57b333fd0c992f7d3112577cf62/my-channel/0/{"msg":"hi"} HTTP/1.1
-```
-
-##### Response: 
-
-```javascript
-[1,"Demo"]
-```
-
-##### Response Codes:
-
-The Publish Response always returns success transmission details.
-The First element of the response Array is a bool value either `0` or `1`.
-`0` means failure and `1` means successful transmission.
-If the response code is `0`, then the transmission has failed.
-In the condition of a failed transmission, an explanation is provided
-in the second element of the response array.
-
-##### Successful Transmission: 
-
-```javascript
-[1,"Sent"]
-```
-
-##### Failed Transmission: 
-
-```javascript
-[0,"Reason for Failure Shown Here"]
-```
-
-##### Possible Failure Reasons:
-
-- "Disconnected" - The network has gone away.
-- "Message Too Big" - Max message size exceeded.
-- "Invalid Publish Key" - Wrong Publish Key was Used.
-- "Invalid Message Signature" - The message was SHA256 Signed incorrectly.
-
-
-### HISTORY()
-
-History API will allow you to fetch previously published messages.
-Currently you can only fetch the last 100 messages.
-However soon-to-come features will include forever-history fetching.
-
-##### URL Format:
-
-```
-/history/sub-key/channel/0/limit
-```
-
-##### Request Example: 
-
-```
-GET /history/demo/my-channel/0/100 HTTP/1.1
-```
-
-##### Response: 
-
-```javascript
+###Response
 [MSG,MSG,MSG]
-```
-
-## Asynchronous Mandate
-
-All functions are required to be non-blocking.
-All I/O must be Asynchronous.
-Threads are `okay` however *SOCKET LOOPS* are much preferred.
-Examples of Good Socket Loop libs are:
-
-- Twisted (Python)
-- Tornado (Python)
-- Node.JS (JavaScript)
-- Event::Machine (Ruby)
-- LibEvent (C)
-- LibEV (C)
-- Any::Event (Perl)
-- POE::Async (Perl)
-
-Any executed function must not stop the execution stack.
-If a return value is needed from a function call,
-then a callback function is required to be a parameter
-of the function -- and the return value is supplied to the callback.
-
-## Pseudocode Logic Requirements
-
-Publish and Subscribe require significant amounts of checks
-in order to provide for easy use to the developer using the API.
-Show as follows are the Publish and Subscribe functions which
-have basic Pseudocode Logic Requirements:
-
-### PUBLISH()
-
-```python
-def publish( self, args ) :
-    ## Fail if bad input.
-    if not (args['channel'] and args['message']) :
-        print('Missing Channel or Message')
-        return False
-
-    ## Capture User Input
-    channel = args['channel']
-
-    if self.cipher_key:
-        message = json.dumps(EncodeAES( self.cipher_key, args['message'] ))
-    else :
-        message = json.dumps(args['message'])
-
-    ## Capture Callback
-    if args.has_key('callback') :
-        callback = args['callback']
-    else :
-        callback = lambda x : x
-
-    ## Sign Message
-    if self.secret_key :
-        signature = hmac.new( self.secret_key, '/'.join([
-            self.publish_key,
-            self.subscribe_key,
-            channel,
-            message
-        ]), hashlib.sha256 ).hexdigest()
-    else :
-        signature = '0'
-
-    ## Send Message
-    self._request([
-        'publish',
-        self.publish_key,
-        self.subscribe_key,
-        signature,
-        URL_ENCODE(channel),
-        '0',
-        URL_ENCODE(message)
-    ], callback )
-```
-
-### SUBSCRIBE()
-
-```python
-def subscribe( self, args ) :
-    ## Fail if missing channel
-    if not 'channel' in args :
-        print('Missing Channel.')
-        return False
-
-    ## Fail if missing callback
-    if not 'callback' in args :
-        print('Missing Callback.')
-        return False
-
-    ## Capture User Input
-    channel      = URL_ENCODE(args['channel'])
-    callback     = args['callback']
-    connectcb    = args['connect'] or lambda x:x
-    disconnectcb = args['disconnect'] or lambda x:x
-    reconnectcb  = args['reconnect'] or lambda x:x
-
-    if 'errorback' in args:
-        errorback = args['errorback']
-    else:
-        errorback = lambda x: x
-
-    ## New Channel?
-    if not (channel in self.subscriptions) :
-        self.subscriptions[channel] = {
-            'first'        : False,
-            'connected'    : 0,
-            'disconnected' : 0,
-            'timetoken'    : '0'
-        }
-
-    ## Ensure Single Connection
-    if self.subscriptions[channel]['connected'] :
-        print("Already Connected")
-        return False
-
-    self.subscriptions[channel]['connected'] = 1
-
-    ## Subscription TimeStack 
-    def receive():
-        ## STOP CONNECTION?
-        if not self.subscriptions[channel]['connected']:
-            return
-
-        def sub_callback(response):
-            ## STOP CONNECTION?
-            if not self.subscriptions[channel]['connected']:
-                return
-
-            ## CONNECTED CALLBACK
-            if not self.subscriptions[channel]['first'] :
-                self.subscriptions[channel]['first'] = True
-                connectcb()
-
-            ## PROBLEM?
-            if not response:
-                ## Disconnect
-                if not self.subscriptions[channel]['disconnected']:
-                    self.subscriptions[channel]['disconnected'] = 1
-                    disconnectcb()
-
-                def time_callback(_time):
-                    if not _time:
-                        reactor.callLater(time.time()+1, receive)
-                        return errorback("Lost Network Connection")
-                    else:
-                        reactor.callLater(time.time()+1, receive)
-
-                ## ENSURE CONNECTED (Call Time Function)
-                return self.time({ 'callback' : time_callback })
-            else:
-                ## Reconnect
-                if self.subscriptions[channel]['disconnected']:
-                    self.subscriptions[channel]['disconnected'] = 0
-                    reconnectcb()
-
-            self.subscriptions[channel]['timetoken'] = response[1]
-            reactor.callLater(time.time()+0.0001, receive)
-
-            for message in response[0]:
-                if self.cipher_key:
-                    callback(json.loads(DecodeAES( self.cipher_key, message )))
-                else:
-                    callback(json.loads(message))
-
-        ## CONNECT TO PUBNUB SUBSCRIBE SERVERS
-        try :
-            self.subscriptions[channel]['request'] = self._request( [
-                'subscribe',
-                self.subscribe_key,
-                channel,
-                '0',
-                str(self.subscriptions[channel]['timetoken'])
-            ], sub_callback )
-        except :
-            reactor.callLater(time.time()+1, receive)
-            return
-
-    ## BEGIN SUBSCRIPTION (LISTEN FOR MESSAGES)
-    receive()
-```
-
-### UNSUBSCRIBE()
-
-```python
-def unsubscribe( self, args ):
-    channel = args['channel']
-
-    ## IGNORE IF NOT CONNECTED
-    if not (channel in self.subscriptions):
-        return False
-
-    ## ABORT CONNECTION
-    self.subscriptions[channel]['request'].abort()
-
-    ## DISCONNECT
-    self.subscriptions[channel]['disconnected'] = 0
-    self.subscriptions[channel]['connected']    = 0
-    self.subscriptions[channel]['timetoken']    = 0
-    self.subscriptions[channel]['first']        = False
-```

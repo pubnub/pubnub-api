@@ -99,26 +99,9 @@
 ##  C#-Silverlight : (Subscribe)
 ##  ----------------------------
         //Subscribe messages of type string,json array and json object
-        pubnub.ResponseCallback respCallback = delegate(object message)
-            {
-                object[] messages = (object[])message;
-                UIThread.Invoke(() =>
-                {
-                    if (messages != null && messages.Count() > 0)
-                    {
-                        for (int i = 0; i < messages.Count(); i++)
-                        {
-                            if (!(lSubscribe.Items.Contains(messages[i].ToString())))
-                            {
-                                lSubscribe.Items.Add(messages[i].ToString());
-                            }
-                        }
-                    }
-                });
-            };
         Dictionary<string, object> args = new Dictionary<string, object>();
         args.Add("channel", channel);
-        args.Add("callback", respCallback);
+        args.Add("callback", new Receiver());
         objPubnub.Subscribe(args);
 
 ##  ------------------------------------------------------------------------------------
@@ -166,5 +149,78 @@
 ##  -----------------------
         // Get UUID
         lblUUID.Text = "Generated UUID - > " + objPubnub.UUID(); 
+        
+##  ------------------------------------------------------------------------------------
+##  C#-Silverlight : (Unsubscribe)
+##  ------------------------------
+        //Subscribe messages of type string,json array and json object        
+        Dictionary<string, object> args = new Dictionary<string, object>();
+        args.Add("channel", channel);
+        args.Add("callback", new Receiver());
+        objPubnub.Subscribe(args);
+        
+        // Publish string 
+        Dictionary<string, object> strArgs = new Dictionary<string, object>();
+        string message = "Hello Silverlight";
+        strArgs.Add("channel", channel);
+        strArgs.Add("message", message);
+        strArgs.Add("callback", respCallback);
+        objPubnub.Publish(strArgs);
+        
+        Dictionary<string, object> arg = new Dictionary<string, object>();
+        arg.Add("channel", channel);
+        //Unsubscribe messages
+        objPubnub.Unsubscribe(arg);
+ ##  ------------------------------------------------------------------------------------ 
+   
+	// Receiver for callback
+    public class Receiver : Callback
+	{
+        public bool responseCallback(string channel, object message)
+        {
+            object[] messages = (object[])message;
+            
+            if (messages != null && messages.Length > 0)
+            {
+                for (int i = 0; i < messages.Length; i++)
+                {
+                    Debug.WriteLine("[Subscribed data] " + messages[i]);                    
+                }
+            }	            
+            return true;
+        }
 
+        public void errorCallback(string channel, object message)
+        {
+            Debug.WriteLine("Channel:" + channel + "-" + message.ToString());
+        }
+
+        public void connectCallback(string channel)
+        {
+            Debug.WriteLine("Connected to channel :" + channel);
+        }
+
+        public void reconnectCallback(string channel)
+        {
+            Debug.WriteLine("Reconnecting to channel :" + channel);
+        }
+
+        public void disconnectCallback(string channel)
+        {
+            Debug.WriteLine("Disconnected to channel :" + channel);
+        }
+    }
+    
+    public interface Callback
+    {
+        bool responseCallback(string channel, object message);
+
+        void errorCallback(String channel, Object message);
+
+        void connectCallback(String channel);
+
+        void reconnectCallback(String channel);
+
+        void disconnectCallback(String channel);
+    }       
 =========================================================================================

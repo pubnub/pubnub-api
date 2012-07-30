@@ -21,8 +21,8 @@
 ## ----------------------------------------------------
 ## Download BZ2 archive from http://twistedmatrix.com/
 ## 
-## > tar xvfj Twisted-11.0.0.tar.bz2
-## > cd Twisted-11.0.0
+## > tar xvfj Twisted-12.1.0.tar.bz2
+## > cd Twisted-12.1.0
 ## > sudo python setup.py install
 ## 
 

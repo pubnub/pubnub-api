@@ -3,6 +3,8 @@ package com.fbt;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +21,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -336,17 +341,18 @@ public class Pubnub {
                         );
 
                 // Stop Connection?
-                boolean is_disconnect = false;
+                boolean isDisconnected = false;
                 for (ChannelStatus it : subscriptions) {
                     if (it.channel.equals(channel)) {
                         if(!it.connected) {
                             callback.disconnectCallback(channel);
-                            is_disconnect = true;
+                            isDisconnected = true;
+                            subscriptions.remove(it);
                             break;
                         }
                     }
                 }
-                if (is_disconnect)
+                if (isDisconnected)
                     return;
 
                 // Wait for Message
@@ -357,13 +363,14 @@ public class Pubnub {
                     if (it.channel.equals(channel)) {
                         if (!it.connected) {
                             callback.disconnectCallback(channel);
-                            is_disconnect = true;
+                            isDisconnected = true;
+                            subscriptions.remove(it);
                             break;
                         }
                     }
                 }
 
-                if (is_disconnect)
+                if (isDisconnected)
                     return;
 
                 // Problem?
@@ -375,12 +382,13 @@ public class Pubnub {
                                  callback.disconnectCallback(channel);
                              }else{
                                  subscriptions.remove(it);
-                                 callback.errorCallback(channel,"Lost Network Connection");
+                                 callback.errorCallback(channel,"No Network Connection");
                              }
+                             break;
                         }
                     }
                     // Ensure Connected (Call Time Function)
-                    boolean is_reconnected = false;
+                    boolean isReconnected = false;
                     while(true) {
                         double time_token = this.time();
                         if (time_token == 0.0) {
@@ -389,11 +397,11 @@ public class Pubnub {
                             Thread.sleep(5000);
                         } else {
                             this._subscribe(args);
-                            is_reconnected = true;
+                            isReconnected = true;
                             break;
                         }
                     }
-                    if(is_reconnected) {
+                    if(isReconnected) {
                         break;
                     }
                 } else {
@@ -565,11 +573,13 @@ public class Pubnub {
         while (url_iterator.hasNext()) {
             try {
                 String url_bit = (String) url_iterator.next();
-                url.append("/").append(_encodeURIcomponent(url_bit));
+                url.append("/").append(_encodeToUTF8(url_bit));
             } catch (Exception e) {
                 e.printStackTrace();
                 JSONArray jsono = new JSONArray();
-                try { jsono.put("Failed UTF-8 Encoding URL."); }
+                try {
+                	jsono.put(0);
+                	jsono.put("Failed UTF-8 Encoding URL."); }
                 catch (Exception jsone) {}
                 return jsono;
             }
@@ -587,12 +597,12 @@ public class Pubnub {
                 JSONArray jsono = new JSONArray();
 
                 try {
-                    jsono.put("Failed to Concurrent HTTP Request.");
+                	jsono.put(0);
+                    jsono.put("Request failed due to missing Internet connection.");
                 } catch (Exception jsone) {
                 }
 
-                e.printStackTrace();
-                System.out.println(e);
+                System.out.println(e.getMessage());
 
                 return jsono;
             }
@@ -601,10 +611,12 @@ public class Pubnub {
 
             JSONArray jsono = new JSONArray();
 
-            try { jsono.put("Failed JSONP HTTP Request."); }
+            try {
+            	jsono.put(0);
+            	jsono.put("Failed JSONP HTTP Request."); }
             catch (Exception jsone) {}
 
-            System.out.println(e);
+            System.out.println(e.getMessage());
 
             return jsono;
         }
@@ -614,11 +626,12 @@ public class Pubnub {
         catch (Exception e) {
             JSONArray jsono = new JSONArray();
 
-            try { jsono.put("Failed JSON Parsing."); }
+            try {
+            	jsono.put(0);
+            	jsono.put("Failed JSON Parsing."); }
             catch (Exception jsone) {}
 
-            e.printStackTrace();
-            System.out.println(e);
+            System.out.println(e.getMessage());
 
             // Return Failure to Parse
             return jsono;
@@ -637,12 +650,14 @@ public class Pubnub {
         public String call() throws Exception {
             // Prepare request
             String line = "", json = "";
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
+            HttpConnectionParams.setSoTimeout(httpParams, 310000);
+            HttpClient httpclient = new DefaultHttpClient(httpParams);
             HttpUriRequest request = new HttpGet(url);
             request.setHeader("V", "3.1");
             request.setHeader("User-Agent", "Java-Android");
             request.setHeader("Accept-Encoding", "gzip");
-            httpclient.getParams().setParameter("http.connection.timeout", 310000);
 
             // Execute request
             HttpResponse response;
@@ -674,27 +689,8 @@ public class Pubnub {
         }
     }
 
-    private String _encodeURIcomponent(String s) {
-        StringBuilder o = new StringBuilder();
-        for (char ch : s.toCharArray()) {
-            if (isUnsafe(ch)) {
-                o.append('%');
-                o.append(toHex(ch / 16));
-                o.append(toHex(ch % 16));
-            } else {
-                o.append(ch);
-            }
-        }
-        return o.toString();
+    private String _encodeToUTF8(String s) throws UnsupportedEncodingException {
+    	String enc = URLEncoder.encode(s, "UTF-8").replace("+", "%20");
+    	return enc;
     }
-
-    private char toHex(int ch) {
-        return (char) (ch < 10 ? '0' + ch : 'A' + ch - 10);
-    }
-
-    private boolean isUnsafe(char ch) {
-        return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?ɂ顶".indexOf(ch) >= 0;
-    }
-
- 
 }

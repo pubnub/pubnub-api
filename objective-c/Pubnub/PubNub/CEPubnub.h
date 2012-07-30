@@ -1,16 +1,16 @@
-// Copyright 2011 Cooliris, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+    // Copyright 2011 Cooliris, Inc.
+    //
+    // Licensed under the Apache License, Version 2.0 (the "License");
+    // you may not use this file except in compliance with the License.
+    // You may obtain a copy of the License at
+    //
+    //     http://www.apache.org/licenses/LICENSE-2.0
+    //
+    // Unless required by applicable law or agreed to in writing, software
+    // distributed under the License is distributed on an "AS IS" BASIS,
+    // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    // See the License for the specific language governing permissions and
+    // limitations under the License.
 
 #import <Foundation/Foundation.h>
 
@@ -18,10 +18,10 @@
 
 @protocol CEPubnubDelegate <NSObject>
 @optional
-- (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel;
+- (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel withResponce: (id)responce;
 - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error;  // "error" may be nil
 
-//- (void) pubnub:(PubNub*)pubnub didReceiveMessage:(NSDictionary*)message onChannel:(NSString*)channel;
+    //- (void) pubnub:(PubNub*)pubnub didReceiveMessage:(NSDictionary*)message onChannel:(NSString*)channel;
 
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveDictionary:(NSDictionary *)message onChannel:(NSString *)channel;
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel;
@@ -36,11 +36,11 @@
 - (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString*)channel ;
 @end
 
-// All operations happen on the main thread
-// Messages must be JSON compatible
+    // All operations happen on the main thread
+    // Messages must be JSON compatible
 @interface CEPubnub : NSObject {
 @private
-    id<CEPubnubDelegate> _delegate;
+    __unsafe_unretained id<CEPubnubDelegate> _delegate;
     NSString* _publishKey;
     NSString* _subscribeKey;
     NSString* _secretKey;
@@ -56,11 +56,12 @@
                     subscribeKey:(NSString*)subscribeKey
                        secretKey:(NSString*)secretKey
                           useSSL:(BOOL)useSSL;
+
 - (CEPubnub*) initWithPublishKey:(NSString*)publishKey  // May be nil if -publishMessage:toChannel: is never used
                     subscribeKey:(NSString*)subscribeKey
                        secretKey:(NSString*)secretKey  // May be nil if -publishMessage:toChannel: is never used
                           useSSL:(BOOL)useSSL
-                       cipherKey:(NSString*)cipherKey
+                       cipherKey:(NSString*)cipherKey  
                           origin:(NSString*)origin;
 
 - (CEPubnub*) initWithPublishKey:(NSString*)publishKey
@@ -68,9 +69,6 @@
                        secretKey:(NSString*)secretKey
                        cipherKey:(NSString*)cipherKey
                           useSSL:(BOOL)useSSL;
-
-//- (void) publishMessage:(id)message toChannel:(NSString*)channel;
-//- (void) fetchHistory:(NSUInteger)limit forChannel:(NSString*)channel;
 
 - (void) publish:(NSDictionary * )arg1;
 - (void) publish:(NSString * )message onChannel:(NSString *) channel;
@@ -84,11 +82,6 @@
 - (BOOL) isSubscribedToChannel:(NSString*)channel;
 @end
 
-struct ChannelStatus{
-    NSString *channel;
-    BOOL connected;
-    BOOL first;
-};
 
 @interface ChannelStatus :NSObject
 @property(nonatomic, retain) NSString* channel;

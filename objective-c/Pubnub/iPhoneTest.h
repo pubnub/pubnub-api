@@ -16,7 +16,12 @@
 - (IBAction)HistoryClick:(id)sender;
 - (IBAction)TimeClick:(id)sender;
 - (IBAction)UUIDClick:(id)sender;
+- (IBAction)unitTest:(id)sender;
+- (IBAction)Subscribe:(id)sender;
+- (IBAction)Unsubscribe:(id)sender;
 
 @property (retain, nonatomic) IBOutlet UITextView *txt;
 
 @end
+
+

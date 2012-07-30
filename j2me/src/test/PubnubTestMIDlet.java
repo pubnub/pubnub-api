@@ -10,7 +10,7 @@ import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 
-public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callback {
+public class PubnubTestMIDlet extends MIDlet implements CommandListener,Callback {
 
     private boolean midletPaused = false;
     private Command exitCommand;
@@ -28,6 +28,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     private void initialize() {
         _pubnub.setCallback(this);
     }
+
     Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "", false);
 
     /**
@@ -35,7 +36,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
      */
     public void startMIDlet() {
         switchDisplayable(null, getForm());
-        Subcribe();
+        subscribe();
     }
 
     /**
@@ -45,15 +46,16 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     }
 
     /**
-     * Switches a current displayable in a display. The
-     * <code>display</code> instance is taken from
-     * <code>getDisplay</code> method. This method is used by all actions in the
-     * design for switching displayable.
-     *
-     * @param alert the Alert which is temporarily set to the display; if
-     * <code>null</code>, then
-     * <code>nextDisplayable</code> is set immediately
-     * @param nextDisplayable the Displayable to be set
+     * Switches a current displayable in a display. The <code>display</code>
+     * instance is taken from <code>getDisplay</code> method. This method is
+     * used by all actions in the design for switching displayable.
+     * 
+     * @param alert
+     *            the Alert which is temporarily set to the display; if
+     *            <code>null</code>, then <code>nextDisplayable</code> is set
+     *            immediately
+     * @param nextDisplayable
+     *            the Displayable to be set
      */
     public void switchDisplayable(Alert alert, Displayable nextDisplayable) {
         Display display = getDisplay();
@@ -67,29 +69,31 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     /**
      * Called by a system to indicated that a command has been invoked on a
      * particular displayable.
-     *
-     * @param command the Command that was invoked
-     * @param displayable the Displayable where the command was invoked
+     * 
+     * @param command
+     *            the Command that was invoked
+     * @param displayable
+     *            the Displayable where the command was invoked
      */
     public void commandAction(Command command, Displayable displayable) {
         if (displayable == form) {
             if (command == exitCommand) {
                 exitMIDlet();
             } else if (command == historyCommand) {
-                History();
+                history();
             } else if (command == publishCommand) {
-                Publish();
+                publish();
             } else if (command == timeCommand) {
-                Time();
+                time();
             } else if (command == unsubscribeCommand) {
-                UnSubcribe();
+                unsubscribe();
             }
         }
     }
 
     /**
      * Returns an initiliazed instance of exitCommand component.
-     *
+     * 
      * @return the initialized component instance
      */
     public Command getExitCommand() {
@@ -101,12 +105,12 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     /**
      * Returns an initiliazed instance of form component.
-     *
+     * 
      * @return the initialized component instance
      */
     public Form getForm() {
         if (form == null) {
-            form = new Form("Welcome", new Item[]{getStringItem()});
+            form = new Form("Welcome", new Item[] { getStringItem() });
             form.addCommand(getExitCommand());
             form.addCommand(getPublishCommand());
             form.addCommand(getTimeCommand());
@@ -119,7 +123,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     /**
      * Returns an initiliazed instance of stringItem component.
-     *
+     * 
      * @return the initialized component instance
      */
     public StringItem getStringItem() {
@@ -131,7 +135,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     /**
      * Returns an initiliazed instance of publishCommand component.
-     *
+     * 
      * @return the initialized component instance
      */
     public Command getPublishCommand() {
@@ -143,7 +147,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     /**
      * Returns an initiliazed instance of timeCommand component.
-     *
+     * 
      * @return the initialized component instance
      */
     public Command getTimeCommand() {
@@ -156,7 +160,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     /**
      * Returns an initiliazed instance of historyCommand component.
-     *
+     * 
      * @return the initialized component instance
      */
     public Command getHistoryCommand() {
@@ -168,7 +172,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     /**
      * Returns an initiliazed instance of unsubscribeCommand component.
-     *
+     * 
      * @return the initialized component instance
      */
     public Command getUnsubscribeCommand() {
@@ -180,7 +184,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     /**
      * Returns a display instance.
-     *
+     * 
      * @return the display instance.
      */
     public Display getDisplay() {
@@ -219,19 +223,21 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     /**
      * Called to signal the MIDlet to terminate.
-     *
-     * @param unconditional if true, then the MIDlet has to be unconditionally
-     * terminated and all resources has to be released.
+     * 
+     * @param unconditional
+     *            if true, then the MIDlet has to be unconditionally terminated
+     *            and all resources has to be released.
      */
     public void destroyApp(boolean unconditional) {
     }
 
-    public void Publish() {
+    public void publish() {
         try {
             // Create JSON Message
             JSONObject message = new JSONObject();
             // Create HashMap parameter
             message.put("some_key", "Hello World!");
+           
             Hashtable args = new Hashtable(2);
             args.put("channel", Channel); // Channel Name
             args.put("message", message); // JSON Message
@@ -242,13 +248,13 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
         }
     }
 
-    public void Subcribe() {
+    public void subscribe() {
         Hashtable args = new Hashtable(6);
         args.put("channel", Channel);
         _pubnub.subscribe(args);
     }
 
-    public void UnSubcribe() {
+    public void unsubscribe() {
         Hashtable args = new Hashtable(1);
         String channel = Channel;
         args.put("channel", channel);
@@ -256,14 +262,14 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
         System.out.println("UnSubscribed sucessfully");
     }
 
-    public void Time() {
+    public void time() {
         System.out.println("Time::" + _pubnub.time());
         double response = _pubnub.time();
         stringItem.setLabel("Time::");
         stringItem.setText(response + "");
     }
 
-    public void History() {
+    public void history() {
         Hashtable args = new Hashtable(2);
         args.put("channel", Channel);
         args.put("limit", new Integer(2));
@@ -273,16 +279,18 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     public void publishCallback(String channel, Object message) {
 
         JSONArray meg = (JSONArray) message;
-        System.out.println("Message sent responce:" + message.toString() + " on channel:" + channel);
+        System.out.println("Message sent responce:" + message.toString()
+                + " on channel:" + channel);
         try {
-            int sucess=Integer.parseInt(meg.get(0).toString());
+            int sucess = Integer.parseInt(meg.get(0).toString());
             if (sucess == 1) {
-
                 stringItem.setLabel("Publish");
-                stringItem.setText("Message sent successfully on channel:" + channel + "\n" + message.toString());
+                stringItem.setText("Message sent successfully on channel:"
+                        + channel + "\n" + message.toString());
             } else {
                 stringItem.setLabel("Publish");
-                stringItem.setText("Message sent failure on channel:" + channel + "\n" + message.toString());
+                stringItem.setText("Message sent failure on channel:" + channel
+                        + "\n" + message.toString());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -290,7 +298,8 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     }
 
     public void subscribeCallback(String channel, Object message) {
-        System.out.println("Message recevie on channel:" + channel + " Message:" + message.toString());
+        System.out.println("Message recevie on channel:" + channel
+                + " Message:" + message.toString());
         try {
             if (message instanceof JSONObject) {
                 JSONObject obj = (JSONObject) message;
@@ -329,14 +338,14 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     public void historyCallback(String channel, Object message) {
         JSONArray meg = (JSONArray) message;
-        System.out.println("History recevie on channel:" + channel + " Message:" + meg.toString());
+        System.out.println("History recevie on channel:" + channel+ " Message:" + meg.toString());
 
         stringItem.setLabel("History");
         stringItem.setText("History recevie on channel:" + channel + "\n" + meg.toString());
-   }
+    }
 
     public void errorCallback(String channel, Object message) {
-        System.out.println("Error on channel:" + channel + " Message:" + message.toString());
+        System.out.println("Error on channel:" + channel + " Message:"+ message.toString());
 
     }
 
