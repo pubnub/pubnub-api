@@ -316,12 +316,21 @@ package
                                     {
                                         if(cipher_key.length > 0)
                                         {
-                                            onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { channel:channel, result:[i+1,pubnubcrypto.decrypt(cipher_key,messages[i])],timeout:1 } ));
-                                            
+                                            onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { 
+                                                channel:channel, 
+                                                result:[i+1,pubnubcrypto.decrypt(cipher_key,messages[i])], 
+                                                envelope: result, 
+                                                timeout:1 
+                                            } ));
                                         }
                                         else
                                         {
-                                            onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { channel:channel, result:[i+1,JSON.encode(messages[i])],timeout:1 } )); 
+                                            onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, {
+                                                channel:channel, 
+                                                result:[i+1,JSON.encode(messages[i])], 
+                                                envelope: result, 
+                                                timeout:1 
+                                            } )); 
                                         }    
                                     }
                                 }
