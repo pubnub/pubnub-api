@@ -15,6 +15,7 @@ except ImportError: import simplejson as json
 import time
 import hashlib
 import urllib2
+import uuid
 
 class Pubnub():
     def __init__(
@@ -23,7 +24,8 @@ class Pubnub():
         subscribe_key,
         secret_key = False,
         ssl_on = False,
-        origin = 'pubsub.pubnub.com'
+        origin = 'pubsub.pubnub.com',
+        pres_uuid = None
     ) :
         """
         #**
@@ -33,9 +35,10 @@ class Pubnub():
         #*
         #* @param string publish_key required key to send messages.
         #* @param string subscribe_key required key to receive messages.
-        #* @param string secret_key required key to sign messages.
+        #* @param string secret_key optional key to sign messages.
         #* @param boolean ssl required for 2048 bit encrypted messages.
         #* @param string origin PUBNUB Server Origin.
+        #* @param string pres_uuid optional identifier for presence (auto-generated if not supplied)
         #**
 
         ## Initiat Class
@@ -53,7 +56,11 @@ class Pubnub():
             self.origin = 'https://' + self.origin
         else :
             self.origin = 'http://'  + self.origin
-
+        
+        self.uuid = pres_uuid or str(uuid.uuid4())
+        
+        if not isinstance(self.uuid, basestring):
+            raise AttributeError("pres_uuid must be a string")
 
     def publish( self, args ) :
         """
@@ -116,7 +123,7 @@ class Pubnub():
         #* This is BLOCKING.
         #* Listen for a message on a channel.
         #*
-        #* @param array args with channel and message.
+        #* @param array args with channel and callback.
         #* @return false on fail, array on success.
         #**
 
@@ -145,6 +152,7 @@ class Pubnub():
         ## Capture User Input
         channel   = str(args['channel'])
         callback  = args['callback']
+        subscribe_key = args.get('subscribe_key') or self.subscribe_key
 
         ## Begin Subscribe
         while True :
@@ -152,13 +160,13 @@ class Pubnub():
             timetoken = 'timetoken' in args and args['timetoken'] or 0
             try :
                 ## Wait for Message
-                response = self._request([
+                response = self._request(self._encode([
                     'subscribe',
-                    self.subscribe_key,
+                    subscribe_key,
                     channel,
                     '0',
                     str(timetoken)
-                ])
+                ])+['?uuid='+self.uuid], encode=False)
 
                 messages          = response[0]
                 args['timetoken'] = response[1]
@@ -176,8 +184,82 @@ class Pubnub():
                 time.sleep(1)
 
         return True
+    
+    def presence( self, args ) :
+        """
+        #**
+        #* presence
+        #*
+        #* This is BLOCKING.
+        #* Listen for presence events on a channel.
+        #*
+        #* @param array args with channel and callback.
+        #* @return false on fail, array on success.
+        #**
 
+        ## Presence Example
+        def pres_event(message) :
+            print(message)
+            return True
 
+        pubnub.presence({
+            'channel'  : 'hello_world',
+            'callback' : receive 
+        })
+        """
+
+        ## Fail if missing channel
+        if not 'channel' in args :
+            raise Exception('Missing Channel.')
+            return False
+
+        ## Fail if missing callback
+        if not 'callback' in args :
+            raise Exception('Missing Callback.')
+            return False
+
+        ## Capture User Input
+        channel   = str(args['channel'])
+        callback  = args['callback']
+        subscribe_key = args.get('subscribe_key') or self.subscribe_key
+        
+        return self.subscribe({'channel': channel, 'subscribe_key':subscribe_key+'-pres', 'callback': callback})
+    
+    
+    def here_now( self, args ) :
+        """
+        #**
+        #* Here Now
+        #*
+        #* Load current occupancy from a channel.
+        #*
+        #* @param array args with 'channel'.
+        #* @return mixed false on fail, array on success.
+        #*
+
+        ## Presence Example
+        here_now = pubnub.here_now({
+            'channel' : 'hello_world',
+        })
+        print(here_now['occupancy'])
+        print(here_now['uuids'])
+
+        """
+        channel = str(args['channel'])
+        
+        ## Fail if bad input.
+        if not channel :
+            raise Exception('Missing Channel')
+            return False
+        
+        ## Get Presence Here Now
+        return self._request([
+            'v2','presence',
+            'sub_key', self.subscribe_key,
+            'channel', channel
+        ]);
+        
+        
     def history( self, args ) :
         """
         #**
