@@ -23,7 +23,7 @@ business collaborative solutions, and more.
 
 ## SIMPLE EXAMPLE
 ```html
-<div id=pubnub></div>
+<div id=pubnub pub-key=demo sub-key=demo></div>
 <script src=http://cdn.pubnub.com/pubnub-3.1.min.js ></script>
 <script>
 
@@ -44,7 +44,7 @@ business collaborative solutions, and more.
 
 ## ADVANCED STYLE
 ```html
-<div id=pubnub></div>
+<div id=pubnub pub-key=demo sub-key=demo></div>
 <script src=http://cdn.pubnub.com/pubnub-3.1.min.js ></script>
 <script>(function(){
     // LISTEN FOR MESSAGES
@@ -95,6 +95,32 @@ business collaborative solutions, and more.
             alert(JSON.stringify(message));
         }
     });
+
+})();</script>
+```
+
+## Using the PUBNUB init() Function
+
+Sometimes you want to use create a PubNub Instance directly in JavaScript
+and pass the PubNub API Keys without using a DOM element.
+To do this, simply follow this `init` example:
+
+```html
+<script src=http://cdn.pubnub.com/pubnub-3.1.min.js ></script>
+<script>(function(){
+
+    // INIT PubNub
+    var pubnub = PUBNUB.init({
+        publish_key   : 'demo',
+        subscribe_key : 'demo',
+        origin        : 'pubsub.pubnub.com'
+    });
+
+    // LISTEN
+    pubnub.subscribe({ channel  : "hello_world", callback : alert })
+
+    // SEND
+    pubnub.publish({ channel : "hello_world", message : "Hi." })
 
 })();</script>
 ```

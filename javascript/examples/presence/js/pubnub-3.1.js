@@ -884,6 +884,7 @@ var PDIV          = $('pubnub') || {}
                 callback : jsonp,
                 url      : [
                     origin, 'v2', 'presence',
+                    //'http://localhost:5000', 'v2', 'presence',
                     'sub_key', SUBSCRIBE_KEY, 
                     'channel', encode(channel)
                 ],
