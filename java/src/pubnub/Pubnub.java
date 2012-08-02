@@ -1,29 +1,16 @@
 package pubnub;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Future;
-import java.util.zip.GZIPInputStream;
-
+import com.ning.http.client.*;
+import com.ning.http.client.AsyncHttpClientConfig.Builder;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import pubnub.crypto.PubnubCrypto;
 
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.AsyncHttpClientConfig.Builder;
-import com.ning.http.client.Request;
-import com.ning.http.client.RequestBuilder;
-import com.ning.http.client.Response;
+import java.io.*;
+import java.net.URLEncoder;
+import java.util.*;
+import java.util.concurrent.Future;
+import java.util.zip.GZIPInputStream;
 
 /**
  * PubNub 3.1 Real-time Push Cloud API
@@ -681,13 +668,13 @@ public class Pubnub {
     
     private String _encodeURIcomponent(String s) {
         StringBuilder o = new StringBuilder();
-        for (char ch : s.toCharArray()) {
+        for (Character ch : s.toCharArray()) {
             if (isUnsafe(ch)) {
                 o.append('%');
                 o.append(toHex(ch / 16));
                 o.append(toHex(ch % 16));
             }
-            else o.append(ch);
+            else o.append(encodeToUTF8(ch.toString()));
         }
         return o.toString();
     }
@@ -700,5 +687,14 @@ public class Pubnub {
         return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?ɂ顶".indexOf(ch) >= 0;
     }
 
+    private String encodeToUTF8(String s) {
+        try {
+            String enc = URLEncoder.encode(s, "UTF-8").replace("+", "%20");
+            return enc;
+        } catch (UnsupportedEncodingException e) {
+
+        }
+        return s;
+    }
 
 }
