@@ -47,7 +47,7 @@ public class PubnubTestActivity extends Activity {
 				"",              // CIPHER_KEY
 				true             // SSL_ON?
 		);
-
+		// pubnub.startPubnub(this);
 		XMLDownloader d = new XMLDownloader();
 		d.execute("xml");
 
@@ -75,6 +75,7 @@ public class PubnubTestActivity extends Activity {
 
 				// Print Response from PubNub JSONP REST Service
 				System.out.println(info);
+				Log.e("Publish", info.toString());
 			}
 		});
 
@@ -193,6 +194,27 @@ public class PubnubTestActivity extends Activity {
 		});
 	}
 
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		// pubnub.stopPubnub();
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		// pubnub.stopPubnub();
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		// pubnub.startPubnub(this);
+	}
+
 	public void allMessageClick(View v) {
 		JSONObject message = new JSONObject();
 		try {
@@ -267,7 +289,7 @@ public class PubnubTestActivity extends Activity {
 				class Receiver implements Callback {
 					public boolean subscribeCallback(String channel,
 							Object message) {
-						Log.i("Message Received", message.toString());
+						Log.e("Message Received", message.toString());
 						myMessage = message.toString();
 						r.sendEmptyMessage(0);
 						return true;
@@ -281,19 +303,19 @@ public class PubnubTestActivity extends Activity {
 
 					@Override
 					public void connectCallback(String channel) {
-						Log.i("ConnectCallback", "Connected to channel :"
+						Log.e("ConnectCallback", "Connected to channel :"
 								+ channel);
 					}
 
 					@Override
 					public void reconnectCallback(String channel) {
-						Log.i("ReconnectCallback", "Reconnected to channel :"
+						Log.e("ReconnectCallback", "Reconnecting to channel :"
 								+ channel);
 					}
 
 					@Override
 					public void disconnectCallback(String channel) {
-						Log.i("DisconnectCallback", "Disconnected to channel :"
+						Log.e("DisconnectCallback", "Disconnected to channel :"
 								+ channel);
 					}
 				}
@@ -409,7 +431,7 @@ public class PubnubTestActivity extends Activity {
 			threads.put(_channel, t);
 
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

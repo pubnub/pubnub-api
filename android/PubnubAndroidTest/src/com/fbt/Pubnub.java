@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -21,10 +23,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import pubnub.PubnubCrypto;
+import android.content.Context;
 
 /**
  * PubNub 3.1 Real-time Push Cloud API
@@ -44,6 +50,8 @@ public class Pubnub {
         boolean connected, first;
     }
     private List<ChannelStatus> subscriptions;
+	private Hashtable<String, Object> connection = new Hashtable<String, Object>();
+	private Context mContext;
 
     /**
      * PubNub 3.1 with Cipher Key
@@ -247,7 +255,7 @@ public class Pubnub {
         url.add(message.toString());
 
         // Return JSONArray
-        return _request(url);
+		return _request(url, channel);
     }
 
     /**
@@ -353,7 +361,7 @@ public class Pubnub {
                     return;
 
                 // Wait for Message
-                JSONArray response = _request(url);
+				JSONArray response = _request(url, channel);
 
                 // Stop Connection?
                 for (ChannelStatus it : subscriptions) {
@@ -500,9 +508,9 @@ public class Pubnub {
         if (this.CIPHER_KEY.length() > 0) {
             // Decrpyt Messages
             PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-            return pc.decryptJSONArray(_request(url));
+			return pc.decryptJSONArray(_request(url, channel));
         } else {
-            return _request(url);
+			return _request(url, channel);
         }
     }
 
@@ -519,7 +527,7 @@ public class Pubnub {
         url.add("time");
         url.add("0");
 
-        JSONArray response = _request(url);
+		JSONArray response = _request(url, null);
         return response.optDouble(0);
     }
 
@@ -551,6 +559,18 @@ public class Pubnub {
                 break;
             }
         }
+		Enumeration<String> e = connection.keys();
+		while (e.hasMoreElements()) {
+
+			String ch = (String) e.nextElement();
+			if (ch.equals(channel))
+			{
+				HttpClient http = (HttpClient) connection.get(ch);
+				http.getConnectionManager().shutdown();
+				if (connection.containsKey(ch))
+					connection.remove(ch);
+			}
+		}
     }
 
     /**
@@ -559,7 +579,7 @@ public class Pubnub {
      * @param List<String> request of url directories.
      * @return JSONArray from JSON response.
      */
-    private JSONArray _request(List<String> url_components) {
+	private JSONArray _request(List<String> url_components, String channel) {
         String   json         = "";
         StringBuilder url     = new StringBuilder();
         Iterator<String> url_iterator = url_components.iterator();
@@ -574,15 +594,16 @@ public class Pubnub {
             } catch (Exception e) {
                 e.printStackTrace();
                 JSONArray jsono = new JSONArray();
-                try { jsono.put("Failed UTF-8 Encoding URL."); }
+                try {
+                	jsono.put(0);
+                	jsono.put("Failed UTF-8 Encoding URL."); }
                 catch (Exception jsone) {}
                 return jsono;
             }
         }
 
         try {
-            
-            PubnubHttpRequest request = new PubnubHttpRequest(url.toString());
+            PubnubHttpRequest request = new PubnubHttpRequest(url.toString(),channel);
             FutureTask<String> task = new FutureTask<String>(request);
             Thread t = new Thread(task);
             t.start();
@@ -592,12 +613,12 @@ public class Pubnub {
                 JSONArray jsono = new JSONArray();
 
                 try {
-                    jsono.put("Failed to Concurrent HTTP Request.");
+                	jsono.put(0);
+                    jsono.put("Request failed due to missing Internet connection.");
                 } catch (Exception jsone) {
                 }
 
-                e.printStackTrace();
-                System.out.println(e);
+                System.out.println(e.getMessage());
 
                 return jsono;
             }
@@ -606,10 +627,12 @@ public class Pubnub {
 
             JSONArray jsono = new JSONArray();
 
-            try { jsono.put("Failed JSONP HTTP Request."); }
+            try {
+            	jsono.put(0);
+            	jsono.put("Failed JSONP HTTP Request."); }
             catch (Exception jsone) {}
 
-            System.out.println(e);
+            System.out.println(e.getMessage());
 
             return jsono;
         }
@@ -619,11 +642,12 @@ public class Pubnub {
         catch (Exception e) {
             JSONArray jsono = new JSONArray();
 
-            try { jsono.put("Failed JSON Parsing."); }
+            try {
+            	jsono.put(0);
+            	jsono.put("Failed JSON Parsing."); }
             catch (Exception jsone) {}
 
-            e.printStackTrace();
-            System.out.println(e);
+            System.out.println(e.getMessage());
 
             // Return Failure to Parse
             return jsono;
@@ -632,22 +656,28 @@ public class Pubnub {
 
     private class PubnubHttpRequest implements Callable<String> {
 
-        String url;
+		String url, channel;
 
-        public PubnubHttpRequest(String url) {
+		public PubnubHttpRequest(String url, String channel) {
             this.url = url;
+			this.channel = channel;
         }
 
         @Override
         public String call() throws Exception {
             // Prepare request
             String line = "", json = "";
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
+            HttpConnectionParams.setSoTimeout(httpParams, 310000);
+            HttpClient httpclient = new DefaultHttpClient(httpParams);
             HttpUriRequest request = new HttpGet(url);
             request.setHeader("V", "3.1");
             request.setHeader("User-Agent", "Java-Android");
             request.setHeader("Accept-Encoding", "gzip");
-            httpclient.getParams().setParameter("http.connection.timeout", 310000);
+			if (channel != null) {
+				connection.put(channel, httpclient);
+			}
 
             // Execute request
             HttpResponse response;
@@ -674,8 +704,10 @@ public class Pubnub {
                 }
                 reader.close();
             }
-
-            return json;
+            if (channel != null) {
+				connection.remove(channel);
+			}
+			return json;
         }
     }
 
