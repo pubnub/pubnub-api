@@ -8,7 +8,7 @@
 
 <!-- <script src="http://cdn.pubnub.com/pubnub-3.1.min.js"></script> -->
 <script>
-    var p       = PUBNUB.init({ ssl : true })
+    var p       = PUBNUB.init({ 'subscribe_key': 'demo', 'publish_key': 'demo', ssl : true })
     ,   out     = p.$('output')
     ,   now     = function(){return+new Date}
     ,   start   = now()
