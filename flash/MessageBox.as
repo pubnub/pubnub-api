@@ -25,37 +25,36 @@ var config:Object = {
 }    
 pubnub.init(config);
 
-            pubnub.addEventListener(PubNubEvent.INIT, onPubInit);
-            function onPubInit(event:PubNubEvent):void
-            {
-                var msgArr:Array = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-                var msgObj:Object = {"Name":"Jhon","Age":"25"};
+//            pubnub.addEventListener(PubNubEvent.INIT, onPubInit);
+//            function onPubInit(event:PubNubEvent):void
+//            {
+//                var msgArr:Array = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+//                var msgObj:Object = {"Name":"Jhon","Age":"25"};
+//
+//                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:"Hello AS3"} ); //string message
+//                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:msgArr} ); // array
+//                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:msgObj} ); //object
+//            }
+//            function onPublishHandler(evt:PubNubEvent):void
+//            {
+//                trace("[" + evt.data.result[0] + " ," + evt.data.result[1]+ " ," + evt.data.result[2] + "]");
+//            }
 
-                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:"Hello AS3"} ); //string message
-                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:msgArr} ); // array
-                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:msgObj} ); //object
+
+//Subscribe messages of type string,json array and json object
+            pubnub.addEventListener(PubNubEvent.INIT, onSubInit);
+            function onSubInit(event:PubNubEvent):void {
+                PubNub.PubNub.subscribe({
+                    callback:onSubscribeHandler,
+                    channel:channelName
+                });
             }
-            function onPublishHandler(evt:PubNubEvent):void
-            {
-                trace("[" + evt.data.result[0] + " ," + evt.data.result[1]+ " ," + evt.data.result[2] + "]");
+
+            function onSubscribeHandler(evt:PubNubEvent):void {
+                trace("[Subscribed data] : " + evt.data.result[1]);
+                trace("[Envelop data] : ", evt.data.envelope);
+                trace("[Source Channel] : ", evt.data.envelope[2]);
             }
-
-
-////Subscribe messages of type string,json array and json object
-//pubnub.addEventListener(PubNubEvent.INIT, onSubInit);
-//function onSubInit(event:PubNubEvent):void
-//{
-//    PubNub.PubNub.subscribe( {
-//        callback:onSubscribeHandler,
-//        channel:channelName
-//    } );
-//}
-//function onSubscribeHandler(evt:PubNubEvent):void
-//{
-//    trace("[Subscribed data] : " + evt.data.result[1]);
-//    trace("[Envelop data] : ", evt.data.envelope);
-//    trace("[Source Channel] : ", evt.data.envelope[2]);
-//}
 
 
  

@@ -20,6 +20,11 @@ package PubNub
 	import com.adobe.crypto.SHA256;
 	import com.adobe.webapis.URLLoaderBase;
 	import com.hurlant.util.der.Type;
+
+    import flash.external.ExternalInterface;
+
+
+
 	
 	/**
 	 * PubNub Static Class
@@ -180,7 +185,7 @@ package PubNub
 			if (secret_key) 
 			{
 				// Create the signature for this message                
-				var concat:String = publish_key + "/" + sub_key + "/" + secret_key + "/" + channel + "/" + message + "?uuid=" + this.session_uuid;
+				var concat:String = publish_key + "/" + sub_key + "/" + secret_key + "/" + channel + "/" + message;
 				
 				// Sign message using HmacSHA256
 				signature = HMAC.hash(secret_key, concat,SHA256);        
@@ -218,7 +223,7 @@ package PubNub
 				node.loader = null;
 				node.handler = null;
 			}            
-			var url:String = origin + "/" + "publish" + "/" + publish_key + "/" + sub_key + "/" + signature + "/" + _encode(channel) + "/" + 0 + "/" +_encode(message as String) + "?uuid=" + this.session_uuid;
+			var url:String = origin + "/" + "publish" + "/" + publish_key + "/" + sub_key + "/" + signature + "/" + _encode(channel) + "/" + 0 + "/" +_encode(message as String);
 			_request( { url:url, channel:channel, handler:publishHandler, uid:uid } );
 		}
 		
@@ -339,7 +344,7 @@ package PubNub
 					node.tries = 0;
 					timer = new Timer(interval, 100);
 					timer.addEventListener(TimerEvent.TIMER_COMPLETE, function():void {
-						_request({ url:url, channel:channel, handler:subHandler, uid:uid, timetoken:time });
+						_request({ url:url, channel:channel, handler:subHandler, uid:uid, timetoken:time, operation:"subscribe_with_timetoken" });
 					});
 					timer.start();
 				}
@@ -360,13 +365,14 @@ package PubNub
 					{
 						timer = new Timer(1000, 1);
 						timer.addEventListener(TimerEvent.TIMER_COMPLETE, function():void {
-							_request({ url:url, channel:channel, handler:subHandler, uid:uid, timetoken:time });
+							_request({ url:url, channel:channel, handler:subHandler, uid:uid, timetoken:time, operation:"subscribe_with_retry" });
 						});
 						timer.start();
 					}
 				}
 			}
-			_request( { url:url, channel:channel, handler:subHandler, uid:uid, timetoken:time } );
+
+			_request( { url:url, channel:channel, handler:subHandler, uid:uid, timetoken:time, operation:"subscribe_get_timetoken" } );
 		}
 		
 		public static function history(args:Object):void
@@ -486,7 +492,7 @@ package PubNub
 			}                   
 			INSTANCE._unsubscribe(args);
 		}
-		
+
 		/**
 		 * UnSubscribes to a channel
 		 * args: { callback:Function, channel:"String" }
@@ -523,7 +529,7 @@ package PubNub
 		 */
 		public function _request(args:Object):void
 		{
-			
+
 			var node:Object = queue[args.uid] || { tries:0 }
 			import flash.net.URLLoader;
 			import flash.net.URLRequestHeader;
@@ -531,21 +537,31 @@ package PubNub
 			var loader:URLLoader = node.loader;
 			var url:String = args.url;
 			if (args.timetoken != null)
-			{                               
-				url += "/" + args.timetoken;
-			}
+			{
+                url += "/" + args.timetoken;
+
+                    if ( args.operation == "subscribe_with_timetoken") {
+                        url += "?uuid=" + this.session_uuid;
+                    }
+
+//                    ExternalInterface.call( "console.log", (url) );
+//                    ExternalInterface.call( "console.log", (this) );
+//                    ExternalInterface.call( "console.log", (args) );
+
+
+            }
 			if (!loader)
 			{
 				
 				node.loader = loader = new URLLoader();                 
 				loader.addEventListener( Event.COMPLETE, args.handler );
 				loader.addEventListener( IOErrorEvent.IO_ERROR, args.handler );
-				loader.addEventListener( SecurityErrorEvent.SECURITY_ERROR, args.handler );                             
+				loader.addEventListener( SecurityErrorEvent.SECURITY_ERROR, args.handler );
 				node.request = new URLRequest(url);
 			}
 			var Request:URLRequest = node.request;
 			Request.url = url;
-			
+
 			loader.load(Request);
 			
 			node.uid = args.uid;
@@ -622,7 +638,7 @@ package PubNub
 			
 			return String.fromCharCode.apply(null, uid);
 		}
-	}   
+	}
 }
 
 internal class SingletonEnforcer{}
