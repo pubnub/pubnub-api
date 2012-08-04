@@ -19,6 +19,7 @@
 - (IBAction)unitTest:(id)sender;
 - (IBAction)Subscribe:(id)sender;
 - (IBAction)Unsubscribe:(id)sender;
+- (IBAction)Here_Now:(id)sender;
 
 @property (retain, nonatomic) IBOutlet UITextView *txt;
 

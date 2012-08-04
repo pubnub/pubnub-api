@@ -27,7 +27,8 @@ typedef enum {
     kCommand_SendMessage,
     kCommand_ReceiveMessage,
     kCommand_FetchHistory,
-    kCommand_GetTime
+    kCommand_GetTime,
+    kCommand_Here_Now
 } Command;
 
 @interface PubNubConnection : NSURLConnection {
@@ -98,7 +99,13 @@ typedef enum {
         if ([contentType hasPrefix:@"text/javascript"] && [contentType containsString:@"UTF-8"]) {  // Should be [text/javascript; charset="UTF-8"] but is sometimes different on 3G
             [_pubNub connection:self didCompleteWithResponse:JSONParseData(_data)];
                 //  NSLog(@"PubNub request returned unexpected content type: %@", contentType);
-        } else {
+        } else if ([contentType hasPrefix:@"text/javascript"])
+        {
+            if(_command== kCommand_Here_Now)
+            {
+                [_pubNub connection:self didCompleteWithResponse:JSONParseData(_data)];
+            }
+        }else {
             NSLog(@"PubNub request returned unexpected content type: %@", contentType);
             switch ([self command]) {
                 case kCommand_SendMessage:
@@ -183,6 +190,7 @@ typedef enum {
         _host = [[NSString alloc] initWithFormat:@"%@://%@", useSSL ? @"https" : @"http", origin];
         _cipherKey=[cipherKey copy];
         _connections = [[NSMutableSet alloc] init];
+        _uuids=[CEPubnub getUUID]; 
     }
     return self;
 }
@@ -295,7 +303,7 @@ typedef enum {
 
 - (void) _resubscribeToChannel:(NSString*)channel timeToken:(NSString*)timeToken {
     
-    NSString* url = [NSString stringWithFormat:@"%@/subscribe/%@/%@/0/%@", _host, _subscribeKey, [channel urlEscapedString], timeToken];
+    NSString* url = [NSString stringWithFormat:@"%@/subscribe/%@/%@/0/%@/?uuid=%@", _host, _subscribeKey, [channel urlEscapedString], timeToken,_uuids];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_ReceiveMessage
@@ -343,6 +351,24 @@ typedef enum {
         [self _resubscribeToChannel:channel];
         NSLog(@"Did subscribe to PubNub channel \"%@\"", channel);
     }
+}
+
+- (void) here_now:(NSString*)channel {
+   if(channel == nil || channel ==@"")
+   {
+   NSLog(@"Missing channel");
+       return;
+   }
+    
+    
+    NSString* url = [NSString stringWithFormat:@"%@/v2/presence/sub_key/%@/channel/%@", _host, _subscribeKey, [channel urlEscapedString]];
+    NSLog(@"URL:%@",url);
+    PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_Here_Now
+                                                                    channel:channel];
+    [_connections addObject:connection];
+    
 }
 
 - (void) unsubscribeFromChannel:(NSString*)channel {
@@ -730,6 +756,14 @@ NSDecimalNumber* time_token = 0;
             }
             break;
         }
+         case kCommand_Here_Now: {
+             if ([response isKindOfClass:[NSDictionary class]] ) {
+                 if ([_delegate respondsToSelector:@selector(pubnub:here_now:onChannel:)]) {
+                     
+                     [_delegate pubnub:self here_now:response onChannel:connection.channel]; 
+                 }
+             }
+         }
         default:
                 //     NOT_REACHED();
             NSLog(@"ERROR::didCompleteWithResponse Command Not Set..");

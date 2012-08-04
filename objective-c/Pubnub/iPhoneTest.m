@@ -93,6 +93,10 @@ CEPubnub *pubnub;
     
 }
 
+- (IBAction)Here_Now:(id)sender {
+     [pubnub here_now: @"hello_world"];  
+}
+
     //=========================================================================
     //Unit-Test
     //=========================================================================
@@ -210,6 +214,15 @@ CEPubnub *_pubnubtemp;
         NSLog(@"Re-Connect to Channel:   %@",channel);
     } 
 
+- (void) pubnub:(CEPubnub*)pubnub here_now:(NSDictionary *)message onChannel:(NSString *)channel{
+    [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received:\n %@", channel, message]];
+    NSLog(@"here_now-   %@",message);
+    NSDictionary* disc=(NSDictionary*)message;
+    for (NSString* key in [disc allKeys]) {
+        NSString* val=(NSString*)[disc objectForKey:key];
+        NSLog(@"%@-->   %@",key,val);
+    }
+}
 
 @end
 

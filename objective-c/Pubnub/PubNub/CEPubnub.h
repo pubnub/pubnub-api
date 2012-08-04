@@ -34,6 +34,8 @@
 - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
 - (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
 - (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString*)channel ;
+
+- (void)pubnub:(CEPubnub *)pubnub here_now:(NSDictionary *)message onChannel:(NSString *)channel;
 @end
 
     // All operations happen on the main thread
@@ -46,6 +48,7 @@
     NSString* _secretKey;
     NSString* _host;
     NSString* _cipherKey;
+    NSString* _uuids;
     
     NSMutableSet* _connections;
     NSMutableSet * _subscriptions;
@@ -80,6 +83,7 @@
 - (void) subscribe:(NSString*)channel;  // Does nothing if already subscribed
 - (void) unsubscribeFromChannel:(NSString*)channel;  // Does nothing if not subscribed
 - (BOOL) isSubscribedToChannel:(NSString*)channel;
+- (void) here_now:(NSString*)channel;
 @end
 
 

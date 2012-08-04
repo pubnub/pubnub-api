@@ -370,7 +370,7 @@
 								<object class="IBUIButton" id="234535704">
 									<reference key="NSNextResponder" ref="224265230"/>
 									<int key="NSvFlags">1316</int>
-									<string key="NSFrame">{{210, 9}, {104, 37}}</string>
+									<string key="NSFrame">{{122, 9}, {104, 37}}</string>
 									<reference key="NSSuperview" ref="224265230"/>
 									<reference key="NSWindow"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -380,6 +380,28 @@
 									<int key="IBUIContentVerticalAlignment">0</int>
 									<int key="IBUIButtonType">1</int>
 									<string key="IBUINormalTitle">Unsubscribe</string>
+									<reference key="IBUIHighlightedTitleColor" ref="239382325"/>
+									<object class="NSColor" key="IBUINormalTitleColor">
+										<int key="NSColorSpace">1</int>
+										<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
+									</object>
+									<reference key="IBUINormalTitleShadowColor" ref="329616175"/>
+									<reference key="IBUIFontDescription" ref="119080232"/>
+									<reference key="IBUIFont" ref="102262143"/>
+								</object>
+								<object class="IBUIButton" id="199724633">
+									<reference key="NSNextResponder" ref="224265230"/>
+									<int key="NSvFlags">1316</int>
+									<string key="NSFrame">{{234, 9}, {80, 37}}</string>
+									<reference key="NSSuperview" ref="224265230"/>
+									<reference key="NSWindow"/>
+									<string key="NSReuseIdentifierKey">_NS:9</string>
+									<bool key="IBUIOpaque">NO</bool>
+									<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+									<int key="IBUIContentHorizontalAlignment">0</int>
+									<int key="IBUIContentVerticalAlignment">0</int>
+									<int key="IBUIButtonType">1</int>
+									<string key="IBUINormalTitle">Here Now</string>
 									<reference key="IBUIHighlightedTitleColor" ref="239382325"/>
 									<object class="NSColor" key="IBUINormalTitleColor">
 										<int key="NSColorSpace">1</int>
@@ -537,6 +559,15 @@
 					</object>
 					<int key="connectionID">71</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">Here_Now:</string>
+						<reference key="source" ref="199724633"/>
+						<reference key="destination" ref="983902574"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">74</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -617,6 +648,7 @@
 							<reference ref="1004969161"/>
 							<reference ref="910418271"/>
 							<reference ref="234535704"/>
+							<reference ref="199724633"/>
 						</object>
 						<reference key="parent" ref="448933780"/>
 					</object>
@@ -680,6 +712,11 @@
 						<reference key="object" ref="234535704"/>
 						<reference key="parent" ref="224265230"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">72</int>
+						<reference key="object" ref="199724633"/>
+						<reference key="parent" ref="224265230"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -727,6 +764,7 @@
 					<string>65.showNotes</string>
 					<string>68.IBPluginDependency</string>
 					<string>69.IBPluginDependency</string>
+					<string>72.IBPluginDependency</string>
 				</object>
 				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -775,6 +813,7 @@
 					<boolean value="NO"/>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -789,7 +828,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">71</int>
+			<int key="maxID">74</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -811,6 +850,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>ArrayPublish:</string>
 							<string>DictionaryPublish:</string>
+							<string>Here_Now:</string>
 							<string>HistoryClick:</string>
 							<string>StringPublish:</string>
 							<string>Subscribe:</string>
@@ -821,6 +861,7 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -838,6 +879,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>ArrayPublish:</string>
 							<string>DictionaryPublish:</string>
+							<string>Here_Now:</string>
 							<string>HistoryClick:</string>
 							<string>StringPublish:</string>
 							<string>Subscribe:</string>
@@ -854,6 +896,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">DictionaryPublish:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">Here_Now:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
