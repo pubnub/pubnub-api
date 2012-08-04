@@ -46,6 +46,7 @@ package PubNub
 		private var subscriptions:Array;
 		private var start_time_token:Number = 0;
 		private var queue:Array;
+        private var session_uuid:String = "";
 		
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
 		private function nextOrigin(origin:String):String 
@@ -115,8 +116,10 @@ package PubNub
 			
 			queue = [];
 			subscriptions = [];
-			
-			function timeHandler( evt:Event ):void
+            this.session_uuid = INSTANCE._uid();
+
+
+            function timeHandler( evt:Event ):void
 			{
 				
 				var node:Object = queue["init"];
@@ -177,7 +180,7 @@ package PubNub
 			if (secret_key) 
 			{
 				// Create the signature for this message                
-				var concat:String = publish_key + "/" + sub_key + "/" + secret_key + "/" + channel + "/" + message;    
+				var concat:String = publish_key + "/" + sub_key + "/" + secret_key + "/" + channel + "/" + message + "?uuid=" + this.session_uuid;
 				
 				// Sign message using HmacSHA256
 				signature = HMAC.hash(secret_key, concat,SHA256);        
@@ -215,7 +218,7 @@ package PubNub
 				node.loader = null;
 				node.handler = null;
 			}            
-			var url:String = origin + "/" + "publish" + "/" + publish_key + "/" + sub_key + "/" + signature + "/" + _encode(channel) + "/" + 0 + "/" +_encode(message as String);           
+			var url:String = origin + "/" + "publish" + "/" + publish_key + "/" + sub_key + "/" + signature + "/" + _encode(channel) + "/" + 0 + "/" +_encode(message as String) + "?uuid=" + this.session_uuid;
 			_request( { url:url, channel:channel, handler:publishHandler, uid:uid } );
 		}
 		
