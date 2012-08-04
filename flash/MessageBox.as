@@ -64,6 +64,7 @@ pubnub.init(config);
             }
 
             function onSubscribeHandler(evt:PubNubEvent):void {
+                ExternalInterface.call( "console.log", ("subscribe event received.") );
                 ExternalInterface.call( "console.log", ("Entering onSubscribeHandler()") );
                 ExternalInterface.call( "console.log", (this) );
                 ExternalInterface.call( "console.log", (evt) );
@@ -72,6 +73,7 @@ pubnub.init(config);
 
 
             function onPresenceHandler(evt:PubNubEvent):void {
+                ExternalInterface.call( "console.log", ("presence event received.") );
                 ExternalInterface.call( "console.log", ("Entering onPresenceHandler()") );
                 ExternalInterface.call( "console.log", (this) );
                 ExternalInterface.call( "console.log", (evt.data.result) );
