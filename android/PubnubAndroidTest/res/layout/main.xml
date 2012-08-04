@@ -72,17 +72,10 @@
 				android:onClick="runUnitTest"
 				android:text="Run Unit-Test" />
 		</TableRow>
-		<TableRow>
-			<Button
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:onClick="PresenceClick"
-				android:text="Subscribes with presence" />
-			<Button
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:onClick="HereNowClick"
-				android:text="Here Now" />
-		</TableRow>
+		<Button
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:onClick="HereNowClick"
+			android:text="Here Now" />
 	</TableLayout>
 </LinearLayout>
