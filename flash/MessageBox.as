@@ -50,18 +50,20 @@ pubnub.init(config);
                 ExternalInterface.call( "console.log", ("init()") );
                 ExternalInterface.call( "console.log", ("my uuid is " + pubnub.getSessionUUID()) );
 
+                // Subscribe
                 PubNub.PubNub.subscribe({
                     callback:onSubscribeHandler,
                     channel:channelName
                 });
 
                 // Presence
-
                 PubNub.PubNub.subscribe({
                     callback:onPresenceHandler,
                     channel:channelName + "-pnpres"
                 });
+
             }
+
 
             function onSubscribeHandler(evt:PubNubEvent):void {
                 ExternalInterface.call( "console.log", ("subscribe event received.") );
@@ -78,6 +80,18 @@ pubnub.init(config);
                 ExternalInterface.call( "console.log", (this) );
                 ExternalInterface.call( "console.log", (evt.data.result) );
             }
+
+            function onHereNowHandler(evt:PubNubEvent):void {
+                ExternalInterface.call( "console.log", ("here_now() event received.") );
+                ExternalInterface.call( "console.log", ("Entering onHerNowHandler()") );
+                ExternalInterface.call( "console.log", (evt.data.result) );
+            }
+
+            // here_now()
+            pubnub.here_now({
+                callback:onHereNowHandler,
+                channel:channelName
+            });
 
 //
 //            private function onPresenceHandler(evt:PubNubEvent):void {

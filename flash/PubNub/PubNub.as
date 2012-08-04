@@ -451,6 +451,60 @@ package PubNub
 		}
 
 
+        public function here_now(args:Object):void
+        {
+            var uid:String = _uid();
+            var onResult:Function = args.callback || dispatchEvent;
+
+            if (!args.channel) {
+                return;
+            }
+
+            var url:String = origin + "/" + "v2/presence/sub_key/" + this.sub_key + "/channel/" + args.channel;
+            ExternalInterface.call( "console.log", ("here_now url is: " + url) );
+
+            function HereNowHandler( evt:Event ):void
+            {
+
+//                var result:Object = JSON.parse(evt.target.data);
+//                ExternalInterface.call( "console.log", (result) );
+
+//                TODO: Why doesn't this work here?
+//                var node:Object = queue[uid];
+//                var loader:URLLoader = node.loader;
+//                var result:Object = JSON.parse(evt.target);
+//                ExternalInterface.call( "console.log", ("event receivied: " + result) );
+
+
+                if ( evt.type == Event.COMPLETE )
+                {
+                    try
+                    {
+                        var result:Object = JSON.parse(evt.target.data);
+                        if(result)
+                        {
+                            onResult(new PubNubEvent(PubNubEvent.HERE_NOW, {result:(result),timeout:1 } ));
+                        }
+                    }
+                    catch (e:*)
+                    {
+                        trace("[PubNub here_now] Bad Data Content Ignored");
+                    }
+                }
+                else
+                {
+                    onResult(new PubNubEvent(PubNubEvent.HERE_NOW, {result:["here_now Connection Issue"], timeout:1000 } ));
+                }
+
+//                node.loader.close();
+//                node.loader = null;
+//                node.handler = null;
+            }
+
+            ExternalInterface.call( "console.log", ("here now _request started.") );
+            _request( { url:url, handler:HereNowHandler } );
+        }
+
 		public function _time(args:Object):void
 		{
 			var onResult:Function = args.callback || dispatchEvent;
@@ -461,14 +515,14 @@ package PubNub
 			{
 				var node:Object = queue[uid];
 				var loader:URLLoader = node.loader;
-				if ( evt.type == Event.COMPLETE ) 
+				if ( evt.type == Event.COMPLETE )
 				{
-					try 
+					try
 					{
-						var result:Object = JSON.parse(loader.data); 
-						if(result) 
+						var result:Object = JSON.parse(loader.data);
+						if(result)
 						{
-							onResult(new PubNubEvent(PubNubEvent.TIME, {result:[JSON.stringify(result[0])],timeout:1 } )); 
+							onResult(new PubNubEvent(PubNubEvent.TIME, {result:[JSON.stringify(result[0])],timeout:1 } ));
 						}
 					}
 					catch (e:*)
