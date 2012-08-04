@@ -3,9 +3,11 @@
     import flash.display.Sprite;
     import flash.text.TextField;
     import PubNub.*;
+    import flash.external.ExternalInterface;
 
- 
-    public class MessageBox extends Sprite {
+
+
+ public class MessageBox extends Sprite {
     
         function MessageBox():void {
 
@@ -44,19 +46,43 @@ pubnub.init(config);
 //Subscribe messages of type string,json array and json object
             pubnub.addEventListener(PubNubEvent.INIT, onSubInit);
             function onSubInit(event:PubNubEvent):void {
+
                 PubNub.PubNub.subscribe({
                     callback:onSubscribeHandler,
                     channel:channelName
                 });
+
+                // Presence
+
+                PubNub.PubNub.subscribe({
+                    callback:onPresenceHandler,
+                    channel:channelName + "-pnpres"
+                });
             }
 
             function onSubscribeHandler(evt:PubNubEvent):void {
-                trace("[Subscribed data] : " + evt.data.result[1]);
-                trace("[Envelop data] : ", evt.data.envelope);
-                trace("[Source Channel] : ", evt.data.envelope[2]);
+                ExternalInterface.call( "console.log", ("Entering onSubscribeHandler()") );
+                ExternalInterface.call( "console.log", (this) );
+                ExternalInterface.call( "console.log", (evt) );
             }
 
 
+            function onPresenceHandler(evt:PubNubEvent):void {
+                ExternalInterface.call( "console.log", ("Entering onPresenceHandler()") );
+                ExternalInterface.call( "console.log", (this) );
+                ExternalInterface.call( "console.log", (evt) );
+            }
+
+//
+//            private function onPresenceHandler(evt:PubNubEvent):void {
+//
+//                ExternalInterface.call( "console.log", ("Entering onPresenceHandler()") );
+//
+//                ExternalInterface.call( "console.log", (this) );
+//                ExternalInterface.call( "console.log", (INSTANCE) );
+//                ExternalInterface.call( "console.log", (evt) );
+//
+//            }
  
          var msgbox:Sprite = new Sprite();
 
