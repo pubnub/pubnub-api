@@ -61,7 +61,11 @@ package PubNub
 					'pubsub', 'ps' + (++ori < 10 ? ori : ori=1)
 				) || origin;
 		}
-		
+
+        public function getSessionUUID():String {
+            return this.session_uuid;
+        }
+
 		public function PubNub(enforcer:SingletonEnforcer) 
 		{
 			

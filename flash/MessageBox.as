@@ -27,7 +27,6 @@ var config:Object = {
 }    
 pubnub.init(config);
 
-//            pubnub.addEventListener(PubNubEvent.INIT, onPubInit);
 //            function onPubInit(event:PubNubEvent):void
 //            {
 //                var msgArr:Array = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -43,9 +42,13 @@ pubnub.init(config);
 //            }
 
 
-//Subscribe messages of type string,json array and json object
+
             pubnub.addEventListener(PubNubEvent.INIT, onSubInit);
+
             function onSubInit(event:PubNubEvent):void {
+
+                ExternalInterface.call( "console.log", ("init()") );
+                ExternalInterface.call( "console.log", ("my uuid is " + pubnub.getSessionUUID()) );
 
                 PubNub.PubNub.subscribe({
                     callback:onSubscribeHandler,
@@ -64,13 +67,14 @@ pubnub.init(config);
                 ExternalInterface.call( "console.log", ("Entering onSubscribeHandler()") );
                 ExternalInterface.call( "console.log", (this) );
                 ExternalInterface.call( "console.log", (evt) );
+                ExternalInterface.call( "console.log", (evt.data.result) );
             }
 
 
             function onPresenceHandler(evt:PubNubEvent):void {
                 ExternalInterface.call( "console.log", ("Entering onPresenceHandler()") );
                 ExternalInterface.call( "console.log", (this) );
-                ExternalInterface.call( "console.log", (evt) );
+                ExternalInterface.call( "console.log", (evt.data.result) );
             }
 
 //
