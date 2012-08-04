@@ -25,8 +25,10 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
 import pubnub.PubnubCrypto;
 
 /**
@@ -42,6 +44,7 @@ public class Pubnub {
     private String SECRET_KEY    = "";
     private String CIPHER_KEY    = "";
     private boolean SSL          = false;
+    private String UUIDs 		 = null;
     private class ChannelStatus {
         String channel; 
         boolean connected, first;
@@ -150,6 +153,7 @@ public class Pubnub {
         } else {
             this.ORIGIN = "http://" + this.ORIGIN;
         }
+        UUIDs = uuid();
     }
 
     /**
@@ -510,6 +514,73 @@ public class Pubnub {
     }
 
     /**
+	 * presence
+	 * 
+	 * This is BLOCKING. Listen for presence events on a channel.
+	 * 
+	 * @param HashMap
+	 *            <String, Object> args with channel and callback.
+	 */
+	public void presence(HashMap<String, Object> args) {
+		String channel = (String) args.get("channel");
+		Callback callback;
+
+		// Validate Arguments
+		if (args.get("callback") != null) {
+			callback = (Callback) args.get("callback");
+		} else {
+			System.out.println("Invalid Callback.");
+			return;
+		}
+
+		if (channel == null || channel.equals("")) {
+			callback.errorCallback(channel, "Invalid Channel.");
+			return;
+		}
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		param.put("channel", channel + "-pnpres");
+		param.put("callback", callback);
+		subscribe(param);
+	}
+
+	/**
+	 * Here Now
+	 * 
+	 * Load current occupancy from a channel
+	 * 
+	 * @param HashMap
+	 *            <String, Object> args with channel.
+	 */
+	public JSONArray here_now(HashMap<String, Object> args) {
+		String channel = (String) args.get("channel");
+		// Validate Arguments
+
+		if (channel == null || channel.equals("")) {
+			JSONArray jsono = new JSONArray();
+			try {
+				jsono.put(0);
+				jsono.put("Missing Channel");
+			} catch (Exception jsone) {
+			}
+			return jsono;
+		}
+
+		// Build URL
+		List<String> url = new ArrayList<String>();
+		url.add("v2");
+		url.add("presence");
+		url.add("sub_key");
+		url.add(this.SUBSCRIBE_KEY);
+		url.add("channel");
+		url.add(channel);
+
+		// Return JSONArray
+		return _request(url);
+
+	}
+    
+    /**
      * Time
      *
      * Timestamp from PubNub Cloud.
@@ -566,7 +637,7 @@ public class Pubnub {
         String   json         = "";
         StringBuilder url     = new StringBuilder();
         Iterator<String> url_iterator = url_components.iterator();
-
+        String _callFor = url_components.get(0);
         url.append(this.ORIGIN);
 
         // Generate URL with UTF-8 Encoding
@@ -584,7 +655,9 @@ public class Pubnub {
                 return jsono;
             }
         }
-
+    	if (_callFor.equalsIgnoreCase("subscribe")) {
+			url.append("/").append("?uuid=" + UUIDs);
+		}
         try {
             
             PubnubHttpRequest request = new PubnubHttpRequest(url.toString());
@@ -620,7 +693,17 @@ public class Pubnub {
 
             return jsono;
         }
+        if (_callFor.equalsIgnoreCase("V2")) {
+			try {
+				JSONArray arr = new JSONArray();
 
+				arr.put(new JSONObject(json));
+
+				json = arr.toString();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
         // Parse JSON String
         try { return new JSONArray(json); }
         catch (Exception e) {

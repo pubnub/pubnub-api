@@ -237,6 +237,18 @@ public class PubnubTestActivity extends Activity {
 		System.out.println(response);
 	}
 
+	public void HereNowClick(View v) {
+		HashMap<String, Object> args = new HashMap<String, Object>(1);
+		args.put("channel", channel);
+		myMessage = pubnub.here_now(args).toString();
+		r.sendEmptyMessage(0);
+		Log.e("Here Now", pubnub.here_now(args).toString());
+	}
+
+	public void PresenceClick(View v) {
+		new SubscribedWithPresence().execute("hello_channel");
+	}
+
 	class RefreshHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
@@ -256,6 +268,71 @@ public class PubnubTestActivity extends Activity {
 			b.show();
 		}
 	};
+
+	class SubscribedWithPresence extends AsyncTask<String, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			try {
+				// Android: (Subscribe)
+				String passed = params[0];
+				Log.e("Channel", passed);
+				class ReceiverCallback implements Callback {
+					public boolean subscribeCallback(String channel,
+							Object message) {
+						Log.i("Message Received", message.toString());
+						myMessage = message.toString();
+						r.sendEmptyMessage(0);
+						return true;
+					}
+
+					@Override
+					public void errorCallback(String channel, Object message) {
+						Log.e("ErrorCallback", "Channel:" + channel + "-"
+								+ message.toString());
+					}
+
+					@Override
+					public void connectCallback(String channel) {
+						Log.i("ConnectCallback", "Connected to channel :"
+								+ channel);
+					}
+
+					@Override
+					public void reconnectCallback(String channel) {
+						Log.i("ReconnectCallback", "Reconnecting to channel :"
+								+ channel);
+					}
+
+					@Override
+					public void disconnectCallback(String channel) {
+						Log.i("DisconnectCallback", "Disconnected to channel :"
+								+ channel);
+					}
+				}
+
+				// Listen for Messages (Subscribe)
+				HashMap<String, Object> args = new HashMap<String, Object>(2);
+				args.put("channel", passed); // Channel Name
+				args.put("callback", new ReceiverCallback()); // Callback to get
+																// response
+				pubnub.presence(args);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.v("ERROR", "While downloading");
+			}
+
+			return Boolean.TRUE;
+		}
+
+		@Override
+		protected void onPreExecute() {
+		}
+
+		protected void onPostExecute(Boolean result) {
+		}
+	}
 
 	class XMLDownloader extends AsyncTask<String, Void, Boolean> {
 
