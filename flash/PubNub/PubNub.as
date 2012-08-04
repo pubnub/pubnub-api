@@ -435,7 +435,7 @@ package PubNub
 				node.loader = null;
 				node.handler = null;
 			}
-			_request( { url:url, channel:channel, handler:HistoryHandler, uid:uid } );
+			_request( { url:url, channel:channel, handler:HistoryHandler, uid:uid, operation:"history" } );
 		}
 		public static function time(args:Object):void
 		{
@@ -445,6 +445,44 @@ package PubNub
 			}
 			INSTANCE._time(args);
 		}
+
+
+        public function presence(args:Object):void
+        {
+            var onResult:Function = args.callback || dispatchEvent;
+            var uid:String = _uid();
+
+
+            function PresenceHandler( evt:Event ):void
+            {
+                var node:Object = queue[uid];
+                var loader:URLLoader = node.loader;
+                if ( evt.type == Event.COMPLETE )
+                {
+                    try
+                    {
+                        var result:Object = JSON.parse(loader.data);
+                        if(result)
+                        {
+                            onResult(new PubNubEvent(PubNubEvent.PRESENCE, {result:[JSON.stringify(result[0])],timeout:1 } ));
+                        }
+                    }
+                    catch (e:*)
+                    {
+                        trace("[PubNub presence] Bad Data Content Ignored");
+                    }
+                }
+                else
+                {
+                    onResult(new PubNubEvent(PubNubEvent.PRESENCE, {result:["Presence Connection Issue"], timeout:1000 } ));
+                }
+                node.loader.close();
+                node.loader = null;
+                node.handler = null;
+            }
+            _request( { url:url, handler:PresenceHandler, uid:uid } );
+        }
+
 		public function _time(args:Object):void
 		{
 			var onResult:Function = args.callback || dispatchEvent;
