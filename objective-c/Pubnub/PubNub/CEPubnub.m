@@ -628,7 +628,7 @@ NSDecimalNumber* time_token = 0;
                         [_subscriptions addObject:cs];
                     }
                     
-                    [self _resubscribeToChannel:connection.channel timeToken: [NSString stringWithFormat: @"%d", timeToken]];
+                    [self _resubscribeToChannel:connection.channel timeToken: [NSString stringWithFormat: @"%@", timeToken]];
                     break;
                 }
             }
