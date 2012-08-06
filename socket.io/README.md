@@ -444,6 +444,20 @@ When you combine the `JavaScript` Socket.IO example with `Python`, you
 have the  ablity to send messages to the client directly from your web server 
 or terminal!
 
+## Revisions (REV)
+
+#### Security Patch Upgrade (Namespacing)
+
+A security patch was applied to the `namespacing` properties of PubNub
+Socket.IO provding an improved separation between channel names and
+multiplexed connectivity.  This upgrade made a fundamental change to the
+`namespacing` scheme that will require an upgrade to your server side logic.
+For updated details, see [Server Sent Events](#sending-events-from-a-server).
+
+Also review a dedicated example of sending data into Socket.IO from the
+standard PubNub libraries or the HTTP REST API -
+[Non-Socket.IO Communication](https://github.com/pubnub/pubnub-api/tree/master/socket.io/non-socket-io-communication)
+
 ## License 
 
 (The MIT License)
