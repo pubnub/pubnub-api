@@ -154,9 +154,9 @@ CEPubnub *_pubnubtemp;
     {
         NSLog(@"Sent message to PubNub channel \"%@\" ", channel);   
     }
-    - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error// "error" may be nil
+    - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error message:(id)message// "error" may be nil
     {
-        NSLog(@"Publishing Error   %@",error);
+        NSLog(@"Publishing Error   %@ \nFor Message   %@",error,message);
     }
     
 	- (void) pubnub:(CEPubnub*)pubnub subscriptionDidFailWithResponse:(NSString *)message onChannel:(NSString *)channel
@@ -196,6 +196,10 @@ CEPubnub *_pubnubtemp;
         } 
         [txt setText:[NSString stringWithFormat:@"History on channel (dict) : %@ - received:\n %@", channel, histry]];
       
+    }
+    -(void) pubnub:(CEPubnub *)pubnub didFailFetchHistoryOnChannel:(NSString *)channel
+    {
+        [txt setText:[NSString stringWithFormat:@"Fail to fetch history on channel  : %@ ", channel]];
     }
     
     - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time{
@@ -262,7 +266,7 @@ CEPubnub *_pubnubtemp;
     [status setObject:[NSNumber numberWithInt:sent.intValue +1] forKey:@"sent"];
     
 }
-- (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error
+- (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error message:(id)message
 {
     [self test:NO message:[NSString stringWithFormat:@"Publish of channel:%@",channel]];
 }

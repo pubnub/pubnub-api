@@ -19,7 +19,7 @@
 @protocol CEPubnubDelegate <NSObject>
 @optional
 - (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel withResponce: (id)responce;
-- (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error;  // "error" may be nil
+- (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error message:(id)message;  // "error" may be nil
 
     //- (void) pubnub:(PubNub*)pubnub didReceiveMessage:(NSDictionary*)message onChannel:(NSString*)channel;
 
@@ -28,7 +28,8 @@
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveString:(NSString *)message onChannel:(NSString *)channel;
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidFailWithResponse:(NSString *)message onChannel:(NSString *)channel;
 
-- (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel;  // "messages" will be nil on failure
+- (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel; 
+- (void) pubnub:(CEPubnub*)pubnub didFailFetchHistoryOnChannel:(NSString*)channel; 
 - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time;  // "time" will be NAN on failure
 
 - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;

@@ -36,6 +36,7 @@ typedef enum {
     CEPubnub * _pubNub;
     Command _command;
     NSString* _channel;
+    id _message;
     
     NSHTTPURLResponse* _response;
     NSMutableData* _data;
@@ -43,6 +44,7 @@ typedef enum {
 @property(nonatomic, readonly) Command command;
 @property(nonatomic, readonly) NSString* channel;
 @property(nonatomic, readonly) NSData* data;
+@property(nonatomic, readonly) id message;
 - (id) initWithPubNub:(CEPubnub*)pubNub url:(NSURL*)url command:(Command)command channel:(NSString*)channel;
 @end
 
@@ -56,7 +58,7 @@ typedef enum {
 
 @implementation PubNubConnection
 
-@synthesize command=_command, channel=_channel, data=_data;
+@synthesize command=_command, channel=_channel, data=_data, message=_message;
 
 - (id) initWithPubNub:(CEPubnub*)pubNub url:(NSURL*)url command:(Command)command channel:(NSString*)channel {
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url
@@ -72,11 +74,28 @@ typedef enum {
         _pubNub = pubNub;
         _channel = [channel copy];
     }
-    
+   
     return self;
 }
 
-
+- (id) initWithPubNub:(CEPubnub*)pubNub url:(NSURL*)url command:(Command)command channel:(NSString*)channel message:(id)message{
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url
+                                                           cachePolicy:NSURLRequestReloadIgnoringCacheData
+                                                       timeoutInterval:kConnectionTimeOut];
+    [request setValue:@"V" forHTTPHeaderField:@"3.1"];
+    [request setValue:@"User-Agent" forHTTPHeaderField:@"Obj-C-iOS"];
+    [request setValue:@"Accept" forHTTPHeaderField:@"gzip"];
+    
+        //   [request setValue:@"close" forHTTPHeaderField:@"Connection"];
+    if ((self = [super initWithRequest:request delegate:self])) {
+        _command = command;
+        _pubNub = pubNub;
+        _channel = [channel copy];
+        _message=[message copy];
+    }
+    
+    return self;
+}
 
 - (void) connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
         // DCHECK(_response == nil);
@@ -546,7 +565,7 @@ NSDecimalNumber* time_token = 0;
     return messages;
 }
 
-- (void) connection:(PubNubConnection*)connection didCompleteWithResponse:(id)response {
+- (void) connection:(PubNubConnection*)connection didCompleteWithResponse:(id)response  {
     switch (connection.command) {
         case kCommand_SendMessage: {
             BOOL success = NO;
@@ -580,8 +599,8 @@ NSDecimalNumber* time_token = 0;
                     error=  [NSString stringWithFormat:@"Failed sending message to PubNub channel %@:", connection.channel];
                     array= [NSArray arrayWithObjects:@"0", error,  nil];
                 }
-                if ([_delegate respondsToSelector:@selector(pubnub:didFailPublishingMessageToChannel:error:)]) {
-                    [_delegate pubnub:self didFailPublishingMessageToChannel:connection.channel error:[array description]];
+                if ([_delegate respondsToSelector:@selector(pubnub:didFailPublishingMessageToChannel:error:message:)]) {
+                    [_delegate pubnub:self didFailPublishingMessageToChannel:connection.channel error:[array description] message:connection.message];
                 }
             }
             break;
@@ -738,8 +757,18 @@ NSDecimalNumber* time_token = 0;
             } else if (response) {
                 NSLog(@"Unexpected history response from PubNub");
             }
-            if ([_delegate respondsToSelector: @selector(pubnub:didFetchHistory:forChannel:)]) {
-                [_delegate pubnub:self didFetchHistory: [NSArray arrayWithArray: mainArray] forChannel: connection.channel];
+            
+            if(response)
+            {
+                if ([_delegate respondsToSelector: @selector(pubnub:didFetchHistory:forChannel:)]) {
+                    [_delegate pubnub:self didFetchHistory: [NSArray arrayWithArray: mainArray] forChannel: connection.channel];
+                }
+            }else {
+                
+                if ([_delegate respondsToSelector: @selector(pubnub:didFailFetchHistoryOnChannel:)]) {
+                    [_delegate pubnub:self didFailFetchHistoryOnChannel:connection.channel];
+                    
+                }
             }
             break;
         }
