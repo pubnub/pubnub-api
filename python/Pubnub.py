@@ -223,7 +223,7 @@ class Pubnub():
         callback  = args['callback']
         subscribe_key = args.get('subscribe_key') or self.subscribe_key
         
-        return self.subscribe({'channel': channel, 'subscribe_key':subscribe_key+'-pres', 'callback': callback})
+        return self.subscribe({'channel': channel+'-pnpres', 'subscribe_key':subscribe_key, 'callback': callback})
     
     
     def here_now( self, args ) :

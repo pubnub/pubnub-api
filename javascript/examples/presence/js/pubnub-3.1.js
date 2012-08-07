@@ -783,7 +783,7 @@ var PDIV          = $('pubnub') || {}
             if (!(channel in CHANNELS)) CHANNELS[channel] = {};
 
             // Make sure we have a Channel
-            if (CHANNELS[channel].connected && !presence) return log('Already Connected');
+            if (CHANNELS[channel].connected) return log('Already Connected');
                 CHANNELS[channel].connected = 1;
 
             // Recurse Subscribe
@@ -859,8 +859,7 @@ var PDIV          = $('pubnub') || {}
             
             if (args['presence']) {
                 SELF.subscribe({
-                    channel: args['channel'],
-                    subscribe_key: SUBSCRIBE_KEY+"-pres",
+                    channel: args['channel']+"-pnpres",
                     callback: presence,
                     restore: args['restore']
                 });
@@ -884,7 +883,6 @@ var PDIV          = $('pubnub') || {}
                 callback : jsonp,
                 url      : [
                     origin, 'v2', 'presence',
-                    //'http://localhost:5000', 'v2', 'presence',
                     'sub_key', SUBSCRIBE_KEY, 
                     'channel', encode(channel)
                 ],
