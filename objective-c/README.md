@@ -1,4 +1,4 @@
-# Pubnub
+# Pubnub 3.2
 ---
 
 Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime messaging service [Pubnub.com](http://www.pubnub.com/).
@@ -20,13 +20,14 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
 
 4. Implement the CEPubnubDelegate methods (they are all optional):
 
-        - (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel;
-        - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error;
+        - (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel withResponce: (id)responce;
+        - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error message:(id)message;  // "error" may be nil
         - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveDictionary:(NSDictionary *)message onChannel:(NSString *)channel;
         - (void)pubnub:(CEPubnub *)pubnub subscriptionDidFailWithResponse:(NSString *)message onChannel:(NSString *)channel;
         - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveString:(NSString *)message onChannel:(NSString *)channel;
         - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel;
         - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel;
+        - (void) pubnub:(CEPubnub*)pubnub didFailFetchHistoryOnChannel:(NSString*)channel;
         - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time;
         - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
 		- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
@@ -77,4 +78,9 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
 
         NSLog(@"UUID::: %@",[CEPubnub getUUID]);
         
-13. That's it! An example iPad app has been included in the project.
+   
+13. Here Now:Able to people to check online or not in chat room
+		
+		[pubnub here_now: @"hello_world"];
+		        
+14. That's it! An example iPad app has been included in the project.
