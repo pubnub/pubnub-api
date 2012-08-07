@@ -81,6 +81,8 @@ class Pubnub
     options = HashWithIndifferentAccess.new(options)
     publish_request = PubnubRequest.new(:operation => :publish, :subscribe_key => @subscribe_key)
 
+    # TODO: Change to instance methods
+
     set_request_channel(options, publish_request)
     set_request_callback(options, publish_request)
     set_request_message(options, publish_request)
@@ -140,29 +142,8 @@ class Pubnub
     end
   end
 
-  private :set_request_message
 
-  def set_request_callback(options, publish_request)
-    if options[:callback].blank?
-      raise(PublishError, "callback is a required parameter.")
-    elsif !options[:callback].try(:respond_to?, "call")
-      raise(PublishError, "callback is invalid.")
-    else
-      publish_request.callback = options[:callback]
-    end
-  end
 
-  private :set_request_callback
-
-  def set_request_channel(options, publish_request)
-    if options[:channel].blank?
-      raise(PublishError, "channel is a required parameter.")
-    else
-      publish_request.channel = options[:channel]
-    end
-  end
-
-  private :set_request_channel
 
   #**
   #* Subscribe

@@ -19,4 +19,39 @@ class PubnubRequest
       self.channel == another.channel && self.message == another.message
   end
 
+  def set_channel(options)
+    if options[:channel].blank?
+      raise(Pubnub::PublishError, "channel is a required parameter.")
+    else
+      self.channel = options[:channel]
+      self
+    end
+  end
+
+  def set_callback(options)
+    if options[:callback].blank?
+      raise(Pubnub::PublishError, "callback is a required parameter.")
+    elsif !options[:callback].try(:respond_to?, "call")
+      raise(Pubnub::PublishError, "callback is invalid.")
+    else
+      self.callback = options[:callback]
+      self
+    end
+  end
+
+  def set_message(options)
+    if options[:message].blank? && options[:message] != ""
+      raise(PublishError, "message is a required parameter.")
+    else
+
+      if cipher_key = (options[:cipher_key] || self.cipher_key)
+        aes_encrypt(cipher_key, options, publish_request)
+      else
+        publish_request.message = options[:message].to_json();
+      end
+    end
+  end
+
+
+
 end

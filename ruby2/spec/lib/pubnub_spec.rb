@@ -115,6 +115,23 @@ describe Pubnub do
     end
   end
 
+  describe "#subscribe" do
+
+    before do
+
+      @my_callback = lambda { |message| Rails.logger.debug(message) }
+      @my_pub_key = "demo_pub_key"
+      @my_sub_key = "demo_sub_key"
+      @my_message = "hello_world!"
+      @my_channel = "demo_channel"
+
+      @my_cipher_key = "my_cipher_key"
+      @my_sec_key = "my_sec_key"
+      @alt_sec_key = "alt_sec_key"
+    end
+
+  end
+
   describe "#publish" do
 
     before do
