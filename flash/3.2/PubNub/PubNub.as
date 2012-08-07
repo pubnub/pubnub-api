@@ -587,47 +587,56 @@ package PubNub
 		 * Makes a pub nub request
 		 * @param       args
 		 */
-		public function _request(args:Object):void
-		{
 
-			var node:Object = queue[args.uid] || { tries:0 }
-			import flash.net.URLLoader;
-			import flash.net.URLRequestHeader;
-			
-			var loader:URLLoader = node.loader;
-			var url:String = args.url;
-			if (args.timetoken != null)
-			{
+
+
+        public function _request(args:Object): void
+        {
+
+            import flash.net.URLLoader;
+            import flash.net.URLRequestHeader;
+
+            var node:Object = { tries:0 }
+
+            if (queue[args.uid]!= null ){node=queue[args.uid];}
+
+            var loader:URLLoader = node.loader;
+            var url:String = args.url;
+
+            if (args.timetoken != null )
+            {
                 url += "/" + args.timetoken;
 
                     if ( args.operation == "subscribe_with_timetoken") {
                         url += "?uuid=" + this.session_uuid;
                     }
-
-//                    ExternalInterface.call( "console.log", (url) );
-//                    ExternalInterface.call( "console.log", (this) );
-//                    ExternalInterface.call( "console.log", (args) );
-
-
             }
-			if (!loader)
-			{
-				
-				node.loader = loader = new URLLoader();                 
-				loader.addEventListener( Event.COMPLETE, args.handler );
-				loader.addEventListener( IOErrorEvent.IO_ERROR, args.handler );
-				loader.addEventListener( SecurityErrorEvent.SECURITY_ERROR, args.handler );
-				node.request = new URLRequest(url);
-			}
-			var Request:URLRequest = node.request;
-			Request.url = url;
 
-			loader.load(Request);
-			
-			node.uid = args.uid;
-			node.channel = args.channel;
-			queue[args.uid] = node;
-		}
+            if (!loader)
+            {
+
+                node.loader = loader = new URLLoader();
+
+                loader.addEventListener( Event.COMPLETE, args.handler );
+                loader.addEventListener( IOErrorEvent.IO_ERROR, args.handler );
+                loader.addEventListener( SecurityErrorEvent.SECURITY_ERROR, args.handler );
+
+                node.request = new URLRequest(url);
+            }
+
+            var Request:URLRequest = node.request;
+            Request.url = url;
+
+            // Uncomment to set Timeout for AIR
+            // Flash is set to 30 seconds and is not adjustable
+            // Request.idleTimeout = 3600000;
+
+            loader.load(Request);
+
+            node.uid = args.uid;
+            node.channel = args.channel;
+            queue[args.uid] = node;
+        }
 		
 		/**
 		 * Encodes a string into some format
