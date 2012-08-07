@@ -79,7 +79,7 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
         NSLog(@"UUID::: %@",[CEPubnub getUUID]);
         
    
-13. Here Now:Able to people to check online or not in chat room
+13. Presence/here_now: Ability to get count of subscribed programs to a particular channel.
 		
 		[pubnub here_now: @"hello_world"];
 		        
