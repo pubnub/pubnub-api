@@ -18,7 +18,7 @@
 
 @protocol CEPubnubDelegate <NSObject>
 @optional
-- (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel withResponce: (id)responce;
+- (void) pubnub:(CEPubnub*)pubnub didSucceedPublishingMessageToChannel:(NSString*)channel withResponce: (id)responce message:(id)message;
 - (void) pubnub:(CEPubnub*)pubnub didFailPublishingMessageToChannel:(NSString*)channel error:(NSString*)error message:(id)message;  // "error" may be nil
 
     //- (void) pubnub:(PubNub*)pubnub didReceiveMessage:(NSDictionary*)message onChannel:(NSString*)channel;
