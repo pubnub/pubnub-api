@@ -9,7 +9,7 @@ Garett Rogers - [@GarettRogers](http://twitter.com/garettrogers)
 
 http://www.pubnub.com/account
 
-## PubNub 3.1 Real-time Cloud Push API - ANDROID
+## PubNub 3.2 Real-time Cloud Push API - ANDROID
 
 http://www.pubnub.com - PubNub Real-time Push Service in the Cloud.
 http://www.pubnub.com/tutorial/java-push-api
@@ -97,7 +97,7 @@ System.out.println(info);
 ```
 
 -------------------------------------------------------------------------------
-Java: (Subscribe)
+Java: Subscribe and Presence (see comment at channel set at end of snippet)
 -------------------------------------------------------------------------------
 
 ```java
@@ -135,6 +135,12 @@ Java: (Subscribe)
         }
 
         @Override
+        public void presenceCallback(String channel, Object message) {
+            System.err.println("Channel:" + channel + "-" + message.toString());
+        }
+
+
+        @Override
         public void connectCallback(String channel) {
             System.out.println("Connected to channel :" + channel);
         }
@@ -151,7 +157,7 @@ Java: (Subscribe)
     }
 
     HashMap<String, Object> args = new HashMap<String, Object>(2);
-    args.put("channel", channel);
+    args.put("channel", channel);              // for presence, channel-name is CHANNEL + "-pnpres"
     args.put("callback", new Receiver());      // callback to get response and events
 ```
 
@@ -204,3 +210,16 @@ Java: (UUID)
     // Get UUID
     System.out.println("UUID : "+Pubnub.uuid());
 ```
+
+-------------------------------------------------------------------------------
+Java: (here_now)
+-------------------------------------------------------------------------------
+
+```java
+    // Who is currently on the channel?
+    HashMap<String, Object> args = new HashMap<String, Object>(1);
+    args.put("channel", channel);
+    myMessage = pubnub.here_now(args).toString();
+
+```
+
