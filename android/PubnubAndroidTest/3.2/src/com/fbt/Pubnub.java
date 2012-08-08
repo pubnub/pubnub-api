@@ -52,7 +52,7 @@ public class Pubnub {
     private List<ChannelStatus> subscriptions;
 
     /**
-     * PubNub 3.1 with Cipher Key
+     * PubNub 3.2 with Presence
      *
      * Prepare PubNub State.
      * 
@@ -707,7 +707,7 @@ public class Pubnub {
             HttpConnectionParams.setSoTimeout(httpParams, 310000);
             HttpClient httpclient = new DefaultHttpClient(httpParams);
             HttpUriRequest request = new HttpGet(url);
-            request.setHeader("V", "3.1");
+            request.setHeader("V", "3.2");
             request.setHeader("User-Agent", "Java-Android");
             request.setHeader("Accept-Encoding", "gzip");
 

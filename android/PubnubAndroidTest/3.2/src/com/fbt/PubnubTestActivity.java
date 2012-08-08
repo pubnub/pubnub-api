@@ -90,6 +90,23 @@ public class PubnubTestActivity extends Activity {
             }
         });
 
+        Button presenceBtn = (Button) findViewById(R.id.presenceBtn);
+        presenceBtn.setOnClickListener(new OnClickListener() {
+
+            public void onClick(View v) {
+
+                // Android: (Presence)
+//                HashMap<String, Object> args = new HashMap<String, Object>(1);
+//                args.put("channel", channel);
+//                pubnub.subscribe(args);
+
+                // Android: (Subscribe)
+                PresenceDownloader d = new PresenceDownloader();
+                d.execute("xml");
+
+            }
+        });
+
         Button subscribeBtn = (Button) findViewById(R.id.subscribeBtn);
         subscribeBtn.setOnClickListener(new OnClickListener() {
 
@@ -272,10 +289,92 @@ public class PubnubTestActivity extends Activity {
         protected Boolean doInBackground(String... params) {
             try {
                 // Android: (Subscribe)
+
+                class Receiver implements Callback {
+
+                    public boolean subscribeCallback(String channel,
+                                                     Object message) {
+                        Log.i("Message Received", message.toString());
+                        myMessage = message.toString();
+                        r.sendEmptyMessage(0);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean presenceCallback(String channel,
+                                                     Object message) {
+                        Log.i("Message Received", message.toString());
+                        myMessage = message.toString();
+                        r.sendEmptyMessage(0);
+                        return true;
+                    }
+                    @Override
+                    public void errorCallback(String channel, Object message) {
+                        Log.e("ErrorCallback", "Channel:" + channel + "-"
+                                + message.toString());
+                    }
+
+                    @Override
+                    public void connectCallback(String channel) {
+                        Log.i("ConnectCallback", "Connected to channel :"
+                                + channel);
+                    }
+
+                    @Override
+                    public void reconnectCallback(String channel) {
+                        Log.i("ReconnectCallback", "Reconnecting to channel :"
+                                + channel);
+                    }
+
+                    @Override
+                    public void disconnectCallback(String channel) {
+                        Log.i("DisconnectCallback", "Disconnected to channel :"
+                                + channel);
+                    }
+                }
+
+                // Listen for Messages (Subscribe)
+                HashMap<String, Object> args = new HashMap<String, Object>(2);
+                args.put("channel", channel);         // Channel Name
+                args.put("callback", new Receiver()); // Callback to get response
+                pubnub.subscribe(args);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.v("ERROR", "While downloading");
+            }
+
+            return Boolean.TRUE;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        protected void onPostExecute(Boolean result) {
+        }
+    }
+
+
+    class PresenceDownloader extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try {
+                // Android: (Subscribe)
                 
                 class Receiver implements Callback {
                     public boolean subscribeCallback(String channel,
                             Object message) {
+                        Log.i("Message Received", message.toString());
+                        myMessage = message.toString();
+                        r.sendEmptyMessage(0);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean presenceCallback(String channel,
+                                                    Object message) {
                         Log.i("Message Received", message.toString());
                         myMessage = message.toString();
                         r.sendEmptyMessage(0);
@@ -309,7 +408,7 @@ public class PubnubTestActivity extends Activity {
 
                 // Listen for Messages (Subscribe)
                 HashMap<String, Object> args = new HashMap<String, Object>(2);
-                args.put("channel", channel);         // Channel Name
+                args.put("channel", channel + "-pnpres");         // Channel Name with -pnpres appended for Presence
                 args.put("callback", new Receiver()); // Callback to get response
                 pubnub.subscribe(args);
 
@@ -449,6 +548,15 @@ public class PubnubTestActivity extends Activity {
             if (response != null) {
                 test(true, " History with channel " + channel);
             }
+            return true;
+        }
+
+        @Override
+        public boolean presenceCallback(String channel,
+                                        Object message) {
+            Log.i("Message Received", message.toString());
+            myMessage = message.toString();
+            r.sendEmptyMessage(0);
             return true;
         }
 
