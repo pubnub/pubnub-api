@@ -28,7 +28,7 @@ CEPubnub *pubnub;
     [super viewDidLoad];
         // Do any additional setup after loading the view, typically from a nib.
     
-    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"demo" useSSL:NO];
+    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:nil   cipherKey:nil useSSL:NO];
         //subscribe to a few channels
 	
 	[pubnub setDelegate:self];

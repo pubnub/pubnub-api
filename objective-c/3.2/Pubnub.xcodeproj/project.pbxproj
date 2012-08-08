@@ -49,7 +49,6 @@
 		C8FD4D77153D469D00D0A418 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		C8FD4D78153D469D00D0A418 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow_iPhone.xib; sourceTree = "<group>"; };
-		F8969FEA15B69E2600D12EBD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +95,6 @@
 		C8FD4D3D153D447200D0A418 /* Pubnub */ = {
 			isa = PBXGroup;
 			children = (
-				F8969FEA15B69E2600D12EBD /* README.md */,
 				C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */,
 				C8FD4D6A153D469D00D0A418 /* PubNub */,
 				C8FD4D46153D447200D0A418 /* AppDelegate.h */,
@@ -190,7 +188,6 @@
 			files = (
 				C8FD4D42153D447200D0A418 /* InfoPlist.strings in Resources */,
 				C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */,
-				F8969FEB15B69E2600D12EBD /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
