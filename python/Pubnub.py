@@ -297,6 +297,59 @@ class Pubnub():
             str(limit)
         ]);
 
+    def detailedHistory(self, args) :
+        """
+        #**
+        #* Detailed History
+        #*
+        #* Load Detailed history from a channel.
+        #*
+        #* @param array args with 'channel', optional: 'start', 'end', 'reverse', 'count'
+        #* @return mixed false on fail, array on success.
+        #*
+
+        ## History Example
+        history = pubnub.detailedHistory({
+            'channel' : 'hello_world',
+            'count'   : 5
+        })
+        print(history)
+
+        """
+        ## Capture User Input
+        channel = str(args['channel'])
+
+        params = [] 
+        count = 100    
+        
+        if args.has_key('count'):
+            count = int(args['count'])
+
+        params.append('count' + '=' + str(count))    
+        
+        if args.has_key('reverse'):
+            params.append('reverse' + '=' + str(args['reverse']).lower())
+
+        if args.has_key('start'):
+            params.append('start' + '=' + str(args['start']))
+
+        if args.has_key('end'):
+            params.append('end' + '=' + str(args['end']))
+
+        ## Fail if bad input.
+        if not channel :
+            raise Exception('Missing Channel')
+            return False
+
+        ## Get History
+        return self._request([
+            'v2',
+            'history',
+            'sub-key',
+            self.subscribe_key,
+            'channel',
+            channel,
+        ],params=params);
 
     def time(self) :
         """
@@ -327,11 +380,14 @@ class Pubnub():
             ]) for bit in request]
 
 
-    def _request( self, request, origin = None, encode = True ) :
+    def _request( self, request, origin = None, encode = True, params = None ) :
         ## Build URL
         url = (origin or self.origin) + '/' + "/".join(
             encode and self._encode(request) or request
         )
+        ## Add query params
+        if params is not None and len(params) > 0:
+            url = url + "?" + "&".join(params)
 
         ## Send Request Expecting JSONP Response
         try:
