@@ -15,13 +15,11 @@
 @implementation NSString (Extensions)
 
 - (NSString*) urlEscapedString {
-    return (__bridge id)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)self, NULL, CFSTR(":@/?&=+"),
-                                                        kCFStringEncodingUTF8) ;
+    return (__bridge_transfer id)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)self, NULL, CFSTR(":@/?&=+"),kCFStringEncodingUTF8) ;
 }
 
 - (NSString*) unescapeURLString {
-    return (__bridge id)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (__bridge CFStringRef)self, CFSTR(""),
-                                                                        kCFStringEncodingUTF8) ;
+    return (__bridge_transfer  id)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (__bridge CFStringRef)self, CFSTR(""),kCFStringEncodingUTF8) ;
 }
 - (BOOL) containsString:(NSString*)string {
     NSRange range = [self rangeOfString:string];
@@ -58,7 +56,7 @@
     
     // create a new CFStringRef (toll-free bridged to NSString)
     // that you own
-    NSString *uuidString = (__bridge NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    NSString *uuidString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
     
         
     // release the UUID

@@ -29,12 +29,14 @@
 - (void)pubnub:(CEPubnub *)pubnub subscriptionDidFailWithResponse:(NSString *)message onChannel:(NSString *)channel;
 
 - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel; 
-- (void) pubnub:(CEPubnub*)pubnub didFailFetchHistoryOnChannel:(NSString*)channel; 
+- (void) pubnub:(CEPubnub*)pubnub didFailFetchHistoryOnChannel:(NSString*)channel withError:(id)error; 
 - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time;  // "time" will be NAN on failure
 
 - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
 - (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
 - (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString*)channel ;
+
+- (void)pubnub:(CEPubnub *)pubnub presence:(NSDictionary *)message onChannel:(NSString *)channel;
 
 - (void)pubnub:(CEPubnub *)pubnub here_now:(NSDictionary *)message onChannel:(NSString *)channel;
 @end
@@ -85,6 +87,7 @@
 - (void) unsubscribeFromChannel:(NSString*)channel;  // Does nothing if not subscribed
 - (BOOL) isSubscribedToChannel:(NSString*)channel;
 - (void) here_now:(NSString*)channel;
+- (void) presence:(NSString*)channel;
 @end
 
 

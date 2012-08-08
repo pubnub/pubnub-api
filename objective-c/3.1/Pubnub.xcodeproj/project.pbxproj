@@ -21,7 +21,6 @@
 		C8FD4D7E153D469D00D0A418 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D76153D469D00D0A418 /* JSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C8FD4D7F153D469D00D0A418 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D78153D469D00D0A418 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */; };
-		F8969FEB15B69E2600D12EBD /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F8969FEA15B69E2600D12EBD /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */

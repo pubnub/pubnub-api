@@ -97,6 +97,10 @@ CEPubnub *pubnub;
      [pubnub here_now: @"hello_world"];  
 }
 
+- (IBAction)Presence:(id)sender {
+    [pubnub presence: @"hello_world"]; 
+}
+
     //=========================================================================
     //Unit-Test
     //=========================================================================
@@ -197,9 +201,9 @@ CEPubnub *_pubnubtemp;
         [txt setText:[NSString stringWithFormat:@"History on channel (dict) : %@ - received:\n %@", channel, histry]];
       
     }
-    -(void) pubnub:(CEPubnub *)pubnub didFailFetchHistoryOnChannel:(NSString *)channel
+    -(void) pubnub:(CEPubnub *)pubnub didFailFetchHistoryOnChannel:(NSString *)channel withError:(id)error
     {
-        [txt setText:[NSString stringWithFormat:@"Fail to fetch history on channel  : %@ ", channel]];
+        [txt setText:[NSString stringWithFormat:@"Fail to fetch history on channel  : %@ with Error: %@", channel,error]];
     }
     
     - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time{
@@ -217,6 +221,16 @@ CEPubnub *_pubnubtemp;
     - (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString *)channel{
         NSLog(@"Re-Connect to Channel:   %@",channel);
     } 
+
+    - (void)pubnub:(CEPubnub *)pubnub presence:(NSDictionary *)message onChannel:(NSString *)channel
+    {
+        NSLog(@"channel:%@   \npresence-   %@",channel,message);
+        NSDictionary* disc=(NSDictionary*)message;
+        for (NSString* key in [disc allKeys]) {
+            NSString* val=(NSString*)[disc objectForKey:key];
+            NSLog(@"%@-->   %@",key,val);
+        }
+    }
 
 - (void) pubnub:(CEPubnub*)pubnub here_now:(NSDictionary *)message onChannel:(NSString *)channel{
     [txt setText:[NSString stringWithFormat:@"sub on channel (dict) : %@ - received:\n %@", channel, message]];

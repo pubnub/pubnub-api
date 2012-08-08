@@ -32,6 +32,7 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
         - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
 		- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
 		- (void) pubnub:(CEPubnub*)pubnub Re_ConnectToChannel:(NSString*)channel ;
+		- (void)pubnub:(CEPubnub *)pubnub presence:(NSDictionary *)message onChannel:(NSString *)channel;
        
 
 5. Instantiate Pubnub in your class so you can publish and subscribe to messages and assign delegate:self:
@@ -79,8 +80,12 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
         NSLog(@"UUID::: %@",[CEPubnub getUUID]);
         
    
-13. Presence/here_now: Ability to get count of subscribed programs to a particular channel.
+13. here_now: Ability to get count of subscribed programs to a particular channel.
 		
 		[pubnub here_now: @"hello_world"];
+		        
+13. Presence: To join a subscriber list on a channel. Callback events can be, Join - Shows availability on a channel or Leave - Disconnected to channel means removed from the list of subscribers.
+		
+		[pubnub presence: @"hello_world"];
 		        
 14. That's it! An example iPad app has been included in the project.
