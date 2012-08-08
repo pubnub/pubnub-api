@@ -301,6 +301,14 @@ public class PubnubTestActivity extends Activity {
                     }
 
                     @Override
+                    public boolean presenceCallback(String channel,
+                                                     Object message) {
+                        Log.i("Message Received", message.toString());
+                        myMessage = message.toString();
+                        r.sendEmptyMessage(0);
+                        return true;
+                    }
+                    @Override
                     public void errorCallback(String channel, Object message) {
                         Log.e("ErrorCallback", "Channel:" + channel + "-"
                                 + message.toString());
@@ -358,6 +366,15 @@ public class PubnubTestActivity extends Activity {
                 class Receiver implements Callback {
                     public boolean subscribeCallback(String channel,
                             Object message) {
+                        Log.i("Message Received", message.toString());
+                        myMessage = message.toString();
+                        r.sendEmptyMessage(0);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean presenceCallback(String channel,
+                                                    Object message) {
                         Log.i("Message Received", message.toString());
                         myMessage = message.toString();
                         r.sendEmptyMessage(0);
@@ -531,6 +548,15 @@ public class PubnubTestActivity extends Activity {
             if (response != null) {
                 test(true, " History with channel " + channel);
             }
+            return true;
+        }
+
+        @Override
+        public boolean presenceCallback(String channel,
+                                        Object message) {
+            Log.i("Message Received", message.toString());
+            myMessage = message.toString();
+            r.sendEmptyMessage(0);
             return true;
         }
 
