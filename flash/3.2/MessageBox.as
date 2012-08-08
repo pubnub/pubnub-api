@@ -13,7 +13,7 @@
 
 
 //set the channel
-var channelName:String = "hello_world_actionscript";
+var channelName:String = "hello_world";
 trace("Channel set to " + channelName);
 
 // Initialize pubnub state
