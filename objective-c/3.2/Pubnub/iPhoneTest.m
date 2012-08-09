@@ -230,6 +230,7 @@ CEPubnub *_pubnubtemp;
             NSString* val=(NSString*)[disc objectForKey:key];
             NSLog(@"%@-->   %@",key,val);
         }
+        [txt setText:[NSString stringWithFormat:@"Presence received on channel %@:-\n %@",channel, message]];
     }
 
 - (void) pubnub:(CEPubnub*)pubnub here_now:(NSDictionary *)message onChannel:(NSString *)channel{
