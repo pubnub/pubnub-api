@@ -19,7 +19,8 @@
 }
 
 - (NSString*) unescapeURLString {
-    return (__bridge_transfer  id)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (__bridge CFStringRef)self, CFSTR(""),kCFStringEncodingUTF8) ;
+    return (__bridge_transfer id)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (__bridge CFStringRef)self, CFSTR(""),
+                                                                        kCFStringEncodingUTF8) ;
 }
 - (BOOL) containsString:(NSString*)string {
     NSRange range = [self rangeOfString:string];
