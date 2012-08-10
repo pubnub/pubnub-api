@@ -537,6 +537,12 @@ function xdr( setup ) {
     script[ASYNC]  = ASYNC;
     script.onerror = function() { done(1) };
     script.src     = setup.url.join(URLBIT);
+    if (setup.data) {
+        script.src += "?";
+        for (key in setup.data) {
+            script.src += key+"="+setup.data[key]+"&";
+        }
+    }
 
     attr( script, 'id', id );
 
@@ -596,8 +602,16 @@ function ajax( setup ) {
         xhr.onerror = xhr.onabort   = function(){ done(1) };
         xhr.onload  = xhr.onloadend = finished;
         xhr.timeout = XHRTME;
-
-        xhr.open( 'GET', setup.url.join(URLBIT), true );
+        
+        url     = setup.url.join(URLBIT);
+        if (setup.data) {
+            url += "?";
+            for (key in setup.data) {
+                url += key+"="+setup.data[key]+"&";
+            }
+        }
+        
+        xhr.open( 'GET', url, true );
         xhr.send();
     }
     catch(eee) {
@@ -625,6 +639,7 @@ var PDIV          = $('pubnub') || {}
     ,   PUBLISH_KEY   = setup['publish_key']   || ''
     ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
     ,   SSL           = setup['ssl'] ? 's' : ''
+    ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
     ,   SELF          = {
         /*
@@ -674,16 +689,12 @@ var PDIV          = $('pubnub') || {}
             PUBNUB.uuid(function(uuid) { console.log(uuid) });
         */
         'uuid' : function(callback) {
-            var jsonp = jsonp_cb();
-            xdr({
-                callback : jsonp,
-                url      : [
-                    'http' + SSL +
-                    '://pubnub-prod.appspot.com/uuid?callback=' + jsonp
-                ],
-                success  : function(response) { callback(response[0]) },
-                fail     : function() { callback(0) }
+            var u = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
             });
+            if (callback) callback(u);
+            return u;
         },
 
         /*
@@ -719,10 +730,10 @@ var PDIV          = $('pubnub') || {}
                 callback : jsonp,
                 success  : function(response) { callback(response) },
                 fail     : function() { callback([ 0, 'Disconnected' ]) },
-                url      : url
+                url      : url,
+                data     : { uuid: UUID }
             });
         },
-
         /*
             PUBNUB.unsubscribe({ channel : 'my_chat' });
         */
@@ -747,15 +758,16 @@ var PDIV          = $('pubnub') || {}
             });
         */
         'subscribe' : function( args, callback ) {
-
             var channel      = args['channel']
             ,   callback     = callback || args['callback']
+            ,   subscribe_key= args['subscribe_key'] || SUBSCRIBE_KEY
             ,   restore      = args['restore']
             ,   timetoken    = 0
             ,   error        = args['error'] || function(){}
             ,   connect      = args['connect'] || function(){}
             ,   reconnect    = args['reconnect'] || function(){}
             ,   disconnect   = args['disconnect'] || function(){}
+            ,   presence     = args['presence'] || function(){}
             ,   disconnected = 0
             ,   connected    = 0
             ,   origin       = nextorigin(ORIGIN);
@@ -786,9 +798,10 @@ var PDIV          = $('pubnub') || {}
                     callback : jsonp,
                     url      : [
                         origin, 'subscribe',
-                        SUBSCRIBE_KEY, encode(channel),
+                        subscribe_key, encode(channel),
                         jsonp, timetoken
                     ],
+                    data     : { uuid: UUID },
                     fail : function() {
                         // Disconnect
                         if (!disconnected) {
@@ -827,7 +840,7 @@ var PDIV          = $('pubnub') || {}
                         restore = db.set(
                             SUBSCRIBE_KEY + channel,
                             timetoken = restore && db.get(
-                                SUBSCRIBE_KEY + channel
+                                subscribe_key + channel
                             ) || messages[1]
                         );
 
@@ -836,12 +849,47 @@ var PDIV          = $('pubnub') || {}
                         } );
 
                         timeout( pubnub, 10 );
-                    }
+                    },
+                    
                 });
             }
 
             // Begin Recursive Subscribe
             pubnub();
+            
+            if (args['presence']) {
+                SELF.subscribe({
+                    channel: args['channel']+"-pnpres",
+                    callback: presence,
+                    restore: args['restore']
+                });
+            }
+        },
+        'here_now' : function( args, callback ) {
+            var callback = args['callback'] || callback 
+            ,   channel  = args['channel']
+            ,   jsonp    = jsonp_cb()
+            ,   origin   = nextorigin(ORIGIN);
+
+            // Make sure we have a Channel
+            if (!channel)  return log('Missing Channel');
+            if (!callback) return log('Missing Callback');
+            
+            data = null;
+            if (jsonp != '0') { data['callback']=jsonp; }
+            
+            // Send Message
+            xdr({
+                callback : jsonp,
+                url      : [
+                    origin, 'v2', 'presence',
+                    'sub_key', SUBSCRIBE_KEY, 
+                    'channel', encode(channel)
+                ],
+                data: data,
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) }
+            });
         },
 
         // Expose PUBNUB Functions
@@ -864,7 +912,10 @@ var PDIV          = $('pubnub') || {}
         'updater'  : updater,
         'init'     : CREATE_PUBNUB
     };
-
+    
+    if (UUID == '') UUID = SELF.uuid();
+    db.set(SUBSCRIBE_KEY+'uuid', UUID);
+    
     return SELF;
 };
 
@@ -873,7 +924,8 @@ PUBNUB = CREATE_PUBNUB({
     'publish_key'   : attr( PDIV, 'pub-key' ),
     'subscribe_key' : attr( PDIV, 'sub-key' ),
     'ssl'           : attr( PDIV, 'ssl' ) == 'on',
-    'origin'        : attr( PDIV, 'origin' )
+    'origin'        : attr( PDIV, 'origin' ),
+    'uuid'          : attr( PDIV, 'uuid' )
 });
 
 // PUBNUB Flash Socket
