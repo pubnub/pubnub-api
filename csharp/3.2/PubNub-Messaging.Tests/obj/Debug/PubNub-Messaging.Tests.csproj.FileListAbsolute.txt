@@ -1,0 +1,21 @@
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging.Tests\obj\Debug\ResolveAssemblyReference.cache
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.dll
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.pdb
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.dll
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.pdb
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.exe
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.pdb
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.dll
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.pdb
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.exe
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.pdb
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging.Tests\obj\Debug\ResolveAssemblyReference.cache
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.dll
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.pdb
+D:\PubNub\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.dll
+D:\PubNub\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.pdb
+D:\PubNub\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.exe
+D:\PubNub\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.pdb
+D:\PubNub\PubNub-Messaging.Tests\obj\Debug\ResolveAssemblyReference.cache
+D:\PubNub\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.dll
+D:\PubNub\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.pdb

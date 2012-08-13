@@ -1,0 +1,22 @@
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging\obj\x86\Debug\ResolveAssemblyReference.cache
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging\bin\Debug\PubNub-Messaging.pdb
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging\bin\Debug\System.Runtime.Serialization.Json.dll
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging\bin\Debug\System.Runtime.Serialization.Json.xml
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.exe
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.pdb
+E:\Net Workflow Dev Home\XMLParsingExample\XMLParsingExample\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe.config
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe.config
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.exe
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.pdb
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging\bin\Debug\PubNub-Messaging.pdb
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging\bin\Debug\System.Runtime.Serialization.Json.dll
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging\bin\Debug\System.Runtime.Serialization.Json.xml
+E:\Web Client Automated Test & Development\PubNub\PubNub-Messaging\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\PubNub\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe.config
+D:\PubNub\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe
+D:\PubNub\PubNub-Messaging\bin\Debug\PubNub-Messaging.pdb
+D:\PubNub\PubNub-Messaging\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\PubNub\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.exe
+D:\PubNub\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.pdb
