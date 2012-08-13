@@ -3,7 +3,7 @@
 YOU MUST USE System.Web.Extensions.dll included in the 3.1 directory.
 ##PubNub C Sharp Usage
 
-Open PubNub-Messaging.csproj, and the example Pubnub_Example.cs should demonstrate all functionality, asyncronously using delegates.
+Open 3.2/PubNub-Messaging/PubNub-Messaging.csproj, and the example Pubnub_Example.cs should demonstrate all functionality, asyncronously using delegates.
 
 You can also view and inspect the tests for additional insight. 
 
