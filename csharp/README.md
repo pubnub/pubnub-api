@@ -1,11 +1,7 @@
 # PubNub 3.2 Web Data Push Cloud-Hosted API - C# .net 4
-
-
-# ARE YOU COMPILING WITH .NET OLDER THAN 3.5?
+## ARE YOU COMPILING WITH .NET OLDER THAN 3.5?
 YOU MUST USE System.Web.Extensions.dll included in the 3.1 directory.
-
-
-#PubNub C Sharp Usage
+##PubNub C Sharp Usage
 
 Open PubNub-Messaging.csproj, and the example Pubnub_Example.cs should demonstrate all functionality, asyncronously using delegates.
 
