@@ -73,6 +73,23 @@ function onSubscribeHandler(evt:PubNubEvent):void
 }
 ```
 
+### Flash AS3 : (Presence)
+
+```javascript
+function onPresenceHandler(evt:PubNubEvent):void {
+    ExternalInterface.call( "console.log", ("presence event received.") );
+    ExternalInterface.call( "console.log", ("Entering onPresenceHandler()") );
+    ExternalInterface.call( "console.log", (this) );
+    ExternalInterface.call( "console.log", (evt.data.result) );
+}
+
+PubNub.PubNub.subscribe({
+    callback:onPresenceHandler,
+    channel:channelName + "-pnpres"
+});
+
+```
+
 ### Flash AS3 : (History)
 
 ```javascript
@@ -115,14 +132,14 @@ trace("Generated UUID is :" + uid);
 
 ```javascript
 function onHereNowHandler(evt:PubNubEvent):void {
-ExternalInterface.call( "console.log", ("here_now() event received.") );
-ExternalInterface.call( "console.log", ("Entering onHerNowHandler()") );
-ExternalInterface.call( "console.log", (evt.data.result) );
+    ExternalInterface.call( "console.log", ("here_now() event received.") );
+    ExternalInterface.call( "console.log", ("Entering onHerNowHandler()") );
+    ExternalInterface.call( "console.log", (evt.data.result) );
 }
 
 
 pubnub.here_now({
-callback:onHereNowHandler,
-channel:channelName
+    callback:onHereNowHandler,
+    channel:channelName
 });
 ```
