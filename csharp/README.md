@@ -1,6 +1,3 @@
-## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
-## http://www.pubnub.com/account
-
 # PubNub 3.2 Web Data Push Cloud-Hosted API - C# .net 4
 
 
