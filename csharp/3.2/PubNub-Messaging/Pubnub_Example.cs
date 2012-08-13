@@ -8,6 +8,7 @@ namespace PubNub_Messaging
 {
     public class Pubnub_Example
     {
+
         static public void Main()
         {
             Publish_Example();
@@ -19,6 +20,7 @@ namespace PubNub_Messaging
 
             Console.ReadKey();
         }
+        
         static void Publish_Example()
         {
             Pubnub pubnub = new Pubnub(
@@ -26,8 +28,8 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            string channel = "my/channel";
-            string message = "Pubnub API Usage Example - Publish";
+            string channel = "hello_world";
+            string message = "Pubnub CSharp (Base) API Usage Example - Publish";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
@@ -41,6 +43,7 @@ namespace PubNub_Messaging
             };
             pubnub.publish(channel, message);
         }
+
         static void History_Example()
         {
             Pubnub pubnub = new Pubnub(
@@ -48,8 +51,8 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            string channel = "my/channel";
-            
+            string channel = "hello_world";
+
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "History")
@@ -64,6 +67,7 @@ namespace PubNub_Messaging
             };
             pubnub.history(channel, 10);
         }
+
         static void Timestamp_Example()
         {
             Pubnub pubnub = new Pubnub(
@@ -71,7 +75,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            
+
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "Time")
@@ -81,6 +85,7 @@ namespace PubNub_Messaging
             };
             pubnub.time();
         }
+
         static void Subscribe_Example()
         {
             Pubnub pubnub = new Pubnub(
@@ -88,7 +93,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            string channel = "my/channel";
+            string channel = "hello_world";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
@@ -108,7 +113,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            string channel = "my/channel";
+            string channel = "hello_world";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
@@ -128,7 +133,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            //string channel = "my/channel";
+
             string channel = "hello_world";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
