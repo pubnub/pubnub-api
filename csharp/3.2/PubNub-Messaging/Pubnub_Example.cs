@@ -17,12 +17,12 @@ namespace PubNub_Messaging
             
             Timestamp_Example();
             
-            Subscribe_Example();
+            //Subscribe_Example();
             
             Presence_Example();
             
-            HereNow_Example();
-            
+            //HereNow_Example();
+
             Console.ReadKey();
         }
         static void Publish_Example()
@@ -32,7 +32,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            string channel = "my/channel";
+            string channel = "hello_world";
             string message = "Pubnub API Usage Example - Publish";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
@@ -55,7 +55,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            string channel = "my/channel";
+            string channel = "hello_world";
             
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
@@ -92,7 +92,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            string channel = "my/channel";
+            string channel = "hello_world";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
@@ -112,14 +112,19 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            string channel = "my/channel";
+            string channel = "hello_world";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "Presence")
                 {
-                    Console.WriteLine("********** Presence Messages *********** ");
-                    MessageFeeder(((Pubnub)sender).Presence);                   
+                    //Console.WriteLine("********** Presence Messages *********** ");
+                    //MessageFeeder(((Pubnub)sender).Presence);
+                    Subscribe_Example();
+                }
+                if (e.PropertyName == "ReturnMessage")
+                {
+                    MessageFeeder(((Pubnub)sender).ReturnMessage);
                 }
             };
             pubnub.presence(channel);
@@ -132,7 +137,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     false);
-            //string channel = "my/channel";
+            //string channel = "hello_world";
             string channel = "hello_world";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
