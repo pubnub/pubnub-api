@@ -681,7 +681,7 @@ NSDecimalNumber* time_token = 0;
                     }
                 }
             }
-            
+        
             if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
                 if(!isPresence)
                     NSLog(@"Received %i messages from PubNub channel \"%@\"", [[response objectAtIndex:0] count], connection.channel);

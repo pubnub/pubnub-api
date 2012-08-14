@@ -27,7 +27,7 @@ $pubnub = new Pubnub(
     "demo",  ## PUBLISH_KEY
     "demo",  ## SUBSCRIBE_KEY
     "",      ## SECRET_KEY
-    false    ## SSL_ON?
+    false,    ## SSL_ON?
     false    ## CUSTOM ORIGIN
 );
 

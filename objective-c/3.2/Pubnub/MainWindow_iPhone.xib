@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="7.10">
 	<data>
-		<int key="IBDocument.SystemTarget">1280</int>
-		<string key="IBDocument.SystemVersion">11D50</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2177</string>
-		<string key="IBDocument.AppKitVersion">1138.32</string>
-		<string key="IBDocument.HIToolboxVersion">568.00</string>
+		<int key="IBDocument.SystemTarget">1296</int>
+		<string key="IBDocument.SystemVersion">11E53</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
+		<string key="IBDocument.AppKitVersion">1138.47</string>
+		<string key="IBDocument.HIToolboxVersion">569.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">1173</string>
+			<string key="NS.object.0">1498</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<string>IBProxyObject</string>
 			<string>IBUIButton</string>
-			<string>IBUIViewController</string>
 			<string>IBUICustomObject</string>
 			<string>IBUILabel</string>
-			<string>IBUIWindow</string>
-			<string>IBUITextView</string>
 			<string>IBUIScrollView</string>
+			<string>IBUITextView</string>
 			<string>IBUIView</string>
+			<string>IBUIViewController</string>
+			<string>IBUIWindow</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -291,11 +291,11 @@
 										<string key="name">Helvetica</string>
 										<string key="family">Helvetica</string>
 										<int key="traits">0</int>
-										<double key="pointSize">17</double>
+										<double key="pointSize">15</double>
 									</object>
-									<object class="NSFont" key="IBUIFont" id="820457277">
+									<object class="NSFont" key="IBUIFont">
 										<string key="NSName">Helvetica</string>
-										<double key="NSSize">17</double>
+										<double key="NSSize">15</double>
 										<int key="NSfFlags">16</int>
 									</object>
 								</object>
@@ -324,7 +324,11 @@
 										<int key="type">1</int>
 										<double key="pointSize">17</double>
 									</object>
-									<reference key="IBUIFont" ref="820457277"/>
+									<object class="NSFont" key="IBUIFont" id="1069384859">
+										<string key="NSName">Helvetica</string>
+										<double key="NSSize">17</double>
+										<int key="NSfFlags">16</int>
+									</object>
 								</object>
 								<object class="IBUILabel" id="839023078">
 									<reference key="NSNextResponder" ref="224265230"/>
@@ -345,7 +349,7 @@
 									<int key="IBUIBaselineAdjustment">0</int>
 									<float key="IBUIMinimumFontSize">10</float>
 									<reference key="IBUIFontDescription" ref="32436598"/>
-									<reference key="IBUIFont" ref="820457277"/>
+									<reference key="IBUIFont" ref="1069384859"/>
 								</object>
 								<object class="IBUIButton" id="910418271">
 									<reference key="NSNextResponder" ref="224265230"/>
@@ -376,7 +380,7 @@
 									<string key="NSFrame">{{119, 9}, {104, 37}}</string>
 									<reference key="NSSuperview" ref="224265230"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="493746978"/>
+									<reference key="NSNextKeyView" ref="905003662"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
 									<bool key="IBUIOpaque">NO</bool>
 									<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -422,6 +426,7 @@
 									<string key="NSFrame">{{229, 9}, {85, 37}}</string>
 									<reference key="NSSuperview" ref="224265230"/>
 									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView" ref="493746978"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
 									<bool key="IBUIOpaque">NO</bool>
 									<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -1005,7 +1010,7 @@
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaTouchPlugin.iPhoneOS</string>
-			<real value="1280" key="NS.object.0"/>
+			<real value="1296" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaTouchPlugin.InterfaceBuilder3</string>
@@ -1013,6 +1018,6 @@
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
-		<string key="IBCocoaTouchPluginVersion">1173</string>
+		<string key="IBCocoaTouchPluginVersion">1498</string>
 	</data>
 </archive>
