@@ -16,14 +16,20 @@ namespace PubNub_Messaging
             History_Example();
             
             Timestamp_Example();
-            
-            //Subscribe_Example();
-            
-            Presence_Example();
-            
-            //HereNow_Example();
 
+            HereNow_Example();
+            
+            Console.WriteLine("***** Presence Example *****");
+            Presence_Example();
+
+            Console.WriteLine("***** Subscribe Example *****");
+            Console.WriteLine("***** press any key to subscribe... *****");
+           
             Console.ReadKey();
+            Subscribe_Example();
+            
+            Console.ReadKey();
+
         }
         static void Publish_Example()
         {
@@ -116,12 +122,6 @@ namespace PubNub_Messaging
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
-                if (e.PropertyName == "Presence")
-                {
-                    //Console.WriteLine("********** Presence Messages *********** ");
-                    //MessageFeeder(((Pubnub)sender).Presence);
-                    Subscribe_Example();
-                }
                 if (e.PropertyName == "ReturnMessage")
                 {
                     MessageFeeder(((Pubnub)sender).ReturnMessage);
