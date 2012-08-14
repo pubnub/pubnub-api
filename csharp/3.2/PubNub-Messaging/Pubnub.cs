@@ -60,6 +60,23 @@ namespace PubNub_Messaging
             }
         }
 
+        // Presence
+        private List<object> _Presence = new List<object>();
+        public List<object> Presence
+        {
+            get
+            {
+                return _Presence;
+            }
+            set
+            {
+                _Presence = value;
+                if (Int64.Parse(value[1].ToString()) > 0)
+                    _presence(value[2].ToString(), Int64.Parse(value[1].ToString()) + 1);
+                RaisePropertyChanged("Presence");
+            }
+
+        }
         // Timestamp
         private List<object> _Time = new List<object>();
         public List<object> Time { get { return _Time; } set { _Time = value; RaisePropertyChanged("Time"); } }
@@ -294,13 +311,13 @@ namespace PubNub_Messaging
                 url.Add(timetoken.ToString());
 
                 // Wait for message
-                _request(url, ResponseType.Subscribe);
+                _request(url, ResponseType.Presence);
 
-                if (Subscribe.Count > 0)
+                if (Presence.Count > 0)
                 {
                     // Update TimeToken
-                    if (Subscribe[1].ToString().Length > 0)
-                        timetoken = (object)Subscribe[1];
+                    if (Presence[1].ToString().Length > 0)
+                        timetoken = (object)Presence[1];
                 }
             }
             catch
@@ -360,7 +377,7 @@ namespace PubNub_Messaging
                 url.Append(_encodeURIcomponent(url_bit));
             }
 
-            if (type == ResponseType.Subscribe)
+            if (type == ResponseType.Presence)
             {
                 url.Append("?uuid=");
                 url.Append(this.sessionUUID);
@@ -437,6 +454,10 @@ namespace PubNub_Messaging
                                 case ResponseType.Subscribe:
                                     result.Add(url_components[2]);
                                     Subscribe = result;
+                                    break;
+                                case ResponseType.Presence:
+                                    result.Add(url_components[2]);
+                                    Presence = result;
                                     break;
                                 default:                                    
                                     break;
