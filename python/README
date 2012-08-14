@@ -6,11 +6,11 @@
 ## ----------------------------------------------------
 
 ## --------------------------------------------------
-## PubNub 3.0 Web Data Push Cloud-hosted API - PYTHON
+## PubNub 3.3 Web Data Push Cloud-hosted API - PYTHON
 ## --------------------------------------------------
 ##
 ## www.pubnub.com - PubNub Web Data Push Service in the Cloud. 
-## http://github.com/pubnub/pubnub-api/tree/master/python/
+## http://github.com/pubnub/pubnub-api/tree/master/python
 ##
 ## PubNub is a Massively Scalable Data Push Service for Web and Mobile Games.
 ## This is a cloud-based service for broadcasting messages
@@ -19,6 +19,9 @@
 ## ---------------
 ## Python Push API
 ## ---------------
+
+### Check out additional tests and examples in the 3.2 directory!
+
 pubnub = Pubnub(
     "demo",  ## PUBLISH_KEY
     "demo",  ## SUBSCRIBE_KEY
@@ -51,6 +54,33 @@ pubnub.subscribe({
     'callback' : receive 
 })
 
+# ---------
+# PRESENCE
+# ---------
+# Listen for Presence Event Messages *BLOCKING*
+
+def pres_event(message) :
+    print(message)
+    return True
+
+pubnub.presence({
+    'channel'  : 'hello_world',
+    'callback' : receive 
+})
+
+# ---------
+# HERE_NOW
+# ---------
+# Get info on who is here right now!
+
+here_now = pubnub.here_now({
+    'channel' : 'hello_world',
+})
+
+print(here_now['occupancy'])
+print(here_now['uuids'])
+
+
 # ------------------
 ## Channel Analytics
 # ------------------
@@ -70,4 +100,18 @@ history = pubnub.history({
     'channel' : 'hello_world',
     'limit'   : 1
 })
+print(history)
+
+
+# -------
+# DETAILED HISTORY
+# -------
+# Load Previously Published Messages in Detail
+history = pubnub.detailedHistory({
+    'channel': 'hello_world',
+    'start': 1,
+    'end': 100,
+    'count': 10
+})[0]
+
 print(history)
