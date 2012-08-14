@@ -10,24 +10,26 @@ namespace PubNub_Messaging
     {
         static public void Main()
         {
-            
+
+            Console.WriteLine("\nRunning publish()");
             Publish_Example();
             
+            Console.WriteLine("\nRunning history()");
             History_Example();
-            
+
+            Console.WriteLine("\nRunning timestamp()");
             Timestamp_Example();
 
+            Console.WriteLine("\nRunning here_now()");
             HereNow_Example();
-            
-            Console.WriteLine("***** Presence Example *****");
+
+            Console.WriteLine("\nRunning presence()");
             Presence_Example();
 
-            Console.WriteLine("***** Subscribe Example *****");
-            Console.WriteLine("***** press any key to subscribe... *****");
-           
-            Console.ReadKey();
+            Console.WriteLine("\nRunning timestamp()");
             Subscribe_Example();
-            
+
+            Console.WriteLine("\nPress any key to exit when done with demo.\n\n");
             Console.ReadKey();
 
         }
@@ -45,7 +47,7 @@ namespace PubNub_Messaging
             {
                 if (e.PropertyName == "Publish")
                 {
-                    Console.WriteLine("*********** Publish Messages *********** ");
+                    Console.WriteLine("\n*********** Publish Messages *********** ");
                     Console.WriteLine(
                         "Publish Success: " + ((Pubnub)sender).Publish[0].ToString() +
                         "\nPublish Info: " + ((Pubnub)sender).Publish[1].ToString()
@@ -67,7 +69,7 @@ namespace PubNub_Messaging
             {
                 if (e.PropertyName == "History")
                 {
-                    Console.WriteLine("*********** History Messages *********** ");
+                    Console.WriteLine("\n*********** History Messages *********** ");
                     MessageFeeder(((Pubnub)sender).History);
                 }
             };
@@ -85,7 +87,7 @@ namespace PubNub_Messaging
             {
                 if (e.PropertyName == "Time")
                 {
-                    Console.WriteLine("********** Timestamp Messages ********** ");
+                    Console.WriteLine("\n********** Timestamp Messages ********** ");
                     MessageFeeder(((Pubnub)sender).Time[0]);
                 }
             };
@@ -104,7 +106,7 @@ namespace PubNub_Messaging
             {
                 if (e.PropertyName == "ReturnMessage")
                 {
-                    Console.WriteLine("********** Subscribe Messages ********** ");
+                    Console.WriteLine("\n********** Subscribe Messages ********** ");
                     MessageFeeder(((Pubnub)sender).ReturnMessage);
                 }
             };
@@ -124,6 +126,7 @@ namespace PubNub_Messaging
             {
                 if (e.PropertyName == "ReturnMessage")
                 {
+                    Console.WriteLine("\n********** Presence Messages ********** ");
                     MessageFeeder(((Pubnub)sender).ReturnMessage);
                 }
             };
@@ -144,7 +147,7 @@ namespace PubNub_Messaging
             {
                 if (e.PropertyName == "Here_Now")
                 {
-                    Console.WriteLine("********** Here Now Messages *********** ");
+                    Console.WriteLine("\n********** Here Now Messages *********** ");
                     Dictionary<string, object> _message = (Dictionary<string, object>)(((Pubnub)sender).Here_Now[0]);
                     foreach (object uuid in (object[])_message["uuids"])
                     {
