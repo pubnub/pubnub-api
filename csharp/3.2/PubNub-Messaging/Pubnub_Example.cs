@@ -22,7 +22,7 @@ namespace PubNub_Messaging
             Presence_Example();
             
             HereNow_Example();
-
+            
             Console.ReadKey();
         }
         static void Publish_Example()
@@ -116,10 +116,10 @@ namespace PubNub_Messaging
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
-                if (e.PropertyName == "ReturnMessage")
+                if (e.PropertyName == "Presence")
                 {
                     Console.WriteLine("********** Presence Messages *********** ");
-                    MessageFeeder(((Pubnub)sender).ReturnMessage);                   
+                    MessageFeeder(((Pubnub)sender).Presence);                   
                 }
             };
             pubnub.presence(channel);
