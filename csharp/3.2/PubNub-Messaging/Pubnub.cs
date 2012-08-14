@@ -287,7 +287,7 @@ namespace PubNub_Messaging
          */
         public void presence(string channel)
         {
-            this._presence(channel, 0);
+            this._presence(channel + "-pnpres", 0);
         }
         /**
          * Presence feature - Private Interface
@@ -306,7 +306,7 @@ namespace PubNub_Messaging
                 List<string> url = new List<string>();
                 url.Add("subscribe");
                 url.Add(this.SUBSCRIBE_KEY);
-                url.Add(channel + "-pnpres");
+                url.Add(channel);
                 url.Add("0");
                 url.Add(timetoken.ToString());
 
@@ -377,7 +377,7 @@ namespace PubNub_Messaging
                 url.Append(_encodeURIcomponent(url_bit));
             }
 
-            if (type == ResponseType.Presence)
+            if (type == ResponseType.Presence || type == ResponseType.Subscribe)
             {
                 url.Append("?uuid=");
                 url.Append(this.sessionUUID);
