@@ -375,17 +375,18 @@ public class Pubnub {
                     while(true) {
                     	double time_token = this.time();
                     	if (time_token == 0.0) {
-                            // Reconnect Callback
-                            callback.reconnectCallback(channel);
+                          
                             Thread.sleep(5000);
                         } else {
-                        	this._subscribe(args);
+                        	  // Reconnect Callback
+                        	 callback.reconnectCallback(channel);
+                        	//this._subscribe(args);
                         	is_reconnected = true;
                         	break;
                         }
                     }
                     if(is_reconnected) {
-                    	break;
+                    	continue;
                     }
                 } else {
                 	for (ChannelStatus it : subscriptions) {
