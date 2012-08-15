@@ -1,0 +1,117 @@
+<html>
+<head>
+    <title>PubNub Presence Demo</title>
+    
+    <style>
+    body { height: auto; bottom:0; top:0; font-family: Verdana, Geneva, sans-serif; }
+    table { border:2px solid #000; width: 100%; height:100%; border-collapse:collapse; }
+    td { border:2px solid #000; vertical-align: top; padding: 10px; }
+    td.history { width: 80%; }
+    td.history .message { clear:both; font-size:12px; }
+    td.history .message .sender { width: 150px; float:left; /*border:1px solid #000;*/ overflow: hidden; white-space: nowrap; font-weight: bold; }
+    td.history .message .text { margin-left:155px; /*border:1px solid #000;*/ }
+    td.chat { height: 19px; padding:0; }
+    td.chat input { margin:0; }
+    td.users { width: 20%; font-size: 14px; }
+    td.users ul { padding-left: 20px; }
+    td.history .join { text-align: center; color: gray; font-style: italic; font-size:12px; }
+    td.chat input { width: 100%; }
+    td.occupancy { text-align: right; padding: 0 10; vertical-align: middle; font-size: 14px; }
+    input.example { color: #666; }
+    </style>
+</head>
+<body>
+
+<table>
+    <tr>
+        <td class="history">
+        </td>
+        <td class="users">
+            <h3>Currently Here</h3>
+            <ul class="list">
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td class="chat">
+            <input />
+        </td>
+        <td class="occupancy">
+            <span class='number'>0</span> people here now
+        </td>
+    </tr>
+</table>
+
+
+<div pub-key="demo" sub-key="demo" ssl="off" origin="pubsub.pubnub.com" id="pubnub"></div>
+<script src="../../pubnub-3.1.js"></script>
+
+<script>(function(){
+ 
+    // LISTEN FOR MESSAGES
+    PUBNUB.subscribe({
+        channel    : "presence_demo_chat",      // CONNECT TO THIS CHANNEL.
+ 
+        restore    : true,              // STAY CONNECTED, EVEN WHEN BROWSER IS CLOSED
+                                         // OR WHEN PAGE CHANGES.
+ 
+        callback   : function(message) { // RECEIVED A MESSAGE.
+            if (message['sender'] != PUBNUB.db.get($("#pubnub").attr('sub-key')+'uuid')) {
+                messageEvent(message);
+            }
+        },
+        connect    : function() {        // CONNECTION ESTABLISHED.
+            
+            PUBNUB.history({channel: "presence_demo_chat", limit:100, callback: function(history) {
+                for (i=0; i<history.length; i++) {
+                    messageEvent(history[i]);
+                }
+            }});
+
+            PUBNUB.here_now({channel:'presence_demo_chat', callback:function(message) {
+                $("td.occupancy .number").text(message['occupancy']);
+                for (i=0; i<message['uuids'].length; i++) {
+                    $(".users .list").append($("<li class='"+message['uuids'][i]+"'>"+message['uuids'][i]+"</li>"));
+                }
+            }});
+            
+        },
+        presence   : function(message) {
+            presenceEvent(message, true);
+        }
+    })
+})();</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" ></script>
+<script src="js/jquery.example.min.js"></script>
+<script>
+function presenceEvent(message, announce) {
+    if (announce == undefined) announce = true;
+    //console.log("Got presence event: ", message, " announce ", announce);
+    if (message['action'] == 'join') {
+        $(".users .list").append($("<li class='"+message['uuid']+"'>"+message['uuid']+"</li>"));
+        if (announce) $(".history").append($("<div class='join "+message['uuid']+"'>"+message['uuid']+" joined the channel</li>"));
+    } else if (message['action'] == 'leave') {
+        $(".users .list li."+message['uuid']).remove();
+        if (announce) $(".history").append($("<div class='join "+message['uuid']+"'>"+message['uuid']+" left the channel</li>"));
+    } else if (message['action'] == 'timeout') {
+        $(".users .list li."+message['uuid']).remove();
+        if (announce) $(".history").append($("<div class='join "+message['uuid']+"'>"+message['uuid']+" timed out</li>"));
+    }
+    $("td.occupancy .number").text(message['occupancy']);
+}
+function messageEvent(message) {
+    //console.log("Got message: ", message);
+    $(".history").append($("<div class='message'><div class='sender'>"+message['sender']+"</div><div class='text'>"+message['text']+"</div></div>"));
+}
+$("td.chat input").example("Chat here");
+$('td.chat input').keypress(function(e){
+    if(e.which == 13){
+        message = {sender:PUBNUB.db.get($("#pubnub").attr('sub-key')+'uuid'), text:$("td.chat input").val()};
+        PUBNUB.publish({channel:'presence_demo_chat',message:message});
+        messageEvent(message);
+        $("td.chat input").val("");
+    }
+});
+</script>
+</body>
+</html

@@ -407,13 +407,14 @@ pubnub = PubNub( 'demo', 'demo', None, False )
 
 ## Publish To Socket.IO
 pubnub.publish({
-    'channel' : 'leaf-wrap',
+    'channel' : 'my_pn_channel',
     'message' : {
-        'name' : 'message',     ## emit( 'event-name', ... )
-        'ns'   : 'chat',        ## chat, news, feed, etc.
-        'data' : {'msg':'Hi'}   ## object to be received.
+        "name" : "message",                  ## Event Name
+        "ns"   : "example-ns-my_pn_channel", ## Namespace
+        "data" : { "my" : "data" }           ## Your Message
     }
 })
+
 ```
 
 The `Python` code above will send a message to your Socket.IO clients.
@@ -422,7 +423,7 @@ Make sure that the client is connected first.
 ```js
 // Use PubNub Setup for Your PubNub Account
 var pubnub_setup = {
-    channel       : 'leaf-wrap',
+    channel       : 'my_pn_channel',
     publish_key   : 'demo',
     subscribe_key : 'demo'
 };
@@ -442,6 +443,20 @@ chat.on( 'message', function(message) {
 When you combine the `JavaScript` Socket.IO example with `Python`, you
 have the  ablity to send messages to the client directly from your web server 
 or terminal!
+
+## Revisions (REV)
+
+#### Security Patch Upgrade (Namespacing)
+
+A security patch was applied to the `namespacing` properties of PubNub
+Socket.IO provding an improved separation between channel names and
+multiplexed connectivity.  This upgrade made a fundamental change to the
+`namespacing` scheme that will require an upgrade to your server side logic.
+For updated details, see [Server Sent Events](#sending-events-from-a-server).
+
+Also review a dedicated example of sending data into Socket.IO from the
+standard PubNub libraries or the HTTP REST API -
+[Non-Socket.IO Communication](https://github.com/pubnub/pubnub-api/tree/master/socket.io/non-socket-io-communication)
 
 ## License 
 
