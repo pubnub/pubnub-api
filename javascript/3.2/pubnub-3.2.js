@@ -849,8 +849,7 @@ var PDIV          = $('pubnub') || {}
                         } );
 
                         timeout( pubnub, 10 );
-                    },
-                    
+                    }
                 });
             }
 
