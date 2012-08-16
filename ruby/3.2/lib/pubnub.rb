@@ -92,19 +92,6 @@ class Pubnub
     _request(publish_request)
   end
 
-
-  def set_request_publish_key(options, publish_request)
-    if options[:publish_key].blank? && self.publish_key.blank?
-      raise(PublishError, "publish_key is a required parameter.")
-    elsif self.publish_key.present? && options['publish_key'].present?
-      raise(PublishError, "existing publish_key #{self.publish_key} cannot be overridden at publish-time.")
-    else
-      publish_request.publish_key = self.publish_key || options[:publish_key]
-    end
-  end
-
-  private :set_request_publish_key
-
   #**
   #* Subscribe
   #*

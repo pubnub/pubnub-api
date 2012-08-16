@@ -8,6 +8,46 @@ describe PubnubRequest do
     @pubnub_request = PubnubRequest.new
   end
 
+  describe "#set_publish_key" do
+
+    it "should throw if the publish_key is not set" do
+      @pubnub_request.message.should == nil
+
+      options = {}
+      self_publish_key = nil
+
+      lambda {  @pubnub_request.set_publish_key(options, self_publish_key).should == "0" }.should raise_error(Pubnub::PublishError, "publish_key is a required parameter.")
+    end
+
+    it "should not let you override a previously set publish_key" do
+      @pubnub_request.message.should == nil
+
+      options = {:publish_key => "my_key"}
+      self_publish_key = "foo"
+
+      lambda { @pubnub_request.set_publish_key(options, self_publish_key) }.should raise_error(Pubnub::PublishError, "existing publish_key #{self_publish_key} cannot be overridden at publish-time.")
+    end
+
+    it "should set the publish_key when self_publish_key is set" do
+      @pubnub_request.message.should == nil
+
+      options = {:publish_key => "my_self_key"}
+      self_publish_key = nil
+
+      @pubnub_request.set_publish_key(options, self_publish_key).should == "my_self_key"
+    end
+
+    it "should set the publish_key when hash_publish_key is set" do
+      @pubnub_request.message.should == nil
+
+      options = { }
+      self_publish_key = "my_self_key"
+
+      @pubnub_request.set_publish_key(options, self_publish_key).should == "my_self_key"
+    end
+
+  end
+
   describe "#set_request_secret_key" do
 
     it "should not let you override a previously set secret_key" do

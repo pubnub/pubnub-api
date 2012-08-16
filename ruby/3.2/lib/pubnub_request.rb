@@ -74,8 +74,20 @@ class PubnubRequest
       if cipher_key.present?
         self.message = aes_encrypt(cipher_key, options, self)
       else
-        self.message = options[:message].to_json()
+        self.message = options[:message].to_json
       end
+    end
+  end
+
+  def set_publish_key(options, self_publish_key)
+    options = HashWithIndifferentAccess.new(options)
+
+    if options[:publish_key].blank? && self_publish_key.blank?
+      raise(Pubnub::PublishError, "publish_key is a required parameter.")
+    elsif self_publish_key.present? && options['publish_key'].present?
+      raise(Pubnub::PublishError, "existing publish_key #{self_publish_key} cannot be overridden at publish-time.")
+    else
+      self.publish_key = self_publish_key || options[:publish_key]
     end
   end
 
