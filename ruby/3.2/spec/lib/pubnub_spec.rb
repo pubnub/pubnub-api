@@ -289,8 +289,19 @@ describe Pubnub do
 
     end
 
-    context "ssl" do
-      it "should default to false if not defined"
+    context "#ssl" do
+
+      it "should default to false if not defined" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+        @pn.ssl.should == false
+      end
+
+      it "should set to true if defined at instantiation" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :ssl => true)
+        @pn.ssl.should == true
+      end
+
+
     end
 
   end
