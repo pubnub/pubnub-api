@@ -8,6 +8,89 @@ describe PubnubRequest do
     @pubnub_request = PubnubRequest.new
   end
 
+  describe "#format_url!" do
+    before do
+      @my_callback = lambda { |message| Rails.logger.debug(message) }
+    end
+
+    it "should raise if the operation is missing" do
+      pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                         :message => "hi", :callback => @my_callback)
+
+      lambda { pubnub_request.format_url!("http://pubsub.pubnub.com") }.should raise_error(Pubnub::PublishError, "Missing .operation in PubnubRequst object")
+
+
+    end
+    it "should raise if the origin is missing" do
+
+      pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                         :message => "hi", :callback => @my_callback, :operation => "publish")
+
+      lambda { pubnub_request.format_url!("http://pubsub.pubnub.com") }.should raise_error(Pubnub::PublishError, "origin cannot be blank.")
+
+    end
+
+    context "when it is a publish operation" do
+
+      before do
+        @operation = "publish"
+        @message = "hello from ruby!".to_json
+      end
+
+      it "should set the url" do
+
+        pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                           :message => @message, :callback => @my_callback, :operation => @operation)
+
+        pubnub_request.format_url!("http://pubsub.pubnub.com")
+        pubnub_request.url.should == %^http://pubsub.pubnub.com/publish/demo/demo/0/hello_world/0/%22hello%20from%20ruby%21%22^
+
+      end
+    end
+
+
+  end
+
+  describe "#set_subscribe_key" do
+
+    it "should throw if the subscribe_key is not set" do
+      @pubnub_request.message.should == nil
+
+      options = {}
+      self_subscribe_key = nil
+
+      lambda { @pubnub_request.set_subscribe_key(options, self_subscribe_key).should == "0" }.should raise_error(Pubnub::PublishError, "subscribe_key is a required parameter.")
+    end
+
+    it "should not let you override a previously set subscribe_key" do
+      @pubnub_request.message.should == nil
+
+      options = {:subscribe_key => "my_key"}
+      self_subscribe_key = "foo"
+
+      lambda { @pubnub_request.set_subscribe_key(options, self_subscribe_key) }.should raise_error(Pubnub::PublishError, "existing subscribe_key #{self_subscribe_key} cannot be overridden at subscribe-time.")
+    end
+
+    it "should set the subscribe_key when self_subscribe_key is set" do
+      @pubnub_request.message.should == nil
+
+      options = {:subscribe_key => "my_self_key"}
+      self_subscribe_key = nil
+
+      @pubnub_request.set_subscribe_key(options, self_subscribe_key).should == "my_self_key"
+    end
+
+    it "should set the subscribe_key when hash_subscribe_key is set" do
+      @pubnub_request.message.should == nil
+
+      options = {}
+      self_subscribe_key = "my_self_key"
+
+      @pubnub_request.set_subscribe_key(options, self_subscribe_key).should == "my_self_key"
+    end
+
+  end
+
   describe "#set_publish_key" do
 
     it "should throw if the publish_key is not set" do
@@ -16,7 +99,7 @@ describe PubnubRequest do
       options = {}
       self_publish_key = nil
 
-      lambda {  @pubnub_request.set_publish_key(options, self_publish_key).should == "0" }.should raise_error(Pubnub::PublishError, "publish_key is a required parameter.")
+      lambda { @pubnub_request.set_publish_key(options, self_publish_key).should == "0" }.should raise_error(Pubnub::PublishError, "publish_key is a required parameter.")
     end
 
     it "should not let you override a previously set publish_key" do
@@ -40,7 +123,7 @@ describe PubnubRequest do
     it "should set the publish_key when hash_publish_key is set" do
       @pubnub_request.message.should == nil
 
-      options = { }
+      options = {}
       self_publish_key = "my_self_key"
 
       @pubnub_request.set_publish_key(options, self_publish_key).should == "my_self_key"

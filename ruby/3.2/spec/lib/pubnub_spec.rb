@@ -304,6 +304,13 @@ describe Pubnub do
 
     end
 
+    #context "integration publish test" do
+    #  it "should publish" do
+    #    @my_callback = lambda { |message| Rails.logger.debug(message) }
+    #    pn = Pubnub.new(:publish_key => :demo, :subscribe_key => :demo)
+    #    pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback).should == {}
+    #  end
+    #end
   end
 
 end

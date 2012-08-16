@@ -81,11 +81,15 @@ class Pubnub
     options = HashWithIndifferentAccess.new(options)
     publish_request = PubnubRequest.new(:operation => :publish, :subscribe_key => @subscribe_key)
 
+    #TODO: This is ugly, refactor
+
     publish_request.set_channel(options)
     publish_request.set_callback(options)
     publish_request.set_message(options, self.cipher_key)
     publish_request.set_publish_key(options, self.publish_key)
+    publish_request.set_subscribe_key(options, self.subscribe_key)
     publish_request.set_secret_key(options, self.secret_key)
+    publish_request.operation = "publish"
 
     _request(publish_request)
   end
@@ -99,6 +103,7 @@ class Pubnub
   #* @param array args with channel and message.
   #* @return false on fail, array on success.
   #*
+
   def subscribe(args)
     ## Capture User Input
     channel = args['channel']
@@ -254,6 +259,8 @@ class Pubnub
   #* @return array from JSON response.
   #*
   def _request(options)
+    operation = options.operation
+
     request = options['request']
     callback = options['callback']
     url = encode_URL(request)
@@ -284,12 +291,5 @@ class Pubnub
     end
   end
 
-  def encode_URL(request)
-    ## Construct Request URL
-    url = '/' + request.map { |bit| bit.split('').map { |ch|
-      ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
-        '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
-    }.join('') }.join('/')
-    return url
-  end
+
 end

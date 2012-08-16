@@ -1,5 +1,5 @@
 class PubnubRequest
-  attr_accessor :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message
+  attr_accessor :url, :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message
 
   def initialize(args = {})
     args = HashWithIndifferentAccess.new(args)
@@ -16,7 +16,7 @@ class PubnubRequest
 
   def ==(another)
     self.operation == another.operation && self.callback == another.callback &&
-      self.channel == another.channel && self.message == another.message
+        self.channel == another.channel && self.message == another.message
   end
 
   def set_channel(options)
@@ -72,7 +72,7 @@ class PubnubRequest
       cipher_key = options[:cipher_key] || self_cipher_key
 
       if cipher_key.present?
-        self.message = aes_encrypt(cipher_key, options, self)
+        self.message = aes_encrypt(cipher_key, options, self)    #TODO: Need a to_json here?
       else
         self.message = options[:message].to_json
       end
@@ -91,6 +91,34 @@ class PubnubRequest
     end
   end
 
+  def set_subscribe_key(options, self_subscribe_key)
+    options = HashWithIndifferentAccess.new(options)
+
+    if options[:subscribe_key].blank? && self_subscribe_key.blank?
+      raise(Pubnub::PublishError, "subscribe_key is a required parameter.")
+    elsif self_subscribe_key.present? && options['subscribe_key'].present?
+      raise(Pubnub::PublishError, "existing subscribe_key #{self_subscribe_key} cannot be overridden at subscribe-time.")
+    else
+      self.subscribe_key = self_subscribe_key || options[:subscribe_key]
+    end
+  end
+
+  def format_url!(origin)
+
+    raise(Pubnub::PublishError, "Missing .operation in PubnubRequst object") if self.operation.blank?
+    raise(Pubnub::PublishError, "origin cannot be blank.") if origin.blank?
+
+    if self.operation.to_s == "publish"
+
+      url_array = [ self.operation.to_s, self.publish_key.to_s, self.subscribe_key.to_s,
+      self.secret_key.to_s, self.channel.to_s, "0", self.message ]
+
+      self.url = origin + encode_URL(url_array)
+
+    end
+
+  end
+
   def aes_encrypt(cipher_key, options, publish_request)
     options = HashWithIndifferentAccess.new(options)
 
@@ -100,6 +128,15 @@ class PubnubRequest
     else
       publish_request.message = pc.encryptObject(options[:message])
     end
+  end
+
+  def encode_URL(request)
+    ## Construct Request URL
+    url = '/' + request.map { |bit| bit.split('').map { |ch|
+      ' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?'.index(ch) ?
+          '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
+    }.join('') }.join('/')
+    return url
   end
 
 end
