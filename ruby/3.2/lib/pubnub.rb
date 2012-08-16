@@ -81,13 +81,11 @@ class Pubnub
     options = HashWithIndifferentAccess.new(options)
     publish_request = PubnubRequest.new(:operation => :publish, :subscribe_key => @subscribe_key)
 
-    # TODO: Change to instance methods
-
-    set_request_channel(options, publish_request)
-    set_request_callback(options, publish_request)
-    set_request_message(options, publish_request)
-    set_request_publish_key(options, publish_request)
-    set_request_secret_key(options, publish_request)
+    publish_request.set_channel(options)
+    publish_request.set_callback(options)
+    publish_request.set_message(options, self.cipher_key)
+    publish_request.set_publish_key(options, self.publish_key)
+    publish_request.set_secret_key(options, self.secret_key)
 
     _request(publish_request)
   end
