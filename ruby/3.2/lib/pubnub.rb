@@ -91,6 +91,8 @@ class Pubnub
     publish_request.set_secret_key(options, self.secret_key)
     publish_request.operation = "publish"
 
+    publish_request.format_url!(@origin)
+
     _request(publish_request)
   end
 
@@ -258,17 +260,14 @@ class Pubnub
   #* @param array request of url directories.
   #* @return array from JSON response.
   #*
-  def _request(options)
-    operation = options.operation
+  def _request(request)
 
-    request = options['request']
-    callback = options['callback']
-    url = encode_URL(request)
-    url = @origin + url
-    open(url) do |f|
+    open(request.url) do |f|
       response = JSON.parse(f.read)
-      if request[0] == 'history'
-        if @cipher_key.length > 0
+
+      if request.operation == 'history'
+
+        if request.cipher_key.present?
           myarr=Array.new()
           response.each do |message|
             pc=PubnubCrypto.new(@cipher_key)
@@ -279,14 +278,13 @@ class Pubnub
             end
             myarr.push(message)
           end
-          callback.call(myarr)
+          request.callback.call(myarr)
         else
-          callback.call(response)
+          request.callback.call(response)
         end
-      elsif request[0] == 'publish'
-        callback.call(response)
+
       else
-        callback.call(response)
+        request.callback.call(response)
       end
     end
   end
