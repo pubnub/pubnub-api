@@ -189,10 +189,8 @@ class Pubnub
   #* @return Unique Identifier
   #*
   def UUID()
-    uuid=SecureRandom.base64(32).gsub("/", "_").gsub(/=+$/, "")
+    SecureRandom.base64(32).gsub("/", "_").gsub(/=+$/, "")
   end
-
-  private
 
   #**
   #* Request URL for subscribe
