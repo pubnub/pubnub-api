@@ -310,7 +310,7 @@ describe Pubnub do
 
       before do
         @my_callback = lambda { |message| Rails.logger.debug(message) }
-
+        @pn = Pubnub.new(:publish_key => :demo, :subscribe_key => :demo)
       end
 
       context "when it is successful" do
@@ -319,26 +319,22 @@ describe Pubnub do
 
           it "should publish without ssl" do
             my_response = [1, "Sent", "13450923394327693"]
-
-            pn = Pubnub.new(:publish_key => :demo, :subscribe_key => :demo)
-
             mock(@my_callback).call(my_response) {}
 
             VCR.use_cassette("integration_publish_1", :record => :none) do
-              pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
             end
           end
 
           it "should publish with ssl" do
 
             my_response = [1, "Sent", "13451428018571368"]
-
-            pn = Pubnub.new(:publish_key => :demo, :subscribe_key => :demo, :ssl => true)
-
             mock(@my_callback).call(my_response) {}
 
+            @pn.ssl = true
+
             VCR.use_cassette("integration_publish_3", :record => :none) do
-              pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
             end
           end
 

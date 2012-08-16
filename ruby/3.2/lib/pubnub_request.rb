@@ -1,5 +1,5 @@
 class PubnubRequest
-  attr_accessor :url, :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message
+  attr_accessor :url, :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
 
   def initialize(args = {})
     args = HashWithIndifferentAccess.new(args)
@@ -12,6 +12,7 @@ class PubnubRequest
     @jsonp = args[:jsonp].present? ? "1" : "0"
     @message = args[:message]
     @secret_key = args[:secret_key] || "0"
+    @ssl = args[:ssl].present? ? "1" : "0"
   end
 
   def ==(another)
@@ -103,10 +104,11 @@ class PubnubRequest
     end
   end
 
-  def format_url!(origin)
+  def format_url!
 
     raise(Pubnub::PublishError, "Missing .operation in PubnubRequst object") if self.operation.blank?
-    raise(Pubnub::PublishError, "origin cannot be blank.") if origin.blank?
+
+    origin = (@ssl.present? ? 'https://' : 'http://') + Pubnub::ORIGIN_HOST
 
 
     case self.operation.to_s

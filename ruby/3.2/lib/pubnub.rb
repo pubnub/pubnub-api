@@ -60,8 +60,6 @@ class Pubnub
     end
 
     verify_init
-    @origin = (@ssl.present? ? 'https://' : 'http://') + ORIGIN_HOST
-
 
   end
 
@@ -83,6 +81,7 @@ class Pubnub
 
     #TODO: This is ugly, refactor
 
+    publish_request.ssl = @ssl
     publish_request.set_channel(options)
     publish_request.set_callback(options)
     publish_request.set_message(options, self.cipher_key)
@@ -91,7 +90,8 @@ class Pubnub
     publish_request.set_secret_key(options, self.secret_key)
     publish_request.operation = "publish"
 
-    publish_request.format_url!(@origin)
+
+    publish_request.format_url!
 
     _request(publish_request)
   end
