@@ -171,9 +171,14 @@ class Pubnub
   #*
   def time(options)
     options = HashWithIndifferentAccess.new(options)
+    raise(PubNubRuntimeError, "You must supply a callback.") if options['callback'].blank?
 
-    options['request'] = ['time', '0']
-    options['callback'].blank? ? raise(PubNubRuntimeError, "You must supply a callback.") : _request(options)
+    time_request = PubnubRequest.new(:operation => :time)
+    time_request.set_callback(options)
+
+    time_request.format_url!(@origin)
+    _request(time_request)
+
   end
 
   #**

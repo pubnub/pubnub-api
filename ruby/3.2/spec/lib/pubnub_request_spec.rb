@@ -21,12 +21,12 @@ describe PubnubRequest do
 
 
     end
-    it "should raise if the origin is missing" do
+    it "should raise if the origin is blank" do
 
       pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
                                          :message => "hi", :callback => @my_callback, :operation => "publish")
 
-      lambda { pubnub_request.format_url!("http://pubsub.pubnub.com") }.should raise_error(Pubnub::PublishError, "origin cannot be blank.")
+      lambda { pubnub_request.format_url!("") }.should raise_error(Pubnub::PublishError, "origin cannot be blank.")
 
     end
 
@@ -48,8 +48,24 @@ describe PubnubRequest do
       end
     end
 
+    context "when it is a time operation" do
+      before do
+        @operation = "time"
+      end
 
-  end
+      it "should set the url" do
+
+        pubnub_request = PubnubRequest.new(:callback => @my_callback, :operation => @operation)
+
+        pubnub_request.format_url!("http://pubsub.pubnub.com")
+        pubnub_request.url.should == %^http://pubsub.pubnub.com/time/0^
+
+      end
+    end
+    end
+
+
+
 
   describe "#set_subscribe_key" do
 

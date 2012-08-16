@@ -108,14 +108,16 @@ class PubnubRequest
     raise(Pubnub::PublishError, "Missing .operation in PubnubRequst object") if self.operation.blank?
     raise(Pubnub::PublishError, "origin cannot be blank.") if origin.blank?
 
-    if self.operation.to_s == "publish"
 
-      url_array = [ self.operation.to_s, self.publish_key.to_s, self.subscribe_key.to_s,
-      self.secret_key.to_s, self.channel.to_s, "0", self.message ]
-
-      self.url = origin + encode_URL(url_array)
-
+    case self.operation.to_s
+      when "publish"
+        url_array = [ self.operation.to_s, self.publish_key.to_s, self.subscribe_key.to_s,
+                      self.secret_key.to_s, self.channel.to_s, "0", self.message ]
+      when "time"
+        url_array = [ self.operation.to_s, "0" ]
     end
+
+    self.url = origin + encode_URL(url_array)
 
   end
 
