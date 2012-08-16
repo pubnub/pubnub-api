@@ -12,7 +12,7 @@ class PubnubRequest
     @jsonp = args[:jsonp].present? ? "1" : "0"
     @message = args[:message]
     @secret_key = args[:secret_key] || "0"
-    @ssl = args[:ssl].present? ? "1" : "0"
+    @ssl = args[:ssl]
   end
 
   def ==(another)

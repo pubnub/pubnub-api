@@ -90,7 +90,6 @@ class Pubnub
     publish_request.set_secret_key(options, self.secret_key)
     publish_request.operation = "publish"
 
-
     publish_request.format_url!
 
     _request(publish_request)
@@ -176,7 +175,7 @@ class Pubnub
     time_request = PubnubRequest.new(:operation => :time)
     time_request.set_callback(options)
 
-    time_request.format_url!(@origin)
+    time_request.format_url!
     _request(time_request)
 
   end
