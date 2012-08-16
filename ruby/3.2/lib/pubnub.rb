@@ -92,21 +92,6 @@ class Pubnub
     _request(publish_request)
   end
 
-  def set_request_secret_key(options, publish_request)
-    if self.secret_key.present? && options['secret_key'].present?
-      raise(PublishError, "existing secret_key #{self.secret_key} cannot be overridden at publish-time.")
-    elsif secret_key = (self.secret_key.present? || options[:secret_key])
-      signature = "{@publish_key,@subscribe_key,@secret_key,channel,message}"
-      digest = OpenSSL::Digest.new("sha256")
-      key = [secret_key]
-      hmac = OpenSSL::HMAC.hexdigest(digest, key.pack("H*"), signature)
-      publish_request.secret_key = hmac
-    else
-      publish_request.secret_key = "0"
-    end
-  end
-
-  private :set_request_secret_key
 
   def set_request_publish_key(options, publish_request)
     if options[:publish_key].blank? && self.publish_key.blank?
@@ -119,20 +104,6 @@ class Pubnub
   end
 
   private :set_request_publish_key
-
-  def set_request_message(options, publish_request)
-    if options[:message].blank? && options[:message] != ""
-      raise(PublishError, "message is a required parameter.")
-    else
-
-      if cipher_key = (options[:cipher_key] || self.cipher_key)
-        aes_encrypt(cipher_key, options, publish_request)
-      else
-        publish_request.message = options[:message].to_json();
-      end
-    end
-  end
-
 
   #**
   #* Subscribe
