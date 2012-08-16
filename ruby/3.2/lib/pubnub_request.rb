@@ -52,7 +52,8 @@ class PubnubRequest
 
     elsif (self_secret_key.present? && options[:secret_key].blank?) || (self_secret_key.blank? && options[:secret_key].present?)
 
-      secret_key = self_secret_key.present? ? self_secret_key : options[:secret_key]
+      secret_key = self_secret_key || options[:secret_key]
+      raise(Pubnub::PublishError, "secret key must be a string.") if secret_key.class != String
 
       signature = "{ @publish_key, @subscribe_key, @secret_key, channel, message}"
       digest = OpenSSL::Digest.new("sha256")

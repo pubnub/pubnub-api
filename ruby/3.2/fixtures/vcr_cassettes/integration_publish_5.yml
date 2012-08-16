@@ -1,0 +1,42 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://pubsub.pubnub.com/publish/demo/demo/7a26410e918a8830ea968d2f84d3873ee4b24fafc4c269c6899b1257be5c2b6d/hello_world/0/%22i7tkMldf66MS2Ykpbl05%2FA==%22
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 16 Aug 2012 20:07:25 GMT
+      Content-Type:
+      - text/javascript; charset="UTF-8"
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Access-Control-Allow-Methods:
+      - GET
+      Pn-Ssl:
+      - ssl
+      Pn-Tt:
+      - '13451476456534121'
+    body:
+      encoding: US-ASCII
+      string: ! '[1,"Sent","13451476456534121"]'
+    http_version: 
+  recorded_at: Thu, 16 Aug 2012 20:07:25 GMT
+recorded_with: VCR 2.2.4

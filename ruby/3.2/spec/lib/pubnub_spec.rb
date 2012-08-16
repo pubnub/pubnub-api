@@ -306,6 +306,7 @@ describe Pubnub do
 
     end
 
+
     context "integration publish test" do
 
       before do
@@ -343,25 +344,143 @@ describe Pubnub do
 
         context "when there is a cipher key" do
 
-          it "should publish" do
+          before do
+            @pn.cipher_key = "enigma"
+          end
+
+          it "should publish without ssl (implicit)" do
 
             my_response = [1, "Sent", "13451424376740954"]
-
-            pn = Pubnub.new(:publish_key => :demo, :subscribe_key => :demo, :cipher_key => "enigma")
-
             mock(@my_callback).call(my_response) {}
 
             VCR.use_cassette("integration_publish_2", :record => :none) do
-              pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
             end
 
           end
 
+          it "should publish without ssl (explicit)" do
+
+            my_response = [1, "Sent", "13451424376740954"]
+            mock(@my_callback).call(my_response) {}
+
+            @pn.ssl = false
+
+            VCR.use_cassette("integration_publish_2", :record => :none) do
+              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+            end
+
+          end
+
+          context "ssl on" do
+
+            context "message signing off" do
+
+              it "should publish" do
+
+                my_response = [1, "Sent", "13451474646150471"]
+                mock(@my_callback).call(my_response) {}
+
+                @pn.ssl = true
+                @pn.secret_key = nil
+
+                VCR.use_cassette("integration_publish_4", :record => :none) do
+                  @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+                end
+              end
+
+            end
+
+            context "message signing on" do
+
+              it "should publish" do
+
+                my_response = [1, "Sent", "13451476456534121"]
+                mock(@my_callback).call(my_response) {}
+
+                @pn.ssl = true
+                @pn.secret_key = "itsmysecret"
+
+                VCR.use_cassette("integration_publish_5", :record => :none) do
+                  @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+                end
+              end
+
+            end
+
+          end
+
+
         end
 
-      end
+        context "when message signing is on" do
 
+          before do
+            @pn.secret_key = "enigma"
+          end
+
+          it "should publish without ssl (implicit)" do
+
+            my_response = [1, "Sent", "13451493026321630"]
+            mock(@my_callback).call(my_response) {}
+
+            VCR.use_cassette("integration_publish_6", :record => :none) do
+              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+            end
+
+          end
+
+          it "should publish without ssl (explicit)" do
+
+            my_response = [1, "Sent", "13451494117873005"]
+            mock(@my_callback).call(my_response) {}
+
+            @pn.ssl = false
+
+            VCR.use_cassette("integration_publish_7", :record => :none) do
+              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+            end
+
+          end
+
+          context "ssl on" do
+
+            context "cipher key off" do
+
+              it "should publish" do
+
+                my_response = [1, "Sent", "13451493874063684"]
+                mock(@my_callback).call(my_response) {}
+
+                @pn.ssl = true
+                @pn.cipher_key = nil
+
+                VCR.use_cassette("integration_publish_8", :record => :none) do
+                  @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+                end
+              end
+
+            end
+
+            context "cipher key on" do
+
+              it "should publish" do
+
+                my_response = [1, "Sent", "13451494427815122"]
+                mock(@my_callback).call(my_response) {}
+
+                @pn.ssl = true
+                @pn.cipher_key = "itsmysecret"
+
+                VCR.use_cassette("integration_publish_9", :record => :none) do
+                  @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+                end
+              end
+
+            end
+          end
+        end
+      end
     end
   end
-
 end

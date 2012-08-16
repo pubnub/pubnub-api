@@ -17,16 +17,8 @@ describe PubnubRequest do
       pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
                                          :message => "hi", :callback => @my_callback)
 
-      lambda { pubnub_request.format_url!("http://pubsub.pubnub.com") }.should raise_error(Pubnub::PublishError, "Missing .operation in PubnubRequst object")
+      lambda { pubnub_request.format_url! }.should raise_error(Pubnub::PublishError, "Missing .operation in PubnubRequst object")
 
-
-    end
-    it "should raise if the origin is blank" do
-
-      pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
-                                         :message => "hi", :callback => @my_callback, :operation => "publish")
-
-      lambda { pubnub_request.format_url!("") }.should raise_error(Pubnub::PublishError, "origin cannot be blank.")
 
     end
 
@@ -42,7 +34,7 @@ describe PubnubRequest do
         pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
                                            :message => @message, :callback => @my_callback, :operation => @operation)
 
-        pubnub_request.format_url!("http://pubsub.pubnub.com")
+        pubnub_request.format_url!
         pubnub_request.url.should == %^http://pubsub.pubnub.com/publish/demo/demo/0/hello_world/0/%22hello%20from%20ruby%21%22^
 
       end
@@ -57,14 +49,12 @@ describe PubnubRequest do
 
         pubnub_request = PubnubRequest.new(:callback => @my_callback, :operation => @operation)
 
-        pubnub_request.format_url!("http://pubsub.pubnub.com")
+        pubnub_request.format_url!
         pubnub_request.url.should == %^http://pubsub.pubnub.com/time/0^
 
       end
     end
-    end
-
-
+  end
 
 
   describe "#set_subscribe_key" do
