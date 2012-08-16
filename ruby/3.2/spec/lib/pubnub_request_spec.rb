@@ -10,22 +10,51 @@ describe PubnubRequest do
 
   describe "#set_message" do
 
-    it "should set the message" do
-      @pubnub_request.message.should == nil
 
-      options = {:message => "my_message"}
+    context "when the message is nil" do
 
-      @pubnub_request.set_message(options)
-      @pubnub_request.message.should == "my_message"
+      it "should throw on a missing message" do
+        @pubnub_request.message.should == nil
+
+        options = {}
+        lambda { @pubnub_request.set_message(options, nil) }.should raise_error(Pubnub::PublishError)
+
+      end
+
     end
 
-    #it "should throw on a missing message" do
-    #  @pubnub_request.message.should == nil
-    #
-    #  options = {}
-    #  lambda { @pubnub_request.set_message(options) }.should raise_error(Pubnub::PublishError)
-    #
-    #end
+    context "when there is a cipher key" do
+
+      it "should set the message" do
+
+        @pubnub_request.message.should == nil
+
+        options = {:message => "my_message"}
+        self_cipher_key = "foo"
+
+        @pubnub_request.set_message(options, self_cipher_key)
+        @pubnub_request.message.should == %^"opISGN77KPWGBB2wP/djBQ=="^
+
+
+      end
+
+    end
+
+    context "when there is not a cipher key" do
+      it "should set the message" do
+
+        @pubnub_request.message.should == nil
+
+        options = {:message => "my_message"}
+        self_cipher_key = ""
+
+        @pubnub_request.set_message(options, self_cipher_key)
+        @pubnub_request.message.should == %^"my_message"^
+
+
+      end
+    end
+
 
   end
 
@@ -54,7 +83,7 @@ describe PubnubRequest do
     it "should set the callback" do
       @pubnub_request.callback.should == nil
 
-      callback = lambda { |m| puts(m)}
+      callback = lambda { |m| puts(m) }
       options = {:callback => callback}
 
       @pubnub_request.set_callback(options)

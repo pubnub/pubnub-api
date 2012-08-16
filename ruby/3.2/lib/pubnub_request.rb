@@ -39,19 +39,27 @@ class PubnubRequest
     end
   end
 
-  def set_message(options)
+  def set_message(options, self_cipher_key)
     if options[:message].blank? && options[:message] != ""
-      raise(PublishError, "message is a required parameter.")
+      raise(Pubnub::PublishError, "message is a required parameter.")
     else
+      cipher_key = options[:cipher_key] || self_cipher_key
 
-      if cipher_key = (options[:cipher_key] || self.cipher_key)
-        aes_encrypt(cipher_key, options, publish_request)
+      if cipher_key.present?
+        self.message = aes_encrypt(cipher_key, options, self)
       else
-        publish_request.message = options[:message].to_json();
+        self.message = options[:message].to_json()
       end
     end
   end
 
-
+  def aes_encrypt(cipher_key, options, publish_request)
+    pc = PubnubCrypto.new(cipher_key)
+    if options[:message].is_a? Array
+      publish_request.message = pc.encryptArray(options[:message])
+    else
+      publish_request.message = pc.encryptObject(options[:message])
+    end
+  end
 
 end

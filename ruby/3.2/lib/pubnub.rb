@@ -133,17 +133,6 @@ class Pubnub
     end
   end
 
-  def aes_encrypt(cipher_key, options, publish_request)
-    pc = PubnubCrypto.new(cipher_key)
-    if options[:message].is_a? Array
-      publish_request.message = pc.encryptArray(options[:message])
-    else
-      publish_request.message = pc.encryptObject(options[:message])
-    end
-  end
-
-
-
 
   #**
   #* Subscribe
