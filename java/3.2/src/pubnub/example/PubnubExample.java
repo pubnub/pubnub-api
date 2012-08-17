@@ -17,9 +17,9 @@ public class PubnubExample {
 		PublishExample();
 		HistoryExample();
 		TimestampExample();
-		SubscribeExample();
 		HereNowExample();
 		PresenceExample();
+		SubscribeExample();		
 	}
 	
 	private static void PublishExample() {
@@ -310,7 +310,7 @@ public class PubnubExample {
         }
 
         HashMap<String, Object> args = new HashMap<String, Object>(6);
-        args.put("channel", channel);
+        args.put("channel", channel + "-pnpres");
         args.put("callback", new Receiver());					// callback to get response
 
         // Listen for Messages (Presence)

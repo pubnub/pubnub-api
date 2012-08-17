@@ -485,8 +485,7 @@ public class Pubnub {
 	 */
 	public void presence(String channel, Callback callback) {
 		HashMap<String, Object> args = new HashMap<String, Object>(2);
-		channel = channel.concat("-pnpres");
-		args.put("channel", channel);
+		args.put("channel", channel + "-pnpres");
 		args.put("callback", callback);
 		subscribe(args);
 	}
