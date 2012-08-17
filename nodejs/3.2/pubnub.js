@@ -301,6 +301,7 @@ exports.init = function(setup) {
                         });
                     },
                     success : function(messages) {
+                        var stop = false;
                         if (!CHANNELS[channel].connected) return;
 
                         // Connect
@@ -316,11 +317,12 @@ exports.init = function(setup) {
                         }
 
                         messages[0].forEach(function(msg) {
-                            callback( msg, messages );
+                            stop = callback( msg, messages );
                         });
 
                         timetoken = messages[1];
-                        timeout( pubnub, 10 );
+                        if(!stop)
+                            timeout( pubnub, 10 );
                     }
                 });
             }
@@ -332,3 +334,4 @@ exports.init = function(setup) {
 
     return PN;
 }
+exports.unique = unique
