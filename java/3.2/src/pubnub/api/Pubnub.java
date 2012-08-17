@@ -706,7 +706,7 @@ public class Pubnub {
 	public JSONArray here_now(String channel) {
 		List<String> url = new ArrayList<String>();
 
-		url.add("here_now");
+		url.add("v2");
 		url.add("presence");
 		url.add("sub_key");
 		url.add(this.SUBSCRIBE_KEY);
@@ -942,6 +942,11 @@ public class Pubnub {
 
 		// Parse JSON String
 		try {
+			if (json.contains("uuids")) {
+				JSONArray resp = new JSONArray();
+				resp.put(json);
+				return resp;
+			}
 			return new JSONArray(json);
 		} catch (Exception e) {
 			JSONArray jsono = new JSONArray();
