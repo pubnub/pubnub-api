@@ -14,12 +14,25 @@ public class PubnubExample {
 	 * @param params
 	 */
 	public static void main(String[] params) {
+		
+		System.out.println("\nRunning publish()");
 		PublishExample();
+		
+		System.out.println("\nRunning history()");
 		HistoryExample();
+		
+		System.out.println("\nRunning timestamp()");
 		TimestampExample();
+		
+		System.out.println("\nRunning here_now()");
 		HereNowExample();
-		PresenceExample();
-		SubscribeExample();		
+				
+		System.out.println("\nRunning presence()");
+		PresenceExample();	
+		
+		System.out.println("\nRunning subscribe()");
+		SubscribeExample();
+
 	}
 	
 	private static void PublishExample() {
