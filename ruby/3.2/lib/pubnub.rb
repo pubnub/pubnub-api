@@ -159,70 +159,65 @@ class Pubnub
     SecureRandom.base64(32).gsub("/", "_").gsub(/=+$/, "")
   end
 
-  #**
-  #* Request URL for subscribe
-  #*
-  #* @param array request of url directories.
-  #* @return array from JSON response.
-  #*
-  def _subscribe(args)
-    channel = args['channel']
-    callback = args['callback']
-    request = args['request']
 
-    # Construct Request
-    url = encode_URL(request);
-    url = @origin + url
-
-    # Execute Request
-    loop do
-      begin
-
-        open(url, 'r', :read_timeout => 300) do |f|
-          http_response = JSON.parse(f.read)
-          messages = http_response[0]
-          timetoken = http_response[1]
-
-          next if !messages.length
-
-          ## Run user Callback and Reconnect if user permits.
-          ## Capture the message and encrypt it
-          if @cipher_key.length > 0
-            pc = PubnubCrypto.new(@cipher_key)
-            messages.each do |message|
-              if message.is_a? Array
-                message=pc.decryptArray(message)
-              else
-                message=pc.decryptObject(message)
-              end
-              if !callback.call(message)
-                return
-              end
-            end
-          else
-            messages.each do |message|
-              if !callback.call(message)
-                return
-              end
-            end
-          end
-
-          request = ['subscribe', @subscribe_key, channel, '0', timetoken.to_s]
-          args['request'] = request
-          # Recusive call to _subscribe
-          _subscribe(args)
-
-        end
-
-      rescue Timeout::Error => e
-        logger.debug "Caught #{e.message}, restarting connection."
-        retry
-
-      end
-
-    end
-
-  end
+  #def _subscribe(args)
+  #  channel = args['channel']
+  #  callback = args['callback']
+  #  request = args['request']
+  #
+  #  # Construct Request
+  #  url = encode_URL(request);
+  #  url = @origin + url
+  #
+  #  # Execute Request
+  #  loop do
+  #    begin
+  #
+  #      open(url, 'r', :read_timeout => 300) do |f|
+  #        http_response = JSON.parse(f.read)
+  #        messages = http_response[0]
+  #        timetoken = http_response[1]
+  #
+  #        next if !messages.length
+  #
+  #        ## Run user Callback and Reconnect if user permits.
+  #        ## Capture the message and encrypt it
+  #        if @cipher_key.length > 0
+  #          pc = PubnubCrypto.new(@cipher_key)
+  #          messages.each do |message|
+  #            if message.is_a? Array
+  #              message=pc.decryptArray(message)
+  #            else
+  #              message=pc.decryptObject(message)
+  #            end
+  #            if !callback.call(message)
+  #              return
+  #            end
+  #          end
+  #        else
+  #          messages.each do |message|
+  #            if !callback.call(message)
+  #              return
+  #            end
+  #          end
+  #        end
+  #
+  #        request = ['subscribe', @subscribe_key, channel, '0', timetoken.to_s]
+  #        args['request'] = request
+  #        # Recusive call to _subscribe
+  #        _subscribe(args)
+  #
+  #      end
+  #
+  #    rescue Timeout::Error => e
+  #      logger.debug "Caught #{e.message}, restarting connection."
+  #      retry
+  #
+  #    end
+  #
+  #  end
+  #
+  #end
 
   #**
   #* Request URL
@@ -232,31 +227,37 @@ class Pubnub
   #*
   def _request(request)
 
-    open(request.url) do |f|
+    open(request.url, 'r', :read_timeout => 300) do |f|
       response = JSON.parse(f.read)
+      request.callback.call(response)
 
-      if request.operation == 'history'
 
-        if request.cipher_key.present?
-          myarr=Array.new()
-          response.each do |message|
-            pc=PubnubCrypto.new(@cipher_key)
-            if message.is_a? Array
-              message=pc.decryptArray(message)
-            else
-              message=pc.decryptObject(message)
-            end
-            myarr.push(message)
-          end
-          request.callback.call(myarr)
-        else
-          request.callback.call(response)
-        end
-
-      else
-        request.callback.call(response)
-      end
+      #if request.operation == 'history'
+      #
+      #  if request.cipher_key.present?
+      #
+      #    myarr = Array.new
+      #
+      #    response.each do |message|
+      #      pc = PubnubCrypto.new(@cipher_key)
+      #      if message.is_a? Array
+      #        message = pc.decryptArray(message)
+      #      else
+      #        message = pc.decryptObject(message)
+      #      end
+      #      myarr.push(message)
+      #    end
+      #
+      #    request.callback.call(myarr)
+      #  else
+      #    request.callback.call(response)
+      #  end
+      #
+      #else
+        #request.callback.call(response)
+      #end
     end
+
   end
 
 
