@@ -1,6 +1,9 @@
 class PubnubRequest
   attr_accessor :url, :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
 
+  class RequestError < RuntimeError;
+  end
+
   def initialize(args = {})
     args = HashWithIndifferentAccess.new(args)
 
@@ -15,6 +18,14 @@ class PubnubRequest
     @ssl = args[:ssl]
   end
 
+  def op_exception
+    if @operation.present?
+      ("Pubnub::" + @operation.to_s.capitalize + "Error").constantize
+    else
+      PubnubRequest::RequestError
+    end
+  end
+
   def ==(another)
     self.operation == another.operation && self.callback == another.callback &&
         self.channel == another.channel && self.message == another.message
@@ -24,7 +35,7 @@ class PubnubRequest
     options = HashWithIndifferentAccess.new(options)
 
     if options[:channel].blank?
-      raise(Pubnub::PublishError, "channel is a required parameter.")
+      raise(op_exception, "channel is a required parameter.")
     else
       self.channel = options[:channel]
       self
@@ -35,9 +46,9 @@ class PubnubRequest
     options = HashWithIndifferentAccess.new(options)
 
     if options[:callback].blank?
-      raise(Pubnub::PublishError, "callback is a required parameter.")
+      raise(op_exception, "callback is a required parameter.")
     elsif !options[:callback].try(:respond_to?, "call")
-      raise(Pubnub::PublishError, "callback is invalid.")
+      raise(op_exception, "callback is invalid.")
     else
       self.callback = options[:callback]
       self
@@ -69,12 +80,12 @@ class PubnubRequest
     options = HashWithIndifferentAccess.new(options)
 
     if options[:message].blank? && options[:message] != ""
-      raise(Pubnub::PublishError, "message is a required parameter.")
+      raise(op_exception, "message is a required parameter.")
     else
       cipher_key = options[:cipher_key] || self_cipher_key
 
       if cipher_key.present?
-        self.message = aes_encrypt(cipher_key, options, self)    #TODO: Need a to_json here?
+        self.message = aes_encrypt(cipher_key, options, self) #TODO: Need a to_json here?
       else
         self.message = options[:message].to_json
       end
@@ -97,9 +108,9 @@ class PubnubRequest
     options = HashWithIndifferentAccess.new(options)
 
     if options[:subscribe_key].blank? && self_subscribe_key.blank?
-      raise(Pubnub::PublishError, "subscribe_key is a required parameter.")
+      raise(op_exception, "subscribe_key is a required parameter.")
     elsif self_subscribe_key.present? && options['subscribe_key'].present?
-      raise(Pubnub::PublishError, "existing subscribe_key #{self_subscribe_key} cannot be overridden at subscribe-time.")
+      raise(op_exception, "existing subscribe_key #{self_subscribe_key} cannot be overridden at subscribe-time.")
     else
       self.subscribe_key = self_subscribe_key || options[:subscribe_key]
     end
@@ -107,15 +118,20 @@ class PubnubRequest
 
   def format_url!
 
-    raise(Pubnub::PublishError, "Missing .operation in PubnubRequst object") if self.operation.blank?
+    raise(Pubnub::PublishError, "Missing .operation in PubnubRequest object") if self.operation.blank?
 
     origin = (@ssl.present? ? 'https://' : 'http://') + Pubnub::ORIGIN_HOST
 
 
     case self.operation.to_s
       when "publish"
-        url_array = [ self.operation.to_s, self.publish_key.to_s, self.subscribe_key.to_s,
-                      self.secret_key.to_s, self.channel.to_s, "0", self.message ]
+        url_array = [self.operation.to_s, self.publish_key.to_s, self.subscribe_key.to_s,
+                     self.secret_key.to_s, self.channel.to_s, "0", self.message]
+
+      when "subscribe"
+        # http://pubsub.pubnub.com/subscribe/demo/hello_world/0/13451593159385860?uuid=foo
+        url_array = [ self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", "0" ]
+
       when "time"
         url_array = [ self.operation.to_s, "0" ]
     end

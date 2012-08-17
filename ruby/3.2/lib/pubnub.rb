@@ -28,6 +28,8 @@ class Pubnub
 
   class PublishError < RuntimeError;
   end
+  class SubscribeError < RuntimeError;
+  end
   class InitError < RuntimeError;
   end
 
@@ -60,15 +62,17 @@ class Pubnub
     end
 
     verify_init
-
   end
 
   def verify_init
     # publish_key and cipher_key are both optional.
     Rails.logger.debug("verifying configuration...")
-
     @subscribe_key.blank? ? raise(InitError, "subscribe_key is a mandatory parameter.") : Rails.logger.debug("subscribe_key set to #{@subscribe_key}")
 
+    init_logger
+  end
+
+  def init_logger
     Rails.logger.debug(@publish_key.present? ? "publish_key set to #{@publish_key}" : "publish_key not set.")
     Rails.logger.debug(@cipher_key.present? ? "cipher_key set to #{@cipher_key}. AES encryption enabled." : "cipher_key not set. AES encryption disabled.")
     Rails.logger.debug(@secret_key.present? ? "secret_key set to #{@secret_key}. HMAC message signing enabled." : "secret_key not set. HMAC signing disabled.")
@@ -77,7 +81,7 @@ class Pubnub
 
   def publish(options)
     options = HashWithIndifferentAccess.new(options)
-    publish_request = PubnubRequest.new(:operation => :publish, :subscribe_key => @subscribe_key)
+    publish_request = PubnubRequest.new(:operation => :publish)
 
     #TODO: This is ugly, refactor
 
@@ -88,57 +92,34 @@ class Pubnub
     publish_request.set_publish_key(options, self.publish_key)
     publish_request.set_subscribe_key(options, self.subscribe_key)
     publish_request.set_secret_key(options, self.secret_key)
-    publish_request.operation = "publish"
+
 
     publish_request.format_url!
 
     _request(publish_request)
   end
 
-  #**
-  #* Subscribe
-  #*
-  #* This is NON-BLOCKING.
-  #* Listen for a message on a channel.
-  #*
-  #* @param array args with channel and message.
-  #* @return false on fail, array on success.
-  #*
+  def subscribe(options)
+    options = HashWithIndifferentAccess.new(options)
 
-  def subscribe(args)
-    ## Capture User Input
-    channel = args['channel']
-    callback = args['callback']
+    subscribe_request = PubnubRequest.new(:operation => :subscribe)
 
-    ## Fail if missing channel
-    if !channel
-      puts "Missing Channel."
-      return false
-    end
+    #TODO: This is ugly, refactor
 
-    ## Fail if missing callback
-    if !callback
-      puts "Missing Callback."
-      return false
-    end
+    subscribe_request.ssl = @ssl
+    subscribe_request.set_channel(options)
+    subscribe_request.set_callback(options)
 
-    ## EventMachine loop
-    #EventMachine.run do
-    timetoken = 0
-    request = ['subscribe', @subscribe_key, channel, '0', timetoken.to_s]
-    args['request'] = request
-    _subscribe(args)
-    #end
+    subscribe_request.set_subscribe_key(options, self.subscribe_key)
+
+
+    subscribe_request.format_url!
+
+    _request(subscribe_request)
+
   end
 
-  #**
-  #* History
-  #*
-  #* Load history from a channel.
-  #*
-  #* @param array args with 'channel' and 'limit'.
-  #* @return mixed false on fail, array on success.
-  #*
+
   def history(args)
     ## Capture User Input
     limit = +args['limit'] ? +args['limit'] : 5
@@ -161,13 +142,6 @@ class Pubnub
     _request(args)
   end
 
-  #**
-  #* Time
-  #*
-  #* Timestamp from PubNub Cloud.
-  #*
-  #* @return int timestamp.
-  #*
   def time(options)
     options = HashWithIndifferentAccess.new(options)
     raise(PubNubRuntimeError, "You must supply a callback.") if options['callback'].blank?
@@ -180,13 +154,7 @@ class Pubnub
 
   end
 
-  #**
-  #* UUID
-  #*
-  #* Unique identifier generation
-  #*
-  #* @return Unique Identifier
-  #*
+
   def UUID()
     SecureRandom.base64(32).gsub("/", "_").gsub(/=+$/, "")
   end

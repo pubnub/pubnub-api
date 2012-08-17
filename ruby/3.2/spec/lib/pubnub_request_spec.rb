@@ -17,7 +17,7 @@ describe PubnubRequest do
       pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
                                          :message => "hi", :callback => @my_callback)
 
-      lambda { pubnub_request.format_url! }.should raise_error(Pubnub::PublishError, "Missing .operation in PubnubRequst object")
+      lambda { pubnub_request.format_url! }.should raise_error(Pubnub::PublishError, "Missing .operation in PubnubRequest object")
 
 
     end
@@ -65,7 +65,7 @@ describe PubnubRequest do
       options = {}
       self_subscribe_key = nil
 
-      lambda { @pubnub_request.set_subscribe_key(options, self_subscribe_key).should == "0" }.should raise_error(Pubnub::PublishError, "subscribe_key is a required parameter.")
+      lambda { @pubnub_request.set_subscribe_key(options, self_subscribe_key).should == "0" }.should raise_error(PubnubRequest::RequestError, "subscribe_key is a required parameter.")
     end
 
     it "should not let you override a previously set subscribe_key" do
@@ -74,7 +74,7 @@ describe PubnubRequest do
       options = {:subscribe_key => "my_key"}
       self_subscribe_key = "foo"
 
-      lambda { @pubnub_request.set_subscribe_key(options, self_subscribe_key) }.should raise_error(Pubnub::PublishError, "existing subscribe_key #{self_subscribe_key} cannot be overridden at subscribe-time.")
+      lambda { @pubnub_request.set_subscribe_key(options, self_subscribe_key) }.should raise_error(PubnubRequest::RequestError, "existing subscribe_key #{self_subscribe_key} cannot be overridden at subscribe-time.")
     end
 
     it "should set the subscribe_key when self_subscribe_key is set" do
@@ -176,7 +176,7 @@ describe PubnubRequest do
         @pubnub_request.message.should == nil
 
         options = {}
-        lambda { @pubnub_request.set_message(options, nil) }.should raise_error(Pubnub::PublishError)
+        lambda { @pubnub_request.set_message(options, nil) }.should raise_error(PubnubRequest::RequestError)
       end
     end
 
@@ -220,7 +220,7 @@ describe PubnubRequest do
       @pubnub_request.channel.should == nil
 
       options = {}
-      lambda { @pubnub_request.set_channel(options) }.should raise_error(Pubnub::PublishError)
+      lambda { @pubnub_request.set_channel(options) }.should raise_error(PubnubRequest::RequestError)
 
     end
   end
@@ -243,7 +243,7 @@ describe PubnubRequest do
       callback = "hi"
       options = {:callback => callback}
 
-      lambda { @pubnub_request.set_callback(options) }.should raise_error(Pubnub::PublishError)
+      lambda { @pubnub_request.set_callback(options) }.should raise_error(PubnubRequest::RequestError)
 
     end
 
@@ -253,7 +253,7 @@ describe PubnubRequest do
       callback = nil
       options = {:callback => callback}
 
-      lambda { @pubnub_request.set_callback(options) }.should raise_error(Pubnub::PublishError)
+      lambda { @pubnub_request.set_callback(options) }.should raise_error(PubnubRequest::RequestError)
 
     end
   end
