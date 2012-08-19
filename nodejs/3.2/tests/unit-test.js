@@ -1,4 +1,4 @@
-var PUBNUB, channel, history_test, nodeunit, publish_dummy, publish_test, pubnub, subscribe_test, time_test, uuid_test;
+var PUBNUB, channel, here_now_test, history_test, nodeunit, presence_test, publish_dummy, publish_test, pubnub, run_dummy_subscribe, subscribe_test, time_test, uuid_test;
 
 PUBNUB = require('../pubnub');
 
@@ -43,7 +43,7 @@ time_test = function(test) {
 
 uuid_test = function(test) {
   test.expect(1);
-  return pubnub.time(function(uuid) {
+  return pubnub.uuid(function(uuid) {
     test.ok(uuid);
     test.done();
   });
@@ -51,7 +51,6 @@ uuid_test = function(test) {
 
 history_test = function(test) {
   test.expect(2);
-  console.log('history test');
   return pubnub.history({
     limit: 1,
     channel: channel,
@@ -72,14 +71,69 @@ subscribe_test = function(test) {
     connect: function() {
       return publish_dummy(test_channel);
     },
-    message: {
-      test: "test"
-    },
     callback: function(message) {
       test.ok(message);
       test.ok(message.test === "test");
       test.done();
-      return true;
+      return {stop: true};
+    }
+  });
+};
+
+run_dummy_subscribe = function(channel) {
+  var pubnub = PUBNUB.init({
+    publish_key: 'demo',
+    subscribe_key: 'demo'
+  });
+  return pubnub.subscribe({
+    channel: channel,
+    connect: function() {
+      return {stop: true};
+    },
+    callback: function() {
+      return {stop: true};
+    }
+  });
+};
+
+presence_test = function(test) {
+  var test_channel;
+  test_channel = 'channel-' + PUBNUB.unique();
+  test.expect(3);
+  return pubnub.presence({
+    channel: test_channel,
+    connect: function() {
+      run_dummy_subscribe(test_channel);
+    },
+    callback: function(message) {
+      test.ok(message);
+      test.ok(message.action === "join");
+      test.ok(message.occupancy === 1);
+      test.done();
+      return {stop: true};
+    }
+  });
+};
+
+here_now_test = function(test) {
+  var test_channel;
+  test_channel = 'channel-' + PUBNUB.unique();
+  test.expect(2);
+  return pubnub.subscribe({
+    channel: test_channel,
+    connect: function() {
+      pubnub.here_now({
+        channel: test_channel,
+        callback: function(message) {
+          test.ok(message);
+          test.ok(message.occupancy === 1);
+          publish_dummy(test_channel);
+        }
+      });
+    },
+    callback: function(message) {
+      test.done();
+      return {stop: true};
     }
   });
 };
@@ -89,5 +143,7 @@ module.exports = {
   "History Test": history_test,
   "Time Test": time_test,
   "UUID Test": uuid_test,
-  "Subscribe Test": subscribe_test
+  "Subscribe Test": subscribe_test,
+  "Presence Test": presence_test,
+  "Here Now Test": here_now_test
 };

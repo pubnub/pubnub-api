@@ -37,6 +37,7 @@ var NOW    = 1
 ,   http   = require('http')
 ,   https  = require('https')
 ,   URLBIT = '/'
+,   QUERYBIT = '&'
 ,   XHRTME = 310000
 ,   XORIGN = 1;
 
@@ -112,7 +113,9 @@ function xdr( setup ) {
             failed = 1;
             (setup.fail||function(){})(e);
         };
-
+    if (setup.query && setup.query.length > 0) {
+        url = url + '?' + setup.query.join(QUERYBIT);
+    }
     try {
         (ssl ? https : http).get( {
             host : origin,
@@ -150,7 +153,18 @@ exports.init = function(setup) {
     ,   SSL           = setup.ssl
     ,   ORIGIN        = setup.origin || 'pubsub.pubnub.com'
     ,   CHANNELS      = {}
+    ,   UUID =   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                    return v.toString(16);
+                })
     ,   PN            = {
+        
+
+        uuid : uuid = function(callback) {
+            if (callback)
+                callback(UUID);
+            return UUID;
+        },
         /*
             PUBNUB.history({
                 channel  : 'my_chat_channel',
@@ -250,7 +264,7 @@ exports.init = function(setup) {
                 callback : function(message) { console.log(message) }
             });
         */
-        'subscribe' : function( args, callback ) {
+        'subscribe' : subscribe = function( args, callback ) {
 
             var channel      = args['channel']
             ,   callback     = callback || args['callback']
@@ -289,6 +303,9 @@ exports.init = function(setup) {
                         encode(channel),
                         '0', timetoken
                     ],
+                    query    : [
+                        'uuid=' + encode(uuid())
+                    ],
                     fail : function() {
                         // Disconnect
                         if (!disconnected) {
@@ -301,27 +318,27 @@ exports.init = function(setup) {
                         });
                     },
                     success : function(messages) {
-                        var stop = false;
+                        var ret = {stop: false};
                         if (!CHANNELS[channel].connected) return;
 
                         // Connect
                         if (!connected) {
                             connected = 1;
-                            connect();
+                            ret = connect();
                         }
 
                         // Reconnect
                         if (disconnected) {
                             disconnected = 0;
-                            reconnect();
+                            ret = reconnect();
                         }
 
                         messages[0].forEach(function(msg) {
-                            stop = callback( msg, messages );
+                            ret = callback( msg, messages );
                         });
 
                         timetoken = messages[1];
-                        if(!stop)
+                        if(!ret.stop)
                             timeout( pubnub, 10 );
                     }
                 });
@@ -330,8 +347,45 @@ exports.init = function(setup) {
             // Begin Recursive Subscribe
             pubnub();
         },
-    };
+        /*
+            PUBNUB.presence({
+                channel  : 'my_chat'
+                callback : function(message) { console.log(message) }
+            });
+        */
+        'presence' : function( args, callback ) {
+            args['channel'] = args['channel'] + '-pnpres';
+            subscribe(args,callback );
+        },
+        /*
+            PUBNUB.here_now({
+                channel  : 'my_chat_channel',
+                callback : function(messages) { console.log(messages) }
+            });
+        */
+        'here_now' : function( args, callback ) {
+            var callback = args['callback']
+            ,   channel  = args['channel'];
 
+            // Make sure we have a Channel
+            if (!channel)  return log('Missing Channel');
+            if (!callback) return log('Missing Callback');
+
+            // Send Message
+            xdr({
+                ssl : SSL,
+                url : [
+                    'v2',
+                    'presence',
+                    'sub-key', SUBSCRIBE_KEY, 
+                    'channel', encode(channel),
+                ],
+                origin  : ORIGIN,
+                success : callback,
+                fail    : function(response) { log(response) }
+            });
+        },
+    };
     return PN;
 }
 exports.unique = unique
