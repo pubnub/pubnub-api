@@ -229,32 +229,50 @@ class Pubnub
   #*
   def _request(request)
 
+    puts("tt0: #{request.timetoken}")
+
 
     http = nil
+
     EventMachine.run do
       http = EventMachine::HttpRequest.new(request.url).get
-      http.callback { EventMachine.stop }
+
+      http.callback do
+
+        if JSON.parse(http.response)[0].blank? && JSON.parse(http.response)[1].present?
+
+
+          new_timetoken = JSON.parse(http.response)[1]
+          request.timetoken = new_timetoken
+          request.format_url!
+          puts("tt1: #{request.timetoken}")
+          http = EventMachine::HttpRequest.new(request.url).get
+          http.callback do
+
+            new_timetoken = JSON.parse(http.response)[1]
+            request.timetoken = new_timetoken
+
+            puts("tt2: #{request.timetoken}: #{JSON.parse(http.response)[0]}")
+
+            EventMachine.stop
+          end
+
+        else
+
+          EventMachine.stop
+        end
+      end
+
+
     end
     http
+
 
     f = http
     #open(request.url, 'r', :read_timeout => 300) do |f|
     response = JSON.parse(f.response)
+    request.callback.call(response)
 
-    if response[0].blank? and response[1].present?
-      new_timetoken = response[1]
-      request.timetoken = new_timetoken
-      puts("new_timetoken is: #{request.timetoken}")
-
-
-    else
-      request.callback.call(response)
-    end
-
-
-    if response[0].present? and response[1].present?
-      foo
-    end
 
 
     #if request.operation == 'history'
