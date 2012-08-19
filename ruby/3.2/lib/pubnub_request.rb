@@ -1,5 +1,5 @@
 class PubnubRequest
-  attr_accessor :url, :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
+  attr_accessor :timetoken, :url, :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
 
   class RequestError < RuntimeError;
   end
@@ -15,6 +15,7 @@ class PubnubRequest
     @jsonp = args[:jsonp].present? ? "1" : "0"
     @message = args[:message]
     @secret_key = args[:secret_key] || "0"
+    @timetoken = args[:timetoken] || "0"
     @ssl = args[:ssl]
   end
 
@@ -130,7 +131,7 @@ class PubnubRequest
 
       when "subscribe"
         # http://pubsub.pubnub.com/subscribe/demo/hello_world/0/13451593159385860?uuid=foo
-        url_array = [ self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", "0" ]
+        url_array = [ self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", @timetoken ]
 
       when "time"
         url_array = [ self.operation.to_s, "0" ]

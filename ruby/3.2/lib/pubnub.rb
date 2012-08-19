@@ -24,6 +24,8 @@ require 'digest'
 require 'pubnub_crypto'
 require 'pubnub_request'
 
+require 'em-http'
+
 class Pubnub
 
   class PublishError < RuntimeError;
@@ -227,36 +229,59 @@ class Pubnub
   #*
   def _request(request)
 
-    open(request.url, 'r', :read_timeout => 300) do |f|
-      response = JSON.parse(f.read)
-      request.callback.call(response)
 
-
-      #if request.operation == 'history'
-      #
-      #  if request.cipher_key.present?
-      #
-      #    myarr = Array.new
-      #
-      #    response.each do |message|
-      #      pc = PubnubCrypto.new(@cipher_key)
-      #      if message.is_a? Array
-      #        message = pc.decryptArray(message)
-      #      else
-      #        message = pc.decryptObject(message)
-      #      end
-      #      myarr.push(message)
-      #    end
-      #
-      #    request.callback.call(myarr)
-      #  else
-      #    request.callback.call(response)
-      #  end
-      #
-      #else
-        #request.callback.call(response)
-      #end
+    http = nil
+    EventMachine.run do
+      http = EventMachine::HttpRequest.new(request.url).get
+      http.callback { EventMachine.stop }
     end
+    http
+
+    f = http
+    #open(request.url, 'r', :read_timeout => 300) do |f|
+    response = JSON.parse(f.response)
+
+    if response[0].blank? and response[1].present?
+      new_timetoken = response[1]
+      request.timetoken = new_timetoken
+      puts("new_timetoken is: #{request.timetoken}")
+
+
+    else
+      request.callback.call(response)
+    end
+
+
+    if response[0].present? and response[1].present?
+      foo
+    end
+
+
+    #if request.operation == 'history'
+    #
+    #  if request.cipher_key.present?
+    #
+    #    myarr = Array.new
+    #
+    #    response.each do |message|
+    #      pc = PubnubCrypto.new(@cipher_key)
+    #      if message.is_a? Array
+    #        message = pc.decryptArray(message)
+    #      else
+    #        message = pc.decryptObject(message)
+    #      end
+    #      myarr.push(message)
+    #    end
+    #
+    #    request.callback.call(myarr)
+    #  else
+    #    request.callback.call(response)
+    #  end
+    #
+    #else
+    #request.callback.call(response)
+    #end
+    #end
 
   end
 
