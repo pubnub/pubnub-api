@@ -117,6 +117,11 @@ class PubnubRequest
     end
   end
 
+  def package_response!(response)
+    self.response = response.respond_to?(:content) ? JSON.parse(response.content ) : JSON.parse(response)
+    self.timetoken = self.response[1] unless self.operation == "time"
+  end
+
   def format_url!
 
     raise(Pubnub::PublishError, "Missing .operation in PubnubRequest object") if self.operation.blank?
@@ -130,10 +135,10 @@ class PubnubRequest
 
       when "subscribe"
         # http://pubsub.pubnub.com/subscribe/demo/hello_world/0/13451593159385860?uuid=foo
-        url_array = [ self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", @timetoken ]
+        url_array = [self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", @timetoken]
 
       when "time"
-        url_array = [ self.operation.to_s, "0" ]
+        url_array = [self.operation.to_s, "0"]
     end
 
     self.url = origin + encode_URL(url_array)

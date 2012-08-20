@@ -253,33 +253,42 @@ class Pubnub
 
   def _request(request)
 
-    puts("tt0: #{request.timetoken}")
-    port = request.ssl.present? ? 443 : 80
 
-    puts("start loop")
 
-    request.format_url!
-    puts("new url is #{request.url}")
+    if !Rails.env.test?
 
-    EM.run do
+      puts("tt0: #{request.timetoken}")
+      port = request.ssl.present? ? 443 : 80
 
-      conn = EM::Protocols::HttpClient2.connect request.host, port
+      puts("start loop")
 
-      req = conn.get(request.query)
-      req.callback do |response|
+      request.format_url!
+      puts("new url is #{request.url}")
 
-        #p(response.status)
-        #p(response.headers)
-        p(response.content)
 
-        request.response = JSON.parse(response.content)
-        request.timetoken = request.response[1]
+      EM.run do
 
-        EM.next_tick do
-          puts("*** nt!")
-          _request(request)
+        conn = EM::Protocols::HttpClient2.connect request.host, port
+
+        req = conn.get(request.query)
+        req.callback do |response|
+
+          p(response.content)
+
+          request.package_response!(response.content)
+          request.callback.call(request.response)
+
+          EM.next_tick do
+            puts("*** nt!")
+            _request(request)
+          end
         end
+      end
 
+    else
+      open(request.url, 'r', :read_timeout => 300) do |response |
+        request.package_response!(response.read)
+        request.callback.call(request.response)
       end
 
     end
@@ -392,6 +401,7 @@ class Pubnub
     #end
 
   end
+
 
 
 end
