@@ -256,33 +256,36 @@ class Pubnub
     puts("tt0: #{request.timetoken}")
     port = request.ssl.present? ? 443 : 80
 
-    loop do
+    puts("start loop")
 
-      puts("start loop")
+    request.format_url!
+    puts("new url is #{request.url}")
 
-      request.format_url!
-      puts("new url is #{request.url}")
+    EM.run do
 
-      EventMachine.run {
+      conn = EM::Protocols::HttpClient2.connect request.host, port
 
-        conn = EM::Protocols::HttpClient2.connect request.host, port
+      req = conn.get(request.query)
+      req.callback do |response|
 
-        req = conn.get(request.query)
-        req.callback { |response|
-          p(response.status)
-          p(response.headers)
-          p(response.content)
+        #p(response.status)
+        #p(response.headers)
+        p(response.content)
 
-          request.response = JSON.parse(response.content)
-          request.timetoken = request.response[1]
+        request.response = JSON.parse(response.content)
+        request.timetoken = request.response[1]
 
-          EM.stop
-        }
+        EM.next_tick do
+          puts("*** nt!")
+          _request(request)
+        end
 
-      }
-
+      end
 
     end
+
+
+    #end
 
 
     #EM.run do
