@@ -141,10 +141,10 @@ public class PubnubUnitTest {
         // Listen for Messages (Subscribe)
         pubnub.subscribe(args);
         try {
-			lock.await(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+            lock.await(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         assertTrue(recv.message_received);
 	}
 
@@ -234,12 +234,12 @@ public class PubnubUnitTest {
         // Listen for Messages (Presence)
         pubnub.presence(args);
         try {
-			lock.await(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+            lock.await(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         assertTrue(recv.message_received);
-	}
+    }
 
 	@Test
 	public void testHere_now() {
