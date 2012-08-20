@@ -271,15 +271,20 @@ class Pubnub
         conn = EM::Protocols::HttpClient2.connect request.host, port
 
         req = conn.get(request.query)
+
+        req.errback do |response|
+          puts("error: #{response}")
+        end
+
         req.callback do |response|
 
-          p(response.content)
+          #p(response.content)
 
           request.package_response!(response.content)
           request.callback.call(request.response)
 
           EM.next_tick do
-            puts("*** nt!")
+            puts("recursing on next timetoken: #{request.timetoken}")
             _request(request)
           end
         end
