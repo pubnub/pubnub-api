@@ -1,5 +1,5 @@
 class PubnubRequest
-  attr_accessor :timetoken, :url, :callback, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
+  attr_accessor :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
 
   class RequestError < RuntimeError;
   end
@@ -123,7 +123,6 @@ class PubnubRequest
 
     origin = (@ssl.present? ? 'https://' : 'http://') + Pubnub::ORIGIN_HOST
 
-
     case self.operation.to_s
       when "publish"
         url_array = [self.operation.to_s, self.publish_key.to_s, self.subscribe_key.to_s,
@@ -138,6 +137,11 @@ class PubnubRequest
     end
 
     self.url = origin + encode_URL(url_array)
+
+    uri = URI.parse(self.url)
+
+    self.host = uri.host
+    self.query = uri.path + (uri.query.present? ? ("?" + uri.query) : "")
 
   end
 

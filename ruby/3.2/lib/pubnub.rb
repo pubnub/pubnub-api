@@ -24,7 +24,7 @@ require 'digest'
 require 'pubnub_crypto'
 require 'pubnub_request'
 
-require 'em-http'
+require 'eventmachine'
 
 class Pubnub
 
@@ -221,58 +221,145 @@ class Pubnub
   #
   #end
 
-  #**
-  #* Request URL
-  #*
-  #* @param array request of url directories.
-  #* @return array from JSON response.
-  #*
+  module DumbHttpClient
+    def post_init
+      send_data "GET / HTTP/1.1\r\nHost: _\r\n\r\n"
+      @data = ""
+      @parsed = false
+    end
+
+    def receive_data data
+      @data << data
+      if !@parsed and @data =~ /[\n][\r]*[\n]/m
+        @parsed = true
+        puts "RECEIVED HTTP HEADER:"
+        $`.each { |line| puts ">>> #{line}" }
+
+        puts "Now we'll terminate the loop, which will also close the connection"
+        EventMachine::stop_event_loop
+      end
+    end
+
+    def unbind
+      puts "A connection has terminated"
+    end
+  end
+
+  module Echo
+    def receive_data(data)
+      p data
+    end
+  end
+
   def _request(request)
 
     puts("tt0: #{request.timetoken}")
+    port = request.ssl.present? ? 443 : 80
 
+    loop do
 
-    http = nil
+      puts("start loop")
 
-    EventMachine.run do
-      http = EventMachine::HttpRequest.new(request.url).get
+      request.format_url!
+      puts("new url is #{request.url}")
 
-      http.callback do
+      EventMachine.run {
 
-        if JSON.parse(http.response)[0].blank? && JSON.parse(http.response)[1].present?
+        conn = EM::Protocols::HttpClient2.connect request.host, port
 
+        req = conn.get(request.query)
+        req.callback { |response|
+          p(response.status)
+          p(response.headers)
+          p(response.content)
 
-          new_timetoken = JSON.parse(http.response)[1]
-          request.timetoken = new_timetoken
-          request.format_url!
-          puts("tt1: #{request.timetoken}")
-          http = EventMachine::HttpRequest.new(request.url).get
-          http.callback do
+          request.response = JSON.parse(response.content)
+          request.timetoken = request.response[1]
 
-            new_timetoken = JSON.parse(http.response)[1]
-            request.timetoken = new_timetoken
+          EM.stop
+        }
 
-            puts("tt2: #{request.timetoken}: #{JSON.parse(http.response)[0]}")
-
-            EventMachine.stop
-          end
-
-        else
-
-          EventMachine.stop
-        end
-      end
+      }
 
 
     end
-    http
 
 
-    f = http
-    #open(request.url, 'r', :read_timeout => 300) do |f|
-    response = JSON.parse(f.response)
-    request.callback.call(response)
+    #EM.run do
+    #
+    #  puts("go!")
 
+
+    #
+    #
+    #  puts("new request url is: #{request.url}")
+    #
+    #  puts(request.host)
+    #  puts(port)
+    #  puts("request.query: #{request.query}")
+    #
+    #  conn = EM::Protocols::HttpClient2.connect request.host, port
+    #  req = conn.get(request.query)
+    #
+    #  req.callback do |response|
+    #    puts(response.content)
+    #    request.timetoken = JSON.parse(response.content)[1]
+    #    request.format_url!
+    #    puts("done 1.")
+    #
+    #  end
+    #
+    #  puts("done 2.")
+    #
+
+    #
+    #puts("done 3.")
+
+
+    #end
+
+
+    #EventMachine::HttpRequest.new(request.url).get.callback do |http|
+    #  request.response = http.response
+    #
+    #  puts ("response: #{request.response}")
+    #  request.timetoken = JSON.parse(http.response)[1]
+    #  request.format_url!
+    #
+    #
+    #end
+
+    #puts("callback or not?")
+    #request.callback.call(request.response) if request.response.present?
+
+    #if JSON.parse(http.response)[0].blank? && JSON.parse(http.response)[1].present?
+    #
+    #
+    #  new_timetoken = JSON.parse(http.response)[1]
+    #  request.timetoken = new_timetoken
+    #  request.format_url!
+    #  puts("tt1: #{request.timetoken}")
+    #  http = EventMachine::HttpRequest.new(request.url).get
+    #  http.callback do
+    #
+    #    new_timetoken = JSON.parse(http.response)[1]
+    #    request.timetoken = new_timetoken
+    #
+    #    puts("tt2: #{request.timetoken}: #{JSON.parse(http.response)[0]}")
+    #
+    #    #EventMachine.stop
+    #  end
+    #
+    #else
+    #
+    #  if JSON.parse(http.response)[0].blank? && JSON.parse(http.response)[1].present?
+    #
+    #  end
+    #  #EventMachine.stop
+    #end
+
+
+    #end
 
 
     #if request.operation == 'history'
