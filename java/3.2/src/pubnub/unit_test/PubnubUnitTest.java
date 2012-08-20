@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +17,7 @@ import pubnub.api.Pubnub;
 
 public class PubnubUnitTest {
 
+	private CountDownLatch lock = new CountDownLatch(1);
 	
 	@Test
 	public void testPublishHashMapOfStringObject() {
@@ -71,6 +74,8 @@ public class PubnubUnitTest {
 		// Callback Interface when a Message is Received
         class Receiver implements Callback {
 
+        	public boolean message_received = false;
+        	
         	public boolean subscribeCallback(String channel, Object message) {
 
                 try {
@@ -95,7 +100,9 @@ public class PubnubUnitTest {
                     e.printStackTrace();
                 }
                 // Continue Listening?
-              return true;
+                message_received = true;
+                lock.countDown();
+                return true;
             }
 
 			@Override
@@ -128,11 +135,17 @@ public class PubnubUnitTest {
 
         HashMap<String, Object> args = new HashMap<String, Object>(6);
         args.put("channel", channel);
-        args.put("callback", new Receiver());					// callback to get response
+        Receiver recv = new Receiver();
+        args.put("callback", recv);					// callback to get response
 
         // Listen for Messages (Subscribe)
         pubnub.subscribe(args);
-        assertTrue(true);
+        try {
+			lock.await(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        assertTrue(recv.message_received);
 	}
 
 	@Test
@@ -153,7 +166,9 @@ public class PubnubUnitTest {
 		
 		// Callback Interface when a Message is Received
         class Receiver implements Callback {
-
+        	
+        	public boolean message_received = false;
+        	
         	public boolean presenceCallback(String channel, Object message) {
 
                 try {
@@ -178,7 +193,9 @@ public class PubnubUnitTest {
                     e.printStackTrace();
                 }
                 // Continue Listening?
-              return true;
+                message_received = true;
+                lock.countDown();
+                return true;
             }
 
 			@Override
@@ -211,11 +228,17 @@ public class PubnubUnitTest {
 
         HashMap<String, Object> args = new HashMap<String, Object>(6);
         args.put("channel", channel + "-pnpres");
-        args.put("callback", new Receiver());					// callback to get response
+        Receiver recv = new Receiver();
+        args.put("callback", recv);					// callback to get response
 
         // Listen for Messages (Presence)
         pubnub.presence(args);
-		assertTrue(true);
+        try {
+			lock.await(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        assertTrue(recv.message_received);
 	}
 
 	@Test
