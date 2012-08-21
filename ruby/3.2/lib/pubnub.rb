@@ -6,7 +6,7 @@
 ## http://www.pubnub.com/
 
 ## -----------------------------------
-## PubNub 3.1 Real-time Push Cloud API
+## PubNub 3.3 Real-time Push Cloud API
 ## -----------------------------------
 
 ## including required libraries
@@ -23,6 +23,7 @@ require 'securerandom'
 require 'digest'
 require 'pubnub_crypto'
 require 'pubnub_request'
+require 'pubnub_deferrable'
 
 require 'eventmachine'
 
@@ -144,125 +145,19 @@ class Pubnub
     SecureRandom.base64(32).gsub("/", "_").gsub(/=+$/, "")
   end
 
-
-  #def _subscribe(args)
-  #  channel = args['channel']
-  #  callback = args['callback']
-  #  request = args['request']
-  #
-  #  # Construct Request
-  #  url = encode_URL(request);
-  #  url = @origin + url
-  #
-  #  # Execute Request
-  #  loop do
-  #    begin
-  #
-  #      open(url, 'r', :read_timeout => 300) do |f|
-  #        http_response = JSON.parse(f.read)
-  #        messages = http_response[0]
-  #        timetoken = http_response[1]
-  #
-  #        next if !messages.length
-  #
-  #        ## Run user Callback and Reconnect if user permits.
-  #        ## Capture the message and encrypt it
-  #        if @cipher_key.length > 0
-  #          pc = PubnubCrypto.new(@cipher_key)
-  #          messages.each do |message|
-  #            if message.is_a? Array
-  #              message=pc.decryptArray(message)
-  #            else
-  #              message=pc.decryptObject(message)
-  #            end
-  #            if !callback.call(message)
-  #              return
-  #            end
-  #          end
-  #        else
-  #          messages.each do |message|
-  #            if !callback.call(message)
-  #              return
-  #            end
-  #          end
-  #        end
-  #
-  #        request = ['subscribe', @subscribe_key, channel, '0', timetoken.to_s]
-  #        args['request'] = request
-  #        # Recusive call to _subscribe
-  #        _subscribe(args)
-  #
-  #      end
-  #
-  #    rescue Timeout::Error => e
-  #      logger.debug "Caught #{e.message}, restarting connection."
-  #      retry
-  #
-  #    end
-  #
-  #  end
-  #
-  #end
-
-  #module DumbHttpClient
-  #  def post_init
-  #    send_data "GET / HTTP/1.1\r\nHost: _\r\n\r\n"
-  #    @data = ""
-  #    @parsed = false
-  #  end
-  #
-  #  def receive_data data
-  #    @data << data
-  #    if !@parsed and @data =~ /[\n][\r]*[\n]/m
-  #      @parsed = true
-  #      puts "RECEIVED HTTP HEADER:"
-  #      $`.each { |line| puts ">>> #{line}" }
-  #
-  #      puts "Now we'll terminate the loop, which will also close the connection"
-  #      EventMachine::stop_event_loop
-  #    end
-  #  end
-  #
-  #  def unbind
-  #    puts "A connection has terminated"
-  #  end
-  #end
-  #
-  #module Echo
-  #  def receive_data(data)
-  #    p data
-  #  end
-  #end
-
   def _request(request)
-
-
 
     if !Rails.env.test?
 
       request.format_url!
-      puts("new url is #{request.url}")
-
+      puts("- Fetching #{request.url}")
 
       begin
 
-
       EM.run do
-
-        conn = EM::Protocols::HttpClient2.connect request.host, request.port
-        # TODO: Add a 300s timeout, keep-alive
-
+        conn = PubnubDeferrable.connect request.host, request.port # TODO: Add a 300s timeout, keep-alive
         req = conn.get(request.query)
-
-        #conn.connection_completed do
-        #  super
-        #  puts("Connection completed.")
-        #end
-        #
-        #conn.unbind do
-        #  super
-        #  puts("Disconnected.")
-        #end
+        puts("req is a #{req.class}")
 
         req.errback do |response|
           puts("error: #{response}")
@@ -270,13 +165,12 @@ class Pubnub
         end
 
         req.callback do |response|
-
           request.package_response!(response.content)
           request.callback.call(request.response)
 
           EM.next_tick do
             if request.operation == "subscribe"
-              puts("\n#{Time.now} - recursing on next timetoken: #{request.timetoken}")
+              puts("- #{Time.now} - Recursing on timetoken: #{request.timetoken}")
               conn.close_connection
               _request(request)
             else
