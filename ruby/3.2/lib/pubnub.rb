@@ -301,7 +301,7 @@ class Pubnub
               puts("\n#{Time.now} - recursing on next timetoken: #{request.timetoken}")
               _request(request)
             else
-              conn.close_connection
+              conn.close_connection # TODO: play with close_connection on pub and sub to note open sockets
               return
             end
 
