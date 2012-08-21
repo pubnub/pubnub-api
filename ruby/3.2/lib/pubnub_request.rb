@@ -1,5 +1,6 @@
 class PubnubRequest
   attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl, :port
+  attr_accessor :history_limit
 
   class RequestError < RuntimeError;
   end
@@ -39,7 +40,7 @@ class PubnubRequest
     if options[:channel].blank?
       raise(op_exception, "channel is a required parameter.")
     else
-      self.channel = options[:channel]
+      self.channel = options[:channel].to_s
       self
     end
   end
@@ -117,7 +118,7 @@ class PubnubRequest
     elsif self_publish_key.present? && options['publish_key'].present?
       raise(Pubnub::PublishError, "existing publish_key #{self_publish_key} cannot be overridden at publish-time.")
     else
-      self.publish_key = self_publish_key || options[:publish_key]
+      self.publish_key = (self_publish_key || options[:publish_key]).to_s
     end
   end
 
@@ -129,7 +130,7 @@ class PubnubRequest
     elsif self_subscribe_key.present? && options['subscribe_key'].present?
       raise(op_exception, "existing subscribe_key #{self_subscribe_key} cannot be overridden at subscribe-time.")
     else
-      self.subscribe_key = self_subscribe_key || options[:subscribe_key]
+      self.subscribe_key = (self_subscribe_key || options[:subscribe_key]).to_s
     end
   end
 
@@ -181,6 +182,13 @@ class PubnubRequest
 
       when "time"
         url_array = [self.operation.to_s, "0"]
+
+      when "history"
+        url_array = [self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", self.history_limit.to_s]
+
+        else
+
+        raise(PubnubRequest::InitError, "I can't create that URL for you due to unknown operation type.")
     end
 
     self.url = origin + encode_URL(url_array)

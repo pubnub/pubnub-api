@@ -104,7 +104,6 @@ class Pubnub
 
   def subscribe(options)
     options = HashWithIndifferentAccess.new(options)
-
     subscribe_request = PubnubRequest.new(:operation => :subscribe)
 
     #TODO: This is ugly, refactor
@@ -124,7 +123,34 @@ class Pubnub
   end
 
 
-  def history(args)
+  def history(options = nil)
+    if options.class != Hash
+      raise(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+    end
+
+    options = HashWithIndifferentAccess.new(options) unless (options == nil)
+
+    unless options[:limit] && options[:channel] && options[:callback]
+      raise(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+    end
+
+
+    history_request = PubnubRequest.new(:operation => :history)
+
+    #TODO: This is ugly, refactor
+
+    # /history/SUBSCRIBE_KEY/CHANNEL/JSONP_CALLBACK/LIMIT
+
+    history_request.ssl = @ssl
+    history_request.set_channel(options)
+    history_request.set_callback(options)
+    history_request.set_cipher_key(options, self.cipher_key)
+
+    history_request.set_subscribe_key(options, self.subscribe_key)
+    history_request.history_limit = options[:limit]
+
+    history_request.format_url!
+    _request(history_request)
 
   end
 
