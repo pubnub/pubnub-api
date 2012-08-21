@@ -275,32 +275,32 @@ describe Pubnub do
           end
         end
 
-        #context "on the subsequent timetoken fetch" do
-        #
-        #  context "with basic subscribe config" do
-        #
-        #    it "should sub without ssl" do
-        #      my_response = [[], "13451632748083262"]
-        #      mock(@my_callback).call(my_response) {}
-        #
-        #      VCR.use_cassette("integration_subscribe_1b", :record => :none) do
-        #        @pn.subscribe(:channel => :hello_world, :callback => @my_callback)
-        #      end
-        #    end
-        #
-        #    it "should publish with ssl" do
-        #
-        #      my_response = [[], "13451632748083262"]
-        #      mock(@my_callback).call(my_response) {}
-        #
-        #      @pn.ssl = true
-        #
-        #      VCR.use_cassette("integration_subscribe_3b", :record => :none) do
-        #        @pn.subscribe(:channel => :hello_world, :callback => @my_callback)
-        #      end
-        #    end
-        #  end
-        #end
+        context "on the subsequent timetoken fetch" do
+
+          context "with basic subscribe config" do
+
+            it "should sub without ssl" do
+              my_response = [[{"text"=>"bo"}], "13455067954018816"]
+              mock(@my_callback).call(my_response) {}
+
+              VCR.use_cassette("integration_subscribe_1b", :record => :none) do
+                @pn.subscribe(:channel => :hello_world, :callback => @my_callback, :override_timetoken => 13455067091198286)
+              end
+            end
+
+            it "should publish with ssl" do
+
+              my_response = [[{"text"=>"bo"}], "13455068901569588"]
+              mock(@my_callback).call(my_response) {}
+
+              @pn.ssl = true
+
+              VCR.use_cassette("integration_subscribe_3b", :record => :none) do
+                @pn.subscribe(:channel => :hello_world, :callback => @my_callback, :override_timetoken => 13455068696466554)
+              end
+            end
+          end
+        end
 
         #
         #

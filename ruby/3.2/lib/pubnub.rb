@@ -114,8 +114,8 @@ class Pubnub
 
     subscribe_request.set_subscribe_key(options, self.subscribe_key)
 
-
-    subscribe_request.format_url!
+    format_url_options = options[:override_timetoken].present? ? options[:override_timetoken] : nil
+    subscribe_request.format_url!(format_url_options)
 
     _request(subscribe_request)
 
@@ -266,6 +266,9 @@ class Pubnub
       puts("new url is #{request.url}")
 
 
+      begin
+
+
       EM.run do
 
         conn = EM::Protocols::HttpClient2.connect request.host, port
@@ -278,17 +281,20 @@ class Pubnub
 
         req.callback do |response|
 
-          #p(response.content)
-
           request.package_response!(response.content)
           request.callback.call(request.response)
 
           EM.next_tick do
-            puts("recursing on next timetoken: #{request.timetoken}")
+            puts("#{Time.now} - recursing on next timetoken: #{request.timetoken}")
             _request(request)
           end
         end
       end
+
+      rescue EventMachine::ConnectionError => e
+        [0, "Network Error"]
+      end
+
 
     else
       open(request.url, 'r', :read_timeout => 300) do |response |

@@ -122,11 +122,15 @@ class PubnubRequest
     self.timetoken = self.response[1] unless self.operation == "time"
   end
 
-  def format_url!
+  def format_url!(override_timetoken = nil)
 
     raise(Pubnub::PublishError, "Missing .operation in PubnubRequest object") if self.operation.blank?
 
     origin = (@ssl.present? ? 'https://' : 'http://') + Pubnub::ORIGIN_HOST
+
+    if override_timetoken.present?
+      self.timetoken = override_timetoken.to_s
+    end
 
     case self.operation.to_s
       when "publish"
