@@ -4,6 +4,14 @@ require 'vcr'
 
 describe Pubnub do
 
+  describe "#UUID" do
+    it "should return a UUID" do
+      uuid_regexp = /\A[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\z/i
+      uuid = Pubnub.new(:subscribe_key => :demo).UUID
+      uuid.match(uuid_regexp).should_not be_nil
+    end
+  end
+
   describe ".initialize" do
 
     before do

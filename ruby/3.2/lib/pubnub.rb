@@ -141,8 +141,8 @@ class Pubnub
   end
 
 
-  def UUID()
-    SecureRandom.base64(32).gsub("/", "_").gsub(/=+$/, "")
+  def UUID
+    UUID.new.generate
   end
 
   def _request(request)
