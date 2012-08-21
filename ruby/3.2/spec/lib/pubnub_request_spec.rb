@@ -137,6 +137,39 @@ describe PubnubRequest do
 
   end
 
+  describe "#set_request_cipher_key" do
+
+    it "should not let you override a previously set cipher_key" do
+      @pubnub_request.message.should == nil
+
+      options = {:cipher_key => "my_key"}
+      self_cipher_key = "foo"
+
+      lambda { @pubnub_request.set_cipher_key(options, self_cipher_key) }.should raise_error(Pubnub::PublishError, "existing cipher_key foo cannot be overridden at publish-time.")
+    end
+
+    it "should let you define a cipher_key if one was not previously set" do
+      @pubnub_request.message.should == nil
+
+      options = {:cipher_key => "my_key"}
+      self_cipher_key = nil
+
+      @pubnub_request.set_cipher_key(options, self_cipher_key).should == "my_key"
+
+    end
+
+    it "should set the secret key to nil if it is not set" do
+      @pubnub_request.message.should == nil
+
+      options = {}
+      self_cipher_key = nil
+
+      @pubnub_request.set_cipher_key(options, self_cipher_key).should == nil
+
+    end
+
+  end
+  
   describe "#set_request_secret_key" do
 
     it "should not let you override a previously set secret_key" do

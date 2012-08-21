@@ -1,5 +1,5 @@
 class PubnubRequest
-  attr_accessor :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
+  attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
 
   class RequestError < RuntimeError;
   end
@@ -9,6 +9,7 @@ class PubnubRequest
 
     @operation = args[:operation].to_s
     @callback = args[:callback]
+    @cipher_key = args[:cipher_key]
     @publish_key = args[:publish_key]
     @subscribe_key = args[:subscribe_key]
     @channel = args[:channel]
@@ -56,6 +57,21 @@ class PubnubRequest
     end
   end
 
+
+  def set_cipher_key(options, self_cipher_key)
+    options = HashWithIndifferentAccess.new(options)
+
+    if self_cipher_key.present? && options['cipher_key'].present?
+      raise(Pubnub::PublishError, "existing cipher_key #{self_cipher_key} cannot be overridden at publish-time.")
+
+    elsif (self_cipher_key.present? && options[:cipher_key].blank?) || (self_cipher_key.blank? && options[:cipher_key].present?)
+
+      this_cipher_key = self_cipher_key || options[:cipher_key]
+      raise(Pubnub::PublishError, "secret key must be a string.") if this_cipher_key.class != String
+      self.cipher_key =  this_cipher_key
+    end
+  end
+
   def set_secret_key(options, self_secret_key)
     options = HashWithIndifferentAccess.new(options)
 
@@ -64,12 +80,12 @@ class PubnubRequest
 
     elsif (self_secret_key.present? && options[:secret_key].blank?) || (self_secret_key.blank? && options[:secret_key].present?)
 
-      secret_key = self_secret_key || options[:secret_key]
-      raise(Pubnub::PublishError, "secret key must be a string.") if secret_key.class != String
+      my_secret_key = self_secret_key || options[:secret_key]
+      raise(Pubnub::PublishError, "secret key must be a string.") if my_secret_key.class != String
 
       signature = "{ @publish_key, @subscribe_key, @secret_key, channel, message}"
       digest = OpenSSL::Digest.new("sha256")
-      key = [secret_key]
+      key = [my_secret_key]
       hmac = OpenSSL::HMAC.hexdigest(digest, key.pack("H*"), signature)
       self.secret_key = hmac
     else
@@ -83,10 +99,10 @@ class PubnubRequest
     if options[:message].blank? && options[:message] != ""
       raise(op_exception, "message is a required parameter.")
     else
-      cipher_key = options[:cipher_key] || self_cipher_key
+      my_cipher_key = options[:cipher_key] || self_cipher_key
 
-      if cipher_key.present?
-        self.message = aes_encrypt(cipher_key, options, self) #TODO: Need a to_json here?
+      if my_cipher_key.present?
+        self.message = aes_encrypt(my_cipher_key, options, self) #TODO: Need a to_json here?
       else
         self.message = options[:message].to_json
       end
@@ -118,8 +134,22 @@ class PubnubRequest
   end
 
   def package_response!(response)
-    self.response = response.respond_to?(:content) ? JSON.parse(response.content ) : JSON.parse(response)
+    self.response = response.respond_to?(:content) ? JSON.parse(response.content) : JSON.parse(response)
     self.timetoken = self.response[1] unless self.operation == "time"
+
+    if self.cipher_key.present?
+      myarr = Array.new
+      pc = PubnubCrypto.new(@cipher_key)
+
+      response.each do |message|
+        if message.is_a? Array
+          message = pc.decryptArray(message)
+        else
+          message = pc.decryptObject(message)
+        end
+        myarr.push(message)
+      end
+    end
   end
 
   def format_url!(override_timetoken = nil)
