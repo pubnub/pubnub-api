@@ -35,4 +35,39 @@ http_interactions:
       string: ! '[["qJQ6AhSEW8QCnqi8oVncbA=="],"13455091504972178"]'
     http_version: 
   recorded_at: Tue, 21 Aug 2012 00:32:30 GMT
+- request:
+    method: get
+    uri: http://pubsub.pubnub.com/subscribe/demo/hello_world/0/13455304919137038
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 21 Aug 2012 06:28:36 GMT
+      Content-Type:
+      - text/javascript; charset="UTF-8"
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Access-Control-Allow-Methods:
+      - GET
+    body:
+      encoding: US-ASCII
+      string: ! '[["N56FnGyifE+gjCxu12/f3A=="],"13455305163038924"]'
+    http_version: 
+  recorded_at: Tue, 21 Aug 2012 06:28:36 GMT
 recorded_with: VCR 2.2.4

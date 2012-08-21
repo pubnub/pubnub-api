@@ -180,19 +180,14 @@ describe Pubnub do
 
     context "cipher key" do
 
-      it "should let you override an existing instantiated cipher key" do
+      it "should not let you override an existing instantiated cipher key" do
 
         @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :cipher_key => @my_cipher_key)
         alt_cipher_key = "alt_cipher_key"
 
         # TODO: generate this from the pn encryption instance method, mock the response
 
-        mock_subscribe_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel,
-                                                   :operation => :subscribe, :subscribe_key => @my_sub_key,
-                                                   :cipher_key => alt_cipher_key)
-
-        mock(@pn)._request(mock_subscribe_request) {}
-        @pn.subscribe(:channel => @my_channel, :callback => @my_callback, :cipher_key => alt_cipher_key)
+        lambda { @pn.subscribe(:channel => @my_channel, :callback => @my_callback, :cipher_key => alt_cipher_key) }.should raise_error(Pubnub::SubscribeError, "existing cipher_key my_cipher_key cannot be overridden at publish-time.")
 
       end
 
@@ -309,67 +304,27 @@ describe Pubnub do
 
           it "should subscribe without ssl (implicit)" do
 
-            my_response = [["qJQ6AhSEW8QCnqi8oVncbA=="], "13455091504972178"]
+            my_response = [["hello"], "13455305163038924"]
             mock(@my_callback).call(my_response) {}
 
             VCR.use_cassette("integration_subscribe_2", :record => :none) do
-              @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback, :override_timetoken => 13455091148478282)
+              @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback, :override_timetoken => 13455304919137038)
             end
 
           end
 
           it "should subscribe without ssl (explicit)" do
 
-            my_response = [1, "Sent", "13451424376740954"]
+            my_response = [["hello"], "13455305163038924"]
             mock(@my_callback).call(my_response) {}
 
             @pn.ssl = false
 
             VCR.use_cassette("integration_subscribe_2", :record => :none) do
-              @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+              @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback, :override_timetoken => 13455304919137038)
             end
 
           end
-
-          context "ssl on" do
-
-            context "message signing off" do
-
-              it "should subscribe" do
-
-                my_response = [1, "Sent", "13451474646150471"]
-                mock(@my_callback).call(my_response) {}
-
-                @pn.ssl = true
-                @pn.secret_key = nil
-
-                VCR.use_cassette("integration_subscribe_4", :record => :none) do
-                  @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback)
-                end
-              end
-
-            end
-
-            context "message signing on" do
-
-              it "should subscribe" do
-
-                my_response = [1, "Sent", "13451476456534121"]
-                mock(@my_callback).call(my_response) {}
-
-                @pn.ssl = true
-                @pn.secret_key = "itsmysecret"
-
-                VCR.use_cassette("integration_subscribe_5", :record => :none) do
-                  @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback)
-                end
-              end
-
-            end
-
-          end
-
-
         end
         #
         #      context "when message signing is on" do

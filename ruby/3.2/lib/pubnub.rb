@@ -111,6 +111,7 @@ class Pubnub
     subscribe_request.ssl = @ssl
     subscribe_request.set_channel(options)
     subscribe_request.set_callback(options)
+    subscribe_request.set_cipher_key(options, self.cipher_key)
 
     subscribe_request.set_subscribe_key(options, self.subscribe_key)
 

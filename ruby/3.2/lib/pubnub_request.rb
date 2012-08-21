@@ -62,7 +62,7 @@ class PubnubRequest
     options = HashWithIndifferentAccess.new(options)
 
     if self_cipher_key.present? && options['cipher_key'].present?
-      raise(Pubnub::PublishError, "existing cipher_key #{self_cipher_key} cannot be overridden at publish-time.")
+      raise(op_exception, "existing cipher_key #{self_cipher_key} cannot be overridden at publish-time.")
 
     elsif (self_cipher_key.present? && options[:cipher_key].blank?) || (self_cipher_key.blank? && options[:cipher_key].present?)
 
@@ -133,15 +133,15 @@ class PubnubRequest
     end
   end
 
-  def package_response!(response)
-    self.response = response.respond_to?(:content) ? JSON.parse(response.content) : JSON.parse(response)
+  def package_response!(response_data)
+    self.response = response_data.respond_to?(:content) ? JSON.parse(response_data.content) : JSON.parse(response_data)
     self.timetoken = self.response[1] unless self.operation == "time"
 
-    if self.cipher_key.present?
+    if self.cipher_key.present? && self.operation == "subscribe"
       myarr = Array.new
       pc = PubnubCrypto.new(@cipher_key)
 
-      response.each do |message|
+      self.response.first.each do |message|
         if message.is_a? Array
           message = pc.decryptArray(message)
         else
@@ -149,6 +149,8 @@ class PubnubRequest
         end
         myarr.push(message)
       end
+
+      self.response[0] = myarr
     end
   end
 

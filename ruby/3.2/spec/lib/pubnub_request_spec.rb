@@ -145,7 +145,7 @@ describe PubnubRequest do
       options = {:cipher_key => "my_key"}
       self_cipher_key = "foo"
 
-      lambda { @pubnub_request.set_cipher_key(options, self_cipher_key) }.should raise_error(Pubnub::PublishError, "existing cipher_key foo cannot be overridden at publish-time.")
+      lambda { @pubnub_request.set_cipher_key(options, self_cipher_key) }.should raise_error(PubnubRequest::RequestError, "existing cipher_key foo cannot be overridden at publish-time.")
     end
 
     it "should let you define a cipher_key if one was not previously set" do
