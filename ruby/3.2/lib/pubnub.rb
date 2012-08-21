@@ -258,10 +258,7 @@ class Pubnub
 
     if !Rails.env.test?
 
-      puts("tt0: #{request.timetoken}")
-      port = request.ssl.present? ? 443 : 80
-
-      puts("start loop")
+      port = request.ssl.present? ? 443 : 80 #TODO: Put into request object
 
       request.format_url!
       puts("new url is #{request.url}")
@@ -276,6 +273,19 @@ class Pubnub
 
         req = conn.get(request.query)
 
+        #conn.connection_completed do
+        #  super
+        #  @connected.succeed
+        #  puts("Connection completed.")
+        #end
+        #
+        #conn.unbind do
+        #  super
+        #  @closed = true
+        #  (@requests || []).each {|r| r.fail}
+        #  puts("Disconnected.")
+        #end
+
         req.errback do |response|
           puts("error: #{response}")
           [0, "Unknown Error: #{response.to_s}"]
@@ -287,8 +297,14 @@ class Pubnub
           request.callback.call(request.response)
 
           EM.next_tick do
-            puts("#{Time.now} - recursing on next timetoken: #{request.timetoken}")
-            _request(request)
+            if request.operation == "subscribe"
+              puts("\n#{Time.now} - recursing on next timetoken: #{request.timetoken}")
+              _request(request)
+            else
+              conn.close_connection
+              return
+            end
+
           end
         end
       end
@@ -305,83 +321,6 @@ class Pubnub
       end
 
     end
-
-
-    #end
-
-
-    #EM.run do
-    #
-    #  puts("go!")
-
-
-    #
-    #
-    #  puts("new request url is: #{request.url}")
-    #
-    #  puts(request.host)
-    #  puts(port)
-    #  puts("request.query: #{request.query}")
-    #
-    #  conn = EM::Protocols::HttpClient2.connect request.host, port
-    #  req = conn.get(request.query)
-    #
-    #  req.callback do |response|
-    #    puts(response.content)
-    #    request.timetoken = JSON.parse(response.content)[1]
-    #    request.format_url!
-    #    puts("done 1.")
-    #
-    #  end
-    #
-    #  puts("done 2.")
-    #
-
-    #
-    #puts("done 3.")
-
-
-    #end
-
-
-    #EventMachine::HttpRequest.new(request.url).get.callback do |http|
-    #  request.response = http.response
-    #
-    #  puts ("response: #{request.response}")
-    #  request.timetoken = JSON.parse(http.response)[1]
-    #  request.format_url!
-    #
-    #
-    #end
-
-    #puts("callback or not?")
-    #request.callback.call(request.response) if request.response.present?
-
-    #if JSON.parse(http.response)[0].blank? && JSON.parse(http.response)[1].present?
-    #
-    #
-    #  new_timetoken = JSON.parse(http.response)[1]
-    #  request.timetoken = new_timetoken
-    #  request.format_url!
-    #  puts("tt1: #{request.timetoken}")
-    #  http = EventMachine::HttpRequest.new(request.url).get
-    #  http.callback do
-    #
-    #    new_timetoken = JSON.parse(http.response)[1]
-    #    request.timetoken = new_timetoken
-    #
-    #    puts("tt2: #{request.timetoken}: #{JSON.parse(http.response)[0]}")
-    #
-    #    #EventMachine.stop
-    #  end
-    #
-    #else
-    #
-    #  if JSON.parse(http.response)[0].blank? && JSON.parse(http.response)[1].present?
-    #
-    #  end
-    #  #EventMachine.stop
-    #end
 
 
     #end
