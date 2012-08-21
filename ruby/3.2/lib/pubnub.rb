@@ -278,6 +278,7 @@ class Pubnub
 
         req.errback do |response|
           puts("error: #{response}")
+          [0, "Unknown Error: #{response.to_s}"]
         end
 
         req.callback do |response|
