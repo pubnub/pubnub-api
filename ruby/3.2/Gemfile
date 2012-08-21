@@ -6,8 +6,10 @@ gem 'rails', '3.2.6'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3'
-gem 'eventmachine'
-gem 'em-http-request'
+
+gem 'eventmachine', "~> 0.12.9"
+gem "uuid", "~> 2.3.5"
+
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -24,9 +26,9 @@ end
 group :test do
   gem 'rspec-rails', "~> 2.0"
   gem 'ruby-debug-base19'
-  gem 'rr'
-  gem 'vcr'
-  gem 'webmock'
+  gem 'rr', "1.0.4"
+  gem 'vcr', "2.2.4"
+  gem 'webmock', "1.8.8"
 end
 
 #gem 'jquery-rails'

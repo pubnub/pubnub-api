@@ -4,7 +4,6 @@ class PubnubDeferrable < EM::Protocols::HttpClient2
 
   attr_accessor :start_time, :end_time, :elapsed_time
 
-
   def connection_completed
     @start_time = Time.now
     puts("\n--- #{@start_time}: Connected.")
