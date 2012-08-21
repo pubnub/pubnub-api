@@ -261,8 +261,6 @@ describe Pubnub do
 
             it "should subscribe with ssl" do
 
-
-
               my_response = [[], "13451632748083262"]
               mock(@my_callback).call(my_response) {}
 
@@ -280,7 +278,7 @@ describe Pubnub do
           context "with basic subscribe config" do
 
             it "should sub without ssl" do
-              my_response = [[{"text"=>"bo"}], "13455067954018816"]
+              my_response = [[{"text" => "bo"}], "13455067954018816"]
               mock(@my_callback).call(my_response) {}
 
               VCR.use_cassette("integration_subscribe_1b", :record => :none) do
@@ -288,9 +286,9 @@ describe Pubnub do
               end
             end
 
-            it "should publish with ssl" do
+            it "should subscribe with ssl" do
 
-              my_response = [[{"text"=>"bo"}], "13455068901569588"]
+              my_response = [[{"text" => "bo"}], "13455068901569588"]
               mock(@my_callback).call(my_response) {}
 
               @pn.ssl = true
@@ -302,78 +300,77 @@ describe Pubnub do
           end
         end
 
-        #
-        #
-        #      context "when there is a cipher key" do
-        #
-        #        before do
-        #          @pn.cipher_key = "enigma"
-        #        end
-        #
-        #        it "should publish without ssl (implicit)" do
-        #
-        #          my_response = [1, "Sent", "13451424376740954"]
-        #          mock(@my_callback).call(my_response) {}
-        #
-        #          VCR.use_cassette("integration_publish_2", :record => :none) do
-        #            @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
-        #          end
-        #
-        #        end
-        #
-        #        it "should publish without ssl (explicit)" do
-        #
-        #          my_response = [1, "Sent", "13451424376740954"]
-        #          mock(@my_callback).call(my_response) {}
-        #
-        #          @pn.ssl = false
-        #
-        #          VCR.use_cassette("integration_publish_2", :record => :none) do
-        #            @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
-        #          end
-        #
-        #        end
-        #
-        #        context "ssl on" do
-        #
-        #          context "message signing off" do
-        #
-        #            it "should publish" do
-        #
-        #              my_response = [1, "Sent", "13451474646150471"]
-        #              mock(@my_callback).call(my_response) {}
-        #
-        #              @pn.ssl = true
-        #              @pn.secret_key = nil
-        #
-        #              VCR.use_cassette("integration_publish_4", :record => :none) do
-        #                @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
-        #              end
-        #            end
-        #
-        #          end
-        #
-        #          context "message signing on" do
-        #
-        #            it "should publish" do
-        #
-        #              my_response = [1, "Sent", "13451476456534121"]
-        #              mock(@my_callback).call(my_response) {}
-        #
-        #              @pn.ssl = true
-        #              @pn.secret_key = "itsmysecret"
-        #
-        #              VCR.use_cassette("integration_publish_5", :record => :none) do
-        #                @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
-        #              end
-        #            end
-        #
-        #          end
-        #
-        #        end
-        #
-        #
-        #      end
+
+        context "when there is a cipher key" do
+
+          before do
+            @pn.cipher_key = "enigma"
+          end
+
+          it "should subscribe without ssl (implicit)" do
+
+            my_response = [["qJQ6AhSEW8QCnqi8oVncbA=="], "13455091504972178"]
+            mock(@my_callback).call(my_response) {}
+
+            VCR.use_cassette("integration_subscribe_2", :record => :none) do
+              @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback, :override_timetoken => 13455091148478282)
+            end
+
+          end
+
+          it "should subscribe without ssl (explicit)" do
+
+            my_response = [1, "Sent", "13451424376740954"]
+            mock(@my_callback).call(my_response) {}
+
+            @pn.ssl = false
+
+            VCR.use_cassette("integration_subscribe_2", :record => :none) do
+              @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+            end
+
+          end
+
+          context "ssl on" do
+
+            context "message signing off" do
+
+              it "should subscribe" do
+
+                my_response = [1, "Sent", "13451474646150471"]
+                mock(@my_callback).call(my_response) {}
+
+                @pn.ssl = true
+                @pn.secret_key = nil
+
+                VCR.use_cassette("integration_subscribe_4", :record => :none) do
+                  @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+                end
+              end
+
+            end
+
+            context "message signing on" do
+
+              it "should subscribe" do
+
+                my_response = [1, "Sent", "13451476456534121"]
+                mock(@my_callback).call(my_response) {}
+
+                @pn.ssl = true
+                @pn.secret_key = "itsmysecret"
+
+                VCR.use_cassette("integration_subscribe_5", :record => :none) do
+                  @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+                end
+              end
+
+            end
+
+          end
+
+
+        end
         #
         #      context "when message signing is on" do
         #
