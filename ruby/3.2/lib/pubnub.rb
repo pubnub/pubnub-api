@@ -124,25 +124,7 @@ class Pubnub
 
 
   def history(args)
-    ## Capture User Input
-    limit = +args['limit'] ? +args['limit'] : 5
-    channel = args['channel']
-    callback = args['callback']
 
-    ## Fail if bad input.
-    if (!channel)
-      puts 'Missing Channel.'
-      return false
-    end
-    if (!callback)
-      puts 'Missing Callback.'
-      return false
-    end
-
-    ## Get History
-    request = ['history', @subscribe_key, channel, '0', limit.to_s]
-    args['request'] = request
-    _request(args)
   end
 
   def time(options)
@@ -222,43 +204,41 @@ class Pubnub
   #
   #end
 
-  module DumbHttpClient
-    def post_init
-      send_data "GET / HTTP/1.1\r\nHost: _\r\n\r\n"
-      @data = ""
-      @parsed = false
-    end
-
-    def receive_data data
-      @data << data
-      if !@parsed and @data =~ /[\n][\r]*[\n]/m
-        @parsed = true
-        puts "RECEIVED HTTP HEADER:"
-        $`.each { |line| puts ">>> #{line}" }
-
-        puts "Now we'll terminate the loop, which will also close the connection"
-        EventMachine::stop_event_loop
-      end
-    end
-
-    def unbind
-      puts "A connection has terminated"
-    end
-  end
-
-  module Echo
-    def receive_data(data)
-      p data
-    end
-  end
+  #module DumbHttpClient
+  #  def post_init
+  #    send_data "GET / HTTP/1.1\r\nHost: _\r\n\r\n"
+  #    @data = ""
+  #    @parsed = false
+  #  end
+  #
+  #  def receive_data data
+  #    @data << data
+  #    if !@parsed and @data =~ /[\n][\r]*[\n]/m
+  #      @parsed = true
+  #      puts "RECEIVED HTTP HEADER:"
+  #      $`.each { |line| puts ">>> #{line}" }
+  #
+  #      puts "Now we'll terminate the loop, which will also close the connection"
+  #      EventMachine::stop_event_loop
+  #    end
+  #  end
+  #
+  #  def unbind
+  #    puts "A connection has terminated"
+  #  end
+  #end
+  #
+  #module Echo
+  #  def receive_data(data)
+  #    p data
+  #  end
+  #end
 
   def _request(request)
 
 
 
     if !Rails.env.test?
-
-      port = request.ssl.present? ? 443 : 80 #TODO: Put into request object
 
       request.format_url!
       puts("new url is #{request.url}")
@@ -269,20 +249,18 @@ class Pubnub
 
       EM.run do
 
-        conn = EM::Protocols::HttpClient2.connect request.host, port
+        conn = EM::Protocols::HttpClient2.connect request.host, request.port
+        # TODO: Add a 300s timeout, keep-alive
 
         req = conn.get(request.query)
 
         #conn.connection_completed do
         #  super
-        #  @connected.succeed
         #  puts("Connection completed.")
         #end
         #
         #conn.unbind do
         #  super
-        #  @closed = true
-        #  (@requests || []).each {|r| r.fail}
         #  puts("Disconnected.")
         #end
 
@@ -299,9 +277,10 @@ class Pubnub
           EM.next_tick do
             if request.operation == "subscribe"
               puts("\n#{Time.now} - recursing on next timetoken: #{request.timetoken}")
+              conn.close_connection
               _request(request)
             else
-              conn.close_connection # TODO: play with close_connection on pub and sub to note open sockets
+              conn.close_connection # TODO: play with close_connection / reconnect / send_data on pub and sub to note open sockets
               return
             end
 

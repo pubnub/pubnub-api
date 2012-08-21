@@ -1,5 +1,5 @@
 class PubnubRequest
-  attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl
+  attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl, :port
 
   class RequestError < RuntimeError;
   end
@@ -68,7 +68,7 @@ class PubnubRequest
 
       this_cipher_key = self_cipher_key || options[:cipher_key]
       raise(Pubnub::PublishError, "secret key must be a string.") if this_cipher_key.class != String
-      self.cipher_key =  this_cipher_key
+      self.cipher_key = this_cipher_key
     end
   end
 
@@ -158,7 +158,13 @@ class PubnubRequest
 
     raise(Pubnub::PublishError, "Missing .operation in PubnubRequest object") if self.operation.blank?
 
-    origin = (@ssl.present? ? 'https://' : 'http://') + Pubnub::ORIGIN_HOST
+    if @ssl.present?
+      origin = 'https://' + Pubnub::ORIGIN_HOST
+      @port = 443
+    else
+      origin = 'http://' + Pubnub::ORIGIN_HOST
+      @port = 80
+    end
 
     if override_timetoken.present?
       self.timetoken = override_timetoken.to_s
@@ -183,6 +189,7 @@ class PubnubRequest
 
     self.host = uri.host
     self.query = uri.path + (uri.query.present? ? ("?" + uri.query) : "")
+    self
 
   end
 

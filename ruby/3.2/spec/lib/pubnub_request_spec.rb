@@ -13,6 +13,29 @@ describe PubnubRequest do
       @my_callback = lambda { |message| Rails.logger.debug(message) }
     end
 
+    context "#port" do
+       it "should set port to 80 if ssl.blank? (explicit)" do
+         pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                            :message => "hi", :callback => @my_callback, :ssl => false).format_url!
+
+         pubnub_request.port.should == 80
+       end
+
+       it "should set port to 80 if ssl.blank? (implicit)" do
+         pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                            :message => "hi", :callback => @my_callback, :ssl => false).format_url!
+
+         pubnub_request.port.should == 80
+       end
+
+       it "should set port to 443 if ssl.present?" do
+         pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                            :message => "hi", :callback => @my_callback, :ssl => true).format_url!
+
+         pubnub_request.port.should == 443
+       end
+    end
+
     it "should raise if the operation is missing" do
       pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
                                          :message => "hi", :callback => @my_callback)
