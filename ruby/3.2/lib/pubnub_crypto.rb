@@ -50,19 +50,20 @@ class PubnubCrypto
   #* @param cipher object (cipher to decrypt)
   #* @return plain text (decrypted text)
   #*
-  def decryptObject(cipher_Object)
-    params = {};
-    if cipher_Object.is_a? String
-      return decrypt(cipher_Object)
+  def decryptObject(encrypted_item)
+    if encrypted_item.is_a?(String)
+      return decrypt(encrypted_item)
+
+    elsif encrypted_item.is_a?(Hash)
+      decrypted_hash = Hash.new
+
+      encrypted_item.each { |key,value| decrypted_hash[key] = decrypt(value) }
+      return decrypted_hash
+
     else
-      cipher_Object.each do |key,value|
-        case(key)
-        when(key)
-          params[key] = decrypt(value);
-        end
-      end
-      return params
+      return "DECRYPTION_ERROR"
     end
+
   end
 
   #**
@@ -135,8 +136,15 @@ class PubnubCrypto
     decode_cipher.decrypt
     decode_cipher.key = @@key
     decode_cipher.iv = @@iv
+    begin
     plain_text = decode_cipher.update(cipher_text.unpack('m')[0])
     plain_text << decode_cipher.final
+    rescue => e
+
+      return "DECRYPTION_ERROR"
+
+    end
+
     return plain_text
   end
 end

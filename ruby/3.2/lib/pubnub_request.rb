@@ -146,6 +146,8 @@ class PubnubRequest
       case @operation
         when "publish"
           iterate = self.response.first
+        when "subscribe"
+          iterate = self.response.first
         when "history"
           iterate = self.response
 
