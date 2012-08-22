@@ -179,45 +179,54 @@ class Pubnub
 
       begin
 
-      EM.run do
+        EM.run do
 
-        conn = PubnubDeferrable.connect request.host, request.port # TODO: Add a 300s timeout, keep-alive
-        conn.pubnub_request = request
+          conn = PubnubDeferrable.connect request.host, request.port # TODO: Add a 300s timeout, keep-alive
+          conn.pubnub_request = request
 
-        req = conn.get(request.query)
+          req = conn.get(request.query)
 
-        req.errback do |response|
-          conn.close_connection
-          error_message = "Unknown Error: #{response.to_s}"
-          puts(error_message)
-          return [0, error_message]
-        end
+          #EM.next_tick do # TODO: Set as a periodic timer to check for error status
+          #  if conn.error?
+          #    error_message = "Intermittent Server Error, status: #{response.status}, extended info: #{response.internal_error}"
+          #    puts(error_message)
+          #    return [0, error_message]
+          #  end
+          #end
 
-        req.callback do |response|
-
-          if response.status != 200
-            error_message = "Server Error, status: #{response.status}, extended info: #{response.internal_error}"
+          req.errback do |response|
+            conn.close_connection
+            error_message = "Unknown Error: #{response.to_s}"
             puts(error_message)
             return [0, error_message]
           end
 
+          req.callback do |response|
 
-          request.package_response!(response.content)
-          request.callback.call(request.response)
-
-          EM.next_tick do
-            if request.operation == "subscribe"
-              puts("- #{Time.now} - Recursing on timetoken: #{request.timetoken}")
-              conn.close_connection
-              _request(request)
-            else
-              conn.close_connection # TODO: play with close_connection / reconnect / send_data on pub and sub to note open sockets
-              return
+            if response.status != 200
+              error_message = "Server Error, status: #{response.status}, extended info: #{response.internal_error}"
+              puts(error_message)
+              return [0, error_message]
             end
 
+
+            request.package_response!(response.content)
+            request.callback.call(request.response)
+
+            EM.next_tick do
+              if request.operation == "subscribe"
+                puts("- #{Time.now} - Recursing on timetoken: #{request.timetoken}")
+                conn.close_connection
+                _request(request)
+              else
+                conn.close_connection # TODO: play with close_connection / reconnect / send_data on pub and sub to note open sockets
+                return request.response
+
+              end
+
+            end
           end
         end
-      end
 
       rescue EventMachine::ConnectionError => e
         error_message = "Network Error: #{e.message}"
@@ -226,7 +235,7 @@ class Pubnub
       end
 
     else
-      open(request.url, 'r', :read_timeout => 300) do |response |
+      open(request.url, 'r', :read_timeout => 300) do |response|
         request.package_response!(response.read)
         request.callback.call(request.response)
       end
