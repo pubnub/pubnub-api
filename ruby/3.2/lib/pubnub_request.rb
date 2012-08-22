@@ -1,6 +1,6 @@
 class PubnubRequest
   attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl, :port
-  attr_accessor :history_limit
+  attr_accessor :history_limit, :session_uuid
 
   class RequestError < RuntimeError;
   end
@@ -11,6 +11,7 @@ class PubnubRequest
     @operation = args[:operation].to_s
     @callback = args[:callback]
     @cipher_key = args[:cipher_key]
+    @session_uuid = args[:session_uuid]
     @publish_key = args[:publish_key]
     @subscribe_key = args[:subscribe_key]
     @channel = args[:channel]
@@ -214,6 +215,11 @@ class PubnubRequest
     uri = URI.parse(self.url)
 
     self.host = uri.host
+
+    if @operation == "subscribe"
+      uri.query = uri.query.blank? ? "uuid=#{@session_uuid}" : (uri.query + "uuid=#{@session_uuid}")
+    end
+
     self.query = uri.path + (uri.query.present? ? ("?" + uri.query) : "")
     self
 

@@ -15,7 +15,7 @@ class PubnubDeferrable < EM::Protocols::HttpClient2
 
   def connection_completed
     @start_time = Time.now
-    puts("\n--- #{@start_time}: Connected: #{self.pubnub_request.url}.")
+    puts("\n--- #{@start_time}: Connected with string: #{self.pubnub_request.query}")
     super
   end
 

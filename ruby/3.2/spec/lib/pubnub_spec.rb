@@ -4,11 +4,17 @@ require 'vcr'
 
 describe Pubnub do
 
+  before do
+    @mocked_uuid = "123-456-789"
+    any_instance_of(Pubnub) do |pubnub|
+      stub(pubnub).uuid { @mocked_uuid }
+    end
+  end
+
   describe "#UUID" do
     it "should return a UUID" do
-      uuid_regexp = /\A[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\z/i
-      uuid = Pubnub.new(:subscribe_key => :demo).uuid
-      uuid.match(uuid_regexp).should_not be_nil
+
+      Pubnub.new(:subscribe_key => :demo).uuid.should == @mocked_uuid
     end
   end
 
@@ -53,14 +59,8 @@ describe Pubnub do
 
     context "when initialized" do
       it "should set a sessionUUID" do
-        mocked_uuid = "123-456-789"
-        any_instance_of(Pubnub) do |pubnub|
-          mock(pubnub).uuid { mocked_uuid }
-        end
-
         @pn = Pubnub.new("demo_pub_key", "demo_sub_key", "demo_md5_key", "demo_cipher_key", false)
-        @pn.session_uuid.should == mocked_uuid
-
+        @pn.session_uuid.should == @mocked_uuid
       end
     end
 

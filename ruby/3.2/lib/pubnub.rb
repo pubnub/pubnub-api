@@ -105,7 +105,7 @@ class Pubnub
 
   def subscribe(options)
     options = HashWithIndifferentAccess.new(options)
-    subscribe_request = PubnubRequest.new(:operation => :subscribe)
+    subscribe_request = PubnubRequest.new(:operation => :subscribe, :session_uuid => @session_uuid)
 
     #TODO: This is ugly, refactor
 
@@ -216,7 +216,6 @@ class Pubnub
 
             EM.next_tick do
               if request.operation == "subscribe"
-                puts("- #{Time.now} - Recursing on timetoken: #{request.timetoken}")
                 conn.close_connection
                 _request(request)
               else
