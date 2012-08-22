@@ -45,38 +45,84 @@ describe PubnubRequest do
 
     end
 
+
+    context "when it is a subscribe operation" do
+
+      before do
+        @operation = "subscribe"
+        @pubnub_request = PubnubRequest.new(:session_uuid => "123-456", :channel => :hello_world, :subscribe_key => :demo,
+                                            :message => @message, :callback => @my_callback, :operation => @operation)
+      end
+
+      it "should set the url" do
+        @pubnub_request.format_url!
+        @pubnub_request.url.should == %^http://pubsub.pubnub.com/subscribe/demo/hello_world/0/0^
+      end
+
+      it "should set the query" do
+        @pubnub_request.format_url!
+        @pubnub_request.query.should == %^/subscribe/demo/hello_world/0/0?uuid=123-456^
+      end
+    end
+
     context "when it is a publish operation" do
 
       before do
         @operation = "publish"
         @message = "hello from ruby!".to_json
+        @pubnub_request = PubnubRequest.new(:session_uuid => "123-456", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                            :message => @message, :callback => @my_callback, :operation => @operation)
       end
 
       it "should set the url" do
+        @pubnub_request.format_url!
+        @pubnub_request.url.should == %^http://pubsub.pubnub.com/publish/demo/demo/0/hello_world/0/%22hello%20from%20ruby%21%22^
+      end
 
-        pubnub_request = PubnubRequest.new(:channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
-                                           :message => @message, :callback => @my_callback, :operation => @operation)
-
-        pubnub_request.format_url!
-        pubnub_request.url.should == %^http://pubsub.pubnub.com/publish/demo/demo/0/hello_world/0/%22hello%20from%20ruby%21%22^
-
+      it "should set the query" do
+        @pubnub_request.format_url!
+        @pubnub_request.query.should == %^/publish/demo/demo/0/hello_world/0/%22hello%20from%20ruby%21%22^
       end
     end
 
     context "when it is a time operation" do
       before do
         @operation = "time"
+        @pubnub_request = PubnubRequest.new(:session_uuid => "123-456", :callback => @my_callback, :operation => @operation)
       end
 
       it "should set the url" do
+        @pubnub_request.format_url!
+        @pubnub_request.url.should == %^http://pubsub.pubnub.com/time/0^
+      end
 
-        pubnub_request = PubnubRequest.new(:callback => @my_callback, :operation => @operation)
-
-        pubnub_request.format_url!
-        pubnub_request.url.should == %^http://pubsub.pubnub.com/time/0^
-
+      it "should set the query" do
+        @pubnub_request.format_url!
+        @pubnub_request.query.should == %^/time/0^
       end
     end
+
+
+    context "when it is a history operation" do
+      before do
+        @operation = "history"
+        @pubnub_request = PubnubRequest.new(:session_uuid => "123-456", :channel => :hello_world, :subscribe_key => :demo,
+                                            :callback => @my_callback, :operation => @operation)
+
+      end
+
+      it "should set the url" do
+        @pubnub_request.format_url!
+        @pubnub_request.url.should == %^http://pubsub.pubnub.com/history/demo/hello_world/0/^
+      end
+
+      it "should set the query" do
+        @pubnub_request.format_url!
+        @pubnub_request.query.should == %^/history/demo/hello_world/0/^
+      end
+
+    end
+
   end
 
 
