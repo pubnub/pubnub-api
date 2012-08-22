@@ -36,7 +36,7 @@ class Pubnub
   class InitError < RuntimeError;
   end
 
-  attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl, :channel, :origin
+  attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl, :channel, :origin, :session_uuid
 
   MAX_RETRIES = 3
   ORIGIN_HOST = 'pubsub.pubnub.com'
@@ -64,6 +64,7 @@ class Pubnub
       raise(InitError, "Initialize with either a hash of options, or exactly 5 named parameters.")
     end
 
+    @session_uuid = uuid
     verify_init
   end
 
@@ -166,7 +167,7 @@ class Pubnub
   end
 
 
-  def UUID
+  def uuid
     UUID.new.generate
   end
 
@@ -238,6 +239,7 @@ class Pubnub
       open(request.url, 'r', :read_timeout => 300) do |response|
         request.package_response!(response.read)
         request.callback.call(request.response)
+        request.response
       end
     end
   end
