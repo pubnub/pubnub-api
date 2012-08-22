@@ -163,7 +163,6 @@ class Pubnub
 
     time_request.format_url!
     _request(time_request)
-
   end
 
 
@@ -183,14 +182,23 @@ class Pubnub
       EM.run do
         conn = PubnubDeferrable.connect request.host, request.port # TODO: Add a 300s timeout, keep-alive
         req = conn.get(request.query)
-        puts("req is a #{req.class}")
 
         req.errback do |response|
-          puts("error: #{response}")
-          [0, "Unknown Error: #{response.to_s}"]
+          conn.close_connection
+          error_message = "Unknown Error: #{response.to_s}"
+          puts(error_message)
+          return [0, error_message]
         end
 
         req.callback do |response|
+
+          if response.status != 200
+            error_message = "Server Error, status: #{response.status}, extended info: #{response.internal_error}"
+            puts(error_message)
+            return [0, error_message]
+          end
+
+
           request.package_response!(response.content)
           request.callback.call(request.response)
 
@@ -209,21 +217,16 @@ class Pubnub
       end
 
       rescue EventMachine::ConnectionError => e
-        [0, "Network Error"]
+        error_message = "Network Error: #{e.message}"
+        puts(error_message)
+        return [0, error_message]
       end
-
 
     else
       open(request.url, 'r', :read_timeout => 300) do |response |
         request.package_response!(response.read)
         request.callback.call(request.response)
       end
-
     end
-
-
   end
-
-
-
 end
