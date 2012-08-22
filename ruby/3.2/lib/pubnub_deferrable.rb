@@ -2,11 +2,20 @@ class PubnubDeferrable < EM::Protocols::HttpClient2
 
   include EM::Deferrable
 
-  attr_accessor :start_time, :end_time, :elapsed_time
+  attr_accessor :start_time, :end_time, :elapsed_time, :pubnub_request
+
+  def initialize
+    super
+  end
+
+  def post_init
+    #puts("deferrable says my query is: #{pubnub_request.query}")
+    super
+  end
 
   def connection_completed
     @start_time = Time.now
-    puts("\n--- #{@start_time}: Connected.")
+    puts("\n--- #{@start_time}: Connected: #{self.pubnub_request.url}.")
     super
   end
 

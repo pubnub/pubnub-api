@@ -180,7 +180,10 @@ class Pubnub
       begin
 
       EM.run do
+
         conn = PubnubDeferrable.connect request.host, request.port # TODO: Add a 300s timeout, keep-alive
+        conn.pubnub_request = request
+
         req = conn.get(request.query)
 
         req.errback do |response|
