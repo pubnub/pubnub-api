@@ -138,11 +138,22 @@ class PubnubRequest
     self.response = response_data.respond_to?(:content) ? JSON.parse(response_data.content) : JSON.parse(response_data)
     self.timetoken = self.response[1] unless self.operation == "time"
 
-    if self.cipher_key.present? && self.operation == "subscribe"
+    if self.cipher_key.present? && %w(subscribe history).include?(self.operation)
+
       myarr = Array.new
       pc = PubnubCrypto.new(@cipher_key)
 
-      self.response.first.each do |message|
+      case @operation
+        when "publish"
+          iterate = self.response.first
+        when "history"
+          iterate = self.response
+
+        else
+          raise(RequestError, "Don't know how to iterate on this operation.")
+      end
+
+      iterate.each do |message|
         if message.is_a? Array
           message = pc.decryptArray(message)
         else
@@ -151,7 +162,12 @@ class PubnubRequest
         myarr.push(message)
       end
 
-      self.response[0] = myarr
+      if %w(publish subscribe).include?(@operation)
+        self.response[0] = myarr
+      else
+        self.response = myarr
+      end
+
     end
   end
 

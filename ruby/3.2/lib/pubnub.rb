@@ -222,35 +222,6 @@ class Pubnub
     end
 
 
-    #end
-
-
-    #if request.operation == 'history'
-    #
-    #  if request.cipher_key.present?
-    #
-    #    myarr = Array.new
-    #
-    #    response.each do |message|
-    #      pc = PubnubCrypto.new(@cipher_key)
-    #      if message.is_a? Array
-    #        message = pc.decryptArray(message)
-    #      else
-    #        message = pc.decryptObject(message)
-    #      end
-    #      myarr.push(message)
-    #    end
-    #
-    #    request.callback.call(myarr)
-    #  else
-    #    request.callback.call(response)
-    #  end
-    #
-    #else
-    #request.callback.call(response)
-    #end
-    #end
-
   end
 
 
