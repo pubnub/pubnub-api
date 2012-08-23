@@ -7,7 +7,7 @@ require_once('Pubnub.php');
 ## ---------------------------------------------------------------------------
 #
 # php ./unit-test.php
-# php ./unit-test.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [USE SSL]
+# php ./unit-test.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
 #
 
 
@@ -89,4 +89,3 @@ function test( $val1, $val2, $name ) {
     echo("$name\n");
 }
 ?>
-
