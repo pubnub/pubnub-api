@@ -38,8 +38,11 @@ class Pubnub
 
   attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl, :channel, :origin, :session_uuid
 
-  MAX_RETRIES = 3
-  ORIGIN_HOST = 'pubsub.pubnub.com'
+
+  ORIGINS = %w(newcloud-virginia.pubnub.com newcloud-california.pubnub.com newcloud-ireland.pubnub.com newcloud-tokyo.pubnub.com)
+  #ORIGIN_HOST = 'pubsub.pubnub.com'
+  ORIGIN_HOST = 'newcloud-california.pubnub.com'
+  #ORIGIN_HOST = 'test.pubnub.com'
 
   def initialize(*args)
 
