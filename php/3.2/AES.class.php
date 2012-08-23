@@ -171,7 +171,7 @@ class AES {
 			   echo('hiii');
 			   $len = strlen($z);
 			   if ($len > 256) {
-					$z = substr($z, 0, $len);
+					$z = substr($z, 0, 256);
 			   }elseif ($len > 192) {
 					$z = str_pad($z, 256 - $len);
 			   }elseif ($len > 128) {
