@@ -196,8 +196,10 @@ class PubnubRequest
                      self.secret_key.to_s, self.channel.to_s, "0", self.message]
 
       when "subscribe"
-        # http://pubsub.pubnub.com/subscribe/demo/hello_world/0/13451593159385860?uuid=foo
         url_array = [self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", @timetoken]
+
+      when "presence"
+        url_array = ["subscribe", self.subscribe_key.to_s, ((self.channel.to_s) + "-pnpres"), "0", @timetoken]
 
       when "time"
         url_array = [self.operation.to_s, "0"]
@@ -219,7 +221,7 @@ class PubnubRequest
 
     self.host = uri.host
 
-    if @operation == "subscribe"
+    if %w(subscribe presence).include?(@operation)
       uri.query = uri.query.blank? ? "uuid=#{@session_uuid}" : (uri.query + "uuid=#{@session_uuid}")
     end
 

@@ -29,6 +29,8 @@ require 'eventmachine'
 
 class Pubnub
 
+  class PresenceError < RuntimeError;
+  end
   class PublishError < RuntimeError;
   end
   class SubscribeError < RuntimeError;
@@ -108,14 +110,17 @@ class Pubnub
 
   def subscribe(options)
     options = HashWithIndifferentAccess.new(options)
-    subscribe_request = PubnubRequest.new(:operation => :subscribe, :session_uuid => @session_uuid)
+
+    operation = options[:operation].nil? ? :subscribe : :presence
+
+    subscribe_request = PubnubRequest.new(:operation => operation, :session_uuid => @session_uuid)
 
     #TODO: This is ugly, refactor
 
     subscribe_request.ssl = @ssl
     subscribe_request.set_channel(options)
     subscribe_request.set_callback(options)
-    subscribe_request.set_cipher_key(options, self.cipher_key)
+    subscribe_request.set_cipher_key(options, self.cipher_key) unless subscribe_request.operation == "presence"
 
     subscribe_request.set_subscribe_key(options, self.subscribe_key)
 
@@ -125,6 +130,23 @@ class Pubnub
     _request(subscribe_request)
 
   end
+
+  def presence(options)
+    usage_error = "presence() requires :channel and :callback options."
+    if options.class != Hash
+      raise(ArgumentError, usage_error)
+    end
+
+    options = HashWithIndifferentAccess.new(options) unless (options == nil)
+
+    unless options[:channel] && options[:callback]
+      raise(ArgumentError, usage_error)
+    end
+
+    subscribe(options.merge(:operation => "presence"))
+
+  end
+
 
   def here_now(options = nil)
     usage_error = "here_now() requires :channel and :callback options."
@@ -251,7 +273,7 @@ class Pubnub
             request.callback.call(request.response)
 
             EM.next_tick do
-              if request.operation == "subscribe"
+              if %w(subscribe presence).include?(request.operation)
                 conn.close_connection
                 _request(request)
               else

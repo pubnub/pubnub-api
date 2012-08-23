@@ -46,6 +46,25 @@ describe PubnubRequest do
     end
 
 
+    context "when it is a presence operation" do
+
+      before do
+        @operation = "presence"
+        @pubnub_request = PubnubRequest.new(:session_uuid => "123-456", :channel => :"hello_world", :subscribe_key => :demo,
+                                            :message => @message, :callback => @my_callback, :operation => @operation)
+      end
+
+      it "should set the url" do
+        @pubnub_request.format_url!
+        @pubnub_request.url.should == %^http://pubsub.pubnub.com/subscribe/demo/hello_world-pnpres/0/0^
+      end
+
+      it "should set the query" do
+        @pubnub_request.format_url!
+        @pubnub_request.query.should == %^/subscribe/demo/hello_world-pnpres/0/0?uuid=123-456^
+      end
+    end
+
     context "when it is a subscribe operation" do
 
       before do

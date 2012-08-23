@@ -140,6 +140,106 @@ describe Pubnub do
     end
   end
 
+
+  describe "#presence" do
+
+    before do
+
+      @my_callback = lambda { |message| Rails.logger.debug(message) }
+      @my_pub_key = "demo"
+      @my_sub_key = "demo"
+      @my_message = "hello_world!"
+      @my_channel = "hello_world"
+
+      @my_cipher_key = "my_cipher_key"
+      @my_sec_key = "my_sec_key"
+      @alt_sec_key = "alt_sec_key"
+    end
+
+    context "required parameters" do
+
+      before do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+      end
+
+      it "should raise when channel is missing" do
+        lambda { @pn.presence(:foo => :bar) }.
+            should raise_error(ArgumentError, "presence() requires :channel and :callback options.")
+      end
+
+      it "should raise when callback is missing" do
+        lambda { @pn.presence(:channel => @my_channel) }.
+            should raise_error(ArgumentError, "presence() requires :channel and :callback options.")
+      end
+
+      it "should raise when callback is invalid" do
+        lambda { @pn.presence(:channel => @my_channel, :callback => :blah) }.
+            should raise_error(Pubnub::PresenceError, "callback is invalid.")
+      end
+
+    end
+
+    context "subscribe key" do
+
+      before do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+      end
+
+      it "should not let you override an existing instantiated subscribe key" do
+        #TODO: unless its the same as existing
+
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+        @alt_sub_key = "alt_sub_key"
+
+        lambda { @pn.presence(:channel => @my_channel, :callback => @my_callback, :subscribe_key => @alt_sub_key) }.
+            should raise_error(Pubnub::PresenceError, "existing subscribe_key demo cannot be overridden at subscribe-time.")
+      end
+
+      it "should throw if you create a PubNub object without a sub key" do
+        lambda { @pn = Pubnub.new(:publish_key => @my_pub_key).presence(:channel => @my_channel, :callback => @my_callback) }.should raise_error(Pubnub::InitError, "subscribe_key is a mandatory parameter.")
+      end
+    end
+
+    context "cipher key" do
+
+      it "should ignore the cipher key at subscribe time if it was not instantiated with one" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+
+        mock_presence_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel,
+                                                   :operation => :presence, :subscribe_key => @my_sub_key,
+                                                   :cipher_key => "foo" )
+
+        mock(@pn)._request(mock_presence_request) {}
+        @pn.presence(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
+      end
+
+
+      it "should subscribe without a cipher key" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+
+        mock_presence_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel,
+                                                   :operation => :presence, :subscribe_key => @my_sub_key)
+
+        mock(@pn)._request(mock_presence_request) {}
+        @pn.presence(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
+      end
+
+    end
+
+    context "#ssl" do
+
+      it "should default to false if not defined" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+        @pn.ssl.should == false
+      end
+
+      it "should set to true if defined at instantiation" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :ssl => true)
+        @pn.ssl.should == true
+      end
+    end
+  end
+
   describe "#subscribe" do
 
     before do
@@ -250,230 +350,230 @@ describe Pubnub do
       end
     end
   end
-end
 
-describe "#publish" do
 
-  before do
-
-    @my_callback = lambda { |message| Rails.logger.debug(message) }
-    @my_pub_key = "demo_pub_key"
-    @my_sub_key = "demo_sub_key"
-    @my_message = "hello_world!"
-    @my_channel = "demo_channel"
-
-    @my_cipher_key = "my_cipher_key"
-    @my_sec_key = "my_sec_key"
-    @alt_sec_key = "alt_sec_key"
-  end
-
-  context "required parameters" do
+  describe "#publish" do
 
     before do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key)
-    end
 
-    it "should raise when channel is missing" do
-      lambda { @pn.publish(:message => @my_message) }.
-          should raise_error(Pubnub::PublishError, "channel is a required parameter.")
-    end
+      @my_callback = lambda { |message| Rails.logger.debug(message) }
+      @my_pub_key = "demo_pub_key"
+      @my_sub_key = "demo_sub_key"
+      @my_message = "hello_world!"
+      @my_channel = "demo_channel"
 
-    it "should raise when callback is missing" do
-      lambda { @pn.publish(:message => @my_message, :channel => @my_channel) }.
-          should raise_error(Pubnub::PublishError, "callback is a required parameter.")
-    end
-
-    it "should raise when callback is invalid" do
-      lambda { @pn.publish(:message => @my_message, :channel => @my_channel, :callback => :blah) }.
-          should raise_error(Pubnub::PublishError, "callback is invalid.")
-    end
-
-    it "should raise when message is missing" do
-      lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback) }.
-          should raise_error(Pubnub::PublishError, "message is a required parameter.")
-    end
-  end
-
-  context "publish key" do
-
-    before do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key)
-    end
-
-    it "should not let you override an existing instantiated publish key" do
-      #TODO: unless its the same as existing
-
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
-      @alt_pub_key = "alt_pub_key"
-
-      lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key) }.
-          should raise_error(Pubnub::PublishError, "existing publish_key demo_pub_key cannot be overridden at publish-time.")
-    end
-
-    it "should let you define a publish key at publish time if it was not instantiated with one" do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key)
-      @alt_pub_key = "alt_pub_key"
-
-      mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
-                                               :operation => :publish, :publish_key => @alt_pub_key, :subscribe_key => @my_sub_key)
-      mock(@pn)._request(mock_publish_request) {}
-
-      @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key)
-    end
-
-    it "should throw if you publish without a publish key" do
-      lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key) }.should raise_error(Pubnub::PublishError, "publish_key is a required parameter.")
-    end
-  end
-
-  context "secret key" do
-
-    it "should not let you override an existing instantiated secret key" do
-      #TODO: unless its the same as existing
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :secret_key => @my_sec_key)
+      @my_cipher_key = "my_cipher_key"
+      @my_sec_key = "my_sec_key"
       @alt_sec_key = "alt_sec_key"
-
-      lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :secret_key => @alt_sec_key) }.
-          should raise_error(Pubnub::PublishError, "existing secret_key my_sec_key cannot be overridden at publish-time.")
     end
 
-    it "should let you define a secret key at publish time if it was not instantiated with one" do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+    context "required parameters" do
 
-      mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
-                                               :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
-                                               :secret_key => @my_sec_key)
+      before do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+      end
 
-      mock(@pn)._request(mock_publish_request) {}
-      @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :secret_key => @my_sec_key)
+      it "should raise when channel is missing" do
+        lambda { @pn.publish(:message => @my_message) }.
+            should raise_error(Pubnub::PublishError, "channel is a required parameter.")
+      end
+
+      it "should raise when callback is missing" do
+        lambda { @pn.publish(:message => @my_message, :channel => @my_channel) }.
+            should raise_error(Pubnub::PublishError, "callback is a required parameter.")
+      end
+
+      it "should raise when callback is invalid" do
+        lambda { @pn.publish(:message => @my_message, :channel => @my_channel, :callback => :blah) }.
+            should raise_error(Pubnub::PublishError, "callback is invalid.")
+      end
+
+      it "should raise when message is missing" do
+        lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback) }.
+            should raise_error(Pubnub::PublishError, "message is a required parameter.")
+      end
     end
 
+    context "publish key" do
 
-    it "should publish without signing the message if you publish without a secret key" do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+      before do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+      end
 
-      mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
-                                               :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key)
+      it "should not let you override an existing instantiated publish key" do
+        #TODO: unless its the same as existing
 
-      mock(@pn)._request(mock_publish_request) {}
-      @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+        @alt_pub_key = "alt_pub_key"
+
+        lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key) }.
+            should raise_error(Pubnub::PublishError, "existing publish_key demo_pub_key cannot be overridden at publish-time.")
+      end
+
+      it "should let you define a publish key at publish time if it was not instantiated with one" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key)
+        @alt_pub_key = "alt_pub_key"
+
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
+                                                 :operation => :publish, :publish_key => @alt_pub_key, :subscribe_key => @my_sub_key)
+        mock(@pn)._request(mock_publish_request) {}
+
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key)
+      end
+
+      it "should throw if you publish without a publish key" do
+        lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key) }.should raise_error(Pubnub::PublishError, "publish_key is a required parameter.")
+      end
+    end
+
+    context "secret key" do
+
+      it "should not let you override an existing instantiated secret key" do
+        #TODO: unless its the same as existing
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :secret_key => @my_sec_key)
+        @alt_sec_key = "alt_sec_key"
+
+        lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :secret_key => @alt_sec_key) }.
+            should raise_error(Pubnub::PublishError, "existing secret_key my_sec_key cannot be overridden at publish-time.")
+      end
+
+      it "should let you define a secret key at publish time if it was not instantiated with one" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
+                                                 :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
+                                                 :secret_key => @my_sec_key)
+
+        mock(@pn)._request(mock_publish_request) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :secret_key => @my_sec_key)
+      end
+
+
+      it "should publish without signing the message if you publish without a secret key" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
+                                                 :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key)
+
+        mock(@pn)._request(mock_publish_request) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
+      end
+
+    end
+
+    context "cipher key" do
+
+      it "should let you override an existing instantiated cipher key" do
+
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :cipher_key => @my_cipher_key)
+        alt_cipher_key = "alt_cipher_key"
+
+        # TODO: generate this from the pn encryption instance method, mock the response
+
+        encrypted_message = "\"2s0JT2eBNrM3jQaaTVatog==\""
+
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => encrypted_message,
+                                                 :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
+                                                 :secret_key => "0", :cipher_key => alt_cipher_key)
+
+        mock(@pn)._request(mock_publish_request) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :cipher_key => alt_cipher_key)
+
+      end
+
+
+      it "should let you define a cipher key at publish time if it was not instantiated with one" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+        encryped_message = "\"h6lDpklaNSzEEdrahmpQjA==\""
+
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => encryped_message,
+                                                 :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
+                                                 :cipher_key => @my_cipher_key)
+
+        mock(@pn)._request(mock_publish_request) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :cipher_key => @my_cipher_key)
+      end
+
+
+      it "should publish without a cipher key" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
+                                                 :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key)
+
+        mock(@pn)._request(mock_publish_request) {}
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
+      end
+
+    end
+
+    context "#ssl" do
+
+      it "should default to false if not defined" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
+        @pn.ssl.should == false
+      end
+
+      it "should set to true if defined at instantiation" do
+        @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :ssl => true)
+        @pn.ssl.should == true
+      end
+
+
+    end
+
+    describe "#history" do
+
+      before do
+        @sub_key = "demo"
+        @pn = Pubnub.new(:subscribe_key => @sub_key)
+        @my_callback = lambda { |x| puts(x) }
+      end
+
+      it "should require channel" do
+        lambda { @pn.history }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+      end
+
+      it "should require callback" do
+        lambda { @pn.history(:channel => :foo) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+      end
+
+      it "should require limit" do
+        lambda { @pn.history(:channel => :foo, :callback => @my_callback) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+      end
+
+      it "should initialize the request object correctly" do
+        mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "history", :channel => "foo", :limit => 10)
+        mock(@pn)._request(mock_pubnub_request) {}
+        @pn.history(:channel => :foo, :callback => @my_callback, :limit => 10)
+      end
+
+    end
+
+    describe "#here_now" do
+
+      before do
+        @sub_key = "demo"
+        @pn = Pubnub.new(:subscribe_key => @sub_key)
+        @my_callback = lambda { |x| puts(x) }
+      end
+
+      it "should require channel" do
+        lambda { @pn.here_now }.should raise_error(ArgumentError, "here_now() requires :channel and :callback options.")
+      end
+
+      it "should require callback" do
+        lambda { @pn.here_now(:channel => :foo) }.should raise_error(ArgumentError, "here_now() requires :channel and :callback options.")
+      end
+
+      it "should initialize the request object correctly" do
+        mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "here_now", :channel => "hello_world")
+        mock(@pn)._request(mock_pubnub_request) {}
+        @pn.here_now(:channel => :hello_world, :callback => @my_callback)
+      end
+
     end
 
   end
-
-  context "cipher key" do
-
-    it "should let you override an existing instantiated cipher key" do
-
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :cipher_key => @my_cipher_key)
-      alt_cipher_key = "alt_cipher_key"
-
-      # TODO: generate this from the pn encryption instance method, mock the response
-
-      encrypted_message = "\"2s0JT2eBNrM3jQaaTVatog==\""
-
-      mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => encrypted_message,
-                                               :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
-                                               :secret_key => "0", :cipher_key => alt_cipher_key)
-
-      mock(@pn)._request(mock_publish_request) {}
-      @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :cipher_key => alt_cipher_key)
-
-    end
-
-
-    it "should let you define a cipher key at publish time if it was not instantiated with one" do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
-      encryped_message = "\"h6lDpklaNSzEEdrahmpQjA==\""
-
-      mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => encryped_message,
-                                               :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
-                                               :cipher_key => @my_cipher_key)
-
-      mock(@pn)._request(mock_publish_request) {}
-      @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :cipher_key => @my_cipher_key)
-    end
-
-
-    it "should publish without a cipher key" do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
-
-      mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
-                                               :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key)
-
-      mock(@pn)._request(mock_publish_request) {}
-      @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
-    end
-
-  end
-
-  context "#ssl" do
-
-    it "should default to false if not defined" do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
-      @pn.ssl.should == false
-    end
-
-    it "should set to true if defined at instantiation" do
-      @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :ssl => true)
-      @pn.ssl.should == true
-    end
-
-
-  end
-
-  describe "#history" do
-
-    before do
-      @sub_key = "demo"
-      @pn = Pubnub.new(:subscribe_key => @sub_key)
-      @my_callback = lambda { |x| puts(x) }
-    end
-
-    it "should require channel" do
-      lambda { @pn.history }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
-    end
-
-    it "should require callback" do
-      lambda { @pn.history(:channel => :foo) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
-    end
-
-    it "should require limit" do
-      lambda { @pn.history(:channel => :foo, :callback => @my_callback) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
-    end
-
-    it "should initialize the request object correctly" do
-      mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "history", :channel => "foo", :limit => 10)
-      mock(@pn)._request(mock_pubnub_request) {}
-      @pn.history(:channel => :foo, :callback => @my_callback, :limit => 10)
-    end
-
-  end
-
-  describe "#here_now" do
-
-    before do
-      @sub_key = "demo"
-      @pn = Pubnub.new(:subscribe_key => @sub_key)
-      @my_callback = lambda { |x| puts(x) }
-    end
-
-    it "should require channel" do
-      lambda { @pn.here_now }.should raise_error(ArgumentError, "here_now() requires :channel and :callback options.")
-    end
-
-    it "should require callback" do
-      lambda { @pn.here_now(:channel => :foo) }.should raise_error(ArgumentError, "here_now() requires :channel and :callback options.")
-    end
-
-    it "should initialize the request object correctly" do
-      mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "here_now", :channel => "hello_world")
-      mock(@pn)._request(mock_pubnub_request) {}
-      @pn.here_now(:channel => :hello_world, :callback => @my_callback)
-    end
-
-  end
-
-
 
 end
