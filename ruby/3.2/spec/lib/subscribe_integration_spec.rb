@@ -95,6 +95,20 @@ describe "Subscribe Integration Test" do
           end
 
         end
+
+        it "should subscribe with ssl (explicit)" do
+
+          my_response = [["DECRYPTION_ERROR", "2012-08-22 21:19:10 -0700: hi!"], "13456955503770360"]
+          mock(@my_callback).call(my_response) {}
+
+          @pn.ssl = true
+
+          VCR.use_cassette("integration_subscribe_4", :record => :none) do
+            @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback, :override_timetoken => 13456937030869528)
+          end
+
+        end
+
       end
     end
 
