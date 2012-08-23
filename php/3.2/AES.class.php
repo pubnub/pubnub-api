@@ -168,6 +168,18 @@ class AES {
         /** constructs an AES cipher using a specific key.
         */
         public function __construct($z) {
+			   echo('hiii');
+			   $len = strlen($z);
+			   if ($len > 256) {
+					$z = substr($z, 0, 256);
+			   }elseif ($len > 192) {
+					$z = str_pad($z, 256 - $len);
+			   }elseif ($len > 128) {
+					$z = str_pad($z, 192 - $len)
+			   }else{
+					echo("hi");
+					$z = str_pad($z, 128 - $len)
+			   }
 			   $this->Nk = strlen($z)/4;
                $this->Nr = $this->Nk + self::$Nb + 2;
 

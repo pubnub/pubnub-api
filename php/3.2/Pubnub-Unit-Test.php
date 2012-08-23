@@ -9,8 +9,7 @@ require_once('Pubnub.php');
 # php ./unit-test.php
 # php ./unit-test.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
 #
-
-
+	
 $publish_key   = isset($argv[1]) ? $argv[1] : 'demo';
 $subscribe_key = isset($argv[2]) ? $argv[2] : 'demo';
 $secret_key    = isset($argv[3]) ? $argv[3] : false;
