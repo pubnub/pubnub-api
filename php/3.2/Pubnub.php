@@ -66,7 +66,6 @@ class Pubnub {
         $channel = $args['channel'];
 		$message_org = $args['message'];
 		if($this->CIPHER_KEY != false) {
-			echo('entering AES ...');
 			$aes = new AES($this->CIPHER_KEY);
 			$message = json_encode($aes->encrypt($message_org));
 		}else{
