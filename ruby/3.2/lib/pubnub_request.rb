@@ -205,9 +205,12 @@ class PubnubRequest
       when "history"
         url_array = [self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", self.history_limit.to_s]
 
+      when "here_now"
+        url_array = ["v2", "presence", "sub_key", self.subscribe_key.to_s, "channel", self.channel.to_s ]
+
         else
 
-        raise(PubnubRequest::InitError, "I can't create that URL for you due to unknown operation type.")
+        raise(PubnubRequest::RequestError, "I can't create that URL for you due to unknown operation type.")
     end
 
     self.url = origin + encode_URL(url_array)

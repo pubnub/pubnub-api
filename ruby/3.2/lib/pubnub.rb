@@ -39,9 +39,9 @@ class Pubnub
   attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl, :channel, :origin, :session_uuid
 
 
-  ORIGINS = %w(newcloud-virginia.pubnub.com newcloud-california.pubnub.com newcloud-ireland.pubnub.com newcloud-tokyo.pubnub.com)
-  #ORIGIN_HOST = 'pubsub.pubnub.com'
-  ORIGIN_HOST = 'newcloud-california.pubnub.com'
+  #ORIGINS = %w(newcloud-virginia.pubnub.com newcloud-california.pubnub.com newcloud-ireland.pubnub.com newcloud-tokyo.pubnub.com)
+  ORIGIN_HOST = 'pubsub.pubnub.com'
+  #ORIGIN_HOST = 'newcloud-california.pubnub.com'
   #ORIGIN_HOST = 'test.pubnub.com'
 
   def initialize(*args)
@@ -126,16 +126,41 @@ class Pubnub
 
   end
 
+  def here_now(options = nil)
+    usage_error = "here_now() requires :channel and :callback options."
+    if options.class != Hash
+      raise(ArgumentError, usage_error)
+    end
+
+    options = HashWithIndifferentAccess.new(options) unless (options == nil)
+
+    unless options[:channel] && options[:callback]
+      raise(ArgumentError, usage_error)
+    end
+
+    here_now_request = PubnubRequest.new(:operation => :here_now)
+
+    here_now_request.ssl = @ssl
+    here_now_request.set_channel(options)
+    here_now_request.set_callback(options)
+
+    here_now_request.set_subscribe_key(options, self.subscribe_key)
+
+    here_now_request.format_url!
+    _request(here_now_request)
+
+  end
 
   def history(options = nil)
+    usage_error = "history() requires :channel, :callback, and :limit options."
     if options.class != Hash
-      raise(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+      raise(ArgumentError, usage_error)
     end
 
     options = HashWithIndifferentAccess.new(options) unless (options == nil)
 
     unless options[:limit] && options[:channel] && options[:callback]
-      raise(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+      raise(ArgumentError, usage_error)
     end
 
 
@@ -169,6 +194,14 @@ class Pubnub
     _request(time_request)
   end
 
+  def my_callback(x, quiet = false)
+    if quiet !=false
+      puts("mycallback says: #{x.to_s}")
+    else
+      ""
+    end
+
+  end
 
   def uuid
     UUID.new.generate

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'rr'
 require 'vcr'
 
-describe "Publish Integration Test" do
+describe "Subscribe Integration Test" do
 
     before do
       @my_callback = lambda { |message| Rails.logger.debug(message) }

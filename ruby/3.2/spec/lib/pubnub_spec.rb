@@ -18,34 +18,6 @@ describe Pubnub do
     end
   end
 
-  describe "#history" do
-
-    before do
-      @sub_key = "demo"
-      @pn = Pubnub.new(:subscribe_key => @sub_key)
-      @my_callback = lambda { |x| puts(x) }
-    end
-
-    it "should require channel" do
-      lambda { @pn.history }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
-    end
-
-    it "should require callback" do
-      lambda { @pn.history(:channel => :foo) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
-    end
-
-    it "should require limit" do
-      lambda { @pn.history(:channel => :foo, :callback => @my_callback) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
-    end
-
-    it "should initialize the request object correctly" do
-      mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "history", :channel => "foo", :limit => 10)
-      mock(@pn)._request(mock_pubnub_request) {}
-      @pn.history(:channel => :foo, :callback => @my_callback, :limit => 10)
-    end
-
-  end
-
   describe ".initialize" do
 
     before do
@@ -447,6 +419,58 @@ describe "#publish" do
       @pn.ssl.should == true
     end
 
+
+  end
+
+  describe "#history" do
+
+    before do
+      @sub_key = "demo"
+      @pn = Pubnub.new(:subscribe_key => @sub_key)
+      @my_callback = lambda { |x| puts(x) }
+    end
+
+    it "should require channel" do
+      lambda { @pn.history }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+    end
+
+    it "should require callback" do
+      lambda { @pn.history(:channel => :foo) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+    end
+
+    it "should require limit" do
+      lambda { @pn.history(:channel => :foo, :callback => @my_callback) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+    end
+
+    it "should initialize the request object correctly" do
+      mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "history", :channel => "foo", :limit => 10)
+      mock(@pn)._request(mock_pubnub_request) {}
+      @pn.history(:channel => :foo, :callback => @my_callback, :limit => 10)
+    end
+
+  end
+
+  describe "#here_now" do
+
+    before do
+      @sub_key = "demo"
+      @pn = Pubnub.new(:subscribe_key => @sub_key)
+      @my_callback = lambda { |x| puts(x) }
+    end
+
+    it "should require channel" do
+      lambda { @pn.here_now }.should raise_error(ArgumentError, "here_now() requires :channel and :callback options.")
+    end
+
+    it "should require callback" do
+      lambda { @pn.here_now(:channel => :foo) }.should raise_error(ArgumentError, "here_now() requires :channel and :callback options.")
+    end
+
+    it "should initialize the request object correctly" do
+      mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "here_now", :channel => "hello_world")
+      mock(@pn)._request(mock_pubnub_request) {}
+      @pn.here_now(:channel => :hello_world, :callback => @my_callback)
+    end
 
   end
 
