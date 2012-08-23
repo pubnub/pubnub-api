@@ -1,6 +1,5 @@
 package pubnub;
 
-
 import com.tinyline.util.GZIPInputStream;
 import java.io.*;
 import pubnub.crypto.PubnubCrypto;
@@ -42,6 +41,7 @@ public class Pubnub {
         boolean connected, first;
     }
     private Vector subscriptions;
+    private Vector _connection;
 
     /**
      * PubNub 3.1 with Cipher Key
@@ -124,6 +124,7 @@ public class Pubnub {
         } else {
             this.ORIGIN = "http://" + this.ORIGIN;
         }
+        _connection = new Vector();
     }
 
     /**
@@ -235,7 +236,6 @@ public class Pubnub {
         url.addElement(channel);
         url.addElement("0");
         url.addElement(message.toString());
-
         _request(url, channel);
     }
 
@@ -334,7 +334,7 @@ public class Pubnub {
                     }
                     _callback.errorCallback(channel, jsono);
                 }
-                // return;
+                return;
             }
         } else {
             // New Channel
@@ -457,8 +457,24 @@ public class Pubnub {
             it = (ChannelStatus) subscriptions.elementAt(i);
             if (it.channel.equals(channel) && it.connected) {
                 it.connected = false;
-                it.first = false;
+                //   it.first = false;
+
                 break;
+            }
+
+        }
+
+        for (int i = 0; i < _connection.size(); i++) {
+            HttpCallback cb = (HttpCallback) _connection.elementAt(i);
+            if (cb.getChannel().equals(channel)) {
+                HttpConnection con = cb.getConnection();
+                if (con != null) {
+
+                    //con.close();
+                    cb.cancelRequest(cb);
+                    _connection.removeElement(cb);
+
+                }
             }
         }
     }
@@ -509,19 +525,17 @@ public class Pubnub {
         _headers.put("User-Agent", "J2ME");
         _headers.put("Accept-Encoding", "gzip");
 
-        
 
         HttpCallback callback = new HttpCallback(url.toString(), _headers, request_for) {
 
             public void processResponse(HttpConnection conn, Object cookie) throws IOException {
-               
             }
 
             public void OnComplet(HttpConnection hc, String response, String req_for) throws IOException {
                 try {
                     String timetoken = "0";
                     //response=response.replace('+', ' ');
-                   
+
                     JSONArray out = null;
                     if (response != null) {
                         out = new JSONArray(response);
@@ -563,8 +577,10 @@ public class Pubnub {
                                 for (int i = 0; i < subscriptions.size(); i++) {
                                     it = (ChannelStatus) subscriptions.elementAt(i);
                                     if (it.channel.equals(channel)) {
-                                        if (!it.connected) {
+                                        if (!it.connected && it.first) {
+                                            subscriptions.removeElement(it);
                                             if (_callback != null) {
+
                                                 _callback.disconnectCallback(channel);
                                             }
                                             is_disconnect = true;
@@ -584,8 +600,9 @@ public class Pubnub {
                                     for (int i = 0; i < subscriptions.size(); i++) {
                                         it = (ChannelStatus) subscriptions.elementAt(i);
                                         if (it.channel.equals(channel)) {
-                                            subscriptions.removeElement(it);
+
                                             if (_callback != null) {
+
                                                 _callback.disconnectCallback(channel);
                                             }
                                         }
@@ -596,11 +613,14 @@ public class Pubnub {
                                         double time_token = time();
                                         if (time_token == 0) {
                                             // Reconnect Callback
+//                                            if (_callback != null) {
+//                                                _callback.reconnectCallback(channel);
+//                                            }
+                                            Thread.sleep(5000);
+                                        } else {
                                             if (_callback != null) {
                                                 _callback.reconnectCallback(channel);
                                             }
-                                            Thread.sleep(5000);
-                                        } else {
                                             Hashtable args = new Hashtable();
                                             args.put("channel", channel);
 
@@ -707,9 +727,24 @@ public class Pubnub {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+
+                if (_connection.contains(this)) {
+                    _connection.removeElement(this);
+                }
+            }
+
+            public void errorCall(HttpConnection conn, Object message) throws IOException {
+                System.out.println("Error:" + message.toString());
+                if (_connection.contains(this)) {
+                    _connection.removeElement(this);
+                }
             }
         };
+        if (channel != null) {
+            callback.setChannel(channel);
 
+        }
+        _connection.addElement(callback);
         AsyncHttpManager.getInstance().queue(callback);
     }
 
@@ -740,9 +775,10 @@ public class Pubnub {
             int len = c.getHeaderFieldInt("Content-Length", 0);
             dis = c.openInputStream();
 
-            if ("gzip".equals(c.getEncoding())) 
-                    dis = new GZIPInputStream(dis);
-            
+            if ("gzip".equals(c.getEncoding())) {
+                dis = new GZIPInputStream(dis);
+            }
+
             byte[] data = null;
             ByteArrayOutputStream tmp = new ByteArrayOutputStream();
             int ch;
@@ -751,7 +787,7 @@ public class Pubnub {
             }
             data = tmp.toByteArray();
             respBody = new String(data, "UTF-8");
-           
+
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Not an HTTP URL");
         } finally {

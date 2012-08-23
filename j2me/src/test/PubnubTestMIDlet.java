@@ -18,6 +18,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener,Callback
     private Command timeCommand;
     private Command historyCommand;
     private Command unsubscribeCommand;
+    private Command subscribeCommand;
     private Form form;
     private StringItem stringItem;
     String Channel = "hello_world";
@@ -88,6 +89,9 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener,Callback
             } else if (command == unsubscribeCommand) {
                 unsubscribe();
             }
+            else if (command == subscribeCommand) {
+               subscribe();
+            }
         }
     }
 
@@ -116,6 +120,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener,Callback
             form.addCommand(getTimeCommand());
             form.addCommand(getHistoryCommand());
             form.addCommand(getUnsubscribeCommand());
+            form.addCommand(getSubscribeCommand());
             form.setCommandListener(this);
         }
         return form;
@@ -182,6 +187,18 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener,Callback
         return unsubscribeCommand;
     }
 
+     /**
+     * Returns an initiliazed instance of subscribeCommand component.
+     * 
+     * @return the initialized component instance
+     */
+    public Command getSubscribeCommand() {
+        if (subscribeCommand == null) {
+            subscribeCommand = new Command("Subscribe", Command.ITEM, 0);
+        }
+        return subscribeCommand;
+    }
+    
     /**
      * Returns a display instance.
      * 
