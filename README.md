@@ -354,3 +354,77 @@ PUBNUB.history({
 
 ###Response
 [MSG,MSG,MSG]
+
+<br>
+#\.detailedHistory(options)
+* * *
+Retrieve messages by channel with granular control. **options** contains channel information, limit, start, end, and order options.  and callback.
+>available in version 3.3+
+
+##Native Client Usage Example
+
+```javascript
+PUBNUB.detailedHistory({
+    channel  : "my-channel",
+    limit    : 100, 
+    start    : 12345,
+    end      : 12400,
+    reverse  : false,  // default false (order is oldest to newest)
+    callback : (messages) { log(messages) }
+})
+```
+
+##RESTful Usage Example
+###URL Format
+/v2/history/sub-key/**SUBSCRIBE_KEY**/channel/**CHANNEL**
+####Optional URL parameters
+start=START_TIMETOKEN
+end=END_TIMETOKEN
+reverse=REVERSE_PARAM
+count=MAX_RETURNED
+callback=CALLBACK
+**START_TIMETOKEN** is the EXCLUSIVE start reference when requesting an interval.
+**END_TIMETOKEN** is the INCLUSIVE end reference when requesting an interval.
+**REVERSE_PARAM** defines the order results are returned. is true or false. true returns oldest to newest, and false returns newest to oldest. Default false.
+**COUNT** is the max number of messages to return. 100 is the default and maximum.
+**CALLBACK** is the name of the JSONP callback function.
+
+###Request Examples
+Using a combination of start/end/reverse you can:
+ - Traverse newest to oldest messages (default)
+ - Traverse oldest to newest (setting reverse=true)
+ - Page through results by providing a start __OR__ end time token.
+ - Retrieve a "slice" of the timeline by providing both a start __AND__ end time token.
+
+__Get most recent messages__
+```
+http://pubsub.pubnub.com/v2/history/sub-key/demo/channel/storage_test
+>>> [["Pub1","Pub2","Pub3","Pub4","Pub5"],13406746729185766,13406746845892666]
+```
+
+__Get oldest 3 messages (retrieve the timeline in reverse)__
+```
+http://pubsub.pubnub.com/v2/history/sub-key/demo/channel/storage_test?count=3&reverse=true
+>>> [["Pub1","Pub2","Pub3"],13406746729185766,13406746780720711]
+```
+
+__Get messages newer than a given timetoken (paging old->new from a start point (exclusive)):__
+```
+http://pubsub.pubnub.com/v2/history/sub-key/demo/channel/storage_test?reverse=true&start=13406746780720711
+>>> [["Pub4","Pub5"],13406746814579888,13406746845892666]
+```
+
+__Get messages until a given timetoken (paging new->old until an end point (inclusive)):__
+```
+http://pubsub.pubnub.com/v2/history/sub-key/demo/channel/storage_test?end=13406746780720711
+>>> [["Pub3","Pub4","Pub5"],13406746780720711,13406746845892666]
+```
+
+__Get any messages published on _Tue, 26 Jun 2012 GMT_ (use: Unix time in seconds * 10000000):__
+* start (time token of Tues 26th): 13406688000000000
+* end (time token of Wed 27th): 13407552000000000
+
+```
+http://pubsub.pubnub.com/v2/history/sub-key/demo/channel/storage_test?start=13406688000000000&end=13407552000000000
+>>> [["Pub1","Pub2","Pub3","Pub4","Pub5"],13406746729185766,13406746845892666]
+```
