@@ -84,7 +84,7 @@ var pubnub = PUBNUB.init({
 > **NOTE**: This class method is only available when using the platform-specific API libraries – it is not available via the REST API.
 
 <br>
-#\#.time()
+#\.time()
 * * *
 This function is a utility only and has not functional value other than a PING to the PubNub Cloud.
 >available in version 1+
@@ -108,7 +108,7 @@ PUBNUB.time(function(time){
 [7529152783414]
 
 <br>
-#\#.uuid()
+#\.uuid()
 * * *
 Utility function for generating a UUID. This is a utility function that is useful for creating random, unique channel IDs on the fly.
 >available in version 1+
@@ -123,7 +123,7 @@ Utility function for generating a UUID. This is a utility function that is usefu
 > **NOTE**: This instance method is only available when using the platform-specific API libraries – it is not available via the REST API.
 
 <br>
-#\#.publish(options)
+#\.publish(options)
 * * *
 Broadcast a message on a specific channel. options contains channel name, message, and callback values. The message may be any valid JSON type including objects, arrays, strings, and numbers.
 >available in version 1+
@@ -168,7 +168,7 @@ In the case of a successful transmission, the second element will contain **Sent
 * "Invalid Message Signature" - The message was SHA256 Signed incorrectly.
 
 <br>
-#\#.subscribe(options)
+#\.subscribe(options)
 * * *
 Listen for messages on a specified channel. options contains channel information, and callbacks for receiving messages, connecting, disconnecting, and reconnecting after an unintended disconnect.
 >available in version 1+
@@ -237,7 +237,31 @@ If new message(s) are received within this 300 second window, the server will re
  5\. Repeat from Step 3 to retrieve subsequent message updates.
 
 <br>
-#\#.unsubscribe(options)
+#\.presence(options)
+* * *
+Listen for 'Presence' messages on a specified channel, such as 'join' and 'leave' events.
+For any given channel CHANNEL, CHANNEL-pnpres is the 'Presence' channel for CHANNEL.
+
+>available in version 3.2+
+
+##Native Client Usage Example
+
+```javascript
+PUBNUB.presence({
+    channel    : "my-channel",
+    callback   : function(message) { log(message) }
+})
+```
+
+##Connect, disconnect, reconnect callback lifecycles
+presence() is exactly the same as subscribe(), except the string '-pnpres' is appended to the channel name. See above documentation on subscribe() for more information.
+
+##RESTful Usage Example
+presence() is exactly the same as subscribe(), except the string '-pnpres' is appended to the channel name. See above documentation on subscribe() for more information.
+
+<br>
+
+#\.unsubscribe(options)
 * * *
 Listen for messages on a specified channel. options contains the channel name.
 >available in version 1+
@@ -254,7 +278,7 @@ PUBNUB.unsubscribe({
 > **NOTE**: This instance method is only available when using the platform-specific API libraries – it is not available via the REST API.
 
 <br>
-#\#.history(options)
+#\.history(options)
 * * *
 Retrieve the last *n* messages published to this channel. **options** contains channel information, history limit, and callback.  Currently you can only fetch the last 100 messages. However, upcoming features will include forever-history fetching.
 >available in version 1+
