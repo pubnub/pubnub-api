@@ -175,10 +175,10 @@ class AES {
 			   }elseif ($len > 192) {
 					$z = str_pad($z, 256 - $len);
 			   }elseif ($len > 128) {
-					$z = str_pad($z, 192 - $len)
+					$z = str_pad($z, 192 - $len);
 			   }else{
 					echo("hi");
-					$z = str_pad($z, 128 - $len)
+					$z = str_pad($z, 128 - $len);
 			   }
 			   $this->Nk = strlen($z)/4;
                $this->Nr = $this->Nk + self::$Nb + 2;
