@@ -27,6 +27,7 @@ typedef enum {
     kCommand_SendMessage,
     kCommand_ReceiveMessage,
     kCommand_FetchHistory,
+    kCommand_FetchDetailHistory,
     kCommand_GetTime,
     kCommand_Here_Now
 } Command;
@@ -487,6 +488,68 @@ typedef enum {
     [_connections addObject:connection];
 }
 
+
+- (void) detailedHistory:(NSDictionary * )arg1 {
+   
+    NSString* channel;
+    
+    
+    if (![arg1 objectForKey:@"channel"])
+    {
+        NSLog(@"ERROR::Channel name not found.");
+        return;
+    }else
+    {
+        channel=[arg1 objectForKey:@"channel"];
+    }
+    NSMutableString *parameters= [[NSMutableString alloc]init];
+    
+    if ([arg1 objectForKey:@"count"])
+    {
+       [parameters appendFormat:@"count=%@",[arg1 objectForKey:@"count"]];
+    }
+    
+    if ([arg1 objectForKey:@"start"])
+    {
+        if ([parameters length] > 0) {
+            [parameters appendString:@"&"];
+        }
+        [parameters appendFormat:@"start=%@",[arg1 objectForKey:@"start"]];
+    }
+    
+    if ([arg1 objectForKey:@"end"])
+    {
+        if ([parameters length] > 0) {
+            [parameters appendString:@"&"];
+        }
+        [parameters appendFormat:@"end=%@",[arg1 objectForKey:@"end"]];
+    }
+    
+    if ([arg1 objectForKey:@"reverse"])
+    {
+        if ([parameters length] > 0) {
+            [parameters appendString:@"&"];
+        }
+        if([arg1 objectForKey:@"reverse"])
+            [parameters appendFormat:@"reverse=%@",@"true"];
+        else
+            [parameters appendFormat:@"reverse=%@",@"false"];
+    }
+    
+    if ([parameters length] > 0) {
+        [parameters insertString:@"?" atIndex:0 ];
+    }
+   
+    NSString* url = [NSString stringWithFormat:@"%@/v2/history/sub-key/%@/channel/%@%@", _host, _subscribeKey, [channel urlEscapedString],[parameters description]];
+    PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_FetchDetailHistory
+                                                                    channel:channel];
+    [_connections addObject:connection];
+}
+
+
+
 - (void) getTime {
     NSString* url = [NSString stringWithFormat:@"%@/time/0", _host];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
@@ -626,43 +689,31 @@ NSDecimalNumber* time_token = 0;
             NSString* timeToken = @"0";
             if(!isPresence)
             {
-                for (ChannelStatus* it in [_subscriptions copy]) {
-                    if ([it.channel isEqualToString:connection.channel])
-                    {   
-                        if(!it.connected) {
-                            
-                            if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
-                                [_delegate pubnub:self DisconnectToChannel:connection.channel];
-                            }
-                            break;
-                        }
-                    }
-                }
-                    // Problem?
+
                 if (response == nil  ) {
                     for (ChannelStatus* it in [_subscriptions copy]) {
                         if ([it.channel isEqualToString:connection.channel])
                         {                        
-                            [_subscriptions removeObject:it];
-                            if(it.first) {
-                                
+                            
+                            if(it.first && it.connected) {
+                                it.connected=NO;
                                 if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
                                     [_delegate pubnub:self DisconnectToChannel:connection.channel];
                                 }
                             }
                         }
                     }
-                        // Ensure Connected (Call Time Function)
-                        //BOOL is_reconnected = NO;
+//                   
+//                  BOOL is_reconnected = NO;
                     [self getTime1 ];
                     if (time_token == 0) {
-                            // Reconnect Callback
-                        
+                           
+                    }else
+                    {
                         if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
-                            
                             [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
                         }
-                    } 
+                    }
                 }
                 else {
                     for (ChannelStatus* it in [_subscriptions copy]) {
@@ -676,6 +727,12 @@ NSDecimalNumber* time_token = 0;
                                     [_delegate pubnub:self ConnectToChannel:connection.channel];
                                 }
                                 break;
+                            }else
+                            {
+                                if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
+                                    
+                                    [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
+                                }
                             }
                         }
                     }
@@ -735,6 +792,44 @@ NSDecimalNumber* time_token = 0;
             } 
             else {
                 [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
+            }
+            break;
+        }
+        case kCommand_FetchDetailHistory:{
+            NSMutableArray *mainArray = [NSMutableArray arrayWithCapacity: 2];
+           NSMutableArray *returnArray = [NSMutableArray arrayWithArray:response];
+            if ([response isKindOfClass:[NSArray class]]) {
+               id msg= [response objectAtIndex:0];
+                for (id message in msg) {
+                    if ([message isKindOfClass:[NSDictionary class]]) {
+                        NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
+                        [mainArray addObject:disc];
+                    }else if ([message isKindOfClass:[NSArray class]]) {
+                        NSArray * arr=[self getDecryptedArray:(NSArray *)message];
+                        [mainArray addObject:arr];
+                    }else if ([message isKindOfClass:[NSString class]]) {
+                        NSString * str=[self getDecryptedString:(NSString *)message];
+                        [mainArray addObject:str];
+                    }
+                }
+              
+                [returnArray replaceObjectAtIndex:0 withObject:mainArray];
+                
+            }else if (response) {
+                NSLog(@"Unexpected history response from PubNub");
+            }
+            
+            if(response)
+            {
+                if ([_delegate respondsToSelector: @selector(pubnub:didFetchDetailedHistory:forChannel:)]) {
+                    [_delegate pubnub:self didFetchDetailedHistory: [NSArray arrayWithArray: returnArray] forChannel: connection.channel];
+                }
+            }else {
+                NSArray* array= [NSArray arrayWithObjects:@"0", @"Fetch History request failed due to missing Internet connection",  nil];
+                if ([_delegate respondsToSelector: @selector(pubnub:didFailFetchDetailedHistoryOnChannel:withError:)]) {
+                    [_delegate pubnub:self didFailFetchDetailedHistoryOnChannel:connection.channel withError:array];
+                    
+                }
             }
             break;
         }

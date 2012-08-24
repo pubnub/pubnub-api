@@ -28,6 +28,8 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
         - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel;
         - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel;
         - (void) pubnub:(CEPubnub*)pubnub didFailFetchHistoryOnChannel:(NSString*)channel;
+        - (void) pubnub:(CEPubnub*)pubnub didFetchDetailedHistory:(NSArray*)messages forChannel:(NSString*)channel;
+		- (void) pubnub:(CEPubnub*)pubnub didFailFetchDetailedHistoryOnChannel:(NSString*)channel withError:(id)error;
         - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time;
         - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
 		- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
@@ -88,4 +90,14 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
 		
 		[pubnub presence: @"hello_world"];
 		        
+13. Detailed History: Load Previously Published Messages in Detail.
+		@param array args with 'channel', optional: 'start', 'end', 'reverse', 'count'
+		'channel'-Channel name
+		'start'-Start timestamp
+		'end'-End timestamp
+		'reverse'-Order of History
+		'count'-Number of History messages
+		
+		[pubnub presence: @"hello_world"];
+
 14. That's it! An example iPad app has been included in the project.

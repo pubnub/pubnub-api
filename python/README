@@ -107,11 +107,17 @@ print(history)
 # DETAILED HISTORY
 # -------
 # Load Previously Published Messages in Detail
-history = pubnub.detailedHistory({
-    'channel': 'hello_world',
-    'start': 1,
-    'end': 100,
-    'count': 10
-})[0]
+	@param array args with 'channel', optional: 'start', 'end', 'reverse', 'count'
+	'channel'-Channel name
+	'start'-Start timestamp
+	'end'-End timestamp
+	'reverse'-Order of History
+	'count'-Number of History messages
+	
+ 	NSInteger count = 3;
+    NSNumber * aCountInt = [NSNumber numberWithInteger:count];
+    [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
+                             aCountInt,@"count",
+                             @"hello_world",@"channel",
+                             nil]];
 
-print(history)
