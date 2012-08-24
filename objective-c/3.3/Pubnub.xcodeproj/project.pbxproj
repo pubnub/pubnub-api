@@ -1,0 +1,320 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C8FD4D38153D447200D0A418 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FD4D37153D447200D0A418 /* UIKit.framework */; };
+		C8FD4D3A153D447200D0A418 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FD4D39153D447200D0A418 /* Foundation.framework */; };
+		C8FD4D3C153D447200D0A418 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FD4D3B153D447200D0A418 /* CoreGraphics.framework */; };
+		C8FD4D42153D447200D0A418 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8FD4D40153D447200D0A418 /* InfoPlist.strings */; };
+		C8FD4D44153D447200D0A418 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D43153D447200D0A418 /* main.m */; };
+		C8FD4D48153D447200D0A418 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D47153D447200D0A418 /* AppDelegate.m */; };
+		C8FD4D4E153D447200D0A418 /* iPhoneTest.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D4D153D447200D0A418 /* iPhoneTest.m */; };
+		C8FD4D79153D469D00D0A418 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D6C153D469D00D0A418 /* Base64.m */; };
+		C8FD4D7A153D469D00D0A418 /* CEPubnub.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D6E153D469D00D0A418 /* CEPubnub.m */; };
+		C8FD4D7B153D469D00D0A418 /* Cipher.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D70153D469D00D0A418 /* Cipher.m */; };
+		C8FD4D7C153D469D00D0A418 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D72153D469D00D0A418 /* Common.m */; };
+		C8FD4D7E153D469D00D0A418 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D76153D469D00D0A418 /* JSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		C8FD4D7F153D469D00D0A418 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D78153D469D00D0A418 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		C8FD4D33153D447200D0A418 /* Pubnub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pubnub.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8FD4D37153D447200D0A418 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		C8FD4D39153D447200D0A418 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C8FD4D3B153D447200D0A418 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		C8FD4D3F153D447200D0A418 /* Pubnub-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Pubnub-Info.plist"; sourceTree = "<group>"; };
+		C8FD4D41153D447200D0A418 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C8FD4D43153D447200D0A418 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C8FD4D45153D447200D0A418 /* Pubnub-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Pubnub-Prefix.pch"; sourceTree = "<group>"; };
+		C8FD4D46153D447200D0A418 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		C8FD4D47153D447200D0A418 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		C8FD4D4C153D447200D0A418 /* iPhoneTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iPhoneTest.h; sourceTree = "<group>"; };
+		C8FD4D4D153D447200D0A418 /* iPhoneTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iPhoneTest.m; sourceTree = "<group>"; };
+		C8FD4D6B153D469D00D0A418 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		C8FD4D6C153D469D00D0A418 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		C8FD4D6D153D469D00D0A418 /* CEPubnub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPubnub.h; sourceTree = "<group>"; };
+		C8FD4D6E153D469D00D0A418 /* CEPubnub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEPubnub.m; sourceTree = "<group>"; };
+		C8FD4D6F153D469D00D0A418 /* Cipher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cipher.h; sourceTree = "<group>"; };
+		C8FD4D70153D469D00D0A418 /* Cipher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cipher.m; sourceTree = "<group>"; };
+		C8FD4D71153D469D00D0A418 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		C8FD4D72153D469D00D0A418 /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
+		C8FD4D75153D469D00D0A418 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
+		C8FD4D76153D469D00D0A418 /* JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSON.m; sourceTree = "<group>"; };
+		C8FD4D77153D469D00D0A418 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		C8FD4D78153D469D00D0A418 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
+		C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow_iPhone.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C8FD4D30153D447200D0A418 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C8FD4D38153D447200D0A418 /* UIKit.framework in Frameworks */,
+				C8FD4D3A153D447200D0A418 /* Foundation.framework in Frameworks */,
+				C8FD4D3C153D447200D0A418 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C8FD4D28153D447100D0A418 = {
+			isa = PBXGroup;
+			children = (
+				C8FD4D3D153D447200D0A418 /* Pubnub */,
+				C8FD4D36153D447200D0A418 /* Frameworks */,
+				C8FD4D34153D447200D0A418 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C8FD4D34153D447200D0A418 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C8FD4D33153D447200D0A418 /* Pubnub.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C8FD4D36153D447200D0A418 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C8FD4D37153D447200D0A418 /* UIKit.framework */,
+				C8FD4D39153D447200D0A418 /* Foundation.framework */,
+				C8FD4D3B153D447200D0A418 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C8FD4D3D153D447200D0A418 /* Pubnub */ = {
+			isa = PBXGroup;
+			children = (
+				C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */,
+				C8FD4D6A153D469D00D0A418 /* PubNub */,
+				C8FD4D46153D447200D0A418 /* AppDelegate.h */,
+				C8FD4D47153D447200D0A418 /* AppDelegate.m */,
+				C8FD4D4C153D447200D0A418 /* iPhoneTest.h */,
+				C8FD4D4D153D447200D0A418 /* iPhoneTest.m */,
+				C8FD4D3E153D447200D0A418 /* Supporting Files */,
+			);
+			path = Pubnub;
+			sourceTree = "<group>";
+		};
+		C8FD4D3E153D447200D0A418 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C8FD4D3F153D447200D0A418 /* Pubnub-Info.plist */,
+				C8FD4D40153D447200D0A418 /* InfoPlist.strings */,
+				C8FD4D43153D447200D0A418 /* main.m */,
+				C8FD4D45153D447200D0A418 /* Pubnub-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C8FD4D6A153D469D00D0A418 /* PubNub */ = {
+			isa = PBXGroup;
+			children = (
+				C8FD4D6B153D469D00D0A418 /* Base64.h */,
+				C8FD4D6C153D469D00D0A418 /* Base64.m */,
+				C8FD4D6D153D469D00D0A418 /* CEPubnub.h */,
+				C8FD4D6E153D469D00D0A418 /* CEPubnub.m */,
+				C8FD4D6F153D469D00D0A418 /* Cipher.h */,
+				C8FD4D70153D469D00D0A418 /* Cipher.m */,
+				C8FD4D71153D469D00D0A418 /* Common.h */,
+				C8FD4D72153D469D00D0A418 /* Common.m */,
+				C8FD4D75153D469D00D0A418 /* JSON.h */,
+				C8FD4D76153D469D00D0A418 /* JSON.m */,
+				C8FD4D77153D469D00D0A418 /* JSONKit.h */,
+				C8FD4D78153D469D00D0A418 /* JSONKit.m */,
+			);
+			path = PubNub;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C8FD4D32153D447200D0A418 /* Pubnub */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C8FD4D51153D447200D0A418 /* Build configuration list for PBXNativeTarget "Pubnub" */;
+			buildPhases = (
+				C8FD4D2F153D447200D0A418 /* Sources */,
+				C8FD4D30153D447200D0A418 /* Frameworks */,
+				C8FD4D31153D447200D0A418 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Pubnub;
+			productName = Pubnub;
+			productReference = C8FD4D33153D447200D0A418 /* Pubnub.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C8FD4D2A153D447100D0A418 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = C8FD4D2D153D447100D0A418 /* Build configuration list for PBXProject "Pubnub" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = C8FD4D28153D447100D0A418;
+			productRefGroup = C8FD4D34153D447200D0A418 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C8FD4D32153D447200D0A418 /* Pubnub */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C8FD4D31153D447200D0A418 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C8FD4D42153D447200D0A418 /* InfoPlist.strings in Resources */,
+				C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C8FD4D2F153D447200D0A418 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C8FD4D44153D447200D0A418 /* main.m in Sources */,
+				C8FD4D48153D447200D0A418 /* AppDelegate.m in Sources */,
+				C8FD4D4E153D447200D0A418 /* iPhoneTest.m in Sources */,
+				C8FD4D79153D469D00D0A418 /* Base64.m in Sources */,
+				C8FD4D7A153D469D00D0A418 /* CEPubnub.m in Sources */,
+				C8FD4D7B153D469D00D0A418 /* Cipher.m in Sources */,
+				C8FD4D7C153D469D00D0A418 /* Common.m in Sources */,
+				C8FD4D7E153D469D00D0A418 /* JSON.m in Sources */,
+				C8FD4D7F153D469D00D0A418 /* JSONKit.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		C8FD4D40153D447200D0A418 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C8FD4D41153D447200D0A418 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C8FD4D4F153D447200D0A418 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		C8FD4D50153D447200D0A418 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C8FD4D52153D447200D0A418 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Pubnub/Pubnub-Prefix.pch";
+				INFOPLIST_FILE = "Pubnub/Pubnub-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		C8FD4D53153D447200D0A418 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Pubnub/Pubnub-Prefix.pch";
+				INFOPLIST_FILE = "Pubnub/Pubnub-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C8FD4D2D153D447100D0A418 /* Build configuration list for PBXProject "Pubnub" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C8FD4D4F153D447200D0A418 /* Debug */,
+				C8FD4D50153D447200D0A418 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C8FD4D51153D447200D0A418 /* Build configuration list for PBXNativeTarget "Pubnub" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C8FD4D52153D447200D0A418 /* Debug */,
+				C8FD4D53153D447200D0A418 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C8FD4D2A153D447100D0A418 /* Project object */;
+}
