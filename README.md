@@ -72,10 +72,10 @@ Create a new PubNub Entity for Publishing/Subscribing. This entity associates it
 var pubnub = PUBNUB.init({
     publish_key   : "CUSTOMER_PUBLISH_KEY",
     subscribe_key : "CUSTOMER_SUBSCRIBE_KEY",
-    secret_key    : "CUSTOMER_SECRET_KEY", # Required only when client publishes.
+    secret_key    : "CUSTOMER_SECRET_KEY", // Required only when client publishes.
     ssl           : true,
     origin        : "pubsub.pubnub.com",
-    cipher_key    : "AES-Crypto-Cipher-Key" # Optional. Use to enable encryption.
+    cipher_key    : "AES-Crypto-Cipher-Key" // Optional. Use to enable encryption.
 })
 ```
 
@@ -183,7 +183,7 @@ PUBNUB.subscribe({
     disconnect : function() { log("Disconnected") },
     reconnect  : function() { log("Reconnected") },
     error      : function() { log("Network Error") },
-    restore    : true # JavaScript only
+    restore    : true // JavaScript only
 })
 ```
 
