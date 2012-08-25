@@ -6,8 +6,8 @@ require_once('Pubnub.php');
 ## USAGE:
 ## ---------------------------------------------------------------------------
 #
-# php ./unit-test.php
-# php ./unit-test.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
+# php ./Pubnub-Unit-Test.php
+# php ./Pubnub-Unit-Test.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
 #
 	
 $publish_key   = isset($argv[1]) ? $argv[1] : 'demo';

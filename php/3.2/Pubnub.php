@@ -1,5 +1,4 @@
 <?php
-
 require_once('AES.class.php');
 /**
  * PubNub 3.2 Real-time Push Cloud API
