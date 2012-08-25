@@ -46,6 +46,14 @@ test( count($history), 1, 'History With First Published Message' );
 test( $history, '["Pubnub Publish Test"]', 'History Message Text == "Pubnub Publish Test"' );
 
 ## ---------------------------------------------------------------------------
+## HERE_NOW TEST
+## ---------------------------------------------------------------------------
+$here_now = $pubnub->here_now(array(
+    'channel' => $channel
+));
+test( count($here_now), 2, 'Here Now With Presence');
+
+## ---------------------------------------------------------------------------
 ## TIMESTAMP TEST
 ## ---------------------------------------------------------------------------
 $timestamp = $pubnub->time();
