@@ -1,5 +1,4 @@
 <?php
-
 require_once('AES.class.php');
 /**
  * PubNub 3.2 Real-time Push Cloud API
@@ -96,6 +95,24 @@ class Pubnub {
         ));
     }
 
+	function here_now($args) {
+		if (!($args['channel'])) {
+            echo('Missing Channel');
+            return false;
+        }
+
+        ## Capture User Input
+        $channel = $args['channel'];
+		
+		return $this->_request(array(
+			'v2',
+            'presence',
+            'sub_key',
+            $this->SUBSCRIBE_KEY,
+            'channel',
+            $channel
+        ));
+	}
     /**
      * Subscribe
      *

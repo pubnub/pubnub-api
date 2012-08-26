@@ -6,8 +6,8 @@ require_once('Pubnub.php');
 ## USAGE:
 ## ---------------------------------------------------------------------------
 #
-# php ./unit-test.php
-# php ./unit-test.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
+# php ./Pubnub-Unit-Test.php
+# php ./Pubnub-Unit-Test.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
 #
 	
 $publish_key   = isset($argv[1]) ? $argv[1] : 'demo';
@@ -44,6 +44,14 @@ $history = $pubnub->history(array(
 ));
 test( count($history), 1, 'History With First Published Message' );
 test( $history, '["Pubnub Publish Test"]', 'History Message Text == "Pubnub Publish Test"' );
+
+## ---------------------------------------------------------------------------
+## HERE_NOW TEST
+## ---------------------------------------------------------------------------
+$here_now = $pubnub->here_now(array(
+    'channel' => $channel
+));
+test( count($here_now), 2, 'Here Now With Presence');
 
 ## ---------------------------------------------------------------------------
 ## TIMESTAMP TEST
