@@ -15,9 +15,10 @@ class PubnubCrypto
   #*
   def initialize(cipher_key)
     @@alg = "AES-128-CBC"
+    #@@alg = "AES-256-CBC"
     digest = Digest::MD5.new
     digest.update(cipher_key)
-    @@key = digest.digest
+    @@key = digest.digest # this needs to pad for  256 AES
     @@iv = '0123456789012345'
     raise 'Key Error' if(@@key.nil? or @@key.size != 16)
   end
