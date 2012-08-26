@@ -524,6 +524,7 @@ public class Pubnub {
         _headers.put("V", "3.1");
         _headers.put("User-Agent", "J2ME");
         _headers.put("Accept-Encoding", "gzip");
+        _headers.put("Connection", "close");  //For Close Connection immediate 
 
 
         HttpCallback callback = new HttpCallback(url.toString(), _headers, request_for) {
