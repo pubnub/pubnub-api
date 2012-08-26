@@ -37,6 +37,15 @@ class Pubnub {
         $this->PUBLISH_KEY   = $publish_key;
         $this->SUBSCRIBE_KEY = $subscribe_key;
         $this->SECRET_KEY    = $secret_key;
+		$len = strlen($cipher_key);
+		if($len > 0) {
+			if ($len > 32) {
+				$cipher_key = substr($cipher_key, 0, 32);
+			} else {
+				$cipher_key = str_pad($cipher_key, 32, "-", STR_PAD_RIGHT);
+			}
+		}
+			   
 		$this->CIPHER_KEY	 = $cipher_key;
         $this->SSL           = $ssl;
 
@@ -66,7 +75,8 @@ class Pubnub {
 		$message_org = $args['message'];
 		if($this->CIPHER_KEY != false) {
 			$aes = new AES($this->CIPHER_KEY);
-			$message = json_encode($aes->encrypt($message_org));
+			$encrypted = $aes->encrypt($message_org);
+			$message = json_encode(base64_encode($encrypted));
 		}else{
 			$message = json_encode($message_org);
 		}
@@ -164,7 +174,9 @@ class Pubnub {
 				$message_org = $message;
 				if($this->CIPHER_KEY != false) {
 					$aes = new AES($this->CIPHER_KEY);
-					$message = json_encode($aes->decrypt($message_org));
+					$encrypted = base64_decode($message_org);
+					$decrypted = $aes->decrypt($encrypted);
+					$message = json_encode($decrypted);
 				}else{
 					$message = json_encode($message_org);
 				}
@@ -231,7 +243,10 @@ class Pubnub {
 				$message_org = $message;
 				if($this->CIPHER_KEY != false) {
 					$aes = new AES($this->CIPHER_KEY);
-					$message = json_encode($aes->decrypt($message_org));
+					$encrypted = base64_decode($message_org);
+					$decrypted = $aes->decrypt($encrypted);
+					$message = json_encode($decrypted);
+					$message = json_encode($message_org);
 				}else{
 					$message = json_encode($message_org);
 				}
@@ -275,8 +290,18 @@ class Pubnub {
 					$limit
 				));;
 		if($this->CIPHER_KEY != false) {
+			echo("AESImpl"); echo("\r\n");
+			$message = array_values($response);
 			$aes = new AES($this->CIPHER_KEY);
-			return json_encode($aes->decrypt($response));
+			$count = count($message);
+			$history = array();
+			for ($i = 0; $i < $count; $i++) {
+				$encrypted = base64_decode($message[$i]);
+				$decrypted = $aes->decrypt($encrypted);
+				echo($decrypted); echo("\r\n");
+				array_push($history, $decrypted);
+			}
+			return json_encode($history);
 		}else{
 			return json_encode($response);
 		}		

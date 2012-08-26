@@ -62,6 +62,7 @@ test( $timestamp, true, 'Timestamp API Test: ' . $timestamp );
 ## ---------------------------------------------------------------------------
 ## Test Presence
 ## ---------------------------------------------------------------------------
+echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
 
 $pubnub->presence(array(
     'channel'  => $channel,
@@ -69,19 +70,21 @@ $pubnub->presence(array(
 		echo('PASS: ');
 		echo($message);
 		echo "\r\n";
-        return true;
+        return false;
     }
 ));
 
 ## ---------------------------------------------------------------------------
 ## Test Subscribe
 ## ---------------------------------------------------------------------------
+echo("\nWaiting for Publish message... Hit CTRL+C to finish.\n");
 
-echo("\n\nHit CTRL+C to finish.\n");
 $pubnub->subscribe(array(
     'channel'  => $channel,
     'callback' => function($message) {
-        test( $message, 1234, 'Subscribe: ' . $message );
+        echo('PASS: ');
+		echo($message);
+		echo "\r\n";
         return true;
     }
 ));
