@@ -172,7 +172,8 @@ class Pubnub {
             ## Run user Callback and Reconnect if user permits.
             foreach ($messages as $message) {
 				$message_org = $message;
-				if($this->CIPHER_KEY != false) {
+				echo(gettype($message_org));
+				if(($this->CIPHER_KEY != false) && (gettype($message_org) == "string")) {
 					$aes = new AES($this->CIPHER_KEY);
 					$encrypted = base64_decode($message_org);
 					$decrypted = $aes->decrypt($encrypted);
