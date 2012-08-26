@@ -168,12 +168,6 @@ class AES {
         /** constructs an AES cipher using a specific key.
         */
         public function __construct($z) {
-			   $len = strlen($z);
-			   if ($len > 32) {
-					$z = substr($z, 0, 32);
-			   } else {
-					$z = str_pad($z, 32, "-=", STR_PAD_RIGHT);
-			   }
 			   $this->Nk = strlen($z)/4;
                $this->Nr = $this->Nk + self::$Nb + 2;
 

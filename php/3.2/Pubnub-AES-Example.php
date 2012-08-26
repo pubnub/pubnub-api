@@ -57,6 +57,16 @@ echo($history);
 echo "\r\n";
 
 ## ---------------------------------------------------------------------------
+## Here_Now Example
+## ---------------------------------------------------------------------------
+echo "Running here_now\r\n";
+$here_now = $pubnub->here_now(array(
+    'channel' => $channel
+));
+var_dump($here_now);
+echo "\r\n";
+
+## ---------------------------------------------------------------------------
 ## Timestamp Example
 ## ---------------------------------------------------------------------------
 echo "Running timestamp\r\n";
@@ -65,18 +75,23 @@ echo('Timestamp: ' . $timestamp);
 echo "\r\n";
 
 ## ---------------------------------------------------------------------------
-## Subscribe Example
+## Presence Example
 ## ---------------------------------------------------------------------------
-echo("\nHit CTRL+C to finish.\n");
+echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
 
 $pubnub->presence(array(
     'channel'  => $channel,
     'callback' => function($message) {
         echo($message);
 		echo "\r\n";
-        return true;
+        return false;
     }
 ));
+
+## ---------------------------------------------------------------------------
+## Subscribe Example
+## ---------------------------------------------------------------------------
+echo("\nWaiting for Publish message... Hit CTRL+C to finish.\n");
 
 $pubnub->subscribe(array(
     'channel'  => $channel,
