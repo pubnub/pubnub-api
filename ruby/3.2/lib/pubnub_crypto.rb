@@ -20,7 +20,14 @@ class PubnubCrypto
     #digest.update(cipher_key)
     #@@key = digest.digest # this needs to pad for  256 AES
 
-    @@key = Digest::SHA1.hexdigest(cipher_key).slice(0,32)
+    sha256_key = Digest::SHA256.hexdigest(cipher_key)
+
+    @@key = sha256_key.slice(0,32)
+
+    puts("\nraw sha cipher_key is: #{cipher_key}")
+    puts("raw sha cipher_key is: #{sha256_key}")
+    puts("padded cipher_key is: #{@@key}\n")
+
     @@iv = '0123456789012345'
     #raise 'Key Error' if(@@key.nil? or @@key.size != 16)
   end
