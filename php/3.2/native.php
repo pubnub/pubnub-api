@@ -34,23 +34,33 @@ function decrypt($cipher_text, $cipher_key, $iv) {
 }
 
 
-function encrypt($cipher_text, $cipher_key, $iv)
+function encrypt($plain_text, $cipher_key, $iv)
 {
 
     $sha_cipher_key = hash("sha256", $cipher_key);
     $padded_cipher_key = substr($sha_cipher_key, 0, 32);
+    $padded_plain_text = pkcs5_pad($plain_text, 16);
 
     printf("sha256 key is %s\n", $sha_cipher_key);
     printf("padded cipher key is %s\n\n", $padded_cipher_key);
+    printf("padded plain_text is %s\n\n", $padded_plain_text);
 
+
+    # This is the way to do AES-256 using mcrypt PHP - its not AES-128 or anything other than that!
     $td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
     mcrypt_generic_init($td, $padded_cipher_key, $iv);
-    $encrypted = mcrypt_generic($td, $cipher_text);
+    $encrypted = mcrypt_generic($td, $padded_plain_text);
     $encode = base64_encode($encrypted);
     mcrypt_generic_deinit($td);
     mcrypt_module_close($td);
     printf("\nencoded: %s", $encode);
     return $encode;
+}
+
+function pkcs5_pad ($text, $blocksize)
+{
+    $pad = $blocksize - (strlen($text) % $blocksize);
+    return $text . str_repeat(chr($pad), $pad);
 }
 
 function unpadPKCS7($data, $blockSize)
