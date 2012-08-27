@@ -13,6 +13,17 @@ describe PubnubCrypto do
     @cipher_object = %^yLUdgdHs2Fsd5MUYXO7cJH2ciXPC8S3zVrmQHV00sxU=^
   end
 
+  describe "#when there is a message encrypted on PHP AES256" do
+    it "should decrypt it" do
+      cipher_key = "enigma"
+      cipher_text = %^RVOElAJIHskATgCCP+KlaVGAVc7lkF1mzq06yRO+8+Y=^
+      result = ["hellohellohello!"]
+
+      crypto = PubnubCrypto.new(cipher_key)
+      crypto.decryptArray([cipher_text]).should == result
+    end
+  end
+
   describe "#encrypt_array" do
     it "should not blow up on an empty array" do
       PubnubCrypto.new(@cipher_key).encryptArray([]).should == [].to_json
