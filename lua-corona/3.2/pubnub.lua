@@ -134,6 +134,9 @@ function pubnub.new(init)
                     self:_encode(channel),
                     "0",
                     timetoken
+                },
+                query = {
+                   "uuid=" .. self.uuid
                 }
             })
         end
@@ -151,6 +154,31 @@ function pubnub.new(init)
         subscriptions[channel].connected = nil
         subscriptions[channel].first     = nil
     end
+
+    function self:presence(args)
+	args.channel = args.channel .. '-pnpres'
+	self:subscribe(args)
+    end
+
+    function self:here_now(args)
+        if not (args.callback and args.channel) then
+            return print("Missing Here Now Callback and/or Channel")
+        end
+
+        local channel  = args.channel
+        local callback = args.callback
+
+        self:_request({
+            callback = callback,
+            request  = {
+                'v2',
+                'presence',
+                'sub-key', self.subscribe_key,
+                'channel', self:_encode(channel)
+            }
+        })
+
+    end    
 
     function self:history(args)
         if not (args.callback and args.channel) then
@@ -196,8 +224,11 @@ function pubnub.new(init)
         table.insert( args.request, 1, self.origin )
 
         local url = table.concat( args.request, "/" )
+	if args.query and # args.query then
+	    url = url .. "?" .. table.concat(args.query,"&")
+        end
         local params = {}
-        params["V"] = "3.1"
+        params["V"] = "3.2"
         params["User-Agent"] = "Corona"
 
         network.request( url, "GET", function(event)
@@ -259,6 +290,9 @@ function pubnub.new(init)
         Hex2Dec, BMOr, BMAnd, Dec2Hex = BinDecHex.Hex2Dec, BinDecHex.BMOr, BinDecHex.BMAnd, BinDecHex.Dec2Hex
      end
 
+    self.uuid = self:UUID()
+    
     -- RETURN NEW PUBNUB OBJECT
     return self
+
 end
