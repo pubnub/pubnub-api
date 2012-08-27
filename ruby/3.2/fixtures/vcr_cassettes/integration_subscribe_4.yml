@@ -1,0 +1,40 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://pubsub.pubnub.com/subscribe/demo/hello_world/0/13456937030869528
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 23 Aug 2012 04:19:49 GMT
+      Content-Type:
+      - text/javascript; charset="UTF-8"
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Access-Control-Allow-Methods:
+      - GET
+      Pn-Ssl:
+      - ssl
+    body:
+      encoding: US-ASCII
+      string: ! '[["2012-08-22 21:18:20 -0700: hi!","aV6LnX7s5s47nSemIvxJKIe5pxU6yvCxBVsfa/Vm5d4="],"13456955503770360"]'
+    http_version: 
+  recorded_at: Thu, 23 Aug 2012 04:19:49 GMT
+recorded_with: VCR 2.2.4

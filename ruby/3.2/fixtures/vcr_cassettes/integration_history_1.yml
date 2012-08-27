@@ -1,0 +1,40 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://pubsub.pubnub.com/history/demo/no_history/0/10
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 22 Aug 2012 00:00:50 GMT
+      Content-Type:
+      - text/javascript; charset="UTF-8"
+      Content-Length:
+      - '2'
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Access-Control-Allow-Methods:
+      - GET
+      Server:
+      - gevent/0.13 Python/2.7
+    body:
+      encoding: US-ASCII
+      string: ! '[]'
+    http_version: 
+  recorded_at: Wed, 22 Aug 2012 00:00:50 GMT
+recorded_with: VCR 2.2.4
