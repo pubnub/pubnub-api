@@ -14,13 +14,15 @@ class PubnubCrypto
   #* @param cipher key (plain text password)
   #*
   def initialize(cipher_key)
-    @@alg = "AES-128-CBC"
-    #@@alg = "AES-256-CBC"
-    digest = Digest::MD5.new
-    digest.update(cipher_key)
-    @@key = digest.digest # this needs to pad for  256 AES
+    #@@alg = "AES-128-CBC"
+    @@alg = "AES-256-CBC"  # Algorithim
+    #digest = Digest::MD5.new
+    #digest.update(cipher_key)
+    #@@key = digest.digest # this needs to pad for  256 AES
+
+    @@key = Digest::SHA1.hexdigest(cipher_key).slice(0,32)
     @@iv = '0123456789012345'
-    raise 'Key Error' if(@@key.nil? or @@key.size != 16)
+    #raise 'Key Error' if(@@key.nil? or @@key.size != 16)
   end
 
   #**
