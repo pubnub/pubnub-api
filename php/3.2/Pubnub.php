@@ -40,6 +40,10 @@ class Pubnub
         $origin = false
     )
     {
+
+
+        $this->SESSION_UUID = $this->uuid();
+
         $this->PUBLISH_KEY = $publish_key;
         $this->SUBSCRIBE_KEY = $subscribe_key;
         $this->SECRET_KEY = $secret_key;
@@ -60,8 +64,7 @@ class Pubnub
     }
 
 
-
-     /**
+    /**
      * Publish
      *
      * Send a message to a channel.
@@ -178,53 +181,52 @@ class Pubnub
             return false;
         }
 
-        ## Begin Recursive Subscribe
-        try {
-            ## Wait for Message
-            $response = $this->_request(array(
-                'subscribe',
-                $this->SUBSCRIBE_KEY,
-                $channel,
-                '0',
-                $timetoken
-            ));
+        while (1) {
 
-            $messages = $response[0][0];
-            $args['timetoken'] = $response[1];
+            try {
+                ## Wait for Message
+                $response = $this->_request(array(
+                    'subscribe',
+                    $this->SUBSCRIBE_KEY,
+                    $channel,
+                    '0',
+                    $timetoken
+                ));
 
-            ## If it was a timeout
-            if (!count($messages)) {
-                return $this->subscribe($args);
-            }
+                $messages = $response[0];
+                $timetoken = $response[1];
 
-            $receivedMessages = $messages;
-            if ($this->CIPHER_KEY) {
-                $receivedMessages = array();
-                foreach ($messages as $message) {
-                    array_push($receivedMessages, $this->receiveMessage($message));
+                ## If it was a timeout
+                if (!count($messages)) {
+                    continue;
                 }
+
+                $receivedMessages = $messages;
+                if ($this->CIPHER_KEY) {
+                    $receivedMessages = array();
+                    foreach ($messages as $message) {
+                        array_push($receivedMessages, $this->receiveMessage($message));
+                    }
+                }
+
+                $returnArray = array($receivedMessages[0], $timetoken);
+
+                if (!$callback($returnArray))
+                    trigger_error("Callback error.", E_USER_ERROR);
+
+            } catch (Exception $error) {
+                $this->handleError($error, $args);
             }
-
-            $returnArray = array($receivedMessages, $timetoken);
-
-            if (!$callback($returnArray))
-                return;
-
-            ## Keep Listening.
-            return $this->subscribe($args);
-
-        } catch (Exception $error) {
-            return $this->handleError($error, $args);
         }
     }
+
 
     public function handleError($error, $args)
     {
         $errorMsg = 'Error on line ' . $error->getLine() . ' in ' . $error->getFile() . $error->getMessage();
-        printf("%s", $errorMsg);
+        trigger_error($errorMsg, E_COMPILE_WARNING);
 
         sleep(1);
-        return $this->subscribe($args);
     }
 
     /**
@@ -239,58 +241,8 @@ class Pubnub
     function presence($args)
     {
         ## Capture User Input
-        $channel = $args['channel'];
-        $callback = $args['callback'];
-        $timetoken = isset($args['timetoken']) ? $args['timetoken'] : '0';
-
-        ## Fail if missing channel
-        if (!$channel) {
-            echo("Missing Channel.\n");
-            return false;
-        }
-
-        ## Fail if missing callback
-        if (!$callback) {
-            echo("Missing Callback.\n");
-            return false;
-        }
-
-        ## Begin Recusive Subscribe
-        try {
-            ## Wait for Message
-            $response = $this->_request(array(
-                'subscribe',
-                $this->SUBSCRIBE_KEY,
-                $channel . '-pnpres',
-                '0',
-                $timetoken
-            ));
-
-            $messages = $response[0];
-            $args['timetoken'] = $response[1];
-
-            ## If it was a timeout
-            if (!count($messages)) {
-                return $this->presence($args);
-            }
-
-            ## Run user Callback and Reconnect if user permits.
-            foreach ($messages as $message) {
-                $message_org = $message;
-                if ($this->CIPHER_KEY != false) {
-                    $message = json_encode(decrypt($message_org, $this->CIPHER_KEY));
-
-                } else {
-                    $message = json_encode($message_org);
-                }
-                if (!$callback($message)) return;
-            }
-
-            ## Keep Listening.
-            return $this->presence($args);
-        } catch (Exception $error) {
-            return $this->handleError($error, $args);
-        }
+        $args['channel'] = $args['channel'] + "-pnpres";
+        subscribe($args);
     }
 
     /**
@@ -382,10 +334,11 @@ class Pubnub
     private function _request($request)
     {
         $request = array_map('Pubnub::_encode', $request);
+
         array_unshift($request, $this->ORIGIN);
-        if ($this->SESSION_UUID === '') {
-            $this->SESSION_UUID = $this->uuid();
-        }
+
+        echo($this->SESSION_UUID);
+
         if (($request[1] === 'presence') || ($request[1] === 'subscribe')) {
             array_push($request, '?uuid=' . $this->SESSION_UUID);
         }
@@ -406,13 +359,12 @@ class Pubnub
      */
     private static function _encode($part)
     {
-        return implode('', array_map(
-            'Pubnub::_encode_char', str_split($part)
-        ));
+        $pieces = array_map('Pubnub::_encode_char', str_split($part));
+        return implode('', $pieces);
     }
 
     /**
-     * Encode Char
+     * Encode Char                               ddddd
      *
      * @param string $char val.
      * @return string encoded char.
@@ -421,8 +373,10 @@ class Pubnub
     {
         if (strpos(' ~`!@#$%^&*()+=[]\\{}|;\':",./<>?', $char) === false)
             return $char;
-        return rawurlencode($char);
-    }
+        else
+            return rawurlencode($char);
+        }
+
 }
 
 
