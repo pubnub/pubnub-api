@@ -111,18 +111,7 @@ class Pubnub
         ));
     }
 
-    public function receiveMessage($message_org)
-
-    {
-        if ($this->CIPHER_KEY != false) {
-            $message = json_decode(decrypt($message_org, $this->CIPHER_KEY));
-        } else {
-            $message = json_decode($message_org);
-        }
-        return $message;
-    }
-
-    public function sendMessage($message_org)
+      public function sendMessage($message_org)
 
     {
         if ($this->CIPHER_KEY != false) {
@@ -205,13 +194,7 @@ class Pubnub
                     continue;
                 }
 
-                $receivedMessages = $messages;
-                if ($this->CIPHER_KEY) {
-                    $receivedMessages = array();
-                    foreach ($messages as $message) {
-                        array_push($receivedMessages, $this->receiveMessage($message));
-                    }
-                }
+                $receivedMessages = $this->decodeAndDecrypt($messages);
 
                 $returnArray = array($receivedMessages[0], $timetoken);
 
@@ -224,6 +207,17 @@ class Pubnub
         }
     }
 
+    public function decodeAndDecrypt($messages)
+    {
+        $receivedMessages = array();
+
+        foreach ($messages as $message) {
+            if ($this->CIPHER_KEY)
+                $message = decrypt($message, $this->CIPHER_KEY);
+            array_push($receivedMessages, urldecode($message));
+        }
+        return $receivedMessages;
+    }
 
     public function handleError($error, $args)
     {
@@ -278,21 +272,11 @@ class Pubnub
             $limit
         ));
         ;
-        if ($this->CIPHER_KEY != false) {
 
-            $message = array_values($response);
-            $aes = new AES($this->CIPHER_KEY);
-            $count = count($message);
-            $history = array();
-            for ($i = 0; $i < $count; $i++) {
-                $encrypted = base64_decode($message[$i]);
-                $decrypted = decrypt($encrypted, $this->CIPHER_KEY);
-                array_push($history, $decrypted);
-            }
-            return json_encode($history);
-        } else {
-            return json_encode($response);
-        }
+        $receivedMessages = $this->decodeAndDecrypt($response);
+
+        return $receivedMessages;
+
     }
 
     /**
@@ -377,7 +361,7 @@ class Pubnub
             return $char;
         else
             return rawurlencode($char);
-        }
+    }
 }
 
 ?>

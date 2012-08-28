@@ -41,17 +41,17 @@ $publish_success = $pubnub->publish(array(
 echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
 
-//## ---------------------------------------------------------------------------
-//## History Example
-//## ---------------------------------------------------------------------------
-//echo "Running history\r\n";
-//$history = $pubnub->history(array(
-//    'channel' => $channel,
-//    'limit'   => 2
-//));
-//echo($history);
-//echo "\r\n";
-//
+## ---------------------------------------------------------------------------
+## History Example
+## ---------------------------------------------------------------------------
+echo "Running history\r\n";
+$history = $pubnub->history(array(
+    'channel' => $channel,
+    'limit'   => 2
+));
+echo($history);
+echo "\r\n";
+
 //## ---------------------------------------------------------------------------
 //## Here_Now Example
 //## ---------------------------------------------------------------------------
