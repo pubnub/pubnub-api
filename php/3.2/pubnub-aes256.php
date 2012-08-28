@@ -9,12 +9,15 @@ printf("\ncipher key is %s\n", $cipher_key);
 #$decrypt = "RVOElAJIHskATgCCP+KlaQ==";
 
 #$key = "67a4f45f0d1d9bc606486fc42dc49416";
-$iv = "0123456789012345";
+#$iv = "0123456789012345";
 
-$cipher_text = encrypt("hellohellohello!", $cipher_key, $iv);
-$p_text = decrypt($cipher_text, $cipher_key, $iv);
+## Manual Run
+#$cipher_text = encrypt("hellohellohello!", $cipher_key, $iv);
+#$p_text = decrypt($cipher_text, $cipher_key, $iv);
+##
 
-function decrypt($cipher_text, $cipher_key, $iv) {
+function decrypt($cipher_text, $cipher_key) {
+    $iv = "0123456789012345";
 
     $decoded = base64_decode($cipher_text);
 
@@ -34,8 +37,8 @@ function decrypt($cipher_text, $cipher_key, $iv) {
 }
 
 
-function encrypt($plain_text, $cipher_key, $iv)
-{
+function encrypt($plain_text, $cipher_key) {
+    $iv = "0123456789012345";
 
     $sha_cipher_key = hash("sha256", $cipher_key);
     $padded_cipher_key = substr($sha_cipher_key, 0, 32);
@@ -44,7 +47,6 @@ function encrypt($plain_text, $cipher_key, $iv)
     printf("sha256 key is %s\n", $sha_cipher_key);
     printf("padded cipher key is %s\n\n", $padded_cipher_key);
     printf("padded plain_text is %s\n\n", $padded_plain_text);
-
 
     # This is the way to do AES-256 using mcrypt PHP - its not AES-128 or anything other than that!
     $td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
@@ -78,6 +80,14 @@ function unpadPKCS7($data, $blockSize)
         }
     }
     return $data;
+}
+
+function isBlank($word)
+{
+    if (($word == null) || ($word == false))
+        return true;
+    else
+        return false;
 }
 
 ?>

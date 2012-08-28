@@ -2,14 +2,9 @@
 
 require_once('Pubnub.php');
 
-## ---------------------------------------------------------------------------
-## USAGE:
-## ---------------------------------------------------------------------------
-#
+##
 # php ./Pubnub-Example.php
 # php ./Pubnub-Example.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
-#
-
 
 ## Capture Publish and Subscribe Keys from Command Line
 $publish_key   = 'demo';
@@ -32,17 +27,18 @@ $channel = "hello_world";
 ## Publish Example
 ## ---------------------------------------------------------------------------
 echo "Running publish\r\n";
-$pubish_success = $pubnub->publish(array(
+$publish_success = $pubnub->publish(array(
     'channel' => $channel,
     'message' => 'Pubnub Messaging API 1'
 ));
-echo($pubish_success[0] . $pubish_success[1]);
+echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
-$pubish_success = $pubnub->publish(array(
+
+$publish_success = $pubnub->publish(array(
     'channel' => $channel,
     'message' => 'Pubnub Messaging API 2'
 ));
-echo($pubish_success[0] . $pubish_success[1]);
+echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
 
 //## ---------------------------------------------------------------------------

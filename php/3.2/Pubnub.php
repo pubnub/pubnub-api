@@ -1,9 +1,10 @@
 <?php
-require_once('AES.class.php');
+require_once('pubnub-aes256.php');
 /**
  * PubNub 3.2 Real-time Push Cloud API
  *
  * @author Leonardo Redmond
+ * @author Geremy Cohen
  * @author Stephen Blum
  * @package Pubnub
  */
@@ -28,6 +29,8 @@ class Pubnub
      * @param string $origin optional setting for cloud origin.
      * @param boolean $ssl required for 2048 bit encrypted messages.
      */
+
+
     function Pubnub(
         $publish_key = 'demo',
         $subscribe_key = 'demo',
@@ -41,25 +44,24 @@ class Pubnub
         $this->SUBSCRIBE_KEY = $subscribe_key;
         $this->SECRET_KEY = $secret_key;
 
+        if (!isBlank($cipher_key)) {
+            $this->CIPHER_KEY = $cipher_key;
+        }
 
-        $sha_cipher_key = hash("sha256", $cipher_key);
-        $padded_cipher_key = substr($sha_cipher_key, 0, 32);
-
-        printf("cipher key is %s\n", $cipher_key);
-        printf("sha256 key is %s\n", $sha_cipher_key);
-        printf("padded cipher key is %s\n", $padded_cipher_key);
-
-        $this->CIPHER_KEY = $padded_cipher_key;
         $this->SSL = $ssl;
 
-        if ($origin) $this->ORIGIN = $origin;
+        if ($origin)
+            $this->ORIGIN = $origin;
 
-        if ($ssl) $this->ORIGIN = 'https://' . $this->ORIGIN;
+        if ($ssl)
+            $this->ORIGIN = 'https://' . $this->ORIGIN;
         else
             $this->ORIGIN = 'http://' . $this->ORIGIN;
     }
 
-    /**
+
+
+     /**
      * Publish
      *
      * Send a message to a channel.
@@ -67,6 +69,7 @@ class Pubnub
      * @param array $args with channel and message.
      * @return array success information.
      */
+
     function publish($args)
     {
         ## Fail if bad input.
@@ -78,13 +81,8 @@ class Pubnub
         ## Capture User Input
         $channel = $args['channel'];
         $message_org = $args['message'];
-        if ($this->CIPHER_KEY != false) {
-            $aes = new AES($this->CIPHER_KEY);
-            $encrypted = $aes->encrypt($message_org);
-            $message = json_encode(base64_encode($encrypted));
-        } else {
-            $message = json_encode($message_org);
-        }
+
+        $message = $this->sendMessage($message_org);
 
         ## Generate String to Sign
         $string_to_sign = implode('/', array(
@@ -108,6 +106,28 @@ class Pubnub
             '0',
             $message
         ));
+    }
+
+    public function receiveMessage($message_org)
+
+    {
+        if ($this->CIPHER_KEY != false) {
+            $message = json_decode(decrypt($message_org, $this->CIPHER_KEY));
+        } else {
+            $message = json_decode($message_org);
+        }
+        return $message;
+    }
+
+    public function sendMessage($message_org)
+
+    {
+        if ($this->CIPHER_KEY != false) {
+            $message = json_encode(encrypt($message_org, $this->CIPHER_KEY));
+        } else {
+            $message = json_encode($message_org);
+        }
+        return $message;
     }
 
     function here_now($args)
@@ -158,7 +178,7 @@ class Pubnub
             return false;
         }
 
-        ## Begin Recusive Subscribe
+        ## Begin Recursive Subscribe
         try {
             ## Wait for Message
             $response = $this->_request(array(
@@ -169,7 +189,7 @@ class Pubnub
                 $timetoken
             ));
 
-            $messages = $response[0];
+            $messages = $response[0][0];
             $args['timetoken'] = $response[1];
 
             ## If it was a timeout
@@ -177,26 +197,34 @@ class Pubnub
                 return $this->subscribe($args);
             }
 
-            ## Run user Callback and Reconnect if user permits.
-            foreach ($messages as $message) {
-                $message_org = $message;
-                if (($this->CIPHER_KEY != false) && (gettype($message_org) == "string")) {
-                    $aes = new AES($this->CIPHER_KEY);
-                    $encrypted = base64_decode($message_org);
-                    $decrypted = $aes->decrypt($encrypted);
-                    $message = json_encode($decrypted);
-                } else {
-                    $message = json_encode($message_org);
+            $receivedMessages = $messages;
+            if ($this->CIPHER_KEY) {
+                $receivedMessages = array();
+                foreach ($messages as $message) {
+                    array_push($receivedMessages, $this->receiveMessage($message));
                 }
-                if (!$callback($message)) return;
             }
+
+            $returnArray = array($receivedMessages, $timetoken);
+
+            if (!$callback($returnArray))
+                return;
 
             ## Keep Listening.
             return $this->subscribe($args);
+
         } catch (Exception $error) {
-            sleep(1);
-            return $this->subscribe($args);
+            return $this->handleError($error, $args);
         }
+    }
+
+    public function handleError($error, $args)
+    {
+        $errorMsg = 'Error on line ' . $error->getLine() . ' in ' . $error->getFile() . $error->getMessage();
+        printf("%s", $errorMsg);
+
+        sleep(1);
+        return $this->subscribe($args);
     }
 
     /**
@@ -250,11 +278,8 @@ class Pubnub
             foreach ($messages as $message) {
                 $message_org = $message;
                 if ($this->CIPHER_KEY != false) {
-                    $aes = new AES($this->CIPHER_KEY);
-                    $encrypted = base64_decode($message_org);
-                    $decrypted = $aes->decrypt($encrypted);
-                    $message = json_encode($decrypted);
-                    $message = json_encode($message_org);
+                    $message = json_encode(decrypt($message_org, $this->CIPHER_KEY));
+
                 } else {
                     $message = json_encode($message_org);
                 }
@@ -264,8 +289,7 @@ class Pubnub
             ## Keep Listening.
             return $this->presence($args);
         } catch (Exception $error) {
-            sleep(1);
-            return $this->presence($args);
+            return $this->handleError($error, $args);
         }
     }
 
@@ -299,17 +323,14 @@ class Pubnub
         ));
         ;
         if ($this->CIPHER_KEY != false) {
-            echo("AESImpl");
-            echo("\r\n");
+
             $message = array_values($response);
             $aes = new AES($this->CIPHER_KEY);
             $count = count($message);
             $history = array();
             for ($i = 0; $i < $count; $i++) {
                 $encrypted = base64_decode($message[$i]);
-                $decrypted = $aes->decrypt($encrypted);
-                echo($decrypted);
-                echo("\r\n");
+                $decrypted = decrypt($encrypted, $this->CIPHER_KEY);
                 array_push($history, $decrypted);
             }
             return json_encode($history);
