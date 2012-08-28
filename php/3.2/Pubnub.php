@@ -193,6 +193,10 @@ class Pubnub
                     $timetoken
                 ));
 
+                if ($response == null) {
+                    continue;
+                }
+
                 $messages = $response[0];
                 $timetoken = $response[1];
 
@@ -337,14 +341,12 @@ class Pubnub
 
         array_unshift($request, $this->ORIGIN);
 
-        echo($this->SESSION_UUID);
-
         if (($request[1] === 'presence') || ($request[1] === 'subscribe')) {
             array_push($request, '?uuid=' . $this->SESSION_UUID);
         }
 
         $ctx = stream_context_create(array(
-            'http' => array('timeout' => 200)
+            'http' => array('timeout' => 300)
         ));
         return json_decode(@file_get_contents(
             implode('/', $request), 0, $ctx
@@ -364,7 +366,7 @@ class Pubnub
     }
 
     /**
-     * Encode Char                               ddddd
+     * Encode Char
      *
      * @param string $char val.
      * @return string encoded char.
@@ -376,8 +378,6 @@ class Pubnub
         else
             return rawurlencode($char);
         }
-
 }
-
 
 ?>
