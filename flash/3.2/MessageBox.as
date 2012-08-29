@@ -23,7 +23,8 @@ var config:Object = {
     publish_key:"demo",
     sub_key:"demo",
     secret_key:"",
-    cipher_key:""
+    //cipher_key:""
+    cipher_key:"enigma"
 }    
 pubnub.init(config);
 
@@ -32,7 +33,7 @@ pubnub.init(config);
 //                var msgArr:Array = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 //                var msgObj:Object = {"Name":"Jhon","Age":"25"};
 //
-//                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:"Hello AS3"} ); //string message
+//                PubNub.PubNub.publish( { callback:onPresenceHandler, channel:channelName, message:"Hello AS3"} ); //string message
 //                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:msgArr} ); // array
 //                PubNub.PubNub.publish( { callback:onPublishHandler, channel:channelName, message:msgObj} ); //object
 //            }
@@ -49,6 +50,12 @@ pubnub.init(config);
 
                 ExternalInterface.call( "console.log", ("init()") );
                 ExternalInterface.call( "console.log", ("my uuid is " + pubnub.getSessionUUID()) );
+
+                PubNub.PubNub.publish({
+                    callback:onPresenceHandler,
+                    channel:channelName,
+                    message:"Hello AS3"}
+                );
 
                 // Subscribe
                 PubNub.PubNub.subscribe({
