@@ -47,9 +47,9 @@ function encrypt($plain_text, $cipher_key) {
     $padded_cipher_key = substr($sha_cipher_key, 0, 32);
     $padded_plain_text = pkcs5_pad($plain_text, 16);
 
-    printf("sha256 key is %s\n", $sha_cipher_key);
-    printf("padded cipher key is %s\n\n", $padded_cipher_key);
-    printf("padded plain_text is %s\n\n", $padded_plain_text);
+//    printf("sha256 key is %s\n", $sha_cipher_key);
+//    printf("padded cipher key is %s\n\n", $padded_cipher_key);
+//    printf("padded plain_text is %s\n\n", $padded_plain_text);
 
     # This is the way to do AES-256 using mcrypt PHP - its not AES-128 or anything other than that!
     $td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
