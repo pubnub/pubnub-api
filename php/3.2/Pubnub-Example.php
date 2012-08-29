@@ -73,19 +73,19 @@ $timestamp = $pubnub->time();
 echo('Timestamp: ' . $timestamp);
 echo "\r\n";
 
-//## ---------------------------------------------------------------------------
-//## Presence Example
-//## ---------------------------------------------------------------------------
-//echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
-//
-//$pubnub->presence(array(
-//    'channel'  => $channel,
-//    'callback' => function($message) {
-//        echo($message);
-//		echo "\r\n";
-//        return false;
-//    }
-//));
+## ---------------------------------------------------------------------------
+## Presence Example
+## ---------------------------------------------------------------------------
+echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
+
+$pubnub->presence(array(
+    'channel'  => $channel,
+    'callback' => function($message) {
+        print_r($message);
+		echo "\r\n";
+        return true;
+    }
+));
 
 ## ---------------------------------------------------------------------------
 ## Subscribe Example
