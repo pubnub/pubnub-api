@@ -1,0 +1,24 @@
+## ------------------------------------------------------
+## PubNub 3.1 Real-time Cloud Push API - Moai
+## ------------------------------------------------------
+##
+## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
+
+## ------------------------------------------------------
+## Moai Push API
+## ------------------------------------------------------
+##
+## Moai Multiplayer Networking and Push Notifications
+## Moai is the mobile platform for pro game developers
+## More information and free SDK at http://getmoai.com
+##
+## Copy "pubnub.lua" and "BinDecHex.lua" into your Project Directory.
+##
+## To try the example run the following from your terminal:
+## >> /<path to your moai host> ./main.lua
+##
+## Usage examples are provided in "main.lua"
