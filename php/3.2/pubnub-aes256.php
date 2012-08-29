@@ -19,6 +19,9 @@ printf("\ncipher key is %s\n", $cipher_key);
 function decrypt($cipher_text, $cipher_key) {
     $iv = "0123456789012345";
 
+    if (gettype($cipher_text) != "string")
+        return "DECRYPTION_ERROR";
+
     $decoded = base64_decode($cipher_text);
 
     $sha_cipher_key = hash("sha256", $cipher_key);
@@ -32,7 +35,7 @@ function decrypt($cipher_text, $cipher_key) {
     mcrypt_module_close($td);
 
     $unpadded = unpadPKCS7($decrypted, 16);
-    printf("\ndecoded: %s", $unpadded);
+    #printf("\ndecoded: %s", $unpadded);
     return $unpadded;
 }
 
@@ -55,7 +58,7 @@ function encrypt($plain_text, $cipher_key) {
     $encode = base64_encode($encrypted);
     mcrypt_generic_deinit($td);
     mcrypt_module_close($td);
-    printf("\nencoded: %s", $encode);
+    #printf("\nencoded: %s", $encode);
     return $encode;
 }
 

@@ -151,7 +151,7 @@ class Pubnub
      * @param array $args with channel and message.
      * @return mixed false on fail, array on success.
      */
-    function subscribe($args)
+    function subscribe($args, $presence = false)
     {
         ## Capture User Input
         $channel = $args['channel'];
@@ -194,7 +194,7 @@ class Pubnub
                     continue;
                 }
 
-                $receivedMessages = $this->decodeAndDecrypt($messages);
+                $receivedMessages = $this->decodeAndDecrypt($messages, $presence);
 
                 $returnArray = array($receivedMessages[0], $timetoken);
 
@@ -207,14 +207,16 @@ class Pubnub
         }
     }
 
-    public function decodeAndDecrypt($messages)
+    public function decodeAndDecrypt($messages, $presence = false)
     {
         $receivedMessages = array();
 
         foreach ($messages as $message) {
-            if ($this->CIPHER_KEY)
-                $message = decrypt($message, $this->CIPHER_KEY);
-            array_push($receivedMessages, urldecode($message));
+            if ($this->CIPHER_KEY && $presence == false) {
+                $decryptedMessage = decrypt($message, $this->CIPHER_KEY);
+                $message = urldecode($decryptedMessage);
+            }
+            array_push($receivedMessages, $message);
         }
         return $receivedMessages;
     }
@@ -239,8 +241,8 @@ class Pubnub
     function presence($args)
     {
         ## Capture User Input
-        $args['channel'] = $args['channel'] + "-pnpres";
-        subscribe($args);
+        $args['channel'] = ($args['channel'] . "-pnpres");
+        $this->subscribe($args, true);
     }
 
     /**
