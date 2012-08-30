@@ -248,10 +248,16 @@ namespace PubNub_Messaging
                     deliveryStatus = true;
                 }
             };
-            pubnub.detailedHistory(channel, starttime, midtime, total_msg/2, true);
+            Console.WriteLine("DetailedHistory with start & end");
+            pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true);
             while (!deliveryStatus) ;
+            Console.WriteLine("DetailedHistory with start & reverse = true");
             deliveryStatus = false;
-            pubnub.detailedHistory(channel, midtime, endtime, total_msg/2, false);
+            pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true);
+            while (!deliveryStatus) ;
+            Console.WriteLine("DetailedHistory with start & reverse = false");
+            deliveryStatus = false;
+            pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false);
             while (!deliveryStatus) ;
             Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
         }
@@ -297,10 +303,16 @@ namespace PubNub_Messaging
                     deliveryStatus = true;
                 }
             };
+            Console.WriteLine("DetailedHistory with start & end");
             pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true);
             while (!deliveryStatus) ;
+            Console.WriteLine("DetailedHistory with start & reverse = true");
             deliveryStatus = false;
-            pubnub.detailedHistory(channel, midtime, endtime, total_msg / 2, false);
+            pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true);
+            while (!deliveryStatus) ;
+            Console.WriteLine("DetailedHistory with start & reverse = false");
+            deliveryStatus = false;
+            pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false);
             while (!deliveryStatus) ;
             Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
         }
