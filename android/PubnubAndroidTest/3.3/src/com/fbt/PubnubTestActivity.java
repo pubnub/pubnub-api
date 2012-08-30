@@ -161,6 +161,49 @@ public class PubnubTestActivity extends Activity {
             }
         });
 
+        Button detailedHistoryBtn = (Button) findViewById(R.id.detailedHistoryBtn);
+        detailedHistoryBtn.setOnClickListener(new OnClickListener() {
+
+            public void onClick(View v) {
+
+                // Android: (History)
+
+                System.out.print("Detailed History: ");
+                HashMap<String, Object> args = new HashMap<String, Object>(2);
+                args.put("channel", channel);
+                args.put("limit", limit);
+
+                // Get History
+                JSONArray response = pubnub.detailedHistory(args);
+
+                // Print Response from PubNub JSONP REST Service
+                try {
+                    if (response != null) {
+                        StringBuffer messages = new StringBuffer("");
+                        for (int i = 0; i < response.length(); i++) {
+                            Object o = response.get(i);
+                            String message = o.toString() + "\n\n";
+                            messages.append(message);
+                        }
+                        final AlertDialog.Builder b = new AlertDialog.Builder(
+                                PubnubTestActivity.this);
+                        b.setIcon(android.R.drawable.ic_dialog_alert);
+                        b.setTitle("History: ");
+                        b.setMessage(messages.toString());
+                        b.setNegativeButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int which) {
+                                    }
+                                });
+                        b.show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         Button uuidBtn = (Button) findViewById(R.id.uuidBtn);
         uuidBtn.setOnClickListener(new OnClickListener() {
 
