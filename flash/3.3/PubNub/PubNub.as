@@ -455,15 +455,6 @@ package PubNub
 		
 		public function detailedHistory(args:Object):void
 		{
-			
-			if (!INSTANCE.initialized)
-			{
-				throw("[PUBNUB] Not initialized yet");
-			}                   
-			INSTANCE._detailedHistory(args);
-		}
-		public function _detailedHistory(args:Object):void
-		{
 			var onResult:Function = args.callback || dispatchEvent;
 			
 			if (!args.channel)
@@ -474,8 +465,8 @@ package PubNub
 			var channel:String   = args.channel;
 			var count:String   = args.count || "100";
 			var uid:String = _uid();
-			var url:String = origin + "/" + "v2" + "/" + "history" + "/" + "sub-key" + "/" + sub_key + "/" + "channel" + "/" + _encode(channel);             
-            var params:String = _encode("count=" + count);
+			var url:String = origin + "/v2/history/sub-key/" + sub_key + "/channel/" + _encode(channel);             
+            var params:String = "count=" + _encode(count);
 			function DetailedHistoryHandler( evt:Event ):void
 			{
 				var node:Object = queue[uid];
@@ -488,15 +479,15 @@ package PubNub
 						if(result) 
 						{
 							var pubnubcrypto:PubnubCrypto = new PubnubCrypto();                                    
-							for (var i:int = 0; i < result.length; i++) 
+							for (var i:int = 0; i < result[0].length; i++) 
 							{
 								if(cipher_key.length > 0)
 								{
-									onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[i+1,pubnubcrypto.decrypt(cipher_key,result[i])],timeout:1 } ));
+									onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[i+1,pubnubcrypto.decrypt(cipher_key,result[0][i])],timeout:1 } ));
 								}
 								else
 								{
-									onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[i+1,JSON.stringify(result[i])],timeout:1 } )); 
+									onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[i+1,JSON.stringify(result[0][i])],timeout:1 } )); 
 								}    
 							}
 						}
@@ -678,7 +669,6 @@ package PubNub
             var loader:URLLoader = node.loader;
             var url:String = args.url;
 
-			if (args.params != null) { args.url = args.url + "?" + args.params; }
 
             if (args.timetoken != null )
             {
@@ -688,6 +678,13 @@ package PubNub
                         url += "?uuid=" + this.session_uuid;
                     }
             }
+
+			if (args.params != null) { 
+				if (args.operation != "subscribe_with_timetoken")
+					args.url = args.url + "?" + args.params;
+				else
+					args.url = args.url + "&" + args.params;
+			}
 
             if (!loader)
             {
