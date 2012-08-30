@@ -254,6 +254,23 @@ public class PubnubTestActivity extends Activity {
         System.out.println(response);
     }
 
+    
+    public void  DetailedHistoryClick(View v)
+    {
+         HashMap<String, Object> args = new HashMap<String, Object>(2);
+         args.put("channel", channel);
+         args.put("count", 5);
+         myMessage = pubnub.detailedHistory(args).toString();
+         r.sendEmptyMessage(0);
+         Log.e("Detailed History", myMessage);
+    }
+    
+    public void UnitTestDetailedHistoryClick(View v)
+    {
+        UnitTestForDetailedHistory unitTest= new UnitTestForDetailedHistory();
+        unitTest.RunUnitTest();
+    }
+    
     public void HereNowClick(View v) {
         HashMap<String, Object> args = new HashMap<String, Object>(1);
         args.put("channel", channel);
