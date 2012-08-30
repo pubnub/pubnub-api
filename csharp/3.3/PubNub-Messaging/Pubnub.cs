@@ -98,6 +98,7 @@ namespace PubNub_Messaging
         public string       PUBLISH_KEY = "";
         private string      SUBSCRIBE_KEY = "";
         public string       SECRET_KEY = "";
+        public string       CIPHER_KEY = "";
         private bool        SSL = false;
         private string      sessionUUID = "";
         private string      parameters = "";
@@ -122,11 +123,12 @@ namespace PubNub_Messaging
          * @param string secret_key.
          * @param bool ssl_on
          */
-        public void init(string publish_key, string subscribe_key, string secret_key, bool ssl_on)
+        public void init(string publish_key, string subscribe_key, string secret_key, string cipher_key, bool ssl_on)
         {
             this.PUBLISH_KEY = publish_key;
             this.SUBSCRIBE_KEY = subscribe_key;
             this.SECRET_KEY = secret_key;
+            this.CIPHER_KEY = cipher_key;
             this.SSL = ssl_on;
             if (this.sessionUUID == "")
                 this.sessionUUID = Guid.NewGuid().ToString();
@@ -147,9 +149,9 @@ namespace PubNub_Messaging
          * @param string secret_key.
          * @param bool ssl_on
          */
-        public Pubnub(string publish_key, string subscribe_key, string secret_key, bool ssl_on)
+        public Pubnub(string publish_key, string subscribe_key, string secret_key, string cipher_key, bool ssl_on)
         {
-            this.init(publish_key, subscribe_key, secret_key, ssl_on);
+            this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
         }
         /**
          * PubNub 2.0 Compatibility
@@ -161,7 +163,7 @@ namespace PubNub_Messaging
          */
         public Pubnub(string publish_key, string subscribe_key)
         {
-            this.init(publish_key, subscribe_key, "", false);
+            this.init(publish_key, subscribe_key, "", "",false);
         }
         /**
          * PubNub 3.0 without SSL
@@ -174,7 +176,7 @@ namespace PubNub_Messaging
          */
         public Pubnub(string publish_key, string subscribe_key, string secret_key)
         {
-            this.init(publish_key, subscribe_key, secret_key, false);
+            this.init(publish_key, subscribe_key, secret_key, "", false);
         }
         /**
          * History
@@ -264,6 +266,12 @@ namespace PubNub_Messaging
                 ;
                 // Sign Message
                 signature = md5(string_to_sign.ToString());
+            }
+            string message_org = message.ToString();
+            if (this.CIPHER_KEY.Length > 0)
+            {
+                PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
+                message = aes.encrypt(message_org);
             }
 
             // Build URL
@@ -458,11 +466,10 @@ namespace PubNub_Messaging
             try
             {
                 // Make request with the following inline Asynchronous callback
-                request.BeginGetResponse(new AsyncCallback((asynchronousResult) =>
-                    {
+                IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback((asynchronousResult) =>
+                {
                         HttpWebRequest aRequest = (HttpWebRequest)asynchronousResult.AsyncState;
                         HttpWebResponse aResponse = (HttpWebResponse)aRequest.EndGetResponse(asynchronousResult);
-
                         using (StreamReader streamReader = new StreamReader(aResponse.GetResponseStream()))
                         {
                             // Deserialize the result
@@ -491,10 +498,35 @@ namespace PubNub_Messaging
                                     Publish = result;
                                     break;
                                 case ResponseType.History:
-                                    History = result;
+                                    if (this.CIPHER_KEY.Length > 0)
+                                    {
+                                        List<object> historyDecrypted = new List<object>();
+                                        PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
+                                        foreach (object message in result)
+                                        {
+                                            historyDecrypted.Add(aes.decrypt(message.ToString()));
+                                        }
+                                        History = historyDecrypted;
+                                    } else
+                                    {
+                                        History = result;
+                                    }
                                     break;
                                 case ResponseType.DetailedHistory:
-                                    DetailedHistory = jsonString;
+                                    if (this.CIPHER_KEY.Length > 0)
+                                    {
+                                        List<object> historyDecrypted = new List<object>();
+                                        PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
+                                        foreach (object message in (object[])result[0])
+                                        {
+                                            historyDecrypted.Add(aes.decrypt(message.ToString()));
+                                        }
+                                        DetailedHistory = historyDecrypted;
+                                    }
+                                    else
+                                    {
+                                        DetailedHistory = (object[])(result[0]);
+                                    }
                                     break;
                                 case ResponseType.Here_Now:
                                     Dictionary<string, object> dic = (Dictionary<string, object>)resultOccupancy;
@@ -520,6 +552,7 @@ namespace PubNub_Messaging
                     }), request
                     
                 );
+                //asyncResult.AsyncWaitHandle.WaitOne();
                 return true;
             }
             catch (System.Exception ex)

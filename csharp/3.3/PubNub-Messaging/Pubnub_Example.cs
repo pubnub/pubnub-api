@@ -8,17 +8,27 @@ namespace PubNub_Messaging
 {
     public class Pubnub_Example
     {
+        static public bool deliveryStatus = false;
+        static public Pubnub pubnub = new Pubnub(
+                    "demo",
+                    "demo",
+                    "",
+                    "",
+                    false);
+        static public string channel = "hello_world";
+        static public string message = "Pubnub API Usage Example - Publish";
+
         static public void Main()
         {
 
-            Console.WriteLine("\nRunning publish()");
-            Publish_Example();
+            //Console.WriteLine("\nRunning publish()");
+            //Publish_Example();
 
-            Console.WriteLine("\nRunning detailedHistory()");
-            DetailedHistory_Example();
+            //Console.WriteLine("\nRunning detailedHistory()");
+            //DetailedHistory_Example();
 
-            //Console.WriteLine("\nRunning history()");
-            //History_Example();
+            //Console.WriteLine("\nRunning detailedHistory()");
+            //DetailedHistory_Decrypted_Example();
 
             //Console.WriteLine("\nRunning timestamp()");
             //Timestamp_Example();
@@ -32,20 +42,286 @@ namespace PubNub_Messaging
             //Console.WriteLine("\nRunning timestamp()");
             //Subscribe_Example();
 
+            //Console.WriteLine("\nRunning history()");
+            //History_Example();
+
+            //Console.WriteLine("\nRunning TestUnencryptedHistory()");
+            //TestUnencryptedHistory();
+
+            //Console.WriteLine("\nRunning TestEncryptedHistory()");
+            //TestEncryptedHistory();
+
+            //Console.WriteLine("\nRunning TestUnencryptedDetailedHistory()");
+            //TestUnencryptedDetailedHistory();
+            
+            //Console.WriteLine("\nRunning TestEncryptedDetailedHistory()");
+            //TestEncryptedDetailedHistory();
+
+            //Console.WriteLine("\nRunning TestUnencryptedDetailedHistoryParams()");
+            //TestUnencryptedDetailedHistoryParams();
+
+            Console.WriteLine("\nRunning TestEncryptedDetailedHistoryParams()");
+            TestEncryptedDetailedHistoryParams();
+
             Console.WriteLine("\nPress any key to exit when done with demo.\n\n");
             Console.ReadLine();
 
         }
+        static void TestUnencryptedHistory()
+        {
+            pubnub.CIPHER_KEY = "";
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "Publish")
+                {
+                    Console.WriteLine("\n*********** Publish Messages *********** ");
+                    Console.WriteLine(
+                        "Publish Success: " + ((Pubnub)sender).Publish[0].ToString() +
+                        "\nPublish Info: " + ((Pubnub)sender).Publish[1].ToString()
+                        );
+                }
+
+                if (e.PropertyName == "History")
+                {
+                    Console.WriteLine("\n*********** History Messages *********** ");
+                    MessageFeeder(((Pubnub)sender).History);
+                }
+            };
+            pubnub.publish(channel, message);
+            pubnub.history(channel, 1);
+        }
+
+        static void TestEncryptedHistory()
+        {
+            pubnub.CIPHER_KEY = "enigma";
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "Publish")
+                {
+                    Console.WriteLine("\n*********** Publish Messages *********** ");
+                    Console.WriteLine(
+                        "Publish Success: " + ((Pubnub)sender).Publish[0].ToString() +
+                        "\nPublish Info: " + ((Pubnub)sender).Publish[1].ToString()
+                        );
+                }
+
+                if (e.PropertyName == "History")
+                {
+                    Console.WriteLine("\n*********** History Messages *********** ");
+                    MessageFeeder(((Pubnub)sender).History);
+                }
+            };
+            pubnub.publish(channel, message);
+            pubnub.history(channel, 1);
+        }
+
+        static void TestUnencryptedDetailedHistory()
+        {
+            // Context setup for Detailed History
+            pubnub.CIPHER_KEY = "";
+            int total_msg = 10;
+            long starttime = Timestamp();
+            Dictionary<long, string> inputs = new Dictionary<long,string>();
+            for (int i = 0; i < total_msg / 2; i++)
+            {
+                string msg = i.ToString();
+                pubnub.publish(channel, msg);
+                long t = Timestamp();
+                inputs.Add(t, msg);
+                Console.WriteLine("Message # " + i.ToString() + " published");
+            }
+
+            long midtime = Timestamp();
+            for (int i = total_msg / 2; i < total_msg; i++)
+            {
+                string msg = i.ToString();
+                pubnub.publish(channel, msg);
+                long t = Timestamp();
+                inputs.Add(t, msg);
+                Console.WriteLine("Message # " + i.ToString() + " published");
+            }
+
+            long endtime = Timestamp();
+
+            deliveryStatus = false;
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "DetailedHistory")
+                {
+                    Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
+                    foreach (object msg_org in (object[])((Pubnub)sender).DetailedHistory)
+                    {
+                        Console.WriteLine(msg_org.ToString());
+                    }
+                    deliveryStatus = true;
+                }
+            };
+            pubnub.detailedHistory(channel, total_msg);
+            while (!deliveryStatus) ;
+            Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
+        }
+
+        static void TestEncryptedDetailedHistory()
+        {
+            // Context setup for Detailed History
+            pubnub.CIPHER_KEY = "enigma";
+            int total_msg = 10;
+            long starttime = Timestamp();
+            Dictionary<long, string> inputs = new Dictionary<long, string>();
+            for (int i = 0; i < total_msg / 2; i++)
+            {
+                string msg = i.ToString();
+                pubnub.publish(channel, msg);
+                long t = Timestamp();
+                inputs.Add(t, msg);
+                Console.WriteLine("Message # " + i.ToString() + " published");
+            }
+
+            long midtime = Timestamp();
+            for (int i = total_msg / 2; i < total_msg; i++)
+            {
+                string msg = i.ToString();
+                pubnub.publish(channel, msg);
+                long t = Timestamp();
+                inputs.Add(t, msg);
+                Console.WriteLine("Message # " + i.ToString() + " published");
+            }
+
+            long endtime = Timestamp();
+
+            deliveryStatus = false;
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "DetailedHistory")
+                {
+                    Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
+                    foreach (object msg_org in (List<object>)((Pubnub)sender).DetailedHistory)
+                    {
+                        Console.WriteLine(msg_org.ToString());
+                    }
+                    deliveryStatus = true;
+                }
+            };
+            pubnub.detailedHistory(channel, total_msg);
+            while (!deliveryStatus) ;
+            Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
+        }
+
+        static void TestUnencryptedDetailedHistoryParams()
+        {
+            // Context setup for Detailed History
+            pubnub.CIPHER_KEY = "";
+            int total_msg = 10;
+            long starttime = Timestamp();
+            Dictionary<long, string> inputs = new Dictionary<long, string>();
+            for (int i = 0; i < total_msg / 2; i++)
+            {
+                string msg = i.ToString();
+                pubnub.publish(channel, msg);
+                long t = Timestamp();
+                inputs.Add(t, msg);
+                Console.WriteLine("Message # " + i.ToString() + " published");
+            }
+
+            long midtime = Timestamp();
+            for (int i = total_msg / 2; i < total_msg; i++)
+            {
+                string msg = i.ToString();
+                pubnub.publish(channel, msg);
+                long t = Timestamp();
+                inputs.Add(t, msg);
+                Console.WriteLine("Message # " + i.ToString() + " published");
+            }
+
+            long endtime = Timestamp();
+
+            deliveryStatus = false;
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "DetailedHistory")
+                {
+                    Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
+                    foreach (object msg_org in (object[])((Pubnub)sender).DetailedHistory)
+                    {
+                        Console.WriteLine(msg_org.ToString());
+                    }
+                    deliveryStatus = true;
+                }
+            };
+            pubnub.detailedHistory(channel, starttime, midtime, total_msg/2, true);
+            while (!deliveryStatus) ;
+            deliveryStatus = false;
+            pubnub.detailedHistory(channel, midtime, endtime, total_msg/2, false);
+            while (!deliveryStatus) ;
+            Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
+        }
+
+        static void TestEncryptedDetailedHistoryParams()
+        {
+            // Context setup for Detailed History
+            pubnub.CIPHER_KEY = "enigma";
+            int total_msg = 10;
+            long starttime = Timestamp();
+            Dictionary<long, string> inputs = new Dictionary<long, string>();
+            for (int i = 0; i < total_msg / 2; i++)
+            {
+                string msg = i.ToString();
+                pubnub.publish(channel, msg);
+                long t = Timestamp();
+                inputs.Add(t, msg);
+                Console.WriteLine("Message # " + i.ToString() + " published");
+            }
+
+            long midtime = Timestamp();
+            for (int i = total_msg / 2; i < total_msg; i++)
+            {
+                string msg = i.ToString();
+                pubnub.publish(channel, msg);
+                long t = Timestamp();
+                inputs.Add(t, msg);
+                Console.WriteLine("Message # " + i.ToString() + " published");
+            }
+
+            long endtime = Timestamp();
+
+            deliveryStatus = false;
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "DetailedHistory")
+                {
+                    Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
+                    foreach (object msg_org in (List<object>)((Pubnub)sender).DetailedHistory)
+                    {
+                        Console.WriteLine(msg_org.ToString());
+                    }
+                    deliveryStatus = true;
+                }
+            };
+            pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true);
+            while (!deliveryStatus) ;
+            deliveryStatus = false;
+            pubnub.detailedHistory(channel, midtime, endtime, total_msg / 2, false);
+            while (!deliveryStatus) ;
+            Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
+        }
+
+        static long Timestamp()
+        {
+            deliveryStatus = false;
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "Time")
+                {
+                    deliveryStatus = true;
+                }
+            };
+            pubnub.time();
+            while (!deliveryStatus) ;
+            return Convert.ToInt64(pubnub.Time[0].ToString());
+        }
         static void Publish_Example()
         {
-            Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    false);
-            string channel = "hello_world";
-            string message = "Pubnub API Usage Example - Publish";
-
+            pubnub.CIPHER_KEY = "";
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "Publish")
@@ -59,51 +335,46 @@ namespace PubNub_Messaging
             };
             pubnub.publish(channel, message);
         }
-        static void History_Example()
-        {
-            Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    false);
-            string channel = "hello_world";
-            
-            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
-            {
-                if (e.PropertyName == "History")
-                {
-                    Console.WriteLine("\n*********** History Messages *********** ");
-                    MessageFeeder(((Pubnub)sender).History);
-                }
-            };
-            pubnub.history(channel, 10);
-        }
+        
         static void DetailedHistory_Example()
         {
-            Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    false);
-            string channel = "hello_world";
+            pubnub.CIPHER_KEY = "";
+            //int start = 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "DetailedHistory")
                 {
                     Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
-                    Console.WriteLine(((Pubnub)sender).DetailedHistory.ToString());
+                    MessageFeeder(((Pubnub)sender).DetailedHistory);
+                    deliveryStatus = true;
                 }
             };
             pubnub.detailedHistory(channel, 10);
+            while (!deliveryStatus) ;
+            Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
         }
+
+        static void DetailedHistory_Decrypted_Example()
+        {
+            pubnub.CIPHER_KEY = "enigma";
+            //int start = 
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "DetailedHistory")
+                {
+                    Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
+                    MessageFeeder((List<object>)(((Pubnub)sender).DetailedHistory));
+                    deliveryStatus = true;
+                }
+            };
+            pubnub.detailedHistory(channel, 1);
+            while (!deliveryStatus) ;
+            Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
+        }
+
         static void Timestamp_Example()
         {
-            Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    false);
-            
+            pubnub.CIPHER_KEY = "";
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "Time")
@@ -116,13 +387,7 @@ namespace PubNub_Messaging
         }
         static void Subscribe_Example()
         {
-            Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    false);
-            string channel = "hello_world";
-
+            pubnub.CIPHER_KEY = "";
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "ReturnMessage")
@@ -136,13 +401,7 @@ namespace PubNub_Messaging
 
         static void Presence_Example()
         {
-            Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    false);
-            string channel = "hello_world";
-
+            pubnub.CIPHER_KEY = "";
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "ReturnMessage")
@@ -156,14 +415,7 @@ namespace PubNub_Messaging
 
         static void HereNow_Example()
         {
-            Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    false);
-            //string channel = "hello_world";
-            string channel = "hello_world";
-
+            pubnub.CIPHER_KEY = "";
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "Here_Now")

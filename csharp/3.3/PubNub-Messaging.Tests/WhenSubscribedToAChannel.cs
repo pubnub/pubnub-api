@@ -18,6 +18,7 @@ namespace PubNub_Messaging.Tests
                    "demo",
                    "demo",
                    "",
+                   "",
                    false);
             string channel = "my/channel";
 

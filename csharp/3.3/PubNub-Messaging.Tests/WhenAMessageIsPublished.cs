@@ -17,6 +17,7 @@ namespace PubNub_Messaging.Tests
                 "demo",
                 "demo",
                 "",
+                "",
                 false
             );
             string channel = "my/channel";
@@ -40,6 +41,7 @@ namespace PubNub_Messaging.Tests
                 "demo",
                 "demo",
                 "",
+                "",
                 false
             );
 
@@ -52,6 +54,7 @@ namespace PubNub_Messaging.Tests
             Pubnub pubnub = new Pubnub(
                 "",
                 "demo",
+                "",
                 "",
                 false
             );
@@ -71,6 +74,7 @@ namespace PubNub_Messaging.Tests
             Pubnub pubnub = new Pubnub(
                 "",
                 "demo",
+                "",
                 "",
                 false
             );

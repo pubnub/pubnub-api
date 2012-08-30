@@ -17,6 +17,7 @@ namespace PubNub_Messaging.Tests
                 "demo",
                 "demo",
                 "",
+                "",
                 false
             );
             string channel = "hello_world";
@@ -45,6 +46,7 @@ namespace PubNub_Messaging.Tests
             Pubnub pubnub = new Pubnub(
                "demo",
                "demo",
+               "",
                "",
                false
            );
