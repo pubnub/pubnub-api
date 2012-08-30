@@ -31,7 +31,10 @@ package com.hurlant.crypto.symmetric
 		
 		
 		public function IVMode(key:ISymmetricKey, padding:IPad = null) {
-			this.key = key;		
+
+            this.key = key;
+
+            trace("mode is set to: " + key);
 			
 			
 			blockSize = key.getBlockSize();

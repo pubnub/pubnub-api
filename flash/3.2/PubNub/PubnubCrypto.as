@@ -14,8 +14,11 @@ import com.hurlant.crypto.symmetric.NullPad;
 import com.hurlant.crypto.symmetric.PKCS5;
 import com.hurlant.util.Base64;
 import com.hurlant.util.Hex;
+import com.hurlant.util.*;
+import com.hurlant.util.der.ByteString;
 
 import flash.display.Sprite;
+import flash.utils.ByteArray;
 import flash.utils.ByteArray;
 
 public class PubnubCrypto extends Sprite {
@@ -24,16 +27,48 @@ public class PubnubCrypto extends Sprite {
     //Basic encryption for string
     public function encryptString(cipher_key:String, plainStr:String):String {
 
+        // hash the cipher key
         var sha256:SHA256 = new SHA256;
-        var src:ByteArray = Hex.toArray(Hex.fromString(cipher_key));
-        cipher_key = sha256.hash(src).toString().slice(0,31);
 
-        var key:ByteArray = Hex.toArray(cipher_key);
-        var data:ByteArray = Hex.toArray(Hex.fromString(plainStr));
+        var hexFromString:String = Hex.fromString(cipher_key); // string representation of hex string of cipher_key
+        var hexToString:String = Hex.toString(cipher_key); // string representation of hex string of cipher_key
+
+        var src:ByteArray = Hex.toArray(hexFromString); // ByteArray of cipher_key
+        var hexCipherKey:ByteArray = sha256.hash(src) // ByteArray of hashed_cipher_key
+
+        var nonPaddedCipherKeyHexString:String = Hex.fromArray(hexCipherKey);
+        var paddedCipherKeyHexString:String = Hex.fromArray(hexCipherKey).slice(0,32);
+
+        trace(nonPaddedCipherKeyHexString);
+        trace(nonPaddedCipherKeyHexString.length);
+
+
+
+//        for (var i:uint=0 ;i<hexCipherKey.length; i++) {
+//            var bite:String = dec2hex(hexCipherKey[i].toString());
+//            paddedCipherKeyHexString = paddedCipherKeyHexString + bite.toString();
+//        }
+//
+//        var fromA:String = Hex.fromArray(hexCipherKey);
+
+//        paddedCipherKeyHexString = paddedCipherKeyHexString.toLowerCase().slice(0,32);
+
+        var key:ByteArray = Hex.toArray(Hex.fromString("67a4f45f0d1d9bc606486fc42dc4941668e71d34ee500735fe9b7ea4625c687c").slice(0,64));
+
+        trace(key);
+
+        //var key:ByteArray = Hex.toArray(nonPaddedCipherKeyHexString);
+        //var data:ByteArray = Hex.toArray(Hex.fromString(plainStr));
+        var data:ByteArray = Hex.toArray(Hex.fromString("Z"));
         var cbc:CBCMode = new CBCMode(new AESKey(key), new PKCS5());
-        cbc.IV = Hex.toArray(Hex.fromString("0123456789012345"));
+        cbc.IV =  Hex.toArray(Hex.fromString("0123456789012345"));
+
+        trace(cbc.IV);
+
         cbc.encrypt(data);
-        return Base64.encodeByteArray(data);
+        var encryptedEncodedData:String = Base64.encodeByteArray(data);
+        return encryptedEncodedData;
+
     }
 
     //Basic decryption for string
@@ -117,6 +152,33 @@ public class PubnubCrypto extends Sprite {
         var ba:ByteArray = new ByteArray();
         ba.writeUTFBytes(s);
         return MD5.hashBinary(ba);
+    }
+
+    private function d2h( d:int ) : String {
+        var c:Array = [ '0', '1', '2', '3', '4', '5', '6', '7', '8',
+            '9', 'A', 'B', 'C', 'D', 'E', 'F' ];
+        if( d > 255 ) d = 255;
+        var l:int = d / 16;
+        var r:int = d % 16;
+        return c[l]+c[r];
+    }
+
+    public function dec2hex( dec:String ) : String {
+        var hex:String = "";
+        var bytes:Array = dec.split(" ");
+        for( var i:int = 0; i < bytes.length; i++ )
+            hex += d2h( int(bytes[i]) );
+        return hex;
+    }
+
+    public function hex2dec( hex:String ) : String {
+        var bytes:Array = [];
+        while( hex.length > 2 ) {
+            var byte:String = hex.substr( -2 );
+            hex = hex.substr(0, hex.length-2 );
+            bytes.splice( 0, 0, int("0x"+byte) );
+        }
+        return bytes.join(" ");
     }
 }
 }

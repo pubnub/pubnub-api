@@ -8,7 +8,9 @@
  */
 package com.hurlant.crypto.symmetric
 {
-	import flash.utils.ByteArray;
+import com.hurlant.util.Hex;
+
+import flash.utils.ByteArray;
 	
 	/**
 	 * CBC confidentiality mode. why not.
@@ -24,7 +26,9 @@ package com.hurlant.crypto.symmetric
 
 		public function encrypt(src:ByteArray):void {
 			padding.pad(src);
-			
+
+            trace("padded data: " + Hex.fromArray(src));
+
 			var vector:ByteArray = getIV4e();
 			for (var i:uint=0;i<src.length;i+=blockSize) {
 				for (var j:uint=0;j<blockSize;j++) {
