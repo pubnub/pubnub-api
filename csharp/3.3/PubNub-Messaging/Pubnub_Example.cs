@@ -13,24 +13,27 @@ namespace PubNub_Messaging
 
             Console.WriteLine("\nRunning publish()");
             Publish_Example();
-            
-            Console.WriteLine("\nRunning history()");
-            History_Example();
 
-            Console.WriteLine("\nRunning timestamp()");
-            Timestamp_Example();
+            Console.WriteLine("\nRunning detailedHistory()");
+            DetailedHistory_Example();
 
-            Console.WriteLine("\nRunning here_now()");
-            HereNow_Example();
+            //Console.WriteLine("\nRunning history()");
+            //History_Example();
 
-            Console.WriteLine("\nRunning presence()");
-            Presence_Example();
+            //Console.WriteLine("\nRunning timestamp()");
+            //Timestamp_Example();
 
-            Console.WriteLine("\nRunning timestamp()");
-            Subscribe_Example();
+            //Console.WriteLine("\nRunning here_now()");
+            //HereNow_Example();
+
+            //Console.WriteLine("\nRunning presence()");
+            //Presence_Example();
+
+            //Console.WriteLine("\nRunning timestamp()");
+            //Subscribe_Example();
 
             Console.WriteLine("\nPress any key to exit when done with demo.\n\n");
-            Console.ReadKey();
+            Console.ReadLine();
 
         }
         static void Publish_Example()
@@ -74,6 +77,24 @@ namespace PubNub_Messaging
                 }
             };
             pubnub.history(channel, 10);
+        }
+        static void DetailedHistory_Example()
+        {
+            Pubnub pubnub = new Pubnub(
+                    "demo",
+                    "demo",
+                    "",
+                    false);
+            string channel = "hello_world";
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "DetailedHistory")
+                {
+                    Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
+                    Console.WriteLine(((Pubnub)sender).DetailedHistory.ToString());
+                }
+            };
+            pubnub.detailedHistory(channel, 10);
         }
         static void Timestamp_Example()
         {

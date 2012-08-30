@@ -39,6 +39,17 @@ namespace PubNub_Messaging
         private List<object> _History = new List<object>();
         public List<object> History { get { return _History; } set { _History = value; RaisePropertyChanged("History"); } }
 
+        // Detailed History of Message
+        private object _DetailedHistory = new List<object>();
+        public object DetailedHistory 
+        {
+            get { return _DetailedHistory; }
+            set
+            {
+                _DetailedHistory = value; RaisePropertyChanged("DetailedHistory");
+            }
+        }
+
         // Here Now
         private List<object> _Here_Now = new List<object>();
         public List<object> Here_Now { get { return _Here_Now; } set { _Here_Now = value; RaisePropertyChanged("Here_Now"); } }
@@ -89,7 +100,8 @@ namespace PubNub_Messaging
         public string       SECRET_KEY = "";
         private bool        SSL = false;
         private string      sessionUUID = "";
-        
+        private string      parameters = "";
+
         public delegate bool Procedure(object message);
 
         public enum ResponseType
@@ -99,7 +111,8 @@ namespace PubNub_Messaging
             Time,
             Subscribe,
             Presence,
-            Here_Now
+            Here_Now,
+            DetailedHistory,
         }
         /**
          * Pubnub instance initialization function
@@ -185,6 +198,42 @@ namespace PubNub_Messaging
             return _request(url, ResponseType.History);
         }
 
+        /**
+         * Detailed History
+         */
+        public bool detailedHistory(string channel, long start, long end, int count, bool reverse)
+        {
+            parameters = "";
+            if (count == -1) count = 100;
+            parameters = "?count=" + count;
+            if (reverse)
+                parameters = parameters + "&" + "reverse=" + reverse.ToString().ToLower();
+            if (start != -1)
+                parameters = parameters + "&" + "start=" + start.ToString().ToLower();
+            if (end != -1)
+                parameters = parameters + "&" + "end=" + end.ToString().ToLower();
+
+            List<string> url = new List<string>();
+
+            url.Add("v2");
+            url.Add("history");
+            url.Add("sub-key");
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add("channel");
+            url.Add(channel);
+
+            return _request(url, ResponseType.DetailedHistory);
+        }
+
+        public bool detailedHistory(string channel, long start, bool reverse = false)
+        {
+            return detailedHistory(channel, start, -1, -1, reverse);
+        }
+
+        public bool detailedHistory(string channel, int count)
+        {
+            return detailedHistory(channel, -1, -1, count, false);
+        }
         /**
          * Publish
          * 
@@ -383,6 +432,9 @@ namespace PubNub_Messaging
                 url.Append(this.sessionUUID);
             }
 
+            if (type == ResponseType.DetailedHistory)
+                url.Append(parameters);
+
             // Temporary fail if string too long
             if (url.Length > this.LIMIT)
             {
@@ -421,14 +473,13 @@ namespace PubNub_Messaging
                             result = (List<object>)jS.Deserialize<List<object>>(jsonString);
                             var resultOccupancy = jS.DeserializeObject(jsonString);
                             
-                            if (result.Count != 0)
+                            if ((result.Count != 0) && (type != ResponseType.DetailedHistory))
                             {
                                 if (result[0] is object[])
                                 {
                                     foreach (object message in (object[])result[0])
                                     {
                                         this.ReturnMessage = message;
-                                        Console.WriteLine("Time token: " + result[1].ToString());
                                     }
                                 }
                             }
@@ -441,6 +492,9 @@ namespace PubNub_Messaging
                                     break;
                                 case ResponseType.History:
                                     History = result;
+                                    break;
+                                case ResponseType.DetailedHistory:
+                                    DetailedHistory = jsonString;
                                     break;
                                 case ResponseType.Here_Now:
                                     Dictionary<string, object> dic = (Dictionary<string, object>)resultOccupancy;

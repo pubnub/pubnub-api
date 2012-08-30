@@ -50,6 +50,7 @@
     <Compile Include="WhenAMessageIsPublished.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WhenDetailedHistoryIsRequested.cs" />
     <Compile Include="WhenGetRequestHistoryMessage.cs">
       <SubType>Code</SubType>
     </Compile>
