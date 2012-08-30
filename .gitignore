@@ -10,5 +10,5 @@
 .DS_Store
 node_modules
 .idea
-/csharp/3.2/PubNub-Messaging*/bin/*
-/csharp/3.2/PubNub-Messaging*/obj/*
+/csharp/*/PubNub-Messaging*/bin/*
+/csharp/*/PubNub-Messaging*/obj/*
