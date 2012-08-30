@@ -87,11 +87,22 @@ pubnub.init(config);
                 ExternalInterface.call( "console.log", (evt.data.result) );
             }
 
-            // here_now()
+            function onDetailedHistoryHandler(evt:PubNubEvent):void {
+                ExternalInterface.call( "console.log", ("detailedHistory() event received.") );
+                ExternalInterface.call( "console.log", ("Entering onDetailedHistoryHandler()") );
+                ExternalInterface.call( "console.log", (evt.data.result) );
+            }
+            
+			//here_now()
             pubnub.here_now({
                 callback:onHereNowHandler,
                 channel:channelName
             });
+
+            pubnub.detailedHistory({
+				channel:channelName,
+                callback:onDetailedHistoryHandler
+			});
 
 //
 //            private function onPresenceHandler(evt:PubNubEvent):void {

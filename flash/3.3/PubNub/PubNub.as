@@ -452,6 +452,70 @@ package PubNub
 			}
 			_request( { url:url, channel:channel, handler:HistoryHandler, uid:uid, operation:"history" } );
 		}
+		
+		public function detailedHistory(args:Object):void
+		{
+			
+			if (!INSTANCE.initialized)
+			{
+				throw("[PUBNUB] Not initialized yet");
+			}                   
+			INSTANCE._detailedHistory(args);
+		}
+		public function _detailedHistory(args:Object):void
+		{
+			var onResult:Function = args.callback || dispatchEvent;
+			
+			if (!args.channel)
+			{
+				onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[-1,"Channel Not Given and/or count"], timeout:1000 } ));
+				return;
+			}
+			var channel:String   = args.channel;
+			var count:String   = args.count || "100";
+			var uid:String = _uid();
+			var url:String = origin + "/" + "v2" + "/" + "history" + "/" + "sub-key" + "/" + sub_key + "/" + "channel" + "/" + _encode(channel);             
+            var params:String = _encode("count=" + count);
+			function DetailedHistoryHandler( evt:Event ):void
+			{
+				var node:Object = queue[uid];
+				var loader:URLLoader = node.loader;
+				if ( evt.type == Event.COMPLETE ) 
+				{
+					try 
+					{
+						var result:Object = JSON.parse(loader.data); 
+						if(result) 
+						{
+							var pubnubcrypto:PubnubCrypto = new PubnubCrypto();                                    
+							for (var i:int = 0; i < result.length; i++) 
+							{
+								if(cipher_key.length > 0)
+								{
+									onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[i+1,pubnubcrypto.decrypt(cipher_key,result[i])],timeout:1 } ));
+								}
+								else
+								{
+									onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[i+1,JSON.stringify(result[i])],timeout:1 } )); 
+								}    
+							}
+						}
+					}
+					catch (e:*)
+					{
+						trace("[PubNub detailed history] Bad Data Content Ignored");
+					}
+				}
+				else
+				{
+					onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[-1,"Connection Issue"], timeout:1000 } ));
+				}
+				node.loader.close();
+				node.loader = null;
+				node.handler = null;
+			}
+			_request( { url:url, params:params, channel:channel, handler:DetailedHistoryHandler, uid:uid, operation:"detailedHistory" } );
+		}
 		public static function time(args:Object):void
 		{
 			if (!INSTANCE.initialized)
@@ -613,6 +677,8 @@ package PubNub
 
             var loader:URLLoader = node.loader;
             var url:String = args.url;
+
+			if (args.params != null) { args.url = args.url + "?" + args.params; }
 
             if (args.timetoken != null )
             {

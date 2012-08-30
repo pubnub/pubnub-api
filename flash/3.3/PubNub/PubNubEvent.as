@@ -14,6 +14,7 @@ package PubNub
         public static const PRESENCE:String = "Presence";
         public static const HERE_NOW:String = "HereNow";
 		public static const HISTORY:String = "History";
+		public static const DETAILED_HISTORY:String = "DetailedHistory";
 		public static const TIME:String="Time";
 		public static const UNSUBSCRIBE:String = "Unsubscribe";
 		public static const ERROR:String = "Error";
