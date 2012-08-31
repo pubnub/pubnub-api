@@ -24,7 +24,7 @@ business collaborative solutions, and more.
 ## SIMPLE EXAMPLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=http://cdn.pubnub.com/pubnub-3.2.min.js ></script>
+<script srchtt=p://cdn.pubnub.com/pubnub-3.2.min.js ></script>
 <script>
 
     // LISTEN
@@ -45,7 +45,7 @@ business collaborative solutions, and more.
 ## ADVANCED STYLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=pubnub-3.2.js ></script>
+<script src=http://pubnub.s3.amazonaws.com/pubnub-3.2.min.js ></script>
 <script>(function(){
     // LISTEN FOR MESSAGES
     PUBNUB.subscribe({
