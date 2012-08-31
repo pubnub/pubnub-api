@@ -17,6 +17,7 @@
 @end
 
 @interface CommonFunction :NSObject
++(void)Log:(NSString*)message;
 +(NSString*) HMAC_SHA256withKey:(NSString*)key Input:(NSString*) input;
 + (NSString *)generateUuidString;
 

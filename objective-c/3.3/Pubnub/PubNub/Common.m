@@ -31,6 +31,11 @@
 
 @implementation CommonFunction 
 
++(void)Log:(NSString*)message
+{
+    NSLog(@"--Log:%@",message);
+}
+
 +(NSString*) HMAC_SHA256withKey:(NSString*)key Input:(NSString*) input {
     
     const char *cKey  = [key cStringUsingEncoding:NSUTF8StringEncoding];
