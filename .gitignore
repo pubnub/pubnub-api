@@ -4,6 +4,7 @@
 *.pyc
 *.class
 *.iml
+/flash/*/out
 /android/PubnubAndroidTest/*/gen
 /android/PubnubAndroidTest/*/bin
 /android/PubnubAndroidTest/*/out
