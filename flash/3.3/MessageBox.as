@@ -50,6 +50,13 @@ pubnub.init(config);
                 ExternalInterface.call( "console.log", ("init()") );
                 ExternalInterface.call( "console.log", ("my uuid is " + pubnub.getSessionUUID()) );
 
+                // Publish
+                PubNub.PubNub.publish({
+                    callback:onSubscribeHandler,
+                    channel:channelName,
+                    message:"Hello from AS3!"
+                });
+
                 // Subscribe
                 PubNub.PubNub.subscribe({
                     callback:onSubscribeHandler,
@@ -101,7 +108,8 @@ pubnub.init(config);
 
             pubnub.detailedHistory({
 				channel:channelName,
-                callback:onDetailedHistoryHandler
+                callback:onDetailedHistoryHandler,
+                count:3
 			});
 
 //
