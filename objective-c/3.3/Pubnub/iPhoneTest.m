@@ -64,7 +64,7 @@ CEPubnub *pubnub;
 }
 
 - (IBAction)HistoryClick:(id)sender {
-    NSLog(@"-----------HISTORY START----------------");
+    NSLog(@"-----------HISTORY ----------------");
     NSInteger limit = 3;
     NSNumber * aWrappedInt = [NSNumber numberWithInteger:limit];    
     [pubnub fetchHistory:[NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", @"hello_world",@"channel",nil]];
@@ -99,6 +99,16 @@ CEPubnub *pubnub;
 
 - (IBAction)Presence:(id)sender {
     [pubnub presence: @"hello_world"]; 
+}
+
+- (IBAction)DetailedHistoryClick:(id)sender {
+     NSLog(@"-----------Detailed History ----------------");
+    NSInteger count = 3;
+    NSNumber * aCountInt = [NSNumber numberWithInteger:count];
+    [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
+                             aCountInt,@"count",
+                             @"hello_world",@"channel",
+                             nil]];
 }
 
     //=========================================================================
@@ -206,6 +216,20 @@ CEPubnub *_pubnubtemp;
         [txt setText:[NSString stringWithFormat:@"Fail to fetch history on channel  : %@ with Error: %@", channel,error]];
     }
     
+    -(void) pubnub:(CEPubnub *)pubnub didFetchDetailedHistory:(NSArray *)messages forChannel:(NSString *)channel
+    {
+        NSMutableString *histry=  [NSMutableString stringWithString: @""];
+        for (id object in messages) {
+        [histry appendString:[NSString stringWithFormat:@" %@\n",object]];
+        }
+        [txt setText:[NSString stringWithFormat:@"History on channel (dict) : %@ - received:\n %@", channel, histry]];
+    }
+    -(void) pubnub:(CEPubnub *)pubnub didFailFetchDetailedHistoryOnChannel:(NSString *)channel withError:(id)error
+    {
+        [txt setText:[NSString stringWithFormat:@"Fail to fetch  Detailed history on channel  : %@ with Error: %@", channel,error]];
+    }   
+
+
     - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time{
         NSLog(@"didReceiveTime   %f",time );
         [txt setText:[NSString stringWithFormat:@"Time  :- received:\n %f", time]];
