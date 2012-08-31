@@ -1,7 +1,7 @@
 # YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 http://www.pubnub.com/account
 
-## PubNub 3.2 Real-time Cloud Push API - AS3
+## PubNub 3.3 Real-time Cloud Push API - AS3
 
 PubNub is a blazingly fast cloud-hosted messaging service for building
 real-time web and mobile apps. Hundreds of apps and thousands of developers
@@ -11,7 +11,7 @@ the infrastructure needed to build amazing MMO games, social apps,
 business collaborative solutions, and more.
 
 ## Examples
-Checkout 3.2/MessageBox.as for an AS3/Flex 4.6-based example. Other examples may be CS 5.0-based.
+Checkout 3.3/MessageBox.as for an AS3/Flex 4.6-based example. Other examples may be CS 5.0-based.
 
 ## TUTORIAL: HOW TO USE
 
@@ -90,10 +90,10 @@ PubNub.PubNub.subscribe({
 
 ```
 
-### Flash AS3 : (History)
+### Flash AS3 : (History, deprecated, use detailedHistory below instead.)
 
 ```javascript
-//Get the history of messages which has published and it depends on limit
+//Message history (deprecated by detailedHistory)
 pubnub.addEventListener(PubNubEvent.INIT, onHistInit);
 function onHistInit(event:PubNubEvent):void
 {
@@ -104,6 +104,35 @@ function onHistoryHandler(evt:PubNubEvent):void
     trace("[History data] : " + evt.data.result[1]);
 }
 ```
+
+### Flash AS3 : (detailedHistory)
+
+
+```javascript
+//Granular, detailed message history with offsets
+pubnub.addEventListener(PubNubEvent.INIT, onHistInit);
+function onHistInit(event:PubNubEvent):void
+{
+    PubNub.detailedHistory({ callback:onHistoryHandler, channel:channelName, limit:3, start:999, end:1004, reverse:false});
+}
+function onHistoryHandler(evt:PubNubEvent):void
+{  
+    trace("[History data] : " + evt.data.result[1]);
+}
+
+Required Parameters:
+
+    'channel' - The channel name
+    
+Optional Parameters:
+	
+    'start' - Start timetoken
+	'end' - End timetoken
+    'limit' - Max number of returned results. Defaults and max is 100.
+	'reverse' - Default is false, which is oldest first. Use true to return newest first, but only when start or end is omitted.
+
+```
+
 
 ### Flash AS3 : (Time)
 
