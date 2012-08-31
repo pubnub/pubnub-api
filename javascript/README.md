@@ -45,7 +45,7 @@ business collaborative solutions, and more.
 ## ADVANCED STYLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=http://cdn.pubnub.com/pubnub-3.2.min.js ></script>
+<script src=pubnub-3.2.js ></script>
 <script>(function(){
     // LISTEN FOR MESSAGES
     PUBNUB.subscribe({
@@ -69,9 +69,27 @@ business collaborative solutions, and more.
         },
         reconnect  : function() {        // CONNECTION RESTORED.
             alert("And we're Back!")
+        },
+        presence   : function(message) { // Presence() example (see console for logged output.)
+            console.log(message, true);
         }
     })
-})();</script>
+})();
+
+</script>
+
+<span onclick="hereNow()">Click Me for Here Now!</span> // here_now() example (see console for logged output.)
+
+<script type="text/javascript">
+
+    function hereNow() {
+        PUBNUB.here_now({channel:'hello_world', callback:function (message) {
+            console.log(message);
+        }});
+    }
+
+</script>
+
 ```
 
 ## SSL MODE
