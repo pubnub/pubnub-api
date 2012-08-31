@@ -466,8 +466,14 @@ package PubNub
 			var count:String   = args.count || "100";
 			var uid:String = _uid();
 			var url:String = origin + "/v2/history/sub-key/" + sub_key + "/channel/" + _encode(channel);             
+
             var params:String = "count=" + _encode(count);
-			function DetailedHistoryHandler( evt:Event ):void
+
+            if (args.start || args.end || args.reverse) {
+                params = extractOptionalParams(args, params);
+            }
+
+            function DetailedHistoryHandler( evt:Event ):void
 			{
 				var node:Object = queue[uid];
 				var loader:URLLoader = node.loader;
@@ -475,7 +481,7 @@ package PubNub
 				{
 					try 
 					{
-						var result:Object = JSON.parse(loader.data); 
+						var result:Object = JSON.parse(loader.data);
 						if(result) 
 						{
 							var pubnubcrypto:PubnubCrypto = new PubnubCrypto();                                    
@@ -494,7 +500,8 @@ package PubNub
 					}
 					catch (e:*)
 					{
-						trace("[PubNub detailed history] Bad Data Content Ignored");
+                        trace("[PubNub detailed history] Bad Data Content Ignored");
+                        onResult(new PubNubEvent(PubNubEvent.DETAILED_HISTORY, { channel:channel, result:[0, "Invalid JSON Received."] } ));
 					}
 				}
 				else
@@ -507,7 +514,31 @@ package PubNub
 			}
 			_request( { url:url, params:params, channel:channel, handler:DetailedHistoryHandler, uid:uid, operation:"detailedHistory" } );
 		}
-		public static function time(args:Object):void
+
+        private function extractOptionalParams(args:Object, params:String):String {
+            var optionalParams:Object = {};
+
+            if (args.start != null) {
+                optionalParams["start"] = args.start;
+            }
+            if (args.end != null) {
+                optionalParams["end"] = args.end;
+            }
+            if (args.reverse != null) {
+                if (args.reverse == true) {
+                    optionalParams["reverse"] = true;
+                } else if (args.reverse == false) {
+                    optionalParams["reverse"] = false;
+                }
+            }
+
+            for (var key:String in optionalParams) {
+                params += "&" + key + "=" + optionalParams[key];
+            }
+            return params;
+        }
+
+        public static function time(args:Object):void
 		{
 			if (!INSTANCE.initialized)
 			{
@@ -681,9 +712,9 @@ package PubNub
 
 			if (args.params != null) { 
 				if (args.operation != "subscribe_with_timetoken")
-					args.url = args.url + "?" + args.params;
+					url = args.url + "?" + args.params;
 				else
-					args.url = args.url + "&" + args.params;
+					url = args.url + "&" + args.params;
 			}
 
             if (!loader)
