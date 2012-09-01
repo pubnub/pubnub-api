@@ -3,6 +3,7 @@ package pubnub.api;
 import com.ning.http.client.*;
 import com.ning.http.client.AsyncHttpClientConfig.Builder;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
@@ -42,9 +43,10 @@ public class Pubnub {
 	private String PUBLISH_KEY = "";
 	private String SUBSCRIBE_KEY = "";
 	private String SECRET_KEY = "";
-	private String CIPHER_KEY = "";
+	public String CIPHER_KEY = "";
 	private boolean SSL = false;
 	private String sessionUUID = "";
+	private String parameters = "";
 	
 	private class ChannelStatus {
 		String channel;
@@ -439,7 +441,7 @@ public class Pubnub {
 							message = pc.decrypt(message);
 						}
 						if (callback != null)
-							callback.subscribeCallback(channel, message);
+							if (!callback.subscribeCallback(channel, message)) return;
 					} else {
 
 						JSONArray arr = messages.optJSONArray(i);
@@ -451,7 +453,7 @@ public class Pubnub {
 								;
 							}
 							if (callback != null)
-								callback.subscribeCallback(channel, arr);
+								if(!callback.subscribeCallback(channel, arr)) return;
 						} else {
 							String msgs = messages.getString(0);
 							if (this.CIPHER_KEY.length() > 0) {
@@ -460,7 +462,7 @@ public class Pubnub {
 								msgs = pc.decrypt(msgs);
 							}
 							if (callback != null)
-								callback.subscribeCallback(channel, msgs);
+								if(!callback.subscribeCallback(channel, msgs)) return;
 						}
 					}
 				}
@@ -660,7 +662,7 @@ public class Pubnub {
 							message = pc.decrypt(message);
 						}
 						if (callback != null)
-							callback.presenceCallback(channel, message);
+							if(!callback.presenceCallback(channel, message)) return;
 					} else {
 
 						JSONArray arr = messages.optJSONArray(i);
@@ -669,10 +671,9 @@ public class Pubnub {
 								PubnubCrypto pc = new PubnubCrypto(
 										this.CIPHER_KEY);
 								arr = pc.decryptJSONArray(arr);
-								;
 							}
 							if (callback != null)
-								callback.presenceCallback(channel, arr);
+								if (!callback.presenceCallback(channel, arr)) return;
 						} else {
 							String msgs = messages.getString(0);
 							if (this.CIPHER_KEY.length() > 0) {
@@ -681,7 +682,7 @@ public class Pubnub {
 								msgs = pc.decrypt(msgs);
 							}
 							if (callback != null)
-								callback.presenceCallback(channel, msgs);
+								if (!callback.presenceCallback(channel, msgs)) return;
 						}
 					}
 				}
@@ -772,7 +773,55 @@ public class Pubnub {
 			return response;
 		}
 	}
+	
+	/**
+	 * DetailedHistory
+	 * 
+	 * DetailedHistory from PubNub Cloud.
+	 * 
+	 * @return JSONArray of detailed history.
+	 */
+	public JSONArray detailedHistory(String channel, long start, long end, int count, Boolean reverse) {
+		parameters = "";
+		if (count == -1) count = 100;
+		if (count == -1) count = 100;
+        parameters = "?count=" + count;
+        if (reverse)
+            parameters = parameters + "&" + "reverse=" + reverse.toString().toLowerCase();
+        if (start != -1)
+            parameters = parameters + "&" + "start=" + Long.toString(start).toLowerCase();
+        if (end != -1)
+            parameters = parameters + "&" + "end=" + Long.toString(end).toLowerCase();
+        
+        List<String> url = new ArrayList<String>();
+        url.add("v2");
+        url.add("history");
+        url.add("sub-key");
+        url.add(this.SUBSCRIBE_KEY);
+        url.add("channel");
+        url.add(channel);
+        
+        JSONArray response = _request(url);
+        
+        if (this.CIPHER_KEY.length() > 0) {
+        	PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+        	try {
+				return pc.decryptJSONArray(response.getJSONArray(0));
+			} catch (JSONException e) {
+				return response;
+			}
+        } else {
+        	return response;
+        }
+	}
+	
+	public JSONArray detailedHistory(String channel, long start, boolean reverse) {
+		return detailedHistory(channel, start, -1, -1, reverse);
+	}
 
+	public JSONArray detailedHistory(String channel, int count) {
+		return detailedHistory(channel, -1, -1, count, false);
+	}
 	/**
 	 * Time
 	 * 
@@ -834,7 +883,8 @@ public class Pubnub {
 		StringBuilder url = new StringBuilder();
 		Iterator<String> url_iterator = url_components.iterator();
 		String request_for = url_components.get(0);
-
+		String request_type = url_components.get(1);
+		
 		url.append(this.ORIGIN);
 
 		// Generate URL with UTF-8 Encoding
@@ -854,6 +904,8 @@ public class Pubnub {
 		}
 		if (request_for.equals("subscribe") || request_for.equals("presence"))
 			url.append("?uuid=").append(this.sessionUUID);
+		if (request_for.equals("v2") && request_type.equals("history"))
+			url.append(parameters);
 		
 		AsyncHttpClient ahc = null;
 		try {

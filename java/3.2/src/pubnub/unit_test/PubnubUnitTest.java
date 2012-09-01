@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,24 +15,20 @@ import pubnub.api.Pubnub;
 
 public class PubnubUnitTest {
 
-	private CountDownLatch lock = new CountDownLatch(1);
+	private static boolean deliveryStatus = false;
+	private Pubnub pubnub = new Pubnub(
+			"demo",
+			"demo",
+			"",
+			"",
+			true
+	);
+	private String channel = "hello_world";
+	private int limit = 1;
 	
 	@Test
 	public void testPublishHashMapOfStringObject() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		String channel = "hello_world";
-		
-		Pubnub pubnub = new Pubnub(
-				publish_key,
-				subscribe_key,
-				secret_key,
-				cipher_key,
-				true
-		);
-		
+		pubnub.CIPHER_KEY = "enigma";
 		JSONObject message = new JSONObject();
 		try {
 			message.put("text", "Hello World!");
@@ -50,32 +44,18 @@ public class PubnubUnitTest {
 		
 		try {
 			assertFalse(response.get(2).toString().equals("0"));
+			System.out.println("PASS: TestPublish");
 		} catch (JSONException e) {
-			fail("Failed to publish message through a channel.");
+			fail("FAIL: TestPublish");
 		}		
 	}
 
 	@Test
 	public void testSubscribeHashMapOfStringObject() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		String channel = "hello_world";
-		
-		Pubnub pubnub = new Pubnub(
-				publish_key,
-				subscribe_key,
-				secret_key,
-				cipher_key,
-				true
-		);
-		
+		pubnub.CIPHER_KEY = "";
 		// Callback Interface when a Message is Received
         class Receiver implements Callback {
 
-        	public boolean message_received = false;
-        	
         	public boolean subscribeCallback(String channel, Object message) {
 
                 try {
@@ -99,10 +79,9 @@ public class PubnubUnitTest {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                deliveryStatus = true;
                 // Continue Listening?
-                message_received = true;
-                lock.countDown();
-                return true;
+                return false;
             }
 
 			@Override
@@ -114,7 +93,7 @@ public class PubnubUnitTest {
 			@Override
 			public void connectCallback(String channel) {
 				System.out.println("Connected to channel :" + channel);
-
+				System.out.println("Waiting for a message from publisher ...");
 			}
 
 			@Override
@@ -135,39 +114,28 @@ public class PubnubUnitTest {
 
         HashMap<String, Object> args = new HashMap<String, Object>(6);
         args.put("channel", channel);
-        Receiver recv = new Receiver();
-        args.put("callback", recv);					// callback to get response
+        args.put("callback", new Receiver());
 
+        deliveryStatus = false;
         // Listen for Messages (Subscribe)
         pubnub.subscribe(args);
+        JSONObject json = new JSONObject();
         try {
-            lock.await(5000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertTrue(recv.message_received);
+			json.put("text", "hi");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+        pubnub.publish(channel, json);
+        while(!deliveryStatus);
+        assertTrue(deliveryStatus);
+        System.out.println("PASS: TestSubscribe");
 	}
 
 	@Test
 	public void testPresenceHashMapOfStringObject() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		String channel = "hello_world";
-		
-		Pubnub pubnub = new Pubnub(
-				publish_key,
-				subscribe_key,
-				secret_key,
-				cipher_key,
-				true
-		);
-		
+		pubnub.CIPHER_KEY = "";
 		// Callback Interface when a Message is Received
         class Receiver implements Callback {
-        	
-        	public boolean message_received = false;
         	
         	public boolean presenceCallback(String channel, Object message) {
 
@@ -192,22 +160,20 @@ public class PubnubUnitTest {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                deliveryStatus = true;
                 // Continue Listening?
-                message_received = true;
-                lock.countDown();
-                return true;
+                return false;
             }
 
 			@Override
 			public void errorCallback(String channel, Object message) {
 				System.err.println("Channel:" + channel + "-" + message.toString());
-				
 			}
 
 			@Override
 			public void connectCallback(String channel) {
 				System.out.println("Connected to channel :" + channel);
-
+				System.out.println("Waiting for subscribe or unsubscribe message ...");
 			}
 
 			@Override
@@ -228,91 +194,352 @@ public class PubnubUnitTest {
 
         HashMap<String, Object> args = new HashMap<String, Object>(6);
         args.put("channel", channel + "-pnpres");
-        Receiver recv = new Receiver();
-        args.put("callback", recv);					// callback to get response
+        args.put("callback", new Receiver());					// callback to get response
 
+        deliveryStatus = false;
         // Listen for Messages (Presence)
         pubnub.presence(args);
-        try {
-            lock.await(5000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertTrue(recv.message_received);
+        while(!deliveryStatus);
+        assertTrue(deliveryStatus);
+        System.out.println("PASS: TestPresence");
     }
 
 	@Test
 	public void testHere_now() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		String channel = "hello_world";
-		
-		Pubnub pubnub = new Pubnub(
-				publish_key,
-				subscribe_key,
-				secret_key,
-				cipher_key,
-				true
-		);
-		
+		pubnub.CIPHER_KEY = "";
 		// Get Here Now
 		JSONArray response = pubnub.here_now(channel);
 		
 		try {
 			assertNotNull(response);
+			System.out.println("PASS: TestHere_Now");
 		} catch (Exception e) {
-			e.printStackTrace();
+			fail("FAIL: TestHere_Now");
 		}
 	}
 
 	@Test
-	public void testHistoryHashMapOfStringObject() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		String channel = "hello_world";
-		int limit = 4;
-		
-		Pubnub pubnub = new Pubnub(
-				publish_key,
-				subscribe_key,
-				secret_key,
-				cipher_key,
-				true
-		);
+	public void testUnencryptedHistoryHashMapOfStringObject() {
+		// Context setup
+		pubnub.CIPHER_KEY = "";
+		JSONObject message = new JSONObject();
+		try {
+			message.put("text", "Hello World!");
+		} catch (org.json.JSONException jsonError) {
+			jsonError.printStackTrace();
+		}
 		
 		HashMap<String, Object> args = new HashMap<String, Object>(2);
+		args.put("channel", channel);
+		args.put("message", message);
+		JSONArray response = null;
+		response = pubnub.publish(args);
+		
+		// Test begins
+		args = new HashMap<String, Object>(2);
 		args.put("channel", channel);
 		args.put("limit", limit);
 		
 		// Get History
-		JSONArray response = pubnub.history(args);
+		response = pubnub.history(args);
 		
 		try {
 			assertNotNull(response);
+			System.out.println("PASS: TestUnencryptedHistory");
 		} catch (Exception e) {
-			e.printStackTrace();
+			fail("FAIL: TestUnencryptedHistory");
+		}
+	}
+	
+	@Test
+	public void testEncryptedHistoryHashMapOfStringObject() {
+		// Context setup
+		pubnub.CIPHER_KEY = "enigma";
+		JSONObject message = new JSONObject();
+		try {
+			message.put("text", "Hello World!");
+		} catch (org.json.JSONException jsonError) {
+			jsonError.printStackTrace();
+		}
+		
+		HashMap<String, Object> args = new HashMap<String, Object>(2);
+		args.put("channel", channel);
+		args.put("message", message);
+		JSONArray response = null;
+		response = pubnub.publish(args);
+		
+		// Test begins
+		args = new HashMap<String, Object>(2);
+		args.put("channel", channel);
+		args.put("limit", limit);
+		
+		// Get History
+		response = pubnub.history(args);
+		
+		try {
+			assertNotNull(response);
+			System.out.println("PASS: TestEncryptedHistory");
+		} catch (Exception e) {
+			fail("FAIL: TestEncryptedHistory");
 		}
 	}
 
 	@Test
+	public void testUnencryptedDetailedHistory()
+	{
+		// Context setup for Detailed History
+		pubnub.CIPHER_KEY = "";
+        int total_msg = 10;
+        long starttime = (long) pubnub.time();
+        HashMap<Long, String> inputs = new HashMap<Long, String>();
+        for (int i = 0; i < total_msg / 2; i++)
+        {
+            String msg = Integer.toString(i);
+            JSONObject json = new JSONObject();
+            try {
+    			json.put("text", msg);
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    		}
+            pubnub.publish(channel, json);
+            long t = (long) pubnub.time();
+            inputs.put(t, msg);
+            System.out.println("Message # " + Integer.toString(i) + " published");
+        }
+
+        long midtime = (long) pubnub.time();
+        for (int i = total_msg / 2; i < total_msg; i++)
+        {
+        	String msg = Integer.toString(i);
+            JSONObject json = new JSONObject();
+            try {
+    			json.put("text", msg);
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    		}
+            pubnub.publish(channel, json);
+            long t = (long) pubnub.time();
+            inputs.put(t, msg);
+            System.out.println("Message # " + Integer.toString(i) + " published");
+        }
+
+        long endtime = (long)pubnub.time();
+		
+        // Get History
+     	JSONArray response = pubnub.detailedHistory(channel, total_msg);
+     		
+     	// Print Response from PubNub JSONP REST Service
+     	System.out.println(response);
+     		
+     	try {
+     		assertNotNull(response);
+     		System.out.println("PASS: TestUnencryptedDetailedHistory");
+     	} catch (Exception e) {
+     		fail("FAIL: TestUnencryptedDetailedHistory");
+     	}
+	}
+	
+	@Test
+	public void testEncryptedDetailedHistory()
+	{
+		// Context setup for Detailed History
+		pubnub.CIPHER_KEY = "enigma";
+        int total_msg = 10;
+        long starttime = (long) pubnub.time();
+        HashMap<Long, String> inputs = new HashMap<Long, String>();
+        for (int i = 0; i < total_msg / 2; i++)
+        {
+            String msg = Integer.toString(i);
+            JSONObject json = new JSONObject();
+            try {
+    			json.put("text", msg);
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    		}
+            pubnub.publish(channel, json);
+            long t = (long) pubnub.time();
+            inputs.put(t, msg);
+            System.out.println("Message # " + Integer.toString(i) + " published");
+        }
+
+        long midtime = (long) pubnub.time();
+        for (int i = total_msg / 2; i < total_msg; i++)
+        {
+        	String msg = Integer.toString(i);
+            JSONObject json = new JSONObject();
+            try {
+    			json.put("text", msg);
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    		}
+            pubnub.publish(channel, json);
+            long t = (long) pubnub.time();
+            inputs.put(t, msg);
+            System.out.println("Message # " + Integer.toString(i) + " published");
+        }
+
+        long endtime = (long)pubnub.time();
+		
+        // Get History
+     	JSONArray response = pubnub.detailedHistory(channel, total_msg);
+     		
+     	// Print Response from PubNub JSONP REST Service
+     	System.out.println(response);
+     		
+     	try {
+     		assertNotNull(response);
+     		System.out.println("PASS: TestEncryptedDetailedHistory");
+     	} catch (Exception e) {
+     		fail("FAIL: TestEncryptedDetailedHistory");
+     	}
+	}
+	
+	@Test
+	public void testUnencryptedDetailedHistoryParams()
+	{
+		// Context setup for Detailed History
+		pubnub.CIPHER_KEY = "";
+        int total_msg = 10;
+        long starttime = (long) pubnub.time();
+        HashMap<Long, String> inputs = new HashMap<Long, String>();
+        for (int i = 0; i < total_msg / 2; i++)
+        {
+            String msg = Integer.toString(i);
+            JSONObject json = new JSONObject();
+            try {
+    			json.put("text", msg);
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    		}
+            pubnub.publish(channel, json);
+            long t = (long) pubnub.time();
+            inputs.put(t, msg);
+            System.out.println("Message # " + Integer.toString(i) + " published");
+        }
+
+        long midtime = (long) pubnub.time();
+        for (int i = total_msg / 2; i < total_msg; i++)
+        {
+        	String msg = Integer.toString(i);
+            JSONObject json = new JSONObject();
+            try {
+    			json.put("text", msg);
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    		}
+            pubnub.publish(channel, json);
+            long t = (long) pubnub.time();
+            inputs.put(t, msg);
+            System.out.println("Message # " + Integer.toString(i) + " published");
+        }
+
+        long endtime = (long)pubnub.time();
+		
+        // Get History
+        JSONArray response;
+        System.out.println("DetailedHistory with start & end");
+        response = pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true);
+        System.out.println(response);
+        try {
+     		assertNotNull(response);
+     	} catch (Exception e) {
+     		fail("FAIL: TestUnencryptedDetailedHistoryParams");
+     	}
+        
+        System.out.println("DetailedHistory with start & reverse = true");
+        response = pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true);
+        System.out.println(response);
+        try {
+     		assertNotNull(response);
+     	} catch (Exception e) {
+     		fail("FAIL: TestUnencryptedDetailedHistoryParams");
+     	}
+        
+        System.out.println("DetailedHistory with start & reverse = false");
+        response = pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false);
+        System.out.println(response);
+        try {
+     		assertNotNull(response);
+     		System.out.println("PASS: TestUnencryptedDetailedHistoryParams");
+     	} catch (Exception e) {
+     		fail("FAIL: TestUnencryptedDetailedHistoryParams");
+     	}
+    }
+	
+	@Test
+	public void testEncryptedDetailedHistoryParams()
+	{
+		// Context setup for Detailed History
+		pubnub.CIPHER_KEY = "enigma";
+        int total_msg = 10;
+        long starttime = (long) pubnub.time();
+        HashMap<Long, String> inputs = new HashMap<Long, String>();
+        for (int i = 0; i < total_msg / 2; i++)
+        {
+            String msg = Integer.toString(i);
+            JSONObject json = new JSONObject();
+            try {
+    			json.put("text", msg);
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    		}
+            pubnub.publish(channel, json);
+            long t = (long) pubnub.time();
+            inputs.put(t, msg);
+            System.out.println("Message # " + Integer.toString(i) + " published");
+        }
+
+        long midtime = (long) pubnub.time();
+        for (int i = total_msg / 2; i < total_msg; i++)
+        {
+        	String msg = Integer.toString(i);
+            JSONObject json = new JSONObject();
+            try {
+    			json.put("text", msg);
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    		}
+            pubnub.publish(channel, json);
+            long t = (long) pubnub.time();
+            inputs.put(t, msg);
+            System.out.println("Message # " + Integer.toString(i) + " published");
+        }
+
+        long endtime = (long)pubnub.time();
+		
+        // Get History
+        JSONArray response;
+        System.out.println("DetailedHistory with start & end");
+        response = pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true);
+        System.out.println(response);
+        try {
+     		assertNotNull(response);
+     	} catch (Exception e) {
+     		fail("FAIL: TestEncryptedDetailedHistoryParams");
+     	}
+        
+        System.out.println("DetailedHistory with start & reverse = true");
+        response = pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true);
+        System.out.println(response);
+        try {
+     		assertNotNull(response);
+     	} catch (Exception e) {
+     		fail("FAIL: TestEncryptedDetailedHistoryParams");
+     	}
+        
+        System.out.println("DetailedHistory with start & reverse = false");
+        response = pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false);
+        System.out.println(response);
+        try {
+     		assertNotNull(response);
+     		System.out.println("PASS: TestEncryptedDetailedHistoryParams");
+     	} catch (Exception e) {
+     		fail("FAIL: TestEncryptedDetailedHistoryParams");
+     	}
+	}
+	
+	@Test
 	public void testTime() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		
-		Pubnub pubnub = new Pubnub(
-				publish_key,
-				subscribe_key,
-				secret_key,
-				cipher_key,
-				true
-		);
-		
 		assertNotNull(pubnub.time());
 	}
 

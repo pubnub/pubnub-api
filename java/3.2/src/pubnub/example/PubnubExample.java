@@ -27,6 +27,9 @@ public class PubnubExample {
 		System.out.println("\nRunning here_now()");
 		HereNowExample();
 				
+		System.out.println("\nRunning detailedHistory()");
+		DetailedHistoryExample();
+		
 		System.out.println("\nRunning presence()");
 		PresenceExample();	
 		
@@ -39,7 +42,7 @@ public class PubnubExample {
 		String publish_key = "demo";
 		String subscribe_key = "demo";
 		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
+		String cipher_key = "enigma"; // (Cipher key is optional)
 		String channel = "hello_world";
 		
 		int publish_message_count = 1;
@@ -97,12 +100,6 @@ public class PubnubExample {
 			
 			response = pubnub.publish(args);
 			System.out.println(response);
-			
-			// Pause
-			try {
-				Thread.currentThread().sleep(100);
-			} catch (Exception ex) {
-			}
 		}
 	}
 	
@@ -110,9 +107,9 @@ public class PubnubExample {
 		String publish_key = "demo";
 		String subscribe_key = "demo";
 		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
+		String cipher_key = "enigma"; // (Cipher key is optional)
 		String channel = "hello_world";
-		int limit = 4;
+		int limit = 1;
 		
 		Pubnub pubnub = new Pubnub(
 				publish_key,
@@ -128,6 +125,46 @@ public class PubnubExample {
 		
 		// Get History
 		JSONArray response = pubnub.history(args);
+		
+		// Print Response from PubNub JSONP REST Service
+		System.out.println(response);
+		
+		try {
+			if (response != null) {
+				for (int i = 0; i < response.length(); i ++) {
+					JSONObject jsono = response.optJSONObject(i);
+					if (jsono != null) {
+						@SuppressWarnings("rawtypes")
+						Iterator keys = jsono.keys();
+						while (keys.hasNext()) {
+							System.out.println(jsono.get(keys.next().toString()) + " ");
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void DetailedHistoryExample() {
+		String publish_key = "demo";
+		String subscribe_key = "demo";
+		String secret_key = "demo";
+		String cipher_key = "enigma"; // (Cipher key is optional)
+		String channel = "hello_world";
+		int    count = 1;
+		
+		Pubnub pubnub = new Pubnub(
+				publish_key,
+				subscribe_key,
+				secret_key,
+				cipher_key,
+				true
+		);
+		
+		// Get History
+		JSONArray response = pubnub.detailedHistory(channel, count);
 		
 		// Print Response from PubNub JSONP REST Service
 		System.out.println(response);
@@ -222,7 +259,7 @@ public class PubnubExample {
 			@Override
 			public void connectCallback(String channel) {
 				System.out.println("Connected to channel :" + channel);
-
+				System.out.println("Waiting for a message from publisher ...");
 			}
 
 			@Override
@@ -303,7 +340,7 @@ public class PubnubExample {
 			@Override
 			public void connectCallback(String channel) {
 				System.out.println("Connected to channel :" + channel);
-
+				System.out.println("Waiting for subscribe or unsubscribe message ...");
 			}
 
 			@Override
