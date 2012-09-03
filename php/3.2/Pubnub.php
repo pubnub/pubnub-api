@@ -177,14 +177,14 @@ class Pubnub
                     $timetoken
                 ));
 
-                if ($response == null) {
+                if ($response == null || $timetoken == null) {
+                    $timetoken = $this->throwAndResetTimetoken($callback, "Bad server response.");
                     continue;
                 }
 
                 $messages = $response[0];
                 $timetoken = $response[1];
 
-                ## If it was a timeout
                 if (!count($messages)) {
                     continue;
                 }
@@ -193,13 +193,27 @@ class Pubnub
 
                 $returnArray = array($receivedMessages[0], $timetoken);
 
-                if (!$callback($returnArray))
+                if (!$callback($returnArray)) {
                     trigger_error("Callback error.", E_USER_ERROR);
+                    $timetoken = $this->throwAndResetTimetoken($callback, "Callback is invalid.");
+                    continue;
+                }
+
 
             } catch (Exception $error) {
                 $this->handleError($error, $args);
+                $timetoken = $this->throwAndResetTimetoken($callback, "Unknown error.");
+                continue;
+
             }
         }
+    }
+
+    public function throwAndResetTimetoken($callback, $errorMessage)
+    {
+        $callback(array(0, $errorMessage));
+        $timetoken = "0";
+        return $timetoken;
     }
 
     public function decodeAndDecrypt($messages, $presence = false)
@@ -220,6 +234,7 @@ class Pubnub
     {
         $errorMsg = 'Error on line ' . $error->getLine() . ' in ' . $error->getFile() . $error->getMessage();
         trigger_error($errorMsg, E_COMPILE_WARNING);
+
 
         sleep(1);
     }
@@ -329,9 +344,12 @@ class Pubnub
         $ctx = stream_context_create(array(
             'http' => array('timeout' => 300)
         ));
-        return json_decode(@file_get_contents(
-            implode('/', $request), 0, $ctx
-        ), true);
+
+        $serverResponse = @file_get_contents(implode('/', $request), 0, $ctx);
+        $decodedResponse = json_decode($serverResponse, true);
+
+        return $decodedResponse;
+
     }
 
     /**
