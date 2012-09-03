@@ -1,15 +1,16 @@
 <?php
-
 require_once('Pubnub.php');
 
 ## ---------------------------------------------------------------------------
 ## USAGE:
 ## ---------------------------------------------------------------------------
 #
-# php ./Pubnub-Unit-Test.php
-# php ./Pubnub-Unit-Test.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
+# php ./pubnubPlaintextTests.php
+# php ./pubnubPlaintextTests.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
 #
-	
+
+
+## Capture Publish and Subscribe Keys from Command Line
 $publish_key   = isset($argv[1]) ? $argv[1] : 'demo';
 $subscribe_key = isset($argv[2]) ? $argv[2] : 'demo';
 $secret_key    = isset($argv[3]) ? $argv[3] : false;
@@ -27,75 +28,77 @@ $pubnub = new Pubnub( $publish_key, $subscribe_key, $secret_key, $cipher_key, $s
 $channel = "hello_world";
 
 ## ---------------------------------------------------------------------------
-## PUBLISH TEST
+## Publish Example
 ## ---------------------------------------------------------------------------
+echo "Running publish\r\n";
 $pubish_success = $pubnub->publish(array(
     'channel' => $channel,
-    'message' => 'Pubnub Publish Test'
+    'message' => 'Pubnub Messaging API 1'
 ));
-test( $pubish_success[0], 1, 'Published First Message' );
+echo($pubish_success[0] . $pubish_success[1]);
+echo "\r\n";
+$pubish_success = $pubnub->publish(array(
+    'channel' => $channel,
+    'message' => 'Pubnub Messaging API 2'
+));
+echo($pubish_success[0] . $pubish_success[1]);
+echo "\r\n";
 
 ## ---------------------------------------------------------------------------
-## HISTORY TEST
+## History Example
 ## ---------------------------------------------------------------------------
+echo "Running history\r\n";
 $history = $pubnub->history(array(
     'channel' => $channel,
-    'limit'   => 1
+    'limit'   => 2
 ));
-test( count($history), 1, 'History With First Published Message' );
-test( $history, '["Pubnub Publish Test"]', 'History Message Text == "Pubnub Publish Test"' );
+echo($history);
+echo "\r\n";
 
 ## ---------------------------------------------------------------------------
-## HERE_NOW TEST
+## Here_Now Example
 ## ---------------------------------------------------------------------------
+echo "Running here_now\r\n";
 $here_now = $pubnub->here_now(array(
     'channel' => $channel
 ));
-test( count($here_now), 2, 'Here Now With Presence');
+var_dump($here_now);
+echo "\r\n";
 
 ## ---------------------------------------------------------------------------
-## TIMESTAMP TEST
+## Timestamp Example
 ## ---------------------------------------------------------------------------
+echo "Running timestamp\r\n";
 $timestamp = $pubnub->time();
-test( $timestamp, true, 'Timestamp API Test: ' . $timestamp );
+echo('Timestamp: ' . $timestamp);
+echo "\r\n";
 
 ## ---------------------------------------------------------------------------
-## Test Presence
+## Presence Example
 ## ---------------------------------------------------------------------------
-echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
-
-$pubnub->presence(array(
-    'channel'  => $channel,
-    'callback' => function($message) {
-		echo('PASS: ');
-		echo($message);
-		echo "\r\n";
-        return false;
-    }
-));
+//echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
+//
+//$pubnub->presence(array(
+//    'channel'  => $channel,
+//    'callback' => function($message) {
+//        print_r($message);
+//		echo "\r\n";
+//        return true;
+//    }
+//));
 
 ## ---------------------------------------------------------------------------
-## Test Subscribe
+## Subscribe Example
 ## ---------------------------------------------------------------------------
 echo("\nWaiting for Publish message... Hit CTRL+C to finish.\n");
 
 $pubnub->subscribe(array(
     'channel'  => $channel,
     'callback' => function($message) {
-        echo('PASS: ');
-		echo($message);
+        print_r($message);
 		echo "\r\n";
         return true;
     }
 ));
 
-
-## ---------------------------------------------------------------------------
-## Unit Test Function
-## ---------------------------------------------------------------------------
-function test( $val1, $val2, $name ) {
-    if ($val1 == $val2) echo('PASS: ');
-    else                echo('FAIL: ');
-    echo("$name\n");
-}
 ?>

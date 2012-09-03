@@ -1,11 +1,7 @@
 <?php
-require_once('pubnub-aes256.php');
+require_once('PubnubAES.php');
 /**
- * PubNub 3.2 Real-time Push Cloud API
- *
- * @author Leonardo Redmond
- * @author Geremy Cohen
- * @author Stephen Blum
+ * PubNub 3.3 Real-time Push Cloud API
  * @package Pubnub
  */
 class Pubnub
@@ -40,7 +36,6 @@ class Pubnub
         $origin = false
     )
     {
-
 
         $this->SESSION_UUID = $this->uuid();
 

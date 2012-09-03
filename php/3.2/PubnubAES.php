@@ -1,16 +1,14 @@
 <?php
 
-$plaintext = "this is my plaintext.";
+#$plaintext = "this is my plaintext.";
 $cipher_key = "enigma";
 
-printf("\ncipher key is %s\n", $cipher_key);
+#printf("\ncipher key is %s\n", $cipher_key);
 
 #$cipher_text = "q/xJqqN6qbiZMXYmiQC1Fw==";
 #$decrypt = "RVOElAJIHskATgCCP+KlaQ==";
-
 #$key = "67a4f45f0d1d9bc606486fc42dc49416";
 #$iv = "0123456789012345";
-
 ## Manual Run
 #$cipher_text = encrypt("hellohellohello!", $cipher_key, $iv);
 #$p_text = decrypt($cipher_text, $cipher_key, $iv);

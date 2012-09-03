@@ -1,21 +1,34 @@
 <?php
+
 require_once('Pubnub.php');
 
-## ---------------------------------------------------------------------------
-## USAGE:
-## ---------------------------------------------------------------------------
-#
-# php ./Pubnub-Example.php
-# php ./Pubnub-Example.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
-#
-
+##
+# php ./pubnubPlaintextTests.php
+# php ./pubnubPlaintextTests.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
 
 ## Capture Publish and Subscribe Keys from Command Line
-$publish_key   = isset($argv[1]) ? $argv[1] : 'demo';
-$subscribe_key = isset($argv[2]) ? $argv[2] : 'demo';
-$secret_key    = isset($argv[3]) ? $argv[3] : false;
-$cipher_key	   = isset($argv[4]) ? $argv[4] : false;
-$ssl_on        = isset($argv[4]);
+$publish_key   = 'demo';
+$subscribe_key = 'demo';
+$secret_key    =  false;
+$cipher_key =  "enigma";
+$ssl_on        = false;
+
+$plain_text = "yay!";
+$cipher_text = "q/xJqqN6qbiZMXYmiQC1Fw==";
+$cipher_key = "enigma";
+
+## Encryption Test
+if (decrypt($cipher_text, $cipher_key) == $plain_text) {
+    echo "Standard encryption test PASS.\n\n";
+} else
+    echo "Standard encryption test FAIL.\n\n";
+
+## Decryption Test
+if (encrypt($plain_text, $cipher_key) == $cipher_text) {
+    echo "Standard decryption test PASS.\n\n";
+} else
+    echo "Standard decryption test FAIL.\n\n";
+
 
 ## ---------------------------------------------------------------------------
 ## Create Pubnub Object
@@ -31,17 +44,18 @@ $channel = "hello_world";
 ## Publish Example
 ## ---------------------------------------------------------------------------
 echo "Running publish\r\n";
-$pubish_success = $pubnub->publish(array(
+$publish_success = $pubnub->publish(array(
     'channel' => $channel,
     'message' => 'Pubnub Messaging API 1'
 ));
-echo($pubish_success[0] . $pubish_success[1]);
+echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
-$pubish_success = $pubnub->publish(array(
+
+$publish_success = $pubnub->publish(array(
     'channel' => $channel,
     'message' => 'Pubnub Messaging API 2'
 ));
-echo($pubish_success[0] . $pubish_success[1]);
+echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
 
 ## ---------------------------------------------------------------------------
@@ -73,19 +87,19 @@ $timestamp = $pubnub->time();
 echo('Timestamp: ' . $timestamp);
 echo "\r\n";
 
-## ---------------------------------------------------------------------------
-## Presence Example
-## ---------------------------------------------------------------------------
-echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
-
-$pubnub->presence(array(
-    'channel'  => $channel,
-    'callback' => function($message) {
-        print_r($message);
-		echo "\r\n";
-        return true;
-    }
-));
+//## ---------------------------------------------------------------------------
+//## Presence Example
+//## ---------------------------------------------------------------------------
+//echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
+//
+//$pubnub->presence(array(
+//    'channel'  => $channel,
+//    'callback' => function($message) {
+//        print_r($message);
+//		echo "\r\n";
+//        return true;
+//    }
+//));
 
 ## ---------------------------------------------------------------------------
 ## Subscribe Example
@@ -102,3 +116,4 @@ $pubnub->subscribe(array(
 ));
 
 ?>
+
