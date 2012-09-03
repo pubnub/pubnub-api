@@ -112,7 +112,7 @@ class Pubnub
 
     }
 
-      public function sendMessage($message_org)
+    public function sendMessage($message_org)
 
     {
         if ($this->CIPHER_KEY != false) {
@@ -262,6 +262,65 @@ class Pubnub
     }
 
     /**
+     * Detailed History
+     *
+     * Load history from a channel.
+     *
+     * @param array $args with 'channel' and 'limit'.
+     * @return mixed false on fail, array on success.
+     */
+
+    function detailedHistory($args)
+    {
+        ## Capture User Input
+
+        ## Fail if bad input.
+        if (!$args['channel']) {
+            echo('Missing Channel');
+            return false;
+        }
+
+        $channel = $args['channel'];
+        $urlParams = "";
+
+        if ($args['count'] || $args['start'] || $args['end'] || $args['reverse']) {
+
+            $urlParamSep = "?";
+            if (isset($args['count'])) {
+               $urlParams .= $urlParamSep . "count=" . $args['count'];
+                $urlParamSep = "&";
+            }
+            if (isset($args['start'])) {
+                $urlParams .= $urlParamSep . "start=" . $args['start'];
+                $urlParamSep = "&";
+            }
+            if (isset($args['end'])) {
+                $urlParams .= $urlParamSep . "end=" . $args['end'];
+                $urlParamSep = "&";
+            }
+            if (isset($args['reverse'])) {
+                $urlParams .= $urlParamSep . "reverse=" . $args['reverse'];
+            }
+
+        }
+
+        $response = $this->_request(array(
+            'v2',
+            'history',
+            "sub-key",
+            $this->SUBSCRIBE_KEY,
+            "channel",
+            $channel
+        ), $urlParams);
+        ;
+
+        $receivedMessages = $this->decodeAndDecrypt($response);
+
+        return $receivedMessages;
+
+    }
+
+    /**
      * History
      *
      * Load history from a channel.
@@ -337,7 +396,7 @@ class Pubnub
      * @param array $request of url directories.
      * @return array from JSON response.
      */
-    private function _request($request)
+    private function _request($request, $urlParams = false)
     {
         $request = array_map('Pubnub::_encode', $request);
 
@@ -351,7 +410,13 @@ class Pubnub
             'http' => array('timeout' => 300)
         ));
 
-        $serverResponse = @file_get_contents(implode('/', $request), 0, $ctx);
+        $urlString = implode('/', $request);
+
+        if ($urlParams) {
+            $urlString .= $urlParams;
+        }
+
+        $serverResponse = @file_get_contents($urlString, 0, $ctx);
         $decodedResponse = json_decode($serverResponse, true);
 
         return $decodedResponse;

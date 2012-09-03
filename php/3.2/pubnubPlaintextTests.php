@@ -54,6 +54,18 @@ echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
 
 ## ---------------------------------------------------------------------------
+## detailedHistory Example
+## ---------------------------------------------------------------------------
+echo "Running detailedHistory\r\n";
+$history = $pubnub->detailedHistory(array(
+    'channel' => $channel,
+    'count'   => 10,
+    'end'   => "13466530169226760"
+));
+print_r($history);
+echo "\r\n";
+
+## ---------------------------------------------------------------------------
 ## History Example
 ## ---------------------------------------------------------------------------
 echo "Running history\r\n";
@@ -61,7 +73,7 @@ $history = $pubnub->history(array(
     'channel' => $channel,
     'limit'   => 2
 ));
-echo($history);
+print_r($history);
 echo "\r\n";
 
 ## ---------------------------------------------------------------------------
