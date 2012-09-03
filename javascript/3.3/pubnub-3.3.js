@@ -240,6 +240,7 @@ var NOW             = 1
 ,   REPL            = /{([\w\-]+)}/g
 ,   ASYNC           = 'async'
 ,   URLBIT          = '/'
+,   PARAMSBIT       = '&'
 ,   XHRTME          = 310000
 ,   SECOND          = 1000
 ,   PRESENCE_SUFFIX = '-pnpres'
@@ -539,12 +540,13 @@ function xdr( setup ) {
     script.onerror = function() { done(1) };
     script.src     = setup.url.join(URLBIT);
     if (setup.data) {
+        var params = [];
         script.src += "?";
         for (key in setup.data) {
-            script.src += key+"="+setup.data[key]+"&";
+             params.push(key+"="+setup.data[key]);
         }
+        script.src += params.join(PARAMSBIT);
     }
-
     attr( script, 'id', id );
 
     append();
@@ -604,12 +606,14 @@ function ajax( setup ) {
         xhr.onload  = xhr.onloadend = finished;
         xhr.timeout = XHRTME;
         
-        url     = setup.url.join(URLBIT);
+        url = setup.url.join(URLBIT);
         if (setup.data) {
+            var params = [];
             url += "?";
             for (key in setup.data) {
-                url += key+"="+setup.data[key]+"&";
+                params.push(key+"="+setup.data[key]);
             }
+            url += params.join(PARAMSBIT);
         }
         
         xhr.open( 'GET', url, true );
@@ -668,6 +672,47 @@ var PDIV          = $('pubnub') || {}
                     SUBSCRIBE_KEY, encode(channel),
                     jsonp, limit
                 ],
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) }
+            });
+        },
+
+        /*
+            PUBNUB.detailedHistory({
+                channel  : 'my_chat_channel',
+                count : 100,
+                callback : function(messages) { console.log(messages) }
+            });
+        */
+        'detailedHistory' : function( args, callback ) {
+            var callback = args['callback'] || callback 
+            ,   count = args['count'] || 100
+            ,   channel  = args['channel']
+            ,   reverse = args['reverse'] || "false"
+            ,   start = args['start']
+            ,   end = args['end']
+            ,   jsonp    = jsonp_cb();
+
+            // Make sure we have a Channel
+            if (!channel)  return log('Missing Channel');
+            if (!callback) return log('Missing Callback');
+
+			var params = {};
+			params["count"] = count;
+            params["reverse"] = reverse;
+            if (start) 
+                params["start"] = start;
+            if (end)
+                params["end"] = end;
+
+            // Send Message
+            xdr({
+                callback : jsonp,
+                url      : [
+                    ORIGIN, 'v2', 'history',
+                    'sub-key', SUBSCRIBE_KEY, 'channel', encode(channel),
+                ],
+                data : params,
                 success  : function(response) { callback(response) },
                 fail     : function(response) { log(response) }
             });
