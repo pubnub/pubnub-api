@@ -106,7 +106,7 @@ class Pubnub
         ));
 
         if ($publishResponse == null)
-            return array(0, "Bad publish response.");
+            return array(0, "Error during publish.");
         else
             return $publishResponse;
 
