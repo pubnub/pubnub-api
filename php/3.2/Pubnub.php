@@ -171,6 +171,12 @@ class Pubnub
             return false;
         }
 
+        if ($presence == true) {
+            $mode = "presence";
+        } else
+            $mode = "default";
+
+
         while (1) {
 
             try {
@@ -195,15 +201,11 @@ class Pubnub
                     continue;
                 }
 
-                $receivedMessages = $this->decodeAndDecrypt($messages, $presence);
+                $receivedMessages = $this->decodeAndDecrypt($messages, $mode);
 
                 $returnArray = array($receivedMessages[0], $timetoken);
 
-                if (!$callback($returnArray)) {
-                    trigger_error("Callback error.", E_USER_ERROR);
-                    $timetoken = $this->throwAndResetTimetoken($callback, "Callback is invalid.");
-                    continue;
-                }
+                $callback($returnArray);
 
 
             } catch (Exception $error) {
@@ -222,15 +224,42 @@ class Pubnub
         return $timetoken;
     }
 
-    public function decodeAndDecrypt($messages, $presence = false)
+    public function decodeAndDecrypt($messages, $mode = "default")
     {
         $receivedMessages = array();
 
-        foreach ($messages as $message) {
-            if ($this->CIPHER_KEY && $presence == false) {
+
+        if ($mode == "presence") {
+            return $messages;
+
+        } elseif ($mode == "default") {
+
+            $messageArray = $messages;
+            $receivedMessages = $this->decodeDecryptLoop($messageArray);
+
+        } elseif ($mode == "detailedHistory") {
+
+            $messageArray = $messages[0];
+            $receivedMessages = $this->decodeDecryptLoop($messageArray);
+
+        }
+
+        return $receivedMessages;
+
+    }
+
+    public function decodeDecryptLoop($messageArray)
+    {
+        $receivedMessages = array();
+        foreach ($messageArray as $message) {
+
+            if ($this->CIPHER_KEY) {
                 $decryptedMessage = decrypt($message, $this->CIPHER_KEY);
                 $message = urldecode($decryptedMessage);
+            } else {
+                $message = urldecode($message);
             }
+
             array_push($receivedMessages, $message);
         }
         return $receivedMessages;
@@ -287,7 +316,7 @@ class Pubnub
 
             $urlParamSep = "?";
             if (isset($args['count'])) {
-               $urlParams .= $urlParamSep . "count=" . $args['count'];
+                $urlParams .= $urlParamSep . "count=" . $args['count'];
                 $urlParamSep = "&";
             }
             if (isset($args['start'])) {
@@ -314,7 +343,7 @@ class Pubnub
         ), $urlParams);
         ;
 
-        $receivedMessages = $this->decodeAndDecrypt($response);
+        $receivedMessages = $this->decodeAndDecrypt($response, "detailedHistory");
 
         return $receivedMessages;
 

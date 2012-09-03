@@ -58,6 +58,19 @@ $publish_success = $pubnub->publish(array(
 echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
 
+
+## ---------------------------------------------------------------------------
+## detailedHistory Example
+## ---------------------------------------------------------------------------
+echo "Running detailedHistory\r\n";
+$history = $pubnub->detailedHistory(array(
+    'channel' => $channel,
+    'count'   => 10,
+    'end'   => "13466530169226760"
+));
+print_r($history);
+echo "\r\n";
+
 ## ---------------------------------------------------------------------------
 ## History Example
 ## ---------------------------------------------------------------------------
@@ -87,12 +100,26 @@ $timestamp = $pubnub->time();
 echo('Timestamp: ' . $timestamp);
 echo "\r\n";
 
-//## ---------------------------------------------------------------------------
-//## Presence Example
-//## ---------------------------------------------------------------------------
-//echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
+## ---------------------------------------------------------------------------
+## Presence Example
+## ---------------------------------------------------------------------------
+echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
+
+$pubnub->presence(array(
+    'channel'  => $channel,
+    'callback' => function($message) {
+        print_r($message);
+		echo "\r\n";
+        return false;
+    }
+));
+
+## ---------------------------------------------------------------------------
+## Subscribe Example
+## ---------------------------------------------------------------------------
+//echo("\nWaiting for Publish message... Hit CTRL+C to finish.\n");
 //
-//$pubnub->presence(array(
+//$pubnub->subscribe(array(
 //    'channel'  => $channel,
 //    'callback' => function($message) {
 //        print_r($message);
@@ -100,20 +127,6 @@ echo "\r\n";
 //        return true;
 //    }
 //));
-
-## ---------------------------------------------------------------------------
-## Subscribe Example
-## ---------------------------------------------------------------------------
-echo("\nWaiting for Publish message... Hit CTRL+C to finish.\n");
-
-$pubnub->subscribe(array(
-    'channel'  => $channel,
-    'callback' => function($message) {
-        print_r($message);
-		echo "\r\n";
-        return true;
-    }
-));
 
 ?>
 
