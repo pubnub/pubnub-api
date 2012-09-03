@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## ------------------------------------------------
-## PubNub 3.1 Real-time Cloud Push API - JAVASCRIPT
+## PubNub 3.3 Real-time Cloud Push API - JAVASCRIPT
 ## ------------------------------------------------
 
 ## ----------------------------------------------------
@@ -33,9 +33,9 @@ browsers=$browsers',safari/5.1'
 
 echo -e "Testing: $browsers"
 
-noinstrument='pubnub-3.1.js,test.js'
+noinstrument='pubnub-3.3.js,test.js'
 
-tar -cf- test.js ../pubnub-3.1.js | \
+tar -cf- test.js ../pubnub-3.3.js | \
     curl -u $1 -sSNT- \
     "testling.com/?noinstrument=$noinstrument&browsers=$browsers"
 
