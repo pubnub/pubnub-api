@@ -33,13 +33,13 @@ $channel = "hello_world";
 echo "Running publish\r\n";
 $pubish_success = $pubnub->publish(array(
     'channel' => $channel,
-    'message' => 'Pubnub Messaging API 1'
+    'message' => 'Hello from PHP!'
 ));
 echo($pubish_success[0] . $pubish_success[1]);
 echo "\r\n";
 $pubish_success = $pubnub->publish(array(
     'channel' => $channel,
-    'message' => 'Pubnub Messaging API 2'
+    'message' => '漢語'
 ));
 echo($pubish_success[0] . $pubish_success[1]);
 echo "\r\n";

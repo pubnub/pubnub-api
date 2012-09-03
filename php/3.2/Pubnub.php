@@ -95,7 +95,7 @@ class Pubnub
         $signature = $this->SECRET_KEY ? md5($string_to_sign) : '0';
 
         ## Send Message
-        return $this->_request(array(
+        $publishResponse = $this->_request(array(
             'publish',
             $this->PUBLISH_KEY,
             $this->SUBSCRIBE_KEY,
@@ -104,6 +104,12 @@ class Pubnub
             '0',
             $message
         ));
+
+        if ($publishResponse == null)
+            return array(0, "Bad publish response.");
+        else
+            return $publishResponse;
+
     }
 
       public function sendMessage($message_org)
