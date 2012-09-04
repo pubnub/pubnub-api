@@ -18,8 +18,6 @@
 		C8FD4D7A153D469D00D0A418 /* CEPubnub.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D6E153D469D00D0A418 /* CEPubnub.m */; };
 		C8FD4D7B153D469D00D0A418 /* Cipher.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D70153D469D00D0A418 /* Cipher.m */; };
 		C8FD4D7C153D469D00D0A418 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D72153D469D00D0A418 /* Common.m */; };
-		C8FD4D7E153D469D00D0A418 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D76153D469D00D0A418 /* JSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		C8FD4D7F153D469D00D0A418 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D78153D469D00D0A418 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */; };
 /* End PBXBuildFile section */
 
@@ -44,10 +42,6 @@
 		C8FD4D70153D469D00D0A418 /* Cipher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cipher.m; sourceTree = "<group>"; };
 		C8FD4D71153D469D00D0A418 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		C8FD4D72153D469D00D0A418 /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
-		C8FD4D75153D469D00D0A418 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
-		C8FD4D76153D469D00D0A418 /* JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSON.m; sourceTree = "<group>"; };
-		C8FD4D77153D469D00D0A418 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
-		C8FD4D78153D469D00D0A418 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow_iPhone.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -128,10 +122,6 @@
 				C8FD4D70153D469D00D0A418 /* Cipher.m */,
 				C8FD4D71153D469D00D0A418 /* Common.h */,
 				C8FD4D72153D469D00D0A418 /* Common.m */,
-				C8FD4D75153D469D00D0A418 /* JSON.h */,
-				C8FD4D76153D469D00D0A418 /* JSON.m */,
-				C8FD4D77153D469D00D0A418 /* JSONKit.h */,
-				C8FD4D78153D469D00D0A418 /* JSONKit.m */,
 			);
 			path = PubNub;
 			sourceTree = "<group>";
@@ -205,8 +195,6 @@
 				C8FD4D7A153D469D00D0A418 /* CEPubnub.m in Sources */,
 				C8FD4D7B153D469D00D0A418 /* Cipher.m in Sources */,
 				C8FD4D7C153D469D00D0A418 /* Common.m in Sources */,
-				C8FD4D7E153D469D00D0A418 /* JSON.m in Sources */,
-				C8FD4D7F153D469D00D0A418 /* JSONKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
