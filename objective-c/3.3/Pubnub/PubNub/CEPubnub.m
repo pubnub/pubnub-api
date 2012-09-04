@@ -13,7 +13,6 @@
     // limitations under the License.
 
 #import "CEPubnub.h"
-#import "JSON.h"
 #import "Common.h"
 
 #define kDefaultOrigin @"pubsub.pubnub.com"
@@ -93,7 +92,6 @@ typedef enum {
         _channel = [channel copy];
         _message=[message copy];
     }
-    
     return self;
 }
 
@@ -116,13 +114,20 @@ typedef enum {
             //  NSLog(@"PubNub request returned Content-Encoding : %@", contente);
         NSString* contentType = [[_response allHeaderFields] objectForKey:@"Content-Type"];
         if ([contentType hasPrefix:@"text/javascript"] && [contentType containsString:@"UTF-8"]) {  // Should be [text/javascript; charset="UTF-8"] but is sometimes different on 3G
-            [_pubNub connection:self didCompleteWithResponse:JSONParseData(_data)];
+            NSError* error = nil;
+            id result = [NSJSONSerialization JSONObjectWithData:_data options:kNilOptions error:&error];
+            if (error != nil) result = nil;
+            [_pubNub connection:self didCompleteWithResponse:result];
                 //  NSLog(@"PubNub request returned unexpected content type: %@", contentType);
         } else if ([contentType hasPrefix:@"text/javascript"])
         {
             if(_command== kCommand_Here_Now)
             {
-                [_pubNub connection:self didCompleteWithResponse:JSONParseData(_data)];
+                
+                NSError* error = nil;
+                id result = [NSJSONSerialization JSONObjectWithData:_data options:kNilOptions error:&error];
+                if (error != nil) result = nil;
+                [_pubNub connection:self didCompleteWithResponse:result];
             }
         }else {
             NSLog(@"PubNub request returned unexpected content type: %@", contentType);
@@ -303,7 +308,7 @@ typedef enum {
         msg = [self getEncryptedDictionary:(NSDictionary*) message];
     }
     
-    NSString* json = JSONWriteString(msg);
+    NSString* json = [CommonFunction JSONToString:msg ];
     NSString* signature;
     if (_secretKey) {
         signature =[CommonFunction HMAC_SHA256withKey:[NSString stringWithFormat:@"%@",_secretKey] Input:[NSString stringWithFormat:@"%@/%@/%@/%@/%@", _publishKey, _subscribeKey, _secretKey, channel, json] ];
@@ -437,11 +442,11 @@ typedef enum {
     }
     for (ChannelStatus* it in [_subscriptions copy]) {
         if ([it.channel isEqualToString:channel])
-        {                        
+        {
             it.connected=false;
             it.first=false;
         }
-    }    
+    }
     return NO;
 }
 
@@ -450,7 +455,7 @@ typedef enum {
 }
 
 - (void) fetchHistory:(NSUInteger)limit forChannel:(NSString*)channel {
-    NSNumber * aWrappedInt = [NSNumber numberWithInteger:limit]; 
+    NSNumber * aWrappedInt = [NSNumber numberWithInteger:limit];
     NSDictionary* disc=  [NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", channel,@"channel",nil];
     [self fetchHistory:disc];
 }
@@ -458,21 +463,21 @@ typedef enum {
 - (void) fetchHistory:(NSDictionary * )arg1 {
     int limit;
     NSString* channel;
-    if (![arg1 objectForKey:@"limit"]) 
+    if (![arg1 objectForKey:@"limit"])
     {
         NSLog(@"ERROR::limit not found.");
         return;
         
-    }else 
+    }else
     {
         limit=[[arg1 objectForKey:@"limit"] intValue];
     }
     
-    if (![arg1 objectForKey:@"channel"]) 
+    if (![arg1 objectForKey:@"channel"])
     {
         NSLog(@"ERROR::Channel name not found.");
         return;
-    }else 
+    }else
     {
         channel=[arg1 objectForKey:@"channel"];
     }
@@ -506,7 +511,10 @@ typedef enum {
     
     if ([arg1 objectForKey:@"count"])
     {
-       [parameters appendFormat:@"count=%@",[arg1 objectForKey:@"count"]];
+        [parameters appendFormat:@"count=%@",[arg1 objectForKey:@"count"]];
+    }else
+    {
+        [parameters appendString:@"count=100"];
     }
     
     if ([arg1 objectForKey:@"start"])
@@ -576,9 +584,12 @@ NSDecimalNumber* time_token = 0;
          
          if ([data length] >0 && error == nil)
          {
-             NSArray* resp=    (NSArray *)JSONParseData(data);
-             if ([resp isKindOfClass:[NSArray class]] && ([resp count] == 1)) {
-                 time_token = [resp objectAtIndex:0];
+             NSError* error = nil;
+             id result = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+             if (error != nil) result = nil;
+             
+             if ([result isKindOfClass:[NSArray class]] && ([result count] == 1)) {
+                 time_token = [result objectAtIndex:0];
              }
          }
          else if ([data length] == 0 && error == nil)
@@ -633,7 +644,7 @@ NSDecimalNumber* time_token = 0;
         if ([object isKindOfClass:[NSString class]]) {
             [messages addObject:[self getDecryptedString:(NSString *)object ]];
         } else if ([object isKindOfClass:[NSArray class]]) {
-            [messages addObject:[self getDecryptedArray:(NSArray *)object ]]; 
+            [messages addObject:[self getDecryptedArray:(NSArray *)object ]];
         } else if ([object isKindOfClass:[NSDictionary class]]) {
             [messages addObject:[self getDecryptedDictionary:(NSDictionary *)object ]];
         }
@@ -694,7 +705,7 @@ NSDecimalNumber* time_token = 0;
                 if (response == nil  ) {
                     for (ChannelStatus* it in [_subscriptions copy]) {
                         if ([it.channel isEqualToString:connection.channel])
-                        {                        
+                        {
                             
                             if(it.first && it.connected) {
                                 it.connected=NO;
@@ -704,11 +715,9 @@ NSDecimalNumber* time_token = 0;
                             }
                         }
                     }
-//                   
-//                  BOOL is_reconnected = NO;
                     [self getTime1 ];
                     if (time_token == 0) {
-                           
+                        
                     }else
                     {
                         if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
@@ -730,16 +739,18 @@ NSDecimalNumber* time_token = 0;
                                 break;
                             }else
                             {
-                                if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
-                                    
-                                    [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
+                                if (it.connected == NO ) {
+                                    it.connected =YES;
+                                    if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
+                                        [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        
+            
             if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
                 if(!isPresence)
                     NSLog(@"Received %i messages from PubNub channel \"%@\"", [[response objectAtIndex:0] count], connection.channel);
@@ -750,12 +761,12 @@ NSDecimalNumber* time_token = 0;
                         if ([message isKindOfClass:[NSDictionary class]]) {
                             if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveDictionary:onChannel:)]) {
                                 NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
-                                [_delegate pubnub:self subscriptionDidReceiveDictionary:disc onChannel:connection.channel]; 
+                                [_delegate pubnub:self subscriptionDidReceiveDictionary:disc onChannel:connection.channel];
                             }
                         }else if ([message isKindOfClass:[NSArray class]]) {
                             if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveArray:onChannel:)]) {
                                 NSArray * arr=[self getDecryptedArray:(NSArray *)message];
-                                [_delegate pubnub:self subscriptionDidReceiveArray:arr onChannel:connection.channel]; 
+                                [_delegate pubnub:self subscriptionDidReceiveArray:arr onChannel:connection.channel];
                             }
                         }else if ([message isKindOfClass:[NSString class]]) {
                             if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveArray:onChannel:)]) {
@@ -773,7 +784,7 @@ NSDecimalNumber* time_token = 0;
                         if ([message isKindOfClass:[NSDictionary class]]) {
                             if ([_delegate respondsToSelector:@selector(pubnub:presence:onChannel:)]) {
                                 NSString* channel = [connection.channel stringByReplacingOccurrencesOfString:@"-pnpres"                                                                     withString:@""];
-                                [_delegate pubnub:self presence:message onChannel:channel]; 
+                                [_delegate pubnub:self presence:message onChannel:channel];
                             }
                         }
                     }
@@ -790,7 +801,7 @@ NSDecimalNumber* time_token = 0;
                 } else {
                     [self _resubscribeToChannel:connection.channel];
                 }
-            } 
+            }
             else {
                 [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
             }
@@ -798,9 +809,9 @@ NSDecimalNumber* time_token = 0;
         }
         case kCommand_FetchDetailHistory:{
             NSMutableArray *mainArray = [NSMutableArray arrayWithCapacity: 2];
-           NSMutableArray *returnArray = [NSMutableArray arrayWithArray:response];
+            NSMutableArray *returnArray = [NSMutableArray arrayWithArray:response];
             if ([response isKindOfClass:[NSArray class]]) {
-               id msg= [response objectAtIndex:0];
+                id msg= [response objectAtIndex:0];
                 for (id message in msg) {
                     if ([message isKindOfClass:[NSDictionary class]]) {
                         NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
@@ -813,7 +824,7 @@ NSDecimalNumber* time_token = 0;
                         [mainArray addObject:str];
                     }
                 }
-              
+                
                 [returnArray replaceObjectAtIndex:0 withObject:mainArray];
                 
             }else if (response) {
@@ -848,7 +859,7 @@ NSDecimalNumber* time_token = 0;
                     }else if ([message isKindOfClass:[NSArray class]]) {
                         NSArray * arr=[self getDecryptedArray:(NSArray *)message];
                         [mainArray addObject:arr];
-                    }else if ([message isKindOfClass:[NSString class]]) { 
+                    }else if ([message isKindOfClass:[NSString class]]) {
                         NSString * str=[self getDecryptedString:(NSString *)message];
                         [mainArray addObject:str];
                     }
@@ -888,7 +899,7 @@ NSDecimalNumber* time_token = 0;
             if ([response isKindOfClass:[NSDictionary class]] ) {
                 if ([_delegate respondsToSelector:@selector(pubnub:here_now:onChannel:)]) {
                     
-                    [_delegate pubnub:self here_now:response onChannel:connection.channel]; 
+                    [_delegate pubnub:self here_now:response onChannel:connection.channel];
                 }
             }
             break;
