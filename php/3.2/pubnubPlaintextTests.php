@@ -9,6 +9,8 @@ require_once('Pubnub.php');
 # php ./pubnubPlaintextTests.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
 #
 
+// TODO: Need SSL tests
+
 
 ## Capture Publish and Subscribe Keys from Command Line
 $publish_key   = isset($argv[1]) ? $argv[1] : 'demo';
