@@ -109,7 +109,7 @@ echo "\r\n";
 echo "Running detailedHistory\r\n";
 $history = $pubnub->detailedHistory(array(
     'channel' => $channel,
-    'count'   => 10,
+    'count'   => 5,
     'end'   => "13466530169226760"
 ));
 print_r($history);
@@ -147,16 +147,16 @@ echo "\r\n";
 ## ---------------------------------------------------------------------------
 ## Presence Example
 ## ---------------------------------------------------------------------------
-echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
-
-$pubnub->presence(array(
-    'channel'  => $channel,
-    'callback' => function($message) {
-        print_r($message);
-		echo "\r\n";
-        return false;
-    }
-));
+//echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
+//
+//$pubnub->presence(array(
+//    'channel'  => $channel,
+//    'callback' => function($message) {
+//        print_r($message);
+//		echo "\r\n";
+//        return false;
+//    }
+//));
 
 ## ---------------------------------------------------------------------------
 ## Subscribe Example

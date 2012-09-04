@@ -237,12 +237,10 @@ class Pubnub
     {
         $receivedMessages = array();
 
-
         if ($mode == "presence") {
             return $messages;
 
         } elseif ($mode == "default") {
-
             $messageArray = $messages;
             $receivedMessages = $this->decodeDecryptLoop($messageArray);
 
@@ -250,11 +248,9 @@ class Pubnub
 
             $messageArray = $messages[0];
             $receivedMessages = $this->decodeDecryptLoop($messageArray);
-
         }
 
         return $receivedMessages;
-
     }
 
     public function decodeDecryptLoop($messageArray)
