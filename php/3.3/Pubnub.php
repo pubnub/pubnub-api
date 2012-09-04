@@ -71,7 +71,7 @@ class Pubnub
     function publish($args)
     {
         ## Fail if bad input.
-        if (!($args['channel'] && $args['message'])) {
+        if (!(isset($args['channel']) && isset($args['message']))) {
             echo('Missing Channel or Message');
             return false;
         }
@@ -82,17 +82,21 @@ class Pubnub
 
         $message = $this->sendMessage($message_org);
 
-        ## Generate String to Sign
-        $string_to_sign = implode('/', array(
-            $this->PUBLISH_KEY,
-            $this->SUBSCRIBE_KEY,
-            $this->SECRET_KEY,
-            $channel,
-            $message
-        ));
 
         ## Sign Message
-        $signature = $this->SECRET_KEY ? md5($string_to_sign) : '0';
+        $signature = "0";
+        if ($this->SECRET_KEY) {
+            ## Generate String to Sign
+            $string_to_sign = implode('/', array(
+                $this->PUBLISH_KEY,
+                $this->SUBSCRIBE_KEY,
+                $this->SECRET_KEY,
+                $channel,
+                $message
+            ));
+
+            $signature = md5($string_to_sign);
+        }
 
         ## Send Message
         $publishResponse = $this->_request(array(
@@ -112,11 +116,11 @@ class Pubnub
 
     }
 
-      public function sendMessage($message_org)
+    public function sendMessage($message_org)
 
     {
         if ($this->CIPHER_KEY != false) {
-            $message = json_encode(encrypt($message_org, $this->CIPHER_KEY));
+            $message = json_encode(encrypt(json_encode($message_org), $this->CIPHER_KEY));
         } else {
             $message = json_encode($message_org);
         }
@@ -171,6 +175,12 @@ class Pubnub
             return false;
         }
 
+        if ($presence == true) {
+            $mode = "presence";
+        } else
+            $mode = "default";
+
+
         while (1) {
 
             try {
@@ -195,15 +205,11 @@ class Pubnub
                     continue;
                 }
 
-                $receivedMessages = $this->decodeAndDecrypt($messages, $presence);
+                $receivedMessages = $this->decodeAndDecrypt($messages, $mode);
 
                 $returnArray = array($receivedMessages[0], $timetoken);
 
-                if (!$callback($returnArray)) {
-                    trigger_error("Callback error.", E_USER_ERROR);
-                    $timetoken = $this->throwAndResetTimetoken($callback, "Callback is invalid.");
-                    continue;
-                }
+                $callback($returnArray);
 
 
             } catch (Exception $error) {
@@ -222,19 +228,45 @@ class Pubnub
         return $timetoken;
     }
 
-    public function decodeAndDecrypt($messages, $presence = false)
+    public function decodeAndDecrypt($messages, $mode = "default")
     {
         $receivedMessages = array();
 
-        foreach ($messages as $message) {
-            if ($this->CIPHER_KEY && $presence == false) {
+
+        if ($mode == "presence") {
+            return $messages;
+
+        } elseif ($mode == "default") {
+
+            $messageArray = $messages;
+            $receivedMessages = $this->decodeDecryptLoop($messageArray);
+
+        } elseif ($mode == "detailedHistory") {
+
+            $messageArray = $messages[0];
+            $receivedMessages = $this->decodeDecryptLoop($messageArray);
+
+        }
+
+        return $receivedMessages;
+
+    }
+
+    public function decodeDecryptLoop($messageArray)
+    {
+        $receivedMessages = array();
+        foreach ($messageArray as $message) {
+
+            if ($this->CIPHER_KEY) {
                 $decryptedMessage = decrypt($message, $this->CIPHER_KEY);
-                $message = urldecode($decryptedMessage);
+                $message = json_decode($decryptedMessage, true);
             }
+
             array_push($receivedMessages, $message);
         }
         return $receivedMessages;
     }
+
 
     public function handleError($error, $args)
     {
@@ -259,6 +291,65 @@ class Pubnub
         ## Capture User Input
         $args['channel'] = ($args['channel'] . "-pnpres");
         $this->subscribe($args, true);
+    }
+
+    /**
+     * Detailed History
+     *
+     * Load history from a channel.
+     *
+     * @param array $args with 'channel' and 'limit'.
+     * @return mixed false on fail, array on success.
+     */
+
+    function detailedHistory($args)
+    {
+        ## Capture User Input
+
+        ## Fail if bad input.
+        if (!$args['channel']) {
+            echo('Missing Channel');
+            return false;
+        }
+
+        $channel = $args['channel'];
+        $urlParams = "";
+
+        if ($args['count'] || $args['start'] || $args['end'] || $args['reverse']) {
+
+            $urlParamSep = "?";
+            if (isset($args['count'])) {
+                $urlParams .= $urlParamSep . "count=" . $args['count'];
+                $urlParamSep = "&";
+            }
+            if (isset($args['start'])) {
+                $urlParams .= $urlParamSep . "start=" . $args['start'];
+                $urlParamSep = "&";
+            }
+            if (isset($args['end'])) {
+                $urlParams .= $urlParamSep . "end=" . $args['end'];
+                $urlParamSep = "&";
+            }
+            if (isset($args['reverse'])) {
+                $urlParams .= $urlParamSep . "reverse=" . $args['reverse'];
+            }
+
+        }
+
+        $response = $this->_request(array(
+            'v2',
+            'history',
+            "sub-key",
+            $this->SUBSCRIBE_KEY,
+            "channel",
+            $channel
+        ), $urlParams);
+        ;
+
+        $receivedMessages = $this->decodeAndDecrypt($response, "detailedHistory");
+
+        return $receivedMessages;
+
     }
 
     /**
@@ -337,7 +428,7 @@ class Pubnub
      * @param array $request of url directories.
      * @return array from JSON response.
      */
-    private function _request($request)
+    private function _request($request, $urlParams = false)
     {
         $request = array_map('Pubnub::_encode', $request);
 
@@ -351,10 +442,16 @@ class Pubnub
             'http' => array('timeout' => 300)
         ));
 
-        $serverResponse = @file_get_contents(implode('/', $request), 0, $ctx);
-        $decodedResponse = json_decode($serverResponse, true);
+        $urlString = implode('/', $request);
 
-        return $decodedResponse;
+        if ($urlParams) {
+            $urlString .= $urlParams;
+        }
+
+        $serverResponse = @file_get_contents($urlString, 0, $ctx);
+        $JSONdecodedResponse = json_decode($serverResponse, true);
+
+        return $JSONdecodedResponse;
 
     }
 

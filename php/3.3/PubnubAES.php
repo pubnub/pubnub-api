@@ -28,7 +28,7 @@ function decrypt($cipher_text, $cipher_key) {
     $td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
     mcrypt_generic_init($td, $padded_cipher_key, $iv);
 
-    $decrypted = mdecrypt_generic($td, $decoded);
+    $decrypted = mdecrypt_generic($td, $decoded); // TODO: handle non-encrypted unicode corner-case
     mcrypt_generic_deinit($td);
     mcrypt_module_close($td);
 

@@ -7,6 +7,10 @@ require_once('Pubnub.php');
 # php ./pubnubPlaintextTests.php [PUB-KEY] [SUB-KEY] [SECRET-KEY] [CIPHER-KEY] [USE SSL]
 
 ## Capture Publish and Subscribe Keys from Command Line
+
+
+// TODO: Need SSL tests
+
 $publish_key   = 'demo';
 $subscribe_key = 'demo';
 $secret_key    =  false;
@@ -58,6 +62,60 @@ $publish_success = $pubnub->publish(array(
 echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
 
+
+
+$publish_success = $pubnub->publish(array(
+    'channel' => $channel,
+    'message' => '漢語'
+));
+echo($publish_success[0] . $publish_success[1]);
+echo "\r\n";
+
+// Publish an associative array
+
+$big_array = array();
+$big_array["this stuff"] = array("can get");
+$big_array["this stuff"]["can get"] = "complicated!";
+
+$publish_success = $pubnub->publish(array(
+    'channel' => $channel,
+    'message' => $big_array
+));
+
+echo($publish_success[0] . $publish_success[1]);
+echo "\r\n";
+
+// Publish an empty array
+$emptyArray = array();
+$publish_success = $pubnub->publish(array(
+    'channel' => $channel,
+    'message' => $emptyArray
+));
+
+echo($publish_success[0] . $publish_success[1]);
+echo "\r\n";
+
+// This should return a failure (0) JSON Array
+$publish_success = $pubnub->publish(array(
+    'channel' => $channel,
+    'message' => "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+));
+echo($publish_success[0] . $publish_success[1]);
+echo "\r\n";
+
+
+## ---------------------------------------------------------------------------
+## detailedHistory Example
+## ---------------------------------------------------------------------------
+echo "Running detailedHistory\r\n";
+$history = $pubnub->detailedHistory(array(
+    'channel' => $channel,
+    'count'   => 10,
+    'end'   => "13466530169226760"
+));
+print_r($history);
+echo "\r\n";
+
 ## ---------------------------------------------------------------------------
 ## History Example
 ## ---------------------------------------------------------------------------
@@ -87,19 +145,19 @@ $timestamp = $pubnub->time();
 echo('Timestamp: ' . $timestamp);
 echo "\r\n";
 
-//## ---------------------------------------------------------------------------
-//## Presence Example
-//## ---------------------------------------------------------------------------
-//echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
-//
-//$pubnub->presence(array(
-//    'channel'  => $channel,
-//    'callback' => function($message) {
-//        print_r($message);
-//		echo "\r\n";
-//        return true;
-//    }
-//));
+## ---------------------------------------------------------------------------
+## Presence Example
+## ---------------------------------------------------------------------------
+echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
+
+$pubnub->presence(array(
+    'channel'  => $channel,
+    'callback' => function($message) {
+        print_r($message);
+		echo "\r\n";
+        return false;
+    }
+));
 
 ## ---------------------------------------------------------------------------
 ## Subscribe Example
