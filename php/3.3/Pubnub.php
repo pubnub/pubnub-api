@@ -193,7 +193,12 @@ class Pubnub
                     $timetoken
                 ));
 
-                if ($response == null || $timetoken == null) {
+                if ($response == "_PUBNUB_TIMEOUT") {
+                    continue;
+                } elseif ($response == "_PUBNUB_MESSAGE_TOO_LARGE") {
+                    $timetoken = $this->throwAndResetTimetoken($callback, "Message Too Large");
+                    continue;
+                } elseif ($response == null || $timetoken == null) {
                     $timetoken = $this->throwAndResetTimetoken($callback, "Bad server response.");
                     continue;
                 }
@@ -207,7 +212,7 @@ class Pubnub
 
                 $receivedMessages = $this->decodeAndDecrypt($messages, $mode);
 
-                $returnArray = array($receivedMessages[0], $timetoken);
+                $returnArray = array($receivedMessages, $timetoken);
 
                 $callback($returnArray);
 
@@ -438,20 +443,42 @@ class Pubnub
             array_push($request, '?uuid=' . $this->SESSION_UUID);
         }
 
-        $ctx = stream_context_create(array(
-            'http' => array('timeout' => 300)
-        ));
-
         $urlString = implode('/', $request);
 
         if ($urlParams) {
             $urlString .= $urlParams;
         }
 
-        $serverResponse = @file_get_contents($urlString, 0, $ctx);
-        $JSONdecodedResponse = json_decode($serverResponse, true);
+        $ch = curl_init();
 
-        return $JSONdecodedResponse;
+        $pubnubHeaders = array("V: 3.3", "Accept: */*");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $pubnubHeaders);
+        curl_setopt($ch, CURLOPT_USERAGENT, "PHP");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+
+        curl_setopt($ch, CURLOPT_URL, $urlString);
+
+        if ($this->SSL) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_CAINFO, getcwd() . "/pubnub.com.pem");
+        }
+
+        $output = curl_exec($ch);
+        $curlError = curl_errno($ch);
+        $curlResponseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        $JSONdecodedResponse = json_decode($output, true);
+
+        if ($JSONdecodedResponse != null)
+            return $JSONdecodedResponse;
+        elseif ($curlError == 28)
+            return "_PUBNUB_TIMEOUT";
+        elseif ($curlResponseCode == 400 || $curlResponseCode == 404)
+            return "_PUBNUB_MESSAGE_TOO_LARGE";
 
     }
 

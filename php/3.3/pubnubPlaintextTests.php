@@ -1,6 +1,7 @@
 <?php
 require_once('Pubnub.php');
 
+// TODO: Add SSL version of these tests
 ## ---------------------------------------------------------------------------
 ## USAGE:
 ## ---------------------------------------------------------------------------
@@ -15,7 +16,7 @@ $publish_key   = isset($argv[1]) ? $argv[1] : 'demo';
 $subscribe_key = isset($argv[2]) ? $argv[2] : 'demo';
 $secret_key    = isset($argv[3]) ? $argv[3] : false;
 $cipher_key	   = isset($argv[4]) ? $argv[4] : false;
-$ssl_on        = isset($argv[4]);
+$ssl_on        = false;
 
 ## ---------------------------------------------------------------------------
 ## Create Pubnub Object
@@ -44,6 +45,16 @@ $publish_success = $pubnub->publish(array(
 ));
 echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
+
+// Publish an associative array
+
+$big_array = array();
+$big_array["this stuff"]["can get"] = "complicated!";
+
+$publish_success = $pubnub->publish(array(
+    'channel' => $channel,
+    'message' => $big_array
+));
 
 // This should return a failure (0) JSON Array
 $publish_success = $pubnub->publish(array(

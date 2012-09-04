@@ -74,7 +74,6 @@ echo "\r\n";
 // Publish an associative array
 
 $big_array = array();
-$big_array["this stuff"] = array("can get");
 $big_array["this stuff"]["can get"] = "complicated!";
 
 $publish_success = $pubnub->publish(array(
