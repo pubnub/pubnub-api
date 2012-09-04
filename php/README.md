@@ -36,7 +36,7 @@ $info = $pubnub->publish(array(
 var_dump($info);
 
 ## --------------------------
-## Request Messages (HISTORY)
+## Request Messages (HISTORY, deprecated, use detailedHistory() below)
 ## --------------------------
 $messages = $pubnub->history(array(
     'channel' => 'hello_world',  ## REQUIRED Channel to Send
@@ -75,4 +75,32 @@ $pubnub->subscribe(array(
         var_dump($message);  ## Print Message
         return true;         ## Keep listening (return false to stop)
     }
+));
+
+## --------------------------
+## Realtime Join/Leave Events (Presence)
+## --------------------------
+$pubnub->presence(array(
+    'channel'  => $channel,
+    'callback' => function($message) {
+        print_r($message);
+		echo "\r\n";
+        return true;
+    }
+));
+
+## --------------------------
+## On-demand Occupancy Status (here_now)
+## --------------------------
+$here_now = $pubnub->here_now(array(
+    'channel' => $channel
+));
+
+## --------------------------
+## Detailed History (detailedHistory())
+## --------------------------
+$history = $pubnub->detailedHistory(array(
+    'channel' => $channel,
+    'count'   => 10,
+    'end'   => "13466530169226760"
 ));

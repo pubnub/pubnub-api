@@ -61,7 +61,19 @@ $history = $pubnub->history(array(
     'channel' => $channel,
     'limit'   => 2
 ));
-echo($history);
+print_r($history);
+echo "\r\n";
+
+## ---------------------------------------------------------------------------
+## detailedHistory Example
+## ---------------------------------------------------------------------------
+echo "Running detailedHistory\r\n";
+$history = $pubnub->detailedHistory(array(
+    'channel' => $channel,
+    'count'   => 10,
+    'end'   => "13466530169226760"
+));
+print_r($history);
 echo "\r\n";
 
 ## ---------------------------------------------------------------------------
