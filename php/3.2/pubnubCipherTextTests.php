@@ -70,8 +70,8 @@ echo "\r\n";
 // Publish an associative array
 
 $big_array = array();
-$big_array["this stuff"]["can get"]["really"] = "complicated!";
-
+$big_array["this stuff"] = array("can get");
+$big_array["this stuff"]["can get"] = "complicated!";
 
 $publish_success = $pubnub->publish(array(
     'channel' => $channel,
@@ -144,16 +144,16 @@ echo "\r\n";
 ## ---------------------------------------------------------------------------
 ## Presence Example
 ## ---------------------------------------------------------------------------
-//echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
-//
-//$pubnub->presence(array(
-//    'channel'  => $channel,
-//    'callback' => function($message) {
-//        print_r($message);
-//		echo "\r\n";
-//        return false;
-//    }
-//));
+echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
+
+$pubnub->presence(array(
+    'channel'  => $channel,
+    'callback' => function($message) {
+        print_r($message);
+		echo "\r\n";
+        return false;
+    }
+));
 
 ## ---------------------------------------------------------------------------
 ## Subscribe Example

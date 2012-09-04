@@ -120,7 +120,7 @@ class Pubnub
 
     {
         if ($this->CIPHER_KEY != false) {
-            $message = '"' . encrypt(json_encode($message_org), $this->CIPHER_KEY) . '"';
+            $message = json_encode(encrypt(json_encode($message_org), $this->CIPHER_KEY));
         } else {
             $message = json_encode($message_org);
         }
@@ -259,15 +259,7 @@ class Pubnub
 
             if ($this->CIPHER_KEY) {
                 $decryptedMessage = decrypt($message, $this->CIPHER_KEY);
-                $message = json_decode(urldecode($decryptedMessage), true);
-            } else {
-
-                if (is_array($message)) {
-                    $message = $this->decodeArray($message);
-
-                } else {
-                    $message = urldecode($message);
-                }
+                $message = json_decode($decryptedMessage, true);
             }
 
             array_push($receivedMessages, $message);
@@ -275,23 +267,6 @@ class Pubnub
         return $receivedMessages;
     }
 
-    public function decodeArray($message)
-    {
-        $newArray = array();
-
-        foreach ($message as $key => $value) {
-
-            if (is_array($value)) {
-                $newArray[$key] = $this->decodeArray($value);
-            } else {
-                $decodedKey = urldecode($key);
-                $decodedValue = urldecode($value);
-                $newArray[$decodedKey] = $decodedValue;
-            }
-        }
-
-        return $newArray;
-    }
 
     public function handleError($error, $args)
     {
@@ -474,9 +449,9 @@ class Pubnub
         }
 
         $serverResponse = @file_get_contents($urlString, 0, $ctx);
-        $decodedResponse = json_decode($serverResponse, true);
+        $JSONdecodedResponse = json_decode($serverResponse, true);
 
-        return $decodedResponse;
+        return $JSONdecodedResponse;
 
     }
 
