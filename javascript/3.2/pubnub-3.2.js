@@ -561,7 +561,7 @@ function xdr( setup ) {
  *  });
  */
 function ajax( setup ) {
-    var xhr
+    var xhr, response
     ,   finished = function() {
             if (loaded) return;
                 loaded = 1;
@@ -813,7 +813,7 @@ var PDIV          = $('pubnub') || {}
                             disconnected = 1;
                             disconnect();
                         }
-                        timeout( pubnub, SECOND );
+                        timeout( _connect, SECOND );
                         SELF['time'](function(success){
                             // Reconnect
                             if (success && disconnected) {
@@ -853,7 +853,7 @@ var PDIV          = $('pubnub') || {}
                             callback( msg, messages );
                         } );
 
-                        timeout( pubnub, 10 );
+                        timeout( _connect, 10 );
                     }
                 });
             }
