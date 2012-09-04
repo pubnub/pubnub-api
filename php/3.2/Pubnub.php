@@ -82,17 +82,21 @@ class Pubnub
 
         $message = $this->sendMessage($message_org);
 
-        ## Generate String to Sign
-        $string_to_sign = implode('/', array(
-            $this->PUBLISH_KEY,
-            $this->SUBSCRIBE_KEY,
-            $this->SECRET_KEY,
-            $channel,
-            $message
-        ));
 
         ## Sign Message
-        $signature = $this->SECRET_KEY ? md5($string_to_sign) : '0';
+        $signature = "0";
+        if ($this->SECRET_KEY) {
+            ## Generate String to Sign
+            $string_to_sign = implode('/', array(
+                $this->PUBLISH_KEY,
+                $this->SUBSCRIBE_KEY,
+                $this->SECRET_KEY,
+                $channel,
+                $message
+            ));
+
+            $signature = md5($string_to_sign);
+        }
 
         ## Send Message
         $publishResponse = $this->_request(array(
@@ -116,7 +120,7 @@ class Pubnub
 
     {
         if ($this->CIPHER_KEY != false) {
-            $message = json_encode(encrypt($message_org, $this->CIPHER_KEY));
+            $message = '"' . encrypt(json_encode($message_org), $this->CIPHER_KEY) . '"';
         } else {
             $message = json_encode($message_org);
         }
@@ -255,7 +259,7 @@ class Pubnub
 
             if ($this->CIPHER_KEY) {
                 $decryptedMessage = decrypt($message, $this->CIPHER_KEY);
-                $message = urldecode($decryptedMessage);
+                $message = json_decode(urldecode($decryptedMessage), true);
             } else {
 
                 if (is_array($message)) {

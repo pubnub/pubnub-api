@@ -70,13 +70,14 @@ echo "\r\n";
 // Publish an associative array
 
 $big_array = array();
-$big_array["this stuff"] = array("can get");
-$big_array["this stuff"]["can get"] = "complicated!";
+$big_array["this stuff"]["can get"]["really"] = "complicated!";
+
 
 $publish_success = $pubnub->publish(array(
     'channel' => $channel,
     'message' => $big_array
 ));
+
 echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
 
@@ -143,30 +144,30 @@ echo "\r\n";
 ## ---------------------------------------------------------------------------
 ## Presence Example
 ## ---------------------------------------------------------------------------
-echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
-
-$pubnub->presence(array(
-    'channel'  => $channel,
-    'callback' => function($message) {
-        print_r($message);
-		echo "\r\n";
-        return false;
-    }
-));
-
-## ---------------------------------------------------------------------------
-## Subscribe Example
-## ---------------------------------------------------------------------------
-//echo("\nWaiting for Publish message... Hit CTRL+C to finish.\n");
+//echo("\nWaiting for Presence message... Hit CTRL+C to finish.\n");
 //
-//$pubnub->subscribe(array(
+//$pubnub->presence(array(
 //    'channel'  => $channel,
 //    'callback' => function($message) {
 //        print_r($message);
 //		echo "\r\n";
-//        return true;
+//        return false;
 //    }
 //));
+
+## ---------------------------------------------------------------------------
+## Subscribe Example
+## ---------------------------------------------------------------------------
+echo("\nWaiting for Publish message... Hit CTRL+C to finish.\n");
+
+$pubnub->subscribe(array(
+    'channel'  => $channel,
+    'callback' => function($message) {
+        print_r($message);
+		echo "\r\n";
+        return true;
+    }
+));
 
 ?>
 
