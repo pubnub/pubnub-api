@@ -71,7 +71,7 @@ class Pubnub
     function publish($args)
     {
         ## Fail if bad input.
-        if (!($args['channel'] && $args['message'])) {
+        if (!(isset($args['channel']) && isset($args['message']))) {
             echo('Missing Channel or Message');
             return false;
         }
@@ -257,12 +257,36 @@ class Pubnub
                 $decryptedMessage = decrypt($message, $this->CIPHER_KEY);
                 $message = urldecode($decryptedMessage);
             } else {
-                $message = urldecode($message);
+
+                if (is_array($message)) {
+                    $message = $this->decodeArray($message);
+
+                } else {
+                    $message = urldecode($message);
+                }
             }
 
             array_push($receivedMessages, $message);
         }
         return $receivedMessages;
+    }
+
+    public function decodeArray($message)
+    {
+        $newArray = array();
+
+        foreach ($message as $key => $value) {
+
+            if (is_array($value)) {
+                $newArray[$key] = $this->decodeArray($value);
+            } else {
+                $decodedKey = urldecode($key);
+                $decodedValue = urldecode($value);
+                $newArray[$decodedKey] = $decodedValue;
+            }
+        }
+
+        return $newArray;
     }
 
     public function handleError($error, $args)

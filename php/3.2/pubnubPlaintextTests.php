@@ -45,6 +45,29 @@ $publish_success = $pubnub->publish(array(
 echo($publish_success[0] . $publish_success[1]);
 echo "\r\n";
 
+// Publish an associative array
+
+$big_array = array();
+$big_array["this stuff"] = array("can get");
+$big_array["this stuff"]["can get"] = "complicated!";
+
+$publish_success = $pubnub->publish(array(
+    'channel' => $channel,
+    'message' => $big_array
+));
+echo($publish_success[0] . $publish_success[1]);
+echo "\r\n";
+
+// Publish an empty array
+$emptyArray = array();
+$publish_success = $pubnub->publish(array(
+    'channel' => $channel,
+    'message' => $emptyArray
+));
+
+echo($publish_success[0] . $publish_success[1]);
+echo "\r\n";
+
 // This should return a failure (0) JSON Array
 $publish_success = $pubnub->publish(array(
     'channel' => $channel,
