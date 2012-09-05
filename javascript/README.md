@@ -24,7 +24,7 @@ business collaborative solutions, and more.
 ## SIMPLE EXAMPLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script srchtt=p://cdn.pubnub.com/pubnub-3.2.min.js ></script>
+<script src=http://cdn.pubnub.com/pubnub-3.2.min.js ></script>
 <script>
 
     // LISTEN

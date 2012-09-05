@@ -104,6 +104,24 @@
     return dec ;
 }
 
+
++(NSString*)JSONToString:(id)object
+{
+    NSString * jsonString= nil;
+    if ([object isKindOfClass:[NSString class]]) {
+		object = [NSString stringWithFormat:@"\"%@\"", object];
+       
+        return object;
+	} else {
+        NSError* error = nil;
+        id result = [NSJSONSerialization dataWithJSONObject:object options:kNilOptions error:&error];
+        if (error != nil) return nil;
+        jsonString =[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
+       
+	}
+    return jsonString;
+}
+
 @end
 
 
