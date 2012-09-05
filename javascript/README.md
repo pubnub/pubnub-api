@@ -10,7 +10,7 @@ You need this to run './test.sh' unit test.
 This is completely optional, however we love Testling.
 
 
-## PubNub 3.2 Real-time Cloud Push API - JAVASCRIPT
+## PubNub 3.3 Real-time Cloud Push API - JAVASCRIPT
 http://www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/tutorial/javascript-push-api
 
@@ -24,7 +24,7 @@ business collaborative solutions, and more.
 ## SIMPLE EXAMPLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=http://cdn.pubnub.com/pubnub-3.2.min.js ></script>
+<script src=http://cdn.pubnub.com/pubnub-3.3.min.js ></script>
 <script>
 
     // LISTEN
@@ -45,7 +45,7 @@ business collaborative solutions, and more.
 ## ADVANCED STYLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=http://pubnub.s3.amazonaws.com/pubnub-3.2.min.js ></script>
+<script src=http://pubnub.s3.amazonaws.com/pubnub-3.3.min.js ></script>
 <script>(function(){
     // LISTEN FOR MESSAGES
     PUBNUB.subscribe({
@@ -79,6 +79,8 @@ business collaborative solutions, and more.
 </script>
 
 <span onclick="hereNow()">Click Me for Here Now!</span> // here_now() example (see console for logged output.)
+ <br/>
+<span onclick="history()">Click Me for History!</span> // detailedHistory() example (see console for logged output.)
 
 <script type="text/javascript">
 
@@ -88,6 +90,13 @@ business collaborative solutions, and more.
         }});
     }
 
+    function history() {
+        PUBNUB.detailedHistory({count:10, channel:'hello_world', callback:function (message) {
+            console.log(message);
+        }});
+}
+
+
 </script>
 
 ```
@@ -96,7 +105,7 @@ business collaborative solutions, and more.
 
 ```html
 <div id=pubnub ssl=on></div>
-<script src=https://pubnub.a.ssl.fastly.net/pubnub-3.2.min.js></script>
+<script src=https://pubnub.a.ssl.fastly.net/pubnub-3.3.min.js></script>
 <script>(function(){
 
     var pubnub = PUBNUB({
@@ -124,7 +133,7 @@ and pass the PubNub API Keys without using a DOM element.
 To do this, simply follow this `init` example:
 
 ```html
-<script src=http://cdn.pubnub.com/pubnub-3.2.min.js ></script>
+<script src=http://cdn.pubnub.com/pubnub-3.3.min.js ></script>
 <script>(function(){
 
     // INIT PubNub
