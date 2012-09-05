@@ -37,6 +37,7 @@
             <input id="detailed-history-count" type="text" value="100"/>
             <input id="detailed-history-start" type="text" value=""/>
             <input id="detailed-history-end" type="text" value=""/>
+            <input id="detailed-history-channel" type="text" value="hello_world"/>
             <input id="detailed-history-reverse" type="checkbox" name="reverse" value="true">Reverse ?</input>
             </select>
         </td>
@@ -54,6 +55,7 @@ var publish_help = "Publish Here";
 var count_help = "Count (default: 100)";
 var start_help = "Start Time Stamp";
 var end_help = "End Time Stamp";
+
 function presenceEvent(message, announce) {
     if (announce == undefined) announce = true;
     if (message['action'] == 'join') {
@@ -89,6 +91,9 @@ $("#detailed-history-button").click(function(){
         paramobj["count"] = $("#detailed-history-count").val();
     else
         paramobj["count"] = 100;
+
+    paramobj["channel"] = $("#detailed-history-channel").val();
+
     
     if ($("#detailed-history-start").val() != start_help)
         paramobj["start"] = $("#detailed-history-start").val();
