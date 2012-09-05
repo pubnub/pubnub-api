@@ -563,7 +563,7 @@ function xdr( setup ) {
  *  });
  */
 function ajax( setup ) {
-    var xhr
+    var xhr, response
     ,   finished = function() {
             if (loaded) return;
                 loaded = 1;
@@ -710,7 +710,7 @@ var PDIV          = $('pubnub') || {}
                 callback : jsonp,
                 url      : [
                     ORIGIN, 'v2', 'history',
-                    'sub-key', SUBSCRIBE_KEY, 'channel', encode(channel),
+                    'sub-key', SUBSCRIBE_KEY, 'channel', encode(channel)
                 ],
                 data : params,
                 success  : function(response) { callback(response) },
@@ -858,7 +858,7 @@ var PDIV          = $('pubnub') || {}
                             disconnected = 1;
                             disconnect();
                         }
-                        timeout( pubnub, SECOND );
+                        timeout( _connect, SECOND );
                         SELF['time'](function(success){
                             // Reconnect
                             if (success && disconnected) {
@@ -898,7 +898,7 @@ var PDIV          = $('pubnub') || {}
                             callback( msg, messages );
                         } );
 
-                        timeout( pubnub, 10 );
+                        timeout( _connect, 10 );
                     }
                 });
             }

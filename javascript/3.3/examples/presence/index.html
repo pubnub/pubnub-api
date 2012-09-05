@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>PubNub Presence Demo</title>
     
     <style>
@@ -50,7 +51,7 @@
  
     // LISTEN FOR MESSAGES
     PUBNUB.subscribe({
-        channel    : "presence_demo_chat",      // CONNECT TO THIS CHANNEL.
+        channel    : "hello_world",      // CONNECT TO THIS CHANNEL.
  
         restore    : true,              // STAY CONNECTED, EVEN WHEN BROWSER IS CLOSED
                                          // OR WHEN PAGE CHANGES.
@@ -62,13 +63,13 @@
         },
         connect    : function() {        // CONNECTION ESTABLISHED.
             
-            PUBNUB.history({channel: "presence_demo_chat", limit:100, callback: function(history) {
+            PUBNUB.history({channel: "hello_world", limit:100, callback: function(history) {
                 for (i=0; i<history.length; i++) {
                     messageEvent(history[i]);
                 }
             }});
 
-            PUBNUB.here_now({channel:'presence_demo_chat', callback:function(message) {
+            PUBNUB.here_now({channel:'hello_world', callback:function(message) {
                 $("td.occupancy .number").text(message['occupancy']);
                 for (i=0; i<message['uuids'].length; i++) {
                     $(".users .list").append($("<li class='"+message['uuids'][i]+"'>"+message['uuids'][i]+"</li>"));
@@ -107,11 +108,11 @@ $("td.chat input").example("Chat here");
 $('td.chat input').keypress(function(e){
     if(e.which == 13){
         message = {sender:PUBNUB.db.get($("#pubnub").attr('sub-key')+'uuid'), text:$("td.chat input").val()};
-        PUBNUB.publish({channel:'presence_demo_chat',message:message});
+        PUBNUB.publish({channel:'hello_world',message:message});
         messageEvent(message);
         $("td.chat input").val("");
     }
 });
 </script>
 </body>
-</html
+</html>
