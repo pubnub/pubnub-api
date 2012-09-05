@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>PubNub Detailed History Demo</title>
     
     <style>
@@ -56,20 +57,7 @@ var count_help = "Count (default: 100)";
 var start_help = "Start Time Stamp";
 var end_help = "End Time Stamp";
 
-function presenceEvent(message, announce) {
-    if (announce == undefined) announce = true;
-    if (message['action'] == 'join') {
-        $(".users .list").append($("<li class='"+message['uuid']+"'>"+message['uuid']+"</li>"));
-        if (announce) $(".history").append($("<div class='join "+message['uuid']+"'>"+message['uuid']+" joined the channel</li>"));
-    } else if (message['action'] == 'leave') {
-        $(".users .list li."+message['uuid']).remove();
-        if (announce) $(".history").append($("<div class='join "+message['uuid']+"'>"+message['uuid']+" left the channel</li>"));
-    } else if (message['action'] == 'timeout') {
-        $(".users .list li."+message['uuid']).remove();
-        if (announce) $(".history").append($("<div class='join "+message['uuid']+"'>"+message['uuid']+" timed out</li>"));
-    }
-    $("td.occupancy .number").text(message['occupancy']);
-}
+
 function messageEvent(message) {
     $("#publish-result").append($("<div class='message'><div class='sender'>"+message['sender']+"</div><div class='text'>"+message['text']+"</div></div>"));
 }
@@ -104,6 +92,7 @@ $("#detailed-history-button").click(function(){
     PUBNUB.detailedHistory(paramobj);
 
 });
+
 $("td.publish input").example(publish_help);
 $("#detailed-history-count").example(count_help);
 $("#detailed-history-start").example(start_help);
@@ -111,11 +100,11 @@ $("#detailed-history-end").example(end_help);
 $('td.publish input').keypress(function(e){
     if(e.which == 13){
         message = {sender:PUBNUB.db.get($("#pubnub").attr('sub-key')+'uuid'), text:$("td.publish input").val()};
-        PUBNUB.publish({channel:'detailed-history-demo-channel',message:message});
+        PUBNUB.publish({channel:$("#detailed-history-channel").val(),message:message});
         messageEvent(message);
         $("td.publish input").val("");
     }
 });
 </script>
 </body>
-</html
+</html>
