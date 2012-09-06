@@ -14,8 +14,8 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
 
         #import "CEPubnub.h"
 
-3. For no network or loss of network scenario:
-	Configure values in CEPubnub.m for max retry cycles (default = -1, infinite) and delay between retries in seconds (detault = 5)
+3. If you wish to consider connection retry interval and retry cycle settings (for example, when the network connection is temporarily lost):
+Configure values in CEPubnub.m for max retry cycles (default = -1, infinite) and delay between retries in seconds (default = 5)
 
 		#define kMinRetryInterval 5.0 //In seconds
  	 	#define kMinRetry -1
