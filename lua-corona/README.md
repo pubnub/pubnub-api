@@ -8,9 +8,11 @@ PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time messages
 to thousands of web and mobile clients simultaneously.
 
-#### Be sure to copy "pubnub.lua" and "Json.lua" into your Project Directory. Check out the examples in the 3.2 directory for complete code examples.
+#### Be sure to copy "pubnub.lua" and "Json.lua" into your Project Directory,
+and check out the sample code in the 3.3 directory for complete code examples!
 
-Require "pubnub"
+```lua
+require "pubnub"
 
 multiplayer = pubnub.new({
     publish_key   = "demo",             -- YOUR PUBLISH KEY
@@ -19,9 +21,10 @@ multiplayer = pubnub.new({
     ssl           = nil,                -- ENABLE SSL?
     origin        = "pubsub.pubnub.com" -- PUBNUB CLOUD ORIGIN
 })
+```
 
-### PUBLISH
-
+### Publish
+```lua
 multiplayer:publish({
     channel  = "lua-corona-demo-channel",
     message  = { "1234", 2, 3, 4 },
@@ -36,9 +39,10 @@ multiplayer:publish({
 
     end
 })
+```
 
-### SUBSCRIBE
-
+### Subscribe
+```lua
 multiplayer:subscribe({
     channel  = "lua-corona-demo-channel",
     callback = function(message)
@@ -49,17 +53,17 @@ multiplayer:subscribe({
         print("Network Connection Lost")
     end
 })
+```
 
-
-### UN-SUBSCRIBE
-
+### Unsubscribe
+```lua
 multiplayer:unsubscribe({
     channel = "lua-corona-demo-channel"
 })
+```
 
-
-### HISTORY (Deprecated, use detailedHistory)
-
+### History (Deprecated, use detailedHistory)
+```lua
 multiplayer:history({
     channel  = "lua-corona-demo-channel",
     limit    = 10,
@@ -79,9 +83,10 @@ multiplayer:history({
         end
     end
 })
+```
 
 ### Detailed History
-
+```lua
 function detailedHistory(channel, count, reverse)
     pubnub_obj:detailedHistory({
         channel = channel,
@@ -109,24 +114,26 @@ end
 
 local my_channel = 'hello_world'
 detailedHistory( my_channel, 5, false )
+```
 
-###PUBNUB SERVER TIME
-
+### Time
+```lua
 multiplayer:time({
     callback = function(time)
         -- PRINT TIME
         print("PUBNUB SERVER TIME: " .. time)
     end
 })
+```
 
-###PUBNUB UUID
-
+### UUID
+```lua
 uuid = multiplayer:UUID()
 print("PUBNUB UUID: ", uuid)
-
+```
 
 ### here_now
-
+```lua
 function here_now(channel)
     pubnub_obj:here_now({
         channel = channel,
@@ -151,9 +158,10 @@ end
 
 local my_channel = 'hello-corona-demo-channel'
 here_now( my_channel )
+```
 
 ### Presence
-
+```lua
 function presence( channel, donecb )
     pubnub_obj:presence({
         channel = channel,
@@ -174,3 +182,4 @@ end
 local my_channel = 'hello_world'
 presence(my_channel, function() end)
 
+```
