@@ -1,28 +1,17 @@
-## --------------------------------------------
-## PubNub 3.1 Real-time Cloud Push API - Corona
-## --------------------------------------------
-##
+## PubNub 3.2 Real-time Cloud Push API - Corona
 ## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
-##
-## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
-## This is a cloud-based service for broadcasting Real-time messages
-## to thousands of web and mobile clients simultaneously.
 
-## ---------------
-## Corona Push API
-## ---------------
+###GET YOUR PUBNUB KEYS HERE:
+###http://www.pubnub.com/account#api-keys
 
-##
-## Corona Multiplayer Networking and Push Notifications
-## Copy "pubnub.lua" and "Json.lua" into your Project Directory.
-##
+PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+This is a cloud-based service for broadcasting Real-time messages
+to thousands of web and mobile clients simultaneously.
+
+#### Be sure to copy "pubnub.lua" and "Json.lua" into your Project Directory. Check out the examples in the 3.2 directory for complete code examples.
 
 Require "pubnub"
 
---
--- GET YOUR PUBNUB KEYS HERE:
--- http://www.pubnub.com/account#api-keys
---
 multiplayer = pubnub.new({
     publish_key   = "demo",             -- YOUR PUBLISH KEY
     subscribe_key = "demo",             -- YOUR SUBSCRIBE KEY
@@ -31,9 +20,8 @@ multiplayer = pubnub.new({
     origin        = "pubsub.pubnub.com" -- PUBNUB CLOUD ORIGIN
 })
 
---
--- PUBNUB PUBLISH MESSAGE (SEND A MESSAGE)
---
+### PUBLISH
+
 multiplayer:publish({
     channel  = "lua-corona-demo-channel",
     message  = { "1234", 2, 3, 4 },
@@ -49,9 +37,8 @@ multiplayer:publish({
     end
 })
 
---
--- PUBNUB SUBSCRIBE CHANNEL (RECEIVE MESSAGES)
---
+### SUBSCRIBE
+
 multiplayer:subscribe({
     channel  = "lua-corona-demo-channel",
     callback = function(message)
@@ -63,16 +50,16 @@ multiplayer:subscribe({
     end
 })
 
---
--- PUBNUB UN-SUBSCRIBE CHANNEL (STOP RECEIVING MESSAGES)
---
+
+### UN-SUBSCRIBE
+
 multiplayer:unsubscribe({
     channel = "lua-corona-demo-channel"
 })
 
---
--- PUBNUB LOAD MESSAGE HISTORY
---
+
+### HISTORY
+
 multiplayer:history({
     channel  = "lua-corona-demo-channel",
     limit    = 10,
@@ -93,10 +80,8 @@ multiplayer:history({
     end
 })
 
+###PUBNUB SERVER TIME
 
---
--- PUBNUB SERVER TIME
---
 multiplayer:time({
     callback = function(time)
         -- PRINT TIME
@@ -104,15 +89,58 @@ multiplayer:time({
     end
 })
 
---
--- PUBNUB UUID
---
+###PUBNUB UUID
+
 uuid = multiplayer:UUID()
 print("PUBNUB UUID: ", uuid)
 
-local screenW, screenH = display.contentWidth, display.contentHeight
 
-local ball = display.newCircle( 0, 0, 40 )
-ball:setFillColor(255, 255, 255, 255)
-ball.x = screenW * 0.5
-ball.y = ball.height
+### here_now
+
+function here_now(channel)
+    pubnub_obj:here_now({
+        channel = channel,
+        limit = limit,
+        callback = function(response)
+            if response then
+                for k, v in pairs(response) 
+                    do 
+                    if (type (v) == 'string')
+                    then textout(v)
+                    elseif (type (v) == 'table') 
+                    then
+                        for i,line in ipairs(v) do
+                            textout(line)
+                        end
+                    end
+                end
+            end
+        end
+    })
+end
+
+local my_channel = 'hello-corona-demo-channel'
+here_now( my_channel )
+
+### Presence
+
+function presence( channel, donecb )
+    pubnub_obj:presence({
+        channel = channel,
+        connect = function()
+            textout('Connected to channel ')
+            textout(channel)
+        end,
+        callback = function(message)
+            for i,v in pairs(message) do textout(i .. " " .. v) end
+            timer.performWithDelay( 500, donecb )
+        end,
+        errorback = function()
+            textout("Oh no!!! Dropped 3G Conection!")
+        end
+    })
+end
+
+local my_channel = 'hello_world'
+presence(my_channel, function() end)
+
