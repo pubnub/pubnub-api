@@ -203,6 +203,57 @@ function pubnub.new(init)
         })
     end
 
+    function self:detailedHistory(args)
+        if not (args.callback and args.channel) then
+            return print("Missing History Callback and/or Channel")
+        end
+
+        query = {}
+
+        if (args.start or args.stop or args.reverse) then
+
+            if args.start then
+                query["start"] = args.start
+            end
+
+            if args.stop then
+                query["stop"] = args.stop
+            end
+
+            if args.reverse then
+                if (args.reverse == true or args.reverse == "true") then
+                    query["reverse"] = "true"
+                    else
+                    query["reverse"] = "false"
+                end
+            end
+        end
+
+        local channel  = args.channel
+        local callback = args.callback
+        local count = args.count
+
+        if not count then
+            count = 10
+            else count = args.count
+        end
+
+        query["count"] = count
+
+        self:_request({
+            callback = callback,
+            request  = {
+                'v2',
+                'history',
+                'sub-key',
+                self.subscribe_key,
+                'channel',
+                self:_encode(channel)
+            },
+            query = query
+        })
+    end
+
     function self:time(args)
         if not args.callback then
             return print("Missing Time Callback")
@@ -224,11 +275,20 @@ function pubnub.new(init)
         table.insert( args.request, 1, self.origin )
 
         local url = table.concat( args.request, "/" )
-	if args.query and # args.query then
-	    url = url .. "?" .. table.concat(args.query,"&")
+
+        urlParams = ""
+        urlSep = "?"
+
+        if args.query and # args.query then
+            for k,v in pairs(args.query) do
+                urlParams = urlParams .. urlSep .. k .. "=" .. v
+                urlSep = "&"
+            end
+            url = url .. urlParams
         end
+
         local params = {}
-        params["V"] = "3.2"
+        params["V"] = "3.3"
         params["User-Agent"] = "Corona"
 
         network.request( url, "GET", function(event)

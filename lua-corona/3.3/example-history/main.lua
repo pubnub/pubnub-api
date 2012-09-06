@@ -1,5 +1,5 @@
 --
--- PubNub 3.1 : History Example
+-- PubNub 3.3 : History Example
 --
 
 require "pubnub"
@@ -31,13 +31,6 @@ local function textout( text )
         background:setFillColor(254,254,254)
     end
 
-    local myText = display.newText( text, 0, 0, nil, display.contentWidth/23 )
-
-    myText:setTextColor(200,200,180)
-    myText.x = math.floor(display.contentWidth/2)
-    myText.y = (display.contentWidth/19) * textoutline - 5
-
-    textoutline = textoutline + 1
     print(text)
 end
 
@@ -49,13 +42,15 @@ display.setStatusBar( display.HiddenStatusBar )
 -- 
 -- CALL HISTORY FUNCTION
 --
-function history(channel, limit)
-    pubnub_obj:history({
+function detailedHistory(channel, count, reverse)
+    pubnub_obj:detailedHistory({
         channel = channel,
-        limit = limit,
+        count = count,
+        reverse = reverse,
         callback = function(response)
+
             if response then
-                for k, v in pairs(response) 
+                for k, v in pairs(response[1])
                     do 
                     print( type (v) )
                     if (type (v) == 'string')
@@ -69,12 +64,6 @@ function history(channel, limit)
                 end
             end
             
-            print(' LOOP THROUGH MESSAGE HISTORY ::::: ')
-            
-            -- LOOP THROUGH MESSAGE HISTORY
-            for i, message in ipairs(messages) do
-                print(Json.Encode(message))
-            end
         end
     })
 end
@@ -82,5 +71,5 @@ end
 -- 
 -- MAIN TEST
 -- 
-local my_channel = 'hello-corona-demo-channel'
-history( my_channel, 3 )
+local my_channel = 'hello_world'
+detailedHistory( my_channel, 5, false )
