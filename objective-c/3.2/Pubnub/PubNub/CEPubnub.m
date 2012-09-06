@@ -626,43 +626,38 @@ NSDecimalNumber* time_token = 0;
             NSString* timeToken = @"0";
             if(!isPresence)
             {
-                for (ChannelStatus* it in [_subscriptions copy]) {
-                    if ([it.channel isEqualToString:connection.channel])
-                    {   
-                        if(!it.connected) {
-                            
-                            if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
-                                [_delegate pubnub:self DisconnectToChannel:connection.channel];
-                            }
-                            break;
-                        }
-                    }
-                }
+
                     // Problem?
                 if (response == nil  ) {
                     for (ChannelStatus* it in [_subscriptions copy]) {
                         if ([it.channel isEqualToString:connection.channel])
                         {                        
-                            [_subscriptions removeObject:it];
-                            if(it.first) {
-                                
+                            
+                            if(it.first && it.connected) {
+                                it.connected=NO;
                                 if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
                                     [_delegate pubnub:self DisconnectToChannel:connection.channel];
                                 }
                             }
                         }
                     }
-                        // Ensure Connected (Call Time Function)
-                        //BOOL is_reconnected = NO;
+//                        // Ensure Connected (Call Time Function)
+//                        //BOOL is_reconnected = NO;
                     [self getTime1 ];
                     if (time_token == 0) {
                             // Reconnect Callback
                         
+//                        if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
+//                            
+//                            [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
+//                        }
+                    }else
+                    {
                         if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
                             
                             [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
                         }
-                    } 
+                    }
                 }
                 else {
                     for (ChannelStatus* it in [_subscriptions copy]) {
@@ -676,6 +671,12 @@ NSDecimalNumber* time_token = 0;
                                     [_delegate pubnub:self ConnectToChannel:connection.channel];
                                 }
                                 break;
+                            }else
+                            {
+                                if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
+                                    
+                                    [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
+                                }
                             }
                         }
                     }
