@@ -6,7 +6,7 @@
 -- http://www.pubnub.com/
 
 -- -----------------------------------
--- PubNub 3.1 Real-time Push Cloud API
+-- PubNub 3.3 Real-time Push Cloud API
 -- -----------------------------------
 
 require "Json"
