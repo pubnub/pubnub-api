@@ -1,0 +1,17 @@
+-- build.settings for project: Mathemania
+-- Managed with http://CoronaProjectManager.com
+-- Copyright © 2011 Raphael Salgado for BeyondtheTech. All Rights Reserved.
+
+settings = {
+    orientation =
+    {
+        --default = "landscapeRight",
+    },
+    iphone =
+    {
+        plist=
+        {
+            --UIStatusBarHidden=true,
+        },
+    },
+}
