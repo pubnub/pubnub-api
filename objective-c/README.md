@@ -14,6 +14,12 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
 
         #import "CEPubnub.h"
 
+3. For no network or loss of network scenario:
+	Configure values in CEPubnub.m for max retry cycles (default = -1, infinite) and delay between retries in seconds (detault = 5)
+
+		#define kMinRetryInterval 5.0 //In seconds
+ 	 	#define kMinRetry -1
+
 3. Make your class follow the PubNubDelegate protocol
 
         @interface iPhoneTest : UIViewController <CEPubnubDelegate>
@@ -64,6 +70,7 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
         [pubnub subscribe: @"hello_world_1"];
         [pubnub subscribe: @"hello_world_2"];
         [pubnub subscribe: @"hello_world_3"];
+
 
 10. Get a history of messages on a channel: (Deprecated, See Detailed History Below)
 
