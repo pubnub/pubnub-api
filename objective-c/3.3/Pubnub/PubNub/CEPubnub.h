@@ -59,6 +59,8 @@
     
     NSMutableSet* _connections;
     NSMutableSet * _subscriptions;
+    
+    int _tryCount;
 }
 @property(nonatomic, assign) id<CEPubnubDelegate> delegate;
 - (CEPubnub*) initWithSubscribeKey:(NSString*)subscribeKey useSSL:(BOOL)useSSL;

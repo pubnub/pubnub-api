@@ -18,7 +18,8 @@
 #define kDefaultOrigin @"pubsub.pubnub.com"
 #define kMaxHistorySize 100  // From documentation
 #define kConnectionTimeOut 310.0  // From https://github.com/jazzychad/CEPubnub/blob/master/CEPubnub/CEPubnubRequest.m
-#define kMinRetryInterval 5.0
+#define kMinRetryInterval 5.0 //In seconds
+#define kMinRetry -1
 #define kInitialTimeToken @"0"
 
 typedef enum {
@@ -717,9 +718,11 @@ NSDecimalNumber* time_token = 0;
                     }
                     [self getTime1 ];
                     if (time_token == 0) {
-                        
+                        _tryCount++;
+                     
                     }else
                     {
+                        _tryCount=0;
                         if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
                             [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
                         }
@@ -803,7 +806,13 @@ NSDecimalNumber* time_token = 0;
                 }
             }
             else {
-                [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
+                if(kMinRetry == -1)
+                {
+                    [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
+                }else if(_tryCount < kMinRetry)
+                {
+                    [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
+                }
             }
             break;
         }
