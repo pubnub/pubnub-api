@@ -135,9 +135,7 @@ function pubnub.new(init)
                     "0",
                     timetoken
                 },
-                query = {
-                   "uuid=" .. self.uuid
-                }
+                query = { uuid = self.uuid }
             })
         end
 
