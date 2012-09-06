@@ -4,11 +4,12 @@
 *.pyc
 *.class
 *.iml
+/flash/*/out
 /android/PubnubAndroidTest/*/gen
 /android/PubnubAndroidTest/*/bin
 /android/PubnubAndroidTest/*/out
 .DS_Store
 node_modules
 .idea
-/csharp/3.2/PubNub-Messaging*/bin/*
-/csharp/3.2/PubNub-Messaging*/obj/*
+/csharp/*/PubNub-Messaging*/bin/*
+/csharp/*/PubNub-Messaging*/obj/*
