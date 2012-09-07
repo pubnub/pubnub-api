@@ -318,27 +318,30 @@ exports.init = function(setup) {
                         });
                     },
                     success : function(messages) {
-                        var ret = {stop: false};
+                        // var ret = {stop: false}; // Uncomment for NodeUnit
                         if (!CHANNELS[channel].connected) return;
 
                         // Connect
                         if (!connected) {
                             connected = 1;
-                            ret = connect();
+                            // ret = connect(); // Uncomment for NodeUnit
+                            connect();
                         }
 
                         // Reconnect
                         if (disconnected) {
                             disconnected = 0;
-                            ret = reconnect();
+                            // ret = reconnect(); // Uncomment for NodeUnit
+                            reconnect();
                         }
 
                         messages[0].forEach(function(msg) {
-                            ret = callback( msg, messages );
+                            // ret = callback( msg, messages ); // Uncomment for NodeUnit
+                            callback( msg, messages );
                         });
 
                         timetoken = messages[1];
-                        if(!ret.stop)
+                        // if(!ret.stop) // callback( msg, messages );
                             timeout( pubnub, 10 );
                     }
                 });
@@ -378,13 +381,13 @@ exports.init = function(setup) {
                     'v2',
                     'presence',
                     'sub-key', SUBSCRIBE_KEY, 
-                    'channel', encode(channel),
+                    'channel', encode(channel)
                 ],
                 origin  : ORIGIN,
                 success : callback,
                 fail    : function(response) { log(response) }
             });
-        },
+        }
     };
     return PN;
 }
