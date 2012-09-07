@@ -183,15 +183,15 @@ package PubNub
 				return;
 			}
 			var channel:String          = args.channel;
-			var message:Object          = args.message;            
+			var message:Object          = args.message;
 			var signature:String        = "0";
 
-            message = JSON.stringify(message);
+            var serializedMessage:String = JSON.stringify(message);
 
             if (secret_key)
 			{
 				// Create the signature for this message                
-				var concat:String = publish_key + "/" + sub_key + "/" + secret_key + "/" + channel + "/" + message;
+				var concat:String = publish_key + "/" + sub_key + "/" + secret_key + "/" + channel + "/" + serializedMessage;
 				
 				// Sign message using HmacSHA256
 				signature = HMAC.hash(secret_key, concat,SHA256);        
@@ -200,7 +200,7 @@ package PubNub
 			if(this.cipher_key.length > 0)
 			{
 				var pubnubcrypto:PubnubCrypto = new PubnubCrypto();
-				message = JSON.stringify(pubnubcrypto.encrypt(this.cipher_key,message));
+				serializedMessage = JSON.stringify(pubnubcrypto.encrypt(this.cipher_key, serializedMessage));
 			}
 			
 			var uid:String = _uid();
@@ -229,7 +229,7 @@ package PubNub
 				node.loader = null;
 				node.handler = null;
 			}            
-			var url:String = origin + "/" + "publish" + "/" + publish_key + "/" + sub_key + "/" + signature + "/" + _encode(channel) + "/" + 0 + "/" +_encode(message as String);
+			var url:String = origin + "/" + "publish" + "/" + publish_key + "/" + sub_key + "/" + signature + "/" + _encode(channel) + "/" + 0 + "/" +_encode(serializedMessage as String);
 			_request( { url:url, channel:channel, handler:publishHandler, uid:uid } );
 		}
 		
@@ -253,7 +253,6 @@ package PubNub
 		 */
 		public function _subscribe(args:Object):void
 		{
-			var pubnubcrypto:PubnubCrypto = new PubnubCrypto();
 			var onResult:Function = args.callback || dispatchEvent;
 			
 			if (!args.callback)
@@ -313,7 +312,9 @@ package PubNub
 					{                        
 						var result:Object = JSON.parse(loader.data);    
 						time = result[1];
-						if(result is Array)
+
+
+                        if(result is Array)  // Valid Response From Server so far
 						{                            
 							if (time == 0)
 							{
@@ -324,12 +325,13 @@ package PubNub
 								var messages:Array = result[0];    
 								if(messages) 
 								{
-									var pubnubcrypto:PubnubCrypto = new PubnubCrypto();                                    
+
 									for (var i:int = 0; i < messages.length; i++) 
 									{
 										if(cipher_key.length > 0)
 										{
-											// onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { channel:channel, result:[i+1,pubnubcrypto.decrypt(cipher_key,messages[i])],timeout:1 } ));
+                                            var pubnubcrypto:PubnubCrypto = new PubnubCrypto();
+
 											onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { 
 												channel:channel, 
 												result:[i+1,pubnubcrypto.decrypt(cipher_key,messages[i])], 
@@ -339,7 +341,6 @@ package PubNub
 										}
 										else
 										{
-											//onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, { channel:channel, result:[i+1,JSON.stringify(messages[i])],timeout:1 } )); 
 											onResult(new PubNubEvent(PubNubEvent.SUBSCRIBE, {
 												channel:channel, 
 												result:[i+1,JSON.stringify(messages[i])], 

@@ -50,17 +50,17 @@ public class MessageBox extends Sprite {
             ExternalInterface.call("console.log", ("init()"));
             ExternalInterface.call("console.log", ("my uuid is " + pubnub.getSessionUUID()));
 
-            PubNub.PubNub.publish({
-                        callback:onPresenceHandler,
-                        channel:channelName,
-                        message:"Pubnub Messaging API 1"}
-            );
+//            PubNub.PubNub.publish({
+//                        callback:onPresenceHandler,
+//                        channel:channelName,
+//                        message:"Pubnub Messaging API 1"}
+//            );
 
-//            // Subscribe
-//            PubNub.PubNub.subscribe({
-//                callback:onSubscribeHandler,
-//                channel:channelName
-//            });
+            // Subscribe
+            PubNub.PubNub.subscribe({
+                callback:onSubscribeHandler,
+                channel:channelName
+            });
 //
 //            // Presence
 //            PubNub.PubNub.subscribe({
