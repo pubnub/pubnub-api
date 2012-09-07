@@ -23,9 +23,6 @@ package PubNub
 
     import flash.external.ExternalInterface;
 
-
-
-	
 	/**
 	 * PubNub Static Class
 	 * 
@@ -54,7 +51,8 @@ package PubNub
         private var session_uuid:String = "";
 		
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
-		private function nextOrigin(origin:String):String 
+
+        private function nextOrigin(origin:String):String
 		{
 			return origin.indexOf('pubsub') > 0
 				&& origin.replace(
