@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset=utf-8>
+        <title>PubNub Presence</title>
+        <link rel=stylesheet href=default.css>
+        <link href=http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400|Open+Sans rel=stylesheet>
+    </head>
+    <body>
+        <div id=main>
+            <div class="section section-one">
+                <div class=circle-header></div>
+                <div class=circle-header-text></div>
+                <div class=circle-header-icon></div>
+            </div>
+            <div class="section section-two">
+                <div class=circle-header></div>
+                <div class=circle-header-text>Recent Updates</div>
+                <div class=circle-header-icon></div>
+            </div>
+        </div>
+
+        <script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+        <script>(function(){
+
+            PUBNUB.time(function(time){ console.log(time) });
+            /*
+                text show area
+                input box  -> send button
+                who's here
+                total counter box
+                facebook connect!?!
+
+            */
+
+        })();</script>
+    </body>
+</html>

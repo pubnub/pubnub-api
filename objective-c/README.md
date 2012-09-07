@@ -1,4 +1,4 @@
-# Pubnub 3.2
+# Pubnub 3.3
 ---
 
 Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime messaging service [Pubnub.com](http://www.pubnub.com/).
@@ -14,6 +14,12 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
 
         #import "CEPubnub.h"
 
+3. If you wish to consider connection retry interval and retry cycle settings (for example, when the network connection is temporarily lost):
+Configure values in CEPubnub.m for max retry cycles (default = -1, infinite) and delay between retries in seconds (default = 5)
+
+		#define kMinRetryInterval 5.0 //In seconds
+ 	 	#define kMinRetry -1
+
 3. Make your class follow the PubNubDelegate protocol
 
         @interface iPhoneTest : UIViewController <CEPubnubDelegate>
@@ -28,6 +34,8 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
         - (void)pubnub:(CEPubnub *)pubnub subscriptionDidReceiveArray:(NSArray *)message onChannel:(NSString *)channel;
         - (void) pubnub:(CEPubnub*)pubnub didFetchHistory:(NSArray*)messages forChannel:(NSString*)channel;
         - (void) pubnub:(CEPubnub*)pubnub didFailFetchHistoryOnChannel:(NSString*)channel;
+        - (void) pubnub:(CEPubnub*)pubnub didFetchDetailedHistory:(NSArray*)messages forChannel:(NSString*)channel;
+		- (void) pubnub:(CEPubnub*)pubnub didFailFetchDetailedHistoryOnChannel:(NSString*)channel withError:(id)error;
         - (void) pubnub:(CEPubnub*)pubnub didReceiveTime:(NSTimeInterval)time;
         - (void) pubnub:(CEPubnub*)pubnub ConnectToChannel:(NSString*)channel ;
 		- (void) pubnub:(CEPubnub*)pubnub DisconnectToChannel:(NSString*)channel ;
@@ -63,29 +71,45 @@ Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime
         [pubnub subscribe: @"hello_world_2"];
         [pubnub subscribe: @"hello_world_3"];
 
-10. Get a history of messages on a channel:
+
+10. Get a history of messages on a channel: (Deprecated, See Detailed History Below)
 
         NSInteger limit = 3;
         NSNumber * aWrappedInt = [NSNumber numberWithInteger:limit];
         [pubnub fetchHistory:[NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", @"hello_world",@"channel",nil]];
    
+11. Detailed History: Load Previously Published Messages in Detail.
     
+        [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys: aCountInt,@"count", @"hello_world",@"channel", nil]];
 
-11. Get the time, Time receive in NSTimeInterval:
+Required args:
+
+	'channel' - The channel name
+
+Optional args:
+
+	'count' - Max number of returned results. Default and max is 100.
+	'start' - Start timetoken
+	'end' - End timetoken
+	'reverse' - Default is false, which is oldest first. Use true to return newest first.
+
+12. Get the time, Time receive in NSTimeInterval:
 
         [pubnub getTime];
         
-12. Get UUID:
+13. Get UUID:
 
         NSLog(@"UUID::: %@",[CEPubnub getUUID]);
         
    
-13. here_now: Ability to get count of subscribed programs to a particular channel.
+14. here_now: Ability to get count of subscribed programs to a particular channel.
 		
-		[pubnub here_now: @"hello_world"];
+	[pubnub here_now: @"hello_world"];
 		        
-13. Presence: To join a subscriber list on a channel. Callback events can be, Join - Shows availability on a channel or Leave - Disconnected to channel means removed from the list of subscribers.
+15. Presence: To join a subscriber list on a channel. Callback events can be, Join - Shows availability on a channel or Leave - Disconnected to channel means removed from the list of subscribers.
 		
-		[pubnub presence: @"hello_world"];
+	[pubnub presence: @"hello_world"];
 		        
-14. That's it! An example iPad app has been included in the project.
+
+
+Tests and an example Xcode project has been included in the project which uses all the above examples.
