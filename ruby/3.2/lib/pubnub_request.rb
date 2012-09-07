@@ -104,7 +104,7 @@ class PubnubRequest
       my_cipher_key = options[:cipher_key] || self_cipher_key
 
       if my_cipher_key.present?
-        self.message = aes_encrypt(my_cipher_key, options, self) #TODO: Need a to_json here?
+        self.message = aes_encrypt(my_cipher_key, options, self).to_json
       else
         self.message = options[:message].to_json
       end
