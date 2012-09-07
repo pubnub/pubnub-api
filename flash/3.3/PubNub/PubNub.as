@@ -185,8 +185,10 @@ package PubNub
 			var channel:String          = args.channel;
 			var message:Object          = args.message;            
 			var signature:String        = "0";
-			
-			if (secret_key) 
+
+            message = JSON.stringify(message);
+
+            if (secret_key)
 			{
 				// Create the signature for this message                
 				var concat:String = publish_key + "/" + sub_key + "/" + secret_key + "/" + channel + "/" + message;
@@ -194,13 +196,13 @@ package PubNub
 				// Sign message using HmacSHA256
 				signature = HMAC.hash(secret_key, concat,SHA256);        
 			}
+
 			if(this.cipher_key.length > 0)
 			{
 				var pubnubcrypto:PubnubCrypto = new PubnubCrypto();
-				message = pubnubcrypto.encrypt(this.cipher_key,message);    
+				message = JSON.stringify(pubnubcrypto.encrypt(this.cipher_key,message));
 			}
 			
-			message = JSON.stringify(message);
 			var uid:String = _uid();
 			
 			function publishHandler( evt:Event ):void
