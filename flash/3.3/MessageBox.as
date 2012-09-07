@@ -23,7 +23,6 @@ public class MessageBox extends Sprite {
             publish_key:"demo",
             sub_key:"demo",
             secret_key:"",
-            //cipher_key:""
             cipher_key:"enigma"
         }
         pubnub.init(config);
@@ -80,8 +79,7 @@ public class MessageBox extends Sprite {
         function onSubscribeHandler(evt:PubNubEvent):void {
             ExternalInterface.call("console.log", ("subscribe event received."));
             ExternalInterface.call("console.log", ("Entering onSubscribeHandler()"));
-            ExternalInterface.call("console.log", (this));
-            ExternalInterface.call("console.log", (evt));
+            trace(evt.data.result);
             ExternalInterface.call("console.log", (evt.data.result));
         }
 
