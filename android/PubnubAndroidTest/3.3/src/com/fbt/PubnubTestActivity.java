@@ -95,12 +95,6 @@ public class PubnubTestActivity extends Activity {
 
             public void onClick(View v) {
 
-                // Android: (Presence)
-//                HashMap<String, Object> args = new HashMap<String, Object>(1);
-//                args.put("channel", channel);
-//                pubnub.subscribe(args);
-
-                // Android: (Subscribe)
                 PresenceDownloader d = new PresenceDownloader();
                 d.execute("xml");
 
