@@ -5,7 +5,7 @@
 *.class
 *.iml
 /flash/*/out
-/android/PubnubAndroidTest/*/gen
+#/android/PubnubAndroidTest/*/gen
 /android/PubnubAndroidTest/*/bin
 /android/PubnubAndroidTest/*/out
 .DS_Store
