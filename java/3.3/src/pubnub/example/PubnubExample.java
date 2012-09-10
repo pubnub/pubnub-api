@@ -1,4 +1,4 @@
-package pubnub.example;
+package src.pubnub.example;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,8 +30,8 @@ public class PubnubExample {
 		System.out.println("\nRunning detailedHistory()");
 		DetailedHistoryExample();
 		
-		System.out.println("\nRunning presence()");
-		PresenceExample();	
+//		System.out.println("\nRunning presence()");
+//		PresenceExample();
 		
 		System.out.println("\nRunning subscribe()");
 		SubscribeExample();

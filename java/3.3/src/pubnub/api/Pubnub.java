@@ -949,7 +949,7 @@ public class Pubnub {
 
 							String line = "", json = "";
 							BufferedReader reader = new BufferedReader(
-									new InputStreamReader(resulting_is));
+									new InputStreamReader(resulting_is, "UTF8"));
 
 							// Read JSON Message
 							while ((line = reader.readLine()) != null) {
