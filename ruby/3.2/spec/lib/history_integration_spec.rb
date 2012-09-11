@@ -51,7 +51,7 @@ describe "History Integration Test" do
       context "when using a cipher_key" do
         it "should return the correct response" do
 
-          my_response = ["hi! 989051762", "hi! 369065577", "hi! 809122372", "hi! 61356238", "hi! 483278698", "hi! 218394427", "hi! 384925549", {"text"=>"DECRYPTION_ERROR"}, "DECRYPTION_ERROR", "DECRYPTION_ERROR"]
+          my_response = ["DECRYPTION_ERROR", "DECRYPTION_ERROR", "DECRYPTION_ERROR", "this is my superduper long encrypted message. dont tell anyone!", "this is my superduper long encrypted message. dont tell anyone!", "hi!", {"foo"=>"bar"}, "DECRYPTION_ERROR", "DECRYPTION_ERROR", "DECRYPTION_ERROR"]
           mock(@my_callback).call(my_response) {}
 
           VCR.use_cassette("integration_history_4", :record => :none) do
@@ -121,7 +121,7 @@ describe "History Integration Test" do
       context "when using a cipher_key" do
         it "should return the correct response" do
 
-          my_response = ["hi! 345260853", "hi! 625465899", "hi! 885519772", "hi! 339496983", "hi! 881352280", "hi! 445071012", "hi! 905527601", "hi! 635167441", {"my"=>"DECRYPTION_ERROR"}, "DECRYPTION_ERROR"]
+          my_response = ["DECRYPTION_ERROR", "DECRYPTION_ERROR", "DECRYPTION_ERROR", "this is my superduper long encrypted message. dont tell anyone!", "this is my superduper long encrypted message. dont tell anyone!", "hi!", {"foo"=>"bar"}, "DECRYPTION_ERROR", "DECRYPTION_ERROR", "DECRYPTION_ERROR"]
           mock(@my_callback).call(my_response) {}
 
           VCR.use_cassette("integration_history_4a", :record => :none) do

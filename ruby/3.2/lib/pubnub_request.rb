@@ -157,11 +157,7 @@ class PubnubRequest
       end
 
       iterate.each do |message|
-        if message.is_a? Array
-          message = pc.decryptArray(message)
-        else
-          message = pc.decryptObject(message)
-        end
+        message = pc.decrypt(message)
         myarr.push(message)
       end
 
