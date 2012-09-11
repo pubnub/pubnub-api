@@ -208,9 +208,9 @@ class PubnubRequest
         url_array = [self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", self.history_limit.to_s]
 
       when "here_now"
-        url_array = ["v2", "presence", "sub_key", self.subscribe_key.to_s, "channel", self.channel.to_s ]
+        url_array = ["v2", "presence", "sub_key", self.subscribe_key.to_s, "channel", self.channel.to_s]
 
-        else
+      else
 
         raise(PubnubRequest::RequestError, "I can't create that URL for you due to unknown operation type.")
     end
@@ -234,11 +234,8 @@ class PubnubRequest
     options = HashWithIndifferentAccess.new(options)
 
     pc = PubnubCrypto.new(cipher_key)
-    if options[:message].is_a? Array
-      publish_request.message = pc.encryptArray(options[:message])
-    else
-      publish_request.message = pc.encryptObject(options[:message])
-    end
+    publish_request.message = pc.encrypt(options[:message])
+
   end
 
   def encode_URL(request)

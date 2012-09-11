@@ -305,11 +305,11 @@ describe PubnubRequest do
       it "should set the message" do
         @pubnub_request.message.should == nil
 
-        options = {:message => "my_message"}
-        self_cipher_key = "foo"
+        options = {:message => "Pubnub Messaging API 1"}
+        self_cipher_key = "enigma"
 
         @pubnub_request.set_message(options, self_cipher_key)
-        @pubnub_request.message.should == %^"opISGN77KPWGBB2wP/djBQ=="^
+        @pubnub_request.message.should == "\"f42pIQcWZ9zbTbH8cyLwByD/GsviOE0vcREIEVPARR0=\""
       end
     end
 
