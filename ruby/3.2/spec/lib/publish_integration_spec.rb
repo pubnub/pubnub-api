@@ -45,7 +45,7 @@ describe "Publish Integration Test" do
 
       it "should publish without ssl (implicit)" do
 
-        my_response = [1, "Sent", "13451424376740954"]
+        my_response = [1, "Sent", "13473285565926387"]
         mock(@my_callback).call(my_response) {}
 
         VCR.use_cassette("integration_publish_2", :record => :none) do
@@ -56,7 +56,7 @@ describe "Publish Integration Test" do
 
       it "should publish without ssl (explicit)" do
 
-        my_response = [1, "Sent", "13451424376740954"]
+        my_response = [1, "Sent", "13473285565926387"]
         mock(@my_callback).call(my_response) {}
 
         @pn.ssl = false
@@ -73,7 +73,7 @@ describe "Publish Integration Test" do
 
           it "should publish" do
 
-            my_response = [1, "Sent", "13451474646150471"]
+            my_response = [1, "Sent", "13473286442585026"]
             mock(@my_callback).call(my_response) {}
 
             @pn.ssl = true
@@ -90,7 +90,7 @@ describe "Publish Integration Test" do
 
           it "should publish" do
 
-            my_response = [1, "Sent", "13451476456534121"]
+            my_response = [1, "Sent", "13473288269652075"]
             mock(@my_callback).call(my_response) {}
 
             @pn.ssl = true
@@ -161,7 +161,7 @@ describe "Publish Integration Test" do
 
           it "should publish" do
 
-            my_response = [1, "Sent", "13451494427815122"]
+            my_response = [1, "Sent", "13473284333280114"]
             mock(@my_callback).call(my_response) {}
 
             @pn.ssl = true
