@@ -1,13 +1,5 @@
-## Pubnub cryptography
-
-## including required libraries
-require "openssl"
-require 'digest'
-require 'base64'
-require 'rubygems'
-require 'json'
-
 class PubnubCrypto
+  require 'yajl'
 
   def initialize(cipher_key)
     @alg = "AES-256-CBC"
@@ -29,9 +21,11 @@ class PubnubCrypto
     aes.key = @key
     aes.iv = @iv
 
-    cipher = aes.update(message.to_json)
+    json_message = Yajl.dump(message)
+    cipher = aes.update(json_message)
     cipher << aes.final
-    ciphertext = Base64.strict_encode64 (cipher)
+
+    Base64.strict_encode64(cipher)
 
   end
 
@@ -42,8 +36,11 @@ class PubnubCrypto
     decode_cipher.key = @key
     decode_cipher.iv = @iv
 
+    plain_text = ""
+
     begin
-    plain_text = decode_cipher.update(cipher_text.unpack('m')[0])
+    undecoded_text = Base64.decode64(cipher_text)
+    plain_text = decode_cipher.update(undecoded_text)
     plain_text << decode_cipher.final
     rescue => e
 
@@ -51,6 +48,6 @@ class PubnubCrypto
 
     end
 
-    return plain_text
+    return Yajl.load(plain_text)
   end
 end

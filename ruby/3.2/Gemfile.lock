@@ -115,6 +115,7 @@ GEM
     webmock (1.8.8)
       addressable (~> 2.2.8)
       crack (>= 0.1.7)
+    yajl-ruby (1.1.0)
 
 PLATFORMS
   ruby
@@ -129,3 +130,4 @@ DEPENDENCIES
   uuid (~> 2.3.5)
   vcr (= 2.2.4)
   webmock (= 1.8.8)
+  yajl-ruby
