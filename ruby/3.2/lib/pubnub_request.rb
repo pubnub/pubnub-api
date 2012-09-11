@@ -20,6 +20,11 @@ class PubnubRequest
     @secret_key = args[:secret_key] || "0"
     @timetoken = args[:timetoken] || "0"
     @ssl = args[:ssl]
+
+    @port = args[:port]
+    @url = args[:url]
+    @host = args[:host]
+    @query = args[:query]
   end
 
   def op_exception

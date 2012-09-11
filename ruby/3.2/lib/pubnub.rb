@@ -96,6 +96,7 @@ class Pubnub
     publish_request.ssl = @ssl
     publish_request.set_channel(options)
     publish_request.set_callback(options)
+    publish_request.set_cipher_key(options, self.cipher_key)
     publish_request.set_message(options, self.cipher_key)
     publish_request.set_publish_key(options, self.publish_key)
     publish_request.set_subscribe_key(options, self.subscribe_key)

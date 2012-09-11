@@ -362,7 +362,7 @@ describe Pubnub do
       @my_message = "hello_world!"
       @my_channel = "demo_channel"
 
-      @my_cipher_key = "my_cipher_key"
+      @my_cipher_key = "enigma"
       @my_sec_key = "my_sec_key"
       @alt_sec_key = "alt_sec_key"
     end
@@ -463,35 +463,33 @@ describe Pubnub do
 
     context "cipher key" do
 
-      it "should let you override an existing instantiated cipher key" do
+      it "should not let you override an existing instantiated cipher key" do
 
         @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key, :cipher_key => @my_cipher_key)
         alt_cipher_key = "alt_cipher_key"
 
         # TODO: generate this from the pn encryption instance method, mock the response
 
-        encrypted_message = "\"2s0JT2eBNrM3jQaaTVatog==\""
-
-        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => encrypted_message,
-                                                 :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
-                                                 :secret_key => "0", :cipher_key => alt_cipher_key)
-
-        mock(@pn)._request(mock_publish_request) {}
-        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :cipher_key => alt_cipher_key)
+        lambda { @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :cipher_key => alt_cipher_key) }.should raise_error(Pubnub::PublishError, "existing cipher_key #{@pn.cipher_key} cannot be overridden at publish-time.")
 
       end
 
 
       it "should let you define a cipher key at publish time if it was not instantiated with one" do
         @pn = Pubnub.new(:subscribe_key => @my_sub_key, :publish_key => @my_pub_key)
-        encryped_message = "\"h6lDpklaNSzEEdrahmpQjA==\""
+        message = "Pubnub Messaging API 1"
+        encrypted_message = PubnubCrypto.new(@my_cipher_key).encrypt(message)
 
-        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => encryped_message,
+        mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => Yajl.dump(encrypted_message),
                                                  :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
-                                                 :cipher_key => @my_cipher_key)
+                                                 :cipher_key => @my_cipher_key, :ssl => false, :port => 80,
+                                                 :url => "http://pubsub.pubnub.com/publish/demo_pub_key/demo_sub_key/0/demo_channel/0/%22f42pIQcWZ9zbTbH8cyLwByD%2FGsviOE0vcREIEVPARR0%3D%22",
+                                                 :host => "pubsub.pubnub.com",
+                                                 :query => "/publish/demo_pub_key/demo_sub_key/0/demo_channel/0/%22f42pIQcWZ9zbTbH8cyLwByD%2FGsviOE0vcREIEVPARR0%3D%22"
+                                                  )
 
         mock(@pn)._request(mock_publish_request) {}
-        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :cipher_key => @my_cipher_key)
+        @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => message, :cipher_key => @my_cipher_key)
       end
 
 
