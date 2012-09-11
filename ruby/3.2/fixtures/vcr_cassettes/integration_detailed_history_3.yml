@@ -1,0 +1,172 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://pubsub.pubnub.com/v2/history/sub-key/demo/channel/hello_world
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: !binary |-
+        T0s=
+    headers:
+      !binary "RGF0ZQ==":
+      - !binary |-
+        VHVlLCAxMSBTZXAgMjAxMiAyMDowOTozOCBHTVQ=
+      !binary "Q29udGVudC1UeXBl":
+      - !binary |-
+        dGV4dC9qYXZhc2NyaXB0OyBjaGFyc2V0PSJVVEYtOCI=
+      !binary "Q29udGVudC1MZW5ndGg=":
+      - !binary |-
+        MzA5NA==
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+      !binary "Q2FjaGUtQ29udHJvbA==":
+      - !binary |-
+        bm8tY2FjaGU=
+      !binary "QWNjZXNzLUNvbnRyb2wtQWxsb3ctT3JpZ2lu":
+      - !binary |-
+        Kg==
+      !binary "QWNjZXNzLUNvbnRyb2wtQWxsb3ctTWV0aG9kcw==":
+      - !binary |-
+        R0VU
+      !binary "U2VydmVy":
+      - !binary |-
+        Z2V2ZW50LzAuMTMgUHl0aG9uLzIuNw==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        W1si5ryi6KqeIiwi5ryi6KqeIiwi5ryi6KqeIiwi5ryi6KqeIiwi5ryi6Kqe
+        Iiwi5ryi6KqeIix7InRleHQiOiJkblBJRGFQK3BpM0VDOE1OU213RHVnPT0i
+        fSwiVXpJeWVWaGFuSStRbnlhTnFWb2IyQT09IixbIk83ZXpxWTR0QXV1am1k
+        aTRTWHdmSXc9PSIsImdKdDVkdXpsbmQ1b1EzbnNpMzR2MFE9PSIsIklBWWNQ
+        Qm1KOTlvZllRYXdabU1ZZWc9PSIsIktNTm5uODN4ci9FVmdlbjJIdG02Q1E9
+        PSIsIkxxbDZabnkzT1djanlSVGh0bjV6aFE9PSIsIlFHYjJpR3Z2VFJIc0ZE
+        d0NFOUZ6clE9PSIsIjRYUk9hQUN2NmM4NzBOSHZlN01nUFE9PSJdLCLmvKLo
+        qp4iLCLmvKLoqp4iLCLmvKLoqp4iLCLmvKLoqp4iLCLmvKLoqp4iLHsidGV4
+        dCI6ImRuUElEYVArcGkzRUM4TU5TbXdEdWc9PSJ9LCJVekl5ZVZoYW5JK1Fu
+        eWFOcVZvYjJBPT0iLFsiTzdlenFZNHRBdXVqbWRpNFNYd2ZJdz09IiwiZ0p0
+        NWR1emxuZDVvUTNuc2kzNHYwUT09IiwiSUFZY1BCbUo5OW9mWVFhd1ptTVll
+        Zz09IiwiS01Obm44M3hyL0VWZ2VuMkh0bTZDUT09IiwiTHFsNlpueTNPV2Nq
+        eVJUaHRuNXpoUT09IiwiUUdiMmlHdnZUUkhzRkR3Q0U5RnpyUT09IiwiNFhS
+        T2FBQ3Y2Yzg3ME5IdmU3TWdQUT09Il0seyJ0ZXh0IjoiZG5QSURhUCtwaTNF
+        QzhNTlNtd0R1Zz09In0sIlV6SXllVmhhbkkrUW55YU5xVm9iMkE9PSIsWyJP
+        N2V6cVk0dEF1dWptZGk0U1h3Zkl3PT0iLCJnSnQ1ZHV6bG5kNW9RM25zaTM0
+        djBRPT0iLCJJQVljUEJtSjk5b2ZZUWF3Wm1NWWVnPT0iLCJLTU5ubjgzeHIv
+        RVZnZW4ySHRtNkNRPT0iLCJMcWw2Wm55M09XY2p5UlRodG41emhRPT0iLCJR
+        R2IyaUd2dlRSSHNGRHdDRTlGenJRPT0iLCI0WFJPYUFDdjZjODcwTkh2ZTdN
+        Z1BRPT0iXSx7InRleHQiOiJkblBJRGFQK3BpM0VDOE1OU213RHVnPT0ifSwi
+        VXpJeWVWaGFuSStRbnlhTnFWb2IyQT09IixbIk83ZXpxWTR0QXV1am1kaTRT
+        WHdmSXc9PSIsImdKdDVkdXpsbmQ1b1EzbnNpMzR2MFE9PSIsIklBWWNQQm1K
+        OTlvZllRYXdabU1ZZWc9PSIsIktNTm5uODN4ci9FVmdlbjJIdG02Q1E9PSIs
+        IkxxbDZabnkzT1djanlSVGh0bjV6aFE9PSIsIlFHYjJpR3Z2VFJIc0ZEd0NF
+        OUZ6clE9PSIsIjRYUk9hQUN2NmM4NzBOSHZlN01nUFE9PSJdLHt9LHsiTWVz
+        c2FnZSI6ImhpIn0sIua8ouiqniIsIua8ouiqniIsIua8ouiqniIsIua8ouiq
+        niIsIua8ouiqniIsIua8ouiqniIsIua8ouiqniIsIua8ouiqniIsIua8ouiq
+        niIsIua8ouiqniIsIua8ouiqniIsIua8ouiqniIsIua8ouiqniIsIua8ouiq
+        niIsIua8ouiqniIsIua8ouiqniIsIua8ouiqniIseyJNZXNzYWdlIjoiaGki
+        fSx7Ik1lc3NhZ2UiOiJoaSJ9LHsiTWVzc2FnZSI6ImhpIn0seyJNZXNzYWdl
+        IjoiaGkifSwi5ryi6KqeIiwi5ryi6KqeIiwi5ryi6KqeIiwi5ryi6KqeIiwi
+        5ryi6KqeIix7ImZvbyI6ImJhciJ9LFsxLDIsMyw0LDVdLFsxLDIsMyw0LDVd
+        LHsiZm9vIjp7ImJhciI6WzEsMiwzLDQsNV19fSx7ImZvbyI6eyJiYXIiOlsx
+        LDIsMyw0LDVdfX0seyJmb28iOnsiYmFyIjpbMSwyLDMsNCw1XX19LHsiZm9v
+        Ijp7ImJhciI6WzEsMiwzLDQsNV19fSx7ImZvbyI6eyJiYXIiOlsxLDIsMyw0
+        LDVdfX0seyJzb21lX3ZhbCI6IkhlbGxvIFdvcmxkISAtLT4gw4nigJrDqcKh
+        wrZAIyQlXiYqKCkhIn0sIkhlbGxvIFdvcmxkIixbIlN1bmRheSIsIk1vbmRh
+        eSIsIlR1ZXNkYXkiLCJXZWRuZXNkYXkiLCJUaHVyc2RheSIsIkZyaWRheSIs
+        IlNhdHVyZGF5Il0sIjlVcjAxUjczbEY1aFpuTFhESlBHd2lBMHd2aEpqcjlU
+        SU16T25NV3NFQmNyeUlhL2hObmd0YmpBaUV4RE1lbzlxcUp4VVhGVGNMTUtl
+        YXpDdGRobzgrMElLSVhyeUZsRDZISnhkQVdGTWhzPSIsIjlVcjAxUjczbEY1
+        aFpuTFhESlBHd2lBMHd2aEpqcjlUSU16T25NV3NFQmNyeUlhL2hObmd0YmpB
+        aUV4RE1lbzlxcUp4VVhGVGNMTUtlYXpDdGRobzgrMElLSVhyeUZsRDZISnhk
+        QVdGTWhzPSIsImloaGFEb1pRK2U1ZFZra3k3dW5WbVE9PSIsInFnTUxkMFBJ
+        MTc0Si81VS9aQXFFNFE9PSIseyJmb28iOiJiYXIifSwieWF5Iix7ImZvbyI6
+        eyJiYXIiOlsxLDIsMyw0LDVdfX0sIkxXVG5WZVdEc1JEa2tuakErT3RrSHc9
+        PSIsInl5a0V6T1F5WmtvdDNZU2h2bHpRZnc9PSIsInl5a0V6T1F5WmtvdDNZ
+        U2h2bHpRZnc9PSIsInl5a0V6T1F5WmtvdDNZU2h2bHpRZnc9PSIsInl5a0V6
+        T1F5WmtvdDNZU2h2bHpRZnc9PSIsInl5a0V6T1F5WmtvdDNZU2h2bHpRZnc9
+        PSIsImhpISIsIjlVcjAxUjczbEY1aFpuTFhESlBHd2lBMHd2aEpqcjlUSU16
+        T25NV3NFQmNyeUlhL2hObmd0YmpBaUV4RE1lbzlxcUp4VVhGVGNMTUtlYXpD
+        dGRobzgrMElLSVhyeUZsRDZISnhkQVdGTWhzPSIsImY0MnBJUWNXWjl6YlRi
+        SDhjeUx3QnlEXC9Hc3ZpT0UwdmNSRUlFVlBBUlIwPSIsImY0MnBJUWNXWjl6
+        YlRiSDhjeUx3QlwvdGR2UnhqRkxPWWNCTk1WS2VIUzU0PSIsIitCWTVcL21p
+        QUE4YWV1aFZsNGQxM0tnPT0iLCJ6TXFIXC9SVFBsQzh5ckFaMlVocEVnTEtV
+        VnprTUkyY2lraWFWZzMwQXlVdTdCNkowRkxxQ2F6UnpET21yc0ZzRiIsIk5z
+        NFRCNDFKalQyTkNYYUdMV1NQQVE9PSIsIkhlbGxvIFdvcmxkIiwiaHZ3Uzdu
+        cG00OWNtSGpjajFvcWpoZz09IiwiOFgrMmZnSExwTERjdDdWdE41NTN3UT09
+        IiwicmRWUFZRZXRUdm1KZ3FBcEVGYng1dz09IiwiRWZFcTRkdFQ4VVFucys0
+        dm9EZEwyUT09Iiwid3JpTEt1RUorN1wvb0I1THNXeURGT0E9PSIsIjdhV2lR
+        VzBlRUJYdFwvTnV2dVpEQTF3PT0iLCJxeVFcL1A2YWoxbW9qMzlTdkdKb1N0
+        Zz09IiwiblcyY0NmVXJqWm1iQ05sTzNsVFVLdz09IiwiekJmS3FoZFwvSnJZ
+        REZDTU5pUDQ5bUE9PSIsInpjc2dWWnNobWhoZE83UGRxekNRbWc9PSIseyJN
+        ZXNzYWdlIjoiaGxsbyJ9LHsiTWVzc2FnZSI6ImhlbGxvIHRoaXMgaXMgdGVz
+        dCBtc2cgZnJvbSBtbnVcbiJ9LHsiTWVzc2FnZSI6ImhlbGxvIHRoaXMgaXMg
+        dGVzdCBtc2cgZnJvbSBtbnVcbiJ9LHsiTWVzc2FnZSI6ImhlbGxvIHRoaXMg
+        aXMgdGVzdCBtc2cgZnJvbSBtbnVcbiJ9LHsiTWVzc2FnZSI6InlvLCB3YXp6
+        dXAgbWFuIn0seyJNZXNzYWdlIjoiaW9qaCJ9LCJIZWxsbyBXb3JsZCJdLDEz
+        NDczMDA4MTA3NTcwNjczLDEzNDczNzc2NjkyNDEzMDA5XQ==
+    http_version: 
+  recorded_at: Tue, 11 Sep 2012 20:09:39 GMT
+- request:
+    method: get
+    uri: http://pubsub.pubnub.com/v2/history/sub-key/demo/channel/hello_world?count=15&reverse=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: !binary |-
+        T0s=
+    headers:
+      !binary "RGF0ZQ==":
+      - !binary |-
+        VHVlLCAxMSBTZXAgMjAxMiAyMDo0MDozMCBHTVQ=
+      !binary "Q29udGVudC1UeXBl":
+      - !binary |-
+        dGV4dC9qYXZhc2NyaXB0OyBjaGFyc2V0PSJVVEYtOCI=
+      !binary "Q29udGVudC1MZW5ndGg=":
+      - !binary |-
+        MzE4
+      !binary "Q29ubmVjdGlvbg==":
+      - !binary |-
+        a2VlcC1hbGl2ZQ==
+      !binary "Q2FjaGUtQ29udHJvbA==":
+      - !binary |-
+        bm8tY2FjaGU=
+      !binary "QWNjZXNzLUNvbnRyb2wtQWxsb3ctT3JpZ2lu":
+      - !binary |-
+        Kg==
+      !binary "QWNjZXNzLUNvbnRyb2wtQWxsb3ctTWV0aG9kcw==":
+      - !binary |-
+        R0VU
+      !binary "U2VydmVy":
+      - !binary |-
+        Z2V2ZW50LzAuMTMgUHl0aG9uLzIuNw==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        W1t7InRleHQiOiJoaSJ9LCJhbmQiLCJieWUiLCJieWUiLCJIZWxsbyBXb3Js
+        ZCIsWyJzZXZlbiIsImVpZ2h0Iix7ImZvb2QiOiJDaGVlc2VidXJnZXIiLCJk
+        cmluayI6IkNvZmZlZSJ9XSx7IkVkaXRlciI6IlgtY29kZS0+w4fDiMKw4oiC
+        QCMkJV4mKigpISIsIkxhbmd1YWdlIjoiT2JqZWN0aXZlLWMifSx7IkVkaXRl
+        ciI6IlgtY29kZS0+w4fDiMKw4oiCQCMkJV4mKigpISIsIkxhbmd1YWdlIjoi
+        T2JqZWN0aXZlLWMifSwiYnllIiwiYnllIiwiYnllIiwiYnllIiwiYnllIiwi
+        YnllIiwiYnllIl0sMTM0Njk2ODk2NjI2MDU5MjksMTM0Njk3Mzg0NjUxMzgx
+        NDRd
+    http_version: 
+  recorded_at: Tue, 11 Sep 2012 20:40:30 GMT
+recorded_with: VCR 2.2.4

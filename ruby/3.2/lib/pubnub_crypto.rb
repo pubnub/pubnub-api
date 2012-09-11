@@ -6,9 +6,9 @@ class PubnubCrypto
     sha256_key = Digest::SHA256.hexdigest(cipher_key)
     @key = sha256_key.slice(0,32)
 
-    puts("\nraw sha cipher_key is: #{cipher_key}")
-    puts("raw sha cipher_key is: #{sha256_key}")
-    puts("padded cipher_key is: #{@key}\n")
+    #puts("\nraw sha cipher_key is: #{cipher_key}")
+    #puts("raw sha cipher_key is: #{sha256_key}")
+    #puts("padded cipher_key is: #{@key}\n")
 
     @iv = '0123456789012345'
   end

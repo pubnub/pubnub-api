@@ -144,7 +144,7 @@ class PubnubRequest
     self.response = response_data.respond_to?(:content) ? Yajl.load(response_data.content) : Yajl.load(response_data)
     self.timetoken = self.response[1] unless self.operation == "time"
 
-    if self.cipher_key.present? && %w(subscribe history).include?(self.operation)
+    if self.cipher_key.present? && %w(subscribe history detailed_history).include?(self.operation)
 
       myarr = Array.new
       pc = PubnubCrypto.new(@cipher_key)
@@ -156,6 +156,8 @@ class PubnubRequest
           iterate = self.response.first
         when "history"
           iterate = self.response
+        when "detailed_history"
+          iterate = self.response.first
 
         else
           raise(RequestError, "Don't know how to iterate on this operation.")
@@ -168,6 +170,9 @@ class PubnubRequest
 
       if %w(publish subscribe).include?(@operation)
         self.response[0] = myarr
+      elsif @operation == "detailed_history"
+        json_response_data = Yajl.load(response_data)
+        self.response = [myarr, json_response_data[1], json_response_data[2]]
       else
         self.response = myarr
       end
@@ -253,15 +258,11 @@ class PubnubRequest
           url_params += url_sep + "reverse=true"
           url_sep = "&"
         end
-
-
-
       end
-
     end
 
-
     self.query = uri.path + (uri.query.present? ? ("?" + uri.query) : "") + url_params
+    self.url += url_params
     self
 
   end
