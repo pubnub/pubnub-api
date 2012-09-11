@@ -557,15 +557,15 @@ describe Pubnub do
       end
 
       it "should require channel" do
-        lambda { @pn.detailed_history }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+        lambda { @pn.history }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
       end
 
       it "should require callback" do
-        lambda { @pn.detailed_history(:channel => :foo) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+        lambda { @pn.history(:channel => :foo) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
       end
 
       it "should require limit" do
-        lambda { @pn.detailed_history(:channel => :foo, :callback => @my_callback) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
+        lambda { @pn.history(:channel => :foo, :callback => @my_callback) }.should raise_error(ArgumentError, "history() requires :channel, :callback, and :limit options.")
       end
 
       it "should initialize the request object correctly" do

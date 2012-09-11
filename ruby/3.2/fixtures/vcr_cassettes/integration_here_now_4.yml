@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://pubsub.pubnub.com/v2/presence/sub_key/demo/channel/hello_world
+    uri: http://pubsub.pubnub.com/v2/presence/sub-key/demo/channel/hello_world
     body:
       encoding: US-ASCII
       string: ''
