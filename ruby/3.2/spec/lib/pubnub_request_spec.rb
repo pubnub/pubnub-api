@@ -14,26 +14,26 @@ describe PubnubRequest do
     end
 
     context "#port" do
-       it "should set port to 80 if ssl.blank? (explicit)" do
-         pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
-                                            :message => "hi", :callback => @my_callback, :ssl => false).format_url!
+      it "should set port to 80 if ssl.blank? (explicit)" do
+        pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                           :message => "hi", :callback => @my_callback, :ssl => false).format_url!
 
-         pubnub_request.port.should == 80
-       end
+        pubnub_request.port.should == 80
+      end
 
-       it "should set port to 80 if ssl.blank? (implicit)" do
-         pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
-                                            :message => "hi", :callback => @my_callback, :ssl => false).format_url!
+      it "should set port to 80 if ssl.blank? (implicit)" do
+        pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                           :message => "hi", :callback => @my_callback, :ssl => false).format_url!
 
-         pubnub_request.port.should == 80
-       end
+        pubnub_request.port.should == 80
+      end
 
-       it "should set port to 443 if ssl.present?" do
-         pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
-                                            :message => "hi", :callback => @my_callback, :ssl => true).format_url!
+      it "should set port to 443 if ssl.present?" do
+        pubnub_request = PubnubRequest.new(:operation => "publish", :channel => :hello_world, :publish_key => :demo, :subscribe_key => :demo,
+                                           :message => "hi", :callback => @my_callback, :ssl => true).format_url!
 
-         pubnub_request.port.should == 443
-       end
+        pubnub_request.port.should == 443
+      end
     end
 
     it "should raise if the operation is missing" do
@@ -140,6 +140,89 @@ describe PubnubRequest do
         @pubnub_request.query.should == %^/history/demo/hello_world/0/^
       end
 
+    end
+
+
+    context "when it is a detailed_history operation" do
+      before do
+        @operation = "detailed_history"
+        @pubnub_request = PubnubRequest.new(:channel => :hello_world, :subscribe_key => :demo,
+                                            :callback => @my_callback, :operation => @operation)
+      end
+
+      # /v2/history/sub-key/<sub-key>/channel/<channel>
+      it "should set the url" do
+        @pubnub_request.format_url!
+        @pubnub_request.url.should == %^http://pubsub.pubnub.com/v2/history/sub-key/demo/channel/hello_world^
+      end
+
+      context "with query parameters" do
+
+        it "should set the query with no url params" do
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world^
+        end
+
+        it "should append a count parameter when count is present" do
+          @pubnub_request.history_count = 5
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world?count=5^
+        end
+
+        it "should append a count parameter when start is present" do
+          @pubnub_request.history_start = 123
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world?start=123^
+        end
+
+        it "should append a count parameter when end is present" do
+          @pubnub_request.history_end = 456
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world?end=456^
+        end
+
+        it "should append a count parameter when reverse is true" do
+          @pubnub_request.history_reverse = true
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world?reverse=true^
+        end
+
+        it "should append a count parameter when reverse is false" do
+          @pubnub_request.history_reverse = false
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world^
+        end
+
+        it "should append a count and start parameter" do
+          @pubnub_request.history_count = 10
+          @pubnub_request.history_start = 999
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world?count=10&start=999^
+        end
+
+        it "should append a start and end parameter" do
+          @pubnub_request.history_end = 10
+          @pubnub_request.history_start = 999
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world?start=999&end=10^
+        end
+
+        it "should append a start and end and reverse = true parameter" do
+          @pubnub_request.history_end = 10
+          @pubnub_request.history_start = 999
+          @pubnub_request.history_reverse = true
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world?start=999&end=10&reverse=true^
+        end
+
+        it "should append a start and end and reverse = false parameter" do
+          @pubnub_request.history_end = 10
+          @pubnub_request.history_start = 999
+          @pubnub_request.history_reverse = false
+          @pubnub_request.format_url!
+          @pubnub_request.query.should == %^/v2/history/sub-key/demo/channel/hello_world?start=999&end=10^
+        end
+      end
     end
 
   end
@@ -257,7 +340,7 @@ describe PubnubRequest do
     end
 
   end
-  
+
   describe "#set_request_secret_key" do
 
     it "should not let you override a previously set secret_key" do

@@ -1,6 +1,6 @@
 class PubnubRequest
   attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl, :port
-  attr_accessor :history_limit, :session_uuid
+  attr_accessor :history_limit, :history_count, :history_start, :history_end, :history_reverse, :session_uuid
 
   class RequestError < RuntimeError;
   end
@@ -208,8 +208,11 @@ class PubnubRequest
       when "history"
         url_array = [self.operation.to_s, self.subscribe_key.to_s, self.channel.to_s, "0", self.history_limit.to_s]
 
+      when "detailed_history"
+        url_array = ["v2", "history", "sub-key", self.subscribe_key.to_s, "channel", self.channel.to_s]
+
       when "here_now"
-        url_array = ["v2", "presence", "sub_key", self.subscribe_key.to_s, "channel", self.channel.to_s]
+        url_array = ["v2", "presence", "sub-key", self.subscribe_key.to_s, "channel", self.channel.to_s]
 
       else
 
@@ -221,12 +224,44 @@ class PubnubRequest
     uri = URI.parse(self.url)
 
     self.host = uri.host
+    url_params = ""
 
     if %w(subscribe presence).include?(@operation)
       uri.query = uri.query.blank? ? "uuid=#{@session_uuid}" : (uri.query + "uuid=#{@session_uuid}")
+
+    elsif @operation == "detailed_history"
+      url_sep = "?"
+
+      if @history_count || @history_start || @history_end || @history_reverse
+
+        if @history_count
+          url_params += url_sep + "count=" + @history_count.to_s
+          url_sep = "&"
+        end
+
+        if @history_start
+          url_params += url_sep + "start=" + @history_start.to_s
+          url_sep = "&"
+        end
+
+        if @history_end
+          url_params += url_sep + "end=" + @history_end.to_s
+          url_sep = "&"
+        end
+
+        if @history_reverse
+          url_params += url_sep + "reverse=true"
+          url_sep = "&"
+        end
+
+
+
+      end
+
     end
 
-    self.query = uri.path + (uri.query.present? ? ("?" + uri.query) : "")
+
+    self.query = uri.path + (uri.query.present? ? ("?" + uri.query) : "") + url_params
     self
 
   end

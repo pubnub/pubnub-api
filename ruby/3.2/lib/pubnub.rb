@@ -173,6 +173,42 @@ class Pubnub
 
   end
 
+  def detailed_history(options = nil)
+    usage_error = "detailed_history() requires :channel, :callback, and :count options."
+    if options.class != Hash
+      raise(ArgumentError, usage_error)
+    end
+
+    options = HashWithIndifferentAccess.new(options) unless (options == nil)
+
+    unless options[:count] && options[:channel] && options[:callback]
+      raise(ArgumentError, usage_error)
+    end
+
+
+    detailed_history_request = PubnubRequest.new(:operation => :detailed_history)
+
+    #TODO: This is ugly, refactor
+
+    # /detailed_history/SUBSCRIBE_KEY/CHANNEL/JSONP_CALLBACK/LIMIT
+
+    detailed_history_request.ssl = @ssl
+    detailed_history_request.set_channel(options)
+    detailed_history_request.set_callback(options)
+    detailed_history_request.set_cipher_key(options, self.cipher_key)
+
+    detailed_history_request.set_subscribe_key(options, self.subscribe_key)
+
+    detailed_history_request.history_count = options[:count]
+    detailed_history_request.history_start = options[:start]
+    detailed_history_request.history_end = options[:end]
+    detailed_history_request.history_reverse = options[:reverse]
+
+    detailed_history_request.format_url!
+    _request(detailed_history_request)
+
+  end
+  
   def history(options = nil)
     usage_error = "history() requires :channel, :callback, and :limit options."
     if options.class != Hash
