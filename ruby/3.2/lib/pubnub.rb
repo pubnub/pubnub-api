@@ -278,32 +278,45 @@ class Pubnub
 
           conn = PubnubDeferrable.connect request.host, request.port # TODO: Add a 300s timeout, keep-alive
           conn.pubnub_request = request
-
           req = conn.get(request.query)
 
-          #EM.next_tick do # TODO: Set as a periodic timer to check for error status
-          #  if conn.error?
-          #    error_message = "Intermittent Server Error, status: #{response.status}, extended info: #{response.internal_error}"
-          #    puts(error_message)
-          #    return [0, error_message]
-          #  end
-          #end
+          timeout_timer = EM.add_periodic_timer(290) do
+            puts("#{Time.now}: Reconnecting from timeout.")
+            reconnect_and_query(conn, request)
+          end
+
+          error_timer = EM.add_periodic_timer(5) do
+            puts("#{Time.now}: Checking for errors.")
+            if conn.error?
+
+              error_message = "Intermittent Error: #{response.status}, extended info: #{response.internal_error}"
+              puts(error_message)
+              request.callback.call([0, error_message])
+
+              reconnect_and_query(conn, request)
+            end
+          end
 
           req.errback do |response|
             conn.close_connection
             error_message = "Unknown Error: #{response.to_s}"
+
             puts(error_message)
-            return [0, error_message]
+            request.callback.call([0, error_message])
+
+            reconnect_and_query(conn, request)
           end
 
           req.callback do |response|
 
             if response.status != 200
               error_message = "Server Error, status: #{response.status}, extended info: #{response.internal_error}"
-              puts(error_message)
-              return [0, error_message]
-            end
 
+              puts(error_message)
+              request.callback.call([0, error_message])
+
+              conn.reconnect request.host, request.port
+            end
 
             request.package_response!(response.content)
             request.callback.call(request.response)
@@ -311,6 +324,10 @@ class Pubnub
             EM.next_tick do
               if %w(subscribe presence).include?(request.operation)
                 conn.close_connection
+
+                timeout_timer.cancel
+                error_timer.cancel
+
                 _request(request)
               else
                 conn.close_connection # TODO: play with close_connection / reconnect / send_data on pub and sub to note open sockets
@@ -336,4 +353,11 @@ class Pubnub
       end
     end
   end
+
+  def reconnect_and_query(conn, request)
+    conn.reconnect request.host, request.port
+    conn.pubnub_request = request
+    conn.get(request.query)
+  end
+
 end

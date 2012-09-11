@@ -21,6 +21,11 @@ class PubnubDeferrable < EM::Protocols::HttpClient2
 
   def unbind
     @end_time = Time.now
+
+    if @start_time == nil
+      @start_time = Time.now
+    end
+
     puts("-- #{@end_time}: Disconnected.")
     puts("--- Elapsed connection time: #{@end_time - @start_time}s")
     super
