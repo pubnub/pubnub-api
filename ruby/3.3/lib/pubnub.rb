@@ -187,7 +187,7 @@ class Pubnub
 
     detailed_history_request = PubnubRequest.new(:operation => :detailed_history)
 
-    #TODO: This is ugly, refactor
+    #TODO: refactor into initializer code on request instantiation
 
     # /detailed_history/SUBSCRIBE_KEY/CHANNEL/JSONP_CALLBACK/LIMIT
 
@@ -223,7 +223,7 @@ class Pubnub
 
     history_request = PubnubRequest.new(:operation => :history)
 
-    #TODO: This is ugly, refactor
+    #TODO: refactor into initializer code on request instantiation
 
     # /history/SUBSCRIBE_KEY/CHANNEL/JSONP_CALLBACK/LIMIT
 
@@ -283,17 +283,17 @@ class Pubnub
 
         EM.run do
 
-          conn = PubnubDeferrable.connect request.host, request.port # TODO: Add a 300s timeout, keep-alive
+          conn = PubnubDeferrable.connect request.host, request.port
           conn.pubnub_request = request
           req = conn.get(request.query)
 
           timeout_timer = EM.add_periodic_timer(290) do
-            puts("#{Time.now}: Reconnecting from timeout.")
+            #puts("#{Time.now}: Reconnecting from timeout.")
             reconnect_and_query(conn, request)
           end
 
           error_timer = EM.add_periodic_timer(5) do
-            puts("#{Time.now}: Checking for errors.")
+            #puts("#{Time.now}: Checking for errors.")
             if conn.error?
 
               error_message = "Intermittent Error: #{response.status}, extended info: #{response.internal_error}"
@@ -337,7 +337,7 @@ class Pubnub
 
                 _request(request)
               else
-                conn.close_connection # TODO: play with close_connection / reconnect / send_data on pub and sub to note open sockets
+                conn.close_connection
                 return request.response
 
               end
