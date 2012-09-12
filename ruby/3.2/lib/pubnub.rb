@@ -87,18 +87,9 @@ class Pubnub
 
   def verify_init
     # publish_key and cipher_key are both optional.
-    Rails.logger.debug("verifying configuration...")
-    @subscribe_key.blank? ? raise(InitError, "subscribe_key is a mandatory parameter.") : Rails.logger.debug("subscribe_key set to #{@subscribe_key}")
-
-    init_logger
+    raise(InitError, "subscribe_key is a mandatory parameter.") if @subscribe_key.blank?
   end
 
-  def init_logger
-    Rails.logger.debug(@publish_key.present? ? "publish_key set to #{@publish_key}" : "publish_key not set.")
-    Rails.logger.debug(@cipher_key.present? ? "cipher_key set to #{@cipher_key}. AES encryption enabled." : "cipher_key not set. AES encryption disabled.")
-    Rails.logger.debug(@secret_key.present? ? "secret_key set to #{@secret_key}. HMAC message signing enabled." : "secret_key not set. HMAC signing disabled.")
-    Rails.logger.debug(@ssl.present? ? "ssl is enabled." : "ssl is disabled.")
-  end
 
   def publish(options)
     options = HashWithIndifferentAccess.new(options)
@@ -221,7 +212,7 @@ class Pubnub
     _request(detailed_history_request)
 
   end
-  
+
   def history(options = nil)
     usage_error = "history() requires :channel, :callback, and :limit options."
     if options.class != Hash
@@ -280,7 +271,15 @@ class Pubnub
 
   def _request(request)
 
-    if !Rails.env.test?
+    if Rails.present? && Rails.env.present? && Rails.env.test?
+
+      open(request.url, 'r', :read_timeout => 300) do |response|
+        request.package_response!(response.read)
+        request.callback.call(request.response)
+        request.response
+      end
+
+    else
 
       request.format_url!
       puts("- Fetching #{request.url}")
@@ -358,12 +357,6 @@ class Pubnub
         return [0, error_message]
       end
 
-    else
-      open(request.url, 'r', :read_timeout => 300) do |response|
-        request.package_response!(response.read)
-        request.callback.call(request.response)
-        request.response
-      end
     end
   end
 
