@@ -277,7 +277,7 @@ class Pubnub
     else
 
       request.format_url!
-      puts("- Fetching #{request.url}")
+      #puts("- Fetching #{request.url}")
 
       begin
 
