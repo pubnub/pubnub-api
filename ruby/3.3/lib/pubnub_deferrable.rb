@@ -1,3 +1,5 @@
+require 'eventmachine'
+
 class PubnubDeferrable < EM::Protocols::HttpClient2
 
   include EM::Deferrable
@@ -15,7 +17,7 @@ class PubnubDeferrable < EM::Protocols::HttpClient2
 
   def connection_completed
     @start_time = Time.now
-    puts("\n--- #{@start_time}: Connected with string: #{self.pubnub_request.query}")
+    #puts("\n--- #{@start_time}: Connected with string: #{self.pubnub_request.query}")
     super
   end
 
@@ -26,8 +28,8 @@ class PubnubDeferrable < EM::Protocols::HttpClient2
       @start_time = Time.now
     end
 
-    puts("-- #{@end_time}: Disconnected.")
-    puts("--- Elapsed connection time: #{@end_time - @start_time}s")
+    #puts("-- #{@end_time}: Disconnected.")
+    #puts("--- Elapsed connection time: #{@end_time - @start_time}s")
     super
   end
 

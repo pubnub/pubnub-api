@@ -2,29 +2,24 @@
 ## http://www.pubnub.com/blog/ruby-push-api - Ruby Push API Blog
 
 ## PubNub Real Time Push APIs and Notifications Framework
-## Copyright (c) 2010 Stephen Blum
+## Copyright (c) 2012 PubNub
 ## http://www.pubnub.com/
 
 ## -----------------------------------
 ## PubNub 3.3 Real-time Push Cloud API
 ## -----------------------------------
 
-## including required libraries
-require 'openssl'
 require 'base64'
 require 'open-uri'
 require 'uri'
-require 'net/http'
-require 'net/https'
-require 'pp'
-require 'rubygems'
-require 'securerandom'
-require 'digest'
+
 require 'pubnub_crypto'
 require 'pubnub_request'
 require 'pubnub_deferrable'
 
 require 'eventmachine'
+require 'uuid'
+
 
 class Object
 
