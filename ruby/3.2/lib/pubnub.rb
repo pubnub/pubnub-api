@@ -26,6 +26,19 @@ require 'pubnub_deferrable'
 
 require 'eventmachine'
 
+class Object
+
+  # borrowed from Rails
+  def blank?
+    respond_to?(:empty?) ? empty? : !self
+  end
+
+  def present?
+    !blank?
+  end
+
+end
+
 class Pubnub
 
   class PresenceError < RuntimeError;
