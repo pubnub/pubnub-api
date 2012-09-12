@@ -23,4 +23,4 @@ var pubnub_data_window = Ti.App.Presence({
 //
 // Open Chat Window
 //
-pubnub_data_window.presence_data_window.open();
+pubnub_data_window.data_window.open();

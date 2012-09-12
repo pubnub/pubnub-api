@@ -101,21 +101,6 @@ Ti.App.Presence = function(setup) {
         table.insertRowBefore( 0, row );
     }
 
-    // Subscribe button Touch
-    subscribe_button.addEventListener( 'touchstart', function(e) {
-        pubnub.subscribe({
-            channel  : setup['channel'],
-            callback : function(message) { },
-            error : function() { }
-        });
-    });
-
-    // Unubscribe button Touch
-    unsubscribe_button.addEventListener( 'touchstart', function(e) {
-        pubnub.unsubscribe({
-            channel  : setup['channel']
-        });
-    });
 
     // Listen for Return Key Press
     data_window.addEventListener( 'open', function(e) {
