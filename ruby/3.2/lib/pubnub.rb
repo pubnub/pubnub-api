@@ -95,7 +95,7 @@ class Pubnub
     options = HashWithIndifferentAccess.new(options)
     publish_request = PubnubRequest.new(:operation => :publish)
 
-    #TODO: This is ugly, refactor
+    #TODO: refactor into initializer code on request instantiation
 
     publish_request.ssl = @ssl
     publish_request.set_channel(options)
@@ -119,7 +119,7 @@ class Pubnub
 
     subscribe_request = PubnubRequest.new(:operation => operation, :session_uuid => @session_uuid)
 
-    #TODO: This is ugly, refactor
+    #TODO: refactor into initializer code on request instantiation
 
     subscribe_request.ssl = @ssl
     subscribe_request.set_channel(options)
