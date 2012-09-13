@@ -266,7 +266,7 @@ class Pubnub
 
   def _request(request)
 
-    if Rails.present? && Rails.env.present? && Rails.env.test?
+    if (defined?(Rails) && Rails.present? && Rails.env.present?) && Rails.env.test?
 
       open(request.url, 'r', :read_timeout => 300) do |response|
         request.package_response!(response.read)
