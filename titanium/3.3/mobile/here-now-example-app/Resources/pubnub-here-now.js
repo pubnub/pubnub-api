@@ -32,8 +32,8 @@ Ti.App.HereNow = function(setup) {
 
     var table = Ti.UI.createTableView({
         separatorColor : (isAndroid) ? '#000' : '#fff',
-        top            : (isAndroid) ? '60dp' : 40,
-        height         : '80%'
+        top            : (isAndroid) ? '60dp' : 80,
+        height         : '60%'
     });
 
 
@@ -70,10 +70,26 @@ Ti.App.HereNow = function(setup) {
         table.insertRowBefore( 0, row );
     }
 
+    var channel = Ti.UI.createTextField({
+        width       : (isAndroid) ? '75%' : 247,
+        height      : (isAndroid) ? '50dp' : 30,
+        left        : 4,
+        top         : 4,
+        color       : "#111",
+        clearOnEdit : true,
+        value       : setup['channel'],
+        border      : 1,
+        borderStyle : Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+        borderRadius : 4,
+        font        : {
+            fontSize   : (isAndroid) ? '18dp' : 14,
+            fontWeight : 'bold'
+        }
+    });
     // Here Now Button
     var here_now_button = Ti.UI.createButton({
         title         : 'Here Now',
-        top           : 4,
+        top           : 40,
         right         : 150,
         width         : (isAndroid) ? '100dp' : 100,
         height        : (isAndroid) ? '50dp' : 30,
@@ -96,7 +112,7 @@ Ti.App.HereNow = function(setup) {
     // here now button Touch
     here_now_button.addEventListener( 'touchstart', function(e) {
         pubnub.here_now({
-            channel  : setup['channel'],
+            channel  : channel.value,
             connect  : function() {
                     append_data("Receiving Here Now data ...");
             },
@@ -109,12 +125,8 @@ Ti.App.HereNow = function(setup) {
         });
     });
 
-    // Listen for Return Key Press
-    data_window.addEventListener( 'open', function(e) {
-        textfield.focus();
-    });
-
     data_window.add(table);
+    data_window.add(channel);
     data_window.add(here_now_button);
 
     this.data_window = data_window;

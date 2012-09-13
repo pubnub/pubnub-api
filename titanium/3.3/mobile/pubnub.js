@@ -371,27 +371,24 @@ var DEMO          = 'demo'
         */
         'detailedHistory' : function( args, callback ) {
             var callback = args['callback'] || callback 
-            ,   count = args['count'] || 100
-            ,   channel  = args['channel']
-            ,   reverse = args['reverse'] || "false"
-            ,   start = args['start']
-            ,   end = args['end'];
+            ,   channel  = args['channel'];
 
             // Make sure we have a Channel
             if (!channel)  return log('Missing Channel');
             if (!callback) return log('Missing Callback');
             
             var params = {};
-            params["reverse"] = reverse;
-            if (start) 
-                params["start"] = start;
-            if (end)
-                params["end"] = end;
+            params['count'] = args['count'] || 100;
+            params['reverse'] = args['reverse'] || 'false';
+            if (args['start']) 
+                params['start'] = args['start'];
+            if (args['end'])
+                params['end'] = args['end'];
 
             // Send Message
             xdr({
                 url      : [
-                    ORIGIN, 'history',
+                    ORIGIN, 'v2', 'history',
                     'sub-key', SUBSCRIBE_KEY, 
                     'channel', encode(channel)
                 ],
