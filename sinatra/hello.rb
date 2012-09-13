@@ -9,9 +9,8 @@ def my_callback(message)
 end
 
 def my_stream(message)
-  puts(message)
-  body message.to_s
-  halt
+  puts(message[0].to_s)
+  halt message[0].to_s if message[0] != []
 end
 
 #callback = method(:my_callback)
