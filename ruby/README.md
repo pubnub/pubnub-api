@@ -4,7 +4,7 @@ Pubnub - http://github/pubnub/pubnub-api
 ##### YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 ##### http://www.pubnub.com/account
 
-## PubNub 3.1 Real-time Cloud Push API - RUBY
+## PubNub 3.3 Real-time Cloud Push API - RUBY
 
 www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/blog/ruby-push-api
@@ -13,91 +13,84 @@ PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time messages
 to thousands of web and mobile clients simultaneously.
 
-### Ruby Push API
+## Pubnub 3.3 for Ruby is a complete rewrite, and is NOT compatible with earlier versions of Pubnub Ruby Client.
+### Usage Examples
+Examine the tests in spec/lib/* for many different scenarios! Specifically, *_integration. But here is a small sample:
 
-### Ruby: (Init)
+### Instantiate a new PN Object
 
 ```ruby
-pubnub = Pubnub.new(
-    "demo",  ## PUBLISH_KEY
-    "demo",  ## SUBSCRIBE_KEY
-    "demo",  ## SECRET_KEY
-    "",      ## CIPHER_KEY (Cipher key is Optional)
-    false    ## SSL_ON?
-)
+    pn = Pubnub.new(:publish_key => @publish_key, # publish_key only required if publishing.
+        :subscribe_key => @subscribe_key,         # required
+        :secret_key => @secret_key,               # optional, if used, message signing is enabled
+        :cipher_key => @cipher_key,               # optional, if used, encryption is enabled
+        :ssl => @ssl_enabled)                     # true or default is false 
 ```
 
-### Ruby: (Publish)
-
-##### Send Message in String Format
+### Publish
+For message, you can just pass it a string, a hash, an array, an object -- it will be serialized as a JSON object,
+and urlencoded automatically for you.
 
 ```ruby
-pubnub.publish({
-    'channel' => 'hello_world',
-    'message' => 'hey what is up?',
-    'callback' => lambda do |message|
-       puts(message)
-     end
-})
+
+    @my_callback = lambda { |message| puts(message) }
+
+    pn.publish(:channel => :hello_world,
+        :message => "hi",
+        :callback => @my_callback)
 ```
 
-##### Send Message in Array Format
+### Subscribe
 
 ```ruby
-pubnub.publish({
-    'channel' => 'hello_world',
-    'message' => { ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"] },
-    'callback' => lambda do |message|
-       puts(message)
-     end
-})
+    pn.subscribe(:channel => :hello_world,
+        :callback => @my_callback)
 ```
 
-##### Send Message in Dictionary Format
+### History (deprecated, use new detailed_history)
 
 ```ruby
-pubnub.publish({
-    'channel' => 'hello_world',
-    'message' => { 'text' => 'some text data' },
-    'callback' => lambda do |message|
-       puts(message)
-     end
-})
+    pn.history(:cipher_key => "enigma",
+        :channel => @no_history_channel,
+        :limit => 10,
+        :callback => @my_callback)
 ```
 
-### Ruby: (Subscribe)
+### Detailed Message History
 
-##### Listen for Messages
-
+Archive messages of on a given channel. Optional start, end, and reverse option examples can be found in the tests.
 ```ruby
-pubnub.subscribe({
-    'channel'  => 'hello_world',
-    'callback' => lambda do |message|
-        puts(message)    ## get and print message
-        return true      ## keep listening?
-    end
-})
+    pn.detailed_history(:channel => channel,
+        :count => 10, 
+        :callback => @my_callback)
 ```
 
-### Ruby: (History)
+### Presence
 
-##### Load Previously Published Messages
-
+Realtime see who channel events, such as joins, leaves, and occupancy.
 ```ruby
-pubnub.history({
-    'channel' => 'hello_world',
-    'limit'   => 10,
-    'callback' => lambda do |message|
-       puts(message)
-     end
-})
+    pn.presence(:channel => :hello_world,
+        :callback => @my_callback)
 ```
 
-### Ruby: (UUID)
+### Here_now 
 
-##### Generate UUID
-
+See who is online in a channel at this very moment.
 ```ruby
-uuid = pubnub.UUID()
-puts(uuid)
+    pn.here_now(:channel => channel,
+    :callback => @my_callback)
+```
+
+### UUID
+
+Session-UUID is automatic, so you will probably not end up ever using this. But if you need a UUID...
+```ruby
+    Pubnub.new(:subscribe_key => :demo).uuid
+```
+
+### Time 
+
+Get the current timetoken.
+```ruby
+    pn.time("callback" => @my_callback)
 ```
