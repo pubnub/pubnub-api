@@ -4,15 +4,15 @@ FAILURE=1
 SUCCESS=0
 
 # Set APP_HOME to PUBNUB_GIT_ROOT/java
-APP_HOME=/home/geremy/pubnub-api/java
+APP_HOME=/pubnub-api/java/3.3
 
 LIB=${APP_HOME}/lib/
 CP=${LIB}async-http-client-1.6.5-shaded.jar:${LIB}slf4j-nop-1.6.2.jar:src/:.
 
 # cleaning up
-if [ -f "$APP_HOME/src/tests/PubnubUnitTest.java" ]; then
+if [ -f "$APP_HOME/src/pubnub/example/PubnubExample.java" ]; then
     echo -e "Cleaning up..."
-    rm src/tests/*.class
+    rm src/pubnub/example/PubnubExample/*.class
 fi
 
 
@@ -29,7 +29,7 @@ if [ ! -f "$JAVA_HOME/bin/javac" ]; then
     exit 1
 fi
 
-if [ ! -f "$APP_HOME/src/tests/PubnubUnitTest.java" ]; then
+if [ ! -f "$APP_HOME/src/pubnub/example/PubnubExample.java" ]; then
     echo "Please edit this build script and verify APP_HOME is valid."
     exit 1
 fi
@@ -37,7 +37,7 @@ fi
 cd ${APP_HOME}
 echo -e "Building..."
 
-${JAVA_HOME}/bin/javac -cp "${CP}" src/tests/PubnubUnitTest.java
+${JAVA_HOME}/bin/javac -cp "${CP}" src/pubnub/example/PubnubExample.java
 
 if [ $? -ne 0 ]
 then
@@ -48,7 +48,7 @@ fi
 echo -e "Build succeeded."
 echo 
 echo -e "Running..."
-${JAVA_HOME}/bin/java -cp "${CP}" src/tests/PubnubUnitTest
+${JAVA_HOME}/bin/java -cp "${CP}" src/pubnub/example/PubnubExample
 
 if [ $? -ne 0 ]
 then
