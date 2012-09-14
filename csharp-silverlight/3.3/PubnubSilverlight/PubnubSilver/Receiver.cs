@@ -14,25 +14,21 @@ namespace PubnubSilver
 {
     public class Receiver : Callback
     {
+        public TextBlock subscribeBlock;
         public bool responseCallback(string channel, object message)
             {
                 object[] messages = (object[])message;
-                //UIThread.Invoke(() =>
-                //{
+                UIThread.Invoke(() =>
+                {
                     if (messages != null && messages.Length> 0)
                     {
-                        //pt.subMessage.Visibility = Visibility.Visible;
                         for (int i = 0; i < messages.Length; i++)
                         {
-                            Debug.WriteLine("[Subscribed data] " + messages[i]);
-                            //if (!(pt.lSubscribe.Items.Contains(messages[i].ToString())))
-                            //{
-                            //    pt.lSubscribe.Items.Add(messages[i].ToString());
-                            //}
+                            subscribeBlock.Text += "\n" + messages[i];
                         }
                     }
-                //});
-                    return true;
+                });
+                return true;
             }
 
         public void errorCallback(string channel, object message)

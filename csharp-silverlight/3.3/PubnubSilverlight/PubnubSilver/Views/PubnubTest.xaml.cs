@@ -39,11 +39,13 @@ namespace PubnubSilver
 
         private void Subscribe_Click(object sender, RoutedEventArgs e)
         {
-            lblSubscribe.Text = "Subscribe to the channel " + channel;           
+            lblSubscribe.Text = "Subscribe to the channel " + channel;
+            Receiver recv = new Receiver();
+            recv.subscribeBlock = lblSubscribe;
             Dictionary<string, object> args = new Dictionary<string, object>();
             args.Add("channel", channel);            
-            args.Add("callback", new Receiver());
-           
+            args.Add("callback", recv);
+            
             objPubnub.Subscribe(args);
         }
         private void Publish_Click(object sender, RoutedEventArgs e)
@@ -138,7 +140,7 @@ namespace PubnubSilver
                     if (result != null && result.Count() > 0)
                     {
                         hereNowData.Visibility = Visibility.Visible;
-                        lblHereNow.Text += "\n[" + result[0].ToString() + "," + result[1].ToString() + "," + result[2].ToString() + "]";
+                        lblHereNow.Text += "\n" + result[0].ToString();
                     }
                 });
             };
@@ -163,12 +165,32 @@ namespace PubnubSilver
 
         private void DetailedHistory_Click(object sender, RoutedEventArgs e)
         {
+            pubnub.ResponseCallback respCallback = delegate(object response)
+            {
+                List<object> result = (List<object>)response;
 
+                UIThread.Invoke(() =>
+                {
+                    if (result != null && result.Count() > 0)
+                    {
+                        detailedHistoryData.Visibility = Visibility.Visible;
+                        lblDetailedHistory.Text += "\n" + result[0].ToString();
+                    }
+                });
+            };
+            objPubnub.DetailedHistory(channel, respCallback, 10);
         }
 
         private void Presence_Click(object sender, RoutedEventArgs e)
         {
+            lblPresence.Text = "Presence to the channel " + channel;
+            Receiver recv = new Receiver();
+            recv.subscribeBlock = lblPresence;
+            Dictionary<string, object> args = new Dictionary<string, object>();
+            args.Add("channel", channel);
+            args.Add("callback", recv);
 
+            objPubnub.Presence(args);
         }
     }
 }

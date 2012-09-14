@@ -209,7 +209,7 @@ namespace PubnubSilver
                 clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
                 if (this.CIPHER_KEY.Length > 0)
                     value = pc.decrypt(value);
-                _History = value;
+                _Presence = value;
             }
         }
 
@@ -629,6 +629,21 @@ namespace PubnubSilver
                         history = JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString());
                         myRequestState.cb(history);
                     }
+                    else if (myRequestState.respType == ResponseType.Here_Now)
+                    {
+                        here_Now.Add(myRequestState.requestData.ToString());
+                        myRequestState.cb(here_Now);
+                    }
+                    else if (myRequestState.respType == ResponseType.Presence)
+                    {
+                        presence.Add(myRequestState.requestData.ToString());
+                        myRequestState.cb(presence);
+                    }
+                    else if (myRequestState.respType == ResponseType.DetailedHistory)
+                    {
+                        detailedHistory.Add(myRequestState.requestData.ToString());
+                        myRequestState.cb(detailedHistory);
+                    }
                     else if (myRequestState.respType == ResponseType.Subscribe)
                     {
                         List<object> lstObj = JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString());
@@ -638,16 +653,16 @@ namespace PubnubSilver
                             if (cs.channel == myRequestState.channel && !cs.connected && !is_disconnect)
                             {
                                 callback.disconnectCallback(myRequestState.channel);
-                                is_disconnect = true;                                
+                                is_disconnect = true;
                                 break;
                             }
                         }
                         if (is_disconnect)
                             return;
-                            
+
                         subscribe = lstObj;
-                        callback.responseCallback(myRequestState.channel, subscribe[0]);                        
-                    }                    
+                        callback.responseCallback(myRequestState.channel, subscribe[0]);
+                    }
                     else
                     {
                         myRequestState.cb(JsonConvert.DeserializeObject<List<object>>(myRequestState.requestData.ToString()));
@@ -863,7 +878,7 @@ namespace PubnubSilver
             url.Add("channel");
             url.Add(channel);
 
-            _request(url, respCallback, ResponseType.History);
+            _request(url, respCallback, ResponseType.DetailedHistory);
         }
 
         public void DetailedHistory(string channel, ResponseCallback respCallback, long start, bool reverse = false)
