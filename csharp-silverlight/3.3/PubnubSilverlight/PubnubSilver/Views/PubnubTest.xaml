@@ -27,6 +27,22 @@
                 <TextBlock x:Name="histMessage" Text="History Messages - >" Visibility="Collapsed" Margin="10,10,0,0"></TextBlock>
                 <ListBox Name="lHistory" Margin="10,10,0,0"></ListBox>
 
+                <TextBlock Text=" * Example to get here now * " Margin="10,10,10,10" HorizontalAlignment="Left" FontWeight="Bold" FontSize="11"></TextBlock>
+                <Button x:Name="HereNow" Content="Here Now" Click="HereNow_Click" HorizontalAlignment="Left" Height="30" Width="100" Margin="10,10,10,10"></Button>
+                <TextBlock x:Name="hereNowData" Text="Here Now messages - > " Visibility="Collapsed" Margin="10,10,10,10" ></TextBlock>
+                <TextBlock x:Name="lblHereNow" HorizontalAlignment="Left" Margin="10,10,10,10"></TextBlock>
+
+                <TextBlock Text=" * Example to get presence * " Margin="10,10,10,10" HorizontalAlignment="Left" FontWeight="Bold" FontSize="11"></TextBlock>
+                <Button x:Name="Presence" Content="Presence" Click="Presence_Click" HorizontalAlignment="Left" Height="30" Width="100" Margin="10,10,10,10"></Button>
+                <TextBlock x:Name="presenceData" Text="Presence messages - > " Visibility="Collapsed" Margin="10,10,10,10" ></TextBlock>
+                <TextBlock x:Name="lblPresence" HorizontalAlignment="Left" Margin="10,10,10,10"></TextBlock>
+
+
+                <TextBlock Text=" * Example to get detailed history * " Margin="10,10,10,10" HorizontalAlignment="Left" FontWeight="Bold" FontSize="11"></TextBlock>
+                <Button x:Name="DetailedHistory" Content="Detailed History" Click="DetailedHistory_Click" HorizontalAlignment="Left" Height="30" Width="100" Margin="10,10,10,10"></Button>
+                <TextBlock x:Name="detailedHistoryData" Text="Detailed history messages - > " Visibility="Collapsed" Margin="10,10,10,10" ></TextBlock>
+                <TextBlock x:Name="lblDetailedHistory" HorizontalAlignment="Left" Margin="10,10,10,10"></TextBlock>
+                
                 <TextBlock Text=" * Example to display time * "  HorizontalAlignment="Left" FontWeight="Bold" FontSize="11" Margin="10,10,0,0"></TextBlock>
                 <Button x:Name="Time" Content="Time" Click="Time_Click"  HorizontalAlignment="Left" Width="100" Height="25" Margin="10,10,0,0"></Button>
                 <TextBlock x:Name="lblTime" Margin="10,10,0,0"></TextBlock>

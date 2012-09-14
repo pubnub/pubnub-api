@@ -549,6 +549,13 @@ namespace PubnubSilver
                     url.Append("/");
                     url.Append(_encodeURIcomponent(url_bit));
                 }
+
+                if (type == ResponseType.Presence || type == ResponseType.Subscribe)
+                {
+                    url.Append("?uuid=");
+                    url.Append(this.sessionUUID);
+                }
+
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
                 RequestState myRequestState = new RequestState();
                 myRequestState.request = request;
@@ -714,11 +721,6 @@ namespace PubnubSilver
             _request(url, respCallback,ResponseType.History);
         }
 
-        public void Presence(Dictionary<string, object> args)
-        {
-
-        }
-
         /**
          * Presence
          *
@@ -823,7 +825,7 @@ namespace PubnubSilver
             }
         }
 
-        public void Here_Now(string channel)
+        public void Here_Now(string channel, ResponseCallback respCallback)
         {
             List<string> url = new List<string>();
 
@@ -834,7 +836,7 @@ namespace PubnubSilver
             url.Add("channel");
             url.Add(channel);
 
-            _request(url, null, ResponseType.Here_Now);
+            _request(url, respCallback, ResponseType.Here_Now);
         }
 
         /**

@@ -126,6 +126,26 @@ namespace PubnubSilver
             args.Add("callback", respCallback);
             objPubnub.History(args); 
         }
+
+        private void HereNow_Click(object sender, RoutedEventArgs e)
+        {
+            pubnub.ResponseCallback respCallback = delegate(object response)
+            {
+                List<object> result = (List<object>)response;
+
+                UIThread.Invoke(() =>
+                {
+                    if (result != null && result.Count() > 0)
+                    {
+                        hereNowData.Visibility = Visibility.Visible;
+                        lblHereNow.Text += "\n[" + result[0].ToString() + "," + result[1].ToString() + "," + result[2].ToString() + "]";
+                    }
+                });
+            };
+
+            objPubnub.Here_Now(channel, respCallback);
+        }
+
         public void timedelegate(object response)
         {
             List<object> result = (List<object>)response;
@@ -139,6 +159,16 @@ namespace PubnubSilver
         private void btnUUID_Click(object sender, RoutedEventArgs e)
         {
             lblUUID.Text = "Generated UUID - > " + objPubnub.UUID(); 
+        }
+
+        private void DetailedHistory_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Presence_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

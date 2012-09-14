@@ -3,3 +3,8 @@ E:\PubnubSilverlight\PubnubSilver.Web\bin\PubnubSilver.Web.pdb
 E:\PubnubSilverlight\PubnubSilver.Web\obj\Debug\ResolveAssemblyReference.cache
 E:\PubnubSilverlight\PubnubSilver.Web\obj\Debug\PubnubSilver.Web.dll
 E:\PubnubSilverlight\PubnubSilver.Web\obj\Debug\PubnubSilver.Web.pdb
+C:\Users\shckyj\Documents\GitHub\pubnub-api\csharp-silverlight\3.3\PubnubSilverlight\PubnubSilver.Web\bin\PubnubSilver.Web.dll
+C:\Users\shckyj\Documents\GitHub\pubnub-api\csharp-silverlight\3.3\PubnubSilverlight\PubnubSilver.Web\bin\PubnubSilver.Web.pdb
+C:\Users\shckyj\Documents\GitHub\pubnub-api\csharp-silverlight\3.3\PubnubSilverlight\PubnubSilver.Web\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\shckyj\Documents\GitHub\pubnub-api\csharp-silverlight\3.3\PubnubSilverlight\PubnubSilver.Web\obj\Debug\PubnubSilver.Web.dll
+C:\Users\shckyj\Documents\GitHub\pubnub-api\csharp-silverlight\3.3\PubnubSilverlight\PubnubSilver.Web\obj\Debug\PubnubSilver.Web.pdb

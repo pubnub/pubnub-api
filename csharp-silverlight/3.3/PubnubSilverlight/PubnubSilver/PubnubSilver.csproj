@@ -79,33 +79,15 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Callback.cs" />
-    <Compile Include="HistoryExample.xaml.cs">
-      <DependentUpon>HistoryExample.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PublishExample.xaml.cs">
-      <DependentUpon>PublishExample.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pubnub.cs" />
     <Compile Include="PubnubCrypto.cs" />
     <Compile Include="Views\PubnubTest.xaml.cs">
       <DependentUpon>PubnubTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="Receiver.cs" />
-    <Compile Include="SubscribeExample.xaml.cs">
-      <DependentUpon>SubscribeExample.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="TimeExample.xaml.cs">
-      <DependentUpon>TimeExample.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UIThread.cs" />
     <Compile Include="Views\unit-test.xaml.cs">
       <DependentUpon>unit-test.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UnsubscribeExample.xaml.cs">
-      <DependentUpon>UnsubscribeExample.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UUIDExample.xaml.cs">
-      <DependentUpon>UUIDExample.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
@@ -130,35 +112,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
-    <Page Include="HistoryExample.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="PublishExample.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\PubnubTest.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SubscribeExample.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="TimeExample.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\unit-test.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UnsubscribeExample.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UUIDExample.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
