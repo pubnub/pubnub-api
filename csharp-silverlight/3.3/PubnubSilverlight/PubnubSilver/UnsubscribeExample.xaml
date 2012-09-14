@@ -1,0 +1,29 @@
+﻿<navigation:Page x:Class="PubnubSilver.UnsubscribeExample" 
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           mc:Ignorable="d"
+           xmlns:navigation="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Navigation"
+           d:DesignWidth="640" d:DesignHeight="480"
+           Title="UnsubscribeExample Page">
+    <Grid x:Name="LayoutRoot">
+        <StackPanel>
+            <TextBlock Text=" * Example to receive published messages * " HorizontalAlignment="Left" FontWeight="Bold" FontSize="11" Margin="10,10,0,0"></TextBlock>
+            <Button x:Name="Subscribe" Content="Subscribe" Click="Subscribe_Click" Height="25" Width="100" HorizontalAlignment="Left" Margin="10,10,0,0"></Button>
+            <TextBlock x:Name="lblSubscribe" Margin="10,10,0,0"></TextBlock>
+            <TextBlock x:Name="subMessage" Text="Received messages - >" Visibility="Collapsed" Margin="10,10,0,0"></TextBlock>
+            <ListBox Name="lSubscribe" Margin="10,10,0,0"></ListBox>
+
+            <TextBlock Text=" * Example to publish messages * " HorizontalAlignment="Left" FontWeight="Bold" FontSize="11" Margin="10,10,0,0"></TextBlock>
+            <Button x:Name="Publish" Content="Publish" Click="Publish_Click" HorizontalAlignment="Left" Height="25" Width="100" Margin="10,10,0,0"></Button>
+            <TextBlock x:Name="publishedData" Text="Published messages - > " Visibility="Collapsed"  Margin="10,10,0,0"></TextBlock>
+            <TextBlock x:Name="lblPublish" Margin="10,10,0,0"></TextBlock>
+
+            <TextBlock Text=" * Example to unsubscribe/disconnect from channel * " HorizontalAlignment="Left" FontWeight="Bold" FontSize="11" Margin="10,10,0,0"></TextBlock>
+            <Button x:Name="Unsubscribe" Content="Unsubscribe" Click="Unsubscribe_Click" Height="25" Width="100" HorizontalAlignment="Left" Margin="10,10,0,0"></Button>
+            <TextBlock x:Name="lblDisConnect" Margin="10,10,10,10"></TextBlock>
+
+        </StackPanel>
+    </Grid>
+</navigation:Page>

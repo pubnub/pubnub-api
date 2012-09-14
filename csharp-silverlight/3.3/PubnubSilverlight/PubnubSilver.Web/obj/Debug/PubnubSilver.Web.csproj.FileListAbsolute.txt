@@ -1,0 +1,5 @@
+E:\PubnubSilverlight\PubnubSilver.Web\bin\PubnubSilver.Web.dll
+E:\PubnubSilverlight\PubnubSilver.Web\bin\PubnubSilver.Web.pdb
+E:\PubnubSilverlight\PubnubSilver.Web\obj\Debug\ResolveAssemblyReference.cache
+E:\PubnubSilverlight\PubnubSilver.Web\obj\Debug\PubnubSilver.Web.dll
+E:\PubnubSilverlight\PubnubSilver.Web\obj\Debug\PubnubSilver.Web.pdb

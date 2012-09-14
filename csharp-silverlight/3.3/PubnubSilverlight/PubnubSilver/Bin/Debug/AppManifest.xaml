@@ -1,0 +1,8 @@
+﻿<Deployment xmlns="http://schemas.microsoft.com/client/2007/deployment" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" EntryPointAssembly="PubnubSilver" EntryPointType="PubnubSilver.App" RuntimeVersion="4.0.50826.0">
+  <Deployment.Parts>
+    <AssemblyPart x:Name="PubnubSilver" Source="PubnubSilver.dll" />
+    <AssemblyPart x:Name="Newtonsoft.Json.Silverlight" Source="Newtonsoft.Json.Silverlight.dll" />
+    <AssemblyPart x:Name="System.Windows.Controls" Source="System.Windows.Controls.dll" />
+    <AssemblyPart x:Name="System.Windows.Controls.Navigation" Source="System.Windows.Controls.Navigation.dll" />
+  </Deployment.Parts>
+</Deployment>
