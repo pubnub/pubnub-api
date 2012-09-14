@@ -47,6 +47,8 @@ namespace PubnubSilver
         private string CIPHER_KEY = "";
         private bool SSL = false;
         const int BUFFER_SIZE = 1024;
+        private string sessionUUID = "";
+        private string parameters = "";
 
         public delegate void ResponseCallback(object response);
         Callback callback;
@@ -345,13 +347,12 @@ namespace PubnubSilver
 
             // SSL On?
             if (this.SSL)
-            {
                 this.ORIGIN = "https://" + this.ORIGIN;
-            }
             else
-            {
                 this.ORIGIN = "http://" + this.ORIGIN;
-            }
+
+            if (this.sessionUUID == "")
+                this.sessionUUID = Guid.NewGuid().ToString();
         }
         /**
          * Publish
@@ -718,14 +719,159 @@ namespace PubnubSilver
 
         }
 
-        public void Here_Now(Dictionary<string, object> args)
-        {
+        /**
+         * Presence
+         *
+         * This function is NON BLOCKING.
+         * Listen for a message on a channel.
+         *
+         * @param Dictionary<string, object> args .
+         *  args contains channel name and a delegate to get response back
+         */
 
+        public void Presence(Dictionary<string, object> args)
+        {
+            bool is_alreadyConnect = false;
+
+            if (!args.ContainsKey("timestamp"))
+                args.Add("timestamp", 0);
+            string channel = args["channel"].ToString();
+            // Validate Arguments
+            if (args["callback"] != null)
+            {
+                callback = (Callback)args["callback"];
+            }
+            else
+            {
+                Debug.WriteLine("Invalid Callback.");
+            }
+            if (channel == null || channel == "")
+            {
+                callback.errorCallback(channel, "Invalid channel.");
+                return;
+            }
+
+            // Ensure Single Connection
+            if (subscriptions != null && subscriptions.Count > 0)
+            {
+                bool channel_exist = false;
+                foreach (Channel_status cs in subscriptions)
+                {
+                    if (cs.channel == channel)
+                    {
+                        channel_exist = true;
+                        if (!cs.connected)
+                            cs.connected = true;
+                        else
+                            is_alreadyConnect = true;
+                        break;
+                    }
+                }
+                if (!channel_exist)
+                {
+                    Channel_status cs = new Channel_status();
+                    cs.channel = channel;
+                    cs.connected = true;
+                    subscriptions.Add(cs);
+                }
+                else if (is_alreadyConnect)
+                {
+                    callback.errorCallback(channel, " Already Connected");
+                    return;
+                }
+            }
+            else
+            {
+                // New Channel
+                Channel_status cs = new Channel_status();
+                cs.channel = channel;
+                cs.connected = true;
+                subscriptions.Add(cs);
+            }
+            this._presence(args);
         }
 
-        public void DetailedHistory(Dictionary<string, object> args)
+        /**
+          * _presence - Private Interface
+          *
+          * @param Dictionary<string, object> args
+         *  args contains channel name and Procedure function callback and timetoken
+          */
+        private void _presence(Dictionary<string, object> args)
         {
+            is_disconnect = false;
+            clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
+            string channel = args["channel"].ToString();
+            object timetoken = args["timestamp"];
 
+            //  Begin Presence
+            try
+            {
+                // Build URL
+                List<string> url = new List<string>();
+                url.Add("subscribe");
+                url.Add(this.SUBSCRIBE_KEY);
+                url.Add(channel + "-pnpres");
+                url.Add("0");
+                url.Add(timetoken.ToString());
+                _request(url, null, ResponseType.Presence);
+
+            }
+            catch
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
+        public void Here_Now(string channel)
+        {
+            List<string> url = new List<string>();
+
+            url.Add("v2");
+            url.Add("presence");
+            url.Add("sub_key");
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add("channel");
+            url.Add(channel);
+
+            _request(url, null, ResponseType.Here_Now);
+        }
+
+        /**
+         * Detailed History
+         */
+        public void DetailedHistory(string channel, ResponseCallback respCallback, long start, long end, int count, bool reverse)
+        {
+            parameters = "";
+            if (count == -1) count = 100;
+            parameters = "?count=" + count;
+            if (reverse)
+                parameters = parameters + "&" + "reverse=" + reverse.ToString().ToLower();
+            if (start != -1)
+                parameters = parameters + "&" + "start=" + start.ToString().ToLower();
+            if (end != -1)
+                parameters = parameters + "&" + "end=" + end.ToString().ToLower();
+
+            List<string> url = new List<string>();
+
+            url.Add("v2");
+            url.Add("history");
+            url.Add("sub-key");
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add("channel");
+            url.Add(channel);
+
+            _request(url, respCallback, ResponseType.History);
+        }
+
+        public void DetailedHistory(string channel, ResponseCallback respCallback, long start, bool reverse = false)
+        {
+            DetailedHistory(channel, respCallback,start, -1, -1, reverse);
+        }
+
+        public void DetailedHistory(string channel, ResponseCallback respCallback, int count)
+        {
+            DetailedHistory(channel, respCallback, -1, -1, count, false);
         }
        /**
         * Unsubscribe
