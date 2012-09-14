@@ -34,7 +34,10 @@ namespace PubnubSilver
             Publish,
             History,
             Time,
-            Subscribe
+            Subscribe,
+            Presence,
+            Here_Now,
+            DetailedHistory,
         }
 
         private string ORIGIN = "pubsub.pubnub.com";
@@ -192,6 +195,53 @@ namespace PubnubSilver
             }
         }
 
+        private List<object> _Presence = new List<object>();
+        public List<object> presence
+        {
+            get
+            {
+                return _Presence;
+            }
+            set
+            {
+                clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
+                if (this.CIPHER_KEY.Length > 0)
+                    value = pc.decrypt(value);
+                _History = value;
+            }
+        }
+
+        private List<object> _Here_Now = new List<object>();
+        public List<object> here_Now
+        {
+            get
+            {
+                return _Here_Now;
+            }
+            set
+            {
+                clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
+                if (this.CIPHER_KEY.Length > 0)
+                    value = pc.decrypt(value);
+                _History = value;
+            }
+        }
+
+        private List<object> _DetailedHistory = new List<object>();
+        public List<object> detailedHistory
+        {
+            get
+            {
+                return _DetailedHistory;
+            }
+            set
+            {
+                clsPubnubCrypto pc = new clsPubnubCrypto(this.CIPHER_KEY);
+                if (this.CIPHER_KEY.Length > 0)
+                    value = pc.decrypt(value);
+                _DetailedHistory = value;
+            }
+        }
         /**
          * PubNub 3.1
          *
@@ -663,6 +713,20 @@ namespace PubnubSilver
             _request(url, respCallback,ResponseType.History);
         }
 
+        public void Presence(Dictionary<string, object> args)
+        {
+
+        }
+
+        public void Here_Now(Dictionary<string, object> args)
+        {
+
+        }
+
+        public void DetailedHistory(Dictionary<string, object> args)
+        {
+
+        }
        /**
         * Unsubscribe
         *
