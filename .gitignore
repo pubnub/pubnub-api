@@ -1,15 +1,11 @@
-.settings
-*~
-*.swp
-*.pyc
-*.class
-*.iml
-/flash/*/out
-/android/PubnubAndroidTest/*/gen
-/android/PubnubAndroidTest/*/bin
-/android/PubnubAndroidTest/*/out
+# Xcode noise
+objective-c/**/*.xcworkspace/xcuserdata/*
+objective-c/**/*.xcodeproj/xcuserdata/*
+objective-c/**/*.xcodeproj/project.xcworkspace/*
+*.pbxuser
+*.mode1v3
+*.mode2v3
+
+# OS X & vim noise
 .DS_Store
-node_modules
-.idea
-/csharp/*/PubNub-Messaging*/bin/*
-/csharp/*/PubNub-Messaging*/obj/*
+*.swp

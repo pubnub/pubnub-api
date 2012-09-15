@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CEPubnub.h"
+#import "CEPubnubDelegate.h"
 
 @interface iPhoneTest : UIViewController<CEPubnubDelegate>
 - (IBAction)StringPublish:(id)sender;

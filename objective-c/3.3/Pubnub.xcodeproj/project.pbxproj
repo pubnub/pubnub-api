@@ -22,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6FC5E1CE1603C90300101576 /* CEPubnubDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEPubnubDelegate.h; sourceTree = "<group>"; };
 		C8FD4D33153D447200D0A418 /* Pubnub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pubnub.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8FD4D37153D447200D0A418 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		C8FD4D39153D447200D0A418 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -37,7 +38,7 @@
 		C8FD4D6B153D469D00D0A418 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		C8FD4D6C153D469D00D0A418 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
 		C8FD4D6D153D469D00D0A418 /* CEPubnub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPubnub.h; sourceTree = "<group>"; };
-		C8FD4D6E153D469D00D0A418 /* CEPubnub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEPubnub.m; sourceTree = "<group>"; };
+		C8FD4D6E153D469D00D0A418 /* CEPubnub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CEPubnub.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		C8FD4D6F153D469D00D0A418 /* Cipher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cipher.h; sourceTree = "<group>"; };
 		C8FD4D70153D469D00D0A418 /* Cipher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cipher.m; sourceTree = "<group>"; };
 		C8FD4D71153D469D00D0A418 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
@@ -114,10 +115,11 @@
 		C8FD4D6A153D469D00D0A418 /* PubNub */ = {
 			isa = PBXGroup;
 			children = (
-				C8FD4D6B153D469D00D0A418 /* Base64.h */,
-				C8FD4D6C153D469D00D0A418 /* Base64.m */,
+				6FC5E1CE1603C90300101576 /* CEPubnubDelegate.h */,
 				C8FD4D6D153D469D00D0A418 /* CEPubnub.h */,
 				C8FD4D6E153D469D00D0A418 /* CEPubnub.m */,
+				C8FD4D6B153D469D00D0A418 /* Base64.h */,
+				C8FD4D6C153D469D00D0A418 /* Base64.m */,
 				C8FD4D6F153D469D00D0A418 /* Cipher.h */,
 				C8FD4D70153D469D00D0A418 /* Cipher.m */,
 				C8FD4D71153D469D00D0A418 /* Common.h */,
@@ -260,6 +262,7 @@
 		C8FD4D52153D447200D0A418 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pubnub/Pubnub-Prefix.pch";
 				INFOPLIST_FILE = "Pubnub/Pubnub-Info.plist";
@@ -272,6 +275,7 @@
 		C8FD4D53153D447200D0A418 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pubnub/Pubnub-Prefix.pch";
 				INFOPLIST_FILE = "Pubnub/Pubnub-Info.plist";
