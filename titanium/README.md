@@ -1,119 +1,86 @@
-## ------------------------------------------------------
-##
-## (FREE VERSION) USE "demo" KEYS As Shown Below
-##
-## (PAID VERSION) GET YOUR OWN API KEYS:
-## http://www.pubnub.com/account
-##
-## ------------------------------------------------------
+## Get your very own registration keys at http://www.pubnub.com/account
 
-## ------------------------------------------------------
-## ALERT!!! ANDROID FIX!!!
-## ------------------------------------------------------
-## 
-## You must update the tiapp.xml and add the following:
-## 
-## <property name="ti.android.threadstacksize" type="int">327680</property>
-## 
-## ------------------------------------------------------
+### PubNub 3.3 Real-time Cloud Push API for Titanium
 
-## ----------------------------------------------------------------
-## PubNub 3.1 Real-time Cloud Push API - JAVASCRIPT TITANIUM MOBILE
-## ----------------------------------------------------------------
-##
-## www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
-## http://www.pubnub.com/tutorial/javascript-push-api
-##
-## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
-## This is a cloud-based service for broadcasting Real-time messages
-## to millions of web and mobile clients simultaneously.
+PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+This is a cloud-based service for broadcasting Real-time messages
+to millions of web and mobile clients simultaneously.
 
+#### API Usage Summary
+API Usage summary follows. But checkout the real working examples in examples 3.3/mobile!
 
-/* ====================================================== */
-/* SIMPLE EXAMPLE USE PUBNUB API (ADVANCED EXAMPLE BELOW) */
-/* ====================================================== */
+### Init
 
+```javascript
 Ti.include('pubnub.js');
 
-// ----------------------------------
-// INIT PUBNUB
-// ----------------------------------
 var pubnub = PUBNUB.init({
     publish_key   : 'demo',
     subscribe_key : 'demo',
     ssl           : false,
     origin        : 'pubsub.pubnub.com'
 });
+```
 
+### Subscribe and Presence
+For a given channel, subscribe to the channel (subscribe), or subscribe to the channel's join/leave events (presence)
 
-// -------------------
-// LISTEN FOR MESSAGES
-// -------------------
+```javascript
 pubnub.subscribe({
     channel  : "hello_world",
     callback : function(message) { Ti.API.log(message) }
 })
+```
 
-// ------------
-// SEND MESSAGE
-// ------------
+### Publish
+Send messages to a channel.
+
+```javascript
 pubnub.publish({
     channel : "hello_world",
     message : "Hi."
 })
+```
 
-/* =============================== */
-/* ADVANCED EXAMPLE USE PUBNUB API */
-/* =============================== */
+### Message History
+Get the message history for a channel.
 
-Ti.include('pubnub.js');
-
-(function(){
-
-    // ----------------------------------
-    // INIT PUBNUB
-    // ----------------------------------
-    var pubnub = PUBNUB.init({
-        publish_key   : 'demo',
-        subscribe_key : 'demo',
-        ssl           : false,
-        origin        : 'pubsub.pubnub.com'
-    });
-
-    // ----------------------------------
-    // LISTEN FOR MESSAGES
-    // ----------------------------------
-    pubnub.subscribe({
-        channel  : 'test',
-        connect  : function() {
-            // You can Receive Messages!
-            send_a_message("Hello World! #1");
-            send_a_message("Hello World! #2");
-            send_a_message("Hello World! #3");
-        },
-        callback : function(message) {
-            // Message RECEIVED!
-            Ti.API.log(JSON.stringify(message));
-        },
-        error : function() {
-            // The internet is gone.
-            Ti.API.log("Connection Lost");
+```javascript
+        var paramobj = {};
+        paramobj['channel'] = channel.value;
+        paramobj['callback'] = function(message) {
+            append_data( JSON.stringify(message));
+        }    
+        paramobj.error = function() {
+            append_data("Lost connection ... ","#f00");
         }
-    });
+        if (start.value != "Start Timestamp" && start.value != "") 
+            paramobj['start'] = start.value;
+        if (end.value != "End Timestamp" && end.value != "") 
+            paramobj['end'] = end.value;
+        if (count.value != "Count" && count.value != "") 
+            paramobj['count'] = count.value;
+        else
+            paramobj['count'] = 100;
+        pubnub.detailedHistory(paramobj);
+```
+### Here_now
+Get real time occupancy stats for a channel. Used complimentarily with Presence
 
-    // ----------------------------------
-    // SEND MESSAGE
-    // ----------------------------------
-    function send_a_message(message) {
-        pubnub.publish({
-            channel  : 'test',
-            message  : { example : message },
-            callback : function(info) {
-                if (info[0])  Ti.API.log("Successfully Sent Message!");
-                if (!info[0]) Ti.API.log("Failed Because: " + info[1]);
+```javascript
+        pubnub.here_now({
+            channel  : channel.value,
+            connect  : function() {
+                    append_data("Receiving Here Now data ...");
+            },
+            callback : function(message) {
+                    append_data( JSON.stringify(message) );
+            },
+            error : function() {
+                    append_data( "Lost Connection...", "#f00" );
             }
         });
-    }
+```
 
-})();
+
 
