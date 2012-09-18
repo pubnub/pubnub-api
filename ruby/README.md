@@ -17,6 +17,12 @@ to thousands of web and mobile clients simultaneously.
 ### Usage Examples
 Examine the tests in spec/lib/* for many different scenarios! Specifically, *_integration. But here is a small sample:
 
+### Require it!
+
+```ruby
+require 'pubnub' # or require 'pubnub-ruby' if you installed pubnub-ruby (they are now identical gems)
+```
+
 ### Instantiate a new PN Object
 
 ```ruby
