@@ -13,7 +13,7 @@ PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time messages
 to thousands of web and mobile clients simultaneously.
 
-## Pubnub 3.3 for Ruby is a complete rewrite, and is NOT compatible with earlier versions of Pubnub Ruby Client.
+# Pubnub 3.3 for Ruby is a complete rewrite, and is NOT compatible with earlier versions of Pubnub Ruby Client.
 ### Usage Examples
 Examine the tests in spec/lib/* for many different scenarios! Specifically, *_integration. But here is a small sample:
 
