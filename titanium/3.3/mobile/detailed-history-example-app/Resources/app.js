@@ -10,7 +10,7 @@ Ti.include('./pubnub-detailed-history.js');
 // Returns an Object with Titanium Window Inside
 //
 var pubnub_data_window = Ti.App.DetailedHistory({
-    "channel" : "detailed-history-test-channel",
+    "channel" : "hello_world",
     "window"    : {
         title           : 'Data',
         backgroundColor : '#fff'

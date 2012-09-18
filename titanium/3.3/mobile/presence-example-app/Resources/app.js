@@ -10,7 +10,7 @@ Ti.include('./pubnub-presence.js');
 // Returns an Object with Titanium Window Inside
 //
 var pubnub_data_window = Ti.App.Presence({
-    "channel" : "presence-test-channel",
+    "channel" : "hello_world",
     "window"    : {
         title           : 'Presence Data',
         backgroundColor : '#fff'

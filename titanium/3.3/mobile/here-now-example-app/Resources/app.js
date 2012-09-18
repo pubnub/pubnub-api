@@ -10,7 +10,7 @@ Ti.include('./pubnub-here-now.js');
 // Returns an Object with Titanium Window Inside
 //
 var pubnub_data_window = Ti.App.HereNow({
-    "channel" : "here-now-test-channel",
+    "channel" : "hello_world",
     "window"    : {
         title           : 'Data',
         backgroundColor : '#fff'
