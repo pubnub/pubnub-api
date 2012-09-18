@@ -95,12 +95,6 @@ public class PubnubTestActivity extends Activity {
 
             public void onClick(View v) {
 
-                // Android: (Presence)
-//                HashMap<String, Object> args = new HashMap<String, Object>(1);
-//                args.put("channel", channel);
-//                pubnub.subscribe(args);
-
-                // Android: (Subscribe)
                 PresenceDownloader d = new PresenceDownloader();
                 d.execute("xml");
 
@@ -327,19 +321,18 @@ public class PubnubTestActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             Log.v("IN", "HANDLER");
-            Toast.makeText(PubnubTestActivity.this, "You got message",
-                    Toast.LENGTH_LONG).show();
-            final AlertDialog.Builder b = new AlertDialog.Builder(
-                    PubnubTestActivity.this);
-            b.setIcon(android.R.drawable.ic_dialog_alert);
-            b.setTitle("PUBNUB");
-            b.setMessage(myMessage);
-
-            b.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            b.show();
+            Toast.makeText(PubnubTestActivity.this, myMessage, Toast.LENGTH_LONG).show();
+//            final AlertDialog.Builder b = new AlertDialog.Builder(
+//                    PubnubTestActivity.this);
+//            b.setIcon(android.R.drawable.ic_dialog_alert);
+//            b.setTitle("PUBNUB");
+//            b.setMessage(myMessage);
+//
+//            b.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int which) {
+//                }
+//            });
+//            b.show();
         }
     };
 

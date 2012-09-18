@@ -1,4 +1,6 @@
-package com.fbt;
+package com.sample.pubnubunittest.pubnub;
+
+
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -431,6 +433,7 @@ public class Pubnub {
 				if (response.optString(1).length() > 0)
 					timetoken = response.optString(1);
 
+				boolean subResponce=true;
 				for (int i = 0; messages.length() > i; i++) {
 					JSONObject message = messages.optJSONObject(i);
 					if (message != null) {
@@ -441,7 +444,8 @@ public class Pubnub {
 							message = pc.decrypt(message);
 						}
 						if (callback != null)
-							callback.subscribeCallback(channel, message);
+							subResponce=callback.subscribeCallback(channel, message);
+							
 					} else {
 
 						JSONArray arr = messages.optJSONArray(i);
@@ -453,7 +457,8 @@ public class Pubnub {
 								;
 							}
 							if (callback != null)
-								callback.subscribeCallback(channel, arr);
+								subResponce=callback.subscribeCallback(channel, arr);
+								
 						} else {
 							String msgs = messages.getString(0);
 							if (this.CIPHER_KEY.length() > 0) {
@@ -462,9 +467,14 @@ public class Pubnub {
 								msgs = pc.decrypt(msgs);
 							}
 							if (callback != null)
-								callback.subscribeCallback(channel, msgs);
+								subResponce=callback.subscribeCallback(channel, msgs);
+							
 						}
 					}
+				}
+				if(!subResponce)
+				{
+					break;
 				}
 			} catch (Exception e) {
 				try {
