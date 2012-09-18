@@ -4,7 +4,7 @@ PubNub is a cross-platform client-to-client (1:1 and 1:many) push service in the
 Optimized for both web and mobile, our scalable, global network of redundant data centers provides lightning-fast, reliable message delivery.  We're up to 100 messages/second faster than possible with WebSockets alone, and **cross-platform compatibility across all phones, tablets, browsers, programming languages, and APIs is always guaranteed!**
 
 #Current Version
-The current version number for communication with PubNub Cloud is 3.1.
+The current version number for communication with PubNub Cloud is 3.3.
 
 #Supported Languages and Frameworks
 The current list of supported languages and frameworks can be found on our [github page](http://www.google.com/url?q=https%3A%2F%2Fgithub.com%2Fpubnub%2Fpubnub-api&sa=D&sntz=1&usg=AFQjCNE-eofH-mEn6I8uFXa7P2y72ds02Q).
