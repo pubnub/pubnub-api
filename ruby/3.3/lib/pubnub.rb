@@ -19,20 +19,11 @@ require 'pubnub_deferrable'
 
 require 'eventmachine'
 require 'uuid'
+require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/object/try'
+require 'active_support/core_ext/object/blank'
 
-
-class Object
-
-  # borrowed from Rails
-  def blank?
-    respond_to?(:empty?) ? empty? : !self
-  end
-
-  def present?
-    !blank?
-  end
-
-end
 
 class Pubnub
 
