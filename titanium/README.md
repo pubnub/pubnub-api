@@ -42,7 +42,7 @@ pubnub.publish({
 })
 ```
 
-### Message History
+### Message History ( history() is deprecated, please migrate your apps to use detailedHistory instead. )
 Get the message history for a channel.
 
 ```javascript
