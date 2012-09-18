@@ -4,7 +4,7 @@ Pubnub - http://github/pubnub/pubnub-api
 ##### YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 ##### http://www.pubnub.com/account
 
-## PubNub 3.3 Real-time Cloud Push API - RUBY
+## PubNub 3.3 Real-time Cloud Push API - Ruby on Sinatra
 
 www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/blog/ruby-push-api
@@ -14,6 +14,8 @@ This is a cloud-based service for broadcasting Real-time messages
 to thousands of web and mobile clients simultaneously.
 
 ## Pubnub 3.3 for Ruby is a complete rewrite, and is NOT compatible with earlier versions of Pubnub Ruby Client.
+## Checkout the included hello.rb for a quick usage example
+
 ### Usage Examples
 Examine the tests in spec/lib/* for many different scenarios! Specifically, *_integration. But here is a small sample:
 

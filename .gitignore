@@ -10,6 +10,6 @@
 /android/PubnubAndroidTest/*/out
 .DS_Store
 node_modules
-.idea
+.idea*
 /csharp/*/PubNub-Messaging*/bin/*
 /csharp/*/PubNub-Messaging*/obj/*
