@@ -37,7 +37,7 @@ var NOW    = 1
 ,   http   = require('http')
 ,   https  = require('https')
 ,   URLBIT = '/'
-,   QUERYBIT = '&'
+,   PARAMSBIT = '&'
 ,   XHRTME = 310000
 ,   XORIGN = 1;
 
@@ -113,8 +113,13 @@ function xdr( setup ) {
             failed = 1;
             (setup.fail||function(){})(e);
         };
-    if (setup.query && setup.query.length > 0) {
-        url = url + '?' + setup.query.join(QUERYBIT);
+    if (setup.data) {
+        var params = [];
+        url += "?";
+        for (key in setup.data) {
+             params.push(key+"="+setup.data[key]);
+        }
+        url += params.join(PARAMSBIT);
     }
     try {
         (ssl ? https : http).get( {
@@ -189,6 +194,44 @@ exports.init = function(setup) {
                     SUBSCRIBE_KEY, encode(channel),
                     '0', limit
                 ],
+                origin  : ORIGIN,
+                success : callback,
+                fail    : function(response) { log(response) }
+            });
+        },
+
+        /*
+            PUBNUB.detailedHistory({
+                channel  : 'my_chat_channel',
+                count : 100,
+                callback : function(messages) { console.log(messages) }
+            });
+        */
+        detailedHistory : function( args, callback ) {
+            var callback = args['callback']
+            ,   channel  = args['channel'];
+
+            // Make sure we have a Channel
+            if (!channel)  return log('Missing Channel');
+            if (!callback) return log('Missing Callback');
+
+            var params = {};
+            params["count"] = args['count'] || 100;
+            params["reverse"] = args['reverse'] || 'false';
+            if (args['start']) 
+                params["start"] = args['start'];
+            if (args['end'])
+                params["end"] = args['end'];
+            
+            // Send Message
+            xdr({
+                ssl : SSL,
+                url : [
+                    'v2', 'history',
+                    'sub-key', SUBSCRIBE_KEY, 
+                    'channel', encode(channel),
+                ],
+                data : params,
                 origin  : ORIGIN,
                 success : callback,
                 fail    : function(response) { log(response) }
@@ -303,9 +346,7 @@ exports.init = function(setup) {
                         encode(channel),
                         '0', timetoken
                     ],
-                    query    : [
-                        'uuid=' + encode(uuid())
-                    ],
+                    data : { 'uuid': encode(uuid()) },
                     fail : function() {
                         // Disconnect
                         if (!disconnected) {
