@@ -22,10 +22,10 @@ var socket = io.connect( 'http://pubsub.pubnub.com/events', pubnub_setup );
 // -----------------------------------------------------------------------
 // PRESENCE
 // -----------------------------------------------------------------------
-socket.on( 'join', function(user) {
+socket.on( 'custom_join', function(user) {
     console.log(user.data.name, ' -> JOINED!!!');
 } );
-socket.on( 'leave', function(user) {
+socket.on( 'custom_leave', function(user) {
     console.log(user.data.name, ' -> LEFT!!!');
 } );
 
@@ -41,9 +41,8 @@ socket.on( 'connect', function() {
 // RECEIVE A MESSAGE
 // -----------------------------------------------------------------------
 socket.on( 'message', function(message) {
-
-    // Received a Message!
-
+  console.log("APP got message : " + message);
 } );
+
 
 })();
