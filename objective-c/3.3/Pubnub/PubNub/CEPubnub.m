@@ -82,7 +82,7 @@ typedef enum {
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url
                                                            cachePolicy:NSURLRequestReloadIgnoringCacheData
                                                        timeoutInterval:kConnectionTimeOut];
-    [request setValue:@"V" forHTTPHeaderField:@"3.1"];
+    [request setValue:@"V" forHTTPHeaderField:@"3.3"];
     [request setValue:@"User-Agent" forHTTPHeaderField:@"Obj-C-iOS"];
     [request setValue:@"Accept" forHTTPHeaderField:@"gzip"];
     
@@ -573,7 +573,7 @@ NSDecimalNumber* time_token = 0;
 
 - (void) getTime1 {
     NSString* url = [NSString stringWithFormat:@"%@/time/0", _host]; 
-    NSURLRequest * urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:1.0];
+    NSURLRequest * urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:kConnectionTimeOut];
     
     [NSURLConnection
      sendAsynchronousRequest:urlRequest
