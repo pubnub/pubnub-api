@@ -104,7 +104,7 @@
                         if (user.connected) return;
 
                         user.connected = true;
-                        p.events.fire( ns + 'join', user );
+                        p.events.fire( ns + 'custom_join', user );
 
                     } );
 
@@ -144,7 +144,7 @@
 
             user.connected = false;
             user.socket.user_count--;
-            p.events.fire( ns + 'leave', user ) 
+            p.events.fire( ns + 'custom_leave', user ) 
         } );
     }
 
@@ -202,6 +202,27 @@
     }
 
     // =====================================================================
+    // Get Detailed History for published messages
+    // =====================================================================
+    function history( namespace, args, callback ) {
+      var p = get_socket(namespace).p;
+      args.channel = p.channel;
+      p.detailedHistory(
+        args, 
+        function(response) {
+          var messages = []
+          for ( var i = 0; i < response[0].length; i++ ) {
+            if ( response[0][i].name == "message" && response[0][i].ns == namespace ) {
+              messages.push(response[0][i]);
+            }
+          }
+          response[0] = messages;
+          callback(response);
+        } 
+      );
+    }
+
+    // =====================================================================
     // GEO LOCATION DATA (LATITUDE AND LONGITUDE)
     // =====================================================================
     function locate(callback) {
@@ -249,8 +270,11 @@
                     },
                     disconnect : function() {
                         delete namespaces[namespace];
-                    }
-                };
+                    },
+                    history : function( args, callback ) {
+                        history( namespace, args, callback );
+                }
+              };
             })();
 
         return socket;
