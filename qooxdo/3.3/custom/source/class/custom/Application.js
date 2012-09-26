@@ -43,26 +43,45 @@ qx.Class.define("custom.Application",
 
                 var label1 = new qx.ui.basic.Label("Last Received Message").set({
                     decorator:"main",
-                    font:new qx.bom.Font(28, ["Verdana", "sans-serif"])
+                    font:new qx.bom.Font(28, ["Verdana", "sans-serif"]),
+                    width: 500,
+                    rich: true
                 });
-                this.getRoot().add(label1, {left:20, top:10});
+                this.getRoot().add(label1, {left:500, top:50});
 
                 // Create a button
-                var button2 = new qx.ui.form.Button("Publish a message!", "custom/test.png");
-                var button1 = new qx.ui.form.Button("Subscribe!", "custom/test.png");
-                var button3 = new qx.ui.form.Button("Un-Subscribe!", "custom/test.png");
+                var publishButton = new qx.ui.form.Button("Publish a message!", "custom/test.png");
+                var subscribeButton = new qx.ui.form.Button("Subscribe!", "custom/test.png");
+                var unsubscribeButton = new qx.ui.form.Button("Un-Subscribe!", "custom/test.png");
+                var historyButton = new qx.ui.form.Button("Message History!", "custom/test.png");
 
 
                 // Document is the application root
                 var doc = this.getRoot();
 
                 // Add button to document at fixed coordinates
-                doc.add(button3, {left:300, top:50});
-                doc.add(button2, {left:125, top:50});
-                doc.add(button1, {left:0, top:50});
+                doc.add(historyButton, {left:0, top:100});
+                doc.add(unsubscribeButton, {left:300, top:50});
+                doc.add(publishButton, {left:125, top:50});
+                doc.add(subscribeButton, {left:0, top:50});
 
                 // Add an event listener
-                button3.addListener("execute", function (e) {
+
+                historyButton.addListener("execute", function (e) {
+
+                    pubnub.detailedHistory({
+                        count:10,
+                        channel:"hello_world",
+                        callback:function (message) {
+                            label1.set({"value":message.toString()});
+                        }
+                    });
+                    //console.log(message);
+
+
+                });
+
+                unsubscribeButton.addListener("execute", function (e) {
 
                     pubnub.unsubscribe({
                         channel:'hello_world'
@@ -72,7 +91,7 @@ qx.Class.define("custom.Application",
 
                 });
 
-                button2.addListener("execute", function (e) {
+                publishButton.addListener("execute", function (e) {
 
                     pubnub.publish({
                         channel:"hello_world",
@@ -80,7 +99,7 @@ qx.Class.define("custom.Application",
                     });
                 });
 
-                button1.addListener("execute", function (e) {
+                subscribeButton.addListener("execute", function (e) {
 
                     pubnub.subscribe({
                         channel:'hello_world',
