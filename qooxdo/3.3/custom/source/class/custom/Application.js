@@ -54,30 +54,43 @@ qx.Class.define("custom.Application",
                 var subscribeButton = new qx.ui.form.Button("Subscribe!", "custom/test.png");
                 var unsubscribeButton = new qx.ui.form.Button("Un-Subscribe!", "custom/test.png");
                 var historyButton = new qx.ui.form.Button("Message History!", "custom/test.png");
-
+                var hereNowButton = new qx.ui.form.Button("Here Now!", "custom/test.png");
 
                 // Document is the application root
                 var doc = this.getRoot();
 
                 // Add button to document at fixed coordinates
+                doc.add(hereNowButton, {left:150, top:100});
                 doc.add(historyButton, {left:0, top:100});
                 doc.add(unsubscribeButton, {left:300, top:50});
                 doc.add(publishButton, {left:125, top:50});
                 doc.add(subscribeButton, {left:0, top:50});
 
-                // Add an event listener
+                // event listeners
+
+                hereNowButton.addListener("execute", function (e) {
+
+                    pubnub.here_now({
+                        channel:"hello_world",
+                        callback:function (message) {
+                            label1.set({"value":
+                                "<b>occupancy</b>: " + message.occupancy +
+                                "<br/><b>uuids</b>: " + message.uuids.toString()
+                            });
+                        }
+                    });
+
+                });
 
                 historyButton.addListener("execute", function (e) {
 
                     pubnub.detailedHistory({
-                        count:10,
+                        count:5,
                         channel:"hello_world",
                         callback:function (message) {
                             label1.set({"value":message.toString()});
                         }
                     });
-                    //console.log(message);
-
 
                 });
 
@@ -104,10 +117,20 @@ qx.Class.define("custom.Application",
                     pubnub.subscribe({
                         channel:'hello_world',
                         connect:function () {
-                            label1.set({"value":"Subscribed."});
+                            label1.set({"value":"Subscribed to channel with Presence."});
                         },
                         callback:function (message) {
                             label1.set({"value":message});
+                        },
+
+                        presence:function (message) {
+                            label1.set({"value":
+                                "<b>occupancy</b>: " + message.occupancy +
+                                "<br/><b>action</b>: " + message.action +
+                                "<br/><b>timestamp</b>: " + message.timestamp +
+                                "<br/><b>uuid</b>: " + message.uuid
+                            });
+                            //console.log(message);
                         }
                     });
 
