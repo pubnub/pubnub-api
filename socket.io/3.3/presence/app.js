@@ -8,7 +8,8 @@ var pubnub_setup = {
     user          : my_user_data,
     channel       : 'bootstrap-app',
     publish_key   : 'demo',
-    subscribe_key : 'demo'
+    subscribe_key : 'demo',
+    custom_presence: false
 };
 
 // -----------------------------------------------------------------------
