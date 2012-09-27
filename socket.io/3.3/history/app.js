@@ -32,7 +32,7 @@
     function seedHistory() {
 
         for (a = 0; a < 9; a++) {
-            socket.send('test data ' + a, function (message) {} );
+            socket.send('test data ' + a, function (message) { console.log("Seeding history data: " + message)} );
         }
 
         getHistory(socket);
