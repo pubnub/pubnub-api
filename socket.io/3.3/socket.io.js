@@ -18,6 +18,7 @@
             var urlbits   = (host+'////').split('/')
             ,   setup     = setup || {}
             ,   cuser     = setup['user'] || {}
+            ,   custom_presence  = 'custom_presence' in setup ? setup['custom_presence'] : true
             ,   presence  = 'presence' in setup ? setup['presence'] : true
             ,   origin    = urlbits[2]
             ,   ns        = (urlbits[3] || 'standard')
@@ -114,22 +115,24 @@
             });
 
             // ESTABLISH CONNECTION FOR NEW PRESENCE 
-            p.subscribe({
+            if (presence) {
+              p.subscribe({
                 channel : namespace,
                 connect : function() {
-                    p.subscribe({
-                      channel : namespace + '-pnpres',
-                      callback: function(response) {
-                        if ( uuid === response.uuid ) return; 
+                  p.subscribe({
+                    channel : namespace + '-pnpres',
+                    callback: function(response) {
+                      if ( uuid === response.uuid ) return; 
                         p.events.fire(namespace + response.action, response.uuid);
                       }
                     });
-                },
+                  },
                 callback : function(evt) { }
-            });
+              });
+            }
 
             // TCP KEEP ALIVE
-            if (presence)
+            if (custom_presence)
                 p.tcpKeepAlive = setInterval( p.updater( function() {
                     var nss = p.map( namespaces, function(ns) { return ns } );
                     send( 'ping', namespace, { nss : nss, cuser : cuser } );
