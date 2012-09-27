@@ -20,7 +20,8 @@
             ,   cuser     = setup['user'] || {}
             ,   presence  = 'presence' in setup ? setup['presence'] : true
             ,   origin    = urlbits[2]
-            ,   namespace = (urlbits[3] || 'standard') + '-' + setup.channel
+            ,   ns        = (urlbits[3] || 'standard')
+            ,   namespace = ns + '-' + setup.channel
             ,   channel   = setup.channel
             ,   socket    = get_socket(namespace);
 
@@ -110,6 +111,21 @@
 
                     if (evt.name === 'user-disconnect') disconnect(evt.uuid);
                 }
+            });
+
+            // ESTABLISH CONNECTION FOR NEW PRESENCE 
+            p.subscribe({
+                channel : namespace,
+                connect : function() {
+                    p.subscribe({
+                      channel : namespace + '-pnpres',
+                      callback: function(response) {
+                        if ( uuid === response.uuid ) return; 
+                        p.events.fire(namespace + response.action, response.uuid);
+                      }
+                    });
+                },
+                callback : function(evt) { }
             });
 
             // TCP KEEP ALIVE
@@ -222,6 +238,20 @@
       );
     }
 
+
+    // =====================================================================
+    // Get Here Now data for present users 
+    // =====================================================================
+    function here_now( namespace, callback ) {
+      var p = get_socket(namespace).p;
+      p.here_now(
+        { channel : namespace }, 
+        function(response) {
+          callback(response);
+        } 
+      );
+    }
+
     // =====================================================================
     // GEO LOCATION DATA (LATITUDE AND LONGITUDE)
     // =====================================================================
@@ -273,7 +303,10 @@
                     },
                     history : function( args, callback ) {
                         history( namespace, args, callback );
-                }
+                    },
+                    here_now : function( callback ) {
+                        here_now( namespace, callback );
+                    }
               };
             })();
 
