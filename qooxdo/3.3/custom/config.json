@@ -1,0 +1,66 @@
+{
+  "name"    : "custom",
+
+  "include" :
+  [
+    {
+      "path" : "${QOOXDOO_PATH}/tool/data/config/application.json"
+    }
+  ],
+
+  "export" :
+  [
+    "api",
+    "api-data",
+    "build",
+    "clean",
+    "distclean",
+    "fix",
+    "info",
+    "inspector",
+    "lint",
+    "migration",
+    "pretty",
+    "profiling",
+    "source",
+    "source-all",
+    "source-hybrid",
+    "simulation-build",
+    "simulation-run",
+    "test",
+    "test-source",
+    "translation"
+  ],
+
+  "default-job" : "source-hybrid",
+
+  "let" :
+  {
+    "APPLICATION"  : "custom",
+    "QOOXDOO_PATH" : "../../../../../qooxdoo-2.0.2-sdk",
+    "QXTHEME"      : "custom.theme.Theme",
+    "API_EXCLUDE"  : ["qx.test.*", "${APPLICATION}.theme.*", "${APPLICATION}.test.*", "${APPLICATION}.simulation.*"],
+    "LOCALES"      : [ "en" ],
+    "CACHE"        : "${TMPDIR}/qx${QOOXDOO_VERSION}/cache",
+    "ROOT"         : "."
+  },
+
+  // You only need to edit the remainder of this file, if you want to customize
+  // specific jobs, or add own job definitions.
+
+    "jobs" : {
+        "add-pubnub" : {
+            "add-script" : [
+                {
+                    "uri": "http://cdn.pubnub.com/pubnub-3.3.min.js"
+                }
+            ]
+        },
+        "source-script" : {
+            "extend" : ["add-pubnub"]
+        },
+        "build-script" : {
+            "extend" : ["add-pubnub"]
+        }
+    }
+}

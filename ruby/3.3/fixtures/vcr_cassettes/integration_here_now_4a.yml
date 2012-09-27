@@ -1,0 +1,38 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://pubsub.pubnub.com/v2/presence/sub-key/demo/channel/hello_world
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 23 Aug 2012 02:28:24 GMT
+      Content-Type:
+      - text/javascript
+      Content-Length:
+      - '142'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Access-Control-Allow-Methods:
+      - GET
+      Server:
+      - Werkzeug/0.8.3 Python/2.7.3
+    body:
+      encoding: US-ASCII
+      string: ! '{"uuids":["E33194F6-D6F1-4762-87D9-9D1DB5BC650B","aa1686b0-cee8-012f-ba60-70def1fd2b7f","1bc5667b-6443-403d-8e98-f5306791b595"],"occupancy":3}'
+    http_version: 
+  recorded_at: Thu, 23 Aug 2012 02:28:24 GMT
+recorded_with: VCR 2.2.4

@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://pubsub.pubnub.com/v2/history/sub-key/demo/channel/hello_world?count=30
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 11 Sep 2012 21:05:29 GMT
+      Content-Type:
+      - text/javascript; charset="UTF-8"
+      Content-Length:
+      - '1135'
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-cache
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Access-Control-Allow-Methods:
+      - GET
+      Server:
+      - gevent/0.13 Python/2.7
+    body:
+      encoding: US-ASCII
+      string: ! '[["9Ur01R73lF5hZnLXDJPGwiA0wvhJjr9TIMzOnMWsEBcryIa/hNngtbjAiExDMeo9qqJxUXFTcLMKeazCtdho8+0IKIXryFlD6HJxdAWFMhs=","f42pIQcWZ9zbTbH8cyLwByD\/GsviOE0vcREIEVPARR0=","f42pIQcWZ9zbTbH8cyLwB\/tdvRxjFLOYcBNMVKeHS54=","+BY5\/miAA8aeuhVl4d13Kg==","zMqH\/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF","Ns4TB41JjT2NCXaGLWSPAQ==","Hello
+        World","hvwS7npm49cmHjcj1oqjhg==","8X+2fgHLpLDct7VtN553wQ==","rdVPVQetTvmJgqApEFbx5w==","EfEq4dtT8UQns+4voDdL2Q==","wriLKuEJ+7\/oB5LsWyDFOA==","7aWiQW0eEBXt\/NuvuZDA1w==","qyQ\/P6aj1moj39SvGJoStg==","nW2cCfUrjZmbCNlO3lTUKw==","zBfKqhd\/JrYDFCMNiP49mA==","zcsgVZshmhhdO7PdqzCQmg==",{"Message":"hllo"},{"Message":"hello
+        this is test msg from mnu\n"},{"Message":"hello this is test msg from mnu\n"},{"Message":"hello
+        this is test msg from mnu\n"},{"Message":"yo, wazzup man"},{"Message":"iojh"},"Hello
+        World","qgMLd0PI174J/5U/ZAqE4Q==","9Ur01R73lF5hZnLXDJPGwiA0wvhJjr9TIMzOnMWsEBcryIa/hNngtbjAiExDMeo9qqJxUXFTcLMKeazCtdho8+0IKIXryFlD6HJxdAWFMhs=","qgMLd0PI174J/5U/ZAqE4Q==","qgMLd0PI174J/5U/ZAqE4Q==","+0NHDVSIvglv/zXRhfS9q+pIIb0Ac4xB5GPn4+F4c8M=","plain
+        text!"],13473292476449446,13473943634298512]'
+    http_version: 
+  recorded_at: Tue, 11 Sep 2012 21:05:30 GMT
+recorded_with: VCR 2.2.4

@@ -5,11 +5,11 @@
 *.class
 *.iml
 /flash/*/out
-/android/PubnubAndroidTest/*/gen
-/android/PubnubAndroidTest/*/bin
-/android/PubnubAndroidTest/*/out
+/android/*/*/gen
+/android/*/*/bin
+/android/*/*/out
 .DS_Store
 node_modules
-.idea
+.idea*
 /csharp/*/PubNub-Messaging*/bin/*
 /csharp/*/PubNub-Messaging*/obj/*
