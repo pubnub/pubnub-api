@@ -13,3 +13,4 @@ node_modules
 .idea*
 /csharp/*/PubNub-Messaging*/bin/*
 /csharp/*/PubNub-Messaging*/obj/*
+/j2me/3.3/nbproject
