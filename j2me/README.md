@@ -1,23 +1,21 @@
-
-##### YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
-##### http://www.pubnub.com/account
-
 ## PubNub 3.3 Real-time Cloud Push API - J2ME
+### YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+### http://www.pubnub.com/account
 
 PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time messages
 to thousands of web and mobile clients simultaneously.
 
-##### Example configuration
+#### Example configuration
 
 -Project tested on Netbeans 7 IDE and Java ME SDK 3.0 Device Manager
 -Device Configuration - CLDC-1.1
 -Device Profile       - MIDP-2.0
 
--------------------------------------------------------------------------------
-J2ME: (Init)
--------------------------------------------------------------------------------
 
+####Init
+
+```java
     Pubnub pubnub = new Pubnub(
         "demo",  // PUBLISH_KEY
         "demo",  // SUBSCRIBE_KEY
@@ -25,11 +23,12 @@ J2ME: (Init)
         "",      // CIPHER_KEY (optional)
         false    // SSL_ON?
     );
+```
 
--------------------------------------------------------------------------------
-J2ME: (Callback)
--------------------------------------------------------------------------------
-	Set Callback when pubnub object create.
+
+####Callback
+Set Callback when pubnub object create.
+```java
     public interface Callback {
 	    public abstract void publishCallback(String channel,Object message,Object responce);
 	    public abstract void subscribeCallback(String channel,Object message);
@@ -42,13 +41,10 @@ J2ME: (Callback)
 	    public abstract void presenceCallback(String channel,Object message);
 	    public abstract void detailedHistoryCallback(String channel,Object message);
 	}
+```
+####Publish
 
-
-
--------------------------------------------------------------------------------
-J2ME: (Publish)
--------------------------------------------------------------------------------
-
+```java
     try {
             // Create JSON Message
             JSONObject message = new JSONObject();
@@ -63,9 +59,10 @@ J2ME: (Publish)
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
-        
-    Result back in Publish Callback.
-    
+```
+Pass result to Publish Callback
+
+```java
     	public void publishCallback(String channel, Object message, Object response) {
 	        JSONArray meg = (JSONArray) response;
 	        System.out.println("Message sent response:" + message.toString()
@@ -85,11 +82,11 @@ J2ME: (Publish)
 	            ex.printStackTrace();
 	        }
 	    }    
+```
 
--------------------------------------------------------------------------------
-J2ME: (Subscribe)
--------------------------------------------------------------------------------
+####Subscribe
 
+```java
  // Callback Interface when a Message is Received
      public void subscribeCallback(String channel, Object message) {
         System.out.println("Message recevie on channel:" + channel
@@ -155,10 +152,12 @@ J2ME: (Subscribe)
     // Listen for Messages (Subscribe)
     _pubnub.subscribe(args);
 
-------------------------------------------------------------------------------
-J2ME: (History)
--------------------------------------------------------------------------------
+```
 
+####History
+###DEPRECATED! Please use / migrate existing to detailedHistory() (see below)
+
+```java
     // Create HashMap parameter
     Hashtable args = new Hashtable(2);
     args.put("channel", "hello_world");
@@ -174,27 +173,53 @@ J2ME: (History)
         stringItem.setLabel("History");
         stringItem.setText("History recevie on channel:" + channel + "\n" + meg.toString());
     }
--------------------------------------------------------------------------------
-J2ME: (Unsubscribe)
--------------------------------------------------------------------------------
+```
 
+####Detailed History
+Retrieve published messages.
+##### Required Parameters
+'channel'- Channel name
+##### Options Parameters
+'start'- Start timetoken
+'end'- End timetoken
+'reverse'- false = oldest first (default), true = newest first
+'count'-Number of History messages. Defaults to 100.
+
+```java
+
+
+      Hashtable args = new Hashtable();
+                args.put("channel", Channel);
+                args.put("count", 2+"");
+      _pubnub.detailedHistory(args);
+
+    //Callback
+     public void detailedHistoryCallback(String channel, Object message) {
+         stringItem.setLabel("DetailedHistory");
+        stringItem.setText("channel:" + channel + "\n" + message);
+    }
+```
+
+
+####Unsubscribe
+
+```java
     // Create Hashtable parameter
     Hashtable args = new Hashtable(1);
     String channel = "hello_world";
     args.put("channel", channel);
     _pubnub.unsubscribe(args);
+```
 
--------------------------------------------------------------------------------
-J2ME: (Time)
--------------------------------------------------------------------------------
+####Time
 
+```java
     // Get server time
     long time = pubnub.time();
     System.out.println("Time : "+time);
-    
--------------------------------------------------------------------------------
-Java: (here_now)
--------------------------------------------------------------------------------
+```
+
+####here_now
 
 ```java
     // Who is currently on the channel?
@@ -202,19 +227,18 @@ Java: (here_now)
     args.put("channel", channel);
     pubnub.here_now(args);
 
-```
+
 
 	public void hereNowCallback(String channel, Object message) {
         stringItem.setLabel("HereNow");
         stringItem.setText("HereNow on channel:" + channel + "\n" + message.toString());
     }
-	
--------------------------------------------------------------------------------
-Java: (presence)
--------------------------------------------------------------------------------
-	
-	To join a subscriber list on a channel. Callback events can be, Join - Shows availability on a channel or Leave - Disconnected to channel means removed from the list of subscribers.
-		
+```
+
+
+#### Presence
+Join a subscriber list on a channel. Callback events can be, Join - Shows availability on a channel or Leave - Disconnected to channel means removed from the list of subscribers.
+```java
 	_pubnub.presence(Channel);
 	
 	//Callback
@@ -222,23 +246,4 @@ Java: (presence)
         stringItem.setLabel("Presence");
         stringItem.setText("channel:" + channel + "\n" + message.toString());
     }
-    
-    
-    
--------------------------------------------------------------------------------
-Java: (Detailed History)
--------------------------------------------------------------------------------
-    Load Previously Published Messages in Detail.
-    
-      Hashtable args = new Hashtable();
-                args.put("channel", Channel);
-                args.put("count", 2+"");
-      _pubnub.detailedHistory(args);
-    
-    //Callback
-     public void detailedHistoryCallback(String channel, Object message) {
-         stringItem.setLabel("DetailedHistory");
-        stringItem.setText("channel:" + channel + "\n" + message);
-    }
-    
-    
+```
