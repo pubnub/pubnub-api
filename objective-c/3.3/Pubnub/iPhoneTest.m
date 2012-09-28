@@ -49,7 +49,7 @@ CEPubnub *pubnub;
 - (IBAction)StringPublish:(id)sender {
     
 	NSLog(@"-----------PUBLISH STRING----------------");
-    NSString * text=@"Hello World";
+    NSString * text=@"🍄🍷🍒🐢🍕👰🍪🐼👬🔪🍄🍼🙋🙍🙎🌽🔮 🎮🐝🐞👓🔋📌👛🍗💬🍭🍆🍌🌎💸🎼🍤🐣";
     [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:@"hello_world",@"channel",text,@"message", nil]];
 }
 
