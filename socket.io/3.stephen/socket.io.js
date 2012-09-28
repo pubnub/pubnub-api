@@ -215,14 +215,12 @@
         } );
     }
 
-
     // =====================================================================
     // Get Here Now data for present users 
     // =====================================================================
     function here_now( namespace, callback ) {
         get_socket(namespace).p.here_now(
-            { channel : namespace },
-            callback(response)
+            { channel : namespace }, callback
         );
     }
 
