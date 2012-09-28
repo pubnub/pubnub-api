@@ -17,7 +17,7 @@ https://github.com/pubnub/pubnub-api/tree/master/javascript
 The only real tweaks that had to be made were based on the questions and comments made by Hristo Hristov, and ThomasH
 on the stackoverflow thread: http://stackoverflow.com/questions/12405175/how-to-integrate-qooxdoo-and-pubnub
 
-Those the final result of those tweaks can be found in config.json, and they look like this:
+The final result of those tweaks can be found in config.json, and they look like this:
 
 ```javascript
     "jobs" : {

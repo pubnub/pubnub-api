@@ -58,13 +58,14 @@ WebSocket = function( url, protocols ) {
     // PubNub WebSocket Emulation
     self.pubnub       = PUBNUB.init(setup);
     self.pubnub.setup = setup;
+    self.setup        = setup;
 
     self.pubnub.subscribe({
         restore    : false,
         channel    : setup.channel,
         disconnect : self.onerror,
         reconnect  : self.onopen,
-        error      : funciton() {
+        error      : function() {
             self.onclose({
                 code     : self.CLOSE_ABNORMAL,
                 reason   : 'Missing URL',
@@ -84,26 +85,27 @@ WebSocket = function( url, protocols ) {
 // ---------------------------------------------------------------------------
 // WEBSOCKET SEND
 // ---------------------------------------------------------------------------
-var buffer = [];
+var buffer  = []
+,   sending = 0;
 
-function stream() {
+function stream(socket) {
+/*
     var socket = buffer.pop();
 
-    /*
     if (socket.buffer.length) {
         socket.pubnub.publish(deliverable);
     }
     else {
         sending = 0;
     }
-    */
+*/
 }
 
 WebSocket.prototype.send = function(data) {
     var self = this;
 
     buffer.push({
-        channel  : self.setup.channel.value,
+        channel  : self.setup.channel,
         message  : data,
         callback : function(response) {
             self.onsend({ data : response });
@@ -111,10 +113,12 @@ WebSocket.prototype.send = function(data) {
         }
     });
 
+    /*
     if (!sending) {
         sending = 1;
         stream(socket);
     }
+    */
     self.pubnub.publish({
         channel  : self.pubnub.setup.channel,
         message  : data,
@@ -131,7 +135,7 @@ WebSocket.prototype.close = function() {
     var self = this;
     self.pubnub.unsubscribe({ channel : self.pubnub.setup.channel });
     self.readyState = self.CLOSED;
-    self.onclose();
+    self.onclose({});
 };
 
 
