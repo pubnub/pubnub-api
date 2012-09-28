@@ -24,7 +24,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     private Command detailedHistoryCommand;
     private Form form;
     private StringItem stringItem;
-    String Channel = "hello";
+    String Channel = "hello_world";
 
     public PubnubTestMIDlet() {
     }
@@ -178,8 +178,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
      */
     public Command getTimeCommand() {
         if (timeCommand == null) {
-            timeCommand = new Command("Time", Command.ITEM, 2);// GEN-LINE:|27-getter|1|27-postInit
-            // GEN-LINE:|7-commandAction|13|7-postCommandAction
+            timeCommand = new Command("Time", Command.ITEM, 2);
         }
         return timeCommand;
     }
@@ -282,10 +281,8 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
 
     public void publish() {
         try {
-            // Create JSON Message
             JSONObject message = new JSONObject();
-            // Create HashMap parameter
-            message.put("some_key", "Hello World!");
+            message.put("some_key", "j2me says hello, world!");
 
             Hashtable args = new Hashtable(2);
             args.put("channel", Channel); // Channel Name
@@ -402,14 +399,12 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     public void historyCallback(String channel, Object message) {
         JSONArray meg = (JSONArray) message;
         System.out.println("History recevie on channel:" + channel + " Message:" + meg.toString());
-
         stringItem.setLabel("History");
         stringItem.setText("History recevie on channel:" + channel + "\n" + meg.toString());
     }
 
     public void errorCallback(String channel, Object message) {
         System.out.println("Error on channel:" + channel + " Message:" + message.toString());
-
     }
 
     public void connectCallback(String channel) {
@@ -438,6 +433,4 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
          stringItem.setLabel("DetailedHistory");
         stringItem.setText("channel:" + channel + "\n" + message);
     }
-
-  
 }

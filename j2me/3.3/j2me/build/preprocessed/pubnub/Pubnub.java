@@ -580,7 +580,6 @@ public class Pubnub {
                 break;
             }
         }
-
         for (int i = 0; i < _connection.size(); i++) {
             HttpCallback cb = (HttpCallback) _connection.elementAt(i);
             if (cb.getChannel().equals(channel)) {
@@ -632,9 +631,7 @@ public class Pubnub {
      * @return JSONArray from JSON response.
      */
     private void _request(Vector url_components, final String channel1,Object message) {
-
         String request_for = (String) url_components.elementAt(0);
-
         if (request_for.equals("subscribe")) {
             current_timetoken = (String) url_components.elementAt(4);
         }
@@ -655,12 +652,9 @@ public class Pubnub {
         _headers.put("Accept-Encoding", "gzip");
         _headers.put("Connection", "close");
 
-
         HttpCallback callback = new HttpCallback(url.toString(), _headers, request_for) {
-
             public void processResponse(HttpConnection conn, Object cookie) throws IOException {
             }
-
             public void OnComplet(HttpConnection hc, String response, String req_for, String channel) throws IOException {
                 try {
                     JSONArray out = null;
@@ -669,7 +663,6 @@ public class Pubnub {
                         if (!req_for.equals("presence")) {
                             out = new JSONArray(response);
                         }
-
                     } else {
                         out = null;
                     }
@@ -766,7 +759,6 @@ public class Pubnub {
                                 if (!it.connected && it.first) {
                                     subscriptions.removeElement(it);
                                     if (_callback != null) {
-
                                         _callback.disconnectCallback(channel);
                                     }
                                     is_disconnect = true;
@@ -778,7 +770,6 @@ public class Pubnub {
                         if (is_disconnect) {
                             return;
                         }
-
 
                         // Problem?
                         if (out == null || out.optInt(1) == 0) {
@@ -814,7 +805,6 @@ public class Pubnub {
                                         args.put("timetoken", current_timetoken + "");
 
                                     }
-
                                     _subscribe(args);
                                     is_reconnected = true;
                                     break;
@@ -838,7 +828,6 @@ public class Pubnub {
                             }
                         }
                     }
-
                     JSONArray messages = out.optJSONArray(0);
 
                     // Update TimeToken
@@ -936,7 +925,6 @@ public class Pubnub {
             callback.setChannel(channel1);
 
         }
-        
         if (request_for.equals("publish")) {
             callback.setMessage(message);
         }
@@ -1009,9 +997,7 @@ public class Pubnub {
         int maxBytesPerChar = 10; // rather arbitrary limit, but safe for now
         StringBuffer out = new StringBuffer(s.length());
         ByteArrayOutputStream buf = new ByteArrayOutputStream(maxBytesPerChar);
-
         OutputStreamWriter writer = new OutputStreamWriter(buf, enc);
-
         for (int i = 0; i < s.length(); i++) {
             int c = (int) s.charAt(i);
             if (dontNeedEncoding(c)) {

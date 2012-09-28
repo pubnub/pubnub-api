@@ -24,7 +24,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     private Command detailedHistoryCommand;
     private Form form;
     private StringItem stringItem;
-    String Channel = "hello";
+    String Channel = "hello_world";
 
     public PubnubTestMIDlet() {
     }
@@ -282,7 +282,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     public void publish() {
         try {
             JSONObject message = new JSONObject();
-            message.put("some_key", "Hello World!");
+            message.put("some_key", "j2me says hello, world!");
 
             Hashtable args = new Hashtable(2);
             args.put("channel", Channel); // Channel Name
