@@ -23,6 +23,12 @@ publish_dummy = function (channel, callback, message) {
     });
 };
 
+var publish_callback = function(message) {};
+var temp_channel = channel + '-' + pubnub.uuid();
+
+publish_dummy(temp_channel, publish_callback, 'first');
+publish_dummy(temp_channel, publish_callback, 'second');
+
 publish_test = function (test) {
     test.expect(2);
     return publish_dummy(channel, function (response) {
@@ -62,41 +68,31 @@ detailed_history_test_1 = function (test) {
 };
 
 detailed_history_test_2 = function (test) {
-    var temp_channel = channel + '-' + pubnub.uuid();
-    test.expect(6);
-    publish_callback = function (response) {
-        test.ok(response[0] === 1);
-        test.ok(response[1] === "Sent");
-    }
-    publish_dummy(temp_channel, publish_callback, 'first');
-    publish_dummy(temp_channel, publish_callback, 'second');
+
+    test.expect(2);
+
     return pubnub.detailedHistory({
         count:1,
         channel:temp_channel,
         callback:function (messages) {
-            test.ok(messages);
-            test.ok(messages[0][0] === "second");
+            test.notEqual(messages, null);
+            test.equal(messages[0][0], "second");
             test.done();
         }
     });
 };
 
 detailed_history_test_3 = function (test) {
-    var temp_channel = channel + '-' + pubnub.uuid();
-    test.expect(6);
-    publish_callback = function (response) {
-        test.ok(response[0] === 1);
-        test.ok(response[1] === "Sent");
-    }
-    publish_dummy(temp_channel, publish_callback, 'first');
-    publish_dummy(temp_channel, publish_callback, 'second');
+
+    test.expect(2);
+
     return pubnub.detailedHistory({
         count:1,
         channel:temp_channel,
         reverse:'true',
         callback:function (messages) {
-            test.ok(messages);
-            test.ok(messages[0][0] === "first");
+            test.notEqual(messages, null);
+            test.equal(messages[0][0], "first");
             test.done();
         }
     });
@@ -188,12 +184,12 @@ here_now_test = function (test) {
 };
 
 module.exports = {
-//  "Publish Test": publish_test,
-//  "History Test": history_test,
-//  "Time Test": time_test,
-//  "UUID Test": uuid_test,
-//  "Subscribe Test": subscribe_test,
-//  "Presence Test": presence_test,
+  "Publish Test": publish_test,
+  "History Test": history_test,
+  "Time Test": time_test,
+  "UUID Test": uuid_test,
+  "Subscribe Test": subscribe_test,
+  "Presence Test": presence_test,
     "Here Now Test":here_now_test,
     "Detailed History Test 1":detailed_history_test_1,
     "Detailed History Test 2":detailed_history_test_2,
