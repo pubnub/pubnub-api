@@ -180,10 +180,10 @@ Retrieve published messages.
 #####Required Parameters
 'channel'- Channel name
 #####Options Parameters
-'start'- Start timetoken
-'end'- End timetoken
-'reverse'- false = oldest first (default), true = newest first
-'count'-Number of History messages. Defaults to 100.
+######'start'- Start timetoken
+######'end'- End timetoken
+######'reverse'- false = oldest first (default), true = newest first
+######'count'-Number of History messages. Defaults to 100.
 
 ```java
       Hashtable args = new Hashtable();
