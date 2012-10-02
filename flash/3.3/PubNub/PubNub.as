@@ -136,7 +136,8 @@ package PubNub
 					try
 					{
 						var result:Object = JSON.parse(loader.data);        
-						start_time_token = result[0];
+						// start_time_token = result[0];
+                        start_time_token = 0; // TODO: Remove this initial timetoken time request altogether
 					} catch (e:*)
 					{
 						trace("[PubNub] Bad JSON Content");
@@ -146,7 +147,7 @@ package PubNub
 				}
 			}
 			var url:String = origin + "/" + "time" + "/" + 0;
-			
+
 			// Loads Time Token
 			_request( { url:url, channel:"system", handler:timeHandler, uid:"init" } );
 		}               
@@ -706,7 +707,7 @@ package PubNub
             {
                 url += "/" + args.timetoken;
 
-                    if ( args.operation == "subscribe_with_timetoken") {
+                    if ( args.operation == "subscribe_with_timetoken" || args.operation == "subscribe_get_timetoken") {
                         url += "?uuid=" + this.session_uuid;
                     }
             }
