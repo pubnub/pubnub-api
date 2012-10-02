@@ -16,13 +16,11 @@
 
             // PARSE SETUP and HOST
             var urlbits   = (host+'////').split('/')
-            ,   setup     = setup || {}
+            ,   setup     = setup         || {}
             ,   cuser     = setup['user'] || {}
-            ,   custom_presence  = 'custom_presence' in setup ? setup['custom_presence'] : true
             ,   presence  = 'presence' in setup ? setup['presence'] : true
             ,   origin    = urlbits[2]
-            ,   ns        = (urlbits[3] || 'standard')
-            ,   namespace = ns + '-' + setup.channel
+            ,   namespace = (urlbits[3] || 'standard') + '-' + setup.channel
             ,   channel   = setup.channel
             ,   socket    = get_socket(namespace);
 
@@ -39,7 +37,9 @@
             if (setup.geo) setInterval( locate, 15000 ) && locate();
 
             // SETUP PUBNUB
+            setup.uuid   = uuid;
             setup.origin = origin;
+
             var p                     =
                 socket.p              =
                 io.connected[channel] =
@@ -59,16 +59,22 @@
 
             // ESTABLISH CONNECTION
             p.subscribe({
-                channel : p.channel,
+                channel    : p.channel,
                 disconnect : dropped,
-                reconnect : function() {p.disconnected = 0;},
-                connect : function() {
+                reconnect  : function() {p.disconnected = 0;},
+                connect    : function() {
                     p.disconnected = 0;
                     p.each( namespaces, function(ns) {
                         if (get_socket(ns).connected) return;
                         get_socket(ns).connected = true;
                         p.events.fire( ns + 'connect', {} );
                     } );
+                    send_details();
+                },
+                presence : presence && function(evt) {
+                    if (evt.action === 'leave')   disconnect(evt.uuid);
+                    if (evt.action === 'timeout') disconnect(evt.uuid);
+                    if (evt.action === 'join')    send_details();
                 },
                 callback : function(evt) {
                     if (p.disconnected) p.each( namespaces, function(ns) {
@@ -86,7 +92,6 @@
                     if (!evt.uuid || evt.uuid === uuid) return;
 
                     evt.name === 'ping' && p.each( data.nss, function(ns) {
-
                         users[ns] = users[ns] || {};
 
                         var user = users[ns][evt.uuid] =
@@ -104,74 +109,40 @@
                         user.data = data.cuser;
 
                         if (user.connected) return;
+                        p.events.fire( ns + 'join', user );
 
                         user.connected = true;
-                        p.events.fire( ns + 'custom_join', user );
-
                     } );
-
-                    if (evt.name === 'user-disconnect') disconnect(evt.uuid);
                 }
             });
 
-            // ESTABLISH CONNECTION FOR NEW PRESENCE 
-            if (presence) {
-              p.subscribe({
-                channel : namespace,
-                connect : function() {
-                  p.subscribe({
-                    channel : namespace + '-pnpres',
-                    callback: function(response) {
-                      if ( uuid === response.uuid ) return; 
-                        p.events.fire(namespace + response.action, response.uuid);
-                      }
-                    });
-                  },
-                callback : function(evt) { }
-              });
+            function send_details() {
+                var nss = p.map( namespaces, function(ns) { return ns } );
+                send( 'ping', namespace, { nss : nss, cuser : cuser } );
             }
 
             // TCP KEEP ALIVE
-            if (custom_presence)
-                p.tcpKeepAlive = setInterval( p.updater( function() {
-                    var nss = p.map( namespaces, function(ns) { return ns } );
-                    send( 'ping', namespace, { nss : nss, cuser : cuser } );
-                }, 3000 ), 500 );
+            if (presence) {
+                setInterval( send_details, 30000 );
+                send_details();
+            }
 
             // RETURN SOCKET
             return socket;
         }
     };
 
-    // =====================================================================
-    // Advanced User Presence
-    // =====================================================================
-    setInterval( function() {
-        p.each( users, function(namespace) {
-            p.each( users[namespace], function(uid) {
-                var user = users[namespace][uid];
-                if (now() - user.last < 5500 || uid === uuid) return;
-                disconnect(user.uuid);
-            } );
-        } );
-    }, 1000 );
-
     function disconnect(uid) {
         p.each( namespaces, function(ns) {
+            if (!(ns in users && uid in users[ns])) return;
             var user = users[ns][uid];
             if (!user.connected) return;
 
             user.connected = false;
             user.socket.user_count--;
-            p.events.fire( ns + 'custom_leave', user ) 
+            p.events.fire( ns + 'leave', user ) 
         } );
     }
-
-    typeof window !== 'undefined' &&
-    p.bind( 'beforeunload', window, function() {
-        send( 'user-disconnect', '', uuid );
-        return true;
-    } );
 
     // =====================================================================
     // Stanford Crypto Library with AES Encryption
@@ -221,38 +192,36 @@
     }
 
     // =====================================================================
+    // FILTER
+    // =====================================================================
+    function filter( list, fun ) {
+        var fin = [];
+        PUBNUB.each( list || [], function(l) { fun(l) && fin.push(l) } );
+        return fin
+    }
+
+    // =====================================================================
     // Get Detailed History for published messages
     // =====================================================================
     function history( namespace, args, callback ) {
-      var p = get_socket(namespace).p;
-      args.channel = p.channel;
-      p.detailedHistory(
-        args, 
-        function(response) {
-          var messages = []
-          for ( var i = 0; i < response[0].length; i++ ) {
-            if ( response[0][i].name == "message" && response[0][i].ns == namespace ) {
-              messages.push(response[0][i]);
-            }
-          }
-          response[0] = messages;
-          callback(response);
-        } 
-      );
-    }
+        var p = get_socket(namespace).p;
+        args.channel = p.channel;
 
+        p.detailedHistory( args, function(response) {
+            response[0] = filter( response[0], function(msg) {
+                return msg.name == "message" && msg.ns == namespace;
+            } );
+            callback(response);
+        } );
+    }
 
     // =====================================================================
     // Get Here Now data for present users 
     // =====================================================================
     function here_now( namespace, callback ) {
-      var p = get_socket(namespace).p;
-      p.here_now(
-        { channel : namespace }, 
-        function(response) {
-          callback(response);
-        } 
-      );
+        get_socket(namespace).p.here_now(
+            { channel : namespace }, callback
+        );
     }
 
     // =====================================================================
@@ -310,7 +279,7 @@
                     here_now : function( callback ) {
                         here_now( namespace, callback );
                     }
-              };
+                };
             })();
 
         return socket;
