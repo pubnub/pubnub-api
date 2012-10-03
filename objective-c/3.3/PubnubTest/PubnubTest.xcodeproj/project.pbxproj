@@ -24,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C8C1CDEE161C424800FE66B6 /* CEPubnubDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPubnubDelegate.h; sourceTree = "<group>"; };
 		C8F6537B15B98D2C008535CE /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		C8F6537C15B98D2C008535CE /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
 		C8F6537D15B98D2C008535CE /* CEPubnub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPubnub.h; sourceTree = "<group>"; };
@@ -69,6 +70,7 @@
 		C8F6537A15B98D2C008535CE /* PubNub */ = {
 			isa = PBXGroup;
 			children = (
+				C8C1CDEE161C424800FE66B6 /* CEPubnubDelegate.h */,
 				C8F6537B15B98D2C008535CE /* Base64.h */,
 				C8F6537C15B98D2C008535CE /* Base64.m */,
 				C8F6537D15B98D2C008535CE /* CEPubnub.h */,
@@ -285,6 +287,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PubnubTest/PubnubTest-Prefix.pch";
 				INFOPLIST_FILE = "PubnubTest/PubnubTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -296,6 +299,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PubnubTest/PubnubTest-Prefix.pch";
 				INFOPLIST_FILE = "PubnubTest/PubnubTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

@@ -21,6 +21,7 @@
 		C8FD4D7B153D469D00D0A418 /* Cipher.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D70153D469D00D0A418 /* Cipher.m */; };
 		C8FD4D7C153D469D00D0A418 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FD4D72153D469D00D0A418 /* Common.m */; };
 		C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */; };
+		F8969FEB15B69E2600D12EBD /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F8969FEA15B69E2600D12EBD /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		C8C1CDD71611C71100FE66B6 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		C8C1CDD91611CC1A00FE66B6 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
 		C8C1CDDA1611CC3C00FE66B6 /* JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSON.m; sourceTree = "<group>"; };
+		C8C1CDE8161C19C100FE66B6 /* CEPubnubDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPubnubDelegate.h; sourceTree = "<group>"; };
 		C8FD4D33153D447200D0A418 /* Pubnub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pubnub.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8FD4D37153D447200D0A418 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		C8FD4D39153D447200D0A418 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -49,6 +51,7 @@
 		C8FD4D71153D469D00D0A418 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		C8FD4D72153D469D00D0A418 /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
 		C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow_iPhone.xib; sourceTree = "<group>"; };
+		F8969FEA15B69E2600D12EBD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +98,7 @@
 		C8FD4D3D153D447200D0A418 /* Pubnub */ = {
 			isa = PBXGroup;
 			children = (
+				F8969FEA15B69E2600D12EBD /* README.md */,
 				C8FD4D84153D505500D0A418 /* MainWindow_iPhone.xib */,
 				C8FD4D6A153D469D00D0A418 /* PubNub */,
 				C8FD4D46153D447200D0A418 /* AppDelegate.h */,
@@ -120,18 +124,19 @@
 		C8FD4D6A153D469D00D0A418 /* PubNub */ = {
 			isa = PBXGroup;
 			children = (
+				C8C1CDE8161C19C100FE66B6 /* CEPubnubDelegate.h */,
+				C8FD4D6D153D469D00D0A418 /* CEPubnub.h */,
+				C8FD4D6E153D469D00D0A418 /* CEPubnub.m */,
+				C8FD4D71153D469D00D0A418 /* Common.h */,
+				C8FD4D72153D469D00D0A418 /* Common.m */,
+				C8FD4D6F153D469D00D0A418 /* Cipher.h */,
+				C8FD4D70153D469D00D0A418 /* Cipher.m */,
+				C8C1CDD91611CC1A00FE66B6 /* JSON.h */,
+				C8C1CDDA1611CC3C00FE66B6 /* JSON.m */,
 				C8C1CDD61611C71100FE66B6 /* JSONKit.h */,
 				C8C1CDD71611C71100FE66B6 /* JSONKit.m */,
 				C8FD4D6B153D469D00D0A418 /* Base64.h */,
 				C8FD4D6C153D469D00D0A418 /* Base64.m */,
-				C8FD4D6D153D469D00D0A418 /* CEPubnub.h */,
-				C8FD4D6E153D469D00D0A418 /* CEPubnub.m */,
-				C8FD4D6F153D469D00D0A418 /* Cipher.h */,
-				C8FD4D70153D469D00D0A418 /* Cipher.m */,
-				C8FD4D71153D469D00D0A418 /* Common.h */,
-				C8FD4D72153D469D00D0A418 /* Common.m */,
-				C8C1CDD91611CC1A00FE66B6 /* JSON.h */,
-				C8C1CDDA1611CC3C00FE66B6 /* JSON.m */,
 			);
 			path = PubNub;
 			sourceTree = "<group>";
@@ -188,6 +193,7 @@
 			files = (
 				C8FD4D42153D447200D0A418 /* InfoPlist.strings in Resources */,
 				C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */,
+				F8969FEB15B69E2600D12EBD /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +281,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pubnub/Pubnub-Prefix.pch";
 				INFOPLIST_FILE = "Pubnub/Pubnub-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -287,7 +293,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pubnub/Pubnub-Prefix.pch";
 				INFOPLIST_FILE = "Pubnub/Pubnub-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

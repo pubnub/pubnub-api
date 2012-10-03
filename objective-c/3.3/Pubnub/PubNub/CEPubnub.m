@@ -35,23 +35,23 @@ typedef enum {
 
 @interface PubNubConnection : NSURLConnection {
 @private
-    CEPubnub * _pubNub;
+    CEPubnub *_pubNub;
     Command _command;
-    NSString* _channel;
+    NSString *_channel;
     id _message;
     
     NSHTTPURLResponse* _response;
     NSMutableData* _data;
 }
 @property(nonatomic, readonly) Command command;
-@property(nonatomic, readonly) NSString* channel;
+@property(nonatomic, readonly) NSString *channel;
 @property(nonatomic, readonly) NSData* data;
 @property(nonatomic, readonly) id message;
-- (id) initWithPubNub:(CEPubnub*)pubNub url:(NSURL*)url command:(Command)command channel:(NSString*)channel;
+- (id) initWithPubNub:(CEPubnub *)pubNub url:(NSURL*)url command:(Command)command channel:(NSString *)channel;
 @end
 
 @interface CEPubnub ()
-- (void) connection:(PubNubConnection*)connection didCompleteWithResponse:(id)response;
+- (void)connection:(PubNubConnection*)connection didCompleteWithResponse:(id)response;
 @end
 
 @implementation ChannelStatus
@@ -62,7 +62,7 @@ typedef enum {
 
 @synthesize command=_command, channel=_channel, data=_data, message=_message;
 
-- (id) initWithPubNub:(CEPubnub*)pubNub url:(NSURL*)url command:(Command)command channel:(NSString*)channel {
+- (id) initWithPubNub:(CEPubnub *)pubNub url:(NSURL*)url command:(Command)command channel:(NSString *)channel {
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url
                                                            cachePolicy:NSURLRequestReloadIgnoringCacheData
                                                        timeoutInterval:kConnectionTimeOut];
@@ -79,7 +79,7 @@ typedef enum {
     return self;
 }
 
-- (id) initWithPubNub:(CEPubnub*)pubNub url:(NSURL*)url command:(Command)command channel:(NSString*)channel message:(id)message{
+- (id) initWithPubNub:(CEPubnub *)pubNub url:(NSURL*)url command:(Command)command channel:(NSString *)channel message:(id)message{
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url
                                                            cachePolicy:NSURLRequestReloadIgnoringCacheData
                                                        timeoutInterval:kConnectionTimeOut];
@@ -97,12 +97,12 @@ typedef enum {
     return self;
 }
 
-- (void) connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
+- (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
         // DCHECK(_response == nil);
     _response = (NSHTTPURLResponse*)[response copy];
 }
 
-- (void) connection:(NSURLConnection*)connection didReceiveData:(NSData*)data {
+- (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)data {
     if (_data == nil) {
         _data = [[NSMutableData alloc] initWithData:data];
     } else {
@@ -110,11 +110,11 @@ typedef enum {
     }
 }
 
-- (void) connectionDidFinishLoading:(NSURLConnection*)connection {
+- (void)connectionDidFinishLoading:(NSURLConnection*)connection {
     if (_response.statusCode == 200) {
-            //  NSString* contente = [[_response allHeaderFields] objectForKey:@"Content-Encoding"];
+            //  NSString *contente = [[_response allHeaderFields] objectForKey:@"Content-Encoding"];
             //  NSLog(@"PubNub request returned Content-Encoding : %@", contente);
-        NSString* contentType = [[_response allHeaderFields] objectForKey:@"Content-Type"];
+        NSString *contentType = [[_response allHeaderFields] objectForKey:@"Content-Type"];
         if ([contentType hasPrefix:@"text/javascript"] && [contentType containsString:@"UTF-8"]) {  // Should be [text/javascript; charset="UTF-8"] but is sometimes different on 3G
             NSError* error = nil;
             
@@ -169,7 +169,7 @@ typedef enum {
     }
 }
 
-- (void) connection:(NSURLConnection*)connection didFailWithError:(NSError*)error {
+- (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error {
     if ([error.domain isEqualToString:NSURLErrorDomain] && (error.code == NSURLErrorNotConnectedToInternet)) {
         NSLog(@"PubNub request failed due to missing Internet connection");
         switch ([self command]) {
@@ -202,23 +202,25 @@ typedef enum {
 
 @synthesize delegate=_delegate;
 
-- (CEPubnub*) initWithSubscribeKey:(NSString*)subscribeKey useSSL:(BOOL)useSSL {
+- (CEPubnub *) initWithSubscribeKey:(NSString *)subscribeKey useSSL:(BOOL)useSSL {
     return [self initWithPublishKey:nil subscribeKey:subscribeKey secretKey:nil useSSL:useSSL cipherKey:nil origin:kDefaultOrigin];
 }
 
-- (CEPubnub*) initWithPublishKey:(NSString*)publishKey
-                    subscribeKey:(NSString*)subscribeKey
-                       secretKey:(NSString*)secretKey
-                          useSSL:(BOOL)useSSL {
+- (CEPubnub *)initWithPublishKey:(NSString *)publishKey
+                    subscribeKey:(NSString *)subscribeKey
+                       secretKey:(NSString *)secretKey
+                          useSSL:(BOOL)useSSL
+{
     return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:nil origin:kDefaultOrigin];
 }
 
-- (CEPubnub*) initWithPublishKey:(NSString*)publishKey
-                    subscribeKey:(NSString*)subscribeKey
-                       secretKey:(NSString*)secretKey
+- (CEPubnub *)initWithPublishKey:(NSString *)publishKey
+                    subscribeKey:(NSString *)subscribeKey
+                       secretKey:(NSString *)secretKey
                           useSSL:(BOOL)useSSL
-                       cipherKey:(NSString*)cipherKey  
-                          origin:(NSString*)origin {
+                       cipherKey:(NSString *)cipherKey
+                          origin:(NSString *)origin
+{
     if ((self = [super init])) {
         _publishKey = [publishKey copy];
         _subscribeKey = [subscribeKey copy];
@@ -226,35 +228,36 @@ typedef enum {
         _host = [[NSString alloc] initWithFormat:@"%@://%@", useSSL ? @"https" : @"http", origin];
         _cipherKey=[cipherKey copy];
         _connections = [[NSMutableSet alloc] init];
-        _uuids=[CEPubnub getUUID]; 
+        _uuids=[CEPubnub getUUID];
     }
     return self;
 }
 
-- (CEPubnub*) initWithPublishKey:(NSString*)publishKey
-                    subscribeKey:(NSString*)subscribeKey
-                       secretKey:(NSString*)secretKey
-                       cipherKey:(NSString*)cipherKey
-                          useSSL:(BOOL)useSSL{
+- (CEPubnub *)initWithPublishKey:(NSString *)publishKey
+                    subscribeKey:(NSString *)subscribeKey
+                       secretKey:(NSString *)secretKey
+                       cipherKey:(NSString *)cipherKey
+                          useSSL:(BOOL)useSSL
+{
     return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:cipherKey origin:kDefaultOrigin];
 }
 
-- (void) dealloc {
+- (void)dealloc {
     for (PubNubConnection* connection in _connections) {
         [connection cancel];
     }
     
 }
 
--(NSDictionary*) getEncryptedDictionary:(NSDictionary*)message
+-(NSDictionary* )getEncryptedDictionary:(NSDictionary*)message
 {
     if(_cipherKey != nil)
     {
         NSMutableDictionary* msg = [NSMutableDictionary dictionaryWithCapacity: message.count];
         NSDictionary* disc = (NSDictionary*) message;
-        for (NSString* key in [disc allKeys]) {
-            NSString* val = (NSString*)[disc objectForKey:key];
-            NSString * dec = [CommonFunction AES128EncryptWithKey: _cipherKey Data:val];
+        for (NSString *key in [disc allKeys]) {
+            NSString *val = (NSString *)[disc objectForKey:key];
+            NSString *dec = [CommonFunction AES128EncryptWithKey: _cipherKey Data:val];
             [msg setObject: dec forKey:key];
         }
         
@@ -263,9 +266,9 @@ typedef enum {
     return [NSMutableDictionary dictionaryWithDictionary: message];
 }
 
--(NSString*) getEncryptedString:(NSString*)disc
+-(NSString *)getEncryptedString:(NSString *)disc
 {
-    NSString * returnval;
+    NSString *returnval;
     if(_cipherKey != nil)
     {
         returnval=  [CommonFunction AES128EncryptWithKey:_cipherKey Data:disc];
@@ -276,7 +279,7 @@ typedef enum {
     return returnval;
 }
 
--(NSArray*) getEncryptedArray:(NSArray*)array
+-(NSArray *)getEncryptedArray:(NSArray*)array
 {
     NSMutableArray *messages = [NSMutableArray arrayWithCapacity: 10];
     for (int i=0; i<array.count; i++) {
@@ -285,7 +288,7 @@ typedef enum {
             [messages addObject:[self getEncryptedString:(NSString *)object]];
             
         } else if ([object isKindOfClass:[NSArray class]]) {
-            [messages addObject:[self getEncryptedArray:(NSArray *)object ]]; 
+            [messages addObject:[self getEncryptedArray:(NSArray *)object ]];
         } else if ([object isKindOfClass:[NSDictionary class]]) {
             [messages addObject:[self getEncryptedDictionary:(NSDictionary *)object]];
         }
@@ -293,13 +296,13 @@ typedef enum {
     return messages;
 }
 
-- (void) publish:(NSString * )message onChannel:(NSString *) channel{
+- (void)publish:(NSString *)message onChannel:(NSString *) channel{
     NSDictionary *disc=   [NSDictionary dictionaryWithObjectsAndKeys:channel,@"channel",message,@"message", nil];
     [self publish:disc];
 }
 
-- (void) publish:(NSDictionary * )arg1{
-    NSString * channel = [arg1 objectForKey: @"channel"];
+- (void)publish:(NSDictionary * )arg1{
+    NSString *channel = [arg1 objectForKey: @"channel"];
     id message = [arg1 objectForKey: @"message"];
     if (!channel) {
         NSLog(@"ERROR::Channel name not found.");
@@ -313,21 +316,21 @@ typedef enum {
     
     id msg = nil;
     if ([message isKindOfClass:[NSString class]]) {
-        msg = [self getEncryptedString:(NSString*) message];
+        msg = [self getEncryptedString:(NSString *) message];
     } else if ([message isKindOfClass:[NSArray class]]) {
         msg = [self getEncryptedArray:(NSArray*) message];
     } else if ([message isKindOfClass:[NSDictionary class]]) {
         msg = [self getEncryptedDictionary:(NSDictionary*) message];
     }
     
-    NSString* json = [CommonFunction JSONToString:msg ];
-    NSString* signature;
+    NSString *json = [CommonFunction JSONToString:msg ];
+    NSString *signature;
     if (_secretKey) {
         signature =[CommonFunction HMAC_SHA256withKey:[NSString stringWithFormat:@"%@",_secretKey] Input:[NSString stringWithFormat:@"%@/%@/%@/%@/%@", _publishKey, _subscribeKey, _secretKey, channel, json] ];
     } else {
         signature = @"0";
     }
-    NSString* url = [NSString stringWithFormat:@"%@/publish/%@/%@/%@/%@/0/%@", _host, _publishKey, _subscribeKey, signature,
+    NSString *url = [NSString stringWithFormat:@"%@/publish/%@/%@/%@/%@/0/%@", _host, _publishKey, _subscribeKey, signature,
                      [channel urlEscapedString], [json urlEscapedString]];
     
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
@@ -339,9 +342,9 @@ typedef enum {
     [_connections addObject:connection];
 }
 
-- (void) _resubscribeToChannel:(NSString*)channel timeToken:(NSString*)timeToken {
+- (void)_resubscribeToChannel:(NSString *)channel timeToken:(NSString *)timeToken {
     
-    NSString* url = [NSString stringWithFormat:@"%@/subscribe/%@/%@/0/%@/?uuid=%@", _host, _subscribeKey, [channel urlEscapedString], timeToken,_uuids];
+    NSString *url = [NSString stringWithFormat:@"%@/subscribe/%@/%@/0/%@/?uuid=%@", _host, _subscribeKey, [channel urlEscapedString], timeToken,_uuids];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_ReceiveMessage
@@ -350,7 +353,7 @@ typedef enum {
     
 }
 
-- (void) _resubscribeToChannel:(NSString*)channel {
+- (void)_resubscribeToChannel:(NSString *)channel {
         // Ensure Single Connection
     if (_subscriptions && [_subscriptions count] > 0) {
         
@@ -384,32 +387,36 @@ typedef enum {
     [self _resubscribeToChannel:channel timeToken:kInitialTimeToken];
 }
 
-- (void) subscribe:(NSString*)channel {
+- (void)subscribe:(NSString *)channel {
     if (![self isSubscribedToChannel:channel]) {
         [self _resubscribeToChannel:channel];
         NSLog(@"Did subscribe to PubNub channel \"%@\"", channel);
     }
 }
 
-- (void) here_now:(NSString*)channel {
-    if(channel == nil || channel ==@"")
+- (void)hereNow:(NSString *)channel {
+    if(channel == nil || channel == @"")
     {
         NSLog(@"Missing channel");
         return;
     }
     
-    
-    NSString* url = [NSString stringWithFormat:@"%@/v2/presence/sub_key/%@/channel/%@", _host, _subscribeKey, [channel urlEscapedString]];
+    NSString *url = [NSString stringWithFormat:@"%@/v2/presence/sub_key/%@/channel/%@", _host, _subscribeKey, [channel urlEscapedString]];
     
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_Here_Now
                                                                     channel:channel];
     [_connections addObject:connection];
-    
 }
 
-- (void) presence:(NSString*)channel
+    // deprecated, but still implement
+    // warning is expected
+- (void)here_now:(NSString *)channel {
+    [self hereNow:channel];
+}
+
+- (void)presence:(NSString *)channel
 {
     if(channel == nil || channel ==@"")
     {
@@ -419,7 +426,7 @@ typedef enum {
     [self subscribe:[NSString stringWithFormat:@"%@-pnpres", channel]];
 }
 
-- (void) unsubscribeFromChannel:(NSString*)channel {
+- (void)unsubscribeFromChannel:(NSString *)channel {
     for (PubNubConnection* connection in [_connections copy]) {
         if ((connection.command == kCommand_ReceiveMessage) && (!channel || [connection.channel isEqualToString:channel])) {
             NSLog(@"Did unsubscribe from PubNub channel \"%@\"", connection.channel);
@@ -430,9 +437,7 @@ typedef enum {
                 {
                     it.connected=false;
                     it.first=false;
-                    if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
-                        [_delegate pubnub:self DisconnectToChannel:connection.channel];
-                    }
+                    [self disconnectFromChannel:connection.channel];
                     [_subscriptions removeObject:it];
                     break;
                 }
@@ -443,12 +448,12 @@ typedef enum {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
-- (BOOL) isSubscribedToChannel:(NSString*)channel {
+- (BOOL)isSubscribedToChannel:(NSString *)channel {
     for (PubNubConnection* connection in _connections) {
         if ((connection.command == kCommand_ReceiveMessage) && [connection.channel isEqualToString:channel]) {
             if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidFailWithResponse:onChannel:)]) {
                 [_delegate pubnub:self subscriptionDidFailWithResponse:@"Already Connected" onChannel:channel];
-            }           
+            }
             return YES;
         }
     }
@@ -462,19 +467,19 @@ typedef enum {
     return NO;
 }
 
-- (void) unsubscribeFromAllChannels {
+- (void)unsubscribeFromAllChannels {
     [self unsubscribeFromChannel:nil];
 }
 
-- (void) fetchHistory:(NSUInteger)limit forChannel:(NSString*)channel {
+- (void)fetchHistory:(NSUInteger)limit forChannel:(NSString *)channel {
     NSNumber * aWrappedInt = [NSNumber numberWithInteger:limit];
     NSDictionary* disc=  [NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", channel,@"channel",nil];
     [self fetchHistory:disc];
 }
 
-- (void) fetchHistory:(NSDictionary * )arg1 {
+- (void)fetchHistory:(NSDictionary * )arg1 {
     int limit;
-    NSString* channel;
+    NSString *channel;
     if (![arg1 objectForKey:@"limit"])
     {
         NSLog(@"ERROR::limit not found.");
@@ -497,7 +502,7 @@ typedef enum {
     if (limit > kMaxHistorySize) {
         NSLog(@"PubNub history too large: %i", limit);
     }
-    NSString* url = [NSString stringWithFormat:@"%@/history/%@/%@/0/%i", _host, _subscribeKey, [channel urlEscapedString], limit];
+    NSString *url = [NSString stringWithFormat:@"%@/history/%@/%@/0/%i", _host, _subscribeKey, [channel urlEscapedString], limit];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_FetchHistory
@@ -505,9 +510,10 @@ typedef enum {
     [_connections addObject:connection];
 }
 
-- (void) detailedHistory:(NSDictionary * )arg1 {
-   
-    NSString* channel;
+
+- (void)detailedHistory:(NSDictionary * )arg1 {
+    
+    NSString *channel;
     
     
     if (![arg1 objectForKey:@"channel"])
@@ -559,8 +565,8 @@ typedef enum {
     if ([parameters length] > 0) {
         [parameters insertString:@"?" atIndex:0 ];
     }
-         
-    NSString* url = [NSString stringWithFormat:@"%@/v2/history/sub-key/%@/channel/%@%@", _host, _subscribeKey, [channel urlEscapedString],[parameters description]];
+    
+    NSString *url = [NSString stringWithFormat:@"%@/v2/history/sub-key/%@/channel/%@%@", _host, _subscribeKey, [channel urlEscapedString],[parameters description]];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_FetchDetailHistory
@@ -568,8 +574,8 @@ typedef enum {
     [_connections addObject:connection];
 }
 
-- (void) getTime {
-    NSString* url = [NSString stringWithFormat:@"%@/time/0", _host];
+- (void)getTime {
+    NSString *url = [NSString stringWithFormat:@"%@/time/0", _host];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_GetTime
@@ -578,19 +584,20 @@ typedef enum {
 }
 
 
-+ (NSString *) getUUID
+
++ (NSString *)getUUID
 {
     return [CommonFunction generateUuidString];
 }
 
--(NSDictionary*) getDecryptedDictionary:(NSDictionary*)message
+- (NSDictionary *)getDecryptedDictionary:(NSDictionary*)message
 {
     if(_cipherKey != nil)
     {
         NSMutableDictionary *msg = [NSMutableDictionary dictionaryWithCapacity: message.count];
-        for (NSString* key in [message allKeys]) {
-            NSString* val = (NSString*) [message objectForKey: key];
-            NSString* dec = [CommonFunction AES128DecryptWithKey: _cipherKey Data: val];
+        for (NSString *key in [message allKeys]) {
+            NSString *val = (NSString *) [message objectForKey: key];
+            NSString *dec = [CommonFunction AES128DecryptWithKey: _cipherKey Data: val];
             [msg setObject: dec forKey: key];
         }
         return msg;
@@ -599,9 +606,9 @@ typedef enum {
     return [NSMutableDictionary dictionaryWithDictionary: message];
 }
 
--(NSString*) getDecryptedString:(NSString*)disc
+- (NSString *)getDecryptedString:(NSString *)disc
 {
-    NSString * returnval;
+    NSString *returnval;
     if(_cipherKey != nil)
     {
         returnval=  [CommonFunction AES128DecryptWithKey:_cipherKey Data:disc];
@@ -612,8 +619,8 @@ typedef enum {
     return returnval;
 }
 
--(NSArray*) getDecryptedArray:(NSArray*)array
-{   
+- (NSArray *)getDecryptedArray:(NSArray*)array
+{
     NSMutableArray *messages = [NSMutableArray arrayWithCapacity: array.count];
     for (int i=0; i < array.count; i++) {
         id object= [array objectAtIndex:i];
@@ -628,254 +635,31 @@ typedef enum {
     return messages;
 }
 
-- (void) connection:(PubNubConnection*)connection didCompleteWithResponse:(id)response  {
+- (void)connection:(PubNubConnection *)connection didCompleteWithResponse:(id)response  {
     switch (connection.command) {
-        case kCommand_SendMessage: {
-            BOOL success = NO;
-            NSString* error = nil;
-            NSArray *array=nil;
-            if(response)
-            {
-                if ([response isKindOfClass:[NSArray class]])
-                {
-                    NSArray *arra= (NSArray*)response;
-                    if([arra count] > 2)
-                    {
-                        success = [[arra objectAtIndex:0] boolValue];
-                        if(success == NO)
-                        {
-                            error = [arra objectAtIndex:1];
-                        }
-                    }
-                }
-            }
-            
-            if (success) {
-                
-                if ([_delegate respondsToSelector:@selector(pubnub:didSucceedPublishingMessageToChannel:withResponce:message:)]) {
-                    [_delegate pubnub:self didSucceedPublishingMessageToChannel:connection.channel withResponce:response message:connection.message];
-                }
-            } else {
-                if (error) {
-                    array= [NSArray arrayWithObjects:@"0", error,  nil];
-                }else {
-                    error=  [NSString stringWithFormat:@"Failed sending message to PubNub channel %@:", connection.channel];
-                    array= [NSArray arrayWithObjects:@"0", error,  nil];
-                }
-                if ([_delegate respondsToSelector:@selector(pubnub:didFailPublishingMessageToChannel:error:message:)]) {
-                    [_delegate pubnub:self didFailPublishingMessageToChannel:connection.channel error:[array description] message:connection.message];
-                }
-            }
+        case kCommand_SendMessage:
+            [self handleCommandSendMessageForConnection:connection response:response];
             break;
-        }
             
-        case kCommand_ReceiveMessage: {
-            BOOL isPresence=NO;
-            if ([connection.channel hasSuffix:@"-pnpres"]) {
-                isPresence=YES;
-            }
-            NSString* timeToken = @"0";
-            if(!isPresence)
-            {
-
-                if (response == nil  ) {
-                    for (ChannelStatus* it in [_subscriptions copy]) {
-                        if ([it.channel isEqualToString:connection.channel])
-                        {
-                            
-                            if(it.first && it.connected) {
-                                it.connected=NO;
-                                if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
-                                    [_delegate pubnub:self DisconnectToChannel:connection.channel];
-                                }
-                            }
-                        }
-                    }
-                    _tryCount++;
-                }
-                else {
-                    for (ChannelStatus* it in [_subscriptions copy]) {
-                        if ([it.channel isEqualToString:connection.channel])
-                        {
-                            _tryCount=0;
-                                // Connect Callback
-                            if (it.first == NO) {
-                                it.first = YES;
-                                it.connected=YES;
-                                if ([_delegate respondsToSelector:@selector(pubnub:ConnectToChannel:)]) {
-                                        // NSLog(@"_Connected to channel %@",connection.channel);
-                                    [_delegate pubnub:self ConnectToChannel:connection.channel];
-                                }
-                                break;
-                            }else
-                            {
-                                if (it.connected == NO ) {
-                                    it.connected =YES;
-                                    if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
-                                        [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
-                if(!isPresence)
-                    NSLog(@"Received %i messages from PubNub channel \"%@\"", [[response objectAtIndex:0] count], connection.channel);
-                
-                if(!isPresence)
-                {
-                    for (id message in [response objectAtIndex:0]) {
-                        if ([message isKindOfClass:[NSDictionary class]]) {
-                            if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveDictionary:onChannel:)]) {
-                                NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
-                                [_delegate pubnub:self subscriptionDidReceiveDictionary:disc onChannel:connection.channel];
-                            }
-                        }else if ([message isKindOfClass:[NSArray class]]) {
-                            if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveArray:onChannel:)]) {
-                                NSArray * arr=[self getDecryptedArray:(NSArray *)message];
-                                [_delegate pubnub:self subscriptionDidReceiveArray:arr onChannel:connection.channel];
-                            }
-                        }else if ([message isKindOfClass:[NSString class]]) {
-                            if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveArray:onChannel:)]) {
-                                NSString * str=[self getDecryptedString:(NSString *)message];
-                                [_delegate pubnub:self subscriptionDidReceiveString:str onChannel:connection.channel];
-                            }
-                        }else {
-                            if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidFailWithResponse:onChannel:onChannel:)]) {
-                                [_delegate pubnub:self subscriptionDidFailWithResponse:message onChannel:connection.channel];
-                            }
-                        }
-                    }
-                }else {
-                    for (id message in [response objectAtIndex:0]) {
-                        if ([message isKindOfClass:[NSDictionary class]]) {
-                            if ([_delegate respondsToSelector:@selector(pubnub:presence:onChannel:)]) {
-                                NSString* channel = [connection.channel stringByReplacingOccurrencesOfString:@"-pnpres"                                                                     withString:@""];
-                                [_delegate pubnub:self presence:message onChannel:channel];
-                            }
-                        }
-                    }
-                    
-                }
-                
-                timeToken = [response objectAtIndex:1];
-            } else if (response) {
-                NSLog(@"Unexpected subscribe response from PubNub");
-            }
-            if (response) {
-                if (timeToken) {
-                    [self _resubscribeToChannel:connection.channel timeToken:timeToken];
-                } else {
-                    [self _resubscribeToChannel:connection.channel];
-                }
-            }
-            else {
-                if(kMinRetry == -1)
-                {
-                    [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
-                }else if(_tryCount <= kMinRetry)
-                {
-                    [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
-                }
-            }
+        case kCommand_ReceiveMessage:
+            [self handleCommandReceiveMessageForConnection:connection response:response];
             break;
-        }
-        case kCommand_FetchDetailHistory:{
-            NSMutableArray *mainArray = [NSMutableArray arrayWithCapacity: 2];
-            NSMutableArray *returnArray = [NSMutableArray arrayWithArray:response];
-            if ([response isKindOfClass:[NSArray class]]) {
-                id msg= [response objectAtIndex:0];
-                for (id message in msg) {
-                    if ([message isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
-                        [mainArray addObject:disc];
-                    }else if ([message isKindOfClass:[NSArray class]]) {
-                        NSArray * arr=[self getDecryptedArray:(NSArray *)message];
-                        [mainArray addObject:arr];
-                    }else if ([message isKindOfClass:[NSString class]]) {
-                        NSString * str=[self getDecryptedString:(NSString *)message];
-                        [mainArray addObject:str];
-                    }
-                }
-                
-                [returnArray replaceObjectAtIndex:0 withObject:mainArray];
-                
-            }else if (response) {
-                NSLog(@"Unexpected history response from PubNub");
-            }
             
-            if(response)
-            {
-                if ([_delegate respondsToSelector: @selector(pubnub:didFetchDetailedHistory:forChannel:)]) {
-                    [_delegate pubnub:self didFetchDetailedHistory: [NSArray arrayWithArray: returnArray] forChannel: connection.channel];
-                }
-            }else {
-                NSArray* array= [NSArray arrayWithObjects:@"0", @"Fetch History request failed due to missing Internet connection",  nil];
-                if ([_delegate respondsToSelector: @selector(pubnub:didFailFetchDetailedHistoryOnChannel:withError:)]) {
-                    [_delegate pubnub:self didFailFetchDetailedHistoryOnChannel:connection.channel withError:array];
-                    
-                }
-            }
+        case kCommand_FetchDetailHistory:
+            [self handleCommandFetchDetailHistoryForConnection:connection response:response];
             break;
-        }
             
-        case kCommand_FetchHistory: {
-            NSMutableArray *mainArray = [NSMutableArray arrayWithCapacity: 2];
-            
-            if ([response isKindOfClass:[NSArray class]]) {
-                NSLog(@"Fetched %i history messages from PubNub channel \"%@\"", [response count], connection.channel);
-                
-                for (id message in response) {
-                    if ([message isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
-                        [mainArray addObject:disc];
-                    }else if ([message isKindOfClass:[NSArray class]]) {
-                        NSArray * arr=[self getDecryptedArray:(NSArray *)message];
-                        [mainArray addObject:arr];
-                    }else if ([message isKindOfClass:[NSString class]]) {
-                        NSString * str=[self getDecryptedString:(NSString *)message];
-                        [mainArray addObject:str];
-                    }
-                }
-            } else if (response) {
-                NSLog(@"Unexpected history response from PubNub");
-            }
-            
-            if(response)
-            {
-                if ([_delegate respondsToSelector: @selector(pubnub:didFetchHistory:forChannel:)]) {
-                    [_delegate pubnub:self didFetchHistory: [NSArray arrayWithArray: mainArray] forChannel: connection.channel];
-                }
-            }else {
-                NSArray* array= [NSArray arrayWithObjects:@"0", @"Fetch History request failed due to missing Internet connection",  nil];
-                if ([_delegate respondsToSelector: @selector(pubnub:didFailFetchHistoryOnChannel:withError:)]) {
-                    [_delegate pubnub:self didFailFetchHistoryOnChannel:connection.channel withError:array];
-                    
-                }
-            }
+        case kCommand_FetchHistory:
+            [self handleCommandFetchHistoryForConnection:connection response:response];
             break;
-        }
-        case kCommand_GetTime: {
-            NSDecimalNumber* number = nil;
-            if ([response isKindOfClass:[NSArray class]] && ([response count] == 1)) {
-                NSLog(@"Retrieved PubNub time '%@'", [response objectAtIndex:0]);
-                number = [response objectAtIndex:0];
-            } else if (response) {
-                NSLog(@"Unexpected time response from PubNub");
-            }
-            if ([_delegate respondsToSelector:@selector(pubnub:didReceiveTime:)]) {
-                [_delegate pubnub:self didReceiveTime:(number ? [number doubleValue] : NAN)];
-            }
+            
+        case kCommand_GetTime:
+            [self handleCommandGetTimeForConnection:connection response:response];
             break;
-        }
+            
         case kCommand_Here_Now: {
             if ([response isKindOfClass:[NSDictionary class]] ) {
-                if ([_delegate respondsToSelector:@selector(pubnub:here_now:onChannel:)]) {
-                    [_delegate pubnub:self here_now:response onChannel:connection.channel];
-                }
+                [self hereNow:response onChannel:connection.channel];
             }
             break;
         }
@@ -886,4 +670,319 @@ typedef enum {
     }
     [_connections removeObject: connection];
 }
+
+#pragma mark - command handlers for -connection:didCompleteWithResponse:
+
+- (void)handleCommandSendMessageForConnection:(PubNubConnection *)connection response:(id)response
+{
+    BOOL success = NO;
+    NSString *error = nil;
+    NSArray *array=nil;
+    if(response)
+    {
+        if ([response isKindOfClass:[NSArray class]])
+        {
+            NSArray *arra= (NSArray*)response;
+            if([arra count] > 2)
+            {
+                success = [[arra objectAtIndex:0] boolValue];
+                if(success == NO)
+                {
+                    error = [arra objectAtIndex:1];
+                }
+            }
+        }
+    }
+    
+    if (success) {
+        [self didSucceedPublishingMessageToChannel:connection.channel withResponse:response message:connection.message];
+    } else {
+        if (error) {
+            array= [NSArray arrayWithObjects:@"0", error,  nil];
+        }else {
+            error=  [NSString stringWithFormat:@"Failed sending message to PubNub channel %@:", connection.channel];
+            array= [NSArray arrayWithObjects:@"0", error,  nil];
+        }
+        if ([_delegate respondsToSelector:@selector(pubnub:didFailPublishingMessageToChannel:error:message:)]) {
+            [_delegate pubnub:self didFailPublishingMessageToChannel:connection.channel error:[array description] message:connection.message];
+        }
+    }
+}
+
+- (void)handleCommandReceiveMessageForConnection:(PubNubConnection *)connection response:(id)response
+{
+    BOOL isPresence=NO;
+    if ([connection.channel hasSuffix:@"-pnpres"]) {
+        isPresence=YES;
+    }
+    NSString *timeToken = @"0";
+    if(!isPresence)
+    {
+        
+        if (response == nil  ) {
+            for (ChannelStatus* it in [_subscriptions copy]) {
+                if ([it.channel isEqualToString:connection.channel])
+                {
+                    
+                    if(it.first && it.connected) {
+                        it.connected=NO;
+                        
+                        [self disconnectFromChannel:connection.channel];
+                    }
+                }
+            }
+            _tryCount++;
+        }
+        else {
+            for (ChannelStatus* it in [_subscriptions copy]) {
+                if ([it.channel isEqualToString:connection.channel])
+                {
+                    _tryCount=0;
+                        // Connect Callback
+                    if (it.first == NO) {
+                        it.first = YES;
+                        it.connected=YES;
+                        [self connectToChannel:connection.channel];
+                        break;
+                    }else
+                    {
+                        if (it.connected == NO ) {
+                            it.connected =YES;
+                            [self reconnectToChannel:connection.channel];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
+        if(!isPresence)
+            NSLog(@"Received %i messages from PubNub channel \"%@\"", [[response objectAtIndex:0] count], connection.channel);
+        
+        if(!isPresence)
+        {
+            for (id message in [response objectAtIndex:0]) {
+                if ([message isKindOfClass:[NSDictionary class]]) {
+                    if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveDictionary:onChannel:)]) {
+                        NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
+                        [_delegate pubnub:self subscriptionDidReceiveDictionary:disc onChannel:connection.channel];
+                    }
+                }else if ([message isKindOfClass:[NSArray class]]) {
+                    if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveArray:onChannel:)]) {
+                        NSArray * arr=[self getDecryptedArray:(NSArray *)message];
+                        [_delegate pubnub:self subscriptionDidReceiveArray:arr onChannel:connection.channel];
+                    }
+                }else if ([message isKindOfClass:[NSString class]]) {
+                    if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidReceiveArray:onChannel:)]) {
+                        NSString * str=[self getDecryptedString:(NSString *)message];
+                        [_delegate pubnub:self subscriptionDidReceiveString:str onChannel:connection.channel];
+                    }
+                }else {
+                    if ([_delegate respondsToSelector:@selector(pubnub:subscriptionDidFailWithResponse:onChannel:onChannel:)]) {
+                        [_delegate pubnub:self subscriptionDidFailWithResponse:message onChannel:connection.channel];
+                    }
+                }
+            }
+        }else {
+            for (id message in [response objectAtIndex:0]) {
+                if ([message isKindOfClass:[NSDictionary class]]) {
+                    if ([_delegate respondsToSelector:@selector(pubnub:presence:onChannel:)]) {
+                        NSString* channel = [connection.channel stringByReplacingOccurrencesOfString:@"-pnpres"                                                                     withString:@""];
+                        [_delegate pubnub:self presence:message onChannel:channel];
+                    }
+                }
+            }
+            
+        }
+        
+        timeToken = [response objectAtIndex:1];
+    } else if (response) {
+        NSLog(@"Unexpected subscribe response from PubNub");
+    }
+    if (response) {
+        if (timeToken) {
+            [self _resubscribeToChannel:connection.channel timeToken:timeToken];
+        } else {
+            [self _resubscribeToChannel:connection.channel];
+        }
+    }
+    else {
+        if(kMinRetry == -1)
+        {
+            [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
+        }else if(_tryCount <= kMinRetry)
+        {
+            [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
+        }
+    }
+}
+
+- (void)handleCommandFetchDetailHistoryForConnection:(PubNubConnection *)connection response:(id)response
+{
+    NSMutableArray *mainArray = [NSMutableArray arrayWithCapacity: 2];
+    NSMutableArray *returnArray = [NSMutableArray arrayWithArray:response];
+    
+    if ([response isKindOfClass:[NSArray class]]) {
+        id msg= [response objectAtIndex:0];
+        for (id message in msg) {
+            if ([message isKindOfClass:[NSDictionary class]]) {
+                NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
+                [mainArray addObject:disc];
+            }else if ([message isKindOfClass:[NSArray class]]) {
+                NSArray * arr=[self getDecryptedArray:(NSArray *)message];
+                [mainArray addObject:arr];
+            }else if ([message isKindOfClass:[NSString class]]) {
+                NSString *str=[self getDecryptedString:(NSString *)message];
+                [mainArray addObject:str];
+            }
+        }
+        
+        [returnArray replaceObjectAtIndex:0 withObject:mainArray];
+        
+    }else if (response) {
+        NSLog(@"Unexpected history response from PubNub");
+    }
+    
+    if(response)
+    {
+        if ([_delegate respondsToSelector: @selector(pubnub:didFetchDetailedHistory:forChannel:)]) {
+            [_delegate pubnub:self didFetchDetailedHistory: [NSArray arrayWithArray: returnArray] forChannel: connection.channel];
+        }
+    }else {
+        NSArray* array= [NSArray arrayWithObjects:@"0", @"Fetch History request failed due to missing Internet connection",  nil];
+        if ([_delegate respondsToSelector: @selector(pubnub:didFailFetchDetailedHistoryOnChannel:withError:)]) {
+            [_delegate pubnub:self didFailFetchDetailedHistoryOnChannel:connection.channel withError:array];
+            
+        }
+    }
+}
+
+- (void)handleCommandFetchHistoryForConnection:(PubNubConnection *)connection response:(id)response
+{
+    NSMutableArray *mainArray = [NSMutableArray arrayWithCapacity: 2];
+    
+    if ([response isKindOfClass:[NSArray class]]) {
+        NSLog(@"Fetched %i history messages from PubNub channel \"%@\"", [response count], connection.channel);
+        
+        for (id message in response) {
+            if ([message isKindOfClass:[NSDictionary class]]) {
+                NSDictionary * disc=[self getDecryptedDictionary:(NSDictionary *)message];
+                [mainArray addObject:disc];
+            }else if ([message isKindOfClass:[NSArray class]]) {
+                NSArray * arr=[self getDecryptedArray:(NSArray *)message];
+                [mainArray addObject:arr];
+            }else if ([message isKindOfClass:[NSString class]]) {
+                NSString *str=[self getDecryptedString:(NSString *)message];
+                [mainArray addObject:str];
+            }
+        }
+    } else if (response) {
+        NSLog(@"Unexpected history response from PubNub");
+    }
+    
+    if(response)
+    {
+        if ([_delegate respondsToSelector: @selector(pubnub:didFetchHistory:forChannel:)]) {
+            [_delegate pubnub:self didFetchHistory:[NSArray arrayWithArray: mainArray] forChannel:connection.channel];
+        }
+    } else {
+        NSArray* array= [NSArray arrayWithObjects:@"0", @"Fetch History request failed due to missing Internet connection",  nil];
+        if ([_delegate respondsToSelector: @selector(pubnub:didFailFetchHistoryOnChannel:withError:)]) {
+            [_delegate pubnub:self didFailFetchHistoryOnChannel:connection.channel withError:array];
+        }
+    }
+}
+
+- (void)handleCommandGetTimeForConnection:(PubNubConnection *)connection response:(id)response
+{
+    NSDecimalNumber *number = nil;
+    if ([response isKindOfClass:[NSArray class]] && ([response count] == 1)) {
+        NSLog(@"Retrieved PubNub time '%@'", [response objectAtIndex:0]);
+        number = [response objectAtIndex:0];
+    } else if (response) {
+        NSLog(@"Unexpected time response from PubNub");
+    }
+    if ([_delegate respondsToSelector:@selector(pubnub:didReceiveTime:)]) {
+        [_delegate pubnub:self didReceiveTime:(number ? [number doubleValue] : NAN)];
+    }
+}
+
+#pragma mark - Deprecated delegate method handlers
+
+    // Each of these methods calls both the new method AND deprecated method, if they exist, in that order.
+    //
+    // Another possible plan, not implemented here, is
+    //
+    // if (new one exists)
+    //     call new one
+    // else if (deprecated one exists)
+    //     call deprecated one
+
+
+- (void)didSucceedPublishingMessageToChannel:(NSString *)channel
+                                withResponse:(id)response
+                                     message:(id)message
+{
+    if ([_delegate respondsToSelector:@selector(pubnub:didSucceedPublishingMessageToChannel:withResponse:message:)]) {
+        [_delegate pubnub:self didSucceedPublishingMessageToChannel:channel withResponse:response message:message];
+    }
+    
+        // TODO: DEPRECATED METHOD
+    if ([_delegate respondsToSelector:@selector(pubnub:didSucceedPublishingMessageToChannel:withResponce:message:)]) {
+        [_delegate pubnub:self didSucceedPublishingMessageToChannel:channel withResponce:response message:message];
+    }
+}
+
+- (void)connectToChannel:(NSString *)channel
+{
+    if ([_delegate respondsToSelector:@selector(pubnub:connectToChannel:)]) {
+            // NSLog(@"_Connected to channel %@",connection.channel);
+        [_delegate pubnub:self connectToChannel:channel];
+    }
+    
+        // TODO: DEPRECATED METHOD
+    if ([_delegate respondsToSelector:@selector(pubnub:ConnectToChannel:)]) {
+            // NSLog(@"_Connected to channel %@",connection.channel);
+        [_delegate pubnub:self ConnectToChannel:channel];
+    }
+}
+
+- (void)reconnectToChannel:(NSString *)channel
+{
+    
+    if ([_delegate respondsToSelector:@selector(pubnub:reconnectToChannel:)]) {
+        [_delegate pubnub:self reconnectToChannel:channel];
+    }
+    
+        // TODO: DEPRECATED METHOD
+    if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
+        [_delegate pubnub:self Re_ConnectToChannel:channel];
+    }
+}
+
+- (void)disconnectFromChannel:(NSString *)channel
+{
+    if ([_delegate respondsToSelector:@selector(pubnub:disconnectFromChannel:)]) {
+        [_delegate pubnub:self disconnectFromChannel:channel];
+    }
+    
+        // TODO: DEPRECATED METHOD
+    if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
+        [_delegate pubnub:self DisconnectToChannel:channel];
+    }
+}
+
+- (void)hereNow:(NSDictionary *)response onChannel:(NSString *)channel
+{
+    if ([_delegate respondsToSelector:@selector(pubnub:hereNow:onChannel:)]) {
+        [_delegate pubnub:self hereNow:response onChannel:channel];
+    }
+    
+        // TODO: DEPRECATED METHOD
+    if ([_delegate respondsToSelector:@selector(pubnub:here_now:onChannel:)]) {
+        [_delegate pubnub:self here_now:response onChannel:channel];
+    }
+}
+
 @end
