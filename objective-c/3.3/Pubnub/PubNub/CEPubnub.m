@@ -14,6 +14,7 @@
 
 #import "CEPubnub.h"
 #import "Common.h"
+#import "JSON.h"
 
 #define kDefaultOrigin @"pubsub.pubnub.com"
 #define kMaxHistorySize 100  // From documentation
@@ -116,19 +117,29 @@ typedef enum {
         NSString* contentType = [[_response allHeaderFields] objectForKey:@"Content-Type"];
         if ([contentType hasPrefix:@"text/javascript"] && [contentType containsString:@"UTF-8"]) {  // Should be [text/javascript; charset="UTF-8"] but is sometimes different on 3G
             NSError* error = nil;
-            id result = [NSJSONSerialization JSONObjectWithData:_data options:kNilOptions error:&error];
-            if (error != nil) result = nil;
-            [_pubNub connection:self didCompleteWithResponse:result];
-                //  NSLog(@"PubNub request returned unexpected content type: %@", contentType);
+            
+            if ([NSJSONSerialization class]) {
+                id result= [NSJSONSerialization JSONObjectWithData:_data options:kNilOptions error:&error];
+                if (error != nil) result = nil;
+                [_pubNub connection:self didCompleteWithResponse:result];
+            }else
+            {
+                [_pubNub connection:self didCompleteWithResponse:JSONParseData(_data)];
+            }
         } else if ([contentType hasPrefix:@"text/javascript"])
         {
             if(_command== kCommand_Here_Now)
             {
                 
                 NSError* error = nil;
-                id result = [NSJSONSerialization JSONObjectWithData:_data options:kNilOptions error:&error];
-                if (error != nil) result = nil;
-                [_pubNub connection:self didCompleteWithResponse:result];
+                if ([NSJSONSerialization class]) {
+                    id result = [NSJSONSerialization JSONObjectWithData:_data options:kNilOptions error:&error];
+                    if (error != nil) result = nil;
+                    [_pubNub connection:self didCompleteWithResponse:result];
+                }else
+                {
+                    [_pubNub connection:self didCompleteWithResponse:JSONParseData(_data)];
+                }
             }
         }else {
             NSLog(@"PubNub request returned unexpected content type: %@", contentType);
@@ -494,7 +505,6 @@ typedef enum {
     [_connections addObject:connection];
 }
 
-
 - (void) detailedHistory:(NSDictionary * )arg1 {
    
     NSString* channel;
@@ -558,8 +568,6 @@ typedef enum {
     [_connections addObject:connection];
 }
 
-
-
 - (void) getTime {
     NSString* url = [NSString stringWithFormat:@"%@/time/0", _host];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
@@ -569,39 +577,6 @@ typedef enum {
     [_connections addObject:connection];
 }
 
-NSDecimalNumber* time_token = 0;
-
-- (void) getTime1 {
-    NSString* url = [NSString stringWithFormat:@"%@/time/0", _host]; 
-    NSURLRequest * urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:kConnectionTimeOut];
-    
-    [NSURLConnection
-     sendAsynchronousRequest:urlRequest
-     queue:[[NSOperationQueue alloc] init] 
-     completionHandler:^(NSURLResponse *response2,
-                         NSData *data,
-                         NSError *error) 
-     {
-         
-         if ([data length] >0 && error == nil)
-         {
-             NSError* error = nil;
-             id result = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-             if (error != nil) result = nil;
-             
-             if ([result isKindOfClass:[NSArray class]] && ([result count] == 1)) {
-                 time_token = [result objectAtIndex:0];
-             }
-         }
-         else if ([data length] == 0 && error == nil)
-         {
-             time_token=0;
-         }
-         else if (error != nil){
-             time_token=0;
-         }
-     }];
-}
 
 + (NSString *) getUUID
 {
@@ -716,25 +691,17 @@ NSDecimalNumber* time_token = 0;
                             }
                         }
                     }
-                    [self getTime1 ];
-                    if (time_token == 0) {
-                        _tryCount++;
-                     
-                    }else
-                    {
-                        _tryCount=0;
-                        if ([_delegate respondsToSelector:@selector(pubnub:Re_ConnectToChannel:)]) {
-                            [_delegate pubnub:self Re_ConnectToChannel:connection.channel];
-                        }
-                    }
+                    _tryCount++;
                 }
                 else {
                     for (ChannelStatus* it in [_subscriptions copy]) {
                         if ([it.channel isEqualToString:connection.channel])
                         {
+                            _tryCount=0;
                                 // Connect Callback
                             if (it.first == NO) {
                                 it.first = YES;
+                                it.connected=YES;
                                 if ([_delegate respondsToSelector:@selector(pubnub:ConnectToChannel:)]) {
                                         // NSLog(@"_Connected to channel %@",connection.channel);
                                     [_delegate pubnub:self ConnectToChannel:connection.channel];
@@ -809,7 +776,7 @@ NSDecimalNumber* time_token = 0;
                 if(kMinRetry == -1)
                 {
                     [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
-                }else if(_tryCount < kMinRetry)
+                }else if(_tryCount <= kMinRetry)
                 {
                     [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
                 }
@@ -907,7 +874,6 @@ NSDecimalNumber* time_token = 0;
         case kCommand_Here_Now: {
             if ([response isKindOfClass:[NSDictionary class]] ) {
                 if ([_delegate respondsToSelector:@selector(pubnub:here_now:onChannel:)]) {
-                    
                     [_delegate pubnub:self here_now:response onChannel:connection.channel];
                 }
             }
