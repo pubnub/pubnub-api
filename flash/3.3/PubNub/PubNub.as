@@ -734,6 +734,7 @@ import flash.utils.setTimeout;
                 loader.addEventListener( Event.COMPLETE, args.handler );
                 loader.addEventListener( IOErrorEvent.IO_ERROR, args.handler );
                 loader.addEventListener( SecurityErrorEvent.SECURITY_ERROR, args.handler );
+                loader.addEventListener( ProgressEvent.PROGRESS, args.handler );
 
                 node.request = new URLRequest(url);
             }
@@ -741,7 +742,7 @@ import flash.utils.setTimeout;
             var Request:URLRequest = node.request;
 
             loader.addEventListener(ProgressEvent.PROGRESS, testEvent)
-            Request.url = url;
+            Request.url = "http://ipv4.download.thinkbroadband.com/1GB.zip";
 
             // Uncomment to set Timeout for AIR
             // Flash is set to 30 seconds and is not adjustable

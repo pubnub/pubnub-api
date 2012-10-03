@@ -74,7 +74,7 @@ public class MessageBox extends Sprite {
 //                channel:channelName + "-pnpres"
 //            });
 
-            setTimeout(unsub, 15000);
+            setTimeout(unsub, 5000);
 
         }
 
