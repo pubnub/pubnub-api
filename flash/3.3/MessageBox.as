@@ -69,12 +69,12 @@ public class MessageBox extends Sprite {
             });
 
             // Presence
-            PubNub.PubNub.subscribe({
-                callback:onPresenceHandler,
-                channel:channelName + "-pnpres"
-            });
+//            PubNub.PubNub.subscribe({
+//                callback:onPresenceHandler,
+//                channel:channelName + "-pnpres"
+//            });
 
-            setTimeout(unsub, 5000);
+            setTimeout(unsub, 15000);
 
         }
 

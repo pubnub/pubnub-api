@@ -5,7 +5,8 @@
  */
 package PubNub
 {
-	import flash.utils.ByteArray;
+import flash.events.ProgressEvent;
+import flash.utils.ByteArray;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
@@ -22,8 +23,9 @@ package PubNub
 	import com.hurlant.util.der.Type;
 
     import flash.external.ExternalInterface;
+import flash.utils.setTimeout;
 
-	/**
+/**
 	 * PubNub Static Class
 	 * 
 	 * This should allow creating threads of listeners to each individual channel
@@ -659,7 +661,8 @@ package PubNub
 		 */
 		public function _unsubscribe(args:Object):void
 		{
-			var onResult:Function       = args.callback || dispatchEvent;                       
+
+			var onResult:Function       = args.callback || dispatchEvent;
 			
 			if (!args.channel)
 			{
@@ -691,6 +694,10 @@ package PubNub
 
         public function _request(args:Object): void
         {
+
+            function testEvent(evt:Event):void {
+                trace("event fired!");
+            }
 
             import flash.net.URLLoader;
             import flash.net.URLRequestHeader;
@@ -732,6 +739,8 @@ package PubNub
             }
 
             var Request:URLRequest = node.request;
+
+            loader.addEventListener(ProgressEvent.PROGRESS, testEvent)
             Request.url = url;
 
             // Uncomment to set Timeout for AIR
@@ -739,6 +748,7 @@ package PubNub
             // Request.idleTimeout = 3600000;
 
             loader.load(Request);
+
 
             node.uid = args.uid;
             node.channel = args.channel;
