@@ -2,8 +2,10 @@ package {
 	import flash.display.*;
 	import flash.events.*;
 	import flash.net.*;
+import flash.utils.Timer;
 
-	/**
+
+/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
@@ -41,12 +43,12 @@ package {
 			urlLoader.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
 			urlLoader.addEventListener(HTTPStatusEvent.HTTP_STATUS, onHTTPStatus);
 			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
-			
-			urlStream = new URLStream(); 
+
+			urlStream = new URLStream();
 			urlStream.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
 			urlStream.addEventListener(HTTPStatusEvent.HTTP_STATUS, onHTTPStatus);
 			urlStream.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
-			
+
 			loader = urlLoader;
 		}
 		
@@ -102,4 +104,8 @@ package {
 			view.statusTxt.text = string
 		}
 	}
+
+
+
+
 }
