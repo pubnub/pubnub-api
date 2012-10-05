@@ -1,14 +1,17 @@
 #import "request.h"
 
 @implementation Request
--(void)
+@synthesize connection,channel;
+
+-(id)
     scheme:   (NSString*) scheme
     host:     (NSString*) host
     path:     (NSString*) path
-    callback: (Response*) callback;
+    callback: (Response*) callback
+    channel:  (NSString*) _channel
 {
     pool     = [[NSAutoreleasePool alloc] init];
-    deligate = callback;
+    delegate = callback;
 
     NSURL *url = [NSURL
         URLWithString: [NSString
@@ -22,16 +25,17 @@
     NSMutableURLRequest *request = [NSMutableURLRequest
         requestWithURL:  url 
         cachePolicy:     NSURLRequestReloadIgnoringCacheData 
-        timeoutInterval: 200
+        timeoutInterval: 310
     ];
     [request setValue:@"close" forHTTPHeaderField:@"Connection"];
     [request setValue:@"Accept-Encoding" forHTTPHeaderField:@"gzip"];
-    NSURLConnection *connection = [[NSURLConnection alloc]
+    connection = [[NSURLConnection alloc]
         initWithRequest:  request
         delegate:         self
     ];
-
+    channel = _channel;
     [connection autorelease];
+    return  self;
 }
 
 -(void)
@@ -46,16 +50,16 @@
 }
 
 -(void)
-    connectionDidFinishLoading: (NSURLConnection *) connection
+    connectionDidFinishLoading: (NSURLConnection *) _connection
 {
-    [deligate callback: response];
+    [delegate callback:_connection withResponce: response];
 }
 
 -(void)
-    connection:       (NSURLConnection*) connection
+    connection:       (NSURLConnection*) _connection
     didFailWithError: (NSError *) error
 {
-    [deligate fail: response];
+    [delegate fail:_connection withResponce: error];
 }
 @end
 
@@ -65,7 +69,7 @@
     pubnub:   (Pubnub*) pubnub_o
 {
     self     = [super init];
-    deligate = callback;
+    delegate = callback;
     parser   = [SBJsonParser new];
     pubnub   = pubnub_o;
     return self;
@@ -76,7 +80,34 @@
     channel:  (NSString*) channel_o
 {
     self     = [super init];
-    deligate = callback;
+    delegate = callback;
+    parser   = [SBJsonParser new];
+    pubnub   = pubnub_o;
+    channel  = channel_o;
+    return self;
+}
+
+-(Response*)
+finished: (id)        callback
+pubnub:   (Pubnub*)   pubnub_o
+channel:  (NSString*) channel_o
+message:  (id)message_o
+{
+    self     = [super init];
+    delegate = callback;
+    parser   = [SBJsonParser new];
+    pubnub   = pubnub_o;
+    channel  = channel_o;
+    message  = message_o;
+    return self;
+}
+
+-(Response*)
+pubnub:   (Pubnub*)   pubnub_o
+channel:  (NSString*) channel_o
+{
+    self     = [super init];
+    delegate = nil;
     parser   = [SBJsonParser new];
     pubnub   = pubnub_o;
     channel  = channel_o;
@@ -85,18 +116,20 @@
 -(Response*)
     pubnub:   (Pubnub*)   pubnub_o
     channel:  (NSString*) channel_o
+    message:  (id)message_o
 {
     self     = [super init];
-    deligate = nil;
+    delegate = nil;
     parser   = [SBJsonParser new];
     pubnub   = pubnub_o;
     channel  = channel_o;
+    message  = message_o;
     return self;
 }
--(void) callback: (id) response {
-    [deligate callback: [parser objectWithString: response]];
+-(void) callback:(NSURLConnection*) connection withResponce: (id) response  {
+    [delegate callback:connection withResponce: [parser objectWithString: response]];
 }
--(void) fail: (id) response {
-    [deligate fail: response];
+-(void) fail: (NSURLConnection*) connection withResponce: (id) response  {
+    [delegate fail: connection withResponce: response];
 }
 @end

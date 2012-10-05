@@ -5,7 +5,7 @@
 // ----------------------
 @interface      TimeResponse: TimeDelegate @end
 @implementation TimeResponse
--(void) callback: (NSNumber*) response {
+-(void) callback:(NSURLConnection *)connection withResponce:(id)response{
     NSLog( @"%@", response );
 }
 @end
@@ -15,11 +15,11 @@
 // -------------------------
 @interface      PublishResponse: Response @end
 @implementation PublishResponse
--(void) callback: (NSArray*) response {
-    NSLog( @"%@", response );
+-(void) callback:(NSURLConnection *)connection withResponce:(id)response {
+    NSLog( @"PublishResponse %@", response );
 }
 -(void) fail: (id) response {
-    NSLog( @"%@", response );
+    NSLog( @"PublishResponse Fail :%@", response );
 }
 @end
 
@@ -28,80 +28,149 @@
 // -------------------------
 @interface      HistoryResponse: Response @end
 @implementation HistoryResponse
--(void) callback: (NSArray*) response {
-    NSLog( @"%@", response );
+-(void) callback:(NSURLConnection *)connection withResponce:(id)response {
+    NSLog( @"HistoryResponse :%@", response );
 }
 @end
+
+// -------------------------
+// Here Now Response Callback
+// -------------------------
+@interface      HereNowResponse: Response @end
+@implementation HereNowResponse
+-(void) callback:(NSURLConnection *)connection withResponce:(id)response {
+    NSLog( @"Here Now:  %@", response );
+}
+@end
+
+// -------------------------
+// Detailed History Response Callback
+// -------------------------
+@interface      DetailedHistoryResponse: Response @end
+@implementation DetailedHistoryResponse
+-(void) callback:(NSURLConnection *)connection withResponce:(id)response {
+    NSLog( @"DetailedHistory :: %@", response );
+}
+@end
+
 
 // ---------------------------
 // Subscribe Response Callback
 // ---------------------------
 @interface      SubscribeResponse: Response @end
 @implementation SubscribeResponse
--(void) callback: (id) response {
+-(void) callback:(NSURLConnection *)connection withResponce: (id) response {
     NSLog( @"Received Message (channel: '%@') -> %@", channel, response );
 }
 @end
 
+// ---------------------------
+// Presence Response Callback
+// ---------------------------
+@interface      PresenceResponse: Response @end
+@implementation PresenceResponse
+-(void) callback:(NSURLConnection *)connection withResponce: (id) response {
+    NSLog( @"Received Presence Message (channel: '%@') -> %@", channel, response );
+}
+@end
+
+ Pubnub *pubnub;
+ NSString* channelName = @"hello_world";
 int main( int argc, const char *argv[] ) {
-    // ------------------
+     // ------------------
     // Init Pubnub Object
     // ------------------
-    Pubnub *pubnub = [[Pubnub alloc]
-        publishKey:   @"demo"
-        subscribeKey: @"demo"
-        secretKey:    @"demo"
-        sslOn:        NO
-        origin:       @"pubsub.pubnub.com"
-    ];
-
-    NSString* channel = @"hello_world";
-
+    pubnub = [[Pubnub alloc]
+                      publishKey:   @"demo"
+                      subscribeKey: @"demo"
+                      secretKey:    @"demo"
+                      sslOn:        NO
+                      origin:       @"pubsub.pubnub.com"
+                      ];
+    
     // ----------------------------------
     // PubNub Server Time (Get TimeToken)
     // ----------------------------------
     [pubnub time: [TimeResponse alloc]];
-
-    // -------------------------------------
-    // PubNub Publish Message (Send Message)
-    // -------------------------------------
+    
+    // -----------------------------------
+    // PubNub presence 
+    // -----------------------------------
+    
+    NSLog( @"Presence to: %@", channelName );
     [pubnub
-        publish: channel
-        message: [NSArray arrayWithObjects:
-            @"one",
-            @"\"~`!@#$%^&*( )+=[]\\\\{}|;\':,./<>?.\"",
-            @"three",
-            nil
-        ]
-        deligate: [PublishResponse alloc]
-    ];
-
+     presence: channelName
+     delegate:  [[PresenceResponse alloc]
+                 pubnub:  pubnub
+                 channel: channelName
+                 ]
+     ];
+    
+   // -----------------------------------
+   // PubNub Subscribe (Receive Messages)
+   // -----------------------------------
+    NSLog( @"Listening to: %@", channelName );
+    [pubnub
+     subscribe: channelName
+     delegate:  [[SubscribeResponse alloc]
+                 pubnub:  pubnub
+                 channel: channelName
+                 ]
+     ];
+    
+    // ---------------------------------------
+    // Detaield PubNub History (Recent Message History)
+    // ---------------------------------------
+    NSInteger count = 3;
+    NSNumber * aCountInt = [NSNumber numberWithInteger:count];
+    [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
+                             aCountInt,@"count",
+                             channelName,@"channel",
+                             [DetailedHistoryResponse alloc],@"delegate",
+                             nil]];
+    
     // ---------------------------------------
     // PubNub History (Recent Message History)
     // ---------------------------------------
     [pubnub
-        history:  channel
-        limit:    1
-        deligate: [HistoryResponse alloc]
-    ];
-
-    // -----------------------------------
-    // PubNub Subscribe (Receive Messages)
-    // -----------------------------------
-    NSLog( @"Listening to: %@", channel );
+     history:  channelName
+     limit:    1
+     delegate: [HistoryResponse alloc]
+     ];
+    
+    // -------------------------------------
+    // PubNub Publish Message (Send Message)
+    // -------------------------------------
     [pubnub
-        subscribe: channel
-        deligate:  [[SubscribeResponse alloc]
-            pubnub:  pubnub
-            channel: channel
-        ]
-    ];
+     publish: channelName
+     message: [NSArray arrayWithObjects:
+               @"one",
+               @"This is my Test",
+               @"three",
+               nil
+               ]
+     delegate: [PublishResponse alloc]
+     ];
+    
+    // -----------------------------------
+    // Here Now
+    // -----------------------------------
+    
+    [pubnub hereNow:channelName delegate:[[HereNowResponse alloc]
+                                         pubnub:  pubnub
+                                         channel: channelName
+                                          ]];
+        
+    [pubnub
+     performSelector: @selector(unsubscribe:)
+     withObject:  channelName
+     afterDelay: 15.0
+     ];
 
-
-    // ----------------------------------
-    // Run Loop for Asynchronous Requests
-    // ----------------------------------
-    // Only necessary when running command line application.
+     // ----------------------------------
+     // Run Loop for Asynchronous Requests
+     // ----------------------------------
+     // Only necessary when running command line application.
     [[NSRunLoop currentRunLoop] run];
     [pubnub release];
 

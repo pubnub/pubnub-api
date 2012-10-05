@@ -10,7 +10,9 @@
     NSString* secret_key;
     NSString* scheme;
     NSString* host;
+    NSString* current_uuid;
     NSMutableDictionary* subscriptions;
+    NSMutableDictionary*  _connections;
     NSAutoreleasePool* pool;
     SBJsonParser* parser;
     SBJsonWriter* writer;
@@ -26,24 +28,38 @@
 -(void)
     publish:  (NSString*) channel
     message:  (id)        message
-    deligate: (id)        deligate;
+    delegate: (id)        delegate;
 
 -(void)
     subscribe: (NSString*) channel
-    deligate:  (id)        deligate;
+    delegate:  (id)        delegate;
 
 -(void) subscribe: (NSDictionary*) args;
 -(BOOL) subscribed: (NSString*) channel;
 
+- (void)
+    hereNow:(NSString *)channel
+    delegate: (id)delegate;
+
+- (void)detailedHistory:(NSDictionary * )arg1;
+
 -(void)
     history:  (NSString*) channel
     limit:    (int)       limit
-    deligate: (id)        deligate;
+    delegate: (id)        delegate;
 
 -(void) unsubscribe: (NSString*) channel;
--(void) time: (id) deligate;
+-(void) removeConnection: (NSString*) channel;
+
+-(void) time: (id) delegate;
++ (NSString*) uuid;
+
+-(void)
+presence: (NSString*) channel
+delegate:  (id)        delegate;
 @end
 
 @interface SubscribeDelegate: Response @end
+@interface PresenceDelegate:  Response @end
 @interface TimeDelegate:      Response @end
 
