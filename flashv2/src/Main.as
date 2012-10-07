@@ -13,7 +13,9 @@ import flash.utils.Timer;
 		
 		private var view:ViewGfx = new ViewGfx();
 
-		private var url:String = 'http://ipv4.download.thinkbroadband.com/1GB.zip';
+        private var url:String = 'http://localhost';
+		//private var url:String = 'http://ipv4.download.thinkbroadband.com/1GB.zip';
+        //private var url:String = 'http://pubsub.pubnub.com/subscribe/demo/hello_world/0/23494764498058254';
 		private var urlLoader:URLLoader;
 		private var urlStream:URLStream;
 		private var method:String = URLRequestMethod.GET;
@@ -43,11 +45,6 @@ import flash.utils.Timer;
 			urlLoader.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
 			urlLoader.addEventListener(HTTPStatusEvent.HTTP_STATUS, onHTTPStatus);
 			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
-
-			urlStream = new URLStream();
-			urlStream.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
-			urlStream.addEventListener(HTTPStatusEvent.HTTP_STATUS, onHTTPStatus);
-			urlStream.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
 
 			loader = urlLoader;
 		}

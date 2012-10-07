@@ -16,7 +16,7 @@ public class URLLoaderDeluxe extends URLLoader {
 
     [Event(name="loaderTimeout", type="flash.events.Event")]
 
-    public function URLLoaderDeluxe(timeout:Number = 1000, request:URLRequest = null) {
+    public function URLLoaderDeluxe(timeout:int = 500, request:URLRequest = null) {
         this.timeout = timeout;
         _timeoutTimer = new Timer(timeout);
         super(request);
@@ -62,6 +62,7 @@ public class URLLoaderDeluxe extends URLLoader {
     private function handleTimeout(event:TimerEvent):void {
         killTimer();
         super.dispatchEvent(new Event(TIMEOUT, true));
+        trace("TIMEOUT!!!");
 //                      this.dispatchEvent(new Event(TIMEOUT, true));
 //                      var dis:EventDispatcher = new EventDispatcher(this);
 //                      dis.dispatchEvent(new Event(TIMEOUT, true));
