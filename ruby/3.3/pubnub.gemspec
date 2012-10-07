@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "pubnub"
-  s.version = "3.3.0.1"
+  s.version = "3.3.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["PubNub"]
@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.summary = "PubNub Official Ruby gem"
 
   s.add_dependency "activesupport"
-  s.add_dependency "eventmachine", "~> 0.12.9"
+  s.add_dependency "eventmachine", "~> 1.0.0"
   s.add_dependency "uuid", "~> 2.3.5"
   s.add_dependency "yajl-ruby"
 

@@ -7,11 +7,6 @@ gem 'rails', '3.2.6'
 
 gem 'sqlite3'
 
-gem 'eventmachine', "~> 0.12.9"
-gem "uuid", "~> 2.3.5"
-gem 'yajl-ruby'
-
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
