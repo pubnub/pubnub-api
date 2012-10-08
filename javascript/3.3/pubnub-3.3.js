@@ -971,7 +971,7 @@ var PDIV          = $('pubnub') || {}
 PUBNUB = CREATE_PUBNUB({
     'publish_key'   : attr( PDIV, 'pub-key' ),
     'subscribe_key' : attr( PDIV, 'sub-key' ),
-    'ssl'           : attr( PDIV, 'ssl' ) == 'on',
+    'ssl'           : attr( PDIV, 'ssl' ) == 'on' || !document.location.href.indexOf('https'),
     'origin'        : attr( PDIV, 'origin' ),
     'uuid'          : attr( PDIV, 'uuid' )
 });
