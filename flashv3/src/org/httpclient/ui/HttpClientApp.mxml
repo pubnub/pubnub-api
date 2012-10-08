@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:HttpClientAppImpl xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" xmlns:ui="org.httpclient.ui.*" creationComplete="onCreationComplete(event)">
+    
+  <mx:TabNavigator id="tabNavigator" width="100%" height="100%" creationPolicy="all">
+      
+    <mx:VBox label="Request">
+        
+      <mx:HBox width="100%" paddingRight="10" paddingBottom="10">
+        <mx:Label text="URI:" width="60" textAlign="right"/>
+        <mx:TextInput id="uriInput" width="100%" text="http://http-test.s3.amazonaws.com/test.txt"/>
+        
+        <mx:ComboBox id="verbCombo" dataProvider="{verbs}" />              
+        
+        <mx:Button label="Go" click="onRequest(event);"/>
+      </mx:HBox>
+      
+      <mx:HBox width="100%" height="100" paddingRight="10" paddingBottom="10">
+        <mx:Label text="Header:" width="60" textAlign="right"/>
+        <mx:TextArea id="requestHeaderArea" width="100%" height="100%" text="{'Content-Type: text/plain\nx-amx-foo: Bar'}" />
+      </mx:HBox>
+      
+      <mx:HBox width="100%" paddingRight="10" paddingBottom="10">
+        <mx:Label text="Body:" width="60" textAlign="right"/>
+        <mx:TextArea id="requestBodyArea" width="100%" height="100" text="This is a test." />
+      </mx:HBox>
+      
+      <mx:HBox width="100%" paddingRight="10" paddingBottom="10">
+        <mx:Label text="Status:" width="60" textAlign="right"/>
+        <mx:Label width="100%" text="{status}"/>
+      </mx:HBox>
+      
+      <mx:HBox width="100%" height="100" paddingRight="10" paddingBottom="10">
+        <mx:Label text="Sent:" width="60" textAlign="right"/>
+        <mx:TextArea editable="false" width="100%" height="100%" text="{requestSent}"/>
+      </mx:HBox>
+      
+    </mx:VBox>    
+      
+    <mx:VBox label="Response">
+      
+      <mx:HBox width="100%" paddingRight="10" paddingBottom="10">
+        <mx:Label text="Status:" width="60" textAlign="right"/>
+        <mx:Label width="100%" text="{responseStatus}"/>
+      </mx:HBox>
+    
+      <mx:HBox width="100%" height="100" paddingRight="10" paddingBottom="10">
+        <mx:Label text="Header:" width="60" textAlign="right"/>
+        <mx:TextArea editable="false" width="100%" height="100%" text="{responseHeader}"/>
+      </mx:HBox>
+    
+      <mx:HBox width="100%" height="100%" paddingRight="10" paddingBottom="10">
+        <mx:Label text="Body:" width="60" textAlign="right"/>
+        <mx:TextArea editable="false" width="100%" height="100%" text="{responseBody}"/>
+      </mx:HBox>          
+    
+    </mx:VBox>
+      
+  </mx:TabNavigator>
+
+
+
+</ui:HttpClientAppImpl>
