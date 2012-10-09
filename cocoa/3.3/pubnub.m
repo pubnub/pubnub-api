@@ -1,13 +1,10 @@
 #import "pubnub.h"
 
-
 @interface NSString (Extensions)
-
 - (NSString*) urlEscapedString;  // Uses UTF-8 encoding and also escapes characters that can confuse the parameter 
 @end
 
 @implementation NSString (Extensions)
-
 - (NSString*) urlEscapedString {
     return (__bridge_transfer id)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)self, NULL, CFSTR(":@/?&=+"),kCFStringEncodingUTF8) ;
 }
@@ -33,7 +30,6 @@
     return self;
 }
 
-
 +(NSString*) md5: (NSString*) stringToHash {
     const char *src = [stringToHash UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
@@ -50,7 +46,12 @@
     return uuidString;
 }
 
-// * /publish/pub-key/sub-key/signature/channel/callback/"msg"
+/**
+ Publish
+ Send a message to a channel.
+ * /publish/pub-key/sub-key/signature/channel/callback/"msg"
+ */
+
 -(void)
     publish:  (NSString*) channel
     message:  (id)        message
@@ -89,10 +90,24 @@
     ];
 }
 
+/**
+ subscribed
+ 
+ Check the channel allready subscribed or not.
+ */
 -(BOOL) subscribed: (NSString*) channel {
     if ([subscriptions objectForKey: channel]) return YES;
     return NO;
 }
+
+/**
+ * Subscribe
+ *
+ * Listen for a message on a channel 
+ *
+ * @param NSDictionary containt channel name,timetoken and delegate.
+ * 
+ */
 // * /subscribe/sub-key/channel/callback/timetoken
 -(void) subscribe: (NSDictionary*) args {
     NSString* channel = [args objectForKey:@"channel"];
@@ -116,6 +131,14 @@
     [_connections setObject:request forKey:channel];
 }
 
+/**
+ * Subscribe
+ *
+ * Listen for a message on a channel
+ *
+ * @param NSString channel name.
+ * @param id delegate
+ */
 -(void)
     subscribe: (NSString*) channel
     delegate:  (id)        delegate
@@ -137,7 +160,17 @@
         nil]
     ];
 }
-    
+/**
+ * Detaile dHistory
+ *
+ * Load Previously Published Messages in Detail
+ *
+ * @param NSDictionary contains 
+                        channel',
+                        delegate and 
+                        optional: 'start', 'end', 'reverse', 'count'
+ *          
+ */
 - (void)detailedHistory:(NSDictionary * )arg1 {
     
     NSString *channel;
@@ -219,6 +252,14 @@
      ];
 }
 
+/**
+ * Here Now
+ *
+ * Load current occupancy from a channel.
+ *
+ * @param channel and delegate
+ *
+ */
 - (void)
     hereNow:(NSString *)channel
     delegate: (id)delegate
@@ -244,6 +285,14 @@
      ];
 }
 
+/**
+ * Unsubscribe
+ *
+ * Stop listen for a message on a channel.
+ *
+ * @param channel
+ *
+ */
 -(void) unsubscribe: (NSString*) channel {
     Request *_req = [_connections objectForKey:channel];
     
@@ -257,6 +306,15 @@
      [_connections removeObjectForKey:channel];
 }
 
+/**
+ * History
+ *
+ * Load history from a channel
+ *
+ * @param NSString channel name.
+ * @param int limit history count response
+ * @param id delegate
+ */
 // * /history/sub-key/channel/callback/limit
 -(void)
     history:  (NSString*) channel
@@ -280,6 +338,13 @@
     ];
 }
 
+/**
+ * Time
+ *
+ * Timestamp from PubNub Cloud
+ *
+ * @param id delegate
+ */
 -(void) time: (id) delegate {
     [[Request alloc]
         scheme  :scheme
@@ -292,15 +357,22 @@
     ];
 }	
 
+/**
+ * Presence feature
+ *
+ * Listen for a presence message on a channel (BLOCKING)
+ *
+ * @param NSString channel name. (+"pnpres")
+ * @param id delegate
+ */
 -(void)
 presence: (NSString*) channel
-delegate:  (id)        delegate
+delegate:  (id)       delegate
 {
     if ([self subscribed: [NSString stringWithFormat:@"%@-pnpres", channel]]) {
         NSLog( @"Already running presence: %@", channel );
         return;
     }
-    
     [subscriptions setObject:@"1" forKey:[NSString stringWithFormat:@"%@-pnpres", channel]];
     
     [self

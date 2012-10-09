@@ -2,7 +2,6 @@
 #import <Cocoa/Cocoa.h>
 
 @class Pubnub;
-
 typedef enum {
     kCommand_Undefined = 0,
     kCommand_SendMessage,

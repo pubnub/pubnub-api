@@ -1,6 +1,5 @@
 
-#import <Foundation/Foundation.h>
-
+#import <Cocoa/Cocoa.h>
 typedef enum {
     test_begin_to_end_count=0,
     test_end_to_begin_count,

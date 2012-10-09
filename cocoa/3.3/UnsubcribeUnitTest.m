@@ -3,8 +3,7 @@
 //  1.Subscribe the channel
 //  2.Publish the message.
 //  3.After Send message. In subscribe callback unsubscribe the channel.
-//  4.And finally unsubscribe the channel.
-//  5.Again publish the message. 
+//  4.Again publish the message. 
 //
 
 #import "UnsubcribeUnitTest.h"
@@ -37,7 +36,6 @@ message:  (id)message_o
     NSLog(@"Publish Message fail on channel:%@ with responce:%@",channel,response);
 }
 
-
 @end
 
 @interface SubcribeCallbackForUnsubcribeUnitTest: Response
@@ -62,27 +60,22 @@ message:  (id)message_o
 
 -(void)callback:(id)request withResponce:(id)response
 {
-    NSLog(@"Subcribe:%@",response);
     NSLog(@"Message recevie sucessfully....");
     NSLog(@"Unsubscribing the channel:%@",channel);
     [pubnub unsubscribe:channel];
     NSLog(@"Unsubscribe the channel:%@  sucussfully.",channel);
     
-    NSLog(@"Publishing message on channel:%@",channel);
+    NSLog(@"Publishing message to channel %@",channel);
     NSString *newMessage=@"Temp sample message.";
     PublishCallbackForUnsubcribeUnitTest *reponceCallback= [[PublishCallbackForUnsubcribeUnitTest alloc]
                                                             pubnub:pubnub
                                                             channel:channel
                                                             message:newMessage];
-    
-    
-    
     [pubnub
      publish: channel
      message: newMessage
      delegate: reponceCallback
      ];
-    
 }
 
 -(void)fail:(id)request withResponce:(id)response
@@ -90,14 +83,11 @@ message:  (id)message_o
       NSLog(@"Subcribe fail:%@",response);
 }
 
-
 @end
-
 
 @implementation UnsubcribeUnitTest
 
 NSString* channel ;
-
 NSString* msg ;
 Pubnub *pubnub;
 
@@ -111,7 +101,6 @@ Pubnub *pubnub;
               origin:       @"pubsub.pubnub.com"
               ];
  	
-    
     channel= [NSString stringWithFormat:@"%d", (int)CFAbsoluteTimeGetCurrent()] ;
     NSLog(@"Channel:%@",channel);
     msg = @" text sample message";
@@ -119,9 +108,9 @@ Pubnub *pubnub;
                                                   pubnub:pubnub
                                                   channel:  channel
                                                   message:msg];
-
     
         //Subcribe the channel
+    NSLog(@"Subscribed to channel  %@",channel);
     [pubnub subscribe:channel delegate:subcb];
     
         //Publish Message on channel
@@ -130,15 +119,10 @@ Pubnub *pubnub;
                                               channel:  channel
                                               message:msg];
     
-    
-    
+    NSLog(@"Publishing message to channel %@",channel);
     [pubnub
      publish: channel
      message: msg
-     delegate: reponceCallback
-     ];
-    
-    
+     delegate: reponceCallback];
 }
-
 @end

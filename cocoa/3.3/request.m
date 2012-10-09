@@ -22,9 +22,7 @@
             stringWithFormat: @"%@://%@%@",
             scheme,
             host,
-            path
-        ]
-    ];
+            path]];
 
     NSMutableURLRequest *request = [NSMutableURLRequest
         requestWithURL:  url 

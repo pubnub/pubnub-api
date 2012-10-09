@@ -1,14 +1,5 @@
-//
-//  DetailedHistoryUnitTest.m
-//  CoCoa_Pubnub
-//
-//  Created by itshastra on 05/10/12.
-//  Copyright (c) 2012 itshastra. All rights reserved.
-//
-
 #import "DetailedHistoryUnitTest.h"
 #import "pubnub.h"
-
 
 @interface      PublishMessageResponse: Response
 -(PublishMessageResponse*)
@@ -17,7 +8,6 @@
     message:  (id)message_o;
 @end
 @implementation PublishMessageResponse
-
 -(PublishMessageResponse*)
     pubnub:  (Pubnub*)   pubnub_o
     channel: (NSString*) channel_o
@@ -28,12 +18,10 @@
 }
 
 DetailedHistoryUnitTest *detailedHistory;
-
 -(void)setDetailedHistory:(id)obj
 {
     detailedHistory=obj;
 }
-
 -(void) callback:(id) request withResponce:(id)response {
     if ([message isKindOfClass:[NSString class]]) {
         
@@ -42,7 +30,6 @@ DetailedHistoryUnitTest *detailedHistory;
         NSString *timestamp=[response objectAtIndex:2];
         NSLog(@"Message #  %ld  published with timestamp # %@",index,timestamp);
 
-  
             //Inittiolize all local variable
         [detailedHistory.inputs addObject:[NSDictionary dictionaryWithObjectsAndKeys:timestamp,@"timestamp",message,@"message", nil]];
         NSUInteger ind= [detailedHistory.inputs count];
@@ -68,11 +55,9 @@ DetailedHistoryUnitTest *detailedHistory;
             
                 //Call First detailed_history_tests
         [detailedHistory detailed_history_tests];
-            
             NSLog(@"Start:%@   mid:%@   end:%@",detailedHistory.starttime,detailedHistory.midtime,detailedHistory.endtime);
         }
     }
-    
 }
 
 -(void) fail: (id) response {
@@ -96,14 +81,12 @@ channel: (NSString*) channel_o
 }
 
 DetailedHistoryUnitTest *detailedHistoryobj;
-
 -(void)setDetailedHistoryObject:(id)obj
 {
     detailedHistoryobj=obj;
 }
 
 -(void) callback:(id) request withResponce:(id)messages {
-    
     if([[messages objectAtIndex:0] isKindOfClass:[NSArray class]])
     {
         NSUInteger index;
@@ -114,7 +97,6 @@ DetailedHistoryUnitTest *detailedHistoryobj;
         NSString * expected_msg;
         switch (detailedHistoryobj.currentTest) {
             case test_begin_to_end_count:
-               
                 if([hCount intValue] == detailedHistoryobj.historyCount && [[[history lastObject] description] isEqualToString:[[[detailedHistoryobj.inputs objectAtIndex:(detailedHistoryobj.historyCount-1)] objectForKey:@"message" ] description]])
                 {
                     [DetailedHistoryUnitTest LogPass:YES WithMessage:@"test_begin_to_end_count"];
@@ -126,7 +108,6 @@ DetailedHistoryUnitTest *detailedHistoryobj;
                       [detailedHistoryobj test_end_to_begin_count];//Call next test;
                 break;
             case test_end_to_begin_count:
-                
                 if([hCount intValue] == detailedHistoryobj.historyCount && [[[history lastObject] description] isEqualToString:[[[detailedHistoryobj.inputs objectAtIndex:(detailedHistoryobj.total_msg-1)] objectForKey:@"message" ] description]])
                 {
                     [DetailedHistoryUnitTest LogPass:YES WithMessage:@"test_end_to_begin_count"];
@@ -198,12 +179,10 @@ DetailedHistoryUnitTest *detailedHistoryobj;
                     [DetailedHistoryUnitTest LogPass:NO WithMessage:@"test_count_zero"];
                 }
                 break;
-                
             default:
                 break;
         }
     }
-    
 }
 
 -(void) fail: (id) response {
@@ -211,13 +190,11 @@ DetailedHistoryUnitTest *detailedHistoryobj;
 }
 @end
 
-
 @implementation DetailedHistoryUnitTest
 @synthesize starttime,midtime,endtime,inputs,total_msg,currentTest,historyCount;
 
 NSString* channel ;
 NSString* crazy = @" text sample message";
-
 Pubnub *pubnub;
 DetailedHistoryUnitTestResponse *detailHisReponceCallback;
 -(void)runUnitTest
@@ -239,14 +216,11 @@ DetailedHistoryUnitTestResponse *detailHisReponceCallback;
     [self publish_msgOnStart:0 AndEnd:total_msg/2 AndOffset:0];
     [self publish_msgOnStart:0 AndEnd:total_msg/2 AndOffset:total_msg/2];
     
-    
     detailHisReponceCallback= [[DetailedHistoryUnitTestResponse alloc]
                                               pubnub:pubnub
                                               channel:  channel
                                               ];
-    
     [detailHisReponceCallback setDetailedHistoryObject:self];
-    
 }
 
 -(void) detailed_history_tests
@@ -266,15 +240,12 @@ DetailedHistoryUnitTestResponse *detailHisReponceCallback;
                                                 pubnub:pubnub
                                                 channel:  channel
                                                 message:text];
-        
         [reponceCallback setDetailedHistory:self];
-       
         [pubnub
               publish: channel
               message: text
               delegate: reponceCallback
               ];
-        
     }
 }
 
@@ -316,12 +287,10 @@ DetailedHistoryUnitTestResponse *detailHisReponceCallback;
                              nil]];
     currentTest=test_end_to_begin_count;//Set Current active unit test. Use in Detailed history callback
     historyCount=[aCountInt intValue];//Hold History count pass to request
-    
 }
 
 -(void) test_start_reverse_true
 {
-    
     [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
                              channel,@"channel",
                              detailHisReponceCallback ,@"delegate",
@@ -333,7 +302,6 @@ DetailedHistoryUnitTestResponse *detailHisReponceCallback;
 
 -(void) test_start_reverse_false
 {
-    
     [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
                              channel,@"channel",
                              detailHisReponceCallback ,@"delegate",
@@ -344,7 +312,6 @@ DetailedHistoryUnitTestResponse *detailHisReponceCallback;
 
 -(void) test_end_reverse_true
 {
-    
     [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
                              channel,@"channel",
                              detailHisReponceCallback ,@"delegate",

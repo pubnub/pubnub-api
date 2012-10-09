@@ -14,7 +14,6 @@
     NSMutableDictionary*  _connections;
     
 }
-
 -(Pubnub*)
     publishKey:   (NSString*) pub_key
     subscribeKey: (NSString*) sub_key
