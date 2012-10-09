@@ -26,10 +26,8 @@ public class MessageBox extends Sprite {
 
 		//set the channel
 
-        Security.allowDomain("*");
-        Security.allowInsecureDomain("*");
-
-
+//        Security.allowDomain("*");
+//        Security.allowInsecureDomain("*");
 
         var channelName:String = "hello_world_flash";
         trace("Channel set to " + channelName);

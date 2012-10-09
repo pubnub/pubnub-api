@@ -130,7 +130,7 @@ package PubNub
 				var result:Object;
 				try{
 					result = JSON.parse(evt.readUTFBytes());        
-					start_time_token = result[0];
+					//start_time_token = result[0];
                     start_time_token = 0;
 					initialized = true;
 				} catch (e:*) {
@@ -729,13 +729,13 @@ package PubNub
             {
                 url += "/" + args.timetoken;
 
-                    if ( args.operation == "subscribe_with_timetoken") {
+                    if ( args.operation == "subscribe_with_timetoken" || args.operation == "subscribe_get_timetoken" ) {
                         url += "?uuid=" + this.session_uuid;
                     }
             }
 
 			if (args.params != null) { 
-				if (args.operation != "subscribe_with_timetoken")
+				if (args.operation != "subscribe_with_timetoken" )
 					url = args.url + "?" + args.params;
 				else
 					url = args.url + "&" + args.params;
