@@ -1,21 +1,23 @@
 #import "pubnub.h"
+#import "DetailedHistoryUnitTest.h"
+#import "UnsubcribeUnitTest.h"
 
-// ----------------------
-// Time Response Callback
-// ----------------------
-@interface      TimeResponse: TimeDelegate @end
+   // ----------------------
+    // Time Response Callback
+    // ----------------------
+@interface      TimeResponse: Response @end
 @implementation TimeResponse
--(void) callback:(NSURLConnection *)connection withResponce:(id)response{
-    NSLog( @"%@", response );
+-(void) callback:(id) request withResponce:(id)response{
+    NSLog( @"Time:%@", response );
 }
 @end
 
-// -------------------------
-// Publish Response Callback
-// -------------------------
+    // -------------------------
+    // Publish Response Callback
+    // -------------------------
 @interface      PublishResponse: Response @end
 @implementation PublishResponse
--(void) callback:(NSURLConnection *)connection withResponce:(id)response {
+-(void) callback:(id) request withResponce:(id)response {
     NSLog( @"PublishResponse %@", response );
 }
 -(void) fail: (id) response {
@@ -28,7 +30,7 @@
 // -------------------------
 @interface      HistoryResponse: Response @end
 @implementation HistoryResponse
--(void) callback:(NSURLConnection *)connection withResponce:(id)response {
+-(void) callback:(id) request withResponce:(id)response {
     NSLog( @"HistoryResponse :%@", response );
 }
 @end
@@ -38,7 +40,7 @@
 // -------------------------
 @interface      HereNowResponse: Response @end
 @implementation HereNowResponse
--(void) callback:(NSURLConnection *)connection withResponce:(id)response {
+-(void) callback:(id) request withResponce:(id)response {
     NSLog( @"Here Now:  %@", response );
 }
 @end
@@ -48,18 +50,17 @@
 // -------------------------
 @interface      DetailedHistoryResponse: Response @end
 @implementation DetailedHistoryResponse
--(void) callback:(NSURLConnection *)connection withResponce:(id)response {
+-(void) callback:(id) request withResponce:(id)response {
     NSLog( @"DetailedHistory :: %@", response );
 }
 @end
-
 
 // ---------------------------
 // Subscribe Response Callback
 // ---------------------------
 @interface      SubscribeResponse: Response @end
 @implementation SubscribeResponse
--(void) callback:(NSURLConnection *)connection withResponce: (id) response {
+-(void) callback:(id) request withResponce: (id) response {
     NSLog( @"Received Message (channel: '%@') -> %@", channel, response );
 }
 @end
@@ -69,7 +70,7 @@
 // ---------------------------
 @interface      PresenceResponse: Response @end
 @implementation PresenceResponse
--(void) callback:(NSURLConnection *)connection withResponce: (id) response {
+-(void) callback:(id) request withResponce: (id) response {
     NSLog( @"Received Presence Message (channel: '%@') -> %@", channel, response );
 }
 @end
@@ -77,38 +78,39 @@
  Pubnub *pubnub;
  NSString* channelName = @"hello_world";
 int main( int argc, const char *argv[] ) {
-     // ------------------
-    // Init Pubnub Object
-    // ------------------
-    pubnub = [[Pubnub alloc]
-                      publishKey:   @"demo"
-                      subscribeKey: @"demo"
-                      secretKey:    @"demo"
-                      sslOn:        NO
-                      origin:       @"pubsub.pubnub.com"
-                      ];
     
-    // ----------------------------------
-    // PubNub Server Time (Get TimeToken)
-    // ----------------------------------
+ // ------------------
+ // Init Pubnub Object
+ // ------------------
+    pubnub = [[Pubnub alloc]
+             publishKey:   @"demo"
+             subscribeKey: @"demo"
+             secretKey:    @"demo"
+             sslOn:        NO
+             origin:       @"pubsub.pubnub.com"
+             ];
+    
+ // ----------------------------------
+ // PubNub Server Time (Get TimeToken)
+ // ----------------------------------
     [pubnub time: [TimeResponse alloc]];
     
-    // -----------------------------------
-    // PubNub presence 
-    // -----------------------------------
+ // -----------------------------------
+ // PubNub presence
+ // -----------------------------------
     
     NSLog( @"Presence to: %@", channelName );
     [pubnub
      presence: channelName
      delegate:  [[PresenceResponse alloc]
-                 pubnub:  pubnub
-                 channel: channelName
-                 ]
+	   pubnub:  pubnub
+      channel: channelName
+   ]
      ];
     
-   // -----------------------------------
-   // PubNub Subscribe (Receive Messages)
-   // -----------------------------------
+ // -----------------------------------
+ // PubNub Subscribe (Receive Messages)
+ // -----------------------------------
     NSLog( @"Listening to: %@", channelName );
     [pubnub
      subscribe: channelName
@@ -118,9 +120,9 @@ int main( int argc, const char *argv[] ) {
                  ]
      ];
     
-    // ---------------------------------------
-    // Detaield PubNub History (Recent Message History)
-    // ---------------------------------------
+ // ---------------------------------------
+ // Detaield PubNub History (Recent Message History)
+ // ---------------------------------------
     NSInteger count = 3;
     NSNumber * aCountInt = [NSNumber numberWithInteger:count];
     [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -129,50 +131,66 @@ int main( int argc, const char *argv[] ) {
                              [DetailedHistoryResponse alloc],@"delegate",
                              nil]];
     
-    // ---------------------------------------
-    // PubNub History (Recent Message History)
-    // ---------------------------------------
+ // ---------------------------------------
+ // PubNub History (Recent Message History)
+ // ---------------------------------------
     [pubnub
      history:  channelName
      limit:    1
      delegate: [HistoryResponse alloc]
      ];
     
-    // -------------------------------------
-    // PubNub Publish Message (Send Message)
-    // -------------------------------------
+ // -------------------------------------
+ // PubNub Publish Message (Send Message)
+ // -------------------------------------
     [pubnub
      publish: channelName
      message: [NSArray arrayWithObjects:
                @"one",
-               @"This is my Test",
+               @"~`!@#$%^&*( )+=[]\\\\{}|;\':,./<>?.",
                @"three",
                nil
                ]
      delegate: [PublishResponse alloc]
      ];
     
-    // -----------------------------------
-    // Here Now
-    // -----------------------------------
+ // -----------------------------------
+ // Here Now
+ // -----------------------------------
     
     [pubnub hereNow:channelName delegate:[[HereNowResponse alloc]
-                                         pubnub:  pubnub
-                                         channel: channelName
+                                          pubnub:  pubnub
+                                          channel: channelName
                                           ]];
-        
+ // -----------------------------------
+ // Detaield History unit test
+ // -----------------------------------
+    
+    DetailedHistoryUnitTest *unittest= [[DetailedHistoryUnitTest alloc] init];
+    [unittest runUnitTest];
+    
+ // -----------------------------------
+ // Unsubcribe unit test
+ // -----------------------------------
+    
+    UnsubcribeUnitTest *unittest1= [[UnsubcribeUnitTest alloc] init];
+    [unittest1 runUnsubcribeUnitTest];
+    
+ // -----------------------------------
+ // Unsubcribe
+ // -----------------------------------
+    
     [pubnub
      performSelector: @selector(unsubscribe:)
      withObject:  channelName
      afterDelay: 15.0
      ];
-
-     // ----------------------------------
-     // Run Loop for Asynchronous Requests
-     // ----------------------------------
-     // Only necessary when running command line application.
+    
+ // ----------------------------------
+ // Run Loop for Asynchronous Requests
+ // ----------------------------------
+ // Only necessary when running command line application.
     [[NSRunLoop currentRunLoop] run];
-    [pubnub release];
 
     return 0;
 }

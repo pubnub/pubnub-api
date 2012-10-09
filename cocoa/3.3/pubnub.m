@@ -1,5 +1,18 @@
 #import "pubnub.h"
 
+
+@interface NSString (Extensions)
+
+- (NSString*) urlEscapedString;  // Uses UTF-8 encoding and also escapes characters that can confuse the parameter 
+@end
+
+@implementation NSString (Extensions)
+
+- (NSString*) urlEscapedString {
+    return (__bridge_transfer id)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)self, NULL, CFSTR(":@/?&=+"),kCFStringEncodingUTF8) ;
+}
+@end
+
 @implementation Pubnub
 
 -(Pubnub*)
@@ -9,45 +22,30 @@
     sslOn:        (BOOL)      ssl_on
     origin:       (NSString*) origin
 {
-    pool          = [[NSAutoreleasePool alloc] init];
-    self          = [super init];
     publish_key   = pub_key;
     subscribe_key = sub_key;
     secret_key    = sec_key;
     scheme        = ssl_on ? @"https" : @"http";
     host          = origin;
     subscriptions = [[NSMutableDictionary alloc] init];
-    parser        = [SBJsonParser new];
-    writer        = [SBJsonWriter new];
     current_uuid  = [Pubnub uuid];
-    
     _connections= [[NSMutableDictionary alloc] init];
     return self;
 }
 
-+(NSString*) urlencode: (NSString*) string {
-    return [string
-        stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding
-    ];
-}
-+(NSString*) md5: (NSString*) input {
-    const char* str = [input UTF8String];
-    unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(str, strlen(str), result);
 
-    NSMutableString *ret = [NSMutableString stringWithCapacity:
-        CC_MD5_DIGEST_LENGTH * 2
-    ];
-    for (int i = 0; i<CC_MD5_DIGEST_LENGTH; i++) {
-        [ret appendFormat:@"%02x",result[i]];
-    }
-    return ret;
++(NSString*) md5: (NSString*) stringToHash {
+    const char *src = [stringToHash UTF8String];
+    unsigned char result[CC_MD5_DIGEST_LENGTH];
+    CC_MD5(src, (unsigned int)strlen(src), result);
+    return [[NSString alloc]initWithData:[NSData dataWithBytes:result length:CC_MD5_DIGEST_LENGTH] encoding:NSUTF8StringEncoding ];
+    
 }
 
 + (NSString *)uuid
 {
     CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
-    NSString *uuidString = ( NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    NSString *uuidString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
     CFRelease(uuid);
     return uuidString;
 }
@@ -58,8 +56,7 @@
     message:  (id)        message
     delegate: (id)        delegate
 {
-    NSString* message_string = [writer stringWithObject: message];
-
+    NSString* message_string =[Pubnub JSONToString:message];
     NSString* signature = [Pubnub md5: [NSString
             stringWithFormat: @"%@/%@/%@/%@/%@",
             publish_key,
@@ -82,11 +79,13 @@
             publish_key,
             subscribe_key,
             signature,
-            [Pubnub urlencode: channel],
-            [Pubnub urlencode: message_string]
+            [channel urlEscapedString],
+            [message_string urlEscapedString]
         ]
         callback: delegate
         channel:  channel
+        pubnub:self
+     command:kCommand_SendMessage
     ];
 }
 
@@ -101,17 +100,17 @@
         scheme: scheme
         host:   host
         path:   [NSString
-            stringWithFormat: @"/subscribe/%@/%@/0/%@/?uuid=%@",
-            subscribe_key,
-            [Pubnub urlencode: channel],
-            [args objectForKey:@"timetoken"],
-            current_uuid
+        stringWithFormat: @"/subscribe/%@/%@/0/%@/?uuid=%@",
+        subscribe_key,
+        [channel urlEscapedString],
+        [args objectForKey:@"timetoken"],
+        current_uuid
         ]
-        callback: [[SubscribeDelegate alloc]
-            finished: [args objectForKey:@"delegate"]
-            pubnub:   self
-            channel:  channel
-        ] channel:  channel
+     
+        callback: [args objectForKey:@"delegate"]
+        channel:  channel
+        pubnub:self
+        command:kCommand_ReceiveMessage
     ];
     
     [_connections setObject:request forKey:channel];
@@ -138,7 +137,7 @@
         nil]
     ];
 }
-
+    
 - (void)detailedHistory:(NSDictionary * )arg1 {
     
     NSString *channel;
@@ -163,8 +162,6 @@
     }
     
     NSMutableString *parameters= [[NSMutableString alloc]init];
-    
-    
     
     if ([arg1 objectForKey:@"count"])
     {
@@ -212,16 +209,14 @@
      path:   [NSString
               stringWithFormat: @"/v2/history/sub-key/%@/channel/%@%@",
               subscribe_key,
-              [Pubnub urlencode: channel],
+              [channel urlEscapedString],
               [parameters description]
               ]
-     callback: [[Response alloc]
-                finished: delegate
-                pubnub:   self
-                channel:  channel
-                ]   channel:channel
+     callback: delegate
+     channel:channel
+     pubnub:self
+     command:kCommand_FetchDetailHistory
      ];
-    
 }
 
 - (void)
@@ -240,27 +235,22 @@
      path:   [NSString
               stringWithFormat: @"/v2/presence/sub_key/%@/channel/%@",
               subscribe_key,
-              [Pubnub urlencode: channel]        
+              [channel urlEscapedString]
               ]
-     callback: [[Response alloc]
-                finished: delegate
-                pubnub:   self
-                channel:  channel
-                ]   channel:channel
+     callback:delegate
+      channel:  channel
+       pubnub:  self
+      command:  kCommand_Here_Now
      ];
-    
-    
 }
 
-
 -(void) unsubscribe: (NSString*) channel {
-
     Request *_req = [_connections objectForKey:channel];
     
     [_req.connection cancel];
     [_connections removeObjectForKey:channel];
     [subscriptions removeObjectForKey:channel];
-    
+    NSLog(@"Unsubscribe successfully.");  
 }
 
 -(void) removeConnection: (NSString*) channel{
@@ -276,34 +266,31 @@
     if (limit > 100) limit = 100;
 
     [[Request alloc]
-        scheme: scheme
-        host:   host
-        path:   [NSString
-            stringWithFormat: @"/history/%@/%@/0/%i",
-            subscribe_key,
-            [Pubnub urlencode: channel],
-            limit
-        ]
-        callback: [[Response alloc]
-            finished: delegate
-            pubnub:   self
-            channel:  channel
-        ]   channel:channel
+        scheme  : scheme
+        host    : host
+        path:     [NSString
+                  stringWithFormat: @"/history/%@/%@/0/%i",
+                  subscribe_key,
+                  [channel urlEscapedString],
+                  limit]
+        callback: delegate
+         channel: channel
+          pubnub: self
+         command: kCommand_FetchHistory
     ];
 }
 
 -(void) time: (id) delegate {
     [[Request alloc]
-        scheme:   scheme
-        host:     host
-        path:     @"/time/0"
-        callback: [[TimeDelegate alloc]
-            finished: delegate
-            pubnub:   self
-        ] channel:nil
+        scheme  :scheme
+        host    :host
+        path    :@"/time/0"
+        callback:delegate		
+        channel :nil
+        pubnub  :self
+        command :kCommand_GetTime
     ];
-}
-
+}	
 
 -(void)
 presence: (NSString*) channel
@@ -327,117 +314,217 @@ delegate:  (id)        delegate
      ];
 }
 
-
 -(void) presence: (NSDictionary*) args {
     NSString* channel = [args objectForKey:@"channel"];
     [[Request alloc]
-     scheme: scheme
-     host:   host
-     path:   [NSString
+     scheme  : scheme
+     host    : host
+     path    : [NSString
               stringWithFormat: @"/subscribe/%@/%@/0/%@/?uuid=%@",
               subscribe_key,
-              [Pubnub urlencode: channel],
+              [channel urlEscapedString],
               [args objectForKey:@"timetoken"],
               current_uuid
               ]
-     callback: [[PresenceDelegate alloc]
-                finished: [args objectForKey:@"delegate"]
-                pubnub:   self
-                channel:  channel
-                ] channel:channel
+     callback: [args objectForKey:@"delegate"]
+     channel :channel
+     pubnub  :self
+     command :kCommand_Presence
      ];
 }
 
-@end
-
-
-@implementation SubscribeDelegate
--(void) callback:(NSURLConnection *)connection withResponce:(id)response {
-    NSArray* response_data = [parser objectWithString: response];
-    if (![pubnub subscribed: channel]) return;
-    
-    [pubnub
-     performSelector: @selector(subscribe:)
-     withObject: [NSDictionary
-                  dictionaryWithObjectsAndKeys:
-                  channel,                         @"channel",
-                  delegate,                        @"delegate",
-                  [response_data objectAtIndex:1], @"timetoken",
-                  nil]
-     ];
-    
-    id message;
-    NSEnumerator* messages = [[response_data objectAtIndex:0]
-                              objectEnumerator
-                              ];
-    
-    while ((message = [messages nextObject])) {
-        [delegate callback:connection withResponce:message ];
++(NSString*)JSONToString:(id)object
+{
+    NSString * jsonString= nil;
+    if ([NSJSONSerialization class]) {
+        if ([object isKindOfClass:[NSString class]]) {
+            object = [NSString stringWithFormat:@"\"%@\"", object];
+            
+            return object;
+        } else {
+            NSError* error = nil;
+            id result = [NSJSONSerialization dataWithJSONObject:object options:kNilOptions error:&error];
+            if (error != nil) return nil;
+            jsonString =[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
+            
+        }
+    }else{
+        NSLog(@"NSJSONSerialization not support.");
     }
-    
+    return jsonString;
 }
 
--(void) fail:(NSURLConnection *)connection withResponce: (id) response {
-    if (![pubnub subscribed: channel]) return;
-    
-    [pubnub
-     performSelector: @selector(subscribe:)
-     withObject: [NSDictionary
-                  dictionaryWithObjectsAndKeys:
-                  channel,  @"channel",
-                  delegate, @"delegate",
-                  @"1",     @"timetoken",
-                  nil]
-     afterDelay: 1.0
-     ];
-}
-@end
-
-@implementation PresenceDelegate
--(void) callback:(NSURLConnection *)connection withResponce:(id)response {
-    NSArray* response_data = [parser objectWithString: response];
-    if (![pubnub subscribed: channel]) return;
-    [pubnub removeConnection:channel];
-    [pubnub
-     performSelector: @selector(presence:)
-     withObject: [NSDictionary
-                  dictionaryWithObjectsAndKeys:
-                  channel,                         @"channel",
-                  delegate,                        @"delegate",
-                  [response_data objectAtIndex:1], @"timetoken",
-                  nil]
-     ];
-    
-    id message;
-    NSEnumerator* messages = [[response_data objectAtIndex:0]
-                              objectEnumerator
-                              ];
-    
-    while ((message = [messages nextObject])) {
-        [delegate callback:connection withResponce:message ];
++(id)StringToJSON:(id)object
+{
+    NSError* error = nil;
+    if ([NSJSONSerialization class]) {
+        id result= [NSJSONSerialization JSONObjectWithData:object options:kNilOptions error:&error];
+        if (error != nil) result = nil;
+        return result;
+    }else
+    {
+        NSLog(@"NSJSONSerialization not support.");
+        return nil;
     }
-    
 }
 
--(void) fail:(NSURLConnection *)connection withResponce: (id) response {
-    if (![pubnub subscribed: channel]) return;
-      [pubnub removeConnection:channel];
-    [pubnub
-     performSelector: @selector(presence:)
-     withObject: [NSDictionary
-                  dictionaryWithObjectsAndKeys:
-                  channel,  @"channel",
-                  delegate, @"delegate",
-                  @"1",     @"timetoken", 
-                  nil]
-     afterDelay: 1.0
-     ];
+- (void)didCompleteWithRequest:(Request*)request WithResponse:(id)response isfail:(BOOL) isFail {
+   
+    switch (request.command) {
+         case kCommand_SendMessage:
+             [self handleCommandSendMessageForRequest:request response:response isfail:isFail];
+             break;
+             
+         case kCommand_ReceiveMessage:
+             [self handleCommandReceiveMessageForRequest:request response:response isfail: isFail];
+             break;
+             
+         case kCommand_FetchDetailHistory:
+             [self handleCommandFetchDetailHistoryForRequest:request response:response isfail: isFail];
+             break;
+             
+         case kCommand_FetchHistory:
+             [self handleCommandFetchHistoryForRequest:request response:response isfail: isFail];
+             break;
+             
+         case kCommand_GetTime:
+             [self handleCommandGetTimeForRequest:request response:response isfail: isFail];
+             break;
+             
+         case kCommand_Here_Now: 
+             [self handleCommandGetHereNowForRequest:request response:response isfail: isFail];
+             break;
+        case kCommand_Presence:
+            [self handleCommandPresenceNowForRequest:request response:response isfail: isFail];
+            break;
+         default:
+             NSLog(@"ERROR::didCompleteWithResponse Command Not Set..");
+             
+        }
 }
-@end
 
-@implementation TimeDelegate
--(void) callback:(NSURLConnection *)connection withResponce:(id) response {
-    [delegate callback:connection withResponce: [[parser objectWithString: response] objectAtIndex:0]];
+#pragma mark - command handlers for -connection:didCompleteWithResponse:
+
+- (void)handleCommandSendMessageForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
+{
+    if(!isfail)
+        [request.delegate callback:request withResponce:response ];
+    else
+        [request.delegate fail:request withResponce:nil ];
 }
+
+- (void)handleCommandReceiveMessageForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
+{
+   if(!isfail)
+   {
+       NSArray* response_data=(NSArray*)response;
+       if (![self subscribed: request.channel]) return;
+       
+       [self
+        performSelector: @selector(subscribe:)
+        withObject: [NSDictionary
+                     dictionaryWithObjectsAndKeys:
+                     request.channel,                 @"channel",
+                     request.delegate,                @"delegate",
+                     [response_data objectAtIndex:1], @"timetoken",
+                     nil]
+        ];
+       NSEnumerator* messages = [[response_data objectAtIndex:0]
+                                 objectEnumerator
+                                 ];
+       id nextMessage;
+       while ((nextMessage = [messages nextObject])) {
+           [request.delegate callback:request withResponce:nextMessage ];
+       }
+   }else
+   {
+       if (![self subscribed: request.channel]) return;
+       [self
+        performSelector: @selector(subscribe:)
+        withObject: [NSDictionary
+                     dictionaryWithObjectsAndKeys:
+                     request.channel,  @"channel",
+                     request.delegate, @"delegate",
+                     @"1",     @"timetoken",
+                     nil]
+        afterDelay: 1.0
+        ];
+   }
+}
+
+- (void)handleCommandFetchDetailHistoryForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
+{
+    if(!isfail)
+        [request.delegate callback:request withResponce:response ];
+    else
+        [request.delegate fail:request withResponce:nil ];
+}
+
+- (void)handleCommandPresenceNowForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
+{
+   if(!isfail)
+   {
+       NSArray* response_data=(NSArray* )response;
+       
+       if (![self subscribed: request.channel]) return;
+       [self removeConnection:request.channel];
+       [self
+        performSelector: @selector(presence:)
+        withObject: [NSDictionary
+                     dictionaryWithObjectsAndKeys:
+                     request.channel,                 @"channel",
+                     request.delegate,                @"delegate",
+                     [response_data objectAtIndex:1], @"timetoken",
+                     nil]
+        ];
+       
+       id nextMessage;
+       NSEnumerator* messages = [[response_data objectAtIndex:0]
+                                 objectEnumerator
+                                 ];
+       
+       while ((nextMessage = [messages nextObject])) {
+           [request.delegate callback:request withResponce:nextMessage ];
+       }
+   }else
+   {
+       if (![self subscribed: request.channel]) return;
+       [self removeConnection:request.channel];
+       [self
+        performSelector: @selector(presence:)
+        withObject: [NSDictionary
+                     dictionaryWithObjectsAndKeys:
+                     request.channel,  @"channel",
+                     request.delegate, @"delegate",
+                     @"1",     @"timetoken",
+                     nil]
+        afterDelay: 1.0
+        ];
+   }
+}
+
+- (void)handleCommandFetchHistoryForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
+{
+    [request.delegate callback:request withResponce:response ];
+}
+
+- (void)handleCommandGetTimeForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
+{
+    if (!isfail) {
+        NSArray* response_data=(NSArray* )response;
+        [request.delegate callback:request withResponce: [response_data objectAtIndex:0]];
+    } else {
+        [request.delegate callback:request withResponce: @"0"];
+    }
+}
+
+- (void)handleCommandGetHereNowForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
+{
+    if(!isfail)
+        [request.delegate callback:request withResponce:response ];
+    else
+        [request.delegate fail:request withResponce:nil ];
+}
+
 @end
 

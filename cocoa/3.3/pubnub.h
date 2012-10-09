@@ -1,7 +1,6 @@
 #import <stdio.h>
 #import <Cocoa/Cocoa.h>
 #import <CommonCrypto/CommonDigest.h>
-#import "JSON/JSON.h"
 #import "request.h"
 
 @interface Pubnub: NSObject {
@@ -13,9 +12,7 @@
     NSString* current_uuid;
     NSMutableDictionary* subscriptions;
     NSMutableDictionary*  _connections;
-    NSAutoreleasePool* pool;
-    SBJsonParser* parser;
-    SBJsonWriter* writer;
+    
 }
 
 -(Pubnub*)
@@ -57,9 +54,10 @@
 -(void)
 presence: (NSString*) channel
 delegate:  (id)        delegate;
+
+- (void)didCompleteWithRequest:(Request*)request WithResponse:(id)response isfail:(BOOL) isFail;
+
 @end
 
-@interface SubscribeDelegate: Response @end
-@interface PresenceDelegate:  Response @end
-@interface TimeDelegate:      Response @end
+
 

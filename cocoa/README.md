@@ -1,4 +1,4 @@
-Objective-C PubNub 3.0 Real-time Cloud Push API
+Objective-C PubNub 3.3 Real-time Cloud Push API
 ===============================================
 
 PubNub Account
@@ -239,8 +239,131 @@ PubNub Server Time Example (Get TimeToken) [Full Example]
         return 0;
     }
 
+PubNub Server Detailed History Example (Recent Message History) [Usage Example]
+----------------------------------------------------------
+	NSInteger count = 3;
+    NSNumber * aCountInt = [NSNumber numberWithInteger:count];
+    [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
+                             aCountInt,@"count",
+                             channelName,@"channel",
+                             [DetailedHistoryResponse alloc],@"delegate",
+                             nil]];
 
-Building Application with PubNub Real-Time Cloud Push API 3.0
+PubNub Server Detailed History Example [Full Example]
+---------------------------------------------------------
+ 	@interface      DetailedHistoryResponse: Response @end
+	@implementation DetailedHistoryResponse
+	-(void) callback:(id) request withResponce:(id)response {
+    	NSLog( @"DetailedHistory :: %@", response );
+	}	
+
+    int main( int argc, const char *argv[] ) {
+        Pubnub *pubnub = [[Pubnub alloc]
+            publishKey:   @"demo"
+            subscribeKey: @"demo"
+            secretKey:    @"demo"
+            sslOn:        NO
+            origin:       @"pubsub.pubnub.com"
+        ];
+
+        NSInteger count = 3;
+    	NSNumber * aCountInt = [NSNumber numberWithInteger:count];
+    	[pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
+                             aCountInt,@"count",
+                             channelName,@"channel",
+                             [DetailedHistoryResponse alloc],@"delegate",
+                             nil]];
+
+        // Only necessary when running command line application.
+        [[NSRunLoop currentRunLoop] run];
+
+        // Free Pubnub
+        [pubnub release];
+
+        return 0;
+    }
+
+PubNub Server Presence Example  [Usage Example]
+----------------------------------------------------------
+	 [pubnub
+     presence: channelName
+     delegate: [[PresenceResponse alloc]
+	   pubnub: pubnub
+      channel: channelName]];
+
+PubNub Server Presence Example [Full Example]
+---------------------------------------------------------
+	@interface      PresenceResponse: Response @end
+	@implementation PresenceResponse
+	-(void) callback:(id) request withResponce: (id) response {
+    	NSLog( @"Received Presence Message (channel: '%@') -> %@", channel, response );
+	}
+	@end	
+
+    int main( int argc, const char *argv[] ) {
+        Pubnub *pubnub = [[Pubnub alloc]
+            publishKey:   @"demo"
+            subscribeKey: @"demo"
+            secretKey:    @"demo"
+            sslOn:        NO
+            origin:       @"pubsub.pubnub.com"
+        ];
+
+        [pubnub
+    	 presence:channelName
+     	 delegate:[[PresenceResponse alloc]
+	  	   pubnub:pubnub
+      	  channel:channelName]];
+
+        // Only necessary when running command line application.
+        [[NSRunLoop currentRunLoop] run];
+
+        // Free Pubnub
+        [pubnub release];
+
+        return 0;
+    }
+
+PubNub Server Here Now Example  [Usage Example]
+----------------------------------------------------------
+	 [pubnub hereNow:channelName 
+			delegate:[[HereNowResponse alloc]
+              pubnub:pubnub
+             channel:channelName]];
+
+PubNub Server Here Now Example [Full Example]
+---------------------------------------------------------
+	@interface      HereNowResponse: Response @end
+	@implementation HereNowResponse
+	-(void) callback:(id) request withResponce:(id)response {
+    	NSLog( @"Here Now:  %@", response );
+	}
+	@end	
+
+    int main( int argc, const char *argv[] ) {
+        Pubnub *pubnub = [[Pubnub alloc]
+            publishKey:   @"demo"
+            subscribeKey: @"demo"
+            secretKey:    @"demo"
+            sslOn:        NO
+            origin:       @"pubsub.pubnub.com"
+        ];
+
+        [pubnub hereNow:channelName 
+			   delegate:[[HereNowResponse alloc]
+                 pubnub:pubnub
+                channel:channelName]];
+
+        // Only necessary when running command line application.
+        [[NSRunLoop currentRunLoop] run];
+
+        // Free Pubnub
+        [pubnub release];
+
+        return 0;
+    }
+
+Building Application with PubNub Real-Time Cloud Push API 3.3
 =============================================================
 
 BUILDING Cocoa iOS XCode

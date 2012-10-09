@@ -1,12 +1,21 @@
 #import <stdio.h>
 #import <Cocoa/Cocoa.h>
-#import "JSON/JSON.h"
 
 @class Pubnub;
 
+typedef enum {
+    kCommand_Undefined = 0,
+    kCommand_SendMessage,
+    kCommand_ReceiveMessage,
+    kCommand_Presence,
+    kCommand_FetchHistory,
+    kCommand_FetchDetailHistory,
+    kCommand_GetTime,
+    kCommand_Here_Now
+} Command;
+
 @interface Response: NSObject {
     id delegate;
-    SBJsonParser* parser;
     Pubnub* pubnub;
     NSString* channel;
     id message;
@@ -35,24 +44,29 @@
     channel: (NSString*) channel_o
     message:  (id)message_o;
 
--(void)      callback:(NSURLConnection*) connection withResponce: (id) response;
--(void)      fail    :(NSURLConnection*) connection withResponce: (id) response;
+-(void)      callback:(id) request withResponce: (id) response;
+-(void)      fail    :(id) request withResponce: (id) response;
 @end
 
 @interface Request: NSObject {
     id delegate;
-    NSString *response;
-    NSAutoreleasePool *pool;
+    NSMutableData *response;
     NSURLConnection *connection;
     NSString* channel;
+    Command command;
+    Pubnub *pubnub;
 }
 @property(nonatomic, retain) NSString *channel;
 @property(nonatomic, retain) NSURLConnection *connection;
+@property(nonatomic, readonly) Command command;
+@property(nonatomic, retain) id delegate;
 -(id)
-    scheme:   (NSString*) scheme
-    host:     (NSString*) host
-    path:     (NSString*) path
-    callback: (Response*) callback
-    channel : (NSString*) channel;
+    scheme	:(NSString*) scheme
+    host	:(NSString*) host
+    path	:(NSString*) path
+    callback:(Response*) callback
+    channel :(NSString*) channel
+    pubnub	:(Pubnub*)pubnub
+    command :(Command)command;
 
 @end
