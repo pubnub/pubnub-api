@@ -48,7 +48,7 @@ package org.httpclient {
      * @param proxy URI
      * @param timeout Default timeout (1 minute)
      */
-    public function HttpClient(proxy:URI = null, timeout:int = 60000) {
+    public function HttpClient(proxy:URI = null, timeout:int = 310000) {
       _timeout = timeout;
       _proxy = proxy;
     }
