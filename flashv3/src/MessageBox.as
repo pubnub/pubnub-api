@@ -37,7 +37,7 @@ public class MessageBox extends Sprite {
 		// Initialize pubnub state
         var pubnub:PubNub = PubNub.PubNub.getInstance();
         var config:Object = {
-            push_interval:10,
+            push_interval:5,
             publish_key:"demo",
             sub_key:"demo",
             secret_key:"",
@@ -91,7 +91,7 @@ public class MessageBox extends Sprite {
 //                channel:channelName + "-pnpres"
 //            });
 
-            setTimeout(unsub, 15000);
+            setTimeout(unsub, 5000);
 
         }
 

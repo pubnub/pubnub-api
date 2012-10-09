@@ -11,20 +11,12 @@ package PubNub
 	import com.adobe.net.URI;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.IOErrorEvent;
-	import flash.events.SecurityErrorEvent;
 	import flash.events.TimerEvent;
 	import flash.external.ExternalInterface;
 	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import flash.net.URLStream;
-	import flash.utils.setTimeout;
 	import flash.utils.Timer;
 	import org.httpclient.events.HttpDataEvent;
-	import org.httpclient.events.HttpDataListener;
-	import org.httpclient.events.HttpErrorEvent;
 	import org.httpclient.events.HttpListener;
-	import org.httpclient.events.HttpResponseEvent;
 	import org.httpclient.HttpClient;
 
 
@@ -54,7 +46,7 @@ package PubNub
 		private var start_time_token:Number = 0;
 		private var queue:Array;
         private var session_uuid:String = "";
-		
+
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
 
         private function nextOrigin(origin:String):String
@@ -127,8 +119,9 @@ package PubNub
 			}
 			
 			queue = [];
-			subscriptions = [];
+            subscriptions = [];
             this.session_uuid = INSTANCE._uid();
+
 
 
             function dataHandler( evt:HttpDataEvent ):void {
@@ -661,19 +654,22 @@ package PubNub
 			var nodes:Array = [];
 			for each(var i:Object  in queue) {
 				if (channel != null && (i.channel == channel)) {
-					disposeNode(i);
+                    disposeNode(i);
 					delete queue[i.args];
 					break;
 				}
-			}
+
+                i.loader.close();
+
+            }
 			
 			 var node:Object = queue[args.uid];
 			 trace('_unsubscribe : ' + args.uid, args.channel);
-			
+
 			if (subscriptions[channel] && subscriptions[channel].connected){
 				subscriptions[channel].connected =  false;
 			}
-			
+
 			var event:PubNubEvent = new PubNubEvent(PubNubEvent.UNSUBSCRIBE, { channel:channel, result:[1, "Channel '" + channel + "' Unsubscribed"], timeout:1000 } );
 			onResult(event);
 		}
@@ -746,10 +742,13 @@ package PubNub
 			}
 			
 			disposeNodeLoader(node);
+
 			node.loader = loader = new HttpClient();
 			var listener:HttpListener = new HttpListener();
 			node.listener = listener;
 			listener.onData = args.handler;
+            listener.onClose = args.hander;
+
 			// TODO: refactor to normal event listener
 			//listener.onError = args.handler;
 			   
