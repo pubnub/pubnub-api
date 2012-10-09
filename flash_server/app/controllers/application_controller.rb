@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   end
 
   def subscribe
-    sleep(5)
+    sleep(20)
     render :inline => '[[],"13497314205537966"]'
   end
 
