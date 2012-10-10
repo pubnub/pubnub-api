@@ -79,6 +79,7 @@ var NOW    = 1
 ,   REPL   = /{([\w\-]+)}/g
 ,   ASYNC  = 'async'
 ,   URLBIT = '/'
+,   PARAMSBIT = '&'
 ,   XHRTME = 310000
 ,   SECOND = 1000
 ,   UA     = navigator.userAgent
@@ -377,6 +378,15 @@ function xdr( setup ) {
     script.onerror = function() { done(1) };
     script.src     = setup.url.join(URLBIT);
 
+    if (setup.data) {
+        var params = [];
+        script.src += "?";
+        for (key in setup.data) {
+             params.push(key+"="+setup.data[key]);
+        }
+        script.src += params.join(PARAMSBIT);
+    }
+
     attr( script, 'id', id );
 
     append();
@@ -434,8 +444,18 @@ function ajax( setup ) {
         xhr.onerror = xhr.onabort   = function(){ done(1) };
         xhr.onload  = xhr.onloadend = finished;
         xhr.timeout = XHRTME;
+        
+        var url = setup.url.join(URLBIT);
+        if (setup.data) {
+            var params = [];
+            url += "?";
+            for (key in setup.data) {
+                params.push(key+"="+setup.data[key]);
+            }
+            url += params.join(PARAMSBIT);
+        }
 
-        xhr.open( 'GET', setup.url.join(URLBIT), true );
+        xhr.open( 'GET', url, true );
         xhr.send();
     }
     catch(eee) {
@@ -465,6 +485,7 @@ var PDIV          = $('pubnub') || {}
     ,   PUBLISH_KEY   = setup['publish_key']   || DEMO
     ,   SUBSCRIBE_KEY = setup['subscribe_key'] || DEMO
     ,   SSL           = setup['ssl'] ? 's' : ''
+    ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
     ,   SELF          = {
         /*
@@ -498,6 +519,47 @@ var PDIV          = $('pubnub') || {}
         },
 
         /*
+            PUBNUB.detailedHistory({
+                channel  : 'my_chat_channel',
+                count : 100,
+                callback : function(messages) { console.log(messages) }
+            });
+        */
+        'detailedHistory' : function( args, callback ) {
+            var callback = args['callback'] || callback 
+            ,   count = args['count'] || 100
+            ,   channel  = args['channel']
+            ,   reverse = args['reverse'] || "false"
+            ,   start = args['start']
+            ,   end = args['end']
+            ,   jsonp    = jsonp_cb();
+
+            // Make sure we have a Channel
+            if (!channel)  return log('Missing Channel');
+            if (!callback) return log('Missing Callback');
+
+            var params = {};
+            params["count"] = count;
+            params["reverse"] = reverse;
+            if (start) 
+                params["start"] = start;
+            if (end)
+                params["end"] = end;
+
+            // Send Message
+            xdr({
+                callback : jsonp,
+                url      : [
+                    ORIGIN, 'v2', 'history',
+                    'sub-key', SUBSCRIBE_KEY, 'channel', encode(channel)
+                ],
+                data : params,
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) }
+            });
+        },
+
+        /*
             PUBNUB.time(function(time){ console.log(time) });
         */
         'time' : function(callback) {
@@ -514,16 +576,12 @@ var PDIV          = $('pubnub') || {}
             PUBNUB.uuid(function(uuid) { console.log(uuid) });
         */
         'uuid' : function(callback) {
-            var jsonp = jsonp_cb();
-            xdr({
-                callback : jsonp,
-                url      : [
-                    'http' + SSL +
-                    '://pubnub-prod.appspot.com/uuid?callback=' + jsonp
-                ],
-                success  : function(response) { callback(response[0]) },
-                fail     : function() { callback(0) }
+            var u = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
             });
+            if (callback) callback(u);
+            return u;
         },
 
         /*
@@ -632,6 +690,7 @@ var PDIV          = $('pubnub') || {}
                         SUBSCRIBE_KEY, encode(channel),
                         jsonp, timetoken
                     ],
+                    data     : { uuid: UUID },
                     fail : function() {
                         // Disconnect
                         if (!disconnected) {
@@ -679,6 +738,44 @@ var PDIV          = $('pubnub') || {}
             // Begin Recursive Subscribe
             pubnub();
         },
+        /*
+            PUBNUB.presence({
+                channel  : 'my_chat'
+                callback : function(message) { console.log(message) }
+            });
+        */
+        'presence' : function( args, callback ) {
+            args['channel'] = args['channel'] + '-pnpres';
+            subscribe(args,callback );
+        },
+        /*
+            PUBNUB.here_now({
+                channel  : 'my_chat_channel',
+                callback : function(messages) { console.log(messages) }
+            });
+        */
+        'here_now' : function( args, callback ) {
+            var callback = args['callback'] || callback 
+            ,   channel  = args['channel']
+            ,   jsonp    = jsonp_cb();
+
+            // Make sure we have a Channel
+            if (!channel)  return log('Missing Channel');
+            if (!callback) return log('Missing Callback');
+
+            // Send Message
+            xdr({
+                callback : jsonp,
+                url      : [
+                    ORIGIN, 'v2', 'presence',
+                    'sub_key', SUBSCRIBE_KEY, 
+                    'channel', encode(channel)
+                ],
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) }
+            });
+        },
+        
 
         // Expose PUBNUB Functions
         'db'       : db,
@@ -698,7 +795,10 @@ var PDIV          = $('pubnub') || {}
         'updater'  : updater,
         'init'     : CREATE_PUBNUB
     };
-
+    
+    if (UUID == '') UUID = SELF.uuid();
+    db.set(SUBSCRIBE_KEY+'uuid', UUID);
+    
     return SELF;
 };
 
@@ -707,7 +807,8 @@ PUBNUB = CREATE_PUBNUB({
     'publish_key'   : attr( PDIV, 'pub-key' ),
     'subscribe_key' : attr( PDIV, 'sub-key' ),
     'ssl'           : attr( PDIV, 'ssl' ) == 'on',
-    'origin'        : attr( PDIV, 'origin' )
+    'origin'        : attr( PDIV, 'origin' ),
+    'uuid'          : attr( PDIV, 'uuid' )
 });
 
 // PUBNUB Flash Socket
