@@ -89,14 +89,14 @@ public class MessageBox extends Sprite {
 //                channel:channelName + "-pnpres"
 //            });
 
-            setTimeout(unsub, 10000);
+            setTimeout(unsub, 5000);
 
         }
 
         function unsub():void {
             PubNub.PubNub.unsubscribe({
                 callback:onUnSubscribe,
-                channel:"hello_world"
+                channel:"hello_world_flash"
             });
         }
 		
