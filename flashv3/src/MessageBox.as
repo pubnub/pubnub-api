@@ -23,12 +23,6 @@ public class MessageBox extends Sprite {
 
     function MessageBox():void {
 
-
-		//set the channel
-
-//        Security.allowDomain("*");
-//        Security.allowInsecureDomain("*");
-
         var channelName:String = "hello_world_flash";
         trace("Channel set to " + channelName);
 
@@ -83,20 +77,33 @@ public class MessageBox extends Sprite {
                 channel:channelName
             });
 
+
+
+            PubNub.PubNub.subscribe({
+                callback:onSubscribeHandler,
+                channel:"flash"
+            });
+
+
+
             // Presence
 //            PubNub.PubNub.subscribe({
 //                callback:onPresenceHandler,
 //                channel:channelName + "-pnpres"
 //            });
 
-            setTimeout(unsub, 5000);
+            var ch1 = function(){ unsub("hello_world_flash")};
+            var ch2 = function(){ unsub("flash")};
+
+            setTimeout(ch1, 5000);
+            setTimeout(ch2, 10000);
 
         }
 
-        function unsub():void {
+        function unsub(myChannel:String):void {
             PubNub.PubNub.unsubscribe({
                 callback:onUnSubscribe,
-                channel:"hello_world_flash"
+                channel:myChannel
             });
         }
 		
