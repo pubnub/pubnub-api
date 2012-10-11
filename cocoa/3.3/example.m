@@ -2,9 +2,9 @@
 #import "DetailedHistoryUnitTest.h"
 #import "UnsubcribeUnitTest.h"
 
-   // ----------------------
-    // Time Response Callback
-    // ----------------------
+ // ----------------------
+ // Time Response Callback
+ // ----------------------
 @interface      TimeResponse: Response @end
 @implementation TimeResponse
 -(void) callback:(id) request withResponce:(id)response{
@@ -12,9 +12,9 @@
 }
 @end
 
-    // -------------------------
-    // Publish Response Callback
-    // -------------------------
+ // -------------------------
+ // Publish Response Callback
+ // -------------------------
 @interface      PublishResponse: Response @end
 @implementation PublishResponse
 -(void) callback:(id) request withResponce:(id)response {
