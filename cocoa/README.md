@@ -1,19 +1,19 @@
 Objective-C PubNub 3.3 Real-time Cloud Push API
 ===============================================
 
-PubNub Account
---------------
+**PubNub Account**
+
 You must have a pubnub account to use the API.
 [http://www.pubnub.com/account](http://www.pubnub.com/account "PubNub Account")
 
-About PubNub
-------------
+**About PubNub**
+
 PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
 This is a cloud-based service for broadcasting Real-time bidirectional
 messages to web, mobile, TV, tablet and GPS clients.
 
-Objective-C Info
-----------------
+**Objective-C Info**
+
 The PubNub Objective C Real-time Cloud Push API runs on Cocoa Native
 and Mobile Devices.  This library offers complete non-blocking asynchronous
 message passing in the cloud.
@@ -25,10 +25,10 @@ using any carrier service provider.
 
 
 PubNub Usage Code Examples
-==========================
+--------------------------
 
-Init Pubnub Class
------------------
+**Init Pubnub Class**
+
 
     Pubnub *pubnub = [[Pubnub alloc]
         publishKey:   @"demo"
@@ -38,8 +38,8 @@ Init Pubnub Class
         origin:       @"pubsub.pubnub.com"
     ];
 
-PubNub Publish Message (Send Message) [Usage Example]
------------------------------------------------------
+**PubNub Publish Message (Send Message) [Usage Example]**
+
 
     [pubnub
         publish: @"hello_world_objective_c"
@@ -52,8 +52,8 @@ PubNub Publish Message (Send Message) [Usage Example]
         deligate: [Response alloc]
     ];
 
-PubNub Publish Message (Send Message) [Full Example]
-----------------------------------------------------
+**PubNub Publish Message (Send Message) [Full Example]**
+
 
     @interface      PublishResponse: Response @end
     @implementation PublishResponse
@@ -107,8 +107,8 @@ PubNub Publish Message (Send Message) [Full Example]
         return 0;
     }
 
-PubNub Subscribe (Receive Messages) [Usage Example]
----------------------------------------------------
+**PubNub Subscribe (Receive Messages) [Usage Example]**
+
 
     [pubnub
         subscribe: @"hello_world_objective_c"
@@ -118,8 +118,8 @@ PubNub Subscribe (Receive Messages) [Usage Example]
         ]
     ];
 
-PubNub Subscribe (Receive Messages) [Full Example]
---------------------------------------------------
+**PubNub Subscribe (Receive Messages) [Full Example]**
+
 
     @interface      SubscribeResponse: Response @end
     @implementation SubscribeResponse
@@ -156,8 +156,8 @@ PubNub Subscribe (Receive Messages) [Full Example]
     }
 
 
-PubNub History (Recent Message History) [Usage Example]
--------------------------------------------------------
+**PubNub History (Recent Message History) [Usage Example]**
+
 
     [pubnub
         history:  @"hello_world_objective_c"
@@ -165,8 +165,8 @@ PubNub History (Recent Message History) [Usage Example]
         deligate: [HistoryResponse alloc]
     ];
 
-PubNub History (Recent Message History) [Full Example]
-------------------------------------------------------
+**PubNub History (Recent Message History) [Full Example]**
+
 
     @interface      HistoryResponse: Response @end
     @implementation HistoryResponse
@@ -204,13 +204,13 @@ PubNub History (Recent Message History) [Full Example]
         return 0;
     }
 
-PubNub Server Time Example (Get TimeToken) [Usage Example]
-----------------------------------------------------------
+**PubNub Server Time Example (Get TimeToken) [Usage Example]**
+
 
     [pubnub time: [TimeResponse alloc]];
 
-PubNub Server Time Example (Get TimeToken) [Full Example]
----------------------------------------------------------
+**PubNub Server Time Example (Get TimeToken) [Full Example]**
+
 
     @interface      TimeResponse: TimeDelegate @end
     @implementation TimeResponse
@@ -239,8 +239,8 @@ PubNub Server Time Example (Get TimeToken) [Full Example]
         return 0;
     }
 
-PubNub Server Detailed History Example (Recent Message History) [Usage Example]
-----------------------------------------------------------
+**PubNub Server Detailed History Example (Recent Message History) [Usage Example]**
+
 	NSInteger count = 3;
     NSNumber * aCountInt = [NSNumber numberWithInteger:count];
     [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -249,8 +249,8 @@ PubNub Server Detailed History Example (Recent Message History) [Usage Example]
                              [DetailedHistoryResponse alloc],@"delegate",
                              nil]];
 
-PubNub Server Detailed History Example [Full Example]
----------------------------------------------------------
+**PubNub Server Detailed History Example [Full Example]**
+
  	@interface      DetailedHistoryResponse: Response @end
 	@implementation DetailedHistoryResponse
 	-(void) callback:(id) request withResponce:(id)response {
@@ -283,16 +283,16 @@ PubNub Server Detailed History Example [Full Example]
         return 0;
     }
 
-PubNub Server Presence Example  [Usage Example]
-----------------------------------------------------------
+**PubNub Server Presence Example  [Usage Example]**
+
 	 [pubnub
      presence: channelName
      delegate: [[PresenceResponse alloc]
 	   pubnub: pubnub
       channel: channelName]];
 
-PubNub Server Presence Example [Full Example]
----------------------------------------------------------
+**PubNub Server Presence Example [Full Example]**
+
 	@interface      PresenceResponse: Response @end
 	@implementation PresenceResponse
 	-(void) callback:(id) request withResponce: (id) response {
@@ -324,15 +324,15 @@ PubNub Server Presence Example [Full Example]
         return 0;
     }
 
-PubNub Server Here Now Example  [Usage Example]
-----------------------------------------------------------
+**PubNub Server Here Now Example  [Usage Example]**
+
 	 [pubnub hereNow:channelName 
 			delegate:[[HereNowResponse alloc]
               pubnub:pubnub
              channel:channelName]];
 
-PubNub Server Here Now Example [Full Example]
----------------------------------------------------------
+**PubNub Server Here Now Example [Full Example]**
+
 	@interface      HereNowResponse: Response @end
 	@implementation HereNowResponse
 	-(void) callback:(id) request withResponce:(id)response {
@@ -364,22 +364,22 @@ PubNub Server Here Now Example [Full Example]
     }
 
 Building Application with PubNub Real-Time Cloud Push API 3.3
-=============================================================
+----------------------------------------------------------------
 
-BUILDING Cocoa iOS XCode
-------------------------
+**BUILDING Cocoa iOS XCode**
+
  1. Copy PubNub directory into your XCode Project Class Directory.
  2. \#import "pubnub.h"
  3. Refer to example.m for PubNub Usage Example.
 
-BUILDING Cocoa Command Line
----------------------------
+**BUILDING Cocoa Command Line**
+
  1. Copy PubNub directory into your Project Directory.
  2. \#import "pubnub.h"
  3. Refer to example.m for PubNub Usage Example.
 
-BUILDING Cocoa Command Line Example
------------------------------------
+**BUILDING Cocoa Command Line Example**
+
  1. Run ./build-example
  2. This will build example.m with a basic test of PubNub functions.
 

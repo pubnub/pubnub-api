@@ -1,4 +1,5 @@
 #import "pubnub.h"
+#import "JSON.h"
 
 @interface NSString (Extensions)
 - (NSString*) urlEscapedString;  // Uses UTF-8 encoding and also escapes characters that can confuse the parameter 
@@ -421,7 +422,8 @@ delegate:  (id)       delegate
             
         }
     }else{
-        NSLog(@"NSJSONSerialization not support.");
+        jsonString = JSONWriteString(object);
+            // NSLog(@"NSJSONSerialization not support.");
     }
     return jsonString;
 }
@@ -435,8 +437,8 @@ delegate:  (id)       delegate
         return result;
     }else
     {
-        NSLog(@"NSJSONSerialization not support.");
-        return nil;
+            // NSLog(@"NSJSONSerialization not support.");
+        return JSONParseData(object);
     }
 }
 

@@ -1,5 +1,6 @@
 #import "request.h"
 #import "pubnub.h"
+#import "JSON.h"
 
 @implementation Request
 @synthesize connection,channel,command,delegate;
@@ -64,7 +65,8 @@
         [pubnub didCompleteWithRequest:self WithResponse:result isfail:NO ];
     }else
     {
-        NSLog(@"NSJSONSerialization not support..");
+            // NSLog(@"NSJSONSerialization not support..");
+        [pubnub didCompleteWithRequest:self WithResponse:JSONParseData(response) isfail:NO ]; 
     }
     
 }
@@ -168,7 +170,9 @@ channel:  (NSString*) channel_o
         [delegate callback:connection withResponce:result];
     }else
     {
-        NSLog(@"NSJSONSerialization not support.");
+            //  NSLog(@"NSJSONSerialization not support.");
+        [delegate callback:connection withResponce:JSONParseData(response)];
+        
     }
 }
 -(void) fail: (NSURLConnection*) connection withResponce: (id) response  {
