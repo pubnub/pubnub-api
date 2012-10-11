@@ -5,7 +5,11 @@ clang \
     example.m \
     pubnub.m \
     request.m \
-    -framework Foundation \
+     JSONKit.m \
+     DetailedHistoryUnitTest.m \
+     JSON.m \
+     UnsubcribeUnitTest.m \
+     -framework Foundation \
     -fobjc-nonfragile-abi2 \
     -Wall \
     -Wimplicit-function-declaration \
