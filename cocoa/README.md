@@ -1,4 +1,4 @@
-Objective-C PubNub 3.3 Real-time Cloud Push API
+Cocoa PubNub 3.3 Real-time Cloud Push API
 ===============================================
 
 **PubNub Account**
