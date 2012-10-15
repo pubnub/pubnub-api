@@ -641,8 +641,8 @@ var PDIV          = $('pubnub') || {}
 ,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
     var CHANNELS      = {}
-    ,   PUBLISH_KEY   = setup['publish_key']   || ''
-    ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
+    ,   PUBLISH_KEY   = setup['publish_key']   || 'demo'
+    ,   SUBSCRIBE_KEY = setup['subscribe_key'] || 'demo'
     ,   SSL           = setup['ssl'] ? 's' : ''
     ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
@@ -828,7 +828,7 @@ var PDIV          = $('pubnub') || {}
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
             if (!callback)      return log('Missing Callback');
-            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
+            if (!subscribe_key) return log('Missing Subscribe Key');
 
             if (!(channel in CHANNELS)) CHANNELS[channel] = {};
 
@@ -872,7 +872,7 @@ var PDIV          = $('pubnub') || {}
                     },
                     success : function(messages) {
                         if (!CHANNELS[channel].connected) return;
-
+                        
                         // Connect
                         if (!connected) {
                             connected = 1;
@@ -912,6 +912,19 @@ var PDIV          = $('pubnub') || {}
 
             // Begin Recursive Subscribe
             _connect();
+        },
+        /*
+            PUBNUB.presence({
+                channel  : 'my_chat'
+                callback : function(message) { console.log(message) }
+            });
+        */
+        'presence' : function( args, callback ) {
+            SELF.subscribe({
+                channel  : args['channel'] + PRESENCE_SUFFIX,
+                callback : args['callback'] || callback,
+                restore  : true
+            });
         },
         'here_now' : function( args, callback ) {
             var callback = args['callback'] || callback 

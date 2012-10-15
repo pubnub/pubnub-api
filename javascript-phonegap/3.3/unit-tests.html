@@ -46,7 +46,7 @@
 </script>
 
 <div id=pubnub></div>
-<script src=pubnub-3.3.js></script>
+<script src=../../javascript/pubnub-3.3.js></script>
 <script>(function(){
 
     function test( t, msg ) {
@@ -129,13 +129,11 @@
             test( uuid.length > 10, 'UUID Long Enough');
         });
         function presence_test() {
-          p.subscribe({
-            channel : channel + '-pnpres',
-            callback : function(response) {
+          p.presence({ channel : channel },
+            function(response) {
               p.unsubscribe({ channel : channel + '-pnpres' } );
               test( response, 'Presence Response' );
-            },
-          });
+            });
         }
         presence_test();            
 
@@ -183,14 +181,14 @@
                 channel  : channel,
                 callback : function(response) {
                     test( response, 'Here Now Response' );
-                    test( response.occupancy == 1, 'Here Now Occupancy' );
+                    test( response.occupancy > 0, 'Here Now Occupancy' );
                 }
             });
         }
         
         p.subscribe({
             channel  : channel,
-            connect  : function() { publish_test(); setTimeout(here_now_test,5000); },
+            connect  : function() { publish_test(); setTimeout(here_now_test,9000); },
             callback : function( message, stack ) {
                 p.unsubscribe({ channel : channel });
                 test( message, 'Subscribe Message' );
