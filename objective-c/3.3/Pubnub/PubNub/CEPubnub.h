@@ -47,12 +47,20 @@
                        secretKey:(NSString *)secretKey  // May be nil if -publishMessage:toChannel: is never used
                           useSSL:(BOOL)useSSL
                        cipherKey:(NSString *)cipherKey
+                            uuid:(NSString *)uuid
                           origin:(NSString *)origin;
 
 - (CEPubnub *)initWithPublishKey:(NSString *)publishKey
                     subscribeKey:(NSString *)subscribeKey
                        secretKey:(NSString *)secretKey
                        cipherKey:(NSString *)cipherKey
+                          useSSL:(BOOL)useSSL;
+
+- (CEPubnub *)initWithPublishKey:(NSString *)publishKey
+                    subscribeKey:(NSString *)subscribeKey
+                       secretKey:(NSString *)secretKey
+                       cipherKey:(NSString *)cipherKey
+                            uuid:(NSString *)uuid
                           useSSL:(BOOL)useSSL;
 
 + (NSString *)getUUID;

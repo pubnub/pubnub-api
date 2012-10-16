@@ -83,7 +83,7 @@ typedef enum {
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url
                                                            cachePolicy:NSURLRequestReloadIgnoringCacheData
                                                        timeoutInterval:kConnectionTimeOut];
-    [request setValue:@"V" forHTTPHeaderField:@"3.1"];
+    [request setValue:@"V" forHTTPHeaderField:@"3.3"];
     [request setValue:@"User-Agent" forHTTPHeaderField:@"Obj-C-iOS"];
     [request setValue:@"Accept" forHTTPHeaderField:@"gzip"];
     
@@ -203,7 +203,7 @@ typedef enum {
 @synthesize delegate=_delegate;
 
 - (CEPubnub *) initWithSubscribeKey:(NSString *)subscribeKey useSSL:(BOOL)useSSL {
-    return [self initWithPublishKey:nil subscribeKey:subscribeKey secretKey:nil useSSL:useSSL cipherKey:nil origin:kDefaultOrigin];
+    return [self initWithPublishKey:nil subscribeKey:subscribeKey secretKey:nil useSSL:useSSL cipherKey:nil uuid:nil origin:kDefaultOrigin];
 }
 
 - (CEPubnub *)initWithPublishKey:(NSString *)publishKey
@@ -211,7 +211,7 @@ typedef enum {
                        secretKey:(NSString *)secretKey
                           useSSL:(BOOL)useSSL
 {
-    return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:nil origin:kDefaultOrigin];
+    return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:nil  uuid:nil  origin:kDefaultOrigin];
 }
 
 - (CEPubnub *)initWithPublishKey:(NSString *)publishKey
@@ -219,6 +219,7 @@ typedef enum {
                        secretKey:(NSString *)secretKey
                           useSSL:(BOOL)useSSL
                        cipherKey:(NSString *)cipherKey
+                            uuid:(NSString *)uuid
                           origin:(NSString *)origin
 {
     if ((self = [super init])) {
@@ -228,7 +229,14 @@ typedef enum {
         _host = [[NSString alloc] initWithFormat:@"%@://%@", useSSL ? @"https" : @"http", origin];
         _cipherKey=[cipherKey copy];
         _connections = [[NSMutableSet alloc] init];
-        _uuids=[CEPubnub getUUID];
+       
+        if(uuid == nil)
+        {
+            _uuids=[CEPubnub getUUID];
+        }else
+        {
+            _uuids=uuid;
+        }
     }
     return self;
 }
@@ -237,9 +245,19 @@ typedef enum {
                     subscribeKey:(NSString *)subscribeKey
                        secretKey:(NSString *)secretKey
                        cipherKey:(NSString *)cipherKey
+                            uuid:(NSString *)uuid
                           useSSL:(BOOL)useSSL
 {
-    return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:cipherKey origin:kDefaultOrigin];
+    return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:cipherKey  uuid:uuid  origin:kDefaultOrigin];
+}
+
+- (CEPubnub *)initWithPublishKey:(NSString *)publishKey
+                    subscribeKey:(NSString *)subscribeKey
+                       secretKey:(NSString *)secretKey
+                       cipherKey:(NSString *)cipherKey
+                          useSSL:(BOOL)useSSL
+{
+    return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:cipherKey  uuid:nil  origin:kDefaultOrigin];
 }
 
 - (void)dealloc {
