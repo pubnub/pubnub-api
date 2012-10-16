@@ -4,10 +4,8 @@ package  {
 	import flash.display.*;
 	import flash.events.*;
 	import flash.external.*;
-
-import mx.controls.listClasses.AdvancedListBase;
-
-/**
+	
+	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
@@ -35,7 +33,12 @@ import mx.controls.listClasses.AdvancedListBase;
 			view.subsBtn.addEventListener(MouseEvent.CLICK, onSubscribeClick);
 			view.unsubBtn.addEventListener(MouseEvent.CLICK, onUnSubscribeClick);
 			view.unsubAllBtn.addEventListener(MouseEvent.CLICK, onUnsubscribeAllClick);
+			view.detHistoryBtn.addEventListener(MouseEvent.CLICK, onDetHistoryClick);
 		}	
+		
+		private function onDetHistoryClick(e:MouseEvent):void {
+			Pn.instance.detailedHistory2(JSON.parse(view.detHistoryTxt.text));
+		}
 		
 		private function onUnsubscribeAllClick(e:MouseEvent):void {
 			Pn.unsubscribeAll();
@@ -59,8 +62,11 @@ import mx.controls.listClasses.AdvancedListBase;
 			Pn.init(config);
 			Pn.instance.addEventListener(PnEvent.INIT, onInit);
 			Pn.instance.addEventListener(PnEvent.INIT_ERROR, onInitError);
-			Pn.instance.addEventListener(SubscribeEvent.SUBSCRIBE, onSubscribe);	
+			Pn.instance.addEventListener(PnEvent.SUBSCRIBE, onSubscribe);	
+			Pn.instance.addEventListener(PnEvent.DETAILED_HISTORY, onDetailedHistory);	
 		}
+		
+		
 		
 		private function onInitError(e:PnEvent):void {
 			callExternalInterface("console.log", ("onInitError"));
@@ -75,23 +81,37 @@ import mx.controls.listClasses.AdvancedListBase;
 		}
 		
 		
-		private function onSubscribe(e:SubscribeEvent):void {
+		private function onSubscribe(e:PnEvent):void {
 			
 			switch (e.status) {
-				case SubscribeStatus.DATA:
-					callExternalInterface("console.log", ("[DATA], channel : " + e.channel + ', result : ' + e.data.result));
+				case OperationStatus.DATA:
+					callExternalInterface("console.log", ("Subscribe [DATA], channel : " + e.channel + ', result : ' + e.data.result));
 					break;
 			
-				case SubscribeStatus.CONNECT:
-					callExternalInterface("console.log", ("[CONNECT] : " + e.channel));
+				case OperationStatus.CONNECT:
+					callExternalInterface("console.log", ("Subscribe [CONNECT] : " + e.channel));
 					break;
 			
-				case SubscribeStatus.DISCONNECT:
-					callExternalInterface("console.log", ("[DISCONNECT] : " + e.channel));
+				case OperationStatus.DISCONNECT:
+					callExternalInterface("console.log", ("Subscribe [DISCONNECT] : " + e.channel));
 					break;
 					
-				case SubscribeStatus.ERROR:
-					callExternalInterface("console.log", ("[ERROR] : " + e.channel));
+				case OperationStatus.ERROR:
+					callExternalInterface("console.log", ("Subscribe [ERROR] : " + e.channel));
+					break;
+			}
+		}
+		
+		private function onDetailedHistory(e:PnEvent):void {
+			switch (e.status) {
+				case OperationStatus.DATA:
+					var messages:Array = e.data as Array;
+					
+					callExternalInterface("console.log", (" DetailedHistory [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
+					break;
+					
+				case OperationStatus.ERROR:
+					callExternalInterface("console.log", ("DetailedHistory [ERROR] : " + e.channel));
 					break;
 			}
 		}

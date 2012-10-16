@@ -11,7 +11,7 @@ package com.pubnub {
 		
 	public class PnCrypto extends Object{
 
-		public function encrypt(cipher_key:String, plainStr:String):String {
+		static public function encrypt(cipher_key:String, plainStr:String):String {
 			var key:ByteArray = hashKey(cipher_key);
 			var data:ByteArray = Hex.toArray(Hex.fromString(plainStr));
 			var cbc:CBCMode = new CBCMode(new AESKey(key), new PKCS5());
@@ -22,7 +22,7 @@ package com.pubnub {
 		}
 		
 		//Basic decryption for string
-		public function decrypt(cipher_key:String, cipherText:String):String {
+		static public function decrypt(cipher_key:String, cipherText:String):String {
 
 			var decodedCipherText:ByteArray = Base64.decodeToByteArray(cipherText)
 			var key:ByteArray = hashKey(cipher_key);
@@ -35,7 +35,7 @@ package com.pubnub {
 			return com.adobe.serialization.json.JSON.decode(Hex.toString(Hex.fromArray(decodedCipherText)));
 		}
 
-		private function hashKey(cipher_key:String):ByteArray {
+		static private function hashKey(cipher_key:String):ByteArray {
 			// hash the cipher key
 			var sha256:SHA256 = new SHA256;
 
@@ -44,13 +44,13 @@ package com.pubnub {
 			var hexCipherKey:ByteArray = sha256.hash(src) // ByteArray of hashed_cipher_key
 			var cipherString:String = Hex.fromArray(hexCipherKey).slice(0, 32);
 
-			trace("cipherString: " + cipherString);
+			//trace("cipherString: " + cipherString);
 
 			var key:ByteArray = Hex.toArray(Hex.fromString(cipherString));
 			return key;
 		}
 
-		public function md5Key(s:String):String {
+		static public function md5Key(s:String):String {
 			var ba:ByteArray = new ByteArray();
 			ba.writeUTFBytes(s);
 			return MD5.hashBinary(ba);

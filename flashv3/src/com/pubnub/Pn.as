@@ -28,7 +28,11 @@ package com.pubnub {
 		public var interval:Number = 0.1;
 		
 		
-		private static var __instance:Pn;
+		static private var __instance:Pn;
+		static private const MILLON:Number = 1000000;
+		static private const INIT_OPERATION:String = 'init';
+		static private const HISTORY_OPERATION:String = 'history';
+		
 		private var _initialized:Boolean = false;         
 		
 		private var operations:Dictionary;
@@ -45,6 +49,7 @@ package com.pubnub {
         private var _sessionUUID:String = "";
         
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
+		
         
 		public function Pn() {
 			if (__instance) throw new IllegalOperationError('Use [Pn.instance] getter');
@@ -75,10 +80,13 @@ package com.pubnub {
             _sessionUUID = PnUtils.getUID();
 			var url:String = origin + "/" + "time" + "/" + 0;
 			// Loads Time Token
-			var operation:Operation = getOperation('init');
-			operation.send( { url:url, channel:"system", uid:"init", sessionUUID : _sessionUUID } );
+			var operation:Operation = getOperation(INIT_OPERATION);
+			operation.send( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
 			operation.addEventListener(OperationEvent.RESULT, onInitComplete);
 			operation.addEventListener(OperationEvent.FAULT, onInitError);
+			
+			var historyOperation:HistoryOperation = new HistoryOperation();
+			operations[HISTORY_OPERATION] = historyOperation;
 		}
 		
 		private function hasChannel(name:String):Boolean {
@@ -123,6 +131,7 @@ package com.pubnub {
 		private function onInitComplete(event:OperationEvent):void {
 			var result:Object = event.data;
 			startTimeToken = result[0];
+			//trace('startTimeToken : ' + startTimeToken);
 			//startTimeToken = 0;
 			_initialized = true;
 			dispatchEvent(new PnEvent(PnEvent.INIT, startTimeToken));
@@ -141,10 +150,10 @@ package com.pubnub {
 			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet");
 			var subChannel:Channel = getChannel(channel);
 			if (subChannel.connected) {
-				dispatchEvent(new SubscribeEvent(SubscribeEvent.SUBSCRIBE, 
+				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, 
+												{ result: [ -1, 'AlreadyConnected'] },
 												channel, 
-												SubscribeStatus.ERROR, 
-												{ result: [ -1, 'AlreadyConnected'] } ));
+												OperationStatus.ERROR ));
 				return;
 			}
 			
@@ -162,22 +171,94 @@ package com.pubnub {
 		
 		private function onSubscribeError(e:ChannelEvent):void {
 			var channel:Channel = e.target as Channel;
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.SUBSCRIBE, channel.name, SubscribeStatus.ERROR, e.data));
+			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, channel.name, OperationStatus.ERROR));
 		}
 		
 		private function onSubscribeDisconnect(e:ChannelEvent):void {
 			var channel:Channel = e.target as Channel;
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.SUBSCRIBE, channel.name, SubscribeStatus.DISCONNECT, e.data));
+			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, channel.name, OperationStatus.DISCONNECT));
 		}
 		
 		private function onSubscribeData(e:ChannelEvent):void {
 			var channel:Channel = e.target as Channel;
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.SUBSCRIBE, channel.name, SubscribeStatus.DATA, e.data));
+			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, channel.name, OperationStatus.DATA));
 		}
 		
 		private function onSubscribeConnect(e:ChannelEvent):void {
 			var channel:Channel = e.target as Channel;
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.SUBSCRIBE, channel.name, SubscribeStatus.CONNECT, e.data));
+			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, channel.name, OperationStatus.CONNECT));
+		}
+		
+		
+		public function detailedHistory(args:Object):void {
+			//throwInit();
+			if (args.start == undefined) {
+				args.start = startTimeToken;
+			}
+			if (args.end == undefined) {
+				args.end = startTimeToken + 100 * MILLON;
+			}
+			if (args.count) {
+				args.count = 100;
+			}
+			if (args.reverse == undefined) {
+				args.reverse = false;
+			}
+			var historyOperation:HistoryOperation = getOperation(HISTORY_OPERATION) as HistoryOperation;
+			historyOperation.channel = args.channel;
+			historyOperation.subKey = _subscribeKey;
+			historyOperation.origin = origin;
+			historyOperation.cipherKey = cipherKey;
+			historyOperation.addEventListener(OperationEvent.RESULT, onHistoryResult);
+			historyOperation.addEventListener(OperationEvent.FAULT, onHistoryFault);
+			historyOperation.send(args);
+		}
+		
+		private function onHistoryResult(e:OperationEvent):void {
+			//trace('onHistoryResult');
+			dispatchEvent(new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.DATA));
+		}
+		
+		private function onHistoryFault(e:OperationEvent):void {
+			//trace('onHistoryFault');
+			dispatchEvent(new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.ERROR));
+		}
+		
+		public function detailedHistory2(args:Object):void {
+			//throwInit();
+			var startTime:int = 0
+			if (args.start != undefined) {
+				startTime = args.start;
+			}
+			
+			var endTime:int = 100;
+			if (args.end != undefined) {
+				endTime = args.end;
+			}
+			var correctedArgs:Object = { };
+			for (var name:String in args) {
+				correctedArgs[name] = args[name]
+			}
+			correctedArgs.start = startTimeToken + startTime * MILLON;
+			correctedArgs.end = startTimeToken + endTime * MILLON;
+			detailedHistory(correctedArgs);
+			//trace(correctedArgs.start, correctedArgs.end, (correctedArgs.end - correctedArgs.start) / 1000000);
+		}
+		
+		public function destroy():void {
+			dispose();
+		}
+		
+		public function dispose():void {
+			getOperation(HISTORY_OPERATION).close();
+			getOperation(INIT_OPERATION).close();
+			for each(var channel:Channel  in subscribes) {
+				channel.dispose();
+			}
+		}
+		
+		private function throwInit():void {
+			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet"); 
 		}
 		
 		private function getOperation(type:String):Operation {
@@ -220,7 +301,7 @@ package com.pubnub {
 				var subChannel:Channel = getChannel(channel);
 				subChannel.unsubscribe(channel);
 			}else {
-				dispatchEvent(new SubscribeEvent(SubscribeEvent.SUBSCRIBE, channel, SubscribeStatus.ERROR, [-1, 'Channel not found']));
+				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, [-1, 'Channel not found'], channel, OperationStatus.ERROR));
 			}
 		}
 		

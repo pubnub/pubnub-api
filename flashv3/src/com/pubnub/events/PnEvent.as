@@ -1,52 +1,47 @@
-package com.pubnub.events{
+package com.pubnub.events {
 	import flash.events.Event;
 	
 	/**
-	 * Pub Nub Event
-	 * @author Maxim Firsov
+	 * ...
+	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class PnEvent extends Event {
 		
-		// init Pubnub
 		public static const INIT:String = "init";
 		public static const INIT_ERROR:String = "initError";
+		public static const SUBSCRIBE:String = 'subscribe';
+		public static const DETAILED_HISTORY:String = 'detailed_history';
 		
-		// subscribe channel was set up
-		public static const SUBSCRIBE:String = "subscribe";
-		// subscribe channel recieve data
-		public static const SUBSCRIBE_DATA:String = "subscribeData";
-		//subscribe channel was disconnect
-		public static const UNSUBSCRIBE:String = "Unsubscribe";
-		
-		
-		public static const PUBLISH:String = "Publish";
-		
-        public static const PRESENCE:String = "Presence";
-        public static const HERE_NOW:String = "HereNow";
-		public static const HISTORY:String = "History";
-		public static const DETAILED_HISTORY:String = "DetailedHistory";
-		public static const TIME:String="Time";
-		
-		public static const ERROR:String = "Error";
-		
-		
+		private var _status:String;
+		private var _channel:String;
 		private var _data:Object;
 		
-		public function PnEvent(type:String, data:Object = null, bubbles:Boolean=false, cancelable:Boolean=false) { 
+		public function PnEvent(type:String, data:Object = null, channel:String = null, status:String = null,  bubbles:Boolean = false, cancelable:Boolean = false) { 
+			_channel = channel;
+			_status = status;
 			_data = data;
 			super(type, bubbles, cancelable);
 		} 
 		
 		public override function clone():Event { 
-			return new PnEvent(type, data, bubbles, cancelable);
+			return new PnEvent(type, data , channel, status,bubbles, cancelable);
 		} 
 		
 		public override function toString():String { 
-			return formatToString("PnEvent", "type", "type", "bubbles", "cancelable", "eventPhase"); 
+			return formatToString("PnEvent", "type", "data" , "channel", "status", "bubbles", "cancelable", "eventPhase"); 
+		}
+		
+		public function get status():String {
+			return _status;
+		}
+		
+		public function get channel():String {
+			return _channel;
 		}
 		
 		public function get data():Object {
 			return _data;
 		}
+		
 	}
 }

@@ -95,15 +95,15 @@ package com.pubnub.channel {
 		
 		private function onSubscribeResult(e:OperationEvent):void {
 			var result:Object = e.data;  
-			var time:Number = result[1];			
+			var time:Number = result[1];	
+			trace(time);
 			var messages:Array = result[0];    
 			if(messages) {
 				for (var i:int = 0; i < messages.length; i++) {
 					if(cipherKey.length > 0){
-						var pubnubcrypto:PnCrypto = new PnCrypto();
 						_data = { 
 							channel:_name, 
-							result:[i+1,pubnubcrypto.decrypt(cipherKey,messages[i])], 
+							result:[i+1,PnCrypto.decrypt(cipherKey,messages[i])], 
 							envelope: result, 
 							timeout:1 
 						}
@@ -147,17 +147,22 @@ package com.pubnub.channel {
 		}
 		
 		public function destroy():void {
+			dispose();
+			
 			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
-			operation.close();
 			operation.removeEventListener(OperationEvent.RESULT, onSubscribeResult);
 			operation.removeEventListener(OperationEvent.FAULT, onSubscribeError);
 			
 			operation = getOperation(Operation.WITH_TIMETOKEN);
-			operation.close();
 			operation.removeEventListener(OperationEvent.RESULT, onSubscribeInitResult);
 			operation.removeEventListener(OperationEvent.FAULT, onSubscribeInitError);
 			
 			operation = null;
+		}
+		
+		public function dispose():void {
+			getOperation(Operation.GET_TIMETOKEN).close();
+			getOperation(Operation.WITH_TIMETOKEN).close();
 		}
 	}
 }
