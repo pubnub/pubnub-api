@@ -1,6 +1,5 @@
 package com.pubnub.operation {
 	import com.pubnub.*;
-	import com.pubnub.channel.*;
 	import com.pubnub.loader.*;
 	import flash.events.*;
 	import org.httpclient.events.*;
@@ -82,7 +81,7 @@ package com.pubnub.operation {
 					url = args.url + "&" + args.params;
 			}
 			this._url = url;
-			trace(operation, url);
+			//trace(operation, url);
 			_loader.load(this._url);
 		}
 		

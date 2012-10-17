@@ -59,6 +59,7 @@ package com.pubnub.operation {
 		
 		override protected function onLoaderData(e:PnURLLoaderEvent):void {
 			var data:* = e.data;
+			
 			//var test:Object = JSON.parse(data);
 			try {
 				var result:Object = JSON.parse(data);
@@ -77,7 +78,7 @@ package com.pubnub.operation {
 				}
 			}
 			catch (e:*){
-				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [0, "[PubNub detailed history] Bad Data Content Ignored"] ));
+				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [-1, "[Pn.detailedHistory()] Bad Data Content Ignored"] ));
 			}
 		}
 	}

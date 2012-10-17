@@ -5,9 +5,10 @@
  */
 package com.pubnub {
 	
-	import com.pubnub.channel.*;
 	import com.pubnub.events.*;
 	import com.pubnub.operation.*;
+	import com.pubnub.subscribe.Subscribe;
+	import com.pubnub.subscribe.SubscribeEvent;
 	import flash.errors.*;
 	import flash.events.*;
 	import flash.utils.*;
@@ -32,6 +33,7 @@ package com.pubnub {
 		static private const MILLON:Number = 1000000;
 		static private const INIT_OPERATION:String = 'init';
 		static private const HISTORY_OPERATION:String = 'history';
+		static private const PUBLISH_OPERATION:String = 'publish';
 		
 		private var _initialized:Boolean = false;         
 		
@@ -79,14 +81,15 @@ package com.pubnub {
 			initKeys(config);
             _sessionUUID = PnUtils.getUID();
 			var url:String = origin + "/" + "time" + "/" + 0;
-			// Loads Time Token
+			
+			// Loads start time token
 			var operation:Operation = getOperation(INIT_OPERATION);
 			operation.send( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
 			operation.addEventListener(OperationEvent.RESULT, onInitComplete);
 			operation.addEventListener(OperationEvent.FAULT, onInitError);
 			
-			var historyOperation:HistoryOperation = new HistoryOperation();
-			operations[HISTORY_OPERATION] = historyOperation;
+			operations[HISTORY_OPERATION] = new HistoryOperation();
+			operations[PUBLISH_OPERATION] = new PublishOperation();
 			
 			// 
 			//var obj:Object = JSON.parse('[[{"value":,{"value":,"hello from ruby!","Hello World",{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{},{"Message":"qqqq"},{"Message":"qqqq"},{},{"Message":"abc"},{"Message":"abc"},{"Message":"qqqq"},{"some_val":"Hello World! --> ɂ顶@#$%^&*()!"},"Hello World",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],{"some_val":"Hello World! --> ɂ顶@#$%^&*()!"},"Hello World",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],{"some_val":"Hello World! --> ɂ顶@#$%^&*()!"},"Hello World",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],{"Message":"\nggg"},{"some_val":"Hello World! --> ɂ顶@#$%^&*()!"},"Hello World",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],{"Message":"\nggg"},{"Message":"qqqq"},{"Message":"qqqq"},{"Message":"qqqq"},{"Message":"qqqq"},{"Message":"qqqq"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"some_text": "Hello my World"},{"sender":"27039cde-00f1-4b43-8332-e01e8a9bee51","text":"ho"},{"sender":"27039cde-00f1-4b43-8332-e01e8a9bee51","text":"hi again"},"T3V9IUvSjcJyS08NcFleDQ==",["97kYgMRX++ScYuoEKVPfAA==","LtuUb78URtpKj9QMi38C8w==",{"food":"y68rf0\/iaqVgp\/FAhwv7Fg==","drink":"QmuzhKb\/dZqqyNKXyvm45g=="}],{"text":"hey"},"more stuff","and more",[1,"last time token"],["97kYgMRX++ScYuoEKVPfAA==","LtuUb78URtpKj9QMi38C8w==",{"food":"y68rf0\/iaqVgp\/FAhwv7Fg==","drink":"QmuzhKb\/dZqqyNKXyvm45g=="}],"T3V9IUvSjcJyS08NcFleDQ==",["97kYgMRX++ScYuoEKVPfAA==","LtuUb78URtpKj9QMi38C8w==",{"food":"y68rf0\/iaqVgp\/FAhwv7Fg==","drink":"QmuzhKb\/dZqqyNKXyvm45g=="}],"hi","hi",{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey2"},{"text":"hey2"},{"text":"hey3"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey5"},{"text":"hey6"},{"text":"hey6"},{"text":"hey6"},{"text":"hey6"},"hi",{"text":"hey6"},"hi","hi","who are you?","hi","who are you?","who are you?","who are you?","who are you?","who are you?","hi","hi"],13504200325960631,13504605225815564]');
@@ -96,8 +99,8 @@ package com.pubnub {
 			return subscribes[name];
 		}
 		
-		private function getChannel(name:String):Channel {
-			var result:Channel = subscribes[name] || new Channel();
+		private function getSubscribe(name:String):Subscribe {
+			var result:Subscribe = subscribes[name] || new Subscribe();
 			subscribes[name] = result;
 			return result;
 		}
@@ -151,8 +154,8 @@ package com.pubnub {
 		
 		public function subscribe(channel:String):void {
 			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet");
-			var subChannel:Channel = getChannel(channel);
-			if (subChannel.connected) {
+			var subscribe:Subscribe = getSubscribe(channel);
+			if (subscribe.connected) {
 				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, 
 												{ result: [ -1, 'AlreadyConnected'] },
 												channel, 
@@ -161,36 +164,58 @@ package com.pubnub {
 			}
 			
 			
-			subChannel.origin = origin;
-			subChannel.subscribeKey = subscribeKey;
-			subChannel.sessionUUID = sessionUUID;
-			subChannel.cipherKey = cipherKey;
-			subChannel.subscribe(channel);
-			subChannel.addEventListener(ChannelEvent.CONNECT, onSubscribeConnect);
-			subChannel.addEventListener(ChannelEvent.DATA, onSubscribeData);
-			subChannel.addEventListener(ChannelEvent.DISCONNECT, onSubscribeDisconnect);
-			subChannel.addEventListener(ChannelEvent.ERROR, onSubscribeError);
+			subscribe.origin = origin;
+			subscribe.subscribeKey = subscribeKey;
+			subscribe.sessionUUID = sessionUUID;
+			subscribe.cipherKey = cipherKey;
+			subscribe.subscribe(channel);
+			subscribe.addEventListener(SubscribeEvent.CONNECT, onSubscribe);
+			subscribe.addEventListener(SubscribeEvent.DATA, onSubscribe);
+			subscribe.addEventListener(SubscribeEvent.DISCONNECT, onSubscribe);
+			subscribe.addEventListener(SubscribeEvent.ERROR, onSubscribe);
 		}
 		
-		private function onSubscribeError(e:ChannelEvent):void {
-			var channel:Channel = e.target as Channel;
-			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, channel.name, OperationStatus.ERROR));
+		private function onSubscribe(e:SubscribeEvent):void {
+			var subscribe:Subscribe = e.target as Subscribe;
+			trace('onSubscribe');
+			var status:String;
+			switch (e.type) {
+				case SubscribeEvent.CONNECT:
+					status = OperationStatus.CONNECT;
+				break;
+			
+				case SubscribeEvent.DATA:
+					status = OperationStatus.DATA;
+				break;
+				
+				case SubscribeEvent.DISCONNECT:
+					status = OperationStatus.DISCONNECT;
+				break;
+			
+				default: status = OperationStatus.ERROR;		
+			}
+			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, subscribe.name, status));
 		}
 		
-		private function onSubscribeDisconnect(e:ChannelEvent):void {
-			var channel:Channel = e.target as Channel;
+		/*private function onSubscribeError(e:SubscribeEvent):void {
+			var subscribe:Subscribe = e.target as Subscribe;
+			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, subscribe.name, OperationStatus.ERROR));
+		}
+		
+		private function onSubscribeDisconnect(e:SubscribeEvent):void {
+			var subscribe:Subscribe = e.target as Subscribe;
 			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, channel.name, OperationStatus.DISCONNECT));
 		}
 		
-		private function onSubscribeData(e:ChannelEvent):void {
-			var channel:Channel = e.target as Channel;
+		private function onSubscribeData(e:SubscribeEvent):void {
+			var subscribe:Subscribe = e.target as Subscribe;
 			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, channel.name, OperationStatus.DATA));
 		}
 		
-		private function onSubscribeConnect(e:ChannelEvent):void {
-			var channel:Channel = e.target as Channel;
+		private function onSubscribeConnect(e:SubscribeEvent):void {
+			var subscribe:Subscribe = e.target as Subscribe;
 			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, channel.name, OperationStatus.CONNECT));
-		}
+		}*/
 		
 		
 		public function detailedHistory(args:Object):void {
@@ -251,8 +276,9 @@ package com.pubnub {
 		public function dispose():void {
 			getOperation(HISTORY_OPERATION).close();
 			getOperation(INIT_OPERATION).close();
-			for each(var channel:Channel  in subscribes) {
-				channel.dispose();
+			getOperation(PUBLISH_OPERATION).close();
+			for each(var s:Subscribe  in subscribes) {
+				s.dispose();
 			}
 		}
 		
@@ -295,10 +321,10 @@ package com.pubnub {
 		 * @param channel
 		 */
 		public function unsubscribe(channel:String):void {
-			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet");   
+			throwInit(); 
 			if (hasChannel(channel)) {
-				var subChannel:Channel = getChannel(channel);
-				subChannel.unsubscribe(channel);
+				var subscribe:Subscribe = getSubscribe(channel);
+				subscribe.unsubscribe(channel);
 			}else {
 				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, [-1, 'Channel not found'], channel, OperationStatus.ERROR));
 			}
@@ -309,10 +335,39 @@ package com.pubnub {
 		}
 		
 		public function unsubscribeAll():void {
-			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet");
-			for each(var i:Channel  in subscribes) {
+			throwInit();
+			for each(var i:Subscribe  in subscribes) {
 				unsubscribe(i.name);
 			}
+		}
+		
+		public static function publish(args:Object):void {
+			instance.publish(args);
+		}
+		
+		public function publish(args:Object):void {
+			throwInit();
+			var publishOperation:PublishOperation = getOperation(PUBLISH_OPERATION) as PublishOperation;
+			publishOperation.cipherKey = cipherKey;
+			publishOperation.secretKey = secretKey;
+			publishOperation.publishKey = _publishKey;
+			publishOperation.subscribeKey = _subscribeKey;
+			publishOperation.origin = origin;
+			publishOperation.addEventListener(OperationEvent.RESULT, onPublishResult);
+			publishOperation.addEventListener(OperationEvent.FAULT, onPublishFault);
+			publishOperation.send(args);
+		}
+		
+		private function onPublishFault(e:OperationEvent):void {
+			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.ERROR);
+			pnEvent.operation = getOperation(PUBLISH_OPERATION);
+			dispatchEvent(pnEvent);
+		}
+		
+		private function onPublishResult(e:OperationEvent):void {
+			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.DATA);
+			pnEvent.operation = getOperation(PUBLISH_OPERATION);
+			dispatchEvent(pnEvent);
 		}
 	}
 }

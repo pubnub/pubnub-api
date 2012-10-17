@@ -12,6 +12,7 @@ package com.pubnub.events {
 		public static const INIT_ERROR:String = "initError";
 		public static const SUBSCRIBE:String = 'subscribe';
 		public static const DETAILED_HISTORY:String = 'detailed_history';
+		public static const PUBLISH:String = 'publish';
 		
 		public var operation:Operation;
 		
