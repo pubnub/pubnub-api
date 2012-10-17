@@ -214,7 +214,12 @@ class Pubnub
 
                 $returnArray = array($receivedMessages, $timetoken);
 
-                $callback($returnArray);
+                $cbReturn = $callback($returnArray);
+
+                if ($cbReturn == false) {
+                return;
+                }
+
 
 
             } catch (Exception $error) {

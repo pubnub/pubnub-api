@@ -177,17 +177,15 @@ Pass result to Publish Callback
 
 ####Detailed History
 Retrieve published messages.
-##### Required Parameters
+#####Required Parameters
 'channel'- Channel name
-##### Options Parameters
-'start'- Start timetoken
-'end'- End timetoken
-'reverse'- false = oldest first (default), true = newest first
-'count'-Number of History messages. Defaults to 100.
+#####Options Parameters
+######'start'- Start timetoken
+######'end'- End timetoken
+######'reverse'- false = oldest first (default), true = newest first
+######'count'-Number of History messages. Defaults to 100.
 
 ```java
-
-
       Hashtable args = new Hashtable();
                 args.put("channel", Channel);
                 args.put("count", 2+"");
