@@ -55,7 +55,7 @@ package com.pubnub {
 			if (__instance) throw new IllegalOperationError('Use [Pn.instance] getter');
 		}
 		
-		static public function get instance():Pn{
+		static public function get instance():Pn {
 			__instance ||= new Pn();
 			return __instance;
 		}
@@ -87,6 +87,9 @@ package com.pubnub {
 			
 			var historyOperation:HistoryOperation = new HistoryOperation();
 			operations[HISTORY_OPERATION] = historyOperation;
+			
+			// 
+			//var obj:Object = JSON.parse('[[{"value":,{"value":,"hello from ruby!","Hello World",{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{},{"Message":"qqqq"},{"Message":"qqqq"},{},{"Message":"abc"},{"Message":"abc"},{"Message":"qqqq"},{"some_val":"Hello World! --> ɂ顶@#$%^&*()!"},"Hello World",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],{"some_val":"Hello World! --> ɂ顶@#$%^&*()!"},"Hello World",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],{"some_val":"Hello World! --> ɂ顶@#$%^&*()!"},"Hello World",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],{"Message":"\nggg"},{"some_val":"Hello World! --> ɂ顶@#$%^&*()!"},"Hello World",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],{"Message":"\nggg"},{"Message":"qqqq"},{"Message":"qqqq"},{"Message":"qqqq"},{"Message":"qqqq"},{"Message":"qqqq"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"some_text": "Hello my World"},{"sender":"27039cde-00f1-4b43-8332-e01e8a9bee51","text":"ho"},{"sender":"27039cde-00f1-4b43-8332-e01e8a9bee51","text":"hi again"},"T3V9IUvSjcJyS08NcFleDQ==",["97kYgMRX++ScYuoEKVPfAA==","LtuUb78URtpKj9QMi38C8w==",{"food":"y68rf0\/iaqVgp\/FAhwv7Fg==","drink":"QmuzhKb\/dZqqyNKXyvm45g=="}],{"text":"hey"},"more stuff","and more",[1,"last time token"],["97kYgMRX++ScYuoEKVPfAA==","LtuUb78URtpKj9QMi38C8w==",{"food":"y68rf0\/iaqVgp\/FAhwv7Fg==","drink":"QmuzhKb\/dZqqyNKXyvm45g=="}],"T3V9IUvSjcJyS08NcFleDQ==",["97kYgMRX++ScYuoEKVPfAA==","LtuUb78URtpKj9QMi38C8w==",{"food":"y68rf0\/iaqVgp\/FAhwv7Fg==","drink":"QmuzhKb\/dZqqyNKXyvm45g=="}],"hi","hi",{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey"},{"text":"hey2"},{"text":"hey2"},{"text":"hey3"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey4"},{"text":"hey5"},{"text":"hey6"},{"text":"hey6"},{"text":"hey6"},{"text":"hey6"},"hi",{"text":"hey6"},"hi","hi","who are you?","hi","who are you?","who are you?","who are you?","who are you?","who are you?","hi","hi"],13504200325960631,13504605225815564]');
 		}
 		
 		private function hasChannel(name:String):Boolean {
@@ -191,22 +194,20 @@ package com.pubnub {
 		
 		
 		public function detailedHistory(args:Object):void {
-			//throwInit();
-			if (args.start == undefined) {
-				args.start = startTimeToken;
+			throwInit();
+			var channel:String = args.channel;
+			var sub_key:String = args['sub-key'];
+			if (channel == null || 
+				channel.length == 0 ||
+				sub_key == null || 
+				sub_key.length == 0) {
+				dispatchEvent(new PnEvent(PnEvent.DETAILED_HISTORY, [ -1, 'Channel and subKey are missing'], channel, OperationStatus.ERROR));
+				return;
 			}
-			if (args.end == undefined) {
-				args.end = startTimeToken + 100 * MILLON;
-			}
-			if (args.count) {
-				args.count = 100;
-			}
-			if (args.reverse == undefined) {
-				args.reverse = false;
-			}
+			
 			var historyOperation:HistoryOperation = getOperation(HISTORY_OPERATION) as HistoryOperation;
-			historyOperation.channel = args.channel;
-			historyOperation.subKey = _subscribeKey;
+			historyOperation.channel = channel;
+			historyOperation.sub_key = sub_key;
 			historyOperation.origin = origin;
 			historyOperation.cipherKey = cipherKey;
 			historyOperation.addEventListener(OperationEvent.RESULT, onHistoryResult);
@@ -215,34 +216,32 @@ package com.pubnub {
 		}
 		
 		private function onHistoryResult(e:OperationEvent):void {
-			//trace('onHistoryResult');
-			dispatchEvent(new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.DATA));
+			trace('onHistoryResult : ' + e.data);
+			var pnEvent:PnEvent = new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.DATA);
+			pnEvent.operation = getOperation(HISTORY_OPERATION);
+			dispatchEvent(pnEvent);
 		}
 		
 		private function onHistoryFault(e:OperationEvent):void {
-			//trace('onHistoryFault');
-			dispatchEvent(new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.ERROR));
+			trace('onHistoryFault');
+			var pnEvent:PnEvent = new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.ERROR);
+			pnEvent.operation = getOperation(HISTORY_OPERATION);
+			dispatchEvent(pnEvent);
 		}
 		
 		public function detailedHistory2(args:Object):void {
-			//throwInit();
-			var startTime:int = 0
-			if (args.start != undefined) {
-				startTime = args.start;
+			throwInit();
+			var start:String= args.start;
+			var end:String = args.end;
+			//trace('start : ' + start);
+			if (start != null && start.length > 0) {
+				args.start = startTimeToken + int(args.start) * MILLON;
 			}
 			
-			var endTime:int = 100;
-			if (args.end != undefined) {
-				endTime = args.end;
+			if (end != null && end.length > 0) {
+				args.end = startTimeToken + int(args.end) * MILLON;
 			}
-			var correctedArgs:Object = { };
-			for (var name:String in args) {
-				correctedArgs[name] = args[name]
-			}
-			correctedArgs.start = startTimeToken + startTime * MILLON;
-			correctedArgs.end = startTimeToken + endTime * MILLON;
-			detailedHistory(correctedArgs);
-			//trace(correctedArgs.start, correctedArgs.end, (correctedArgs.end - correctedArgs.start) / 1000000);
+			detailedHistory(args);
 		}
 		
 		public function destroy():void {

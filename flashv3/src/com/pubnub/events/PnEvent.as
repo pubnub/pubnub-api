@@ -1,4 +1,5 @@
 package com.pubnub.events {
+	import com.pubnub.operation.Operation;
 	import flash.events.Event;
 	
 	/**
@@ -11,6 +12,8 @@ package com.pubnub.events {
 		public static const INIT_ERROR:String = "initError";
 		public static const SUBSCRIBE:String = 'subscribe';
 		public static const DETAILED_HISTORY:String = 'detailed_history';
+		
+		public var operation:Operation;
 		
 		private var _status:String;
 		private var _channel:String;

@@ -10,17 +10,21 @@ package com.pubnub.channel {
 	 */
 	public class Channel extends EventDispatcher {
 		
+		public static const PING_TIMEOUT_VALUE:Number = 120000;
+		
 		public var origin:String = "";
 		public var subscribeKey:String;
 		public var sessionUUID:String;
 		public var cipherKey:String;
 		private var _data:Object;
 		
+		private var pingTimeout:int;
 		private var subscribeUID:String;
 		private var subscribeURL:String;
 		private var _connected:Boolean;
 		private var _name:String;
 		private var operations:Dictionary;
+		private var lastToken:String
 		
 		
 		public function Channel() {
@@ -46,7 +50,7 @@ package com.pubnub.channel {
 			}
 			this._name = channel;
 			var time:Number = 0;
-			
+			clearTimeout(pingTimeout);
 			subscribeURL = origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(channel) + "/" + 0;
 			subscribeUID = PnUtils.getUID();
 			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
@@ -69,13 +73,16 @@ package com.pubnub.channel {
 		}
 		
 		private function onSubscribeInitResult(e:OperationEvent):void {
-			var time:Number =  e.data[1];
+			lastToken =  e.data[1];
 			_connected = true;
+			//clearTimeout(pingTimeout);
 			dispatchEvent(new ChannelEvent(ChannelEvent.CONNECT,  { channel:_name } ));
-			subscribeWithTimeToken(time);
+			subscribeWithTimeToken(lastToken);
 		}
 		
-		private function subscribeWithTimeToken(time:Number):void {
+		private function subscribeWithTimeToken(time:String):void {
+			//trace('subscribeWithToken : ' + time);
+			//getOperation(Operation.WITH_TIMETOKEN).close();
 			var operation:Operation = getOperation(Operation.WITH_TIMETOKEN);
 				operation.send({ 
 				url:subscribeURL, 
@@ -91,12 +98,13 @@ package com.pubnub.channel {
 		private function onSubscribeError(e:OperationEvent):void {
 			_data = [ -1, 'Connect channel error'];
 			dispatchEvent(new ChannelEvent(ChannelEvent.ERROR, _data ));
+			ping();
 		}
 		
 		private function onSubscribeResult(e:OperationEvent):void {
+			//trace('onSubscribeResult : ' + pingTimeout);
 			var result:Object = e.data;  
-			var time:Number = result[1];	
-			trace(time);
+			lastToken = result[1];	
 			var messages:Array = result[0];    
 			if(messages) {
 				for (var i:int = 0; i < messages.length; i++) {
@@ -121,16 +129,24 @@ package com.pubnub.channel {
 					}	
 				}
 			}
-			subscribeWithTimeToken(time);
+			ping();
+		}
+		
+		private function ping():void {
+			subscribeWithTimeToken(lastToken);
+			clearTimeout(pingTimeout);
+			pingTimeout = setTimeout(subscribeWithLastToken, PING_TIMEOUT_VALUE);
+		}
+		
+		private function subscribeWithLastToken():void {
+			subscribeWithTimeToken(lastToken);
 		}
 		
 		public function unsubscribe(name:String):void {
 			if (!_connected || this._name != name) {
 				return;
 			}
-			getOperation(Operation.GET_TIMETOKEN).close();
-			getOperation(Operation.WITH_TIMETOKEN).close();
-			_connected = false;
+			 dispose()
 			dispatchEvent(new ChannelEvent(ChannelEvent.DISCONNECT, { channel:_name } ));
 		}
 		
@@ -161,6 +177,8 @@ package com.pubnub.channel {
 		}
 		
 		public function dispose():void {
+			_connected = false;
+			clearTimeout(pingTimeout);
 			getOperation(Operation.GET_TIMETOKEN).close();
 			getOperation(Operation.WITH_TIMETOKEN).close();
 		}

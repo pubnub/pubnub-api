@@ -25,7 +25,7 @@ package com.pubnub.operation {
 		public var operation:String;
 		
 		
-		protected var url:String;
+		protected var _url:String;
 		protected var _loader:PnURLLoader;
 		protected var _destroyed:Boolean;
 		
@@ -42,10 +42,12 @@ package com.pubnub.operation {
 		}
 		
 		protected function onLoaderError(e:PnURLLoaderEvent):void {
+			//trace('onLoaderError : ' + e);
 			dispatchEvent(new OperationEvent(OperationEvent.FAULT,e.data ));
 		}
 		
 		protected function onLoaderData(e:PnURLLoaderEvent):void {
+			//trace('onLoaderData : ' + e.data);
 			var result:* = e.data;
 			if (parseToJSON) {
 				try {
@@ -79,9 +81,9 @@ package com.pubnub.operation {
 				else
 					url = args.url + "&" + args.params;
 			}
-			this.url = url;
-			//trace(operation, url);
-			_loader.load(this.url);
+			this._url = url;
+			trace(operation, url);
+			_loader.load(this._url);
 		}
 		
 		public function close():void {
@@ -105,6 +107,10 @@ package com.pubnub.operation {
 		
 		public function get loader():PnURLLoader {
 			return _loader;
+		}
+		
+		public function get url():String {
+			return _url;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 package com.pubnub {
+	import flash.external.ExternalInterface;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
@@ -54,7 +55,6 @@ package com.pubnub {
 		public static function encode(args:String):String{
 			return escape(args);
 		}
-		
 	}
 
 }

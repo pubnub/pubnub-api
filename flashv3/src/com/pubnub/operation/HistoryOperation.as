@@ -8,22 +8,22 @@ package com.pubnub.operation {
 	 */
 	public class HistoryOperation extends Operation {
 		
-		public var subKey:String;
+		public var sub_key:String;
 		public var origin:String;
 		public var cipherKey:String;
 		
 		override public function send(args:Object):void {
+			//trace(this, 'sub_key : ' + sub_key);
 			channel = args.channel;
-			var count:String   = args.count.toString() || "100";
-			url = origin + "/v2/history/sub-key/" + subKey + "/channel/" + PnUtils.encode(args.channel); 
-			var params:String = "count=" + PnUtils.encode(count);
-			if (args.start || args.end || args.reverse) {
-                params = extractOptionalParams(args, params);
+			_url = origin + "/v2/history/sub-key/" + sub_key + "/channel/" + PnUtils.encode(args.channel); 
+			if (args.start || args.end || args.reverse || args.count) {
+				_url += extractOptionalParams(args);
             }
-			_loader.load(this.url);
+			_loader.load(_url);
 		}
 		
-		private function extractOptionalParams(args:Object, params:String):String {
+		private function extractOptionalParams(args:Object):String {
+			var result:String = '?';
             var optionalParams:Object = {};
 
             if (args.start != null) {
@@ -32,6 +32,11 @@ package com.pubnub.operation {
             if (args.end != null) {
                 optionalParams["end"] = args.end;
             }
+			
+			if (args.count != null) {
+                optionalParams["count"] = PnUtils.encode(args.count.toString());
+            }
+			
             if (args.reverse != null) {
                 if (args.reverse == true) {
                     optionalParams["reverse"] = true;
@@ -41,13 +46,20 @@ package com.pubnub.operation {
             }
 
             for (var key:String in optionalParams) {
-                params += "&" + key + "=" + optionalParams[key];
+				if (result == '?') {
+					result += key + "=" + optionalParams[key];
+				}else {
+					result += "&" + key + "=" + optionalParams[key];
+				}
+                
             }
-            return params;
+			//trace(result);
+            return result;
         }
 		
 		override protected function onLoaderData(e:PnURLLoaderEvent):void {
 			var data:* = e.data;
+			//var test:Object = JSON.parse(data);
 			try {
 				var result:Object = JSON.parse(data);
 				var messages:Array = [];
