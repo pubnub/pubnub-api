@@ -189,17 +189,18 @@ typedef enum {
                 break;
                 
             default:
-                if(![CEPubnub isApplicationActive]){
+                if([CEPubnub isApplicationActive]){
                     [_pubNub connection:self didCompleteWithResponse:nil];
-                    [CEPubnub setApplicationActive:NO];
+                      NSLog(@"PubNub request failed with error: %@", error);  
                 }else
                 {
                     [_pubNub performSelector:@selector(_resubscribeToChannel:) withObject:_channel afterDelay:kMinRetryInterval];
+                    [CEPubnub setApplicationActive:YES]; 
                 }
-                    
+                 
                 break;
         }
-    
+      
     }
 }
 
@@ -210,7 +211,7 @@ typedef enum {
 @implementation CEPubnub
 
 @synthesize delegate=_delegate;
- BOOL _appState;
+ BOOL _appState = YES;
 
 - (CEPubnub *) initWithSubscribeKey:(NSString *)subscribeKey useSSL:(BOOL)useSSL {
     return [self initWithPublishKey:nil subscribeKey:subscribeKey secretKey:nil useSSL:useSSL cipherKey:nil uuid:nil origin:kDefaultOrigin];
