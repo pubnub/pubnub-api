@@ -776,8 +776,7 @@ var PDIV          = $('pubnub') || {}
                 callback : jsonp,
                 success  : function(response) { callback(response) },
                 fail     : function() { callback([ 0, 'Disconnected' ]) },
-                url      : url,
-                data     : { uuid: UUID }
+                url      : url
             });
         },
         /*
@@ -851,7 +850,7 @@ var PDIV          = $('pubnub') || {}
                         subscribe_key, encode(channel),
                         jsonp, timetoken
                     ],
-                    data     : { uuid: UUID },
+                    data     : { uuid: encode(UUID) },
                     fail : function() {
                         // Disconnect
                         if (!disconnected) {
