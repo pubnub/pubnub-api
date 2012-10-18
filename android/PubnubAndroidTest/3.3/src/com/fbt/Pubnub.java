@@ -56,6 +56,27 @@ public class Pubnub {
 	private Hashtable<String, Object> connection = new Hashtable<String, Object>();
 
 	/**
+	 * 
+	 * Prepare PubNub State.
+	 * 
+	 * @param String
+	 *            Publish Key.
+	 * @param String
+	 *            Subscribe Key.
+	 * @param String
+	 *            Secret Key.
+	 * @param String
+	 *            Cipher Key.
+	 * @param boolean SSL Enabled.
+	 * 
+	 * @param String uuid.
+	 */
+	public Pubnub(String publish_key, String subscribe_key, String secret_key,
+			String cipher_key, boolean ssl_on,String uuid) {
+		this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on,uuid);
+	}
+	
+	/**
 	 * PubNub 3.2 with Presence
 	 * 
 	 * Prepare PubNub State.
@@ -72,7 +93,7 @@ public class Pubnub {
 	 */
 	public Pubnub(String publish_key, String subscribe_key, String secret_key,
 			String cipher_key, boolean ssl_on) {
-		this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
+		this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on,uuid());
 	}
 
 	/**
@@ -90,7 +111,7 @@ public class Pubnub {
 	 */
 	public Pubnub(String publish_key, String subscribe_key, String secret_key,
 			boolean ssl_on) {
-		this.init(publish_key, subscribe_key, secret_key, "", ssl_on);
+		this.init(publish_key, subscribe_key, secret_key, "", ssl_on,uuid());
 	}
 
 	/**
@@ -104,7 +125,7 @@ public class Pubnub {
 	 *            Subscribe Key.
 	 */
 	public Pubnub(String publish_key, String subscribe_key) {
-		this.init(publish_key, subscribe_key, "", "", false);
+		this.init(publish_key, subscribe_key, "", "", false,uuid());
 	}
 
 	/**
@@ -120,7 +141,7 @@ public class Pubnub {
 	 *            Secret Key.
 	 */
 	public Pubnub(String publish_key, String subscribe_key, String secret_key) {
-		this.init(publish_key, subscribe_key, secret_key, "", false);
+		this.init(publish_key, subscribe_key, secret_key, "", false,uuid());
 	}
 
 	/**
@@ -139,7 +160,7 @@ public class Pubnub {
 	 * @param boolean SSL Enabled.
 	 */
 	public void init(String publish_key, String subscribe_key,
-			String secret_key, String cipher_key, boolean ssl_on) {
+			String secret_key, String cipher_key, boolean ssl_on,String uuid) {
 		this.PUBLISH_KEY = publish_key;
 		this.SUBSCRIBE_KEY = subscribe_key;
 		this.SECRET_KEY = secret_key;
@@ -152,7 +173,7 @@ public class Pubnub {
 		} else {
 			this.ORIGIN = "http://" + this.ORIGIN;
 		}
-		UUIDs = uuid();
+		UUIDs = uuid;
 	}
 
 	/**
@@ -431,6 +452,7 @@ public class Pubnub {
 				if (response.optString(1).length() > 0)
 					timetoken = response.optString(1);
 
+				boolean returnval = true;
 				for (int i = 0; messages.length() > i; i++) {
 					JSONObject message = messages.optJSONObject(i);
 					if (message != null) {
@@ -441,7 +463,9 @@ public class Pubnub {
 							message = pc.decrypt(message);
 						}
 						if (callback != null)
-							callback.subscribeCallback(channel, message);
+						{
+							returnval=callback.subscribeCallback(channel, message);
+						}
 					} else {
 
 						JSONArray arr = messages.optJSONArray(i);
@@ -453,7 +477,7 @@ public class Pubnub {
 								;
 							}
 							if (callback != null)
-								callback.subscribeCallback(channel, arr);
+								returnval=callback.subscribeCallback(channel, arr);
 						} else {
 							String msgs = messages.getString(0);
 							if (this.CIPHER_KEY.length() > 0) {
@@ -462,9 +486,14 @@ public class Pubnub {
 								msgs = pc.decrypt(msgs);
 							}
 							if (callback != null)
-								callback.subscribeCallback(channel, msgs);
+								returnval=callback.subscribeCallback(channel, msgs);
 						}
 					}
+				}
+				
+				if(!returnval)
+				{
+					break;
 				}
 			} catch (Exception e) {
 				try {
