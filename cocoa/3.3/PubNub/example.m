@@ -1,6 +1,4 @@
 #import "pubnub.h"
-#import "DetailedHistoryUnitTest.h"
-#import "UnsubcribeUnitTest.h"
 
  // ----------------------
  // Time Response Callback
@@ -162,20 +160,7 @@ int main( int argc, const char *argv[] ) {
                                           pubnub:  pubnub
                                           channel: channelName
                                           ]];
- // -----------------------------------
- // Detaield History unit test
- // -----------------------------------
-    
-    DetailedHistoryUnitTest *unittest= [[DetailedHistoryUnitTest alloc] init];
-    [unittest runUnitTest];
-    
- // -----------------------------------
- // Unsubcribe unit test
- // -----------------------------------
-    
-    UnsubcribeUnitTest *unittest1= [[UnsubcribeUnitTest alloc] init];
-    [unittest1 runUnsubcribeUnitTest];
-    
+
  // -----------------------------------
  // Unsubcribe
  // -----------------------------------

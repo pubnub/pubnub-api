@@ -21,6 +21,14 @@
     sslOn:        (BOOL)      ssl_on
     origin:       (NSString*) origin;
 
+-(Pubnub*)
+    publishKey:   (NSString*) pub_key
+    subscribeKey: (NSString*) sub_key
+    secretKey:    (NSString*) sec_key
+    sslOn:        (BOOL)      ssl_on
+    uuid:         (NSString*) uuid
+    origin:       (NSString*) origin;
+
 -(void)
     publish:  (NSString*) channel
     message:  (id)        message

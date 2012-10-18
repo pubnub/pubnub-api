@@ -91,6 +91,21 @@ NSString* channel ;
 NSString* msg ;
 Pubnub *pubnub;
 
+-(void)publishMessage
+{
+        //Publish Message on channel
+    PublishCallbackForUnsubcribeUnitTest *reponceCallback= [[PublishCallbackForUnsubcribeUnitTest alloc]
+                                                            pubnub:pubnub
+                                                            channel:channel
+                                                            message:msg];
+    NSLog(@"Publishing message to channel %@",channel);
+    [pubnub
+     publish: channel
+     message: msg
+     delegate: reponceCallback];
+    
+}
+
 -(void)runUnsubcribeUnitTest
 {
     pubnub = [[Pubnub alloc]
@@ -113,16 +128,9 @@ Pubnub *pubnub;
     NSLog(@"Subscribed to channel  %@",channel);
     [pubnub subscribe:channel delegate:subcb];
     
-        //Publish Message on channel
-    PublishCallbackForUnsubcribeUnitTest *reponceCallback= [[PublishCallbackForUnsubcribeUnitTest alloc]
-                                              pubnub:pubnub
-                                              channel:  channel
-                                              message:msg];
-    
-    NSLog(@"Publishing message to channel %@",channel);
-    [pubnub
-     publish: channel
-     message: msg
-     delegate: reponceCallback];
+    [self performSelector: @selector(publishMessage)
+               withObject:  nil
+               afterDelay:  3.0
+     ];
 }
 @end
