@@ -20,22 +20,44 @@
     sslOn:        (BOOL)      ssl_on
     origin:       (NSString*) origin
 {
+   return [self publishKey:pub_key subscribeKey:sub_key secretKey:sec_key sslOn:ssl_on uuid:nil origin:origin];
+}
+
+-(Pubnub*)
+    publishKey:   (NSString*) pub_key
+    subscribeKey: (NSString*) sub_key
+    secretKey:    (NSString*) sec_key
+    sslOn:        (BOOL)      ssl_on
+    uuid:         (NSString*) uuid
+    origin:       (NSString*) origin
+{
     publish_key   = pub_key;
     subscribe_key = sub_key;
     secret_key    = sec_key;
     scheme        = ssl_on ? @"https" : @"http";
     host          = origin;
     subscriptions = [[NSMutableDictionary alloc] init];
-    current_uuid  = [Pubnub uuid];
+    
+    if (uuid == nil) {
+         current_uuid  = [Pubnub uuid];
+    }else{
+        current_uuid=uuid;
+    }
     _connections= [[NSMutableDictionary alloc] init];
     return self;
 }
 
-+(NSString*) md5: (NSString*) stringToHash {
-    const char *src = [stringToHash UTF8String];
-    unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(src, (unsigned int)strlen(src), result);
-    return [[NSString alloc]initWithData:[NSData dataWithBytes:result length:CC_MD5_DIGEST_LENGTH] encoding:NSUTF8StringEncoding ];
++(NSString*) md5: (NSString*) stringToHash {   
+    NSData* inputData = [stringToHash dataUsingEncoding:NSUTF8StringEncoding];
+	unsigned char outputData[CC_MD5_DIGEST_LENGTH];
+	CC_MD5([inputData bytes], (unsigned int)[inputData length], outputData);
+    
+	NSMutableString* hashStr = [NSMutableString string];
+	int i = 0;
+	for (i = 0; i < CC_MD5_DIGEST_LENGTH; ++i)
+		[hashStr appendFormat:@"%02x", outputData[i]];
+    
+	return hashStr;
     
 }
 
