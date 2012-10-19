@@ -1,7 +1,7 @@
 package com.pubnub.operation {
-	import com.pubnub.loader.PnURLLoaderEvent;
-	import com.pubnub.PnCrypto;
-	import com.pubnub.PnUtils;
+	import com.pubnub.*;
+	import com.pubnub.json.*;
+	import com.pubnub.loader.*;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
@@ -62,7 +62,7 @@ package com.pubnub.operation {
 			
 			//var test:Object = JSON.parse(data);
 			try {
-				var result:Object = JSON.parse(data);
+				var result:Object = PnJSON.parse(data);
 				var messages:Array = [];
 				var mess:Object;
 				if(result) {
@@ -70,7 +70,7 @@ package com.pubnub.operation {
 						if (cipherKey.length > 0) {
 							mess = [i + 1, PnCrypto.decrypt(cipherKey, result[0][i])];
 						}else {
-							mess = [i + 1, JSON.stringify(result[0][i])];
+							mess = [i + 1, PnJSON.stringify(result[0][i])];
 						}    
 						messages.push(mess);
 					}

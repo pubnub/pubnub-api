@@ -1,5 +1,6 @@
 package com.pubnub.subscribe {
 	import com.pubnub.*;
+	import com.pubnub.json.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
 	import flash.utils.*;
@@ -120,7 +121,7 @@ package com.pubnub.subscribe {
 					else {
 						_data = { 
 							channel:_name, 
-							result:[i+1,JSON.stringify(messages[i])], 
+							result:[i+1,PnJSON.stringify(messages[i])], 
 							envelope: result, 
 							timeout:1 
 						} 
