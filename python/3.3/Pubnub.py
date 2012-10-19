@@ -391,11 +391,14 @@ class Pubnub():
 
         ## Send Request Expecting JSONP Response
         try:
-            try: usock = urllib2.urlopen( url, None, 200 )
-            except TypeError: usock = urllib2.urlopen( url, None )
+            try:
+                usock = urllib2.urlopen( url, None, 200 )
+            except urllib2.HTTPError as e:
+                return [0, "HTTP Error, Status Code : " + str(e.getcode())]
+            except TypeError:
+                usock = urllib2.urlopen( url, None )
             response = usock.read()
             usock.close()
             return json.loads( response )
         except:
-            return None
-
+            return [0,"Server Error"]
