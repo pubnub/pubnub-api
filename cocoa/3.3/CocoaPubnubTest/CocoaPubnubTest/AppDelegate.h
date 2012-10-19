@@ -14,5 +14,6 @@
 - (IBAction)UnsubscribeUnitTest:(id)sender;
 - (IBAction)CL_223_UnitTest:(id)sender;
 - (IBAction)DetailedHistoryUbitTest:(id)sender;
+- (IBAction)Catch_up_Click:(id)sender;
 
 @end

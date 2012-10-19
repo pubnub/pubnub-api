@@ -2,6 +2,9 @@
 #import "pubnub.h"
 #import "JSON.h"
 
+#define NATIVE_JSON_AVAILABLE __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+
+
 @implementation Request
 @synthesize connection,channel,command,delegate;
 
@@ -14,7 +17,6 @@
     pubnub:   (Pubnub *)_pubnub
     command:  (Command)_command
 {
-  
     delegate = callback;
     pubnub=_pubnub;
     command =_command;
@@ -39,6 +41,7 @@
         delegate:         self
     ];
     channel = _channel;
+    
     return  self;
 }
 
@@ -56,19 +59,19 @@
 -(void)
     connectionDidFinishLoading: (NSURLConnection *) _connection
 {
-        //[delegate callback:self withResponce: response];
-    NSError* error = nil;
-    
-    if ([NSJSONSerialization class]) {
+#if NATIVE_JSON_AVAILABLE
+    {
+         NSError* error = nil;
         id result= [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&error];
         if (error != nil) result = nil;
         [pubnub didCompleteWithRequest:self WithResponse:result isfail:NO ];
-    }else
+    }
+#else
     {
-            // NSLog(@"NSJSONSerialization not support..");
         [pubnub didCompleteWithRequest:self WithResponse:JSONParseData(response) isfail:NO ]; 
     }
-    
+#endif
+
 }
 
 -(void)
@@ -163,19 +166,51 @@ channel:  (NSString*) channel_o
     return self;
 }
 -(void) callback:(NSURLConnection*) connection withResponce: (id) response  {
-      NSError* error = nil;
-    if ([NSJSONSerialization class]) {
+      
+#if NATIVE_JSON_AVAILABLE
+    {
+         NSError* error = nil;
         id result= [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&error];
         if (error != nil) result = nil;
         [delegate callback:connection withResponce:result];
-    }else
+    }
+#else
     {
             //  NSLog(@"NSJSONSerialization not support.");
         [delegate callback:connection withResponce:JSONParseData(response)];
         
     }
+#endif   
 }
 -(void) fail: (NSURLConnection*) connection withResponce: (id) response  {
     [delegate fail: connection withResponce: response];
 }
+
+-(void) connectToChannel:(NSString *)_channel
+{
+    if ([delegate respondsToSelector:@selector(connectToChannel:)]) {
+        [delegate connectToChannel:_channel]; 
+    }
+}
+
+-(void)reconnectToChannel:(NSString *)_channel
+{
+    if ([delegate respondsToSelector:@selector(reconnectToChannel:)]) {  
+        [delegate reconnectToChannel:_channel]; 
+    }
+}
+
+-(void)disconnectFromChannel:(NSString *)_channel
+{
+    if ([delegate respondsToSelector:@selector(reconnectToChannel:)])
+    {
+        [delegate reconnectToChannel:_channel];  
+    }
+}
+
 @end
+
+@implementation ChannelStatus
+@synthesize connected,channel,first;
+@end
+

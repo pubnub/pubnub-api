@@ -1,6 +1,8 @@
 #import "pubnub.h"
 #import "JSON.h"
 
+#define NATIVE_JSON_AVAILABLE __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000 || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+
 @interface NSString (Extensions)
 - (NSString*) urlEscapedString;  // Uses UTF-8 encoding and also escapes characters that can confuse the parameter 
 @end
@@ -12,6 +14,8 @@
 @end
 
 @implementation Pubnub
+
+NSString *timestamp=nil;
 
 -(Pubnub*)
     publishKey:   (NSString*) pub_key
@@ -120,6 +124,14 @@
  */
 -(BOOL) subscribed: (NSString*) channel {
     if ([subscriptions objectForKey: channel]) return YES;
+    
+    for (ChannelStatus* it in [_subscriptionset copy]) {
+        if ([it.channel isEqualToString:channel])
+        {
+            it.connected=false;
+            it.first=false;
+        }
+    }
     return NO;
 }
 
@@ -132,7 +144,7 @@
  * 
  */
 // * /subscribe/sub-key/channel/callback/timetoken
--(void) subscribe: (NSDictionary*) args {
+-(void) _resubscribe: (NSDictionary*) args {
     NSString* channel = [args objectForKey:@"channel"];
    Request * request=  [[Request alloc]
         scheme: scheme
@@ -171,10 +183,39 @@
         return;
     }
 
+    if (_subscriptionset && [_subscriptionset count] > 0) {
+        
+        BOOL channel_exist = NO;
+        for (ChannelStatus* it in [_subscriptionset copy]) {
+            if ([it.channel isEqualToString:channel])
+            {
+                channel_exist = YES;
+                break;
+            }
+        }
+        
+        if (!channel_exist) {
+            ChannelStatus *cs = [[ChannelStatus alloc] init] ;
+            cs.channel = channel;
+            cs.connected = YES;
+            [_subscriptionset addObject:cs];
+        } else {
+                // error_cb.execute("Already Connected");
+                //return;
+        }
+    } else {
+            // New Channel
+        ChannelStatus *cs = [[ChannelStatus alloc] init] ;
+        cs.channel = channel;
+        cs.connected = YES;
+        _subscriptionset = [[NSMutableSet alloc] init];
+        [_subscriptionset addObject:cs];
+    }
+    
     [subscriptions setObject:@"1" forKey:channel];
 
     [self
-        performSelector: @selector(subscribe:)
+        performSelector: @selector(_resubscribe:)
         withObject: [NSDictionary
             dictionaryWithObjectsAndKeys:
             channel,   @"channel", 
@@ -318,11 +359,23 @@
  */
 -(void) unsubscribe: (NSString*) channel {
     Request *_req = [_connections objectForKey:channel];
-    
     [_req.connection cancel];
     [_connections removeObjectForKey:channel];
     [subscriptions removeObjectForKey:channel];
-    NSLog(@"Unsubscribe successfully.");  
+    for (ChannelStatus* it in [_subscriptionset copy]) {
+        if ([it.channel isEqualToString:channel])
+        {
+            it.connected=false;
+            it.first=false;
+            //  [self disconnectFromChannel:channel];
+            Response *responce= [_req delegate];
+            [responce disconnectFromChannel:channel];
+            [_subscriptionset removeObject:it];
+            break;
+        }
+    }
+    
+    NSLog(@"Unsubscribe successfully.");
 }
 
 -(void) removeConnection: (NSString*) channel{
@@ -431,7 +484,8 @@ delegate:  (id)       delegate
 +(NSString*)JSONToString:(id)object
 {
     NSString * jsonString= nil;
-    if ([NSJSONSerialization class]) {
+#if NATIVE_JSON_AVAILABLE 
+    {
         if ([object isKindOfClass:[NSString class]]) {
             object = [NSString stringWithFormat:@"\"%@\"", object];
             
@@ -441,27 +495,24 @@ delegate:  (id)       delegate
             id result = [NSJSONSerialization dataWithJSONObject:object options:kNilOptions error:&error];
             if (error != nil) return nil;
             jsonString =[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
-            
         }
-    }else{
-        jsonString = JSONWriteString(object);
-            // NSLog(@"NSJSONSerialization not support.");
     }
+#else
+    jsonString = JSONWriteString(object);
+#endif
     return jsonString;
 }
 
 +(id)StringToJSON:(id)object
 {
+#if NATIVE_JSON_AVAILABLE
     NSError* error = nil;
-    if ([NSJSONSerialization class]) {
-        id result= [NSJSONSerialization JSONObjectWithData:object options:kNilOptions error:&error];
-        if (error != nil) result = nil;
-        return result;
-    }else
-    {
-            // NSLog(@"NSJSONSerialization not support.");
-        return JSONParseData(object);
-    }
+    id result= [NSJSONSerialization JSONObjectWithData:object options:kNilOptions error:&error];
+    if (error != nil) result = nil;
+       return result;
+#else
+    return JSONParseData(object);
+#endif
 }
 
 - (void)didCompleteWithRequest:(Request*)request WithResponse:(id)response isfail:(BOOL) isFail {
@@ -491,8 +542,8 @@ delegate:  (id)       delegate
              [self handleCommandGetHereNowForRequest:request response:response isfail: isFail];
              break;
         case kCommand_Presence:
-            [self handleCommandPresenceNowForRequest:request response:response isfail: isFail];
-            break;
+             [self handleCommandPresenceNowForRequest:request response:response isfail: isFail];
+             break;
          default:
              NSLog(@"ERROR::didCompleteWithResponse Command Not Set..");
              
@@ -511,20 +562,58 @@ delegate:  (id)       delegate
 
 - (void)handleCommandReceiveMessageForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
 {
+    BOOL isReconnect=NO;
+    if (response == nil  ) {
+        for (ChannelStatus* it in [_subscriptionset copy]) {
+            if ([it.channel isEqualToString:request.channel])
+            { 
+                if(it.first && it.connected) {
+                    it.connected=NO;
+                    [request.delegate disconnectFromChannel:request.channel];
+                }
+            }
+        }
+    }
+    else {
+        for (ChannelStatus* it in [_subscriptionset copy]) {
+            if ([it.channel isEqualToString:request.channel])
+            {
+                // Connect Callback
+                if (it.first == NO) {
+                    it.first = YES;
+                    it.connected=YES;
+                    [request.delegate connectToChannel:request.channel];
+                    break;
+                }else
+                {
+                    if (it.connected == NO ) {
+                        it.connected =YES;
+                        isReconnect= YES;
+                        [request.delegate reconnectToChannel:request.channel];
+                    }
+                }
+            }
+        }
+    }
+    
    if(!isfail)
    {
        NSArray* response_data=(NSArray*)response;
        if (![self subscribed: request.channel]) return;
-       
+       if(!isReconnect)
+       {
+           timestamp=[response_data objectAtIndex:1];
+       }
        [self
-        performSelector: @selector(subscribe:)
+        performSelector: @selector(_resubscribe:)
         withObject: [NSDictionary
                      dictionaryWithObjectsAndKeys:
                      request.channel,                 @"channel",
                      request.delegate,                @"delegate",
-                     [response_data objectAtIndex:1], @"timetoken",
+                     timestamp,                       @"timetoken",
                      nil]
         ];
+       timestamp=[response_data objectAtIndex:1];
        NSEnumerator* messages = [[response_data objectAtIndex:0]
                                  objectEnumerator
                                  ];
@@ -536,7 +625,7 @@ delegate:  (id)       delegate
    {
        if (![self subscribed: request.channel]) return;
        [self
-        performSelector: @selector(subscribe:)
+        performSelector: @selector(_resubscribe:)
         withObject: [NSDictionary
                      dictionaryWithObjectsAndKeys:
                      request.channel,  @"channel",
@@ -621,6 +710,5 @@ delegate:  (id)       delegate
     else
         [request.delegate fail:request withResponce:nil ];
 }
-
 @end
 

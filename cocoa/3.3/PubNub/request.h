@@ -45,6 +45,10 @@ typedef enum {
 
 -(void)      callback:(id) request withResponce: (id) response;
 -(void)      fail    :(id) request withResponce: (id) response;
+
+- (void)    connectToChannel:(NSString *)channel;
+- (void)    disconnectFromChannel:(NSString *)channel;
+- (void)    reconnectToChannel:(NSString *)channel;
 @end
 
 @interface Request: NSObject {
@@ -69,3 +73,10 @@ typedef enum {
     command :(Command)command;
 
 @end
+
+@interface ChannelStatus :NSObject
+@property(nonatomic, retain) NSString *channel;
+@property(nonatomic, nonatomic) BOOL connected;
+@property(nonatomic, nonatomic) BOOL first;
+@end
+
