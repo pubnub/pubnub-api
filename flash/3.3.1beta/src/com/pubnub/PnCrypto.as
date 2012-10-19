@@ -8,8 +8,7 @@ package com.pubnub {
 	import com.hurlant.util.Hex;
 	import com.pubnub.json.PnJSON;
 	import flash.utils.ByteArray;
-	//import com.adobe.serialization.json.JSON;
-		
+
 	public class PnCrypto extends Object{
 
 		static public function encrypt(cipher_key:String, plainStr:String):String {
@@ -33,8 +32,7 @@ package com.pubnub {
 			cbc.IV =  Hex.toArray(Hex.fromString("0123456789012345"));
 
 			cbc.decrypt(decodedCipherText);
-			//return PnJSON.decode(Hex.toString(Hex.fromArray(decodedCipherText)));
-			return PnJSON.stringify(Hex.toString(Hex.fromArray(decodedCipherText)));
+			return Hex.toString(Hex.fromArray(decodedCipherText));
 		}
 
 		static private function hashKey(cipher_key:String):ByteArray {

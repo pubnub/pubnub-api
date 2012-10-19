@@ -1,212 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
-			   xmlns:s="library://ns.adobe.com/flex/spark" 
-			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="400" minHeight="300">
-	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
-	</fx:Declarations>
-	<fx:Script>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+               xmlns:s="library://ns.adobe.com/flex/spark"
+               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="400" minHeight="300">
+    <fx:Declarations>
+        <!-- Place non-visual elements (e.g., services, value objects) here -->
+    </fx:Declarations>
+    <fx:Script>
 		<![CDATA[
-			import com.pubnub.*;
-			import com.pubnub.events.*;
-			import flash.events.*;
-			import flash.external.*;
-			
-			[Bindable]
-			public var channel:String = 'hello_world';
-			
-			[Bindable]
-			public var origin:String = 'pubsub.pubnub.com';
-			
-			[Bindable]
-			public var pub_key:String = 'demo';
-			
-			[Bindable]
-			public var sub_key:String = 'demo';
-			
-			[Bindable]
-			public var secret_key:String = '';
-			
-			[Bindable]
-			public var cipher_key:String = '';
-			
-			private var consoleCounter:int = 1;
-			
-			
-			
-			protected function onInitBtnClick(event:MouseEvent):void{
-				//trace('onInitBtnClick');
-				var config:Object = {
-					push_interval:0.5,
-					publish_key:this.pub_key,
-					sub_key:this.sub_key,
-					secret_key:this.secret_key,
-					cipher_key:this.cipher_key
-				}
-				
-				Pn.instance.addEventListener(PnEvent.INIT, onInit);
-				Pn.instance.addEventListener(PnEvent.INIT_ERROR, onInitError);
-				Pn.instance.addEventListener(PnEvent.SUBSCRIBE, onSubscribe);	
-				Pn.instance.addEventListener(PnEvent.DETAILED_HISTORY, onDetailedHistory);
-				Pn.instance.addEventListener(PnEvent.PUBLISH, onPublish);
-				Pn.init(config);
-			}
-			
-			
-				
-			private function onInit(e:PnEvent):void {
-				callExternalInterface("console.log", ("Pn init : " + Pn.instance.sessionUUID));
-			}
-			
-			private function onInitError(e:PnEvent):void {
-				callExternalInterface("console.log", ("onInitError"));
-			}
-			
-			private function onSubscribeClick(e:MouseEvent):void {
-				var channels:Array = channel.split(',');
-				for each(var i:String  in channels) {
-					Pn.subscribe(i);
-				}
-			}
-			
-			private function onSubscribe(e:PnEvent):void {
-				
-				switch (e.status) {
-					case OperationStatus.DATA:
-						callExternalInterface("console.log", ("Subscribe [DATA], channel : " + e.channel + ', result : ' + e.data.result));
-						break;
-				
-					case OperationStatus.CONNECT:
-						callExternalInterface("console.log", ("Subscribe [CONNECT] : " + e.channel));
-						break;
-				
-					case OperationStatus.DISCONNECT:
-						callExternalInterface("console.log", ("Subscribe [DISCONNECT] : " + e.channel));
-						break;
-						
-					case OperationStatus.ERROR:
-						callExternalInterface("console.log", ("Subscribe [ERROR] : " + e.channel));
-						break;
-				}
-			}
-			
-			protected function OnClearConsoleBtnClick(event:MouseEvent):void{
-				consoleCounter = 1;
-				consoleArea.text = '';
-			}
-			
-			private function onDetHistoryClick(e:MouseEvent):void {
-				var args:Object = { };
-				args.start = startTimeTxt.enabled ? startTimeTxt.text: null ;
-				args.end = endTimeTxt.enabled ? endTimeTxt.text : null;
-				args.count = countTxt.enabled ? countTxt.text : null;
-				args.reverse = reverseTxt.enabled ? (reverseTxt.text == 'true' ? true : false): null;
-				args.channel = this.channel;
-				args['sub-key'] = this.sub_key;
-				Pn.instance.detailedHistory(args);
-			}
-			
-			private function onDetailedHistory(e:PnEvent):void {
-				switch (e.status) {
-					case OperationStatus.DATA:
-						var messages:Array = e.data as Array;
-							callExternalInterface("console.log", ("DetailedHistory [DATA], url : " + e.operation.url));
-							callExternalInterface("console.log", ("DetailedHistory [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
-						break;
-						
-					case OperationStatus.ERROR:
-							callExternalInterface("console.log", ("DetailedHistory [ERROR], url : " + e.operation.url));
-							callExternalInterface("console.log", ("DetailedHistory [ERROR] : " + e.data));
-						break;
-				}
-			}
-			
-			protected function unsubscribeBtn_clickHandler(event:MouseEvent):void{
-				// TODO Auto-generated method stub
-				Pn.unsubscribeAll();
-			}
-			
-			private function callExternalInterface(functionName:String, ...rest):void {
-				if (ExternalInterface.available) {
-					ExternalInterface.call(functionName, rest);
-				}
-				consoleArea.appendText((consoleCounter++) +'. '+ rest + '\n');
-			}
-			
-			protected function publishBtn_clickHandler(event:MouseEvent):void{
-				Pn.publish({channel : channel, message : publishMessageTxt.text});
-			}
-			
-			private function onPublish(e:PnEvent):void {
-				switch (e.status) {
-					case OperationStatus.DATA:
-						var messages:Array = e.data as Array;
-							callExternalInterface("console.log", ("Publish [DATA], url : " + e.operation.url));
-							callExternalInterface("console.log", ("Publish [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
-						break;
-						
-					case OperationStatus.ERROR:
-							callExternalInterface("console.log", ("Publish [ERROR], url : " + e.operation.url));
-							callExternalInterface("console.log", ("Publish [ERROR] : " + e.data));
-						break;
-				}
-			}
-			
-		]]>
+        import com.pubnub.*;
+        import com.pubnub.events.*;
+        import flash.events.*;
+        import flash.external.*;
+
+        [Bindable]
+        public var channel:String = 'hello_world';
+
+        [Bindable]
+        public var origin:String = 'pubsub.pubnub.com';
+
+        [Bindable]
+        public var pub_key:String = 'demo';
+
+        [Bindable]
+        public var sub_key:String = 'demo';
+
+        [Bindable]
+        public var secret_key:String = '';
+
+        [Bindable]
+        public var cipher_key:String = '';
+
+        private var consoleCounter:int = 1;
+
+
+
+        protected function onInitBtnClick(event:MouseEvent):void{
+            //trace('onInitBtnClick');
+            var config:Object = {
+                push_interval:0.5,
+                publish_key:this.pub_key,
+                sub_key:this.sub_key,
+                secret_key:this.secret_key,
+                cipher_key:this.cipher_key
+            }
+
+            Pn.instance.addEventListener(PnEvent.INIT, onInit);
+            Pn.instance.addEventListener(PnEvent.INIT_ERROR, onInitError);
+            Pn.instance.addEventListener(PnEvent.SUBSCRIBE, onSubscribe);
+            Pn.instance.addEventListener(PnEvent.DETAILED_HISTORY, onDetailedHistory);
+            Pn.instance.addEventListener(PnEvent.PUBLISH, onPublish);
+            Pn.init(config);
+        }
+
+
+
+        private function onInit(e:PnEvent):void {
+            callExternalInterface("console.log", ("Pn init : " + Pn.instance.sessionUUID));
+        }
+
+        private function onInitError(e:PnEvent):void {
+            callExternalInterface("console.log", ("onInitError"));
+        }
+
+        private function onSubscribeClick(e:MouseEvent):void {
+            var channels:Array = channel.split(',');
+            for each(var i:String  in channels) {
+                Pn.subscribe(i);
+            }
+        }
+
+        private function onSubscribe(e:PnEvent):void {
+
+            switch (e.status) {
+                case OperationStatus.DATA:
+                    callExternalInterface("console.log", ("Subscribe [DATA], channel : " + e.channel + ', result : ' + e.data.result));
+                    break;
+
+                case OperationStatus.CONNECT:
+                    callExternalInterface("console.log", ("Subscribe [CONNECT] : " + e.channel));
+                    break;
+
+                case OperationStatus.DISCONNECT:
+                    callExternalInterface("console.log", ("Subscribe [DISCONNECT] : " + e.channel));
+                    break;
+
+                case OperationStatus.ERROR:
+                    callExternalInterface("console.log", ("Subscribe [ERROR] : " + e.channel));
+                    break;
+            }
+        }
+
+        protected function OnClearConsoleBtnClick(event:MouseEvent):void{
+            consoleCounter = 1;
+            consoleArea.text = '';
+        }
+
+        private function onDetHistoryClick(e:MouseEvent):void {
+            var args:Object = { };
+            args.start = startTimeTxt.enabled ? startTimeTxt.text: null ;
+            args.end = endTimeTxt.enabled ? endTimeTxt.text : null;
+            args.count = countTxt.enabled ? countTxt.text : null;
+            args.reverse = reverseTxt.enabled ? (reverseTxt.text == 'true' ? true : false): null;
+            args.channel = this.channel;
+            args['sub-key'] = this.sub_key;
+            Pn.instance.detailedHistory(args);
+        }
+
+        private function onDetailedHistory(e:PnEvent):void {
+            switch (e.status) {
+                case OperationStatus.DATA:
+                    var messages:Array = e.data as Array;
+                    callExternalInterface("console.log", ("DetailedHistory [DATA], url : " + e.operation.url));
+                    callExternalInterface("console.log", ("DetailedHistory [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
+                    break;
+
+                case OperationStatus.ERROR:
+                    callExternalInterface("console.log", ("DetailedHistory [ERROR], url : " + e.operation.url));
+                    callExternalInterface("console.log", ("DetailedHistory [ERROR] : " + e.data));
+                    break;
+            }
+        }
+
+        protected function unsubscribeBtn_clickHandler(event:MouseEvent):void{
+            // TODO Auto-generated method stub
+            Pn.unsubscribeAll();
+        }
+
+        private function callExternalInterface(functionName:String, ...rest):void {
+            if (ExternalInterface.available) {
+                ExternalInterface.call(functionName, rest);
+            }
+            consoleArea.appendText((consoleCounter++) +'. '+ rest + '\n');
+        }
+
+        protected function publishBtn_clickHandler(event:MouseEvent):void{
+            Pn.publish({channel : channel, message : publishMessageTxt.text});
+        }
+
+        private function onPublish(e:PnEvent):void {
+            switch (e.status) {
+                case OperationStatus.DATA:
+                    var messages:Array = e.data as Array;
+                    callExternalInterface("console.log", ("Publish [DATA], url : " + e.operation.url));
+                    callExternalInterface("console.log", ("Publish [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
+                    break;
+
+                case OperationStatus.ERROR:
+                    callExternalInterface("console.log", ("Publish [ERROR], url : " + e.operation.url));
+                    callExternalInterface("console.log", ("Publish [ERROR] : " + e.data));
+                    break;
+            }
+        }
+
+        ]]>
 	</fx:Script>
-	<s:Label x="10" y="10" fontSize="14" fontWeight="bold" text="Device Console"/>
-	<s:Label x="13" y="39" color="#4D4C4C" fontStyle="italic" text="Channel"/>
-	<s:TextInput id="channelTxt" x="68" y="34" width="246" text="@{channel}"/>
-	<s:Label x="28" y="67" color="#4D4C4C" fontStyle="italic" text="Origin"/>
-	<s:TextInput id="originTxt" x="68" y="63" width="246" text="@{origin}"/>
-	<mx:TabNavigator left="10" right="10" top="108" height="230">
-		<s:NavigatorContent width="100%" height="100%" label="Init">
-			<s:Label x="16" y="30" color="#4D4C4C" fontStyle="italic" text="secret_key" textAlign="right"/>
-			<s:TextInput id="secretKeyTxt" x="81" y="25" width="246" text="@{secret_key}"/>
-			<s:Label x="16" y="60" color="#4D4C4C" fontStyle="italic" text="cipher_key" textAlign="right"/>
-			<s:TextInput id="cipherKeyTxt" x="81" y="55" width="246" text="@{cipher_key}"/>
-			<s:Button id="initBtn" x="10" y="85" label="Init" click="onInitBtnClick(event)"/>
-		</s:NavigatorContent>
-		<s:NavigatorContent width="100%" height="100%" label="Subscribe">
-			<s:Button id="subscribeBtn" x="10" y="5" label="Subscribe" click="onSubscribeClick(event)" />
-			<s:Button id="unsubscribeBtn" x="10" y="35" label="UnSubscribe"
-					  click="unsubscribeBtn_clickHandler(event)"/>
-		</s:NavigatorContent>
-		<s:NavigatorContent width="100%" height="100%" label="DetailedHistory">
-			<s:Label x="2" y="30" width="58" color="#4D4C4C" fontStyle="italic" text="start"
-					 textAlign="right"/>
-			<s:TextInput id="startTimeTxt" x="67" y="25" width="246" text="0" enabled="{startCb.selected}"/>
-			<s:Label x="2" y="60" width="57" color="#4D4C4C" fontStyle="italic" text="end"
-					 textAlign="right"/>
-			<s:TextInput id="endTimeTxt" x="67" y="55" width="246" text="1000"  enabled="{endCb.selected}"/>
-			<s:Button id="DetailedHistoryBtn" x="66" y="145" label="Detailed History"
-					  click="onDetHistoryClick(event)"/>
-			<s:Label x="2" y="90" width="57" color="#4D4C4C" fontStyle="italic" text="count"
-					 textAlign="right"/>
-			<s:TextInput id="countTxt" x="67" y="85" width="246" text="5"  enabled="{countCb.selected}"/>
-			<s:Label x="2" y="120" width="57" color="#4D4C4C" fontStyle="italic" text="reverse"
-					 textAlign="right"/>
-			<s:TextInput id="reverseTxt" x="67" y="115" width="246" text="false"  enabled="{reverseCb.selected}"/>
-			<s:CheckBox id="startCb" x="321" y="29" enabled="true" selected="true"/>
-			<s:CheckBox id="endCb" x="321" y="59" enabled="true" selected="true"/>
-			<s:CheckBox id="countCb" x="321" y="88" enabled="true" selected="true"/>
-			<s:CheckBox id="reverseCb" x="321" y="116" enabled="true" selected="true"/>
-			<s:Label x="95" y="11" height="10" color="#E01F1F" text="Note: input time token"
-					 textAlign="center" verticalAlign="middle"/>
-		</s:NavigatorContent>
-		<s:NavigatorContent width="100%" height="100%" label="Publish">
-			<s:Button id="publishBtn" x="74" y="39" label="Publish"
-					  click="publishBtn_clickHandler(event)"/>
-			<s:Label x="10" y="14" width="57" color="#4D4C4C" fontStyle="italic" text="message"
-					 textAlign="right"/>
-			<s:TextInput id="publishMessageTxt" x="75" y="9" width="246" text="hey"  enabled="true"/>
-		</s:NavigatorContent>
-	</mx:TabNavigator>
-	<s:TextArea id="consoleArea" left="10" right="100" top="360" bottom="10"/>
-	<s:Button id="clearConsoleBtn" right="10" top="360" width="80" label="Clear"
-			  click="OnClearConsoleBtnClick(event)"/>
-	<s:Label x="343" y="67" color="#4D4C4C" fontStyle="italic" text="sub_key" textAlign="right"/>
-	<s:TextInput id="subKeyTxt" x="398" y="62" width="246" text="@{sub_key}"/>
-	<s:Label x="324" y="38" color="#4D4C4C" fontStyle="italic" text="publish_key" textAlign="right"/>
-	<s:TextInput id="publishKeyTxt" x="397" y="34" width="246" text="@{pub_key}"/>
+
+    <s:Label x="125" y="13" height="10" fontWeight="bold" color="#E01F1F" text="Verify below settings, and then be sure to initialize from Init tab before proceeding."
+             textAlign="center" verticalAlign="middle"/>
+
+    <s:Label x="10" y="10" fontSize="14" fontWeight="bold" text="Device Console"/>
+    <s:Label x="13" y="39" color="#4D4C4C" fontStyle="italic" text="Channel"/>
+    <s:TextInput id="channelTxt" x="68" y="34" width="246" text="@{channel}"/>
+    <s:Label x="28" y="67" color="#4D4C4C" fontStyle="italic" text="Origin"/>
+    <s:TextInput id="originTxt" x="68" y="63" width="246" text="@{origin}"/>
+    <mx:TabNavigator left="10" right="10" top="108" height="230">
+        <s:NavigatorContent width="100%" height="100%" label="Init (1)">
+            <s:Label x="16" y="30" color="#4D4C4C" fontStyle="italic" text="secret_key" textAlign="right"/>
+            <s:TextInput id="secretKeyTxt" x="81" y="25" width="246" text="@{secret_key}"/>
+            <s:Label x="16" y="60" color="#4D4C4C" fontStyle="italic" text="cipher_key" textAlign="right"/>
+            <s:TextInput id="cipherKeyTxt" x="81" y="55" width="246" text="@{cipher_key}"/>
+            <s:Button id="initBtn" x="10" y="85" label="Init" click="onInitBtnClick(event)"/>
+        </s:NavigatorContent>
+        <s:NavigatorContent width="100%" height="100%" label="Subscribe (2)">
+            <s:Button id="subscribeBtn" x="10" y="5" label="Subscribe" click="onSubscribeClick(event)" />
+            <s:Button id="unsubscribeBtn" x="10" y="35" label="UnSubscribe"
+                      click="unsubscribeBtn_clickHandler(event)"/>
+        </s:NavigatorContent>
+        <s:NavigatorContent width="100%" height="100%" label="DetailedHistory (3)">
+
+            <s:Label x="2" y="30" width="175" color="#4D4C4C" fontStyle="italic" text="start (optional)"
+                     textAlign="right"/>
+            <s:TextInput id="startTimeTxt" x="185" y="25" width="246" text="0" enabled="{startCb.selected}"/>
+
+            <s:Label x="2" y="60" width="175" color="#4D4C4C" fontStyle="italic" text="end (optional)"
+                     textAlign="right"/>
+            <s:TextInput id="endTimeTxt" x="185" y="55" width="246" text="13505030564366949"  enabled="{endCb.selected}"/>
+
+
+            <s:Label x="2" y="90" width="175" color="#4D4C4C" fontStyle="italic" text="count (optional, default 100)"
+                     textAlign="right"/>
+            <s:TextInput id="countTxt" x="185" y="85" width="246" text="5"  enabled="{countCb.selected}"/>
+
+            <s:Label x="2" y="120" width="175" color="#4D4C4C" fontStyle="italic" text="reverse (optional, default false)"
+                     textAlign="right"/>
+            <s:TextInput id="reverseTxt" x="185" y="115" width="246" text="false"  enabled="{reverseCb.selected}"/>
+
+
+            <s:Button id="DetailedHistoryBtn" x="66" y="145" label="Detailed History"
+                      click="onDetHistoryClick(event)"/>
+
+            <s:CheckBox id="startCb" x="440" y="29" enabled="true" selected="false"/>
+            <s:CheckBox id="endCb" x="440" y="59" enabled="true" selected="false"/>
+            <s:CheckBox id="countCb" x="440" y="88" enabled="true" selected="true"/>
+            <s:CheckBox id="reverseCb" x="440" y="116" enabled="true" selected="false"/>
+
+        </s:NavigatorContent>
+        <s:NavigatorContent width="100%" height="100%" label="Publish (4)">
+            <s:Button id="publishBtn" x="74" y="39" label="Publish"
+                      click="publishBtn_clickHandler(event)"/>
+            <s:Label x="10" y="14" width="57" color="#4D4C4C" fontStyle="italic" text="message"
+                     textAlign="right"/>
+            <s:TextInput id="publishMessageTxt" x="75" y="9" width="246" text="hey"  enabled="true"/>
+        </s:NavigatorContent>
+    </mx:TabNavigator>
+    <s:TextArea id="consoleArea" left="10" right="100" top="360" bottom="10"/>
+    <s:Button id="clearConsoleBtn" right="10" top="360" width="80" label="Clear"
+              click="OnClearConsoleBtnClick(event)"/>
+    <s:Label x="343" y="67" color="#4D4C4C" fontStyle="italic" text="sub_key" textAlign="right"/>
+    <s:TextInput id="subKeyTxt" x="398" y="62" width="246" text="@{sub_key}"/>
+    <s:Label x="324" y="38" color="#4D4C4C" fontStyle="italic" text="publish_key" textAlign="right"/>
+    <s:TextInput id="publishKeyTxt" x="397" y="34" width="246" text="@{pub_key}"/>
 </s:Application>
