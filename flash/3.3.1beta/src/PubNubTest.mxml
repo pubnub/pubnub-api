@@ -154,58 +154,47 @@
 			
 		]]>
 	</fx:Script>
-
-    <s:Label x="125" y="13" height="10" fontWeight="bold" color="#E01F1F" text="Verify below settings, and then be sure to initialize from Init tab before proceeding."
-             textAlign="center" verticalAlign="middle"/>
-
 	<s:Label x="10" y="10" fontSize="14" fontWeight="bold" text="Device Console"/>
 	<s:Label x="13" y="39" color="#4D4C4C" fontStyle="italic" text="Channel"/>
 	<s:TextInput id="channelTxt" x="68" y="34" width="246" text="@{channel}"/>
 	<s:Label x="28" y="67" color="#4D4C4C" fontStyle="italic" text="Origin"/>
 	<s:TextInput id="originTxt" x="68" y="63" width="246" text="@{origin}"/>
 	<mx:TabNavigator left="10" right="10" top="108" height="230">
-		<s:NavigatorContent width="100%" height="100%" label="Init (1)">
+		<s:NavigatorContent width="100%" height="100%" label="Init">
 			<s:Label x="16" y="30" color="#4D4C4C" fontStyle="italic" text="secret_key" textAlign="right"/>
 			<s:TextInput id="secretKeyTxt" x="81" y="25" width="246" text="@{secret_key}"/>
 			<s:Label x="16" y="60" color="#4D4C4C" fontStyle="italic" text="cipher_key" textAlign="right"/>
 			<s:TextInput id="cipherKeyTxt" x="81" y="55" width="246" text="@{cipher_key}"/>
 			<s:Button id="initBtn" x="10" y="85" label="Init" click="onInitBtnClick(event)"/>
 		</s:NavigatorContent>
-		<s:NavigatorContent width="100%" height="100%" label="Subscribe (2)">
+		<s:NavigatorContent width="100%" height="100%" label="Subscribe">
 			<s:Button id="subscribeBtn" x="10" y="5" label="Subscribe" click="onSubscribeClick(event)" />
 			<s:Button id="unsubscribeBtn" x="10" y="35" label="UnSubscribe"
 					  click="unsubscribeBtn_clickHandler(event)"/>
 		</s:NavigatorContent>
-		<s:NavigatorContent width="100%" height="100%" label="DetailedHistory (3)">
-
-            <s:Label x="2" y="30" width="175" color="#4D4C4C" fontStyle="italic" text="start (optional)"
+		<s:NavigatorContent width="100%" height="100%" label="DetailedHistory">
+			<s:Label x="2" y="30" width="58" color="#4D4C4C" fontStyle="italic" text="start"
 					 textAlign="right"/>
-			<s:TextInput id="startTimeTxt" x="185" y="25" width="246" text="0" enabled="{startCb.selected}"/>
-
-            <s:Label x="2" y="60" width="175" color="#4D4C4C" fontStyle="italic" text="end (optional)"
+			<s:TextInput id="startTimeTxt" x="67" y="25" width="246" text="0" enabled="{startCb.selected}"/>
+			<s:Label x="2" y="60" width="57" color="#4D4C4C" fontStyle="italic" text="end"
 					 textAlign="right"/>
-			<s:TextInput id="endTimeTxt" x="185" y="55" width="246" text="13505030564366949"  enabled="{endCb.selected}"/>
-
-
-            <s:Label x="2" y="90" width="175" color="#4D4C4C" fontStyle="italic" text="count (optional, default 100)"
+			<s:TextInput id="endTimeTxt" x="67" y="55" width="246" text="1000"  enabled="{endCb.selected}"/>
+			<s:Button id="DetailedHistoryBtn" x="66" y="145" label="Detailed History"
+					  click="onDetHistoryClick(event)"/>
+			<s:Label x="2" y="90" width="57" color="#4D4C4C" fontStyle="italic" text="count"
 					 textAlign="right"/>
-            <s:TextInput id="countTxt" x="185" y="85" width="246" text="5"  enabled="{countCb.selected}"/>
-
-			<s:Label x="2" y="120" width="175" color="#4D4C4C" fontStyle="italic" text="reverse (optional, default false)"
+			<s:TextInput id="countTxt" x="67" y="85" width="246" text="5"  enabled="{countCb.selected}"/>
+			<s:Label x="2" y="120" width="57" color="#4D4C4C" fontStyle="italic" text="reverse"
 					 textAlign="right"/>
-            <s:TextInput id="reverseTxt" x="185" y="115" width="246" text="false"  enabled="{reverseCb.selected}"/>
-
-
-            <s:Button id="DetailedHistoryBtn" x="66" y="145" label="Detailed History"
-                      click="onDetHistoryClick(event)"/>
-
-            <s:CheckBox id="startCb" x="440" y="29" enabled="true" selected="false"/>
-			<s:CheckBox id="endCb" x="440" y="59" enabled="true" selected="false"/>
-			<s:CheckBox id="countCb" x="440" y="88" enabled="true" selected="true"/>
-			<s:CheckBox id="reverseCb" x="440" y="116" enabled="true" selected="false"/>
-
+			<s:TextInput id="reverseTxt" x="67" y="115" width="246" text="false"  enabled="{reverseCb.selected}"/>
+			<s:CheckBox id="startCb" x="321" y="29" enabled="true" selected="true"/>
+			<s:CheckBox id="endCb" x="321" y="59" enabled="true" selected="true"/>
+			<s:CheckBox id="countCb" x="321" y="88" enabled="true" selected="true"/>
+			<s:CheckBox id="reverseCb" x="321" y="116" enabled="true" selected="true"/>
+			<s:Label x="95" y="11" height="10" color="#E01F1F" text="Note: input time token"
+					 textAlign="center" verticalAlign="middle"/>
 		</s:NavigatorContent>
-		<s:NavigatorContent width="100%" height="100%" label="Publish (4)">
+		<s:NavigatorContent width="100%" height="100%" label="Publish">
 			<s:Button id="publishBtn" x="74" y="39" label="Publish"
 					  click="publishBtn_clickHandler(event)"/>
 			<s:Label x="10" y="14" width="57" color="#4D4C4C" fontStyle="italic" text="message"
