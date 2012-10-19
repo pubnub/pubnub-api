@@ -10,6 +10,7 @@
 #import "UnitTest/DetailedHistoryUnitTest.h"
 #import "UnitTest/UnsubcribeUnitTest.h"
 #import "UnitTest/CL_223.h"
+#import "UnitTest/Catch_Up_UnitTest.h"
 
 @implementation AppDelegate
 
@@ -36,5 +37,10 @@
     [unittest runUnitTest];
     
     
+}
+
+- (IBAction)Catch_up_Click:(id)sender {
+    Catch_Up_UnitTest *unittest= [[Catch_Up_UnitTest alloc] init];
+    [unittest runCatch_up_UnitTest];
 }
 @end

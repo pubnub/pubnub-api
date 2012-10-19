@@ -98,8 +98,6 @@ message:  (id)message_o
 
 @end
 
-
-
 @implementation CL_223
 
 NSString *_publish_key ,*_subscribe_key,*_secret_key,*_cipher_key,*_uuid;
@@ -135,7 +133,6 @@ Pubnub *pubnub;
 -(void) runCL_223UnitTest
 {
     [self initParameter];
-    
     SubcribeCallbackForCL_223UnitTest *reponceCallback= [[SubcribeCallbackForCL_223UnitTest alloc]
                                                           pubnub:pubnub
                                                          channel:_channel

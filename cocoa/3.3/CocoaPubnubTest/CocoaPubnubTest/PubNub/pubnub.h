@@ -12,6 +12,7 @@
     NSString* current_uuid;
     NSMutableDictionary* subscriptions;
     NSMutableDictionary*  _connections;
+    NSMutableSet * _subscriptionset;
     
 }
 -(Pubnub*)
@@ -38,7 +39,7 @@
     subscribe: (NSString*) channel
     delegate:  (id)        delegate;
 
--(void) subscribe: (NSDictionary*) args;
+
 -(BOOL) subscribed: (NSString*) channel;
 
 - (void)
