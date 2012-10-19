@@ -1,6 +1,7 @@
 package com.pubnub.operation {
 	import com.adobe.crypto.*;
 	import com.pubnub.*;
+	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
 	/**
 	 * ...
@@ -22,7 +23,7 @@ package com.pubnub.operation {
 				return;
 			}
 			var signature:String = "0";
-			var serializedMessage:String = JSON.stringify(message);
+			var serializedMessage:String = PnJSON.stringify(message);
 			if (secretKey){
 				// Create the signature for this message                
 				var concat:String = publishKey + "/" + subscribeKey + "/" + secretKey + "/" + channel + "/" + serializedMessage;
@@ -32,7 +33,7 @@ package com.pubnub.operation {
 			}
 			
 			if(cipherKey && cipherKey.length > 0){
-				serializedMessage = JSON.stringify(PnCrypto.encrypt(cipherKey, serializedMessage));
+				serializedMessage = PnJSON.stringify(PnCrypto.encrypt(cipherKey, serializedMessage));
 			}
 			
 			uid = PnUtils.getUID();
@@ -43,7 +44,7 @@ package com.pubnub.operation {
 		override protected function onLoaderData(e:PnURLLoaderEvent):void {
 			var data:* = e.data;
 			try {
-				dispatchEvent(new OperationEvent(OperationEvent.RESULT, JSON.parse(data)));
+				dispatchEvent(new OperationEvent(OperationEvent.RESULT, PnJSON.parse(data)));
 			}
 			catch (e:*){
 				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [-1, "[Pn.publish()] JSON.parse error"] ));

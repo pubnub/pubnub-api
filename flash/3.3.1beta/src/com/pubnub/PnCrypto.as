@@ -6,8 +6,9 @@ package com.pubnub {
 	import com.hurlant.crypto.symmetric.PKCS5;
 	import com.hurlant.util.Base64;
 	import com.hurlant.util.Hex;
+	import com.pubnub.json.PnJSON;
 	import flash.utils.ByteArray;
-	import com.adobe.serialization.json.JSON;
+	//import com.adobe.serialization.json.JSON;
 		
 	public class PnCrypto extends Object{
 
@@ -32,7 +33,8 @@ package com.pubnub {
 			cbc.IV =  Hex.toArray(Hex.fromString("0123456789012345"));
 
 			cbc.decrypt(decodedCipherText);
-			return com.adobe.serialization.json.JSON.decode(Hex.toString(Hex.fromArray(decodedCipherText)));
+			//return PnJSON.decode(Hex.toString(Hex.fromArray(decodedCipherText)));
+			return PnJSON.stringify(Hex.toString(Hex.fromArray(decodedCipherText)));
 		}
 
 		static private function hashKey(cipher_key:String):ByteArray {
@@ -45,7 +47,6 @@ package com.pubnub {
 			var cipherString:String = Hex.fromArray(hexCipherKey).slice(0, 32);
 
 			//trace("cipherString: " + cipherString);
-
 			var key:ByteArray = Hex.toArray(Hex.fromString(cipherString));
 			return key;
 		}
