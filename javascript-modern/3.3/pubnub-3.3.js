@@ -1,11 +1,9 @@
 /* ---------------------------------------------------------------------------
-WAIT! - This file depends on instructions from the PUBNUB Cloud.
-http://www.pubnub.com/account
 --------------------------------------------------------------------------- */
 
 /* ---------------------------------------------------------------------------
 PubNub Real-time Cloud-Hosted Push API and Push Notification Client Frameworks
-Copyright (c) 2011 TopMambo Inc.
+Copyright (c) 2011 PubNub Inc.
 http://www.pubnub.com/
 http://www.pubnub.com/terms
 --------------------------------------------------------------------------- */
@@ -29,18 +27,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 --------------------------------------------------------------------------- */
-
-(function() {
-
-/**
- * UTIL LOCALS
- */
-var NOW     = 1
-,   MAGIC   = /\$?{([\w\-]+)}/g
-,   URLBIT  = '/'
-,   SECOND  = 1000
-,   ANDROID = Ti.Platform.name.toLowerCase().indexOf('android') >= 0
-,   XHRTME  = 140000;
+(function(){
 
 /**
  * UTILITIES
@@ -49,72 +36,34 @@ function unique() { return'x'+ ++NOW+''+(+new Date) }
 function rnow() { return+new Date }
 
 /**
- * LOCAL STORAGE OR COOKIE
+ * LOCAL STORAGE
  */
 var db = (function(){
+    var ls = typeof localStorage != 'undefined' && localStorage;
     return {
         get : function(key) {
-            Ti.App.Properties.getString(''+key);
+            try {
+                if (ls) return ls.getItem(key);
+                if (document.cookie.indexOf(key) == -1) return null;
+                return ((document.cookie||'').match(
+                    RegExp(key+'=([^;]+)')
+                )||[])[1] || null;
+            } catch(e) { return }
         },
         set : function( key, value ) {
-            Ti.App.Properties.setString( ''+key, ''+value );
+            try {
+                if (ls) return ls.setItem( key, value ) && 0;
+                document.cookie = key + '=' + value +
+                    '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/';
+            } catch(e) { return }
         }
     };
 })();
 
 
 /**
- * UPDATER
- * =======
- * var timestamp = unique();
- */
-function updater( fun, rate ) {
-    var timeout
-    ,   last   = 0
-    ,   runnit = function() {
-        if (last + rate > rnow()) {
-            clearTimeout(timeout);
-            timeout = setTimeout( runnit, rate );
-        }
-        else {
-            last = rnow();
-            fun();
-        }
-    };
-
-    return runnit;
-}
-
-
-/**
- * LOG
- * ===
- * log('message');
- */
-function log(message) { Ti.API.info(message) }
-
-/**
- * SUPPLANT
- * ========
- * var text = supplant( 'Hello {name}!', { name : 'John' } )
- */
-function supplant( str, values ) {
-    return str.replace( MAGIC, function( _, match ) {
-        return ''+values[match] || ''
-    } );
-}
-
-/**
- * jsonp_cb
- * ========
- * var callback = jsonp_cb();
- */
-function jsonp_cb() { return '0' }
-
-
-/**
- * Titanium XHR Request
- * ==============================
+ * CORS XHR Request
+ * ================
  *  xdr({
  *     url     : ['http://www.blah.com/url'],
  *     success : function(response) {},
@@ -156,12 +105,16 @@ function xdr( setup ) {
 
     // Send
     try {
-        xhr         = Ti.Network.createHTTPClient();
-        xhr.onerror = function(){ done(1) };
-        xhr.onload  = finished;
-        xhr.timeout = XHRTME;
+        xhr = typeof XDomainRequest !== 'undefined' && 
+              new XDomainRequest()  ||
+              new XMLHttpRequest();
 
-        xhr.open( 'GET', setup.url.join(URLBIT), true );
+        xhr.onerror = xhr.onabort   = function(){ done(1) };
+        xhr.onload  = xhr.onloadend = finished;
+        xhr.timeout = XHRTME;
+        url = 'http' + ((setup.ssl)?'s':'') + '://' + setup.origin + URLBIT + setup.url.join(URLBIT);
+        console.log(url);
+        xhr.open( 'GET', url, true );
         xhr.send();
     }
     catch(eee) {
@@ -173,39 +126,65 @@ function xdr( setup ) {
     return done;
 }
 
+
+
+/**
+ * LOG
+ * ===
+ * var list = grep( [1,2,3], function(item) { return item % 2 } )
+ */
+var log = function(){};
+
+/**
+ * EVENTS
+ * ======
+ * PUBNUB.events.bind( 'you-stepped-on-flower', function(message) {
+ *     // Do Stuff with message
+ * } );
+ *
+ * PUBNUB.events.fire( 'you-stepped-on-flower', "message-data" );
+ * PUBNUB.events.fire( 'you-stepped-on-flower', {message:"data"} );
+ * PUBNUB.events.fire( 'you-stepped-on-flower', [1,2,3] );
+ *
+ */
+var events = {
+    'list'   : {},
+    'unbind' : function( name ) { events.list[name] = [] },
+    'bind'   : function( name, fun ) {
+        (events.list[name] = events.list[name] || []).push(fun);
+    },
+    'fire' : function( name, data ) {
+        each(
+            events.list[name] || [],
+            function(fun) { fun(data) }
+        );
+    }
+};
+
 /* =-====================================================================-= */
 /* =-====================================================================-= */
 /* =-=========================     PUBNUB     ===========================-= */
 /* =-====================================================================-= */
 /* =-====================================================================-= */
 
-var DEMO          = 'demo'
-,   LIMIT         = 1700
-,   CREATE_PUBNUB = function(setup) {
+function PN(setup) {
     var SELF          = {
-
-        // Expose PUBNUB Functions
-        'db'       : db,
-        'each'     : each,
-        'map'      : map,
-        'supplant' : supplant,
-        'now'      : unique,
-        'init'     : CREATE_PUBNUB
-    };
-
-    setup['xdr'] = xdr;
+   			// Expose PUBNUB Functions
+        'xdr'    : xdr,
+        'db'     : db,
+        'each'   : each,
+        'map'    : map,
+        'events' : events
+		};
     setup['db'] = db;
-    setup['jsonp_cb'] = jsonp_cb;
-    SELF.__proto__= PN_API(setup);
-    
-    return SELF;
-};
+    setup['xdr'] = xdr;
+    setup['jsonp_cb'] = function(){ return '0'};
+    SELF.__proto__ = PN_API(setup);
 
-module.exports = CREATE_PUBNUB({
-    'publish_key'   : 'demo',
-    'subscribe_key' : 'demo',
-    'ssl'           : false,
-    'origin'        : 'pubsub.pubnub.com'
-});
+    return SELF;
+}
+
+typeof module  !== 'undefined' && (module.exports = PN) ||
+typeof exports !== 'undefined' && (exports.PN = PN)     || (PUBNUB = PN);
 
 })();

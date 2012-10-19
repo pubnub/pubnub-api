@@ -45,10 +45,56 @@
     <td>{message}</td>
 </script>
 
-<div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=../pubnub-3.3-common.js></script>
+<script src=../../../javascript/3.3/pubnub-3.3-common.js></script>
 <script src=../pubnub-3.3.js></script>
 <script>(function(){
+
+
+    function each( o, f ) {
+        if ( !o || !f ) return;
+
+        if ( typeof o[0] != 'undefined' )
+            for ( var i = 0, l = o.length; i < l; )
+                f.call( o[i], o[i], i++ );
+        else
+            for ( var i in o )
+                o.hasOwnProperty    &&
+                o.hasOwnProperty(i) &&
+                f.call( o[i], i, o[i] );
+    }
+
+    /**
+     * MAP
+     * ===
+     * var list = map( [1,2,3], function(item) { return item + 1 } )
+     */
+    function map( list, fun ) {
+        var fin = [];
+        each( list || [], function( k, v ) { fin.push(fun( k, v )) } );
+        return fin;
+    }
+
+    /**
+     * GREP
+     * ====
+     * var list = grep( [1,2,3], function(item) { return item % 2 } )
+     */
+    function grep( list, fun ) {
+        var fin = [];
+        each( list || [], function(l) { fun(l) && fin.push(l) } );
+        return fin
+    }
+
+    /**
+     * SUPPLANT
+     * ========
+     * var text = supplant( 'Hello {name}!', { name : 'John' } )
+     */
+    function supplant( str, values ) {
+        return str.replace( REPL, function( _, match ) {
+            return values[match] || _
+        } );
+    }
 
     function test( t, msg ) {
         if (!test.run) return;
@@ -81,8 +127,51 @@
         }
     }
 
-    var p            = PUBNUB
-    ,   many_con_tst = 'opera' in window ? -1 : 10
+
+    var REPL = /{([\w\-]+)}/g
+    ,   p    = PUBNUB({ publish_key : 'demo', subscribe_key : 'demo' });
+
+    p.supplant = function supplant( str, values ) {
+        return str.replace( REPL, function( _, match ) {
+            return values[match] || _
+        } );
+    }
+    p.$    = function $(id) { return document.getElementById(id) };
+    p.attr = function attr( node, attribute, value ) {
+        if (value) node.setAttribute( attribute, value );
+        else return node && node.getAttribute && node.getAttribute(attribute);
+    };
+    p.create = function create(element) {
+        return document.createElement(element)
+    };
+    p.css = function css( element, styles ) {
+        for (var style in styles) if (styles.hasOwnProperty(style))
+            try {element.style[style] = styles[style] + (
+                '|width|height|top|left|'.indexOf(style) > 0 &&
+                typeof styles[style] == 'number'
+                ? 'px' : ''
+            )}catch(e){}
+    };
+
+    p.bind = function bind( type, el, fun ) {
+        each( type.split(','), function(etype) {
+            var rapfun = function(e) {
+                if (!e) e = window.event;
+                if (!fun(e)) {
+                    e.cancelBubble = true;
+                    e.returnValue  = false;
+                    e.preventDefault && e.preventDefault();
+                    e.stopPropagation && e.stopPropagation();
+                }
+            };
+
+            if ( el.addEventListener ) el.addEventListener( etype, rapfun, false );
+            else if ( el.attachEvent ) el.attachEvent( 'on' + etype, rapfun );
+            else  el[ 'on' + etype ] = rapfun;
+        } );
+    };
+
+    var many_con_tst = 'opera' in window ? -1 : 10
     ,   channel      = 'pn-javascript-unit-test'
     ,   out          = p.$('unit-test-out')
     ,   test_tpl     = p.$('test_template').innerHTML
@@ -138,7 +227,7 @@
                 message  : { test : "test" },
                 callback : function(response) {
                     test( response[0], 'Successful Publish' );
-                    test( response[1], 'Success With Demo' );
+                    test( response[1] === 'Sent', 'Success With Demo' );
                     history_test();
                 }
             });
@@ -215,7 +304,6 @@
                             channel  : restore_channel,
                             callback : function( message, stack ) {
                                 p.unsubscribe({ channel : restore_channel });
-                                console.log('Subscribe Restore CALLBACK');
                                 test(
                                     message === "test",
                                     'Subscribe Restore'
