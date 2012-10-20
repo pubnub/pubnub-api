@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'rr'
 require 'vcr'
+require 'em_request_helper'
 
 describe Pubnub do
 
@@ -132,10 +133,18 @@ describe Pubnub do
     end
 
     it "should return the current time" do
-      mock(@my_callback).call([13433410952661319]) {}
+      options = {:callback => @my_callback}
 
       VCR.use_cassette("time", :record => :none) do
-        @pn.time("callback" => @my_callback)
+        EventMachine.run {
+          http = EM::HttpRequest.new(create_time_request(options).url).get(:keepalive => true, :timeout=> 310)
+          http.errback{ failed(http) }
+          http.callback {
+            http.response_header.status.should == 200
+            Yajl::Parser.parse(http.response).should == [13433410952661319]
+            EventMachine.stop
+          }
+        }
       end
     end
   end

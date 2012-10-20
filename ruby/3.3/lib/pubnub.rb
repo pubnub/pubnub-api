@@ -18,6 +18,7 @@ require 'pubnub_request'
 require 'pubnub_deferrable'
 
 require 'eventmachine'
+require 'yajl'
 require 'uuid'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/string/inflections'
@@ -256,100 +257,56 @@ class Pubnub
   end
 
   def _request(request)
+    request.format_url!
+    #puts("- Fetching #{request.url}")
 
-    if (defined?(Rails) && Rails.present? && Rails.env.present?) && Rails.env.test?
-
-      open(request.url, 'r', :read_timeout => 300) do |response|
-        request.package_response!(response.read)
-        request.callback.call(request.response)
-        request.response
-      end
-
-    else
-
-      request.format_url!
-      #puts("- Fetching #{request.url}")
-
+    Thread.new {
       begin
 
-        EM.run do
+        conn = PubnubDeferrable.new(request.url)
+        conn.pubnub_request = request
+        req = conn.get(:keepalive => true, :timeout=> 310) #client times out in 310s unless the server returns or timeout first
 
-          conn = PubnubDeferrable.connect request.host, request.port
-          conn.pubnub_request = request
-          req = conn.get(request.query)
-
-          timeout_timer = EM.add_periodic_timer(290) do
-            #puts("#{Time.now}: Reconnecting from timeout.")
-            reconnect_and_query(conn, request)
-          end
-
-          error_timer = EM.add_periodic_timer(5) do
-            #puts("#{Time.now}: Checking for errors.")
-            if conn.error?
-
-              error_message = "Intermittent Error: #{response.status}, extended info: #{response.internal_error}"
-              puts(error_message)
-              request.callback.call([0, error_message])
-
-              reconnect_and_query(conn, request)
-            end
-          end
-
-          req.errback do |response|
-            conn.close_connection
-            error_message = "Unknown Error: #{response.to_s}"
-
+        req.errback{
+          if req.response.blank?
+            puts("#{Time.now}: Reconnecting from timeout.")
+            _request(request)
+          else
+            error_message = "Unknown Error: #{req.response.to_s}"
             puts(error_message)
             request.callback.call([0, error_message])
 
-            reconnect_and_query(conn, request)
+            _request(request)
+          end
+        }
+
+        req.callback{
+          only_success_status_is_acceptable = 200
+          if req.response_header.http_status.to_i != only_success_status_is_acceptable
+            error_message = "Server Error, status: #{req.response_header.http_status}, extended info: #{req.response}"
+
+            puts(error_message)
           end
 
-          req.callback do |response|
+          if %w(subscribe presence).include?(request.operation)
 
-            if response.status != 200
-              error_message = "Server Error, status: #{response.status}, extended info: #{response.internal_error}"
-
-              puts(error_message)
-              request.callback.call([0, error_message])
-
-              conn.reconnect request.host, request.port
-            end
-
-            request.package_response!(response.content)
+            request.package_response!(req.response)
             request.callback.call(request.response)
 
-            EM.next_tick do
-              if %w(subscribe presence).include?(request.operation)
-                conn.close_connection
-
-                timeout_timer.cancel
-                error_timer.cancel
-
-                _request(request)
-              else
-                conn.close_connection
-                return request.response
-
-              end
-
-            end
+            _request(request)
+          else
+            request.package_response!(req.response)
+            request.callback.call(request.response)
           end
-        end
+        }
 
-      rescue EventMachine::ConnectionError => e
+      rescue EventMachine::ConnectionError, RuntimeError => e # RuntimeError for catching "EventMachine not initialized"
         error_message = "Network Error: #{e.message}"
         puts(error_message)
         return [0, error_message]
       end
+    }
 
-    end
-  end
-
-  def reconnect_and_query(conn, request)
-    conn.reconnect request.host, request.port
-    conn.pubnub_request = request
-    conn.get(request.query)
   end
 
 end

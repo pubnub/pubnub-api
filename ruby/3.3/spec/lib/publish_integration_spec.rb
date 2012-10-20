@@ -1,12 +1,12 @@
 require 'spec_helper'
 require 'rr'
 require 'vcr'
+require 'em_request_helper'
 
 describe "Publish Integration Test" do
 
   before do
     @my_callback = lambda { |message| Rails.logger.debug(message) }
-    @pn = Pubnub.new(:publish_key => :demo, :subscribe_key => :demo)
   end
 
   context "when it is successful" do
@@ -15,22 +15,36 @@ describe "Publish Integration Test" do
 
       it "should publish without ssl" do
         my_response = [1, "Sent", "13450923394327693"]
-        mock(@my_callback).call(my_response) {}
+        options = {:channel => :hello_world, :message => "hi", :callback => @my_callback}
 
         VCR.use_cassette("integration_publish_1", :record => :none) do
-          @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+          EventMachine.run {
+            http = EM::HttpRequest.new(create_publish_request(options).url).get(:keepalive => true, :timeout=> 310)
+            http.errback{ failed(http) }
+            http.callback {
+              http.response_header.status.should == 200
+              Yajl::Parser.parse(http.response).should == my_response
+              EventMachine.stop
+            }
+          }
         end
       end
 
       it "should publish with ssl" do
 
         my_response = [1, "Sent", "13451428018571368"]
-        mock(@my_callback).call(my_response) {}
-
-        @pn.ssl = true
+        options = {:channel => :hello_world, :message => "hi", :callback => @my_callback}
 
         VCR.use_cassette("integration_publish_3", :record => :none) do
-          @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+          EventMachine.run {
+            http = EM::HttpRequest.new(create_publish_request(options, nil, true).url).get(:keepalive => true, :timeout=> 310)
+            http.errback{ failed(http) }
+            http.callback {
+              http.response_header.status.should == 200
+              Yajl::Parser.parse(http.response).should == my_response
+              EventMachine.stop
+            }
+          }
         end
       end
 
@@ -39,17 +53,21 @@ describe "Publish Integration Test" do
 
     context "when there is a cipher key" do
 
-      before do
-        @pn.cipher_key = "enigma"
-      end
-
       it "should publish without ssl (implicit)" do
 
         my_response = [1, "Sent", "13473285565926387"]
-        mock(@my_callback).call(my_response) {}
+        options = {:cipher_key => "enigma", :channel => :hello_world, :message => "hi", :callback => @my_callback}
 
         VCR.use_cassette("integration_publish_2", :record => :none) do
-          @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+          EventMachine.run {
+            http = EM::HttpRequest.new(create_publish_request(options).url).get(:keepalive => true, :timeout=> 310)
+            http.errback{ failed(http) }
+            http.callback {
+              http.response_header.status.should == 200
+              Yajl::Parser.parse(http.response).should == my_response
+              EventMachine.stop
+            }
+          }
         end
 
       end
@@ -57,12 +75,18 @@ describe "Publish Integration Test" do
       it "should publish without ssl (explicit)" do
 
         my_response = [1, "Sent", "13473285565926387"]
-        mock(@my_callback).call(my_response) {}
-
-        @pn.ssl = false
+        options = {:cipher_key => "enigma", :channel => :hello_world, :message => "hi", :callback => @my_callback}
 
         VCR.use_cassette("integration_publish_2", :record => :none) do
-          @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+          EventMachine.run {
+            http = EM::HttpRequest.new(create_publish_request(options, nil, false).url).get(:keepalive => true, :timeout=> 310)
+            http.errback{ failed(http) }
+            http.callback {
+              http.response_header.status.should == 200
+              Yajl::Parser.parse(http.response).should == my_response
+              EventMachine.stop
+            }
+          }
         end
 
       end
@@ -74,13 +98,18 @@ describe "Publish Integration Test" do
           it "should publish" do
 
             my_response = [1, "Sent", "13473286442585026"]
-            mock(@my_callback).call(my_response) {}
-
-            @pn.ssl = true
-            @pn.secret_key = nil
+            options = {:cipher_key => "enigma", :channel => :hello_world, :message => "hi", :callback => @my_callback}
 
             VCR.use_cassette("integration_publish_4", :record => :none) do
-              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+              EventMachine.run {
+                http = EM::HttpRequest.new(create_publish_request(options, nil, true).url).get(:keepalive => true, :timeout=> 310)
+                http.errback{ failed(http) }
+                http.callback {
+                  http.response_header.status.should == 200
+                  Yajl::Parser.parse(http.response).should == my_response
+                  EventMachine.stop
+                }
+              }
             end
           end
 
@@ -91,13 +120,18 @@ describe "Publish Integration Test" do
           it "should publish" do
 
             my_response = [1, "Sent", "13473288269652075"]
-            mock(@my_callback).call(my_response) {}
-
-            @pn.ssl = true
-            @pn.secret_key = "itsmysecret"
+            options = {:cipher_key => "enigma", :channel => :hello_world, :message => "hi", :callback => @my_callback}
 
             VCR.use_cassette("integration_publish_5", :record => :none) do
-              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+              EventMachine.run {
+                http = EM::HttpRequest.new(create_publish_request(options, "itsmysecret", true).url).get(:keepalive => true, :timeout=> 310)
+                http.errback{ failed(http) }
+                http.callback {
+                  http.response_header.status.should == 200
+                  Yajl::Parser.parse(http.response).should == my_response
+                  EventMachine.stop
+                }
+              }
             end
           end
 
@@ -110,17 +144,21 @@ describe "Publish Integration Test" do
 
     context "when message signing is on" do
 
-      before do
-        @pn.secret_key = "enigma"
-      end
-
       it "should publish without ssl (implicit)" do
 
         my_response = [1, "Sent", "13451493026321630"]
-        mock(@my_callback).call(my_response) {}
+        options = {:channel => :hello_world, :message => "hi", :callback => @my_callback}
 
         VCR.use_cassette("integration_publish_6", :record => :none) do
-          @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+          EventMachine.run {
+            http = EM::HttpRequest.new(create_publish_request(options, "enigma").url).get(:keepalive => true, :timeout=> 310)
+            http.errback{ failed(http) }
+            http.callback {
+              http.response_header.status.should == 200
+              Yajl::Parser.parse(http.response).should == my_response
+              EventMachine.stop
+            }
+          }
         end
 
       end
@@ -128,12 +166,18 @@ describe "Publish Integration Test" do
       it "should publish without ssl (explicit)" do
 
         my_response = [1, "Sent", "13451494117873005"]
-        mock(@my_callback).call(my_response) {}
-
-        @pn.ssl = false
+        options = {:channel => :hello_world, :message => "hi", :callback => @my_callback}
 
         VCR.use_cassette("integration_publish_7", :record => :none) do
-          @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+          EventMachine.run {
+            http = EM::HttpRequest.new(create_publish_request(options, "enigma", false).url).get(:keepalive => true, :timeout=> 310)
+            http.errback{ failed(http) }
+            http.callback {
+              http.response_header.status.should == 200
+              Yajl::Parser.parse(http.response).should == my_response
+              EventMachine.stop
+            }
+          }
         end
 
       end
@@ -145,13 +189,18 @@ describe "Publish Integration Test" do
           it "should publish" do
 
             my_response = [1, "Sent", "13451493874063684"]
-            mock(@my_callback).call(my_response) {}
-
-            @pn.ssl = true
-            @pn.cipher_key = nil
+            options = {:channel => :hello_world, :message => "hi", :callback => @my_callback}
 
             VCR.use_cassette("integration_publish_8", :record => :none) do
-              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+              EventMachine.run {
+                http = EM::HttpRequest.new(create_publish_request(options, "enigma", true).url).get(:keepalive => true, :timeout=> 310)
+                http.errback{ failed(http) }
+                http.callback {
+                  http.response_header.status.should == 200
+                  Yajl::Parser.parse(http.response).should == my_response
+                  EventMachine.stop
+                }
+              }
             end
           end
 
@@ -162,13 +211,18 @@ describe "Publish Integration Test" do
           it "should publish" do
 
             my_response = [1, "Sent", "13473284333280114"]
-            mock(@my_callback).call(my_response) {}
-
-            @pn.ssl = true
-            @pn.cipher_key = "itsmysecret"
+            options = {:cipher_key => "itsmysecret", :channel => :hello_world, :message => "hi", :callback => @my_callback}
 
             VCR.use_cassette("integration_publish_9", :record => :none) do
-              @pn.publish(:channel => :hello_world, :message => "hi", :callback => @my_callback)
+              EventMachine.run {
+                http = EM::HttpRequest.new(create_publish_request(options, "enigma", true).url).get(:keepalive => true, :timeout=> 310)
+                http.errback{ failed(http) }
+                http.callback {
+                  http.response_header.status.should == 200
+                  Yajl::Parser.parse(http.response).should == my_response
+                  EventMachine.stop
+                }
+              }
             end
           end
 

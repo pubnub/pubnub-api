@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "pubnub"
-  s.version = "3.3.1.0"
+  s.version = "3.3.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["PubNub"]
-  s.date = "2012-09-18"
+  s.date = "2012-10-19"
   s.description = "Ruby anywhere in the world in 250ms with PubNub!"
   s.email = "support@pubnub.com"
   s.files = [
@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.summary = "PubNub Official Ruby gem"
 
   s.add_dependency "activesupport"
-  s.add_dependency "eventmachine", "~> 1.0.0"
+  s.add_dependency "em-http-request"
   s.add_dependency "uuid", "~> 2.3.5"
   s.add_dependency "yajl-ruby"
 
