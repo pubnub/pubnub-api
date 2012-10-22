@@ -30,6 +30,14 @@ THE SOFTWARE.
 (function(){
 
 /**
+ * UTIL LOCALS
+ */
+var NOW        = 1
+,   URLBIT     = '/'
+,   PARAMSBIT  = '&'
+,   XHRTME     = 310000;
+
+/**
  * UTILITIES
  */
 function unique() { return'x'+ ++NOW+''+(+new Date) }
@@ -113,7 +121,14 @@ function xdr( setup ) {
         xhr.onload  = xhr.onloadend = finished;
         xhr.timeout = XHRTME;
         url = 'http' + ((setup.ssl)?'s':'') + '://' + setup.origin + URLBIT + setup.url.join(URLBIT);
-        console.log(url);
+        if (setup.data) {
+            var params = [];
+            url += "?";
+            for (key in setup.data) {
+                params.push(key+"="+setup.data[key]);
+            }
+            url += params.join(PARAMSBIT);
+        }
         xhr.open( 'GET', url, true );
         xhr.send();
     }
@@ -168,14 +183,14 @@ var events = {
 /* =-====================================================================-= */
 
 function PN(setup) {
-    var SELF          = {
-   			// Expose PUBNUB Functions
+    var SELF = {
+               // Expose PUBNUB Functions
         'xdr'    : xdr,
         'db'     : db,
         'each'   : each,
         'map'    : map,
         'events' : events
-		};
+        };
     setup['db'] = db;
     setup['xdr'] = xdr;
     setup['jsonp_cb'] = function(){ return '0'};

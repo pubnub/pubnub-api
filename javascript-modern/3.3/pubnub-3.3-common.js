@@ -1,9 +1,3 @@
-/**
- * UTIL LOCALS
- */
-var NOW    = 1
-,   URLBIT = '/'
-,   XHRTME = 310000;
 
 /**
  * NEXTORIGIN
@@ -93,6 +87,7 @@ function PN_API(setup) {
     ,   xdr           = setup['xdr']
     ,   ssl           = setup['ssl']
     ,   timeout_sec   = setup['timeout'] || 1000
+    ,   log           = setup['log'] || function(){}
 
     SELF = {
         /*
