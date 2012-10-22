@@ -89,6 +89,8 @@ function PN_API(setup) {
     ,   timeout_sec   = setup['timeout'] || 1000
     ,   log           = setup['log'] || function(){}
 
+
+
     SELF = {
         /*
         PUBNUB.history({
@@ -393,6 +395,10 @@ function PN_API(setup) {
             SELF.subscribe(args,callback );
         },
     };
+
+    if(!xdr) return log('Missing xdr function');
+
+
     if (UUID == '') UUID = SELF.uuid();
     db.set(SUBSCRIBE_KEY+'uuid', UUID);
  

@@ -193,6 +193,7 @@ function PN(setup) {
         };
     setup['db'] = db;
     setup['xdr'] = xdr;
+    setup['log'] = function(message) { console.log(message);};
     setup['jsonp_cb'] = function(){ return '0'};
     SELF.__proto__ = PN_API(setup);
 
