@@ -1,7 +1,6 @@
 require 'spec_helper'
 require 'rr'
 require 'vcr'
-require 'em_request_helper'
 
 describe Pubnub do
 
@@ -119,32 +118,24 @@ describe Pubnub do
 
       it "should allow for a symbol" do
         mock_pubnub_request = PubnubRequest.new(:callback => @my_callback, :operation => "time")
-        mock(@pn)._request(mock_pubnub_request) {}
+        mock(@pn).check_for_em(mock_pubnub_request) {}
 
         @pn.time(:callback => @my_callback)
       end
 
       it "should allow for a string" do
         mock_pubnub_request = PubnubRequest.new(:callback => @my_callback, :operation => "time")
-        mock(@pn)._request(mock_pubnub_request) {}
+        mock(@pn).check_for_em(mock_pubnub_request) {}
 
         @pn.time("callback" => @my_callback)
       end
     end
 
     it "should return the current time" do
-      options = {:callback => @my_callback}
+      mock(@my_callback).call([13433410952661319]) {}
 
       VCR.use_cassette("time", :record => :none) do
-        EventMachine.run {
-          http = EM::HttpRequest.new(create_time_request(options).url).get(:keepalive => true, :timeout=> 310)
-          http.errback{ failed(http) }
-          http.callback {
-            http.response_header.status.should == 200
-            Yajl::Parser.parse(http.response).should == [13433410952661319]
-            EventMachine.stop
-          }
-        }
+        @pn.time("callback" => @my_callback)
       end
     end
   end
@@ -218,7 +209,7 @@ describe Pubnub do
                                                    :operation => :presence, :subscribe_key => @my_sub_key,
                                                    :cipher_key => "foo" )
 
-        mock(@pn)._request(mock_presence_request) {}
+        mock(@pn).check_for_em(mock_presence_request) {}
         @pn.presence(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
       end
 
@@ -229,7 +220,7 @@ describe Pubnub do
         mock_presence_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel,
                                                    :operation => :presence, :subscribe_key => @my_sub_key)
 
-        mock(@pn)._request(mock_presence_request) {}
+        mock(@pn).check_for_em(mock_presence_request) {}
         @pn.presence(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
       end
 
@@ -329,7 +320,7 @@ describe Pubnub do
                                                    :operation => :subscribe, :subscribe_key => @my_sub_key,
                                                    :cipher_key => @my_cipher_key)
 
-        mock(@pn)._request(mock_subscribe_request) {}
+        mock(@pn).check_for_em(mock_subscribe_request) {}
         @pn.subscribe(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :cipher_key => @my_cipher_key)
       end
 
@@ -340,7 +331,7 @@ describe Pubnub do
         mock_subscribe_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel,
                                                    :operation => :subscribe, :subscribe_key => @my_sub_key)
 
-        mock(@pn)._request(mock_subscribe_request) {}
+        mock(@pn).check_for_em(mock_subscribe_request) {}
         @pn.subscribe(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
       end
 
@@ -425,7 +416,7 @@ describe Pubnub do
 
         mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
                                                  :operation => :publish, :publish_key => @alt_pub_key, :subscribe_key => @my_sub_key)
-        mock(@pn)._request(mock_publish_request) {}
+        mock(@pn).check_for_em(mock_publish_request) {}
 
         @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :publish_key => @alt_pub_key)
       end
@@ -453,7 +444,7 @@ describe Pubnub do
                                                  :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key,
                                                  :secret_key => @my_sec_key)
 
-        mock(@pn)._request(mock_publish_request) {}
+        mock(@pn).check_for_em(mock_publish_request) {}
         @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message, :secret_key => @my_sec_key)
       end
 
@@ -464,7 +455,7 @@ describe Pubnub do
         mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
                                                  :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key)
 
-        mock(@pn)._request(mock_publish_request) {}
+        mock(@pn).check_for_em(mock_publish_request) {}
         @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
       end
 
@@ -497,7 +488,7 @@ describe Pubnub do
                                                  :query => "/publish/demo_pub_key/demo_sub_key/0/demo_channel/0/%22f42pIQcWZ9zbTbH8cyLwByD%2FGsviOE0vcREIEVPARR0%3D%22"
                                                   )
 
-        mock(@pn)._request(mock_publish_request) {}
+        mock(@pn).check_for_em(mock_publish_request) {}
         @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => message, :cipher_key => @my_cipher_key)
       end
 
@@ -508,7 +499,7 @@ describe Pubnub do
         mock_publish_request = PubnubRequest.new(:callback => @my_callback, :channel => @my_channel, :message => @my_message.to_json,
                                                  :operation => :publish, :publish_key => @my_pub_key, :subscribe_key => @my_sub_key)
 
-        mock(@pn)._request(mock_publish_request) {}
+        mock(@pn).check_for_em(mock_publish_request) {}
         @pn.publish(:channel => @my_channel, :callback => @my_callback, :message => @my_message)
       end
 
@@ -551,7 +542,7 @@ describe Pubnub do
 
       it "should initialize the request object correctly" do
         mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "detailed_history", :channel => "foo", :count => 10)
-        mock(@pn)._request(mock_pubnub_request) {}
+        mock(@pn).check_for_em(mock_pubnub_request) {}
         @pn.detailed_history(:channel => :foo, :callback => @my_callback, :count => 10)
       end
 
@@ -579,7 +570,7 @@ describe Pubnub do
 
       it "should initialize the request object correctly" do
         mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "history", :channel => "foo", :limit => 10)
-        mock(@pn)._request(mock_pubnub_request) {}
+        mock(@pn).check_for_em(mock_pubnub_request) {}
         @pn.history(:channel => :foo, :callback => @my_callback, :limit => 10)
       end
 
@@ -603,7 +594,7 @@ describe Pubnub do
 
       it "should initialize the request object correctly" do
         mock_pubnub_request = PubnubRequest.new(:subscribe_key => "demo", :callback => @my_callback, :operation => "here_now", :channel => "hello_world")
-        mock(@pn)._request(mock_pubnub_request) {}
+        mock(@pn).check_for_em(mock_pubnub_request) {}
         @pn.here_now(:channel => :hello_world, :callback => @my_callback)
       end
 

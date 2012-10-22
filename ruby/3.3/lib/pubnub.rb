@@ -96,7 +96,7 @@ class Pubnub
 
     publish_request.format_url!
 
-    _request(publish_request)
+    check_for_em publish_request
   end
 
   def subscribe(options)
@@ -118,7 +118,7 @@ class Pubnub
     format_url_options = options[:override_timetoken].present? ? options[:override_timetoken] : nil
     subscribe_request.format_url!(format_url_options)
 
-    _request(subscribe_request)
+    check_for_em subscribe_request
 
   end
 
@@ -160,7 +160,7 @@ class Pubnub
     here_now_request.set_subscribe_key(options, self.subscribe_key)
 
     here_now_request.format_url!
-    _request(here_now_request)
+    check_for_em here_now_request
 
   end
 
@@ -196,7 +196,7 @@ class Pubnub
     detailed_history_request.history_reverse = options[:reverse]
 
     detailed_history_request.format_url!
-    _request(detailed_history_request)
+    check_for_em detailed_history_request
 
   end
 
@@ -228,7 +228,7 @@ class Pubnub
     history_request.history_limit = options[:limit]
 
     history_request.format_url!
-    _request(history_request)
+    check_for_em history_request
 
   end
 
@@ -240,7 +240,7 @@ class Pubnub
     time_request.set_callback(options)
 
     time_request.format_url!
-    _request(time_request)
+    check_for_em time_request
   end
 
   def my_callback(x, quiet = false)
@@ -256,11 +256,22 @@ class Pubnub
     UUID.new.generate
   end
 
-  def _request(request)
+  def check_for_em request
+    if EM.reactor_running?
+      _request(request, true)
+    else
+      EM.run do
+        _request(request)
+      end
+    end
+  end
+
+  private
+  
+  def _request(request, is_reactor_running = false)
     request.format_url!
     #puts("- Fetching #{request.url}")
-
-    Thread.new {
+    Thread.new{
       begin
 
         conn = PubnubDeferrable.new(request.url)
@@ -270,33 +281,29 @@ class Pubnub
         req.errback{
           if req.response.blank?
             puts("#{Time.now}: Reconnecting from timeout.")
-            _request(request)
+            _request(request, is_reactor_running)
           else
             error_message = "Unknown Error: #{req.response.to_s}"
             puts(error_message)
             request.callback.call([0, error_message])
 
-            _request(request)
+            _request(request, is_reactor_running)
           end
         }
 
         req.callback{
+          request.package_response!(req.response)
+          request.callback.call(request.response)
+
           only_success_status_is_acceptable = 200
           if req.response_header.http_status.to_i != only_success_status_is_acceptable
             error_message = "Server Error, status: #{req.response_header.http_status}, extended info: #{req.response}"
 
             puts(error_message)
-          end
 
-          if %w(subscribe presence).include?(request.operation)
-
-            request.package_response!(req.response)
-            request.callback.call(request.response)
-
-            _request(request)
+            EM.stop unless is_reactor_running
           else
-            request.package_response!(req.response)
-            request.callback.call(request.response)
+            %w(subscribe presence).include?(request.operation) ? _request(request, is_reactor_running) : (EM.stop unless is_reactor_running)
           end
         }
 
@@ -306,7 +313,6 @@ class Pubnub
         return [0, error_message]
       end
     }
-
   end
 
 end
