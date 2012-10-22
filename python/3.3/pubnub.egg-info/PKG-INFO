@@ -1,0 +1,17 @@
+Metadata-Version: 1.0
+Name: pubnub
+Version: 3.3
+Summary: PubNub Real-time push service in the cloud
+Home-page: https://github.com/pubnub/pubnub-api/blob/CL-230/python/3.3/dist/pubnub-3.3.tar.gz
+Author: Stephen Blum
+Author-email: UNKNOWN
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
