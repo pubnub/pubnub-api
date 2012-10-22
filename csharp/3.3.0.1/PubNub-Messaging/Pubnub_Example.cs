@@ -8,18 +8,27 @@ namespace PubNub_Messaging
 {
     public class Pubnub_Example
     {
-        static public bool deliveryStatus = false;
         static public Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
                     "",
                     false);
+
+        static public bool deliveryStatus = false;
         static public string channel = "my_channel";
         static public string message = "Pubnub API Usage Example - Publish";
 
         static public void Main()
         {
+            Console.WriteLine("HINT: TO TEST RE-CONNECT AND CATCH-UP,");
+            Console.WriteLine("      DISCONNECT YOUR MACHINE FROM NETWORK/INTERNET AND ");
+            Console.WriteLine("      RE-CONNECT YOUR MACHINE AFTER SOMETIME.");
+            Console.WriteLine();
+            Console.WriteLine("      IF NO NETWORK BEFORE MAX RE-TRY CONNECT,");
+            Console.WriteLine("      NETWORK ERROR MESSAGE WILL BE SENT");
+            Console.WriteLine();
+
             Console.WriteLine("ENTER Channel Name");
             channel = Console.ReadLine();
 

@@ -29,15 +29,15 @@ namespace PubNub_Messaging.Tests
 
         static void Pubnub_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            Dictionary<string, object> _message = (Dictionary<string, object>)(((Pubnub)sender).ReturnMessage);
-            if (e.PropertyName != "Here_Now")
-            {
-                Assert.IsNotNull(_message["text"]);
-            }
-            else
-            {
-                Assert.AreEqual("", _message["uuid"]);
-            }
+            //Dictionary<string, object> _message = (Dictionary<string, object>)(((Pubnub)sender).ReturnMessage);
+            //if (e.PropertyName != "Here_Now")
+            //{
+            //    Assert.IsNotNull(_message["text"]);
+            //}
+            //else
+            //{
+            //    Assert.AreEqual("", _message["uuid"]);
+            //}
         }
 
         [TestMethod]
