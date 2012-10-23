@@ -397,5 +397,5 @@ class Pubnub():
             usock.close()
             return json.loads( response )
         except:
-            return [0, "server error"];
+            return None
 

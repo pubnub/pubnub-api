@@ -1,4 +1,5 @@
 Pubnub.py
+README
 setup.py
 pubnub.egg-info/PKG-INFO
 pubnub.egg-info/SOURCES.txt

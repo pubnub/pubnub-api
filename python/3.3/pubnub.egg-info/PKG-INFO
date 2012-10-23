@@ -2,9 +2,9 @@ Metadata-Version: 1.0
 Name: pubnub
 Version: 3.3
 Summary: PubNub Real-time push service in the cloud
-Home-page: https://github.com/pubnub/pubnub-api/blob/CL-230/python/3.3/dist/pubnub-3.3.tar.gz
+Home-page: https://github.com/downloads/pubnub/pubnub-api/pubnub-3.3-for-pip.tar.gz
 Author: Stephen Blum
-Author-email: UNKNOWN
+Author-email: support@pubnub.com
 License: MIT
 Description: UNKNOWN
 Platform: UNKNOWN

@@ -9,7 +9,8 @@ setup(
     version='3.3',
     description='PubNub Real-time push service in the cloud',
     author='Stephen Blum',
-    url='https://github.com/pubnub/pubnub-api/blob/CL-230/python/3.3/dist/pubnub-3.3.tar.gz',
+    author_email='support@pubnub.com',
+    url='https://github.com/downloads/pubnub/pubnub-api/pubnub-3.3-for-pip.tar.gz',
     py_modules=['Pubnub'],
     license='MIT',
     classifiers=(

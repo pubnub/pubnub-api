@@ -51,12 +51,11 @@ history = pubnub.history({
     'channel' : crazy,
     'limit'   : 1
 })
-test (history[0] != 0, 'History Response Success')
 test(
-    history[0] != 0 and history[0].encode('utf-8') == crazy,
-    'History Message: ' + str(history[0])
+    history[0].encode('utf-8') == crazy,
+    'History Message: ' + history[0]
 )
-test( history[0] != 0 and len(history) == 1, 'History Message Count' )
+test( len(history) == 1, 'History Message Count' )
 
 ## -----------------------------------------------------------------------
 ## PubNub Server Time Example
