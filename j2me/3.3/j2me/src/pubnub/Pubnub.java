@@ -2,9 +2,6 @@ package pubnub;
 
 import com.tinyline.util.GZIPInputStream;
 import java.io.*;
-import pubnub.crypto.PubnubCrypto;
-
-
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -13,7 +10,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
-
 import javax.microedition.io.HttpsConnection;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -21,6 +17,7 @@ import org.bouncycastle.util.SecureRandom;
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
+import pubnub.crypto.PubnubCrypto;
 import pubnub.util.AsyncHttpManager;
 import pubnub.util.HttpCallback;
 
@@ -111,7 +108,7 @@ public class Pubnub {
      * @param String Cipher Key.
      * @param boolean SSL Enabled.
      */
-    public void init(String publish_key, String subscribe_key,
+    private void init(String publish_key, String subscribe_key,
             String secret_key, String cipher_key, boolean ssl_on) {
         this.PUBLISH_KEY = publish_key;
         this.SUBSCRIBE_KEY = subscribe_key;
@@ -254,8 +251,6 @@ public class Pubnub {
     public void subscribe(final Hashtable args) {
         args.put("timetoken", "0");
         _subscribe(args);
-
-
     }
 
     private void _subscribe_base(Hashtable args) {
@@ -358,7 +353,6 @@ public class Pubnub {
             }
         }
         _subscribe_base(args);
-
     }
 
     /**
@@ -383,14 +377,9 @@ public class Pubnub {
             } catch (JSONException ex) {
                 ex.printStackTrace();
             }
-
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (ServiceProviderException ex) {
-            ex.printStackTrace();
-        }
+        } catch (Exception ex) {
+            //ex.printStackTrace();
+        } 
         return 0;
     }
 
@@ -522,13 +511,11 @@ public class Pubnub {
      * @return JSONArray of history.
      */
     public void detailedHistory(Hashtable args) {
-
         String channel = (String) args.get("channel");
         if (channel == null || channel.equals("")) {
             System.out.println("Missing Channel");
             return;
         }
-
         StringBuffer parameter = new StringBuffer("?");
         int count = 100;
 
@@ -609,7 +596,6 @@ public class Pubnub {
                     url.append("/").append(encode(url_bit, "UTF-8"));
                 }
             } catch (Exception e) {
-                // e.printStackTrace();
                 JSONArray jsono = new JSONArray();
                 try {
                     jsono.put("Failed UTF-8 Encoding URL.");
@@ -641,7 +627,6 @@ public class Pubnub {
                 request_for = "detailedHistory";
             }
         }
-
         String url = getURL(url_components);
         if (request_for.equals("subscribe")) {
             url = url + "/?uuid=" + UUID;
@@ -658,7 +643,6 @@ public class Pubnub {
             public void OnComplet(HttpConnection hc, String response, String req_for, String channel) throws IOException {
                 try {
                     JSONArray out = null;
-
                     if (response != null) {
                         if (!req_for.equals("presence")) {
                             out = new JSONArray(response);
@@ -674,7 +658,6 @@ public class Pubnub {
                             } else if (req_for.equals("detailedHistory")) {
                                 detailedHistoryComplet(out, channel);
                             } else if (req_for.equals("history")) {
-
                                 if (CIPHER_KEY.length() > 0) {
                                     try {
                                         // Decrpyt Messages
@@ -687,9 +670,7 @@ public class Pubnub {
                                 if (_callback != null) {
                                     _callback.historyCallback(channel, out);
                                 }
-
                             } else if (req_for.equals("publish")) {
-
                                 if (out == null) {
                                     JSONArray arr = new JSONArray();
                                     arr.put("0");
@@ -702,18 +683,15 @@ public class Pubnub {
                             }
                         }
                     }
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-
                 if (_connection.contains(this)) {
                     _connection.removeElement(this);
                 }
             }
 
             public void errorCall(HttpConnection conn, Object message) throws IOException {
-                System.out.println("Error:" + message.toString());
                 if (_connection.contains(this)) {
                     _connection.removeElement(this);
                 }
@@ -721,7 +699,6 @@ public class Pubnub {
 
             void detailedHistoryComplet(JSONArray responce, String channel) {
                 if (CIPHER_KEY.length() > 0) {
-
                     try {
                         JSONArray messageArray = responce.getJSONArray(0);
                         PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
@@ -760,27 +737,30 @@ public class Pubnub {
                                     subscriptions.removeElement(it);
                                     if (_callback != null) {
                                         _callback.disconnectCallback(channel);
+                                          it.connected = false;
                                     }
                                     is_disconnect = true;
                                     break;
                                 }
                             }
                         }
-
                         if (is_disconnect) {
                             return;
                         }
-
                         // Problem?
                         if (out == null || out.optInt(1) == 0) {
-
                             for (int i = 0; i < subscriptions.size(); i++) {
                                 it = (ChannelStatus) subscriptions.elementAt(i);
                                 if (it.channel.equals(channel)) {
                                     if (_callback != null) {
                                         _callback.disconnectCallback(channel);
+                                         is_disconnect = true;
+                                         it.connected = false;
                                     }
                                 }
+                            }
+                            if (is_disconnect) {
+                               // return;
                             }
                             // Ensure Connected (Call Time Function)
                             boolean is_reconnected = false;
@@ -795,30 +775,39 @@ public class Pubnub {
                                 } else {
                                     if (_callback != null) {
                                         _callback.reconnectCallback(channel);
+                                        for (int i = 0; i < subscriptions.size(); i++) {
+                                            it = (ChannelStatus) subscriptions.elementAt(i);
+                                            if (it.channel.equals(channel)) {
+                                                //if (_callback != null) {
+                                                    //_callback.disconnectCallback(channel);
+                                                    //is_disconnect = true;
+                                                    it.connected = true;
+                                                //}
+                                            }
+                                        }
                                     }
                                     Hashtable args = new Hashtable();
                                     args.put("channel", channel);
-
                                     if (current_timetoken.equals("0")) {
                                         args.put("timetoken", time_token + "");
                                     } else {
                                         args.put("timetoken", current_timetoken + "");
-
                                     }
-                                    _subscribe(args);
+                                    _subscribe_base(args);
                                     is_reconnected = true;
                                     break;
                                 }
                             }
+                            if(is_reconnected){
+                                return;
+                            }
                         } else {
-
                             for (int i = 0; i < subscriptions.size(); i++) {
                                 it = (ChannelStatus) subscriptions.elementAt(i);
                                 if (it.channel.equals(channel)) {
                                     // Connect Callback
                                     if (!it.first) {
                                         it.first = true;
-
                                         if (_callback != null) {
                                             _callback.connectCallback(channel);
                                         }
@@ -829,7 +818,6 @@ public class Pubnub {
                         }
                     }
                     JSONArray messages = out.optJSONArray(0);
-
                     // Update TimeToken
                     if (out.optString(1).length() > 0) {
                         timetoken = out.optString(1);
@@ -838,7 +826,6 @@ public class Pubnub {
                         for (int i = 0; messages.length() > i; i++) {
                             JSONObject message = messages.optJSONObject(i);
                             if (message != null) {
-
                                 if (CIPHER_KEY.length() > 0) {
                                     // Decrypt Message
                                     PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
@@ -881,8 +868,6 @@ public class Pubnub {
                             }
                         }
                     }
-
-
                     Hashtable args = new Hashtable();
                     args.put("channel", channel);
                     args.put("timetoken", timetoken + "");
@@ -942,7 +927,7 @@ public class Pubnub {
         InputStream dis = null;
         OutputStream os = null;
         int rc;
-        String respBody = new String(""); // return empty string on bad things
+        String respBody = ""; // return empty string on bad things
         try {
             if (SSL) {
                 c = (HttpsConnection) Connector.open(url, Connector.READ_WRITE,
@@ -1079,7 +1064,6 @@ public class Pubnub {
     }
 
     static class CCharacter {
-
         public static char forDigit(int digit, int radix) {
             if ((digit >= radix) || (digit < 0)) {
                 return '\0';
@@ -1103,7 +1087,6 @@ public class Pubnub {
                 break;
             }
         }
-
         return en;
     }
     //private static final int caseDiff = ('a' - 'A');
