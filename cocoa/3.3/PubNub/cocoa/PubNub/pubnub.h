@@ -63,6 +63,9 @@
 presence: (NSString*) channel
 delegate:  (id)        delegate;
 
+
++ (BOOL)isApplicationActive;
++ (void)setApplicationActive:(BOOL) state;
 - (void)didCompleteWithRequest:(Request*)request WithResponse:(id)response isfail:(BOOL) isFail;
 
 @end

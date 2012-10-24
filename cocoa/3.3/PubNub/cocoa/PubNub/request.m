@@ -41,7 +41,6 @@
         delegate:         self
     ];
     channel = _channel;
-    
     return  self;
 }
 
@@ -86,6 +85,7 @@
                 break;
                 
             default:
+               
                 [pubnub didCompleteWithRequest:self WithResponse:nil isfail:YES];
                 break;
         }
@@ -97,10 +97,27 @@
                 break;
                 
             default:
-                [pubnub didCompleteWithRequest:self WithResponse:nil isfail:YES ];
+                    //[pubnub didCompleteWithRequest:self WithResponse:nil isfail:YES ];
+                if([Pubnub isApplicationActive]){
+                    [pubnub didCompleteWithRequest:self WithResponse:nil isfail:YES];
+                    NSLog(@"PubNub request failed with error: %@", error);
+                }else
+                {
+                    [pubnub performSelector: @selector(_resubscribe:)
+                                 withObject: [NSDictionary
+                                              dictionaryWithObjectsAndKeys:
+                                              channel,  @"channel",
+                                              delegate, @"delegate",
+                                              @"1",     @"timetoken",
+                                              nil]
+                                 afterDelay: 1.0
+                     ];
+                    [Pubnub setApplicationActive:YES];
+                }
+                
                 break;
         }
-        NSLog(@"PubNub request failed with error: %@", error);
+            // NSLog(@"PubNub request failed with error: %@", error);
     }
     
 }

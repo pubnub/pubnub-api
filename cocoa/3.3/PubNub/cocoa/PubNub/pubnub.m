@@ -14,6 +14,7 @@
 @end
 
 @implementation Pubnub
+BOOL _appState = YES;
 
 NSString *timestamp=nil;
 
@@ -49,6 +50,16 @@ NSString *timestamp=nil;
     }
     _connections= [[NSMutableDictionary alloc] init];
     return self;
+}
+
++ (BOOL)isApplicationActive
+{
+    return _appState;
+}
+
++ (void)setApplicationActive:(BOOL)state
+{
+    _appState=state;
 }
 
 +(NSString*) md5: (NSString*) stringToHash {   
