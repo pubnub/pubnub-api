@@ -22,23 +22,13 @@ using Microsoft.Win32;
 namespace PubNub_Messaging
 {
     // INotifyPropertyChanged provides a standard event for objects to notify clients that one of its properties has changed
-    
+
     public class Pubnub : INotifyPropertyChanged
     {
-        ConcurrentDictionary<string, bool> _channelSubscription = new ConcurrentDictionary<string, bool>();
-        ConcurrentDictionary<string, bool> _channelPresence = new ConcurrentDictionary<string, bool>();
-        ConcurrentDictionary<string, RequestState> _channelRequest = new ConcurrentDictionary<string, RequestState>();
-        ConcurrentDictionary<string, Timer> _channelReconnectTimer = new ConcurrentDictionary<string, Timer>();
-        ConcurrentDictionary<string, ReconnectState> _channelReconnectState = new ConcurrentDictionary<string, ReconnectState>();
-
-        const int PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC = 30;
+        const int PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC = 60;
         const int PUBNUB_NETWORK_CHECK_CALLBACK_INTERVAL_IN_SEC = 5;
         const int PUBNUB_NETWORK_CHECK_RETRIES = 24;
-
-        private static bool _pubnetInternetStatus = false;
-        private static bool _pubnetSystemActive = true;
-
-        private static TraceSwitch appSwitch = new TraceSwitch("PubnubTraceSwitch", "Pubnub Trace Switch in config file");
+        const int PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC = 15; // -1 = Disable Heartbeat; > 0 = heart beat timeout interval to check internet connection
 
         // Common property changed event
         public event PropertyChangedEventHandler PropertyChanged;
@@ -50,6 +40,20 @@ namespace PubNub_Messaging
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        ConcurrentDictionary<string, bool> _channelSubscription = new ConcurrentDictionary<string, bool>();
+        ConcurrentDictionary<string, bool> _channelPresence = new ConcurrentDictionary<string, bool>();
+        ConcurrentDictionary<string, RequestState> _channelRequest = new ConcurrentDictionary<string, RequestState>();
+        ConcurrentDictionary<string, Timer> _channelReconnectTimer = new ConcurrentDictionary<string, Timer>();
+        ConcurrentDictionary<string, ReconnectState> _channelReconnectState = new ConcurrentDictionary<string, ReconnectState>();
+
+        System.Threading.Timer heartBeatTimer;
+
+        private static bool _pubnetInternetStatus = false;
+        private static bool _pubnetSystemActive = true;
+
+        private static TraceSwitch appSwitch = new TraceSwitch("PubnubTraceSwitch", "Pubnub Trace Switch in config file");
+
 
         // Publish
         private ConcurrentDictionary<string, object> _publishMsg = new ConcurrentDictionary<string, object>();
@@ -66,7 +70,6 @@ namespace PubNub_Messaging
 
         // Timestamp
         private List<object> _Time = new List<object>();
-        public List<object> Time { get { return _Time; } set { _Time = value; RaisePropertyChanged("Time"); } }
 
         // Pubnub Core API implementation
         private string      ORIGIN = "pubsub.pubnub.com";
@@ -103,7 +106,12 @@ namespace PubNub_Messaging
             else
                 this.ORIGIN = "http://" + this.ORIGIN;
 
-
+            //Eventhoug heart beat is disabled, run one time to check internet connection by setting dueTime=0
+            heartBeatTimer = new System.Threading.Timer(
+                new TimerCallback(OnPubnubHeartBeatTimeoutCallback), null,0, 
+                (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC)?Timeout.Infinite:PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000);
+            
+            //Initiate System Events for PowerModeChanged - to monitor suspend/resume
             initiatePowerModeCheck();
         }
 
@@ -130,29 +138,33 @@ namespace PubNub_Messaging
                             Trace.WriteLine(string.Format("DateTime {0} {1} out of {2} tries by callback to connect Internet for channel={3}", DateTime.Now.ToString(), currentRetry, PUBNUB_NETWORK_CHECK_RETRIES, netState.channel));
                         }
                         ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive,updateInternetStatus);
-                        Thread.Sleep(2000);
+                        Thread.Sleep(1000);
                     }
                     else
                     {
                         netState.retryNum = currentRetry++;
                         if (_channelReconnectTimer.ContainsKey(netState.channel))
                         {
-                            System.Threading.Timer timer = _channelReconnectTimer[netState.channel] as System.Threading.Timer;
-                            timer.Change(Timeout.Infinite, Timeout.Infinite);
-                            timer.Dispose();
+                            System.Threading.Timer reconnectTimer = _channelReconnectTimer[netState.channel] as System.Threading.Timer;
+                            reconnectTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                            reconnectTimer.Dispose();
                             if (appSwitch.TraceInfo)
                             {
-                                Trace.WriteLine(string.Format("DateTime {0}, Maxed tries. Stopped callback timer to connect Internet for channel={1}", DateTime.Now.ToString(), netState.channel));
+                                Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Stopped callback timer to connect Internet for channel={1}", DateTime.Now.ToString(), netState.channel));
                             }
                             
-                            bool removeFlag = _channelReconnectTimer.TryRemove(netState.channel, out timer);
+                            bool removeFlag = _channelReconnectTimer.TryRemove(netState.channel, out reconnectTimer);
                             if (!removeFlag && appSwitch.TraceError)
                             {
-                                Trace.WriteLine(string.Format("DateTime {0}, Unable to remove timer from dictionary for channel={1}", DateTime.Now.ToString(), netState.channel));
+                                Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Unable to remove timer from dictionary for channel={1}", DateTime.Now.ToString(), netState.channel));
                             }
 
                             if (_pubnetInternetStatus)
                             {
+                                if (appSwitch.TraceInfo)
+                                {
+                                    Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Internet Available : {1}", DateTime.Now.ToString(), _pubnetInternetStatus));
+                                }
                                 switch (netState.type)
                                 {
                                     case ResponseType.Subscribe:
@@ -203,18 +215,24 @@ namespace PubNub_Messaging
         private void initiatePowerModeCheck()
         {
             SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, Initiated System Event - PowerModeChanged.", DateTime.Now.ToString()));
+            }
         }
-        
+
         void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
             if (e.Mode == PowerModes.Suspend)
             {
+                _pubnetSystemActive = false;
+                TerminatePendingWebRequest(false);
+                heartBeatTimer.Change(Timeout.Infinite, Timeout.Infinite);
                 if (appSwitch.TraceInfo)
                 {
                     Trace.WriteLine(string.Format("DateTime {0}, System entered into Suspend Mode.", DateTime.Now.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, Disabled Timer for heartbeat ", DateTime.Now.ToString()));
                 }
-                _pubnetSystemActive = false;
-                TerminatePendingWebRequest();
             }
             else if (e.Mode == PowerModes.Resume)
             {
@@ -223,31 +241,31 @@ namespace PubNub_Messaging
                     Trace.WriteLine(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()));
                 }
                 _pubnetSystemActive = true;
+                heartBeatTimer.Change(
+                    (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000,
+                    (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000);
             }
         }
 
-        private void TerminatePendingWebRequest()
+        private void TerminatePendingWebRequest(bool heartbeatTimeout)
         {
-            if (!_pubnetSystemActive)
+            ConcurrentDictionary<string, RequestState> webReq = _channelRequest;
+            ICollection<string> keyCol = _channelRequest.Keys;
+            foreach (string key in keyCol)
             {
-                ConcurrentDictionary<string, RequestState> webReq = _channelRequest;
-                ICollection<string> keyCol = _channelRequest.Keys;
-                foreach (string key in keyCol)
+                RequestState currReq = _channelRequest[key];
+                if (currReq.request != null)
                 {
-                    RequestState currReq = _channelRequest[key];
-                    if (currReq.request != null)
+                    currReq.request.Abort();
+                    if (appSwitch.TraceInfo)
                     {
-                        if (_pubnetSystemActive) break;
-                        if (appSwitch.TraceInfo)
-                        {
-                            Trace.WriteLine(string.Format("DateTime {0}, Due to System Inactive Status, terminating pending web request {1}", DateTime.Now.ToString(),currReq.request.RequestUri.ToString()));
-                        }
-                        currReq.request.Abort();
-                        bool removeKey = _channelRequest.TryRemove(key, out currReq);
-                        if (!removeKey && appSwitch.TraceError)
-                        {
-                            Trace.WriteLine(string.Format("DateTime {0}, Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(), key));
-                        }
+                        Trace.WriteLine(string.Format("DateTime {0}, heartbeatTimeout={1}, TerminatePendingWebRequest {2}", DateTime.Now.ToString(),heartbeatTimeout.ToString(), currReq.request.RequestUri.ToString()));
+                    }
+                    
+                    bool removeKey = _channelRequest.TryRemove(key, out currReq);
+                    if (!removeKey && appSwitch.TraceError)
+                    {
+                        Trace.WriteLine(string.Format("DateTime {0}, heartbeatTimeout={1}, Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(),heartbeatTimeout, key));
                     }
                 }
             }
@@ -258,7 +276,7 @@ namespace PubNub_Messaging
             _pubnetInternetStatus = status;
             if (appSwitch.TraceInfo)
             {
-                Trace.WriteLine(string.Format("DateTime {0}, Internet Available : {1}", DateTime.Now.ToString(), status));
+                Trace.WriteLine(string.Format("DateTime {0}, updateInternetStatus. Internet Available : {1}", DateTime.Now.ToString(), status));
             }
         }
 
@@ -561,6 +579,15 @@ namespace PubNub_Messaging
                         Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached. However state is unknown", DateTime.Now.ToString()));
                     }
                 }
+
+                //reset heart beat time because http request already timedout
+                heartBeatTimer.Change(
+                    (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000,
+                    (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000);
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: resetting the heartbeat timeout", DateTime.Now.ToString()));
+                }
             }
             else if (!_pubnetInternetStatus)
             {
@@ -586,6 +613,25 @@ namespace PubNub_Messaging
                 }
             }
        }
+
+        void OnPubnubHeartBeatTimeoutCallback(Object heartbeatState)
+        {
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime: {0}, **OnPubnubHeartBeatTimeoutCallback**", DateTime.Now.ToString()));
+            }
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
+            Thread.Sleep(2000);
+            if (!_pubnetInternetStatus)
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubHeartBeatTimeoutCallback - No internet connection.", DateTime.Now.ToString()));
+                }
+                TerminatePendingWebRequest(true);
+            }
+        }
+
 
         /// <summary>
         /// Check the response of the REST API and call for re-subscribe
@@ -738,7 +784,7 @@ namespace PubNub_Messaging
 
             //Check internet connection
             ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (!_pubnetInternetStatus && _pubnetSystemActive)
             {
@@ -988,14 +1034,14 @@ namespace PubNub_Messaging
          * 
          * @return object timestamp.
          */
-        public bool time()
+        public bool time(Action<object> usercallback)
         {
             List<string> url = new List<string>();
 
             url.Add("time");
             url.Add("0");
 
-            return _request(url, ResponseType.Time);
+            return _urlRequest(url,ResponseType.Time,usercallback,false);
         }
         /**
          * Http Get Request
@@ -1174,9 +1220,13 @@ namespace PubNub_Messaging
                                     string jsonString = streamReader.ReadToEnd();
                                     streamReader.Close();
 
+                                    heartBeatTimer.Change(
+                                        (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000,
+                                        (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000);
+
                                     if (appSwitch.TraceInfo)
                                     {
-                                        Trace.WriteLine(string.Format("DateTime {0}, JSON={1}", DateTime.Now.ToString(), jsonString));
+                                        Trace.WriteLine(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(),channelName, type.ToString(), jsonString));
                                     }
 
                                     result = WrapResultBasedOnResponseType(type, jsonString, url_components,reconnect);
@@ -1192,7 +1242,7 @@ namespace PubNub_Messaging
                             }
                         }
 
-                        if (result != null && result.Count >= 2 && usercallback != null)
+                        if (result != null && result.Count >= 1 && usercallback != null)
                         {
                             responseToUserCallback(result, type, channelName, usercallback);
                         }
@@ -1237,7 +1287,11 @@ namespace PubNub_Messaging
                         }
                         else if (type == ResponseType.DetailedHistory)
                         {
-                            detailedHistoryHandler(channelName, usercallback);
+                            detailedHistoryExceptionHandler(channelName, usercallback);
+                        }
+                        else if (type == ResponseType.Time)
+                        {
+                            timeExceptionHandler(usercallback);
                         }
                     }
                     catch (Exception ex)
@@ -1268,7 +1322,11 @@ namespace PubNub_Messaging
                         }
                         else if (type == ResponseType.DetailedHistory)
                         {
-                            detailedHistoryHandler(channelName, usercallback);
+                            detailedHistoryExceptionHandler(channelName, usercallback);
+                        }
+                        else if (type == ResponseType.Time)
+                        {
+                            timeExceptionHandler(usercallback);
                         }
                     }
 
@@ -1325,6 +1383,12 @@ namespace PubNub_Messaging
                     }
                     break;
                 case ResponseType.Here_Now:
+                    if (result != null && result.Count > 0)
+                    {
+                        usercallback(result.AsReadOnly());
+                    }
+                    break;
+                case ResponseType.Time:
                     if (result != null && result.Count > 0)
                     {
                         usercallback(result.AsReadOnly());
@@ -1472,7 +1536,7 @@ namespace PubNub_Messaging
             }
         }
 
-        private void detailedHistoryHandler(string channelName, Action<object> usercallback)
+        private void detailedHistoryExceptionHandler(string channelName, Action<object> usercallback)
         {
             List<object> result = new List<object>();
             string jsonString = "[0, \"Network connnect error\"]";
@@ -1481,7 +1545,23 @@ namespace PubNub_Messaging
             result.Add(channelName);
             if (appSwitch.TraceInfo)
             {
-                Trace.WriteLine(string.Format("DateTime {0}, JSON detailedhistory response={1}", DateTime.Now.ToString(), jsonString));
+                Trace.WriteLine(string.Format("DateTime {0}, JSON detailedHistoryExceptionHandler response={1}", DateTime.Now.ToString(), jsonString));
+            }
+            if (usercallback != null)
+            {
+                usercallback(result.AsReadOnly());
+            }
+        }
+
+        private void timeExceptionHandler(Action<object> usercallback)
+        {
+            List<object> result = new List<object>();
+            string jsonString = "[0, \"Network connnect error\"]";
+            JavaScriptSerializer jS = new JavaScriptSerializer();
+            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, JSON timeExceptionHandler response={1}", DateTime.Now.ToString(), jsonString));
             }
             if (usercallback != null)
             {
@@ -1543,7 +1623,7 @@ namespace PubNub_Messaging
                     result.Add(channelName);
                     break;
                 case ResponseType.Time:
-                    Time = result;
+                    _Time = result;
                     break;
                 case ResponseType.Subscribe:
                     result.Add(channelName);
@@ -2464,6 +2544,13 @@ namespace PubNub_Messaging
                     socket.Shutdown(SocketShutdown.Both);
                     socket.Disconnect(true);
                     socket.Close();
+                }
+            }
+            catch (ObjectDisposedException objEx)
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), objEx.ToString()));
                 }
             }
             catch (Exception ex)

@@ -42,6 +42,7 @@ namespace PubNub_Messaging
             Console.WriteLine("ENTER 5 FOR Here_Now");
             Console.WriteLine("ENTER 6 FOR Unsubscribe");
             Console.WriteLine("ENTER 7 FOR Presence-Unsubscribe");
+            Console.WriteLine("ENTER 8 FOR Time");
             Console.WriteLine("ENTER 0 FOR EXIT OR QUIT");
 
             bool exitFlag = false;
@@ -85,6 +86,10 @@ namespace PubNub_Messaging
                         Console.WriteLine("Running presence-unsubscribe()");
                         pubnub.presence_unsubscribe(channel, DisplayReturnMessage);
                         break;
+                    case "8":
+                        Console.WriteLine("Running time()");
+                        pubnub.time(DisplayReturnMessage);
+                        break;
                     default:
                         Console.WriteLine("INVALID CHOICE.");
                         break;
@@ -98,24 +103,25 @@ namespace PubNub_Messaging
 
         static long Timestamp()
         {
-            deliveryStatus = false;
-            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
-            {
-                if (e.PropertyName == "Time")
-                {
-                    deliveryStatus = true;
-                }
-            };
-            pubnub.time();
-            while (!deliveryStatus) ;
-            return Convert.ToInt64(pubnub.Time[0].ToString());
+            return 0;
+            //deliveryStatus = false;
+            //pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            //{
+            //    if (e.PropertyName == "Time")
+            //    {
+            //        deliveryStatus = true;
+            //    }
+            //};
+            //pubnub.time();
+            //while (!deliveryStatus) ;
+            //return Convert.ToInt64(pubnub.Time[0].ToString());
         }
 
         static void DisplayReturnMessage(object result)
         {
             IList<object> message = result as IList<object>;
 
-            if (message != null && message.Count >= 2)
+            if (message != null && message.Count >= 1)
             {
                 for (int index = 0; index < message.Count; index++)
                 {
