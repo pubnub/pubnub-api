@@ -1,4 +1,8 @@
 Ruby2::Application.routes.draw do
+
+  match 'examples/pub/:channel/:message' => 'examples#pub'
+  match 'examples/sub/:channel' => 'examples#sub'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
