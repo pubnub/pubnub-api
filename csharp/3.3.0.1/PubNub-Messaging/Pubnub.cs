@@ -16,6 +16,8 @@ using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Configuration;
+using Microsoft.Win32;
 
 namespace PubNub_Messaging
 {
@@ -34,6 +36,7 @@ namespace PubNub_Messaging
         const int PUBNUB_NETWORK_CHECK_RETRIES = 24;
 
         private static bool _pubnetInternetStatus = false;
+        private static bool _pubnetSystemActive = true;
 
         private static TraceSwitch appSwitch = new TraceSwitch("PubnubTraceSwitch", "Pubnub Trace Switch in config file");
 
@@ -100,13 +103,14 @@ namespace PubNub_Messaging
             else
                 this.ORIGIN = "http://" + this.ORIGIN;
 
+
+            initiatePowerModeCheck();
         }
 
         private void reconnectNetwork(ReconnectState netState)
         {
             System.Threading.Timer timer = new Timer(new TimerCallback(reconnectNetworkCallback),netState,0,PUBNUB_NETWORK_CHECK_CALLBACK_INTERVAL_IN_SEC * 1000);
             _channelReconnectTimer.AddOrUpdate(netState.channel, timer, (key, oldState) => timer);
-            
         }
 
         void reconnectNetworkCallback(Object reconnectState)
@@ -125,7 +129,7 @@ namespace PubNub_Messaging
                         {
                             Trace.WriteLine(string.Format("DateTime {0} {1} out of {2} tries by callback to connect Internet for channel={3}", DateTime.Now.ToString(), currentRetry, PUBNUB_NETWORK_CHECK_RETRIES, netState.channel));
                         }
-                        ClientNetworkStatus.checkInternetStatus(updateInternetStatus);
+                        ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive,updateInternetStatus);
                         Thread.Sleep(2000);
                     }
                     else
@@ -196,6 +200,59 @@ namespace PubNub_Messaging
             }
         }
 
+        private void initiatePowerModeCheck()
+        {
+            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
+        }
+        
+        void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode == PowerModes.Suspend)
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, System entered into Suspend Mode.", DateTime.Now.ToString()));
+                }
+                _pubnetSystemActive = false;
+                TerminatePendingWebRequest();
+            }
+            else if (e.Mode == PowerModes.Resume)
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()));
+                }
+                _pubnetSystemActive = true;
+            }
+        }
+
+        private void TerminatePendingWebRequest()
+        {
+            if (!_pubnetSystemActive)
+            {
+                ConcurrentDictionary<string, RequestState> webReq = _channelRequest;
+                ICollection<string> keyCol = _channelRequest.Keys;
+                foreach (string key in keyCol)
+                {
+                    RequestState currReq = _channelRequest[key];
+                    if (currReq.request != null)
+                    {
+                        if (_pubnetSystemActive) break;
+                        if (appSwitch.TraceInfo)
+                        {
+                            Trace.WriteLine(string.Format("DateTime {0}, Due to System Inactive Status, terminating pending web request {1}", DateTime.Now.ToString(),currReq.request.RequestUri.ToString()));
+                        }
+                        currReq.request.Abort();
+                        bool removeKey = _channelRequest.TryRemove(key, out currReq);
+                        if (!removeKey && appSwitch.TraceError)
+                        {
+                            Trace.WriteLine(string.Format("DateTime {0}, Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(), key));
+                        }
+                    }
+                }
+            }
+        }
+
         private void updateInternetStatus(bool status)
         {
             _pubnetInternetStatus = status;
@@ -203,6 +260,12 @@ namespace PubNub_Messaging
             {
                 Trace.WriteLine(string.Format("DateTime {0}, Internet Available : {1}", DateTime.Now.ToString(), status));
             }
+        }
+
+        ~Pubnub()
+        {
+            //detach
+            SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
         }
 
         /**
@@ -486,7 +549,7 @@ namespace PubNub_Messaging
                     {
                         if (appSwitch.TraceInfo)
                         {
-                            Trace.WriteLine(string.Format("DateTime: {0}, client request timeout reached.Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel));
+                            Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached.Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel));
                         }
                         request.Abort();
                     }
@@ -495,7 +558,30 @@ namespace PubNub_Messaging
                 {
                     if (appSwitch.TraceError)
                     {
-                        Trace.WriteLine(string.Format("DateTime: {0}, client request timeout reached. However state is unknown", DateTime.Now.ToString()));
+                        Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached. However state is unknown", DateTime.Now.ToString()));
+                    }
+                }
+            }
+            else if (!_pubnetInternetStatus)
+            {
+                RequestState currentState = state as RequestState;
+                if (currentState != null)
+                {
+                    HttpWebRequest request = currentState.request;
+                    if (request != null)
+                    {
+                        if (appSwitch.TraceInfo)
+                        {
+                            Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: No network detected. Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel));
+                        }
+                        request.Abort();
+                    }
+                }
+                else
+                {
+                    if (appSwitch.TraceError)
+                    {
+                        Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: No network detected. However state is unknown", DateTime.Now.ToString()));
                     }
                 }
             }
@@ -651,10 +737,10 @@ namespace PubNub_Messaging
             }
 
             //Check internet connection
-            ClientNetworkStatus.checkInternetStatus(updateInternetStatus);
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
             Thread.Sleep(2000);
 
-            if (!_pubnetInternetStatus)
+            if (!_pubnetInternetStatus && _pubnetSystemActive)
             {
                 if (appSwitch.TraceInfo)
                 {
@@ -682,9 +768,9 @@ namespace PubNub_Messaging
                 url.Add(channel);
                 url.Add("0");
                 url.Add(timetoken.ToString());
-                
+
                 // Wait for message
-                _urlRequest(url, ResponseType.Subscribe,usercallback,reconnect);
+                _urlRequest(url, ResponseType.Subscribe, usercallback, reconnect);
             }
             catch(Exception ex)
             {
@@ -766,7 +852,7 @@ namespace PubNub_Messaging
             }
 
             //Check internet connection
-            ClientNetworkStatus.checkInternetStatus(updateInternetStatus);
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
             Thread.Sleep(2000);
 
             if (!_pubnetInternetStatus)
@@ -798,8 +884,7 @@ namespace PubNub_Messaging
                 url.Add(timetoken.ToString());
 
                 // Wait for message
-                _urlRequest(url, ResponseType.Presence,usercallback,reconnect);
-
+                _urlRequest(url, ResponseType.Presence, usercallback, reconnect);
             }
             catch (Exception ex)
             {
@@ -884,14 +969,6 @@ namespace PubNub_Messaging
                 throw new ArgumentException("Missing Channel");
             }
 
-            //ClientNetworkStatus.checkInternetStatus(updateInternetStatus);
-            //Thread.Sleep(2000);
-            //if (!_pubnetInternetStatus)
-            //{
-            //    hereNowExceptionHandler(channel, usercallback);
-            //    return false;
-            //}
-
             List<string> url = new List<string>();
 
             url.Add("v2");
@@ -903,6 +980,7 @@ namespace PubNub_Messaging
 
             return _urlRequest(url, ResponseType.Here_Now, usercallback,false);
         }
+
         /**
          * Time
          * 
@@ -2295,13 +2373,20 @@ namespace PubNub_Messaging
     {
         private static TraceSwitch appSwitch = new TraceSwitch("PubnubTraceSwitch", "Pubnub Trace Switch in config file");
 
-        internal static void checkInternetStatus(Action<bool> callback)
+        internal static void checkInternetStatus(bool systemActive, Action<bool> callback)
         {
             if (callback != null)
             {
                 try
                 {
-                    checkClientNetworkAvailability(callback);
+                    if (systemActive)
+                    {
+                        checkClientNetworkAvailability(callback);
+                    }
+                    else
+                    {
+                        callback(false);
+                    }
                 }
                 catch (Exception ex)
                 {
