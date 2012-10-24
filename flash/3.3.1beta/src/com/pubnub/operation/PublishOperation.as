@@ -42,9 +42,8 @@ package com.pubnub.operation {
 		}
 		
 		override protected function onLoaderData(e:PnURLLoaderEvent):void {
-			var data:* = e.data;
 			try {
-				dispatchEvent(new OperationEvent(OperationEvent.RESULT, PnJSON.parse(data)));
+				dispatchEvent(new OperationEvent(OperationEvent.RESULT, PnJSON.parse(String(e.data))));
 			}
 			catch (e:*){
 				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [-1, "[Pn.publish()] JSON.parse error"] ));

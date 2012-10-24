@@ -13,8 +13,8 @@ package com.pubnub.operation {
 		public var cipherKey:String;
 		
 		override public function send(args:Object):void {
-			//trace(this, 'sub_key : ' + sub_key);
 			channel = args.channel;
+			sub_key = args['sub-key'];
 			_url = origin + "/v2/history/sub-key/" + sub_key + "/channel/" + PnUtils.encode(args.channel); 
 			if (args.start || args.end || args.reverse || args.count) {
 				_url += extractOptionalParams(args);
@@ -51,16 +51,12 @@ package com.pubnub.operation {
 				}else {
 					result += "&" + key + "=" + optionalParams[key];
 				}
-                
             }
-			//trace(result);
             return result;
         }
 		
 		override protected function onLoaderData(e:PnURLLoaderEvent):void {
 			var data:* = e.data;
-			
-			//var test:Object = JSON.parse(data);
 			try {
 				var result:Object = PnJSON.parse(data);
 				var messages:Array = [];

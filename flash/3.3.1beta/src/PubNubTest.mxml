@@ -8,12 +8,12 @@
     <fx:Script>
 		<![CDATA[
         import com.pubnub.*;
-        import com.pubnub.events.*;
         import flash.events.*;
         import flash.external.*;
 
         [Bindable]
-        public var channel:String = 'hello_world';
+        public var channel:String = 'my_snz';
+        //public var channel:String = 'hello_world';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
@@ -43,7 +43,9 @@
                 secret_key:this.secret_key,
                 cipher_key:this.cipher_key
             }
-
+			//stage.addEventListener(Event.ACTIVATE, onActivate);
+			//stage.addEventListener(Event.DEACTIVATE, onDeactivate);
+			
             Pn.instance.addEventListener(PnEvent.INIT, onInit);
             Pn.instance.addEventListener(PnEvent.INIT_ERROR, onInitError);
             Pn.instance.addEventListener(PnEvent.SUBSCRIBE, onSubscribe);
@@ -51,9 +53,7 @@
             Pn.instance.addEventListener(PnEvent.PUBLISH, onPublish);
             Pn.init(config);
         }
-
-
-
+		
         private function onInit(e:PnEvent):void {
             callExternalInterface("console.log", ("Pn init : " + Pn.instance.sessionUUID));
         }
@@ -85,7 +85,7 @@
                     break;
 
                 case OperationStatus.ERROR:
-                    callExternalInterface("console.log", ("Subscribe [ERROR] : " + e.channel));
+                    callExternalInterface("console.log", ("Subscribe [ERROR] : " + e.channel + ', ' + e.data));
                     break;
             }
         }

@@ -1,11 +1,8 @@
 package com.pubnub.loader {
-	import com.adobe.net.URI;
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import org.httpclient.events.HttpDataEvent;
-	import org.httpclient.events.HttpErrorEvent;
-	import org.httpclient.events.HttpListener;
-	import org.httpclient.HttpClient;
+	import com.adobe.net.*;
+	import flash.events.*;
+	import org.httpclient.*;
+	import org.httpclient.events.*;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
@@ -14,27 +11,22 @@ package com.pubnub.loader {
 	[Event(name="PnURLLoaderEvent.complete", type="com.pubnub.loader.PnURLLoaderEvent")]
 	public class PnURLLoader extends EventDispatcher {
 		
-		//public var onComplete:Function;
-		//public var onError:Function;
-		//public var uid:String;
-		//public var channel:String;
-		
-		
 		private var _destroyed:Boolean;
-		//private var tries:int = 0;
 		public var httpClient:HttpClient;
 		private var listener:HttpListener;
 		private var _url:String;
+		private var timeout:Number;
 		
 		
-		public function PnURLLoader() {
+		public function PnURLLoader(timeout:Number = 310000) {
 			super(null);
+			this.timeout = timeout;
 			init();
 		}	
 		
 		private function init():void {
 			var uri:URI = new URI(_url);
-			httpClient = new HttpClient();
+			httpClient = new HttpClient(null, timeout);
 			listener = new HttpListener();
 			listener.addEventListener(HttpDataEvent.DATA, onHttpData);
 			listener.addEventListener(HttpErrorEvent.ERROR, onHttpDataError);
@@ -63,6 +55,7 @@ package com.pubnub.loader {
 			listener.removeEventListener(HttpErrorEvent.TIMEOUT_ERROR, onHttpDataError);
 			listener.unregister();
 			listener = null;
+			httpClient = null;
 		}
 		
 		public function close():void {

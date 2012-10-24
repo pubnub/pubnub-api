@@ -16,6 +16,7 @@ package com.pubnub.operation {
 		static public const WITH_TIMETOKEN:String = 'subscribe_with_timetoken';
 		static public const GET_TIMETOKEN:String = 'subscribe_get_timetoken';
 		static public const WITH_RETRY:String = 'subscribe_with_retry';
+		static public const TIMEOUT:int = 310000;
 		
 		public var uid:String;
 		public var channel:String;
@@ -35,20 +36,17 @@ package com.pubnub.operation {
 		}
 		
 		protected function init():void {
-			_loader = new PnURLLoader();
+			_loader = new PnURLLoader(TIMEOUT);
 			_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
 			_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
 		
 		}
 		
 		protected function onLoaderError(e:PnURLLoaderEvent):void {
-			//trace('onLoaderError : ' + e);
 			dispatchEvent(new OperationEvent(OperationEvent.FAULT,e.data ));
 		}
 		
 		protected function onLoaderData(e:PnURLLoaderEvent):void {
-			//trace('onLoaderData : ' + e.data);
-			//JSON.parse(
 			var result:* = e.data;
 			if (parseToJSON) {
 				try {
@@ -83,7 +81,6 @@ package com.pubnub.operation {
 					url = args.url + "&" + args.params;
 			}
 			this._url = url;
-			//trace(operation, url);
 			_loader.load(this._url);
 		}
 		
@@ -100,6 +97,7 @@ package com.pubnub.operation {
 			_loader.removeEventListener(HttpErrorEvent.ERROR, onLoaderError);
 			_loader.removeEventListener(HttpErrorEvent.TIMEOUT_ERROR, onLoaderError);
 			_loader.destroy();
+			_loader = null;
 		}
 		
 		public function get destroyed():Boolean {

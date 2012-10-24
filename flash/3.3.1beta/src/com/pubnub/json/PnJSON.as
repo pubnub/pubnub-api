@@ -8,12 +8,8 @@ package com.pubnub.json {
 	 */
 	public class PnJSON {
 		
-		//import com.adobe.serialization.json.JSON;
-		
-		
 		static public function parse(text:String, reviver:Function = null):Object {
 			try {
-				
 				return JSONNative.parse(text, reviver);
 			}catch (err:Error) {
 				// native JSON works with error here
@@ -27,7 +23,6 @@ package com.pubnub.json {
 			}catch (err:Error) {
 				// native JSON works with error here
 			}
-			
 			return JSON3dParty.stringify(value);
 		}
 	}
