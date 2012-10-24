@@ -15,7 +15,7 @@ package com.pubnub.environment {
 	public class NetMon extends EventDispatcher {
 		
 		// timeout for "time function"
-		static public const HEARTBEAT:int = 5000;
+		static public const HEARTBEAT:int = 15000;
 		private var interval:int;
 		private var loader:URLLoader;
 		private var lastStatus:String
