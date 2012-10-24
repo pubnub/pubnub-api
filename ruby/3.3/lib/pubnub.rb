@@ -281,13 +281,16 @@ class Pubnub
         req.errback{
           if req.response.blank?
             puts("#{Time.now}: Reconnecting from timeout.")
-            _request(request, is_reactor_running)
+
+            EM::Timer.new(1) do
+              _request(request, is_reactor_running)
+            end
           else
             error_message = "Unknown Error: #{req.response.to_s}"
             puts(error_message)
             request.callback.call([0, error_message])
 
-            _request(request, is_reactor_running)
+            EM.stop unless is_reactor_running
           end
         }
 
