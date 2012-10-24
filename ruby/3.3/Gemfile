@@ -7,7 +7,7 @@ gem 'rails', '3.2.6'
 
 gem 'sqlite3'
 
-gem 'eventmachine', "~> 0.12.9"
+#gem 'eventmachine', "~> 0.12.9"
 gem 'em-http-request'
 gem "uuid", "~> 2.3.5"
 gem 'yajl-ruby'

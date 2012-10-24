@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["PubNub"]
-  s.date = "2012-10-19"
+  s.date = "2012-10-23"
   s.description = "Ruby anywhere in the world in 250ms with PubNub!"
   s.email = "support@pubnub.com"
   s.files = [

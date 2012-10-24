@@ -127,7 +127,6 @@ PLATFORMS
 
 DEPENDENCIES
   em-http-request
-  eventmachine (~> 0.12.9)
   rails (= 3.2.6)
   rr (= 1.0.4)
   rspec-rails (~> 2.0)
