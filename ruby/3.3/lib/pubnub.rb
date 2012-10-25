@@ -294,19 +294,25 @@ class Pubnub
           end
         }
 
-        req.callback{
+        req.callback {
           request.package_response!(req.response)
-          request.callback.call(request.response)
+          cycle = request.callback.call(request.response)
 
           only_success_status_is_acceptable = 200
-          if req.response_header.http_status.to_i != only_success_status_is_acceptable
+
+          if (req.response_header.http_status.to_i != only_success_status_is_acceptable)
+
             error_message = "Server Error, status: #{req.response_header.http_status}, extended info: #{req.response}"
-
             puts(error_message)
-
             EM.stop unless is_reactor_running
           else
-            %w(subscribe presence).include?(request.operation) ? _request(request, is_reactor_running) : (EM.stop unless is_reactor_running)
+
+            if %w(subscribe presence).include?(request.operation) && (cycle != false || request.first_request?)
+              _request(request, is_reactor_running)
+            else
+              EM.stop unless is_reactor_running
+            end
+
           end
         }
 
@@ -317,5 +323,7 @@ class Pubnub
       end
     }
   end
+
+
 
 end

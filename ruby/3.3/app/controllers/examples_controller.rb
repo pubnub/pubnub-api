@@ -14,7 +14,7 @@ class ExamplesController < ApplicationController
   def sub
     init_vars
 
-    @pubnub.subscribe(:channel => @channel, :callback => method(:set_output))
+    @pubnub.subscribe(:channel => @channel, :callback => method(:set_output)) # if set_output returns false, return immediately, otherwise, keep going...
     render :text => @out
   end
 
