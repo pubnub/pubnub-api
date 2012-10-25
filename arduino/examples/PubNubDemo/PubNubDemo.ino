@@ -48,7 +48,7 @@ void loop()
 	EthernetClient *client;
 
 	Serial.println("publishing a message");
-	client = PubNub.publishRaw(channel, "\"\\\"Hello world!\\\" she said.\"");
+	client = PubNub.publish(channel, "\"\\\"Hello world!\\\" she said.\"");
 	if (!client) {
 		Serial.println("publishing error");
 		delay(1000);
@@ -63,7 +63,7 @@ void loop()
 	Serial.println();
 
 	Serial.println("waiting for a message (subscribe)");
-	client = PubNub.subscribeRaw(channel);
+	client = PubNub.subscribe(channel);
 	if (!client) {
 		Serial.println("subscription error");
 		delay(1000);
@@ -78,7 +78,7 @@ void loop()
 	Serial.println();
 
 	Serial.println("retrieving message history");
-	client = PubNub.historyRaw(channel);
+	client = PubNub.history(channel);
 	if (!client) {
 		Serial.println("history error");
 		delay(1000);

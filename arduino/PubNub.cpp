@@ -11,7 +11,7 @@ bool PubNub::begin(char *publish_key_, char *subscribe_key_, char *origin_)
 	origin = origin_;
 }
 
-EthernetClient *PubNub::publishRaw(char *channel, char *message)
+EthernetClient *PubNub::publish(char *channel, char *message)
 {
 	EthernetClient &client = publish_client;
 	if (!client.connect(origin, 80)) {
@@ -60,7 +60,7 @@ EthernetClient *PubNub::publishRaw(char *channel, char *message)
 	}
 }
 
-PubSubClient *PubNub::subscribeRaw(char *channel)
+PubSubClient *PubNub::subscribe(char *channel)
 {
 	PubSubClient &client = subscribe_client;
 	if (!client.connect(origin, 80)) {
@@ -98,7 +98,7 @@ PubSubClient *PubNub::subscribeRaw(char *channel)
 	}
 }
 
-EthernetClient *PubNub::historyRaw(char *channel, int limit)
+EthernetClient *PubNub::history(char *channel, int limit)
 {
 	EthernetClient &client = history_client;
 	if (!client.connect(origin, 80)) {
@@ -127,13 +127,11 @@ EthernetClient *PubNub::historyRaw(char *channel, int limit)
 bool PubNub::_request_bh(EthernetClient &client, bool chunked)
 {
 	/* Finish the first line of the request. */
-	client.println(" HTTP/1.1");
+	client.print(" HTTP/1.1\r\n");
 	/* Finish HTTP request. */
 	client.print("Host: ");
-	client.println(origin);
-	client.println("User-Agent: PubNub-Arduino/1.0");
-	client.println("Connection: close");
-	client.println();
+	client.print(origin);
+	client.print("\r\nUser-Agent: PubNub-Arduino/1.0\r\nConnection: close\r\n\r\n");
 
 #define WAIT() do { \
 	while (client.connected() && !client.available()) /* wait */; \

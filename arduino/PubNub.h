@@ -95,7 +95,7 @@ public:
 	 * Send a message (assumed to be well-formed JSON) to a given channel.
 	 *
 	 * Note that the reply can be obtained using code like:
-	     client = publishRaw("demo", "\"lala\"");
+	     client = publish("demo", "\"lala\"");
 	     if (!client) return; // error
 	     while (client->connected()) {
 	       while (client->connected() && !client->available()) ; // wait
@@ -110,7 +110,7 @@ public:
 	 * @param string channel required channel name.
 	 * @param string message required message string in JSON format.
 	 * @return string Stream-ish object with reply message or NULL on error. */
-	EthernetClient *publishRaw(char *channel, char *message);
+	EthernetClient *publish(char *channel, char *message);
 
 	/**
 	 * Subscribe (raw)
@@ -126,10 +126,10 @@ public:
 	 * TODO rest of documentation
 	 *
 	 * @param string channel required channel name. */
-	PubSubClient *subscribeRaw(char *channel);
+	PubSubClient *subscribe(char *channel);
 
 	/* TODO document */
-	EthernetClient *historyRaw(char *channel, int limit = 10);
+	EthernetClient *history(char *channel, int limit = 10);
 
 private:
 	bool _request_bh(EthernetClient &client, bool chunked = true);
