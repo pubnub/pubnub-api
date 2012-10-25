@@ -165,9 +165,7 @@ NSString* channelName = @"hello_world";
 
 -(void) printLog:(NSString*) log
 {
-    NSLog(@"LOG:%@",log);
     [txt setTitle:log];
-        //[textView insertText:@"\n"];
 }
 
 /*Listen for a message on a channel */

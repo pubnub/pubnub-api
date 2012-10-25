@@ -35,13 +35,13 @@
     [request setValue:@"3.3" forHTTPHeaderField:@"V"];
     [request setValue:@"Cocoa" forHTTPHeaderField:@"User-Agent"];
     [request setValue:@"close" forHTTPHeaderField:@"Connection"];
-    [request setValue:@"Accept-Encoding" forHTTPHeaderField:@"gzip"];
+    [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
+  
     connection = [[NSURLConnection alloc]
         initWithRequest:  request
         delegate:         self
     ];
     channel = _channel;
-    
     return  self;
 }
 
@@ -86,6 +86,7 @@
                 break;
                 
             default:
+               
                 [pubnub didCompleteWithRequest:self WithResponse:nil isfail:YES];
                 break;
         }
@@ -97,10 +98,27 @@
                 break;
                 
             default:
-                [pubnub didCompleteWithRequest:self WithResponse:nil isfail:YES ];
+                    //[pubnub didCompleteWithRequest:self WithResponse:nil isfail:YES ];
+                if([Pubnub isApplicationActive]){
+                    [pubnub didCompleteWithRequest:self WithResponse:nil isfail:YES];
+                    NSLog(@"PubNub request failed with error: %@", error);
+                }else
+                {
+                    [pubnub performSelector: @selector(_resubscribe:)
+                                 withObject: [NSDictionary
+                                              dictionaryWithObjectsAndKeys:
+                                              channel,  @"channel",
+                                              delegate, @"delegate",
+                                              timetoken,     @"timetoken",
+                                              nil]
+                                 afterDelay: 1.0
+                     ];
+                    [Pubnub setApplicationActive:YES];
+                }
+                
                 break;
         }
-        NSLog(@"PubNub request failed with error: %@", error);
+            // NSLog(@"PubNub request failed with error: %@", error);
     }
     
 }

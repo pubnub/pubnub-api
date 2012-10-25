@@ -35,7 +35,8 @@
     [request setValue:@"3.3" forHTTPHeaderField:@"V"];
     [request setValue:@"Cocoa" forHTTPHeaderField:@"User-Agent"];
     [request setValue:@"close" forHTTPHeaderField:@"Connection"];
-    [request setValue:@"Accept-Encoding" forHTTPHeaderField:@"gzip"];
+    [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
+  
     connection = [[NSURLConnection alloc]
         initWithRequest:  request
         delegate:         self
@@ -108,7 +109,7 @@
                                               dictionaryWithObjectsAndKeys:
                                               channel,  @"channel",
                                               delegate, @"delegate",
-                                              @"1",     @"timetoken",
+                                              timetoken,     @"timetoken",
                                               nil]
                                  afterDelay: 1.0
                      ];

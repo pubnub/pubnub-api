@@ -14,6 +14,7 @@
 @end
 
 @implementation Pubnub
+BOOL _appState = YES;
 
 NSString *timestamp=nil;
 
@@ -49,6 +50,16 @@ NSString *timestamp=nil;
     }
     _connections= [[NSMutableDictionary alloc] init];
     return self;
+}
+
++ (BOOL)isApplicationActive
+{
+    return _appState;
+}
+
++ (void)setApplicationActive:(BOOL)state
+{
+    _appState=state;
 }
 
 +(NSString*) md5: (NSString*) stringToHash {   
@@ -162,6 +173,7 @@ NSString *timestamp=nil;
         pubnub:self
         command:kCommand_ReceiveMessage
     ];
+    request.timetoken=[args objectForKey:@"timetoken"];
     
     [_connections setObject:request forKey:channel];
 }
@@ -600,10 +612,7 @@ delegate:  (id)       delegate
    {
        NSArray* response_data=(NSArray*)response;
        if (![self subscribed: request.channel]) return;
-       if(!isReconnect)
-       {
-           timestamp=[response_data objectAtIndex:1];
-       }
+       timestamp=[response_data objectAtIndex:1];
        [self
         performSelector: @selector(_resubscribe:)
         withObject: [NSDictionary
@@ -630,9 +639,9 @@ delegate:  (id)       delegate
                      dictionaryWithObjectsAndKeys:
                      request.channel,  @"channel",
                      request.delegate, @"delegate",
-                     @"1",     @"timetoken",
+                     timestamp,     @"timetoken",
                      nil]
-        afterDelay: 1.0
+        afterDelay: 2.0
         ];
    }
 }

@@ -58,10 +58,12 @@ typedef enum {
     NSString* channel;
     Command command;
     Pubnub *pubnub;
+    NSString *timetoken;//only use for subscribe catch-up 
 }
 @property(nonatomic, retain) NSString *channel;
 @property(nonatomic, retain) NSURLConnection *connection;
 @property(nonatomic, readonly) Command command;
+@property(nonatomic, retain) NSString *timetoken;
 @property(nonatomic, retain) id delegate;
 -(id)
     scheme	:(NSString*) scheme
