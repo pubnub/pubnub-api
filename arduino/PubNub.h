@@ -24,7 +24,54 @@
  * (iv) If you are having problems connecting, maybe you have hit
  * a bug in Debian's version of Arduino pertaining the DNS code. Try using
  * an IP address as origin and/or upgrading your Arduino package.
+ *
+ * (v) We assume that server replies always use Transfer-encoding: chunked;
+ * adding auto-detection would be straightforward if that ever changes.
+ * Adding support for multiple chunks is going to be possible, not so
+ * trivial though if we are to shield the user application from chunked
+ * encoding. Note that /history still uses non-chunked encoding.
  */
+
+
+/* This class is a thin EthernetClient wrapper whose goal is to
+ * automatically acquire time token information when reading
+ * subscribe call response.
+ *
+ * (i) The user application sees only the JSON body, not the timetoken.
+ * As soon as the body ends, PubSubclient reads the rest of HTTP reply
+ * itself and disconnects. The stored timetoken is used in the next call
+ * to the PubSub::subscribe method then. */
+class PubSubClient : public EthernetClient {
+public:
+	PubSubClient() :
+		EthernetClient(), json_enabled(false), timetoken(/* "0" */ {'0', 0})
+	{}
+
+	/* Customized functions that make reading stop as soon as we
+	 * have hit ',' outside of braces and string, which indicates
+	 * end of JSON body. */
+	virtual int read();
+	virtual int read(uint8_t *buf, size_t size);
+	virtual void stop();
+
+	/* Enable the JSON state machine. */
+	void start_body();
+
+	inline char *server_timetoken() { return timetoken; }
+
+private:
+	void _state_input(uint8_t ch, uint8_t *nextbuf, size_t nextsize);
+	void _grab_timetoken(uint8_t *nextbuf, size_t nextsize);
+
+	/* JSON state machine context */
+	bool json_enabled:1;
+	bool in_string:1;
+	bool after_backslash:1;
+	int braces_depth;
+
+	/* Time token acquired during the last subscribe request. */
+	char timetoken[22];
+};
 
 
 class PubNub {
@@ -79,7 +126,7 @@ public:
 	 * TODO rest of documentation
 	 *
 	 * @param string channel required channel name. */
-	EthernetClient *subscribeRaw(char *channel);
+	PubSubClient *subscribeRaw(char *channel);
 
 	/* TODO document */
 	EthernetClient *historyRaw(char *channel, int limit = 10);
@@ -90,7 +137,8 @@ private:
 	char *publish_key, *subscribe_key;
 	char *origin;
 
-	EthernetClient publish_client, subscribe_client, history_client;
+	EthernetClient publish_client, history_client;
+	PubSubClient subscribe_client;
 };
 
 extern class PubNub PubNub;
