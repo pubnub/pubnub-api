@@ -1,7 +1,11 @@
 Ruby2::Application.routes.draw do
 
   match 'examples/pub/:channel/:message' => 'examples#pub'
-  match 'examples/sub/:channel' => 'examples#sub'
+  match 'examples/time' => 'examples#time'
+  match 'examples/here_now/:channel' => 'examples#here_now'
+  match 'examples/uuid' => 'examples#uuid'
+  match 'examples/detailed_history/:channel/:count' => 'examples#detailed_history'
+  match 'examples/history/:channel/:limit' => 'examples#history'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
