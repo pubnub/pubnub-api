@@ -8,6 +8,7 @@
     //
 
 #import "ViewController.h"
+#import "CL_215.h"
 
 typedef enum {
     test_begin_to_end_count=0,
@@ -70,6 +71,11 @@ CEPubnub *pubnub;
     
     [self publish_msgOnStart:0 AndEnd:total_msg/2 AndOffset:0];
     [self publish_msgOnStart:0 AndEnd:total_msg/2 AndOffset:total_msg/2];
+}
+
+- (IBAction)unit_test_CL215:(id)sender {
+    CL_215 *cl215=[[CL_215 alloc]init];
+    [cl215 runCL_215UnitTest];
 }
 
 -(void)publish_msgOnStart:(int)start AndEnd:(int)end AndOffset:(int)offset

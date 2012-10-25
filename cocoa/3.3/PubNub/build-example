@@ -1,0 +1,21 @@
+#!/bin/bash
+
+clang \
+    -o example \
+    example.m \
+    pubnub.m \
+    request.m \
+     JSONKit.m \
+     JSON.m \
+     -framework Foundation \
+    -fobjc-nonfragile-abi2 \
+    -Wall \
+    -Wimplicit-function-declaration \
+    -fstack-protector \
+    -fblocks \
+    -m686 \
+    -lpthread \
+    -lm \
+    -lc \
+    -lobjc
+

@@ -9,7 +9,7 @@
 #import "Common.h"
 #import "Base64.h"
 #import "Cipher.h"
-
+#import "JSON.h"
 
 
 @implementation NSString (Extensions)
@@ -102,6 +102,28 @@
     }
     NSString *dec=   [[NSString alloc]initWithData:decData encoding:NSUTF8StringEncoding] ;
     return dec ;
+}
+
+
++(NSString*)JSONToString:(id)object
+{
+    NSString * jsonString= nil;
+    if ([NSJSONSerialization class]) {
+        if ([object isKindOfClass:[NSString class]]) {
+            object = [NSString stringWithFormat:@"\"%@\"", object];
+            
+            return object;
+        } else {
+            NSError* error = nil;
+            id result = [NSJSONSerialization dataWithJSONObject:object options:kNilOptions error:&error];
+            if (error != nil) return nil;
+            jsonString =[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
+            
+        }
+    }else{
+        jsonString = JSONWriteString(object);
+    }
+    return jsonString;
 }
 
 @end
