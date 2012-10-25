@@ -85,7 +85,7 @@ public:
 	EthernetClient *historyRaw(char *channel, int limit = 10);
 
 private:
-	bool _request_bh(EthernetClient &client);
+	bool _request_bh(EthernetClient &client, bool chunked = true);
 
 	char *publish_key, *subscribe_key;
 	char *origin;

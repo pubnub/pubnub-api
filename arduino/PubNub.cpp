@@ -100,7 +100,7 @@ EthernetClient *PubNub::historyRaw(char *channel, int limit)
 	client.print("/0/");
 	client.print(limit, DEC);
 
-	if (this->_request_bh(client)) {
+	if (this->_request_bh(client, false)) {
 		/* Success and reached body, return handle to the client
 		 * for further perusal. */
 		return &client;
@@ -111,7 +111,7 @@ EthernetClient *PubNub::historyRaw(char *channel, int limit)
 	}
 }
 
-bool PubNub::_request_bh(EthernetClient &client)
+bool PubNub::_request_bh(EthernetClient &client, bool chunked)
 {
 	/* Finish the first line of the request. */
 	client.println(" HTTP/1.1");
@@ -156,6 +156,16 @@ bool PubNub::_request_bh(EthernetClient &client)
 		if (client.read() != '\r') continue;
 		WAIT();
 		if (client.read() != '\n') continue;
+		if (chunked) {
+			/* There is one extra line due to
+			 * Transfer-encoding: chunked.
+			 * Skip this line. */
+			do {
+				WAIT();
+			} while (client.read() != '\r');
+			WAIT();
+			client.read(); /* '\n' */
+		}
 
 		/* Good! Body begins now. */
 		return true;
