@@ -44,8 +44,10 @@
 class PubSubClient : public EthernetClient {
 public:
 	PubSubClient() :
-		EthernetClient(), json_enabled(false), timetoken(/* "0" */ {'0', 0})
-	{}
+		EthernetClient(), json_enabled(false)
+	{
+		strcpy(timetoken, "0");
+	}
 
 	/* Customized functions that make reading stop as soon as we
 	 * have hit ',' outside of braces and string, which indicates
