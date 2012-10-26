@@ -101,22 +101,6 @@ namespace PubNub_Messaging
 
         }
 
-        static long Timestamp()
-        {
-            return 0;
-            //deliveryStatus = false;
-            //pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
-            //{
-            //    if (e.PropertyName == "Time")
-            //    {
-            //        deliveryStatus = true;
-            //    }
-            //};
-            //pubnub.time();
-            //while (!deliveryStatus) ;
-            //return Convert.ToInt64(pubnub.Time[0].ToString());
-        }
-
         static void DisplayReturnMessage(object result)
         {
             IList<object> message = result as IList<object>;

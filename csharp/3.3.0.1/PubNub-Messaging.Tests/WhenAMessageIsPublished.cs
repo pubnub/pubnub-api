@@ -77,7 +77,7 @@ namespace PubNub_Messaging.Tests
             );
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
-            pubnub.PUBLISH_KEY = "demo";
+            //pubnub.PUBLISH_KEY = "demo";
 
             pubnub.publish(channel, message, ThenDoCallback);
             manualEvent.WaitOne();
@@ -119,7 +119,7 @@ namespace PubNub_Messaging.Tests
             manualEvent.WaitOne();
 
             publishedMessage = false;
-            pubnub.SECRET_KEY = "key";
+            //pubnub.SECRET_KEY = "key";
 
             pubnub.publish(channel, message, ThenDoCallback);
             manualEvent.WaitOne();
