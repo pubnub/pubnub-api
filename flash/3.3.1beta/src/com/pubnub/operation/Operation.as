@@ -81,6 +81,7 @@ package com.pubnub.operation {
 					url = args.url + "&" + args.params;
 			}
 			this._url = url;
+			//trace(operation, url);
 			_loader.load(this._url);
 		}
 		

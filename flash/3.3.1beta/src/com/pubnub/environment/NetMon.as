@@ -1,12 +1,7 @@
 package com.pubnub.environment {
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.events.IOErrorEvent;
-	import flash.events.SecurityErrorEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import flash.utils.clearInterval;
-	import flash.utils.setInterval;
+	import flash.events.*;
+	import flash.net.*;
+	import flash.utils.*;
 	
 	/**
 	 * ...
@@ -16,12 +11,17 @@ package com.pubnub.environment {
 		
 		// timeout for "time function"
 		static public const HEARTBEAT:int = 15000;
+		static public const FORCE_RECONNECT_TIMEOUT:int = 1000;
+		
+		public var forceReconnect:Boolean = true;
+		
 		private var interval:int;
 		private var loader:URLLoader;
 		private var lastStatus:String
 		private var _origin:String;
 		private var url:String;
-		private var _isRunning:Boolean
+		private var _isRunning:Boolean;
+		private var sysMon:SysMon;
 		
 		public function NetMon (origin:String = null) {
 			super(null);
@@ -34,25 +34,45 @@ package com.pubnub.environment {
 			loader.addEventListener(Event.COMPLETE, onComplete);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, onError);
 			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+			
+			sysMon = new SysMon();
+			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
+		}
+		
+		private function onRestoreFromSleep(e:SysMonEvent):void {
+			//trace('onRestoreFromSleep');
+			lastStatus = null;
+			heartbeat();
 		}
 		
 		private function onError(e:Event):void {
 			// no network
-			//trace('onError');
+			//trace('onError : ' + lastStatus);
 			if (lastStatus == NetMonEvent.HTTP_DISABLE) return;
 			lastStatus = NetMonEvent.HTTP_DISABLE;
+			if (forceReconnect) {
+				clearInterval(interval);
+				interval = setInterval(ping, FORCE_RECONNECT_TIMEOUT);
+			}
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
 		}
 		
 		private function onComplete(e:Event):void {
-			//trace('onComplete : ' + e.target.data);
 			// network ready
+			//trace('onComplete : ' + lastStatus);
 			if (lastStatus == NetMonEvent.HTTP_ENABLE) return;
 			lastStatus = NetMonEvent.HTTP_ENABLE;
+			if (forceReconnect) {
+				//trace('to HEARTBEAT');
+				clearInterval(interval);
+				interval = setInterval(ping, HEARTBEAT);
+			}
+			//setTimeout(dispatchEvent, 200, new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 		}
 		
 		private function ping():void {
+			//trace('ping');
 			try { loader.close(); }
 			catch (err:Error) { };
 			loader.load(new URLRequest(url));
@@ -60,7 +80,12 @@ package com.pubnub.environment {
 		
 		public function start():void {
 			if (_isRunning) return;
+			heartbeat();
+			sysMon.start();
 			_isRunning = true;
+		}
+		
+		private function heartbeat():void {
 			stop();
 			ping();
 			interval = setInterval(ping, HEARTBEAT);
@@ -68,11 +93,15 @@ package com.pubnub.environment {
 		
 		public function stop():void {
 			_isRunning = false;
+			sysMon.stop();
 			clearInterval(interval);
 		}
 		
 		public function destroy():void {
 			stop();
+			sysMon.stop();
+			sysMon.removeEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
+			sysMon = null;
 		}
 		
 		public function get origin():String {
@@ -87,6 +116,5 @@ package com.pubnub.environment {
 		public function get isRunning():Boolean {
 			return _isRunning;
 		}
-		
 	}
 }

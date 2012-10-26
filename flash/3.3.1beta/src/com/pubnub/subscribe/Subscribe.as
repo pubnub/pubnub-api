@@ -11,8 +11,8 @@ package com.pubnub.subscribe {
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class Subscribe extends EventDispatcher {
+		public static const RESUME_ON_RECONNECT:Boolean = true;
 		private static const WAIT_NETWORK_DELAY:Number = 1500000; // 1500 seconds
-		
 		
 		public var subscribeKey:String;
 		public var sessionUUID:String;
@@ -30,6 +30,7 @@ package com.pubnub.subscribe {
 		private var netMonitor:NetMon;
 		private var waitNetwork:Boolean;
 		private var waitNetworkTimeout:int;
+		private var waitNetworkStartTime:int;
 		
 		public function Subscribe() {
 			super(null);
@@ -44,21 +45,36 @@ package com.pubnub.subscribe {
 		}
 		
 		private function onNetMonitorHTTPDisable(e:NetMonEvent):void {
+			//trace('Disable : ' + _connected);
 			if (_connected) {
 				waitNetwork = true;
+				waitNetworkStartTime = getTimer();
 				clearTimeout(waitNetworkTimeout);
+				clearTimeout(pingTimeout);
 				waitNetworkTimeout = setTimeout(unsubscribe, WAIT_NETWORK_DELAY, _name);
 				getOperation(Operation.WITH_TIMETOKEN).close();
 			}
 		}
 		
 		private function onNetMonitorHTTPEnable(e:NetMonEvent):void {
+			//trace('Enable : ' + waitNetwork);
 			if (waitNetwork) {
 				waitNetwork = false;
 				clearTimeout(waitNetworkTimeout);
-				restoreSubscribe();
+				var delay:Number = getTimer() - waitNetworkStartTime;
+				if (delay > WAIT_NETWORK_DELAY) {
+					unsubscribe(_name);
+				}else {
+					if (RESUME_ON_RECONNECT) { 
+						restoreWithLastToken();
+					}else {
+						restoreWithZeroToken();
+					}
+				}
 			}
 		}
+		
+	
 		
 		public function subscribe(channel:String):void {
 			if (_connected) {
@@ -91,7 +107,6 @@ package com.pubnub.subscribe {
 		}
 		
 		private function onSubscribeInitResult(e:OperationEvent):void {
-			//trace('onSubscribeInitResult: ' + e.data[1]);
 			lastToken =  e.data[1];
 			_connected = true;
 			subscribeToken(lastToken);
@@ -106,7 +121,6 @@ package com.pubnub.subscribe {
 		}
 		
 		private function subscribeToken(time:String):void {
-			//trace('subscribeWithToken : ' + time);
 			var operation:Operation = getOperation(Operation.WITH_TIMETOKEN);
 			operation.send({ 
 				url:subscribeURL, 
@@ -123,7 +137,6 @@ package com.pubnub.subscribe {
 			var result:Object = e.data;  
 			lastToken = result[1];	
 			var messages:Array = result[0]; 
-			//trace('onSubscribeResult : ' + lastToken);
 			if(messages) {
 				for (var i:int = 0; i < messages.length; i++) {
 					if(cipherKey.length > 0){
@@ -169,22 +182,13 @@ package com.pubnub.subscribe {
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, { channel:_name } ));
 		}
 		
-		private function restoreSubscribe():void {
-			clearTimeout(pingTimeout);
-			getOperation(Operation.WITH_TIMETOKEN).close();
-			getOperation(Operation.GET_TIMETOKEN).close();
-			subscribeURL = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_name) + "/" + 0;
-			//trace('restoreSubscribe : ' + subscribeURL);
-			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
-			operation.send({ 
-				url:subscribeURL, 
-				channel:_name, 
-				uid:subscribeUID, 
-				sessionUUID : sessionUUID,
-				timetoken:0, 
-				operation:Operation.GET_TIMETOKEN } );
-			operation.addEventListener(OperationEvent.RESULT, onSubscribeInitResult);
-			operation.addEventListener(OperationEvent.FAULT, onSubscribeInitError);
+		private function restoreWithLastToken():void {
+			subscribeToken(lastToken);
+		}
+		
+		private function restoreWithZeroToken():void {
+			lastToken = '0';
+			subscribeToken(lastToken);
 		}
 		
 		private function getOperation(type:String):Operation {
@@ -192,8 +196,6 @@ package com.pubnub.subscribe {
 			operations[type] = result;
 			return result;
 		}
-		
-		
 		
 		private function ping():void {
 			clearTimeout(pingTimeout);
@@ -248,6 +250,7 @@ package com.pubnub.subscribe {
 			clearTimeout(waitNetworkTimeout);
 			_connected = false;
 			waitNetwork = false;
+			waitNetworkStartTime = 0;
 			netMonitor.stop();
 			getOperation(Operation.GET_TIMETOKEN).close();
 			getOperation(Operation.WITH_TIMETOKEN).close();
