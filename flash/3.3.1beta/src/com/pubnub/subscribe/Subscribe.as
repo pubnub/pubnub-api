@@ -11,8 +11,7 @@ package com.pubnub.subscribe {
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class Subscribe extends EventDispatcher {
-		public static const RESUME_ON_RECONNECT:Boolean = true;
-		private static const WAIT_NETWORK_DELAY:Number = 1500000; // 1500 seconds
+		//public static const RESUME_ON_RECONNECT:Boolean = true;
 		
 		public var subscribeKey:String;
 		public var sessionUUID:String;
@@ -29,8 +28,6 @@ package com.pubnub.subscribe {
 		private var lastToken:String;
 		private var netMonitor:NetMon;
 		private var waitNetwork:Boolean;
-		private var waitNetworkTimeout:int;
-		private var waitNetworkStartTime:int;
 		
 		public function Subscribe() {
 			super(null);
@@ -40,18 +37,23 @@ package com.pubnub.subscribe {
 		private function init():void {
 			operations = new Dictionary();
 			netMonitor = new NetMon();
+			netMonitor.reconnectDelay = Settings.RECONNECT_DELAY;
+			netMonitor.forceReconnectDelay = Settings.FORCE_RECONNECT_DELAY;
+			netMonitor.maxForceReconnectRetries = Settings.MAX_FORCE_RECONNECT_RETRIES;
 			netMonitor.addEventListener(NetMonEvent.HTTP_ENABLE, onNetMonitorHTTPEnable);
 			netMonitor.addEventListener(NetMonEvent.HTTP_DISABLE, onNetMonitorHTTPDisable);
+			netMonitor.addEventListener(NetMonEvent.MAX_RETRIES, onNetMonitorMaxRetries);
+		}
+		
+		private function onNetMonitorMaxRetries(e:NetMonEvent):void {
+			unsubscribe(_name);
 		}
 		
 		private function onNetMonitorHTTPDisable(e:NetMonEvent):void {
 			//trace('Disable : ' + _connected);
 			if (_connected) {
 				waitNetwork = true;
-				waitNetworkStartTime = getTimer();
-				clearTimeout(waitNetworkTimeout);
 				clearTimeout(pingTimeout);
-				waitNetworkTimeout = setTimeout(unsubscribe, WAIT_NETWORK_DELAY, _name);
 				getOperation(Operation.WITH_TIMETOKEN).close();
 			}
 		}
@@ -60,22 +62,14 @@ package com.pubnub.subscribe {
 			//trace('Enable : ' + waitNetwork);
 			if (waitNetwork) {
 				waitNetwork = false;
-				clearTimeout(waitNetworkTimeout);
-				var delay:Number = getTimer() - waitNetworkStartTime;
-				if (delay > WAIT_NETWORK_DELAY) {
-					unsubscribe(_name);
+				if (Settings.RESUME_ON_RECONNECT) { 
+					restoreWithLastToken();
 				}else {
-					if (RESUME_ON_RECONNECT) { 
-						restoreWithLastToken();
-					}else {
-						restoreWithZeroToken();
-					}
+					restoreWithZeroToken();
 				}
 			}
 		}
-		
-	
-		
+			
 		public function subscribe(channel:String):void {
 			if (_connected) {
 				_data = [ -1, 'Already Connected'];
@@ -199,10 +193,8 @@ package com.pubnub.subscribe {
 		
 		private function ping():void {
 			clearTimeout(pingTimeout);
-			pingTimeout = setTimeout(subscribeLastToken, Operation.TIMEOUT);
+			pingTimeout = setTimeout(subscribeLastToken, Settings.OPERATION_TIMEOUT);
 		}
-		
-		
 		
 		public function get connected():Boolean {
 			return _connected;
@@ -247,10 +239,8 @@ package com.pubnub.subscribe {
 		
 		public function dispose():void {
 			clearTimeout(pingTimeout);
-			clearTimeout(waitNetworkTimeout);
 			_connected = false;
 			waitNetwork = false;
-			waitNetworkStartTime = 0;
 			netMonitor.stop();
 			getOperation(Operation.GET_TIMETOKEN).close();
 			getOperation(Operation.WITH_TIMETOKEN).close();

@@ -26,7 +26,6 @@ package com.pubnub {
 
 			var decodedCipherText:ByteArray = Base64.decodeToByteArray(cipherText)
 			var key:ByteArray = hashKey(cipher_key);
-			//trace("key: " + key);
 
 			var cbc:CBCMode = new CBCMode(new AESKey(key), new PKCS5());
 			cbc.IV =  Hex.toArray(Hex.fromString("0123456789012345"));
@@ -38,13 +37,10 @@ package com.pubnub {
 		static private function hashKey(cipher_key:String):ByteArray {
 			// hash the cipher key
 			var sha256:SHA256 = new SHA256;
-
 			var hexFromString:String = Hex.fromString(cipher_key); // string representation of hex string of cipher_key
 			var src:ByteArray = Hex.toArray(hexFromString); // ByteArray of cipher_key
 			var hexCipherKey:ByteArray = sha256.hash(src) // ByteArray of hashed_cipher_key
 			var cipherString:String = Hex.fromArray(hexCipherKey).slice(0, 32);
-
-			//trace("cipherString: " + cipherString);
 			var key:ByteArray = Hex.toArray(Hex.fromString(cipherString));
 			return key;
 		}

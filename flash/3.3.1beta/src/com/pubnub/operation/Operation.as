@@ -16,7 +16,6 @@ package com.pubnub.operation {
 		static public const WITH_TIMETOKEN:String = 'subscribe_with_timetoken';
 		static public const GET_TIMETOKEN:String = 'subscribe_get_timetoken';
 		static public const WITH_RETRY:String = 'subscribe_with_retry';
-		static public const TIMEOUT:int = 310000;
 		
 		public var uid:String;
 		public var channel:String;
@@ -36,7 +35,7 @@ package com.pubnub.operation {
 		}
 		
 		protected function init():void {
-			_loader = new PnURLLoader(TIMEOUT);
+			_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
 			_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
 			_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
 		

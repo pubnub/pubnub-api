@@ -37,14 +37,11 @@
         protected function onInitBtnClick(event:MouseEvent):void{
             //trace('onInitBtnClick');
             var config:Object = {
-                push_interval:0.5,
                 publish_key:this.pub_key,
                 sub_key:this.sub_key,
                 secret_key:this.secret_key,
                 cipher_key:this.cipher_key
             }
-			//stage.addEventListener(Event.ACTIVATE, onActivate);
-			//stage.addEventListener(Event.DEACTIVATE, onDeactivate);
 			
             Pn.instance.addEventListener(PnEvent.INIT, onInit);
             Pn.instance.addEventListener(PnEvent.INIT_ERROR, onInitError);

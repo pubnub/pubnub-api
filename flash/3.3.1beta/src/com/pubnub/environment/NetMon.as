@@ -9,10 +9,6 @@ package com.pubnub.environment {
 	 */
 	public class NetMon extends EventDispatcher {
 		
-		// timeout for "time function"
-		static public const HEARTBEAT:int = 15000;
-		static public const FORCE_RECONNECT_TIMEOUT:int = 1000;
-		
 		public var forceReconnect:Boolean = true;
 		
 		private var interval:int;
@@ -22,6 +18,10 @@ package com.pubnub.environment {
 		private var url:String;
 		private var _isRunning:Boolean;
 		private var sysMon:SysMon;
+		private var _currentRetries:uint
+		private var _maxForceReconnectRetries:uint = 100;
+		private var _forceReconnectDelay:uint = 1000;
+		private var _reconnectDelay:uint = 15000;
 		
 		public function NetMon (origin:String = null) {
 			super(null);
@@ -42,17 +42,25 @@ package com.pubnub.environment {
 		private function onRestoreFromSleep(e:SysMonEvent):void {
 			//trace('onRestoreFromSleep');
 			lastStatus = null;
-			heartbeat();
+			reconnect();
 		}
 		
 		private function onError(e:Event):void {
 			// no network
 			//trace('onError : ' + lastStatus);
-			if (lastStatus == NetMonEvent.HTTP_DISABLE) return;
+			if (lastStatus == NetMonEvent.HTTP_DISABLE) {
+				_currentRetries++;
+				if (_currentRetries >= _maxForceReconnectRetries) {
+					stop();
+					lastStatus = NetMonEvent.MAX_RETRIES;
+					dispatchEvent(new NetMonEvent(NetMonEvent.MAX_RETRIES));
+				}
+				return;
+			}
 			lastStatus = NetMonEvent.HTTP_DISABLE;
 			if (forceReconnect) {
 				clearInterval(interval);
-				interval = setInterval(ping, FORCE_RECONNECT_TIMEOUT);
+				interval = setInterval(ping, _forceReconnectDelay);
 			}
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
 		}
@@ -63,11 +71,9 @@ package com.pubnub.environment {
 			if (lastStatus == NetMonEvent.HTTP_ENABLE) return;
 			lastStatus = NetMonEvent.HTTP_ENABLE;
 			if (forceReconnect) {
-				//trace('to HEARTBEAT');
 				clearInterval(interval);
-				interval = setInterval(ping, HEARTBEAT);
+				interval = setInterval(ping, _reconnectDelay);
 			}
-			//setTimeout(dispatchEvent, 200, new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 		}
 		
@@ -80,19 +86,22 @@ package com.pubnub.environment {
 		
 		public function start():void {
 			if (_isRunning) return;
-			heartbeat();
+			_currentRetries = 0;
+			lastStatus = null;
+			reconnect();
 			sysMon.start();
 			_isRunning = true;
 		}
 		
-		private function heartbeat():void {
+		private function reconnect():void {
 			stop();
 			ping();
-			interval = setInterval(ping, HEARTBEAT);
+			interval = setInterval(ping, _reconnectDelay);
 		}
 		
 		public function stop():void {
 			_isRunning = false;
+			lastStatus = null;
 			sysMon.stop();
 			clearInterval(interval);
 		}
@@ -115,6 +124,34 @@ package com.pubnub.environment {
 		
 		public function get isRunning():Boolean {
 			return _isRunning;
+		}
+		
+		public function get currentRetries():uint {
+			return _currentRetries;
+		}
+		
+		public function get maxForceReconnectRetries():uint {
+			return _maxForceReconnectRetries;
+		}
+		
+		public function set maxForceReconnectRetries(value:uint):void {
+			_maxForceReconnectRetries = value;
+		}
+		
+		public function get forceReconnectDelay():uint {
+			return _forceReconnectDelay;
+		}
+		
+		public function set forceReconnectDelay(value:uint):void {
+			_forceReconnectDelay = value;
+		}
+		
+		public function get reconnectDelay():uint {
+			return _reconnectDelay;
+		}
+		
+		public function set reconnectDelay(value:uint):void {
+			_reconnectDelay = value;
 		}
 	}
 }

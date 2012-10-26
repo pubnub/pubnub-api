@@ -7,7 +7,6 @@ package com.pubnub {
 	
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
-	import flash.display.Sprite;
 	import flash.errors.*;
 	import flash.events.*;
 	import flash.utils.*;
@@ -23,27 +22,19 @@ package com.pubnub {
 	[Event(name="init", type="com.pubnub.PnEvent")]
 	public class Pn extends EventDispatcher {
 		
-		public var origin:String = "http://pubsub.pubnub.com";          
-		public var ssl:Boolean = false;
-		public var interval:Number = 0.1;
-		
-		
 		static private var __instance:Pn;
-		static private const MILLON:Number = 1000000;
 		static private const INIT_OPERATION:String = 'init';
 		static private const HISTORY_OPERATION:String = 'history';
 		static private const PUBLISH_OPERATION:String = 'publish';
 		
 		private var _initialized:Boolean = false;         
-		
 		private var operations:Dictionary;
         private var subscribes:Dictionary;
-		
+		private var origin:String = "http://pubsub.pubnub.com";   
 		private var _publishKey:String = "demo";
 		private var _subscribeKey:String = "demo";
 		private var secretKey:String = "";
 		private var cipherKey:String = "";
-		
 		private var startTimeToken:Number = 0;
         private var _sessionUUID:String = "";
         
@@ -80,13 +71,13 @@ package com.pubnub {
 			
 			// Loads start time token
 			var operation:Operation = getOperation(INIT_OPERATION);
+			operation.close();
 			operation.send( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
 			operation.addEventListener(OperationEvent.RESULT, onInitComplete);
 			operation.addEventListener(OperationEvent.FAULT, onInitError);
 			
 			operations[HISTORY_OPERATION] = new HistoryOperation();
 			operations[PUBLISH_OPERATION] = new PublishOperation();
-		
 		}
 		
 		private function initKeys(config:Object):void {
@@ -111,10 +102,6 @@ package com.pubnub {
 			
 			if(config.cipher_key){
 				cipherKey = config.cipher_key;
-			}
-			
-			if (config.push_interval){
-				interval = config.push_interval;
 			}
 		}
 		
