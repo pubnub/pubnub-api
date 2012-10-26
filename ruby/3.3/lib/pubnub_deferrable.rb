@@ -1,4 +1,4 @@
-require 'eventmachine'
+require 'em-http-request'
 
 class PubnubDeferrable < EM::HttpRequest
 

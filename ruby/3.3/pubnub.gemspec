@@ -25,7 +25,8 @@ Gem::Specification.new do |s|
   s.summary = "PubNub Official Ruby gem"
 
   s.add_dependency "activesupport"
-  s.add_dependency "em-http-request"
+  s.add_dependency "eventmachine", "~>0.12.10"
+  s.add_dependency "em-http-request", "~>0.3.0"
   s.add_dependency "uuid", "~> 2.3.5"
   s.add_dependency "yajl-ruby"
 
