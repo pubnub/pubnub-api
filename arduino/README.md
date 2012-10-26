@@ -97,8 +97,9 @@ The limit argument is optional and defaults to 10.
 Installation
 ============
 
-Move the contents of the ``pubnub-api/arduino`` directory to
-``~/sketchbook/libraries/`` and restart your Arduino IDE.
+Move the contents of the ``pubnub-api/arduino/`` directory to
+``~/sketchbook/libraries/PubNub/`` and restart your Arduino IDE.
+Try out the examples!
 
 Notes
 =====
