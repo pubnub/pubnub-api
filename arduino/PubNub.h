@@ -90,7 +90,7 @@ public:
 	 * @return boolean whether begin() was successful. */
 	bool begin(char *publish_key, char *subscribe_key, char *origin = "pubsub.pubnub.com");
 
-	/* Publish (raw)
+	/* Publish
 	 *
 	 * Send a message (assumed to be well-formed JSON) to a given channel.
 	 *
@@ -113,22 +113,31 @@ public:
 	EthernetClient *publish(char *channel, char *message);
 
 	/**
-	 * Subscribe (raw)
+	 * Subscribe
 	 *
 	 * Listen for a message on a given channel. The function will block
 	 * and return when a message arrives. Typically, you will run this
 	 * function from loop() function to keep listening for messages
 	 * indefinitely.
 	 *
-	 * TODO timer
-	 * TODO empty output
+	 * As a reply, you will get a JSON array with messages, e.g.:
+	 * 	["msg1",{msg2:"x"}]
+	 * and so on. Empty reply [] is also normal and your code must be
+	 * able to handle that. Note that the reply specifically does not
+	 * include the time token present in the raw reply.
 	 *
-	 * TODO rest of documentation
-	 *
-	 * @param string channel required channel name. */
+	 * @param string channel required channel name.
+	 * @return string Stream-ish object with reply message or NULL on error. */
 	PubSubClient *subscribe(char *channel);
 
-	/* TODO document */
+	/**
+	 * History
+	 *
+	 * Receive list of the last N messages on the given channel.
+	 *
+	 * @param string channel required channel name.
+	 * @param int limit optional number of messages to retrieve.
+	 * @return string Stream-ish object with reply message or NULL on error. */
 	EthernetClient *history(char *channel, int limit = 10);
 
 private:
