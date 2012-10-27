@@ -2,103 +2,19 @@
 <html> 
 <head> 
     <!-- Hey, let's be friends! twitter.com/pubnub -->
+    <title>PubNub Performance Meter</title> 
+
     <meta http-equiv=content-type content=text/html;charset=utf-8>
-
     <meta name=viewport content="width=640, user-scalable=no">
-
     <meta name=apple-mobile-web-app-capable content=yes>  
     <meta name=apple-mobile-web-app-status-bar-style content=black>
 
     <link rel=apple-touch-icon href=icon.png>
     <link rel=apple-touch-startup-image href=startup.png>
 
-    <title>PubNub Performance Meter</title> 
-    <link href='http://fonts.googleapis.com/css?family=Exo:100,800' rel='stylesheet' type='text/css'>
-    <style>
-        body { background: #efebdc; }
-        table { width: 100%; }
-        body, div, img {
-            padding: 0;
-            margin: 0;
-            border; 0;
-        }
-        #performance {
-            position: relative;
-            width: 640px;
-            height: 640px;
-            overflow: hidden;
-        }
-
-        #performance-meter {
-            position: absolute;
-            top: -11px;
-            left: 0px;
-            width: 640px;
-            height: 640px;
-            background: transparent url(./performance-meter.png) no-repeat 0px 0px;
-        }
-        #performance-meter-bezel {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 640px;
-            height: 640px;
-            background: transparent url(./performance-meter.png) no-repeat -1280px 0px;
-        }
-
-        #performance-arrow {
-            position: absolute;
-            top: 10px;
-            left: 0px;
-            width: 640px;
-            height: 900px;
-            background: transparent url(./performance-meter.png) no-repeat -640px 0px;
-        }
-
-        #performance-meter-number {
-            position: absolute;
-            top: 330px;
-            left: 0px;
-            width: 640px;
-
-            color: #474332;
-            text-shadow: 0px 1px 20px rgba(0,0,0,0.5);
-            text-align: center;
-            font-family: Exo;
-            font-size: 110px;
-            font-weight: 100;
-        }
-        #performance-meter-rps {
-            position: absolute;
-            top: 460px;
-            left: 0px;
-            width: 640px;
-
-            color: #615c49;
-            opacity: 0.8;
-            text-shadow: 0px 1px 2px #fff;
-            text-align: center;
-            font-family: Exo;
-            font-size: 45px;
-            font-weight: 800;
-        }
-        #performance-medians {
-            border-top: 1px solid rgba(0,0,0,0.1);
-            margin-top: 10px;
-            padding-top: 20px;
-            width: 640px;
-            color: #615c57;
-            text-shadow: 0px 1px 2px #fff;
-            text-align: center;
-            font-family: Exo;
-            font-size: 22px;
-            font-weight: 100;
-        }
-        .strong {
-            font-family: Exo;
-            font-weight: 800;
-        }
-    </style>
+    <link href=performance.css rel=stylesheet>
+    <link href='http://fonts.googleapis.com/css?family=Exo:100,800'
+        rel='stylesheet'>
 </head> 
 <body>
 
@@ -114,142 +30,29 @@
 <!-- PUBNUB MEDIAN MPS TEMPLATE -->
 <script id=median-template type=template>
 <div><table><tr>
-    <td>{50}<span class=strong></span></td>
-    <td>{66}</td>
-    <td>{75}</td>
-    <td>{80}</td>
-    <td>{90}</td>
-    <td>{95}</td>
-    <td>{98}</td>
-    <td>{99}</td>
-    <td>{100}</td>
+    <td>{1}</td><td>{2}</td><td>{5}</td>
+    <td>{10}</td><td>{20}</td><td>{25}</td>
+    <td>{30}</td><td>{40}</td><td>{45}</td>
 </tr><tr>
-    <td class=strong>50%</td>
-    <td class=strong>66%</td>
-    <td class=strong>75%</td>
-    <td class=strong>80%</td>
-    <td class=strong>90%</td>
-    <td class=strong>95%</td>
-    <td class=strong>98%</td>
-    <td class=strong>99%</td>
-    <td class=strong>100%</td>
+    <td class=strong>Fastest</td><td class=strong>2%</td><td class=strong>5%</td>
+    <td class=strong>10%</td><td class=strong>20%</td><td class=strong>25%</td>
+    <td class=strong>30%</td><td class=strong>40%</td>
+    <td class=strong>45%</td>
+</tr><tr>
+    <td>{50}</td><td>{66}</td><td>{75}</td>
+    <td>{80}</td><td>{90}</td><td>{95}</td>
+    <td>{98}</td><td>{99}</td><td>{100}</td>
+</tr><tr>
+    <td class=strong>50%</td><td class=strong>66%</td><td class=strong>75%</td>
+    <td class=strong>80%</td><td class=strong>90%</td><td class=strong>95%</td>
+    <td class=strong>98%</td><td class=strong>99%</td>
+    <td class=strong>Slowest</td>
 </tr></table></div>
 </script>
 
 <div id=pubnub></div>
 <script src=http://cdn.pubnub.com/pubnub-3.3.js></script>
 <script src=animate.js></script>
-<script>(function(){
-
-
-function now() {return+new Date}
-
-// ----------------------------------------------------------------------
-// PUBLISH A MESSAGE (SEND)
-// ----------------------------------------------------------------------
-var net     = PUBNUB.init({ publish_key:'demo', subscribe_key:'demo' })
-,   channel = 'performance-meter-' + now() + Math.random()
-,   start   = now()
-,   mps_avg = 0
-,   lat_avg = 0
-,   median  = [0]
-,   sent    = 0
-,   publish = (function(){
-    var sendqueue = []
-    ,   sending   = 0;
-
-    function deliver() {
-        if (sendqueue.length) net.publish(sendqueue.pop())
-        else                  sending = 0;
-    }
-
-    return function(message,callback) {
-        if (!net) return;
-
-        start = now();
-
-        sendqueue.push({
-            channel  : channel,
-            message  : message || 1,
-            callback : function(info) {
-                deliver();
-                callback && callback(info);
-            }
-        });
-        if (!sending) { sending = 1; deliver(); }
-    };
-})();
-
-// ----------------------------------------------------------------------
-// SUBSCRIBE FOR MESSAGES (RECEIVE)
-// ----------------------------------------------------------------------
-net.subscribe({
-    channel   : channel,
-    connect   : publish,
-    reconnect : publish,
-    callback  : function() {
-        var latency     = now() - start
-        ,   new_mps_avg = 1000 / latency;
-
-        lat_avg = (latency + lat_avg) / 2;
-        mps_avg = (new_mps_avg + mps_avg) / 2;
-        median.push(latency);
-
-        start = now();
-        publish();
-    }
-});
-publish();
-setInterval( function() { set_rps(mps_avg) }, 500 );
-
-// ----------------------------------------------------------------------
-// CALCULATE MEDIAN VALUES
-// ----------------------------------------------------------------------
-var median_template = PUBNUB.$('median-template').innerHTML
-,   median_out      = PUBNUB.$('performance-medians');
-
-function update_medians() {
-    var length = median.length - 1
-    ,   medlen = Math.floor(length/2);
-
-    function get_median(val) {
-        return median[medlen + Math.floor(length * val)];
-    }
-
-    median = median.sort(function(a,b){return a-b});
-
-    median_out.innerHTML = PUBNUB.supplant( median_template, {
-        '50'  : median[medlen],
-        '66'  : get_median(0.16),
-        '75'  : get_median(0.25),
-        '80'  : get_median(0.30),
-        '90'  : get_median(0.40),
-        '95'  : get_median(0.45),
-        '98'  : get_median(0.48),
-        '99'  : get_median(0.49),
-        '100' : median[length]
-    } );
-}
-update_medians();
-
-// ----------------------------------------------------------------------
-// SET RPS FOR DISPLAY
-// ----------------------------------------------------------------------
-var set_rps = (function() {
-    var rps   = PUBNUB.$('performance-meter-number')
-    ,   arrow = PUBNUB.$("performance-arrow");
-
-    return function (val) {
-        var meter = -90.0 + (val*6);
-        animate( arrow, [ { d : 0.5, r : meter > 90 ? 90 : meter } ] );
-        rps.innerHTML = ''+Math.ceil(val);
-        update_medians();
-    };
-})();
-set_rps(0);
-
-
-})();</script>
+<script src=performance.js></script>
 </body>
 </html>
-
