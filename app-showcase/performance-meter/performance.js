@@ -22,7 +22,7 @@ var net     = PUBNUB.init({ publish_key:'demo', subscribe_key:'demo' })
         else                  sending = 0;
     }
 
-    return function(message,callback) {
+    return function( message, callback ) {
         if (!net) return;
 
         start = now();
@@ -31,6 +31,7 @@ var net     = PUBNUB.init({ publish_key:'demo', subscribe_key:'demo' })
             channel  : channel,
             message  : message || 1,
             callback : function(info) {
+                info && info[0] || publish( message, callback );
                 deliver();
                 callback && callback(info);
             }
@@ -47,7 +48,7 @@ net.subscribe({
     connect   : publish,
     reconnect : publish,
     callback  : function() {
-        var latency     = now() - start
+        var latency     = (now() - start) || median[1]
         ,   new_mps_avg = 1000 / latency;
 
         lat_avg = (latency + lat_avg) / 2;
@@ -79,6 +80,7 @@ function update_medians() {
     }
 
     median = median.sort(function(a,b){return a-b});
+    console.log(median);
 
     median_out.innerHTML = PUBNUB.supplant( median_template, {
         '1'   : median[1],
@@ -102,7 +104,7 @@ function update_medians() {
         '98'  : get_median(0.48),
         '99'  : get_median(0.49),
 
-        '100' : median[length]
+        '100' : median[length-1]
     } );
 }
 update_medians();
@@ -115,13 +117,12 @@ var set_rps = (function() {
     ,   arrow = PUBNUB.$("performance-arrow");
 
     return function (val) {
+        val = val || 0;
         var meter = -90.0 + (val*6);
         animate( arrow, [ { d : 0.5, r : meter > 90 ? 90 : meter } ] );
         rps.innerHTML = ''+Math.ceil(val);
         update_medians();
     };
 })();
-set_rps(0);
-
 
 })();

@@ -81,3 +81,10 @@ body, div, img {
     font-family: Exo;
     font-weight: 800;
 }
+.fastest {
+    color: #4e9a06;
+}
+.slowest {
+    color: #ce5c00;
+    color: #4e9a06;
+}

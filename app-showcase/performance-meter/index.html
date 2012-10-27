@@ -30,23 +30,20 @@
 <!-- PUBNUB MEDIAN MPS TEMPLATE -->
 <script id=median-template type=template>
 <div><table><tr>
-    <td>{1}</td><td>{2}</td><td>{5}</td>
+    <td>{1}ms</td><td>{5}</td>
     <td>{10}</td><td>{20}</td><td>{25}</td>
     <td>{30}</td><td>{40}</td><td>{45}</td>
-</tr><tr>
-    <td class=strong>Fastest</td><td class=strong>2%</td><td class=strong>5%</td>
+</tr><tr class=fastest>
+    <td class=strong>Fastest</td><td class=strong>5%</td>
     <td class=strong>10%</td><td class=strong>20%</td><td class=strong>25%</td>
-    <td class=strong>30%</td><td class=strong>40%</td>
-    <td class=strong>45%</td>
+    <td class=strong>30%</td><td class=strong>40%</td><td class=strong>45%</td>
 </tr><tr>
     <td>{50}</td><td>{66}</td><td>{75}</td>
-    <td>{80}</td><td>{90}</td><td>{95}</td>
-    <td>{98}</td><td>{99}</td><td>{100}</td>
-</tr><tr>
+    <td>{80}</td><td>{90}</td><td>{95}</td><td>{99}</td><td>{100}</td>
+</tr><tr class=slowest>
     <td class=strong>50%</td><td class=strong>66%</td><td class=strong>75%</td>
     <td class=strong>80%</td><td class=strong>90%</td><td class=strong>95%</td>
-    <td class=strong>98%</td><td class=strong>99%</td>
-    <td class=strong>Slowest</td>
+    <td class=strong>99%</td><td class=strong>Slowest</td>
 </tr></table></div>
 </script>
 
