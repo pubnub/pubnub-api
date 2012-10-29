@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRecord xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results />
+  <Tests>
+    <TestRecord Name="PubNubTest">
+      <Results />
+      <Tests>
+        <TestRecord Name="WhenAMessageIsPublished">
+          <Results>
+            <UnitTestResult>
+              <TestDate>2012-10-28T20:26:39</TestDate>
+              <Passed>0</Passed>
+              <Errors>0</Errors>
+              <Failures>0</Failures>
+              <Inconclusive>0</Inconclusive>
+              <NotRunnable>0</NotRunnable>
+              <Skipped>0</Skipped>
+              <Ignored>0</Ignored>
+              <Time />
+              <Message>Connection refused</Message>
+              <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+            </UnitTestResult>
+          </Results>
+          <Tests>
+            <TestRecord Name="IfSSLNotProvidedThenDefaultShouldBeFalse">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T20:26:39</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.26ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:52:04</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 4.59ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+              <Tests />
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+        <TestRecord Name="WhenGetRequestServerTime">
+          <Results>
+            <UnitTestResult>
+              <TestDate>2012-10-28T20:26:55</TestDate>
+              <Passed>0</Passed>
+              <Errors>0</Errors>
+              <Failures>0</Failures>
+              <Inconclusive>0</Inconclusive>
+              <NotRunnable>0</NotRunnable>
+              <Skipped>0</Skipped>
+              <Ignored>0</Ignored>
+              <Time />
+              <Message>Connection refused</Message>
+              <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+            </UnitTestResult>
+          </Results>
+          <Tests>
+            <TestRecord Name="ThenItShouldReturnTimeStamp">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T20:26:55</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Unix transport error.</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.UnixMessageIO.ReceiveMessageStatus (System.IO.Stream networkStream, System.Byte[] buffer) [0x0000f] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixMessageIO.cs:59 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x0004f] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:176 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T20:27:09</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 4.74ms</Message>
+                  <ConsoleOutput>13514362344233762
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:50:47</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 3.74ms</Message>
+                  <ConsoleOutput>13514412514786161
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+              <Tests />
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+        <TestRecord Name="WhenDetailedHistoryIsRequested">
+          <Results />
+          <Tests>
+            <TestRecord Name="ItShouldReturnDetailedHistory">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T20:27:22</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T20:57:03</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 6.90ms</Message>
+                  <ConsoleOutput>1
+Sent
+13514380294291344
+hello_world
+0
+Network connnect error
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:01:30</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:12:57</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.NullReferenceException : Object reference not set to an instance of an object</Message>
+                  <StackTrace>  at PubNubTest.WhenDetailedHistoryIsRequested.ItShouldReturnDetailedHistory () [0x00081] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs:38 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>1
+Sent
+13514389860252354
+hello_world
+Test message
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:13:49</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:16:06</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:19:43</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:41:15</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 2.78ms</Message>
+                  <ConsoleOutput>1
+Sent
+13514406784787840
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:41:36</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.NullReferenceException : Object reference not set to an instance of an object</Message>
+                  <StackTrace>  at PubNubTest.WhenDetailedHistoryIsRequested.ItShouldReturnDetailedHistory () [0x0007f] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs:39 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>1
+Sent
+13514407032562473
+hello_world
+Test message
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:41:58</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.InvalidCastException : Cannot cast from source type to destination type.</Message>
+                  <StackTrace>  at PubNubTest.WhenDetailedHistoryIsRequested.ItShouldReturnDetailedHistory () [0x0009e] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs:44 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>1
+Sent
+13514407240018238
+hello_world
+Test message
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:44:53</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.InvalidCastException : Cannot cast from source type to destination type.</Message>
+                  <StackTrace>  at PubNubTest.WhenDetailedHistoryIsRequested.ItShouldReturnDetailedHistory () [0x0009e] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs:44 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>1
+Sent
+13514409007868605
+hello_world
+Test message
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:47:32</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.InvalidCastException : Cannot cast from source type to destination type.</Message>
+                  <StackTrace>  at PubNubTest.WhenDetailedHistoryIsRequested.ItShouldReturnDetailedHistory () [0x0009e] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs:44 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>1
+Sent
+13514410574697727
+hello_world
+Test message
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:48:45</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.InvalidCastException : Cannot cast from source type to destination type.</Message>
+                  <StackTrace>  at PubNubTest.WhenDetailedHistoryIsRequested.ItShouldReturnDetailedHistory () [0x0009e] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs:44 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>1
+Sent
+13514411358650652
+hello_world
+Test message
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:49:36</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 6.05ms</Message>
+                  <ConsoleOutput>1
+Sent
+13514411811463167
+hello_world
+Test message
+hello_world
+Test message
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T21:50:29</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 6.08ms</Message>
+                  <ConsoleOutput>1
+Sent
+13514412341068103
+hello_world
+Test message
+hello_world
+Test message
+hello_world
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+              <Tests />
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+        <TestRecord Name="WhenAClientIsPresented">
+          <Tests>
+            <TestRecord Name="ThenItShouldReturnReceivedMessage">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-28T22:12:44</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+      </Tests>
+    </TestRecord>
+  </Tests>
+</TestRecord>
