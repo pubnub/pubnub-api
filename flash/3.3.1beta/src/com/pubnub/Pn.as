@@ -133,7 +133,7 @@ package com.pubnub {
 		}
 		
 		private function onInitError(event:OperationEvent):void {
-			dispatchEvent(new PnEvent(PnEvent.INIT_ERROR));
+			dispatchEvent(new PnEvent(PnEvent.INIT_ERROR, 'Init operation error'));
 		}
 		
 		
@@ -151,7 +151,6 @@ package com.pubnub {
 											OperationStatus.ERROR ));
 				return;
 			}
-			
 			
 			subscribe.origin = origin;
 			subscribe.subscribeKey = subscribeKey;
