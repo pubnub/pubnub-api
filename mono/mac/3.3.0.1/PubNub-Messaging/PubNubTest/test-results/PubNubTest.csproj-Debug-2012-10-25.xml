@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRecord xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Tests>
+    <TestRecord Name="PubNubTest">
+      <Results>
+        <UnitTestResult>
+          <TestDate>2012-10-25T15:34:04</TestDate>
+          <Passed>0</Passed>
+          <Errors>0</Errors>
+          <Failures>0</Failures>
+          <Inconclusive>0</Inconclusive>
+          <NotRunnable>0</NotRunnable>
+          <Skipped>0</Skipped>
+          <Ignored>0</Ignored>
+          <Time />
+          <Message>Connection refused</Message>
+          <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+        </UnitTestResult>
+      </Results>
+      <Tests>
+        <TestRecord Name="WhenAMessageIsPublished">
+          <Tests>
+            <TestRecord Name="IfSSLNotProvidedThenDefaultShouldBeFalse">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:34:04</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.29ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="NullShouldBeTreatedAsEmpty">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:34:04</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.NullReferenceException : Object reference not set to an instance of an object</Message>
+                  <StackTrace>  at PubNubLib.Pubnub.publish (System.String channel, System.Object message, System.Action`1 usercallback) [0x0001c] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:394 
+  at PubNubTest.WhenAMessageIsPublished.NullShouldBeTreatedAsEmpty () [0x0002d] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/WhenAMessageIsPublished.cs:210 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="ThenItShouldGenerateUniqueIdentifier">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:34:04</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.01ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="ThenItShouldReturnSuccessCodeAndInfo">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:34:40</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:35:11</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:39:31</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="ThenPublishKeyShouldBeOverriden">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:35:00</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.26ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="ThenPublishKeyShouldNotBeEmptyAfterOverriden">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:35:37</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.MissingFieldException : PUBLISH_KEY cannot be empty for publish</Message>
+                  <StackTrace>  at PubNubLib.Pubnub.publish (System.String channel, System.Object message, System.Action`1 usercallback) [0x00107] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:433 
+  at PubNubTest.WhenAMessageIsPublished.ThenPublishKeyShouldNotBeEmptyAfterOverriden () [0x00039] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/WhenAMessageIsPublished.cs:158 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="ThenSecretKeyShouldBeProvidedOptionally">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T15:35:48</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.26ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+        <TestRecord Name="EncryptionTests">
+          <Results>
+            <UnitTestResult>
+              <TestDate>2012-10-25T22:47:16</TestDate>
+              <Passed>0</Passed>
+              <Errors>13</Errors>
+              <Failures>11</Failures>
+              <Inconclusive>0</Inconclusive>
+              <NotRunnable>0</NotRunnable>
+              <Skipped>0</Skipped>
+              <Ignored>0</Ignored>
+              <Time />
+              <Message>One or more child tests had errors</Message>
+            </UnitTestResult>
+          </Results>
+          <Tests>
+            <TestRecord Name="TestArrayDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 206.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestArrayDecryption () [0x00011] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:127 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestArrayEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 24. Strings differ at index 0.
+  Expected: "Ns4TB41JjT2NCXaGLWSPAQ=="
+  But was:  "xDn/r8OSeZwfijRmR2PnYg=="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestArrayEncryption () [0x0002a] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:111 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestGermanCharsDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 18.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestGermanCharsDecryption () [0x00017] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:450 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestGermanCharsEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 24. Strings differ at index 0.
+  Expected: "stpgsG1DZZxb44J7mFNSzg=="
+  But was:  "rKRFtBAkL8l/GLUysAQ+xQ=="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestGermanCharsEncryption () [0x00034] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:471 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>"ÜÖ"
+rKRFtBAkL8l/GLUysAQ+xQ==
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestHashDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 25.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestHashDecryption () [0x00011] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:357 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestHashEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 44. Strings differ at index 0.
+  Expected: "GsvkCYZoYylL5a7/DKhysDjNbwn+BtBtHj2CvzC4Y4g="
+  But was:  "yLUdgdHs2Fsd5MUYXO7cJH2ciXPC8S3zVrmQHV00sxU="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestHashEncryption () [0x0001a] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:343 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestMyObjectDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 0.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestMyObjectDecryption () [0x00011] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:208 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestMyObjectEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 44. Strings differ at index 0.
+  Expected: "Zbr7pEF/GFGKj1rOstp0tWzA4nwJXEfj+ezLtAr8qqE="
+  But was:  "0wHag2KqAlw7yQbfkfxqoLVeaF3ul2RPxjdVwaJBC5g="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestMyObjectEncryption () [0x00029] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:194 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestNullDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.NullReferenceException : Object reference not set to an instance of an object</Message>
+                  <StackTrace>  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00084] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2408 
+  at PubNubTest.EncryptionTests.TestNullDecryption () [0x0000d] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:389 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestNullEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.ArgumentNullException : Argument cannot be null.
+Parameter name: s</Message>
+                  <StackTrace>  at System.Text.Encoding.GetBytes (System.String s) [0x0007b] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Text/Encoding.cs:261 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x0005d] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2401 
+  at PubNubTest.EncryptionTests.TestNullEncryption () [0x0000d] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:373 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestObjectDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 106.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestObjectDecryption () [0x00011] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:168 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestObjectEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 24. Strings differ at index 0.
+  Expected: "IDjZE9BHSjcX67RddfCYYg=="
+  But was:  "diHPqa6vM/UU9DPaSRKQqw=="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestObjectEncryption () [0x00029] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:153 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestPubNubDecryption1">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 31.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestPubNubDecryption1 () [0x00017] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:290 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestPubNubDecryption2">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 118.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestPubNubDecryption2 () [0x00011] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:250 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestPubNubEncryption1">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 44. Strings differ at index 0.
+  Expected: "f42pIQcWZ9zbTbH8cyLwByD/GsviOE0vcREIEVPARR0="
+  But was:  "q2bOlhsxrq2W9fvSKfP15ESX3M2o3AFk+eOPvbMoIU0="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestPubNubEncryption1 () [0x00028] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:274 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestPubNubEncryption2">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 44. Strings differ at index 0.
+  Expected: "f42pIQcWZ9zbTbH8cyLwB/tdvRxjFLOYcBNMVKeHS54="
+  But was:  "q2bOlhsxrq2W9fvSKfP15KVnD4YErONmiVOQlhnNW6E="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestPubNubEncryption2 () [0x00028] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:235 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestStuffcanDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 19.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestStuffcanDecryption () [0x00011] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:324 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestStuffCanEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 64. Strings differ at index 0.
+  Expected: "zMqH/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF"
+  But was:  "golValeuWwaOIEkISsokguJ+ONDW+q5qudJK6cnoGKwP2sVzobjL+4tja4YRloyM"
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestStuffCanEncryption () [0x0001a] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:310 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestUnicodeCharsDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 177.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestUnicodeCharsDecryption () [0x00017] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:432 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestUnicodeCharsEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 24. Strings differ at index 0.
+  Expected: "+BY5/miAA8aeuhVl4d13Kg=="
+  But was:  "Rtk4YQCjLBZR4VSXrHXwQQ=="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestUnicodeCharsEncryption () [0x00034] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:418 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>"漢語"
+Rtk4YQCjLBZR4VSXrHXwQQ==
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestYayDecryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 174.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestYayDecryption () [0x0001f] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:62 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestYayDecryptionBasic">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>1</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>System.Security.Cryptography.CryptographicException : Bad PKCS7 padding. Invalid length 70.</Message>
+                  <StackTrace>  at Mono.Security.Cryptography.SymmetricTransform.ThrowBadPaddingException (PaddingMode padding, Int32 length, Int32 position) [0x0005c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:357 
+  at Mono.Security.Cryptography.SymmetricTransform.FinalDecrypt (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x001a3] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:504 
+  at Mono.Security.Cryptography.SymmetricTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00034] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/Mono.Security.Cryptography/SymmetricTransform.cs:538 
+  at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock (System.Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount) [0x00000] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Security.Cryptography/RijndaelManagedTransform.cs:94 
+  at PubNubLib.PubnubCrypto.EncryptOrDecrypt (Boolean type, System.String plainStr) [0x00098] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs:2409 
+  at PubNubTest.EncryptionTests.TestYayDecryptionBasic () [0x00011] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:27 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestYayEncryption">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 24. Strings differ at index 0.
+  Expected: "Wi24KS4pcTzvyuGOHubiXg=="
+  But was:  "ZPmm3ltqO1mLn0xTUzb/Yw=="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestYayEncryption () [0x0002e] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:84 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>"yay!"
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestYayEncryptionBasic">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-10-25T22:47:16</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  String lengths are both 24. Strings differ at index 0.
+  Expected: "q/xJqqN6qbiZMXYmiQC1Fw=="
+  But was:  "9BXU1aHu1qYTKiBzX/qQhw=="
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.EncryptionTests.TestYayEncryptionBasic () [0x0001a] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNubTest/EncryptionTests.cs:44 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+      </Tests>
+    </TestRecord>
+  </Tests>
+</TestRecord>
