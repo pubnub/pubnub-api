@@ -6,7 +6,7 @@
 
 
 @implementation Request
-@synthesize connection,channel,command,delegate;
+@synthesize connection,channel,command,delegate,timetoken;
 
 -(id)
     scheme:   (NSString*) scheme
@@ -156,7 +156,7 @@ message:  (id)message_o
     delegate = callback;
     pubnub   = pubnub_o;
     channel  = channel_o;
-    message  = message_o;
+    message  = [[NSString alloc]initWithFormat:@"%@",message_o ];
     return self;
 }
 
@@ -180,7 +180,7 @@ channel:  (NSString*) channel_o
     delegate = nil;
     pubnub   = pubnub_o;
     channel  = channel_o;
-    message  = message_o;
+    message  =  [[NSString alloc]initWithFormat:@"%@",message_o ];
     return self;
 }
 -(void) callback:(NSURLConnection*) connection withResponce: (id) response  {

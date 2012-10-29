@@ -574,7 +574,6 @@ delegate:  (id)       delegate
 
 - (void)handleCommandReceiveMessageForRequest:(Request *)request response:(id)response isfail:(BOOL) isfail
 {
-    BOOL isReconnect=NO;
     if (response == nil  ) {
         for (ChannelStatus* it in [_subscriptionset copy]) {
             if ([it.channel isEqualToString:request.channel])
@@ -600,7 +599,6 @@ delegate:  (id)       delegate
                 {
                     if (it.connected == NO ) {
                         it.connected =YES;
-                        isReconnect= YES;
                         [request.delegate reconnectToChannel:request.channel];
                     }
                 }
