@@ -24,7 +24,7 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
 char pubkey[] = "demo";
 char subkey[] = "demo";
-char channel[] = "some_unique_channel_perhaps";
+char channel[] = "hello_world";
 
 void setup()
 {
