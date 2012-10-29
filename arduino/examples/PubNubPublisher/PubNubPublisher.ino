@@ -6,6 +6,7 @@
   Circuit:
   * Ethernet shield attached to pins 10, 11, 12, 13
   * (Optional.) Analog sensors on pins A0 to A5.
+  * (Optional.) LED on pin 9 for success indication.
 
   created 23 October 2012
   by Petr Baudis
@@ -22,12 +23,17 @@
 // fill in that address here, or choose your own at random:
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
+const int pubLedPin = 9;
+
 char pubkey[] = "demo";
 char subkey[] = "demo";
 char channel[] = "hello_world";
 
 void setup()
 {
+	pinMode(pubLedPin, OUTPUT);
+	digitalWrite(pubLedPin, LOW);
+
 	Serial.begin(9600);
 	Serial.println("Serial set up");
 
@@ -39,6 +45,17 @@ void setup()
 
 	PubNub.begin(pubkey, subkey);
 	Serial.println("PubNub set up");
+}
+
+void flash(int ledPin)
+{
+	/* Flash LED three times. */
+	for (int i = 0; i < 3; i++) {
+		digitalWrite(ledPin, HIGH);
+		delay(100);
+		digitalWrite(ledPin, LOW);
+		delay(100);
+	}
 }
 
 void loop()
@@ -58,10 +75,10 @@ void loop()
 	client = PubNub.publish(channel, msg);
 	if (!client) {
 		Serial.println("publishing error");
-		delay(1000);
-		return;
+	} else {
+		flash(pubLedPin);
+		client->stop();
 	}
-	client->stop();
 
 	delay(5000);
 }
