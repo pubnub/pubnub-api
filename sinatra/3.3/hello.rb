@@ -2,8 +2,6 @@ require 'sinatra'
 require 'sinatra/hashfix'
 require 'pubnub'
 
-set :server, :webrick
-
 # callback
 # if output returns false, return immediately, otherwise, keep going...
 def output(out, cycle = false); p out; cycle; end
