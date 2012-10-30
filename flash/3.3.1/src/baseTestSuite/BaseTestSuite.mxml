@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" width="1024" height="600" 
+   xmlns:flexUnitUIRunner="http://www.adobe.com/2009/flexUnitUIRunner"
+   creationComplete="runTests();"
+   layout="absolute">
+   
+   <mx:Script>
+      <![CDATA[
+		  import baseTestSuite.tests.DetailedHistoryTest;
+		  import baseTestSuite.tests.InitTest;
+		  import baseTestSuite.tests.PublishTest;
+		  import baseTestSuite.tests.SubscribeTest;
+		  import baseTestSuite.tests.UnsubTest;
+		  import mx.logging.LogEventLevel;
+		  import org.flexunit.internals.TextListener;
+		  import org.flexunit.internals.TraceListener;
+		  import org.flexunit.listeners.CIListener;
+		  import org.flexunit.listeners.UIListener;
+		  import org.flexunit.runner.FlexUnitCore;
+         
+         public function runTests() : void {
+				var core : FlexUnitCore = new FlexUnitCore();
+				/**If you don't need graphical test results, comment out the line below and the MXML declaring 
+				the TestRunnerBase. **/
+				core.addListener(new UIListener(uiListener));
+				core.addListener(new CIListener());
+				
+				/**If you would like to see text output in verbose mode, umcomment either of the follow listeners **/
+				//core.addListener( new TraceListener() ); - For AS3 Projects
+				//core.addListener( TextListener.getDefaultTextListener( LogEventLevel.DEBUG ) ); - For Flex Projects
+				
+            //core.run(InitTest, SubscribeTest, PublishTest, UnsubscribeTest);
+            core.run(InitTest, SubscribeTest, PublishTest, DetailedHistoryTest, UnsubTest);
+         }
+      ]]>
+   </mx:Script>
+   <flexUnitUIRunner:TestRunnerBase id="uiListener" width="100%" height="100%"   />
+</mx:Application>

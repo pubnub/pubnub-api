@@ -14,3 +14,5 @@ node_modules
 /csharp/*/PubNub-Messaging*/bin/*
 /csharp/*/PubNub-Messaging*/obj/*
 /j2me/3.3/nbproject
+/flash/3.3.1beta/obj/*.old
+/flash/3.3.1beta/obj/PubNubTestConfig.xml
