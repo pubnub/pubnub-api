@@ -1,0 +1,24 @@
+#!/bin/bash
+
+clang \
+    -o cl-81-example \
+    cl-81-example.m \
+    CEPubnub.m \
+    Base64.m \
+    Common.m \
+    JSONKit.m \
+    JSON.m \
+    Cipher.m \
+    -framework Foundation \
+    -fobjc-nonfragile-abi2 \
+    -Wall \
+    -Wimplicit-function-declaration \
+    -fstack-protector \
+    -fblocks \
+    -m686 \
+    -lpthread \
+    -lm \
+    -lc \
+    -lobjc
+  
+

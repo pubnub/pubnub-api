@@ -14,11 +14,13 @@
 
 @implementation AppDelegate
 @synthesize window;
+@synthesize cl_81_test;
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
+    cl_81_test = [[CL_81 alloc] init];
 }
 
 - (IBAction)UnsubscribeUnitTest:(id)sender {
@@ -43,4 +45,29 @@
     Catch_Up_UnitTest *unittest= [[Catch_Up_UnitTest alloc] init];
     [unittest runCatch_up_UnitTest];
 }
+
+/*Objective-c tests*/
+- (IBAction)publish_CL_81_test:(id)sender{
+    [cl_81_test publishMessage];
+}
+- (IBAction)history_81_test:(id)sender{
+    [cl_81_test getHistory];
+}
+- (IBAction)time_81_test:(id)sender{
+    [cl_81_test getTime];
+}
+- (IBAction)subscribe_CL_81_test:(id)sender{
+    [cl_81_test subscribe];
+}
+- (IBAction)unsubscribe_81_test:(id)sender {
+    [cl_81_test unsubscribe];
+}
+- (IBAction)here_now_81_test:(id)sender{
+    [cl_81_test here_now];
+}
+
+- (IBAction)uuid_81_test:(id)sender{
+    [cl_81_test getUUID];
+}
+
 @end

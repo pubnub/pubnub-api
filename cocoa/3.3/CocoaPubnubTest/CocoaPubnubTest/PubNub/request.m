@@ -228,7 +228,7 @@ channel:  (NSString*) channel_o
 
 @end
 
-@implementation ChannelStatus
+/*@implementation ChannelStatus
 @synthesize connected,channel,first;
-@end
+@end*/
 

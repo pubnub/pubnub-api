@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4985ECA7163FC89C0073C285 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 4985EC9F163FC89B0073C285 /* Base64.m */; };
+		4985ECA8163FC89C0073C285 /* CEPubnub.m in Sources */ = {isa = PBXBuildFile; fileRef = 4985ECA1163FC89B0073C285 /* CEPubnub.m */; };
+		4985ECA9163FC89C0073C285 /* Cipher.m in Sources */ = {isa = PBXBuildFile; fileRef = 4985ECA4163FC89B0073C285 /* Cipher.m */; };
+		4985ECAA163FC89C0073C285 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 4985ECA6163FC89C0073C285 /* Common.m */; };
+		4985ECAE163FCC940073C285 /* CL_81.m in Sources */ = {isa = PBXBuildFile; fileRef = 4985ECAC163FCC940073C285 /* CL_81.m */; };
 		C8A466EF162FE06B003DDAA6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8A466EE162FE06B003DDAA6 /* Cocoa.framework */; };
 		C8A466F9162FE06B003DDAA6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8A466F7162FE06B003DDAA6 /* InfoPlist.strings */; };
 		C8A466FB162FE06B003DDAA6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A466FA162FE06B003DDAA6 /* main.m */; };
@@ -25,6 +30,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4985EC9E163FC89B0073C285 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		4985EC9F163FC89B0073C285 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		4985ECA0163FC89B0073C285 /* CEPubnub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPubnub.h; sourceTree = "<group>"; };
+		4985ECA1163FC89B0073C285 /* CEPubnub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEPubnub.m; sourceTree = "<group>"; };
+		4985ECA2163FC89B0073C285 /* CEPubnubDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEPubnubDelegate.h; sourceTree = "<group>"; };
+		4985ECA3163FC89B0073C285 /* Cipher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cipher.h; sourceTree = "<group>"; };
+		4985ECA4163FC89B0073C285 /* Cipher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cipher.m; sourceTree = "<group>"; };
+		4985ECA5163FC89C0073C285 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		4985ECA6163FC89C0073C285 /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
+		4985ECAC163FCC940073C285 /* CL_81.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CL_81.m; sourceTree = "<group>"; };
+		4985ECAF163FCD530073C285 /* CL_81.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CL_81.h; sourceTree = "<group>"; };
 		C8A466EA162FE06B003DDAA6 /* CocoaPubnubTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CocoaPubnubTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8A466EE162FE06B003DDAA6 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C8A466F1162FE06B003DDAA6 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -134,6 +150,15 @@
 		C8A4670B162FE311003DDAA6 /* PubNub */ = {
 			isa = PBXGroup;
 			children = (
+				4985EC9E163FC89B0073C285 /* Base64.h */,
+				4985EC9F163FC89B0073C285 /* Base64.m */,
+				4985ECA0163FC89B0073C285 /* CEPubnub.h */,
+				4985ECA1163FC89B0073C285 /* CEPubnub.m */,
+				4985ECA2163FC89B0073C285 /* CEPubnubDelegate.h */,
+				4985ECA3163FC89B0073C285 /* Cipher.h */,
+				4985ECA4163FC89B0073C285 /* Cipher.m */,
+				4985ECA5163FC89C0073C285 /* Common.h */,
+				4985ECA6163FC89C0073C285 /* Common.m */,
 				C8A4670E162FE311003DDAA6 /* JSON.h */,
 				C8A4670F162FE311003DDAA6 /* JSON.m */,
 				C8A46710162FE311003DDAA6 /* JSONKit.h */,
@@ -159,6 +184,8 @@
 				C8A46725162FE57B003DDAA6 /* CL_223.m */,
 				C8BA022A16317D8F00DAE577 /* Catch_Up_UnitTest.h */,
 				C8BA022B16317D8F00DAE577 /* Catch_Up_UnitTest.m */,
+				4985ECAC163FCC940073C285 /* CL_81.m */,
+				4985ECAF163FCD530073C285 /* CL_81.h */,
 			);
 			path = UnitTest;
 			sourceTree = "<group>";
@@ -238,6 +265,11 @@
 				C8A46726162FE57B003DDAA6 /* CL_223.m in Sources */,
 				C8A46729162FE5D7003DDAA6 /* CommonUtil.m in Sources */,
 				C8BA022C16317D8F00DAE577 /* Catch_Up_UnitTest.m in Sources */,
+				4985ECA7163FC89C0073C285 /* Base64.m in Sources */,
+				4985ECA8163FC89C0073C285 /* CEPubnub.m in Sources */,
+				4985ECA9163FC89C0073C285 /* Cipher.m in Sources */,
+				4985ECAA163FC89C0073C285 /* Common.m in Sources */,
+				4985ECAE163FCC940073C285 /* CL_81.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
