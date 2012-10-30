@@ -45,7 +45,6 @@ namespace PubNub_Messaging
         ConcurrentDictionary<string, bool> _channelPresence = new ConcurrentDictionary<string, bool>();
         ConcurrentDictionary<string, RequestState> _channelRequest = new ConcurrentDictionary<string, RequestState>();
         ConcurrentDictionary<string, Timer> _channelReconnectTimer = new ConcurrentDictionary<string, Timer>();
-        ConcurrentDictionary<string, ReconnectState> _channelReconnectState = new ConcurrentDictionary<string, ReconnectState>();
 
         System.Threading.Timer heartBeatTimer;
 
@@ -118,6 +117,12 @@ namespace PubNub_Messaging
         private void reconnectNetwork(ReconnectState netState)
         {
             System.Threading.Timer timer = new Timer(new TimerCallback(reconnectNetworkCallback), netState, 0, PUBNUB_NETWORK_CHECK_CALLBACK_INTERVAL_IN_SEC * 1000);
+            _channelReconnectTimer.AddOrUpdate(netState.channel, timer, (key, oldState) => timer);
+        }
+
+        private void reconnectNetwork<T>(ReconnectState<T> netState)
+        {
+            System.Threading.Timer timer = new Timer(new TimerCallback(reconnectNetworkCallback<T>), netState, 0, PUBNUB_NETWORK_CHECK_CALLBACK_INTERVAL_IN_SEC * 1000);
             _channelReconnectTimer.AddOrUpdate(netState.channel, timer, (key, oldState) => timer);
         }
 
@@ -208,6 +213,97 @@ namespace PubNub_Messaging
                 if (appSwitch.TraceError)
                 {
                     Trace.WriteLine(string.Format("DateTime {0} method:reconnectNetworkCallback \n Exception Details={1}", DateTime.Now.ToString(), ex.ToString()));
+                }
+            }
+        }
+
+        void reconnectNetworkCallback<T>(Object reconnectState)
+        {
+            try
+            {
+                ReconnectState<T> netState = reconnectState as ReconnectState<T>;
+                int currentRetry = netState.retryNum;
+                currentRetry++;
+                if (netState != null)
+                {
+                    netState.retryNum = currentRetry;
+                    if (!_pubnetInternetStatus && (currentRetry <= PUBNUB_NETWORK_CHECK_RETRIES))
+                    {
+                        if (appSwitch.TraceInfo)
+                        {
+                            Trace.WriteLine(string.Format("DateTime {0} {1} out of {2} tries by reconnectNetworkCallback<T> to connect Internet for channel={3}", DateTime.Now.ToString(), currentRetry, PUBNUB_NETWORK_CHECK_RETRIES, netState.channel));
+                        }
+                        ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
+                        Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        netState.retryNum = currentRetry++;
+                        if (_channelReconnectTimer.ContainsKey(netState.channel))
+                        {
+                            System.Threading.Timer reconnectTimer = _channelReconnectTimer[netState.channel] as System.Threading.Timer;
+                            reconnectTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                            reconnectTimer.Dispose();
+                            if (appSwitch.TraceInfo)
+                            {
+                                Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback<T>. Stopped callback timer to connect Internet for channel={1}", DateTime.Now.ToString(), netState.channel));
+                            }
+
+                            bool removeFlag = _channelReconnectTimer.TryRemove(netState.channel, out reconnectTimer);
+                            if (!removeFlag && appSwitch.TraceError)
+                            {
+                                Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback<T>. Unable to remove timer from dictionary for channel={1}", DateTime.Now.ToString(), netState.channel));
+                            }
+
+                            if (_pubnetInternetStatus)
+                            {
+                                if (appSwitch.TraceInfo)
+                                {
+                                    Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback<T>. Internet Available : {1}", DateTime.Now.ToString(), _pubnetInternetStatus));
+                                }
+                                switch (netState.type)
+                                {
+                                    case ResponseType.Subscribe:
+                                        _subscribe(netState.channel, netState.timetoken, netState.callback, false);
+                                        break;
+                                    case ResponseType.Presence:
+                                        _presence(netState.channel, netState.timetoken, netState.callback, false);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                switch (netState.type)
+                                {
+                                    case ResponseType.Subscribe:
+                                        subscribeExceptionHandler(netState.channel, netState.callback, true);
+                                        break;
+                                    case ResponseType.Presence:
+                                        presenceExceptionHandler(netState.channel, netState.callback, true);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+
+                        }
+                    }
+                }
+                else
+                {
+                    if (appSwitch.TraceError)
+                    {
+                        Trace.WriteLine(string.Format("DateTime {0}, Unknown request state in reconnectNetworkCallback<T>", DateTime.Now.ToString()));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (appSwitch.TraceError)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0} method:reconnectNetworkCallback<T> \n Exception Details={1}", DateTime.Now.ToString(), ex.ToString()));
                 }
             }
         }
@@ -385,9 +481,46 @@ namespace PubNub_Messaging
             return _urlRequest(url, ResponseType.DetailedHistory, usercallback, false);
         }
 
+        public bool detailedHistory<T>(string channel, long start, long end, int count, bool reverse, Action<T> usercallback)
+        {
+            if (string.IsNullOrWhiteSpace(channel))
+            {
+                throw new ArgumentException("Missing Channel");
+            }
+
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
+            Thread.Sleep(2000);
+
+            parameters = "";
+            if (count <= -1) count = 100;
+            parameters = "?count=" + count;
+            if (reverse)
+                parameters = parameters + "&" + "reverse=" + reverse.ToString().ToLower();
+            if (start != -1)
+                parameters = parameters + "&" + "start=" + start.ToString().ToLower();
+            if (end != -1)
+                parameters = parameters + "&" + "end=" + end.ToString().ToLower();
+
+            List<string> url = new List<string>();
+
+            url.Add("v2");
+            url.Add("history");
+            url.Add("sub-key");
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add("channel");
+            url.Add(channel);
+
+            return _urlRequest<T>(url, ResponseType.DetailedHistory, usercallback, false);
+        }
+
         public bool detailedHistory(string channel, long start, Action<object> usercallback, bool reverse)
         {
             return detailedHistory(channel, start, -1, -1, reverse, usercallback);
+        }
+
+        public bool detailedHistory<T>(string channel, long start, Action<T> usercallback, bool reverse)
+        {
+            return detailedHistory<T>(channel, start, -1, -1, reverse, usercallback);
         }
 
         public bool detailedHistory(string channel, int count, Action<object> usercallback)
@@ -395,6 +528,10 @@ namespace PubNub_Messaging
             return detailedHistory(channel, -1, -1, count, false, usercallback);
         }
 
+        public bool detailedHistory<T>(string channel, int count, Action<T> usercallback)
+        {
+            return detailedHistory<T>(channel, -1, -1, count, false, usercallback);
+        }
         /**
          * Publish
          * 
@@ -453,6 +590,57 @@ namespace PubNub_Messaging
             url.Add(msg);
 
             return _urlRequest(url, ResponseType.Publish, usercallback, false);
+        }
+
+        public bool publish<T>(string channel, object message, Action<T> usercallback)
+        {
+            if (string.IsNullOrWhiteSpace(channel) || message == null)
+            {
+                throw new ArgumentException("Missing Channel or Message");
+            }
+
+            //TODO: Should we validate at constructor level
+            if (this.PUBLISH_KEY.Length == 0)
+            {
+                throw new MissingFieldException("PUBLISH_KEY cannot be empty for publish");
+            }
+
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
+            Thread.Sleep(2000);
+
+            string msg = jsonEncodePublishMsg(message);
+
+            // Generate String to Sign
+            string signature = "0";
+            if (this.SECRET_KEY.Length > 0)
+            {
+                StringBuilder string_to_sign = new StringBuilder();
+                string_to_sign
+                    .Append(this.PUBLISH_KEY)
+                    .Append('/')
+                    .Append(this.SUBSCRIBE_KEY)
+                    .Append('/')
+                    .Append(this.SECRET_KEY)
+                    .Append('/')
+                    .Append(channel)
+                    .Append('/')
+                    .Append(msg); // 1
+
+                // Sign Message
+                signature = md5(string_to_sign.ToString());
+            }
+
+            // Build URL
+            List<string> url = new List<string>();
+            url.Add("publish");
+            url.Add(this.PUBLISH_KEY);
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add(signature);
+            url.Add(channel);
+            url.Add("0");
+            url.Add(msg);
+
+            return _urlRequest<T>(url, ResponseType.Publish, usercallback, false);
         }
 
         private string jsonEncodePublishMsg(object originalMsg)
@@ -556,6 +744,44 @@ namespace PubNub_Messaging
             {
                 _channelSubscription.GetOrAdd(channel, true);
                 _subscribe(channel, 0, usercallback, false);
+            }
+
+        }
+
+        public void subscribe<T>(string channel, Action<T> usercallback)
+        {
+            if (string.IsNullOrWhiteSpace(channel))
+            {
+                throw new ArgumentException("Missing Channel");
+            }
+            if (usercallback == null)
+            {
+                throw new ArgumentException("Missing Callback");
+            }
+
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, requested subscribe for channel={1}", DateTime.Now.ToString(), channel));
+            }
+
+
+            if (_channelSubscription.ContainsKey(channel))
+            {
+                List<object> result = new List<object>();
+                string jsonString = "[0, \"Already subscribed\"]";
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result.Add(channel);
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON subscribe response={1}", DateTime.Now.ToString(), jsonString));
+                }
+                goToUserCallback<T>(result, usercallback);
+            }
+            else
+            {
+                _channelSubscription.GetOrAdd(channel, true);
+                _subscribe<T>(channel, 0, usercallback, false);
             }
 
         }
@@ -676,6 +902,39 @@ namespace PubNub_Messaging
             }
         }
 
+        private void subscribeInternalCallback<T>(object subscribeResult, Action<T> usercallback)
+        {
+            List<object> message = subscribeResult as List<object>;
+            string channelName = "";
+            if (message != null)
+            {
+                channelName = message[2].ToString();
+            }
+            else
+            {
+                if (appSwitch.TraceError)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Lost Channel Name for resubscribe", DateTime.Now.ToString()));
+                }
+                return;
+            }
+
+            if (!_channelSubscription.ContainsKey(channelName))
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, further re-subscription was stopped for channel {1}", DateTime.Now.ToString(), channelName.ToString()));
+                }
+                return;
+            }
+
+
+            if (message != null && message.Count >= 3)
+            {
+                _subscribe<T>(channelName, (object)message[1], usercallback, false); //TODO
+            }
+        }
+
 
         private void presenceInternalCallback(object presenceResult, Action<object> usercallback)
         {
@@ -698,6 +957,30 @@ namespace PubNub_Messaging
             if (message != null && message.Count >= 3)
             {
                 _presence(channelName, (object)message[1], usercallback, false);
+            }
+        }
+
+        private void presenceInternalCallback<T>(object presenceResult, Action<T> usercallback)
+        {
+            List<object> message = presenceResult as List<object>;
+            string channelName = "";
+            if (message != null)
+            {
+                channelName = message[2].ToString();
+            }
+            else
+            {
+                if (appSwitch.TraceError)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Lost Channel Name for re-presence", DateTime.Now.ToString()));
+                }
+                return;
+            }
+
+
+            if (message != null && message.Count >= 3)
+            {
+                _presence<T>(channelName, (object)message[1], usercallback, false);
             }
         }
 
@@ -768,6 +1051,62 @@ namespace PubNub_Messaging
             }
         }
 
+        public void unsubscribe<T>(string channel, Action<T> usercallback)
+        {
+            if (string.IsNullOrWhiteSpace(channel))
+            {
+                throw new ArgumentException("Missing Channel");
+            }
+
+            bool unsubStatus = false;
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, requested unsubscribe<> for channel={1}", DateTime.Now.ToString(), channel));
+            }
+            if (_channelSubscription.ContainsKey(channel))
+            {
+                if (_channelRequest.ContainsKey(channel))
+                {
+                    HttpWebRequest storedRequest = _channelRequest[channel].request;
+                    storedRequest.Abort();
+                }
+                _channelSubscription.TryRemove(channel, out unsubStatus);
+
+                List<object> result = new List<object>();
+                string jsonString = "";
+                if (unsubStatus)
+                {
+                    jsonString = string.Format("[1, \"Unsubscribed from {0}\"]", channel);
+                }
+                else
+                {
+                    jsonString = string.Format("[1, \"Error unsubscribing from {0}\"]", channel);
+                }
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result.Add(channel);
+
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
+                }
+                goToUserCallback<T>(result, usercallback);
+            }
+            else
+            {
+                List<object> result = new List<object>();
+                string jsonString = "[0, \"Channel Not Subscribed\"]";
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result.Add(channel);
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
+                }
+                goToUserCallback<T>(result, usercallback);
+            }
+        }
+
         /**
          * Subscribe - Private Interface
          * 
@@ -834,6 +1173,66 @@ namespace PubNub_Messaging
                 this._subscribe(channel, timetoken, usercallback, false);
             }
         }
+
+        private void _subscribe<T>(string channel, object timetoken, Action<T> usercallback, bool reconnect)
+        {
+            //Exit if the channel is unsubscribed
+            if (!_channelSubscription.ContainsKey(channel))
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, further subscription<T> was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()));
+                }
+                return;
+            }
+
+            //Check internet connection
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
+            Thread.Sleep(1000);
+
+            if (!_pubnetInternetStatus && _pubnetSystemActive)
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Subscribe<T> - No internet connection for {1}", DateTime.Now.ToString(), channel));
+                }
+
+                ReconnectState<T> netState = new ReconnectState<T>();
+                netState.channel = channel;
+                netState.type = ResponseType.Subscribe;
+                netState.callback = usercallback;
+                netState.timetoken = timetoken;
+
+                reconnectNetwork<T>(netState);
+                return;
+            }
+
+
+            // Begin recursive subscribe
+            try
+            {
+                // Build URL
+                List<string> url = new List<string>();
+                url.Add("subscribe");
+                url.Add(this.SUBSCRIBE_KEY);
+                url.Add(channel);
+                url.Add("0");
+                url.Add(timetoken.ToString());
+
+                // Wait for message
+                _urlRequest<T>(url, ResponseType.Subscribe, usercallback, reconnect);
+            }
+            catch (Exception ex)
+            {
+                if (appSwitch.TraceError)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0} method:_subscribe<T> \n channel={1} \n timetoken={2} \n Exception Details={3}", DateTime.Now.ToString(), channel, timetoken.ToString(), ex.ToString()));
+                }
+                //TODO: Check if we need sleep time
+                System.Threading.Thread.Sleep(1000);
+                this._subscribe<T>(channel, timetoken, usercallback, false);
+            }
+        }
         /**
          * Presence feature
          * 
@@ -882,6 +1281,45 @@ namespace PubNub_Messaging
                 this._presence(channel, 0, usercallback, false);
             }
         }
+
+        public void presence<T>(string channel, Action<T> usercallback)
+        {
+            if (string.IsNullOrWhiteSpace(channel))
+            {
+                throw new ArgumentException("Missing Channel");
+            }
+
+            if (usercallback == null)
+            {
+                throw new ArgumentException("Missing Callback");
+            }
+
+            channel = string.Format("{0}-pnpres", channel);
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, requested presence for channel={1}", DateTime.Now.ToString(), channel));
+            }
+
+            if (_channelPresence.ContainsKey(channel))
+            {
+                List<object> result = new List<object>();
+                string jsonString = "[0, \"Presence Already subscribed\"]";
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result.Add(channel);
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON presence response={1}", DateTime.Now.ToString(), jsonString));
+                }
+                goToUserCallback<T>(result, usercallback);
+            }
+            else
+            {
+                _channelPresence.GetOrAdd(channel, true);
+                this._presence<T>(channel, 0, usercallback, false);
+            }
+        }
+
         /**
          * Presence feature - Private Interface
          * 
@@ -949,6 +1387,65 @@ namespace PubNub_Messaging
             }
         }
 
+        private void _presence<T>(string channel, object timetoken, Action<T> usercallback, bool reconnect)
+        {
+            //Exit if the channel is unsubscribed
+            if (!_channelPresence.ContainsKey(channel))
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Due to Presence-unsubscribe, further presence<T> was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()));
+                }
+                return;
+            }
+
+            //Check internet connection
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
+            Thread.Sleep(2000);
+
+            if (!_pubnetInternetStatus)
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Presence<T> - No internet connection for {1}", DateTime.Now.ToString(), channel));
+                }
+
+                ReconnectState<T> netState = new ReconnectState<T>();
+                netState.channel = channel;
+                netState.type = ResponseType.Presence;
+                netState.callback = usercallback;
+                netState.timetoken = timetoken;
+
+                reconnectNetwork<T>(netState);
+                return;
+            }
+
+            // Begin recursive subscribe
+            try
+            {
+                // Build URL
+                List<string> url = new List<string>();
+                url.Add("subscribe");
+                url.Add(this.SUBSCRIBE_KEY);
+                url.Add(channel);
+                url.Add("0");
+                url.Add(timetoken.ToString());
+
+                // Wait for message
+                _urlRequest<T>(url, ResponseType.Presence, usercallback, reconnect);
+            }
+            catch (Exception ex)
+            {
+                if (appSwitch.TraceError)
+                {
+                    Trace.WriteLine(string.Format("method:_presence<T> \n channel={0} \n timetoken={1} \n Exception Details={2}", channel, timetoken.ToString(), ex.ToString()));
+                }
+                //TODO: Check if we need sleep time
+                System.Threading.Thread.Sleep(1000);
+                this._presence<T>(channel, timetoken, usercallback, false);
+            }
+        }
+
         public void presence_unsubscribe(string channel, Action<object> usercallback)
         {
             if (string.IsNullOrWhiteSpace(channel))
@@ -1013,6 +1510,64 @@ namespace PubNub_Messaging
             }
         }
 
+        public void presence_unsubscribe<T>(string channel, Action<T> usercallback)
+        {
+            if (string.IsNullOrWhiteSpace(channel))
+            {
+                throw new ArgumentException("Missing Channel");
+            }
+
+            channel = string.Format("{0}-pnpres", channel);
+
+            bool unsubStatus = false;
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, requested presence-unsubscribe for channel={1}", DateTime.Now.ToString(), channel));
+            }
+            if (_channelPresence.ContainsKey(channel))
+            {
+                if (_channelRequest.ContainsKey(channel))
+                {
+                    HttpWebRequest storedRequest = _channelRequest[channel].request;
+                    storedRequest.Abort();
+                }
+                _channelPresence.TryRemove(channel, out unsubStatus);
+
+                List<object> result = new List<object>();
+                string jsonString = "";
+                if (unsubStatus)
+                {
+                    jsonString = string.Format("[1, \"Presence-Unsubscribed from {0}\"]", channel.Replace("-pnpres", ""));
+                }
+                else
+                {
+                    jsonString = string.Format("[1, \"Error presence-unsubscribing from {0}\"]", channel.Replace("-pnpres", ""));
+                }
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result.Add(channel.Replace("-pnpres", ""));
+
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
+                }
+                goToUserCallback<T>(result, usercallback);
+            }
+            else
+            {
+                List<object> result = new List<object>();
+                string jsonString = "[0, \"Channel Not Subscribed\"]";
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result.Add(channel.Replace("-pnpres", ""));
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
+                }
+                goToUserCallback<T>(result, usercallback);
+            }
+        }
+
         public bool here_now(string channel, Action<object> usercallback)
         {
             if (string.IsNullOrWhiteSpace(channel))
@@ -1035,6 +1590,28 @@ namespace PubNub_Messaging
             return _urlRequest(url, ResponseType.Here_Now, usercallback, false);
         }
 
+        public bool here_now<T>(string channel, Action<T> usercallback)
+        {
+            if (string.IsNullOrWhiteSpace(channel))
+            {
+                throw new ArgumentException("Missing Channel");
+            }
+
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
+            Thread.Sleep(2000);
+
+            List<string> url = new List<string>();
+
+            url.Add("v2");
+            url.Add("presence");
+            url.Add("sub_key");
+            url.Add(this.SUBSCRIBE_KEY);
+            url.Add("channel");
+            url.Add(channel);
+
+            return _urlRequest<T>(url, ResponseType.Here_Now, usercallback, false);
+        }
+
         /**
          * Time
          * 
@@ -1053,6 +1630,19 @@ namespace PubNub_Messaging
             url.Add("0");
 
             return _urlRequest(url, ResponseType.Time, usercallback, false);
+        }
+
+        public bool time<T>(Action<T> usercallback)
+        {
+            List<string> url = new List<string>();
+
+            ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
+            Thread.Sleep(2000);
+
+            url.Add("time");
+            url.Add("0");
+
+            return _urlRequest<T>(url, ResponseType.Time, usercallback, false);
         }
         /**
          * Http Get Request
@@ -1357,6 +1947,224 @@ namespace PubNub_Messaging
             }
         }
 
+        private bool _urlRequest<T>(List<string> url_components, ResponseType type, Action<T> usercallback, bool reconnect)
+        {
+            List<object> result = new List<object>();
+            string channelName = getChannelName(url_components, type);
+
+            StringBuilder url = new StringBuilder();
+
+            // Add Origin To The Request
+            url.Append(this.ORIGIN);
+
+            // Generate URL with UTF-8 Encoding
+            foreach (string url_bit in url_components)
+            {
+                url.Append("/");
+                url.Append(_encodeURIcomponent(url_bit));
+            }
+
+            if (type == ResponseType.Presence || type == ResponseType.Subscribe)
+            {
+                url.Append("?uuid=");
+                url.Append(this.sessionUUID);
+            }
+
+            if (type == ResponseType.DetailedHistory)
+                url.Append(parameters);
+
+            // Temporary fail if string too long
+            if (url.Length > this.LIMIT)
+            {
+                result.Add(0);
+                result.Add("Message Too Long.");
+                // return result;
+            }
+
+            Uri requestUri = new Uri(url.ToString());
+
+            // Force canonical path and query
+            string paq = requestUri.PathAndQuery;
+            FieldInfo flagsFieldInfo = typeof(Uri).GetField("m_Flags", BindingFlags.Instance | BindingFlags.NonPublic);
+            ulong flags = (ulong)flagsFieldInfo.GetValue(requestUri);
+            flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
+            flagsFieldInfo.SetValue(requestUri, flags);
+
+
+            try
+            {
+                // Create Request
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUri);
+                request.Timeout = PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000;
+                if ((!_channelSubscription.ContainsKey(channelName) && type == ResponseType.Subscribe)
+                    || (!_channelPresence.ContainsKey(channelName) && type == ResponseType.Presence))
+                {
+                    if (appSwitch.TraceInfo)
+                    {
+                        Trace.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, request<T> aborted for channel={1}", DateTime.Now.ToString(), channelName));
+                    }
+                    request.Abort();
+                }
+
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Request<T>={1}", DateTime.Now.ToString(), requestUri.ToString()));
+                }
+
+                RequestState pubnubRequestState = new RequestState();
+                pubnubRequestState.request = request;
+                pubnubRequestState.channel = channelName;
+
+                if (type == ResponseType.Subscribe || type == ResponseType.Presence)
+                {
+                    _channelRequest.AddOrUpdate(channelName, pubnubRequestState, (key, oldState) => pubnubRequestState);
+                }
+
+                // Make request with the following inline Asynchronous callback
+                IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback((asynchronousResult) =>
+                {
+                    try
+                    {
+                        RequestState asynchRequestState = (RequestState)asynchronousResult.AsyncState;
+                        HttpWebRequest aRequest = (HttpWebRequest)asynchRequestState.request;
+                        if (aRequest != null)
+                        {
+                            using (HttpWebResponse aResponse = (HttpWebResponse)aRequest.EndGetResponse(asynchronousResult))
+                            {
+                                pubnubRequestState.response = aResponse;
+
+                                using (StreamReader streamReader = new StreamReader(aResponse.GetResponseStream()))
+                                {
+                                    // Deserialize the result
+                                    string jsonString = streamReader.ReadToEnd();
+                                    streamReader.Close();
+
+                                    heartBeatTimer.Change(
+                                        (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000,
+                                        (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000);
+
+                                    if (appSwitch.TraceInfo)
+                                    {
+                                        Trace.WriteLine(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channelName, type.ToString(), jsonString));
+                                    }
+
+                                    result = WrapResultBasedOnResponseType(type, jsonString, url_components, reconnect);
+                                }
+                                aResponse.Close();
+                            }
+                        }
+                        else
+                        {
+                            if (appSwitch.TraceInfo)
+                            {
+                                Trace.WriteLine(string.Format("DateTime {0}, Request aborted for channel={1}", DateTime.Now.ToString(), channelName));
+                            }
+                        }
+
+                        if (result != null && result.Count >= 1 && usercallback != null)
+                        {
+                            responseToUserCallback<T>(result, type, channelName, usercallback);
+                        }
+
+                        switch (type)
+                        {
+                            case ResponseType.Subscribe:
+                                subscribeInternalCallback<T>(result, usercallback);
+                                break;
+                            case ResponseType.Presence:
+                                presenceInternalCallback<T>(result, usercallback);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    catch (WebException webEx)
+                    {
+                        RequestState state = (RequestState)asynchronousResult.AsyncState;
+                        if (state.response != null)
+                            state.response.Close();
+
+                        if (appSwitch.TraceError)
+                        {
+                            Trace.WriteLine(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.Message, requestUri.ToString()));
+                        }
+                        if (type == ResponseType.Subscribe)
+                        {
+                            subscribeExceptionHandler<T>(channelName, usercallback, false);
+                        }
+                        else if (type == ResponseType.Presence)
+                        {
+                            presenceExceptionHandler<T>(channelName, usercallback, false);
+                        }
+                        else if (type == ResponseType.Publish)
+                        {
+                            publishExceptionHandler<T>(channelName, usercallback);
+                        }
+                        else if (type == ResponseType.Here_Now)
+                        {
+                            hereNowExceptionHandler<T>(channelName, usercallback);
+                        }
+                        else if (type == ResponseType.DetailedHistory)
+                        {
+                            detailedHistoryExceptionHandler<T>(channelName, usercallback);
+                        }
+                        else if (type == ResponseType.Time)
+                        {
+                            timeExceptionHandler<T>(usercallback);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        RequestState state = (RequestState)asynchronousResult.AsyncState;
+                        if (state.response != null)
+                            state.response.Close();
+
+                        if (appSwitch.TraceError)
+                        {
+                            Trace.WriteLine(string.Format("DateTime {0} Exception= {1} for URL: {2}", DateTime.Now.ToString(), ex.ToString(), requestUri.ToString()));
+                        }
+                        if (type == ResponseType.Subscribe)
+                        {
+                            subscribeExceptionHandler<T>(channelName, usercallback, false);
+                        }
+                        else if (type == ResponseType.Presence)
+                        {
+                            presenceExceptionHandler<T>(channelName, usercallback, false);
+                        }
+                        else if (type == ResponseType.Publish)
+                        {
+                            publishExceptionHandler<T>(channelName, usercallback);
+                        }
+                        else if (type == ResponseType.Here_Now)
+                        {
+                            hereNowExceptionHandler<T>(channelName, usercallback);
+                        }
+                        else if (type == ResponseType.DetailedHistory)
+                        {
+                            detailedHistoryExceptionHandler<T>(channelName, usercallback);
+                        }
+                        else if (type == ResponseType.Time)
+                        {
+                            timeExceptionHandler<T>(usercallback);
+                        }
+                    }
+
+                }), pubnubRequestState);
+
+                ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
+
+                return true;
+            }
+            catch (System.Exception ex)
+            {
+                if (appSwitch.TraceError)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0} Exception={1}", DateTime.Now.ToString(), ex.ToString()));
+                }
+                return false;
+            }
+        }
+
         /* COPY OF _request method END  */
 
         private void responseToUserCallback(List<object> result, ResponseType type, string channelName, Action<object> usercallback)
@@ -1407,6 +2215,72 @@ namespace PubNub_Messaging
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void responseToUserCallback<T>(List<object> result, ResponseType type, string channelName, Action<T> usercallback) //where T:  class//, new()
+        {
+            switch (type)
+            {
+                case ResponseType.Subscribe:
+                    object[] msgs = result[0] as object[];
+                    if (msgs != null && msgs.Length > 0 && _channelSubscription.ContainsKey(channelName))
+                    {
+                        goToUserCallback<T>(result, usercallback);
+                        removeChannelRequest(channelName);
+                    }
+                    break;
+                case ResponseType.Presence:
+                    object[] msgp = result[0] as object[];
+                    if (msgp != null && msgp.Length > 0 && _channelPresence.ContainsKey(channelName))
+                    {
+                        List<object> dupResult = result.GetRange(0, result.Count);
+                        dupResult[2] = ((string)dupResult[2]).Replace("-pnpres", "");
+
+                        goToUserCallback<T>(dupResult, usercallback);
+                        removeChannelRequest(channelName);
+                    }
+                    break;
+                case ResponseType.Publish:
+                    if (result != null && result.Count > 0)
+                    {
+                        goToUserCallback<T>(result, usercallback);
+                    }
+                    break;
+                case ResponseType.DetailedHistory:
+                    if (result != null && result.Count > 0)
+                    {
+                        goToUserCallback<T>(result, usercallback);
+                    }
+                    break;
+                case ResponseType.Here_Now:
+                    if (result != null && result.Count > 0)
+                    {
+                        goToUserCallback<T>(result, usercallback);
+                    }
+                    break;
+                case ResponseType.Time:
+                    if (result != null && result.Count > 0)
+                    {
+                        goToUserCallback<T>(result, usercallback);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void jsonResponseToUserCallback<T>(List<object> result, Action<T> usercallback)
+        {
+            string usercallbackJSON = "";
+
+            if (typeof(T) == typeof(string))
+            {
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                usercallbackJSON = jS.Serialize(result);
+
+                Action<string> castUserCallback = usercallback as Action<string>;
+                castUserCallback(usercallbackJSON);
             }
         }
 
@@ -1469,6 +2343,50 @@ namespace PubNub_Messaging
             }
         }
 
+        private void subscribeExceptionHandler<T>(string channelName, Action<T> usercallback, bool reconnectTry)
+        {
+            if (reconnectTry)
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, MAX retries reached. Exiting the subscribe for channel = {1}", DateTime.Now.ToString(), channelName));
+                }
+
+                unsubscribe(channelName, null);
+
+                List<object> errorResult = new List<object>();
+                string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", PUBNUB_NETWORK_CHECK_RETRIES);
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                errorResult = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                errorResult.Add(channelName);
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString));
+                }
+                if (usercallback != null)
+                {
+                    usercallback((T)(IList)errorResult.AsReadOnly());
+                }
+            }
+            else
+            {
+                List<object> result = new List<object>();
+                result.Add("0");
+                if (_subscribeMsg.ContainsKey(channelName))
+                {
+                    List<object> lastResult = _subscribeMsg[channelName] as List<object>;
+                    result.Add((lastResult != null) ? lastResult[1] : "0"); //get last timetoken
+                }
+                else
+                {
+                    result.Add("0"); //timetoken
+                }
+                result.Add(channelName); //send channel name
+
+                subscribeInternalCallback<T>(result, usercallback);
+            }
+        }
+
         private void presenceExceptionHandler(string channelName, Action<object> usercallback, bool reconnectTry)
         {
             if (reconnectTry)
@@ -1513,6 +2431,50 @@ namespace PubNub_Messaging
             }
         }
 
+        private void presenceExceptionHandler<T>(string channelName, Action<T> usercallback, bool reconnectTry)
+        {
+            if (reconnectTry)
+            {
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, MAX retries reached. Exiting the presence<T> for channel = {1}", DateTime.Now.ToString(), channelName));
+                }
+
+                presence_unsubscribe(channelName.Replace("-pnpres", ""), null);
+
+                List<object> errorResult = new List<object>();
+                string jsonString = string.Format("[0, \"Presence-unsubscribed after {0} failed retries\"]", PUBNUB_NETWORK_CHECK_RETRIES);
+                JavaScriptSerializer jS = new JavaScriptSerializer();
+                errorResult = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                errorResult.Add(channelName);
+                if (appSwitch.TraceInfo)
+                {
+                    Trace.WriteLine(string.Format("DateTime {0}, Presence<T> JSON network error response={1}", DateTime.Now.ToString(), jsonString));
+                }
+                if (usercallback != null)
+                {
+                    usercallback((T)(IList)errorResult.AsReadOnly());
+                }
+            }
+            else
+            {
+                List<object> result = new List<object>();
+                result.Add("0");
+                if (_presenceMsg.ContainsKey(channelName))
+                {
+                    List<object> lastResult = _presenceMsg[channelName] as List<object>;
+                    result.Add((lastResult != null) ? lastResult[1] : "0"); //get last timetoken
+                }
+                else
+                {
+                    result.Add("0"); //timetoken
+                }
+                result.Add(channelName); //send channel name
+
+                presenceInternalCallback<T>(result, usercallback);
+            }
+        }
+
         private void publishExceptionHandler(string channelName, Action<object> usercallback)
         {
             List<object> result = new List<object>();
@@ -1528,6 +2490,20 @@ namespace PubNub_Messaging
             {
                 usercallback(result.AsReadOnly());
             }
+        }
+
+        private void publishExceptionHandler<T>(string channelName, Action<T> usercallback)
+        {
+            List<object> result = new List<object>();
+            string jsonString = "[0, \"Network connnect error\"]";
+            JavaScriptSerializer jS = new JavaScriptSerializer();
+            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            result.Add(channelName);
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, JSON publish response={1}", DateTime.Now.ToString(), jsonString));
+            }
+            goToUserCallback<T>(result, usercallback);
         }
 
         private void hereNowExceptionHandler(string channelName, Action<object> usercallback)
@@ -1547,6 +2523,20 @@ namespace PubNub_Messaging
             }
         }
 
+        private void hereNowExceptionHandler<T>(string channelName, Action<T> usercallback)
+        {
+            List<object> result = new List<object>();
+            string jsonString = "[0, \"Network connnect error\"]";
+            JavaScriptSerializer jS = new JavaScriptSerializer();
+            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            result.Add(channelName);
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, JSON here_now response={1}", DateTime.Now.ToString(), jsonString));
+            }
+            goToUserCallback<T>(result, usercallback);
+        }
+
         private void detailedHistoryExceptionHandler(string channelName, Action<object> usercallback)
         {
             List<object> result = new List<object>();
@@ -1564,6 +2554,20 @@ namespace PubNub_Messaging
             }
         }
 
+        private void detailedHistoryExceptionHandler<T>(string channelName, Action<T> usercallback)
+        {
+            List<object> result = new List<object>();
+            string jsonString = "[0, \"Network connnect error\"]";
+            JavaScriptSerializer jS = new JavaScriptSerializer();
+            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            result.Add(channelName);
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, JSON detailedHistoryExceptionHandler response={1}", DateTime.Now.ToString(), jsonString));
+            }
+            goToUserCallback<T>(result, usercallback);
+        }
+
         private void timeExceptionHandler(Action<object> usercallback)
         {
             List<object> result = new List<object>();
@@ -1578,6 +2582,19 @@ namespace PubNub_Messaging
             {
                 usercallback(result.AsReadOnly());
             }
+        }
+
+        private void timeExceptionHandler<T>(Action<T> usercallback)
+        {
+            List<object> result = new List<object>();
+            string jsonString = "[0, \"Network connnect error\"]";
+            JavaScriptSerializer jS = new JavaScriptSerializer();
+            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            if (appSwitch.TraceInfo)
+            {
+                Trace.WriteLine(string.Format("DateTime {0}, JSON timeExceptionHandler response={1}", DateTime.Now.ToString(), jsonString));
+            }
+            goToUserCallback<T>(result, usercallback);
         }
 
         /// <summary>
@@ -1682,6 +2699,20 @@ namespace PubNub_Messaging
             return result;
         }
 
+        private void goToUserCallback<T>(List<object> result, Action<T> usercallback)
+        {
+            if (usercallback != null)
+            {
+                if (typeof(T) == typeof(string))
+                {
+                    jsonResponseToUserCallback(result, usercallback);
+                }
+                else
+                {
+                    usercallback((T)(IList)result.AsReadOnly());
+                }
+            }
+        }
         /// <summary>
         /// Retrieves the channel name from the url components
         /// </summary>
@@ -2420,14 +3451,22 @@ namespace PubNub_Messaging
             }
             else
             {
-                ICryptoTransform decrypto = aesEncryption.CreateDecryptor();
-                //decode
-                byte[] decryptedBytes = Convert.FromBase64CharArray(plainStr.ToCharArray(), 0, plainStr.Length);
-                //byte[] decryptedBytes = Convert.FromBase64String(plainStr);
-                //decrypt
-                string strDecrypted = System.Text.Encoding.ASCII.GetString(decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length));
+                try
+                {
+                    ICryptoTransform decrypto = aesEncryption.CreateDecryptor();
+                    //decode
+                    byte[] decryptedBytes = Convert.FromBase64CharArray(plainStr.ToCharArray(), 0, plainStr.Length);
+                    //byte[] decryptedBytes = Convert.FromBase64String(plainStr);
+                    //decrypt
+                    string strDecrypted = System.Text.Encoding.ASCII.GetString(decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length));
 
-                return strDecrypted;
+                    return strDecrypted;
+                }
+                catch
+                {
+                    //throw new CryptographicException("Decrypt Failed",ex);
+                    return "**DECRYPT ERROR**";
+                }
             }
         }
 
@@ -2491,13 +3530,29 @@ namespace PubNub_Messaging
         DetailedHistory,
     }
 
-
     internal class ReconnectState
     {
         public int retryNum;
         public string channel;
         public ResponseType type;
         public Action<object> callback;
+        public object timetoken;
+
+        public ReconnectState()
+        {
+            retryNum = 0;
+            channel = "";
+            callback = null;
+            timetoken = null;
+        }
+    }
+
+    internal class ReconnectState<T>
+    {
+        public int retryNum;
+        public string channel;
+        public ResponseType type;
+        public Action<T> callback;
         public object timetoken;
 
         public ReconnectState()
