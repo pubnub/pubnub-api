@@ -1,8 +1,3 @@
-/**
- * Author: WikiFlashed
- * Released under: MIT or whatever license allowed by PubNub.
- * Use of this file at your own risk. WikiFlashed holds no responsibility or liability to what you do with this.
- */
 package com.pubnub {
 	
 	import com.pubnub.operation.*;
@@ -11,13 +6,7 @@ package com.pubnub {
 	import flash.events.*;
 	import flash.utils.*;
 	
-	/**
-	 * PubNub Static Class
-	 * 
-	 * This should allow creating threads of listeners to each individual channel
-	 * 
-	 * @author Fan
-	 */
+
 	[Event(name="initError", type="com.pubnub.PnEvent")]
 	[Event(name="init", type="com.pubnub.PnEvent")]
 	public class Pn extends EventDispatcher {

@@ -7,12 +7,12 @@ package {
 
 	
 
-	public class PnTest extends Sprite {
+	public class PubNubAS3Example extends Sprite {
 
 		private var channel:String = 'hello_world';
 		private var channel2:String = 'another_world';
 		
-		public function PnTest():void {
+		public function PubNubAS3Example():void {
 			super();
 			init();
 		}
