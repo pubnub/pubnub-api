@@ -12,8 +12,7 @@
         import flash.external.*;
 
         [Bindable]
-        public var channel:String = 'my_snz';
-        //public var channel:String = 'hello_world';
+        public var channel:String = 'hello_world';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';

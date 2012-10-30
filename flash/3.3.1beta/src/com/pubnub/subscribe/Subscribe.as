@@ -37,9 +37,9 @@ package com.pubnub.subscribe {
 		private function init():void {
 			operations = new Dictionary();
 			netMonitor = new NetMon();
-			netMonitor.reconnectDelay = Settings.RECONNECT_DELAY;
-			netMonitor.forceReconnectDelay = Settings.FORCE_RECONNECT_DELAY;
-			netMonitor.maxForceReconnectRetries = Settings.MAX_FORCE_RECONNECT_RETRIES;
+			netMonitor.reconnectDelay = Settings.CONNECTION_HEARTBEAT_INTERVAL;
+			netMonitor.forceReconnectDelay = Settings.RECONNECT_HEARTBEAT_TIMEOUT;
+			netMonitor.maxForceReconnectRetries = Settings.MAX_RECONNECT_RETRIES;
 			netMonitor.addEventListener(NetMonEvent.HTTP_ENABLE, onNetMonitorHTTPEnable);
 			netMonitor.addEventListener(NetMonEvent.HTTP_DISABLE, onNetMonitorHTTPDisable);
 			netMonitor.addEventListener(NetMonEvent.MAX_RETRIES, onNetMonitorMaxRetries);
