@@ -57,6 +57,11 @@ CEPubnub *pubnub;
     [pubnub subscribe: _channel];
 }
 
+- (void) presence
+{
+    [pubnub presence: _channel];
+}
+
 - (void) unsubscribe
 {
     [pubnub unsubscribeFromChannel: _channel];
@@ -127,6 +132,11 @@ CEPubnub *pubnub;
 
 - (void)pubnub:(CEPubnub *)pubnub reconnectToChannel:(NSString *)channel{
     NSLog(@"Re-Connect to Channel:   %@",channel);
+}
+
+- (void)pubnub:(CEPubnub *)pubnub presence:(NSDictionary *)message onChannel:(NSString *)channel
+{
+    NSLog(@"channel:%@   \npresence-   %@",channel,message);
 }
 
 /*HERE NOW callback*/

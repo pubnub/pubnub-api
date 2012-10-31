@@ -26,6 +26,7 @@
 - (IBAction)unsubscribe_81_test:(id)sender;
 - (IBAction)here_now_81_test:(id)sender;
 - (IBAction)uuid_81_test:(id)sender;
+- (IBAction) presence_81_test:(id)sender;
 
 
 @end

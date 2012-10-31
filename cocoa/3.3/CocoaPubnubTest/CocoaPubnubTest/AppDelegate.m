@@ -59,6 +59,11 @@
 - (IBAction)subscribe_CL_81_test:(id)sender{
     [cl_81_test subscribe];
 }
+
+- (IBAction) presence_81_test:(id)sender {
+    [cl_81_test presence];
+}
+
 - (IBAction)unsubscribe_81_test:(id)sender {
     [cl_81_test unsubscribe];
 }

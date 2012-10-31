@@ -16,6 +16,7 @@
 - (void) getTime;
 - (void) getUUID;
 - (void) subscribe;
+- (void) presence;
 - (void) unsubscribe;
 - (void) here_now;
 
