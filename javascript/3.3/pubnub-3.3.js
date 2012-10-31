@@ -923,7 +923,7 @@ var PDIV          = $('pubnub') || {}
             if (!channel)  return log('Missing Channel');
             if (!callback) return log('Missing Callback');
             
-            data = null;
+            data = {};
             if (jsonp != '0') { data['callback']=jsonp; }
             
             // Send Message
