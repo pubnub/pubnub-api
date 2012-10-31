@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
   s.files = [
     "lib/pubnub.rb",
     "lib/pubnub_crypto.rb",
-    "lib/pubnub_deferrable.rb",
     "lib/pubnub_request.rb"
   ]
   s.homepage = "http://github.com/pubnub/pubnub-api"

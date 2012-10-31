@@ -15,9 +15,9 @@ require 'uri'
 
 require 'pubnub_crypto'
 require 'pubnub_request'
-require 'pubnub_deferrable'
 
 require 'eventmachine'
+require 'em-http-request'
 require 'yajl'
 require 'uuid'
 require 'active_support/core_ext/hash/indifferent_access'
@@ -274,9 +274,8 @@ class Pubnub
     Thread.new{
       begin
 
-        conn = PubnubDeferrable.new(request.url)
-        conn.pubnub_request = request
-        req = conn.get(:keepalive => true, :timeout=> 310) #client times out in 310s unless the server returns or timeout first
+        conn = EM::HttpRequest.new(request.url, :inactivity_timeout => 310)#client times out in 310s unless the server returns or timeout first
+        req = conn.get()
 
         req.errback{
           if req.response.blank?
