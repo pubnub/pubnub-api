@@ -20,21 +20,15 @@ namespace PubNubTest
                 false
             );
             
-            bool responseStatus = false;
-
             string strResponse = "";
-            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e) {
-                if (e.PropertyName == "Time") {
-                    strResponse = ((Pubnub)sender).Time[0].ToString();
+            Common.deliveryStatus = false;
 
-                    responseStatus = true;
-                }
-            };
+            pubnub.time(Common.DisplayReturnMessage);
+            while (!Common.deliveryStatus) ;
 
-            pubnub.time();
-            while (!responseStatus);
-
-            Console.WriteLine (strResponse);
+            IList<object> fields = Common.objResponse as IList<object>;
+            strResponse = fields[0].ToString();
+            Console.WriteLine(strResponse);
             Assert.AreNotEqual("0",strResponse);
         }
 

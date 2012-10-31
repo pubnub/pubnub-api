@@ -86,8 +86,14 @@ namespace PubNubTest
             string message = "Pubnub API Usage Example";
 
             //pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
-
-            pubnub.PUBLISH_KEY = "demo";
+            pubnub = new Pubnub(
+                "demo",
+                "demo",
+                "",
+                "",
+                false
+            );
+            //pubnub.PUBLISH_KEY = "demo";
             Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
 
         }
@@ -106,6 +112,8 @@ namespace PubNubTest
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
+            //pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
+
             Assert.AreEqual(false, pubnub.publish(channel, message, Common.DisplayReturnMessage));
         }
 
@@ -122,8 +130,12 @@ namespace PubNubTest
             //pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
 
             Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
-
-            pubnub.SECRET_KEY = "key";
+            pubnub = new Pubnub(
+                "demo",
+                "demo",
+                "key"
+            );
+            //pubnub.SECRET_KEY = "key";
             Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
         }
 
