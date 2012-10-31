@@ -66,9 +66,9 @@ body, div, img {
     font-weight: 800;
 }
 #performance-medians {
-    border-top: 1px solid rgba(0,0,0,0.1);
     margin-top: 10px;
-    padding-top: 20px;
+    margin-bottom: 10px;
+    padding-top: 10px;
     width: 640px;
     color: #615c57;
     text-shadow: 0px 1px 2px #fff;
@@ -76,15 +76,43 @@ body, div, img {
     font-family: Exo;
     font-size: 22px;
     font-weight: 100;
+    border-radius: 3px;
+    background: #ebe7d5;
 }
 .strong {
     font-family: Exo;
     font-weight: 800;
 }
 .fastest {
-    color: #4e9a06;
+    color: #b8a665;
 }
 .slowest {
-    color: #ce5c00;
-    color: #4e9a06;
+    color: #cfc5a1;
 }
+#performance-sent {
+    position: absolute;
+    top: 6px;
+    left: 0px;
+
+    border-top: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 640px;
+    color: #615c57;
+    background: rgba(255,255,255,0.2);
+    text-shadow: 0px 1px 5px rgba(0,0,0,0.4);
+    text-align: center;
+    font-family: Exo;
+    font-size: 22px;
+    font-weight: 100;
+}
+
+#performance-graph {
+    border-top: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    width: 640px;
+    height: 50px;
+}
+
