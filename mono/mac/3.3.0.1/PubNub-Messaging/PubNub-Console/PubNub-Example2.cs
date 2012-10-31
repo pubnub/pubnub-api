@@ -13,12 +13,12 @@ namespace PubNubConsole
         static public bool deliveryStatus = false;
         static public string channel = "my_channel";
         static public string message = "Pubnub API Usage Example - Publish";
-		static public Dictionary<long, string> inputs = new Dictionary<long, string>();
+        static public Dictionary<long, string> inputs = new Dictionary<long, string>();
         static public object objResponse = null;
 
         public static void TestEncryptedDetailedHistoryParams()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -29,13 +29,12 @@ namespace PubNubConsole
             int total_msg = 10;
             long starttime = Timestamp(pubnub);
             
-            
             for (int i = 0; i < total_msg / 2; i++)
             {
-				deliveryStatus = false;
+                deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, DisplayReturnMessage);
-				while (!deliveryStatus) ;
+                while (!deliveryStatus) ;
                 //long t = Timestamp();
                 //inputs.Add(t, msg);
                 Console.WriteLine("Message # " + i.ToString() + " published");
@@ -44,10 +43,10 @@ namespace PubNubConsole
             long midtime = Timestamp(pubnub);
             for (int i = total_msg / 2; i < total_msg; i++)
             {
-				deliveryStatus = false;
+                deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, DisplayReturnMessage);
-				while (!deliveryStatus) ;
+                while (!deliveryStatus) ;
                 //long t = Timestamp();
                 //inputs.Add(t, msg);
                 Console.WriteLine("Message # " + i.ToString() + " published");
@@ -85,27 +84,27 @@ namespace PubNubConsole
 
 
         public static long Timestamp (Pubnub pubnub)
-		{
-			deliveryStatus = false;
+        {
+            deliveryStatus = false;
 
             pubnub.time(DisplayReturnMessage);
             while (!deliveryStatus) ;
             string strResponse = "";
 
-			IList<object> fields = objResponse as IList<object>;
+            IList<object> fields = objResponse as IList<object>;
             return Convert.ToInt64(fields[0].ToString());
         }
 
         public static void TestUnencryptedHistory()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
                     "enigma",
                     false);
             //pubnub.CIPHER_KEY = "";
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 /*if (e.PropertyName == "Publish")
@@ -133,7 +132,7 @@ namespace PubNubConsole
 
         public static void TestEncryptedHistory()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -157,11 +156,11 @@ namespace PubNubConsole
                     MessageFeeder(((Pubnub)sender).History);
                 }
             };
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.publish(channel, message, DisplayReturnMessage);
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** Publish *********** ");
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.history(channel, 1);
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** History *********** ");
@@ -169,7 +168,7 @@ namespace PubNubConsole
 
         public static void TestUnencryptedDetailedHistory()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -182,7 +181,7 @@ namespace PubNubConsole
             Dictionary<long, string> inputs = new Dictionary<long,string>();
             for (int i = 0; i < total_msg / 2; i++)
             {
-				deliveryStatus = false;
+                deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, DisplayReturnMessage);
                 long t = Timestamp(pubnub);
@@ -193,7 +192,7 @@ namespace PubNubConsole
             long midtime = Timestamp(pubnub);
             for (int i = total_msg / 2; i < total_msg; i++)
             {
-				deliveryStatus = false;
+                deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, DisplayReturnMessage);
                 long t = Timestamp(pubnub);
@@ -209,7 +208,7 @@ namespace PubNubConsole
                 /*if (e.PropertyName == "DetailedHistory")
                 {
                     Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
-					//modified object[] to List<object>
+                    //modified object[] to List<object>
                     foreach (object msg_org in (List<object>)((Pubnub)sender).DetailedHistory)
                     {
                         Console.WriteLine(msg_org.ToString());
@@ -224,7 +223,7 @@ namespace PubNubConsole
 
         public static void TestEncryptedDetailedHistory()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -276,7 +275,7 @@ namespace PubNubConsole
 
         public static void TestUnencryptedDetailedHistoryParams()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -289,7 +288,7 @@ namespace PubNubConsole
             Dictionary<long, string> inputs = new Dictionary<long, string>();
             for (int i = 0; i < total_msg / 2; i++)
             {
-				deliveryStatus = false;
+                deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, DisplayReturnMessage);
                 long t = Timestamp(pubnub);
@@ -300,7 +299,7 @@ namespace PubNubConsole
             long midtime = Timestamp(pubnub);
             for (int i = total_msg / 2; i < total_msg; i++)
             {
-				deliveryStatus = false;
+                deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, DisplayReturnMessage);
                 long t = Timestamp(pubnub);
@@ -316,7 +315,7 @@ namespace PubNubConsole
                 if (e.PropertyName == "DetailedHistory")
                 {
                     Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
-					//modified object[] to List<object>
+                    //modified object[] to List<object>
                     /*foreach (object msg_org in (List<object>)((Pubnub)sender).DetailedHistory)
                     {
                         Console.WriteLine(msg_org.ToString());
@@ -368,7 +367,7 @@ namespace PubNubConsole
 
         public static void Publish_Example()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -386,7 +385,7 @@ namespace PubNubConsole
                         );*/
                 }
             };
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.publish(channel, message, DisplayReturnMessage);
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** Publish *********** ");
@@ -394,7 +393,7 @@ namespace PubNubConsole
         
         public static void DetailedHistory_Example()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -411,7 +410,7 @@ namespace PubNubConsole
                     deliveryStatus = true;*/
                 }
             };
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.detailedHistory(channel, 10, DisplayReturnMessage);
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
@@ -419,7 +418,7 @@ namespace PubNubConsole
 
         public static void DetailedHistory_Decrypted_Example()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -436,7 +435,7 @@ namespace PubNubConsole
                     deliveryStatus = true;*/
                 }
             };
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.detailedHistory(channel, 1, DisplayReturnMessage);
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
@@ -444,7 +443,7 @@ namespace PubNubConsole
 
         static void Timestamp_Example()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -460,13 +459,13 @@ namespace PubNubConsole
                 }
             };
             //pubnub.time();
-			deliveryStatus = false;
+            deliveryStatus = false;
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** Timestamp *********** ");
         }
         public static void Subscribe_Example()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -479,7 +478,7 @@ namespace PubNubConsole
                 {
                     Console.WriteLine("\n********** Subscribe Messages ********** ");
                     MessageFeeder(((Pubnub)sender).ReturnMessage);
-       			}
+                   }
                 //added Roger
                 else if (e.PropertyName == "Subscribe")
                 {
@@ -487,7 +486,7 @@ namespace PubNubConsole
                     MessageFeeder(((Pubnub)sender).Subscribe);
                 }*/
             };
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.subscribe(channel, DisplayReturnMessage);
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** Subscribe*********** ");
@@ -495,7 +494,7 @@ namespace PubNubConsole
 
         public static void Presence_Example()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
@@ -516,7 +515,7 @@ namespace PubNubConsole
                     MessageFeeder(((Pubnub)sender).Presence);
                 }*/
             };
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.presence(channel, DisplayReturnMessage);
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** Presence *********** ");
@@ -524,14 +523,14 @@ namespace PubNubConsole
 
         public static void HereNow_Example()
         {
-			Pubnub pubnub = new Pubnub(
+            Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
                     "",
                     false);
             //pubnub.CIPHER_KEY = "";
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "Here_Now")
@@ -545,7 +544,7 @@ namespace PubNubConsole
                     Console.WriteLine("Occupancy: " + _message["occupancy"].ToString());*/
                 }
             };
-			deliveryStatus = false;
+            deliveryStatus = false;
             pubnub.here_now(channel, DisplayReturnMessage);
             while (!deliveryStatus) ;
             Console.WriteLine("\n*********** Here Now *********** ");
@@ -590,7 +589,7 @@ namespace PubNubConsole
             }
         }
 
- 		static void DisplayReturnMessage(object result)
+         static void DisplayReturnMessage(object result)
         {
             IList<object> message = result as IList<object>;
 
@@ -655,7 +654,7 @@ namespace PubNubConsole
                 Console.WriteLine(result.ToString());
             }
 
-        }		
-	}
+        }        
+    }
 }
 
