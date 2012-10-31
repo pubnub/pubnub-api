@@ -1,4 +1,5 @@
 using System;
+using PubNub_Messaging;
 
 namespace PubNubConsole
 {
@@ -6,9 +7,17 @@ namespace PubNubConsole
 	{
 		public static void Main (string[] args)
 		{
+			//DetailedHistory_Example.DetailedHistoryCountDemo();
+			//Here_Now_Example.Here_Now_Demo();
+			//Presence_Example.PresenceDemo();
+			//PresenceUnsubscribe_Example.PresenceUnsubscribeDemo();
+			//Subscribe_Example.SecureSubscribeDemo();
+			//Subscribe_Example.SubscribeDemo();
+			//Publish_Example.PublishDemo();
+
 			//Console.WriteLine ("Hello World!");
-			Pubnub_Example.Main2();
-			//Pubnub_Example2.TestEncryptedDetailedHistoryParams();
+			//Pubnub_Example.Main2();
+			Pubnub_Example2.TestEncryptedDetailedHistoryParams();
 
             //Subscribe Example
             //Pubnub_Example2.Subscribe_Example(); //no response

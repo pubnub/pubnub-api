@@ -58,11 +58,11 @@ namespace PubNubTest
                     "demo",
                     "demo",
                     "",
-                    "",
+                    "enigma",
                     false);
             string channel = "my_channel";
 
-            pubnub.CIPHER_KEY = "enigma";
+            //pubnub.CIPHER_KEY = "enigma";
             int total_msg = 10;
             long starttime = Common.Timestamp(pubnub);
             
@@ -178,7 +178,7 @@ namespace PubNubTest
                     "",
                     false);
             string channel = "my_channel";
-            pubnub.CIPHER_KEY = "";
+            //pubnub.CIPHER_KEY = "";
             int total_msg = 10;
             long starttime = Common.Timestamp(pubnub);
             Dictionary<long, string> inputs = new Dictionary<long,string>();
@@ -240,10 +240,10 @@ namespace PubNubTest
                     "demo",
                     "demo",
                     "",
-                    "",
+                    "enigma",
                     false);
             string channel = "my_channel";
-            pubnub.CIPHER_KEY = "enigma";
+            //pubnub.CIPHER_KEY = "enigma";
 
             int total_msg = 10;
             long starttime = Common.Timestamp(pubnub);
@@ -306,7 +306,7 @@ namespace PubNubTest
                     "",
                     false);
             string channel = "my_channel";
-            pubnub.CIPHER_KEY = "";
+            //pubnub.CIPHER_KEY = "";
             int total_msg = 10;
             long starttime = Common.Timestamp(pubnub);
             Dictionary<long, string> inputs = new Dictionary<long, string>();
@@ -419,7 +419,7 @@ namespace PubNubTest
                     "",
                     false);
             string channel = "my_channel";
-            pubnub.CIPHER_KEY = "";
+            //pubnub.CIPHER_KEY = "";
             string msg = "Test Message";
             Common.deliveryStatus = false;
             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
@@ -454,10 +454,10 @@ namespace PubNubTest
                     "demo",
                     "demo",
                     "",
-                    "",
+                    "enigma",
                     false);
             string channel = "my_channel";
-            pubnub.CIPHER_KEY = "enigma";
+            //pubnub.CIPHER_KEY = "enigma";
             string msg = "Test Message";
 
             Common.deliveryStatus = false;

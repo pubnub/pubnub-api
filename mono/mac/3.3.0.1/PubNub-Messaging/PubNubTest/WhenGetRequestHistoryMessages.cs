@@ -65,7 +65,7 @@ namespace PubNubTest
                     "",
                     false);
             string channel = "my_channel";
-            pubnub.CIPHER_KEY = "";
+            //pubnub.CIPHER_KEY = "";
 
             Common.deliveryStatus = false;
             string message = "Pubnub API Usage Example - Publish";
@@ -100,13 +100,13 @@ namespace PubNubTest
                     "demo",
                     "demo",
                     "",
-                    "",
+                    "enigma",
                     false);
             string channel = "my_channel";
 
             Common.deliveryStatus = false;
             string message = "Pubnub API Usage Example - Publish";
-            pubnub.CIPHER_KEY = "enigma";
+            //pubnub.CIPHER_KEY = "enigma";
 
             pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {

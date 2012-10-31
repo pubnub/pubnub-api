@@ -1,16 +1,31 @@
-using System;
-using PubNubLib;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using PubNubLib;
 
-namespace PubNubTest
+namespace PubNub_Messaging
 {
-  public class Common
-  {
-      static public object objResponse = null;
-      static public bool deliveryStatus = false;
+    internal static class Here_Now_Example
+    {
+        internal static void Here_Now_Demo()
+        {
+            Pubnub pubnub = new Pubnub(
+                        "demo",
+                        "demo",
+                        "",
+                        "",
+                        false);
 
-      public static void DisplayReturnMessage(object result)
+            string channel = "my_channel";
+
+            Console.WriteLine("Here_Now_Example");
+
+            pubnub.here_now(channel, DisplayReturnMessage);
+
+        }
+
+        static void DisplayReturnMessage(object result)
         {
             IList<object> message = result as IList<object>;
 
@@ -25,8 +40,6 @@ namespace PubNubTest
             {
                 Console.WriteLine("unable to parse data");
             }
-            deliveryStatus = true;
-            objResponse = result;
         }
 
         static void ParseObject(object result, int loop)
@@ -47,10 +60,6 @@ namespace PubNubTest
                             ParseObject(item, loop + 1);
                         }
                     }
-                    else
-                    {
-                        ParseObject(item, loop + 1);
-                    }
                 }
             }
             else if (result.GetType().IsGenericType && (result.GetType().Name == typeof(Dictionary<,>).Name))
@@ -70,22 +79,7 @@ namespace PubNubTest
                     }
                 }
             }
-            else
-            {
-                Console.WriteLine(result.ToString());
-            }
+
         }
-
-        public static long Timestamp(Pubnub pubnub)
-        {
-            deliveryStatus = false;
-
-            pubnub.time(DisplayReturnMessage);
-            while (!deliveryStatus) ;
-
-            IList<object> fields = objResponse as IList<object>;
-            return Convert.ToInt64(fields[0].ToString());
-        }
-  }
+    }
 }
-

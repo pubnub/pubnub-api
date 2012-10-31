@@ -45,6 +45,12 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="PubNub-Example.cs" />
     <Compile Include="PubNub-Example2.cs" />
+    <Compile Include="DetailedHistory_Example.cs" />
+    <Compile Include="Here_Now_Example.cs" />
+    <Compile Include="Presence_Example.cs" />
+    <Compile Include="PresenceUnsubscribe_Example.cs" />
+    <Compile Include="Subscribe_Example.cs" />
+    <Compile Include="Publish_Example.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -52,5 +58,8 @@
       <Project>{9C21E9C5-6F22-4A30-B4BA-E7A94E26710E}</Project>
       <Name>PubNubLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
 </Project>
