@@ -13,7 +13,7 @@
 #import "UnitTest/Catch_Up_UnitTest.h"
 
 @implementation AppDelegate
-
+@synthesize window;
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
