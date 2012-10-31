@@ -423,13 +423,13 @@ namespace PubNubLib
             ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
             Thread.Sleep(2000);
 
-			//commented for monomac
+            //commented for monomac
             //string msg = jsonEncodePublishMsg(message);
-			//end changes for monomac
+            //end changes for monomac
 
-			//Added for monomac
-			JavaScriptSerializer ser = new JavaScriptSerializer();
-			//end changes for monomac
+            //Added for monomac
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+            //end changes for monomac
 
             // Generate String to Sign
             string signature = "0";
@@ -450,7 +450,7 @@ namespace PubNubLib
                     //end changes for monomac
 
                     //added for monomac
-				    .Append(ser.Serialize(message));
+                    .Append(ser.Serialize(message));
                     //end changes for monomac
                     //.Append(msg); // 1
 
@@ -458,8 +458,8 @@ namespace PubNubLib
                 signature = md5(string_to_sign.ToString());
             }
 
-			//Added for monomac
-			if (this.CIPHER_KEY.Length > 0)
+            //Added for monomac
+            if (this.CIPHER_KEY.Length > 0)
             {
                 PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
                 //serialize the message
@@ -477,12 +477,12 @@ namespace PubNubLib
             url.Add(signature);
             url.Add(channel);
             url.Add("0");
-			//commented for monomac
+            //commented for monomac
             //url.Add(msg);
             //end changes for monomac
 
-			//Added for monomac
-			url.Add(ser.Serialize(message));
+            //Added for monomac
+            url.Add(ser.Serialize(message));
             //end changes for monomac
 
             return _urlRequest(url, ResponseType.Publish, usercallback, false);
@@ -1376,14 +1376,14 @@ namespace PubNubLib
 
                 }), pubnubRequestState);
 
-				//Added for monomac
-				if(!asyncResult.AsyncWaitHandle.WaitOne(PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000))
-				{
-					OnPubnubWebRequestTimeout(pubnubRequestState, true);
-				}
+                //Added for monomac
+                if(!asyncResult.AsyncWaitHandle.WaitOne(PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000))
+                {
+                    OnPubnubWebRequestTimeout(pubnubRequestState, true);
+                }
                 //end changes for monomac
 
-				//Commented for monomac
+                //Commented for monomac
                 //ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
                 //end changes for monomac
 
@@ -1656,11 +1656,11 @@ namespace PubNubLib
                         PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
                         foreach (object message in result)
                         {
-						    //Commented for monomac
+                            //Commented for monomac
                             //historyDecrypted.Add(aes.decrypt(message.ToString()));
                             //end changes for monomac
 
-						    //added for monomac
+                            //added for monomac
                             string strDecrypted = aes.decrypt(message.ToString());
                             string strDecoded = jS.Deserialize<string>(strDecrypted);
                             historyDecrypted.Add(strDecoded);
@@ -1674,7 +1674,7 @@ namespace PubNubLib
                     }
                     break;
                 case ResponseType.DetailedHistory:
-				    //added for monomac
+                    //added for monomac
                     if (this.CIPHER_KEY.Length > 0)
                     {
                         List<object> historyDecrypted = new List<object>();
@@ -1707,7 +1707,8 @@ namespace PubNubLib
                         }
                         result = historyDecrypted;
                     }
-				    //end changes for monomac
+                    //end changes for monomac
+
                     result.Add(channelName);
                     break;
                 case ResponseType.Here_Now:
