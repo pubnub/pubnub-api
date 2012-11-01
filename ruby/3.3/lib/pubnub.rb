@@ -15,9 +15,10 @@ require 'uri'
 
 require 'pubnub_crypto'
 require 'pubnub_request'
-require 'pubnub_deferrable'
 
 require 'eventmachine'
+require 'em-http-request'
+require 'yajl'
 require 'uuid'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/string/inflections'
@@ -95,7 +96,7 @@ class Pubnub
 
     publish_request.format_url!
 
-    _request(publish_request)
+    check_for_em publish_request
   end
 
   def subscribe(options)
@@ -117,7 +118,7 @@ class Pubnub
     format_url_options = options[:override_timetoken].present? ? options[:override_timetoken] : nil
     subscribe_request.format_url!(format_url_options)
 
-    _request(subscribe_request)
+    check_for_em subscribe_request
 
   end
 
@@ -159,7 +160,7 @@ class Pubnub
     here_now_request.set_subscribe_key(options, self.subscribe_key)
 
     here_now_request.format_url!
-    _request(here_now_request)
+    check_for_em here_now_request
 
   end
 
@@ -195,7 +196,7 @@ class Pubnub
     detailed_history_request.history_reverse = options[:reverse]
 
     detailed_history_request.format_url!
-    _request(detailed_history_request)
+    check_for_em detailed_history_request
 
   end
 
@@ -227,7 +228,7 @@ class Pubnub
     history_request.history_limit = options[:limit]
 
     history_request.format_url!
-    _request(history_request)
+    check_for_em history_request
 
   end
 
@@ -239,7 +240,7 @@ class Pubnub
     time_request.set_callback(options)
 
     time_request.format_url!
-    _request(time_request)
+    check_for_em time_request
   end
 
   def my_callback(x, quiet = false)
@@ -255,101 +256,73 @@ class Pubnub
     UUID.new.generate
   end
 
-  def _request(request)
-
-    if (defined?(Rails) && Rails.present? && Rails.env.present?) && Rails.env.test?
-
-      open(request.url, 'r', :read_timeout => 300) do |response|
-        request.package_response!(response.read)
-        request.callback.call(request.response)
-        request.response
-      end
-
+  def check_for_em request
+    if EM.reactor_running?
+      _request(request, true)
     else
+      EM.run do
+        _request(request)
+      end
+    end
+  end
 
-      request.format_url!
-      #puts("- Fetching #{request.url}")
-
+  private
+  
+  def _request(request, is_reactor_running = false)
+    request.format_url!
+    #puts("- Fetching #{request.url}")
+    Thread.new{
       begin
 
-        EM.run do
+        conn = EM::HttpRequest.new(request.url, :inactivity_timeout => 310)#client times out in 310s unless the server returns or timeout first
+        req = conn.get()
 
-          conn = PubnubDeferrable.connect request.host, request.port
-          conn.pubnub_request = request
-          req = conn.get(request.query)
+        req.errback{
+          if req.response.blank?
+            puts("#{Time.now}: Reconnecting from timeout.")
 
-          timeout_timer = EM.add_periodic_timer(290) do
-            #puts("#{Time.now}: Reconnecting from timeout.")
-            reconnect_and_query(conn, request)
-          end
-
-          error_timer = EM.add_periodic_timer(5) do
-            #puts("#{Time.now}: Checking for errors.")
-            if conn.error?
-
-              error_message = "Intermittent Error: #{response.status}, extended info: #{response.internal_error}"
-              puts(error_message)
-              request.callback.call([0, error_message])
-
-              reconnect_and_query(conn, request)
+            EM::Timer.new(1) do
+              _request(request, is_reactor_running)
             end
-          end
-
-          req.errback do |response|
-            conn.close_connection
-            error_message = "Unknown Error: #{response.to_s}"
-
+          else
+            error_message = "Unknown Error: #{req.response.to_s}"
             puts(error_message)
             request.callback.call([0, error_message])
 
-            reconnect_and_query(conn, request)
+            EM.stop unless is_reactor_running
           end
+        }
 
-          req.callback do |response|
+        req.callback {
+          request.package_response!(req.response)
+          cycle = request.callback.call(request.response)
 
-            if response.status != 200
-              error_message = "Server Error, status: #{response.status}, extended info: #{response.internal_error}"
+          only_success_status_is_acceptable = 200
 
-              puts(error_message)
-              request.callback.call([0, error_message])
+          if (req.response_header.http_status.to_i != only_success_status_is_acceptable)
 
-              conn.reconnect request.host, request.port
+            error_message = "Server Error, status: #{req.response_header.http_status}, extended info: #{req.response}"
+            puts(error_message)
+            EM.stop unless is_reactor_running
+          else
+
+            if %w(subscribe presence).include?(request.operation) && (cycle != false || request.first_request?)
+              _request(request, is_reactor_running)
+            else
+              EM.stop unless is_reactor_running
             end
 
-            request.package_response!(response.content)
-            request.callback.call(request.response)
-
-            EM.next_tick do
-              if %w(subscribe presence).include?(request.operation)
-                conn.close_connection
-
-                timeout_timer.cancel
-                error_timer.cancel
-
-                _request(request)
-              else
-                conn.close_connection
-                return request.response
-
-              end
-
-            end
           end
-        end
+        }
 
-      rescue EventMachine::ConnectionError => e
+      rescue EventMachine::ConnectionError, RuntimeError => e # RuntimeError for catching "EventMachine not initialized"
         error_message = "Network Error: #{e.message}"
         puts(error_message)
         return [0, error_message]
       end
-
-    end
+    }
   end
 
-  def reconnect_and_query(conn, request)
-    conn.reconnect request.host, request.port
-    conn.pubnub_request = request
-    conn.get(request.query)
-  end
+
 
 end

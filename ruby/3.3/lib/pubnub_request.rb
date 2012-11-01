@@ -1,6 +1,6 @@
 class PubnubRequest
   attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl, :port
-  attr_accessor :history_limit, :history_count, :history_start, :history_end, :history_reverse, :session_uuid
+  attr_accessor :history_limit, :history_count, :history_start, :history_end, :history_reverse, :session_uuid, :last_timetoken
 
   class RequestError < RuntimeError;
   end
@@ -142,6 +142,7 @@ class PubnubRequest
 
   def package_response!(response_data)
     self.response = response_data.respond_to?(:content) ? Yajl.load(response_data.content) : Yajl.load(response_data)
+    self.last_timetoken = self.timetoken
     self.timetoken = self.response[1] unless self.operation == "time"
 
     if self.cipher_key.present? && %w(subscribe history detailed_history).include?(self.operation)
@@ -282,6 +283,10 @@ class PubnubRequest
           '%' + ch.unpack('H2')[0].to_s.upcase : URI.encode(ch)
     }.join('') }.join('/')
     return url
+  end
+
+  def first_request?
+    @last_timetoken == "0"
   end
 
 end
