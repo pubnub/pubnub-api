@@ -136,7 +136,7 @@ package com.pubnub.subscribe {
 					if(cipherKey.length > 0){
 						_data = { 
 							channel:_name, 
-							result:[i+1,PnCrypto.decrypt(cipherKey,messages[i])], 
+							result:[i+1, PnCrypto.decrypt(cipherKey,messages[i])], 
 							envelope: result, 
 							timeout:1 
 						}
@@ -145,7 +145,7 @@ package com.pubnub.subscribe {
 					else {
 						_data = { 
 							channel:_name, 
-							result:[i+1,PnJSON.stringify(messages[i])], 
+							result:[i+1, PnJSON.stringify(messages[i])], 
 							envelope: result, 
 							timeout:1 
 						} 

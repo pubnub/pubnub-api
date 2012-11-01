@@ -116,7 +116,6 @@ package com.pubnub {
 		private function onInitComplete(event:OperationEvent):void {
 			var result:Object = event.data;
 			startTimeToken = result[0];
-			//startTimeToken = 0;
 			_initialized = true;
 			dispatchEvent(new PnEvent(PnEvent.INIT, startTimeToken));
 		}

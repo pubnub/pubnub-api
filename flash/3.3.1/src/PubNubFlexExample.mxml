@@ -30,9 +30,7 @@
         public var cipher_key:String = '';
 
         private var consoleCounter:int = 1;
-
-
-
+		
         protected function onInitBtnClick(event:MouseEvent):void{
             //trace('onInitBtnClick');
             var config:Object = {
