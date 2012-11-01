@@ -1,0 +1,55 @@
+﻿<navigation:Page x:Class="PubnubSilverlight.Example.Views.CodeExampleView" 
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           mc:Ignorable="d"
+           xmlns:navigation="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Navigation"
+           d:DesignWidth="640" d:DesignHeight="480"
+           Title="CodeExampleView Page" >
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="350" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel HorizontalAlignment="Left" Margin="10 10 0 0">
+
+            <Button Content="Publish" ToolTipService.ToolTip="Publish Example" Click="Button_Click_1" Style="{StaticResource ShortButtonStyle}" />
+
+            <Button Content="Timestamp" ToolTipService.ToolTip="Timestamp Example" Click="Button_Click_4" Style="{StaticResource ShortButtonStyle}" />
+
+            <Button Content="HereNow" ToolTipService.ToolTip="HereNow Example" Click="Button_Click_5" Style="{StaticResource ShortButtonStyle}" />
+
+            <Button Content="Presence" ToolTipService.ToolTip="Presence Example" Click="Button_Click_6" Style="{StaticResource ShortButtonStyle}" />
+
+            <Button Content="Subscribe" ToolTipService.ToolTip="Subscribe Example" Click="Button_Click_7" Style="{StaticResource ShortButtonStyle}" />
+
+            <Button Content="Detailed History" ToolTipService.ToolTip="Detailed History Example" Click="Button_Click_2" Style="{StaticResource ShortButtonStyle}" />
+
+            <Button Content="Detailed History Decrypted" ToolTipService.ToolTip="Detailed History Decrypted Example" Click="Button_Click_3" Style="{StaticResource LongButtonStyle}" />
+
+            <Button Content="Unencrypted History" ToolTipService.ToolTip="Test Unencrypted History"  Click="Button_Click_8" Style="{StaticResource LongButtonStyle}"/>
+
+            <Button Content="Encrypted History" ToolTipService.ToolTip="Test Encrypted History" Click="Button_Click_9" Style="{StaticResource LongButtonStyle}" />
+
+            <Button Content="Unencrypted Detailed History" ToolTipService.ToolTip="Test Unencrypted Detailed History" Click="Button_Click_10" Style="{StaticResource LongButtonStyle}" />
+
+            <Button Content="Encrypted Detailed History" ToolTipService.ToolTip="Test Encrypted Detailed History" Click="Button_Click_11" Style="{StaticResource LongButtonStyle}" />
+
+            <Button Content="Unencrypted Detailed History Params" ToolTipService.ToolTip="Test Unencrypted Detailed History Params" Click="Button_Click_12" Style="{StaticResource LongButtonStyle}"  />
+
+            <Button Content="Encrypted Detailed History Params" ToolTipService.ToolTip="Test Encrypted Detailed History Params" Click="Button_Click_13" Style="{StaticResource LongButtonStyle}"  />
+
+        </StackPanel>
+
+        <ScrollViewer Grid.Column="2" Background="Black">
+
+            <TextBlock x:Name="ConsoleContainer" Foreground="Aqua" />
+
+        </ScrollViewer>
+
+    </Grid>
+
+</navigation:Page>
