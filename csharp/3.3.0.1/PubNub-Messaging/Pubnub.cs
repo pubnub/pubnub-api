@@ -432,9 +432,9 @@ namespace PubNub_Messaging
             }
 
             //TODO: Should we validate at constructor level
-            if (this.PUBLISH_KEY.Length == 0)
+            if (string.IsNullOrWhiteSpace(this.PUBLISH_KEY) || this.PUBLISH_KEY.Length <= 0)
             {
-                throw new MissingFieldException("PUBLISH_KEY cannot be empty for publish");
+                throw new MissingFieldException("Invalid publish key");
             }
 
             ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
@@ -1820,7 +1820,7 @@ namespace PubNub_Messaging
     /// <summary>
     /// MD5 Service provider
     /// </summary>
-    public class MD5CryptoServiceProvider : MD5
+    internal class MD5CryptoServiceProvider : MD5
     {
         public MD5CryptoServiceProvider()
             : base()
@@ -1830,7 +1830,7 @@ namespace PubNub_Messaging
     /// <summary>
     /// MD5 messaging-digest algorithm is a widely used cryptographic hash function that produces 128-bit hash value.
     /// </summary>
-    public class MD5 : IDisposable
+    internal class MD5 : IDisposable
     {
         static public MD5 Create(string hashName)
         {
@@ -2397,14 +2397,14 @@ namespace PubNub_Messaging
         /// <param name='algorithm'>
         /// Algorithm to use for Hashing
         /// </param>
-        public static string ComputeHash(string input, HashAlgorithm algorithm)
+        private static string ComputeHash(string input, HashAlgorithm algorithm)
         {
             Byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
             Byte[] hashedBytes = algorithm.ComputeHash(inputBytes);
             return BitConverter.ToString(hashedBytes);
         }
 
-        public string GetEncryptionKey()
+        private string GetEncryptionKey()
         {
             //Compute Hash using the SHA256 
             string strKeySHA256HashRaw = ComputeHash(this.CIPHER_KEY, new SHA256CryptoServiceProvider());
@@ -2421,7 +2421,7 @@ namespace PubNub_Messaging
          * for encrypt type = true
          * for decrypt type = false
          */
-        public string EncryptOrDecrypt(bool type, string plainStr)
+        private string EncryptOrDecrypt(bool type, string plainStr)
         {
             RijndaelManaged aesEncryption = new RijndaelManaged();
             aesEncryption.KeySize = 256;
@@ -2469,12 +2469,16 @@ namespace PubNub_Messaging
         // encrypt string
         public string encrypt(string plainStr)
         {
+            if (plainStr == null || plainStr.Length <= 0) throw new ArgumentNullException("plainStr");
+
             return EncryptOrDecrypt(true, plainStr);
         }
 
         // decrypt string
         public string decrypt(string cipherStr)
         {
+            if (cipherStr == null) throw new ArgumentNullException("cipherStr");
+
             return EncryptOrDecrypt(false, cipherStr);
         }
 
