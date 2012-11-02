@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <!-- Hey, let's be friends! twitter.com/pubnub -->
+    <meta http-equiv=content-type content=text/html;charset=utf-8>
+
+    <meta name=viewport content=width=device-width>
+    <meta name=viewport content=initial-scale=1.0>
+    <meta name=viewport content=user-scalable=no>
+
+    <meta name=apple-mobile-web-app-capable content=yes>  
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+
+    <link rel=apple-touch-icon href=icon.png>
+    <link rel=apple-touch-startup-image href=startup.png>
+
+    <title>PubNub ★ Non-Socket.IO Communication</title>
+
+    <link
+        href=http://fonts.googleapis.com/css?family=Open+Sans:400,700
+        rel=stylesheet>
+    <link href=styles.css rel=stylesheet>
+</head>
+<body>
+
+<h1>PubNub ★ Non-Socket.IO Communication</h1>
+<div>
+    Now that you have this page open,
+    click to go to the
+    <a href=http://www.pubnub.com/console?channel=my_pn_channel&sub=demo&pub=demo>PubNub Dev Console</a>.
+</div>
+<div>
+    Once on this page, put in this JSON message
+    into the message textarea field:
+    <code><pre style=background:#eeeee2>
+
+    { "name" : "message",
+      "ns"   : "example-ns-my_pn_channel",
+      "data" : {"my":"data"} }
+    </pre></code>
+</div>
+After you copy/pasted that JSON text, simply click the [Send] button.
+
+<script>scrollTo(0,1);</script>
+<script src=http://pubnub.s3.amazonaws.com/socket.io.min.js></script>
+<script src=app.js></script>
+</body>
+</html>

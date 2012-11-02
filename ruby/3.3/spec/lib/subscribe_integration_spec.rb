@@ -17,7 +17,7 @@ describe "Subscribe Integration Test" do
 
           it "should sub without ssl" do
             my_response = [[], "13451632748083262"]
-            mock(@my_callback).call(my_response) {}
+            mock(@my_callback).call(my_response) {EM.stop}
 
             VCR.use_cassette("integration_subscribe_1", :record => :none) do
               @pn.subscribe(:channel => :hello_world, :callback => @my_callback)
@@ -27,7 +27,7 @@ describe "Subscribe Integration Test" do
           it "should subscribe with ssl" do
 
             my_response = [[], "13451632748083262"]
-            mock(@my_callback).call(my_response) {}
+            mock(@my_callback).call(my_response) {EM.stop}
 
             @pn.ssl = true
 
@@ -44,7 +44,7 @@ describe "Subscribe Integration Test" do
 
           it "should sub without ssl" do
             my_response = [[{"text" => "bo"}], "13455067954018816"]
-            mock(@my_callback).call(my_response) {}
+            mock(@my_callback).call(my_response) { EM.stop}
 
             VCR.use_cassette("integration_subscribe_1b", :record => :none) do
               @pn.subscribe(:channel => :hello_world, :callback => @my_callback, :override_timetoken => 13455067091198286)
@@ -54,7 +54,7 @@ describe "Subscribe Integration Test" do
           it "should subscribe with ssl" do
 
             my_response = [[{"text" => "bo"}], "13455068901569588"]
-            mock(@my_callback).call(my_response) {}
+            mock(@my_callback).call(my_response) {EM.stop}
 
             @pn.ssl = true
 
@@ -75,7 +75,7 @@ describe "Subscribe Integration Test" do
         it "should subscribe without ssl (implicit)" do
 
           my_response = [["DECRYPTION_ERROR", "this is my superduper long encrypted message. dont tell anyone!"], "13473292476449446"]
-          mock(@my_callback).call(my_response) {}
+          mock(@my_callback).call(my_response) {EM.stop}
 
           VCR.use_cassette("integration_subscribe_2", :record => :none) do
             @pn.subscribe(:channel => :hello_world, :message => "hi", :callback => @my_callback, :override_timetoken => 13473291856851191)

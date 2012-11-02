@@ -16,8 +16,7 @@ namespace PubNub_Messaging
                     false);
 
         static public bool deliveryStatus = false;
-        static public string channel = "my_channel";
-        static public string message = "Pubnub API Usage Example - Publish";
+        static public string channel = "";
 
         static public void Main()
         {
@@ -58,37 +57,43 @@ namespace PubNub_Messaging
                         break;
                     case "1":
                         Console.WriteLine("Running subscribe()");
-                        pubnub.subscribe(channel, DisplayReturnMessage);
+                        pubnub.subscribe<string>(channel, DisplayReturnMessage);
+                        //pubnub.subscribe<object>(channel, DisplayReturnMessage);
+                        //pubnub.subscribe(channel, DisplayReturnMessage);
                         break;
                     case "2":
                         Console.WriteLine("Running publish()");
                         Console.WriteLine("Enter the message for publish. To exit loop, enter QUIT");
                         string publishMsg = Console.ReadLine();
-                        pubnub.publish(channel, publishMsg, DisplayReturnMessage);
+                        pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
                         break;
                     case "3":
                         Console.WriteLine("Running presence()");
-                        pubnub.presence(channel, DisplayReturnMessage);
+                        pubnub.presence<string>(channel, DisplayReturnMessage);
+                        //pubnub.presence<object>(channel, DisplayReturnMessage);
                         break;
                     case "4":
                         Console.WriteLine("Running detailed history()");
-                        pubnub.detailedHistory(channel, 100, DisplayReturnMessage);
+                        pubnub.detailedHistory<string>(channel, 100, DisplayReturnMessage);
+                        //pubnub.detailedHistory<object>(channel, 100, DisplayReturnMessage);
                         break;
                     case "5":
                         Console.WriteLine("Running Here_Now()");
-                        pubnub.here_now(channel, DisplayReturnMessage);
+                        pubnub.here_now<string>(channel, DisplayReturnMessage);
+                        //pubnub.here_now<object>(channel, DisplayReturnMessage);
                         break;
                     case "6":
                         Console.WriteLine("Running unsubscribe()");
-                        pubnub.unsubscribe(channel, DisplayReturnMessage);
+                        pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
+                        //pubnub.unsubscribe<object>(channel, DisplayReturnMessage);
                         break;
                     case "7":
                         Console.WriteLine("Running presence-unsubscribe()");
-                        pubnub.presence_unsubscribe(channel, DisplayReturnMessage);
+                        pubnub.presence_unsubscribe<string>(channel, DisplayReturnMessage);
                         break;
                     case "8":
                         Console.WriteLine("Running time()");
-                        pubnub.time(DisplayReturnMessage);
+                        pubnub.time<string>(DisplayReturnMessage);
                         break;
                     default:
                         Console.WriteLine("INVALID CHOICE.");
@@ -99,6 +104,11 @@ namespace PubNub_Messaging
             Console.WriteLine("\nPress any key to confirm exit.\n\n");
             Console.ReadLine();
 
+        }
+
+        static void DisplayReturnMessage(string result)
+        {
+            Console.WriteLine(result);
         }
 
         static void DisplayReturnMessage(object result)
@@ -125,11 +135,18 @@ namespace PubNub_Messaging
                 object[] arrResult = (object[])result;
                 foreach (object item in arrResult)
                 {
-                    if (!item.GetType().IsGenericType)
+                    if (item != null)
                     {
-                        if (!item.GetType().IsArray)
+                        if (!item.GetType().IsGenericType)
                         {
-                            Console.WriteLine(item.ToString());
+                            if (!item.GetType().IsArray)
+                            {
+                                Console.WriteLine(item.ToString());
+                            }
+                            else
+                            {
+                                ParseObject(item, loop + 1);
+                            }
                         }
                         else
                         {
@@ -138,8 +155,8 @@ namespace PubNub_Messaging
                     }
                     else
                     {
-                        ParseObject(item, loop + 1);
-                    }
+                        Console.WriteLine();
+                   }
                 }
             }
             else if (result.GetType().IsGenericType && (result.GetType().Name == typeof(Dictionary<,>).Name))
