@@ -78,7 +78,8 @@
 - (void)presence:(NSString *)channel;
 
 - (void)here_now:(NSString *)channel __deprecated;
-
++ (BOOL)isApplicationActive;
++ (void)setApplicationActive:(BOOL) state;
 @end
 
 @interface ChannelStatus :NSObject

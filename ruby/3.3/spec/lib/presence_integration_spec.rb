@@ -17,7 +17,7 @@ describe "Presence Integration Test" do
 
           it "should sub without ssl" do
             my_response = [[], "13456942772413940"]
-            mock(@my_callback).call(my_response) {}
+            mock(@my_callback).call(my_response) {EM.stop}
 
             VCR.use_cassette("integration_presence_1", :record => :none) do
               @pn.presence(:channel => :hello_world, :callback => @my_callback)
@@ -27,7 +27,7 @@ describe "Presence Integration Test" do
           it "should presence with ssl" do
 
             my_response = [[], "13456942772413940"]
-            mock(@my_callback).call(my_response) {}
+            mock(@my_callback).call(my_response) {EM.stop}
 
             @pn.ssl = true
 
@@ -44,7 +44,7 @@ describe "Presence Integration Test" do
 
           it "should sub without ssl" do
             my_response = [[{"action"=>"join", "timestamp"=>1345720165, "uuid"=>"1975", "occupancy"=>3}], "13456949659872604"]
-            mock(@my_callback).call(my_response) {}
+            mock(@my_callback).call(my_response) {EM.stop}
 
             VCR.use_cassette("integration_presence_1b", :record => :none) do
               @pn.presence(:channel => :hello_world, :callback => @my_callback, :override_timetoken => 13456942772413940)
@@ -54,7 +54,7 @@ describe "Presence Integration Test" do
           it "should presence with ssl" do
 
             my_response = [[{"action"=>"join", "timestamp"=>1345720165, "uuid"=>"1975", "occupancy"=>3}], "13456949659872604"]
-            mock(@my_callback).call(my_response) {}
+            mock(@my_callback).call(my_response) {EM.stop}
 
             @pn.ssl = true
 
@@ -75,7 +75,7 @@ describe "Presence Integration Test" do
         it "should presence without ssl (implicit)" do
 
           my_response = [[{"action"=>"join", "timestamp"=>1345720165, "uuid"=>"1975", "occupancy"=>3}], "13456949659872604"]
-          mock(@my_callback).call(my_response) {}
+          mock(@my_callback).call(my_response) {EM.stop}
 
           VCR.use_cassette("integration_presence_2", :record => :none) do
             @pn.presence(:channel => :hello_world, :callback => @my_callback, :override_timetoken => 13456942772413940)
@@ -86,7 +86,7 @@ describe "Presence Integration Test" do
         it "should presence without ssl (explicit)" do
 
           my_response = [[{"action"=>"join", "timestamp"=>1345720165, "uuid"=>"1975", "occupancy"=>3}], "13456949659872604"]
-          mock(@my_callback).call(my_response) {}
+          mock(@my_callback).call(my_response) {EM.stop}
 
           @pn.ssl = false
 
@@ -99,7 +99,7 @@ describe "Presence Integration Test" do
         it "should presence with ssl (explicit)" do
 
           my_response = [[{"action"=>"join", "timestamp"=>1345720165, "uuid"=>"1975", "occupancy"=>3}], "13456949659872604"]
-          mock(@my_callback).call(my_response) {}
+          mock(@my_callback).call(my_response) {EM.stop}
 
           @pn.ssl = true
 

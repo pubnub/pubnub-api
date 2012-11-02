@@ -19,7 +19,7 @@ package com.pubnub {
 		private var _initialized:Boolean = false;         
 		private var operations:Dictionary;
         private var subscribes:Dictionary;
-		private var origin:String = "http://pubsub.pubnub.com";   
+		private var origin:String = "http://multiplexing.pubnub.com";
 		private var _publishKey:String = "demo";
 		private var _subscribeKey:String = "demo";
 		private var secretKey:String = "";

@@ -21,13 +21,13 @@
 @implementation iPhoneTest
 @synthesize txt;
 
-
+NSString *channelName;
 CEPubnub *pubnub;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
         // Do any additional setup after loading the view, typically from a nib.
-    
+    channelName=@"hello_world";
     pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:nil   cipherKey:nil useSSL:NO];
         //subscribe to a few channels
 	
@@ -50,24 +50,24 @@ CEPubnub *pubnub;
     
 	NSLog(@"-----------PUBLISH STRING----------------");
     NSString *text=@"Hello World";
-    [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:@"hello_world",@"channel",text,@"message", nil]];
+    [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:channelName,@"channel",text,@"message", nil]];
 }
 
 - (IBAction)ArrayPublish:(id)sender {
     NSLog(@"-----------PUBLISH ARRAY----------------");
-    [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:@"hello_world",@"channel",[NSArray arrayWithObjects:@"seven", @"eight", [NSDictionary dictionaryWithObjectsAndKeys:@"Cheeseburger",@"food",@"Coffee",@"drink", nil], nil],@"message", nil]];
+    [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:channelName,@"channel",[NSArray arrayWithObjects:@"seven", @"eight", [NSDictionary dictionaryWithObjectsAndKeys:@"Cheeseburger",@"food",@"Coffee",@"drink", nil], nil],@"message", nil]];
 }
 
 - (IBAction)DictionaryPublish:(id)sender {
     NSLog(@"-----------PUBLISH Dictionary----------------");
-    [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:@"hello_world",@"channel",[NSDictionary dictionaryWithObjectsAndKeys:@"X-code->ÇÈ°∂@#$%^&*()!",@"Editer",@"Objective-c",@"Language", nil],@"message", nil]];
+    [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:channelName,@"channel",[NSDictionary dictionaryWithObjectsAndKeys:@"X-code->ÇÈ°∂@#$%^&*()!",@"Editer",@"Objective-c",@"Language", nil],@"message", nil]];
 }
 
 - (IBAction)HistoryClick:(id)sender {
     NSLog(@"-----------HISTORY ----------------");
     NSInteger limit = 3;
     NSNumber * aWrappedInt = [NSNumber numberWithInteger:limit];    
-    [pubnub fetchHistory:[NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", @"hello_world",@"channel",nil]];
+    [pubnub fetchHistory:[NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", channelName,@"channel",nil]];
 }
 
 - (IBAction)TimeClick:(id)sender {
@@ -85,20 +85,20 @@ CEPubnub *pubnub;
 }
 
 - (IBAction)Subscribe:(id)sender {
-    [pubnub subscribe: @"hello_world"];  
+    [pubnub subscribe: channelName];  
 }
 
 - (IBAction)Unsubscribe:(id)sender {
-    [pubnub unsubscribeFromChannel: @"hello_world"];  
+    [pubnub unsubscribeFromChannel: channelName];  
     
 }
 
 - (IBAction)Here_Now:(id)sender {
-     [pubnub hereNow: @"hello_world"];
+     [pubnub hereNow: channelName];
 }
 
 - (IBAction)Presence:(id)sender {
-    [pubnub presence: @"hello_world"]; 
+    [pubnub presence: channelName]; 
 }
 
 - (IBAction)DetailedHistoryClick:(id)sender {
@@ -107,7 +107,7 @@ CEPubnub *pubnub;
     NSNumber * aCountInt = [NSNumber numberWithInteger:count];
     [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
                              aCountInt,@"count",
-                             @"hello_world",@"channel",
+                             channelName,@"channel",
                              nil]];
 }
 
@@ -376,5 +376,4 @@ CEPubnub *_pubnubtemp;
 }
 
 @end
-
 
