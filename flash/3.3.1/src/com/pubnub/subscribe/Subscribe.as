@@ -2,7 +2,8 @@ package com.pubnub.subscribe {
 	import com.pubnub.*;
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
-	import com.pubnub.operation.*;
+import com.pubnub.json.PnJSON;
+import com.pubnub.operation.*;
 	import flash.events.*;
 	import flash.utils.*;
 	
@@ -126,37 +127,31 @@ package com.pubnub.subscribe {
 			operation.addEventListener(OperationEvent.RESULT, onSubscribeResult);
 			operation.addEventListener(OperationEvent.FAULT, onSubscribeError);
 		}
-		
-		private function onSubscribeResult(e:OperationEvent):void {
-			var result:Object = e.data;  
-			lastToken = result[1];	
-			var messages:Array = result[0]; 
-			if(messages) {
-				for (var i:int = 0; i < messages.length; i++) {
-					if(cipherKey.length > 0){
-						_data = { 
-							channel:_name, 
-							result:[i+1,PnCrypto.decrypt(cipherKey,messages[i])], 
-							envelope: result, 
-							timeout:1 
-						}
-						dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA,  _data));
-					}
-					else {
-						_data = { 
-							channel:_name, 
-							result:[i+1,PnJSON.stringify(messages[i])], 
-							envelope: result, 
-							timeout:1 
-						} 
-						dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, _data));
-					}	
-				}
-			}
-			subscribeLastToken();
-		}
-		
-		private function subscribeLastToken():void {
+
+        private function onSubscribeResult(e:OperationEvent):void {
+            var eventData:Object = e.data;
+            lastToken = eventData[1];
+            var messages:Array = eventData[0];
+            if (messages) {
+
+                for (var i:int = 0; i < messages.length; i++) {
+
+                    var msg:* = cipherKey.length > 0 ? PnJSON.parse(PnCrypto.decrypt(cipherKey, messages[i])) : messages[i];
+
+                    _data = {
+                        channel:_name,
+                        result:[i + 1, msg],
+                        //envelope:eventData,
+                        timeout:1
+                    }
+
+                    dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, _data));
+                }
+            }
+            subscribeLastToken();
+        }
+
+        private function subscribeLastToken():void {
 			//trace('subscribeLastToken : ' + lastToken);
 			getOperation(Operation.WITH_TIMETOKEN).close();
 			subscribeToken(lastToken);
