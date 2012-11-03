@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using PubnubSilverlight.Core;
 
-namespace PubNub_Messaging.Tests
+namespace PubnubSilverlight.UnitTest
 {
     [TestClass]
     public class WhenGetRequestServerTime
@@ -14,11 +14,17 @@ namespace PubNub_Messaging.Tests
         [TestMethod]
         public void ThenItShouldReturnTimeStamp()
         {
-            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            Pubnub pubnub = new Pubnub(
+                "demo",
+                "demo",
+                "",
+                "",
+                false
+            );
             
             pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
 
-            pubnub.time();
+            //pubnub.time();
         }
 
         static void Pubnub_PropertyChanged(object sender, PropertyChangedEventArgs e)

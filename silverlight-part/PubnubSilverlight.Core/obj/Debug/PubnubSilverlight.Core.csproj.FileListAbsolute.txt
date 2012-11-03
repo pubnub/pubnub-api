@@ -7,6 +7,7 @@ E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.Core\obj\Debug\Pu
 E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.Core\obj\Debug\PubnubSilverlight.Core.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\PubnubSilverlight.Core.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\PubnubSilverlight.Core.pdb
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\ConcurrentHashtable_Silverlight.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\PubnubSilverlight.Imports.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\PubnubSilverlight.Imports.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\obj\Debug\PubnubSilverlight.Core.csprojResolveAssemblyReference.cache

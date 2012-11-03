@@ -48,7 +48,7 @@ namespace PubNub_Messaging
         ConcurrentDictionary<string, ReconnectState> _channelReconnectState = new ConcurrentDictionary<string, ReconnectState>();
 
         System.Threading.Timer heartBeatTimer;
-
+    
         private static bool _pubnetInternetStatus = false;
         private static bool _pubnetSystemActive = true;
 

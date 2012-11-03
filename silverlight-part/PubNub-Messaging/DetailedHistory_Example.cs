@@ -61,7 +61,7 @@ namespace PubNub_Messaging
                             }
                             else
                             {
-                                Console.WriteLine(string.Format("Unhandled type {0}",item.ToString()));
+                                Console.WriteLine(string.Format("Unhandled type {0}", item.ToString()));
                             }
                         }
                     }

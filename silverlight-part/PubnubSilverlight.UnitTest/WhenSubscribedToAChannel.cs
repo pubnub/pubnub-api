@@ -4,32 +4,47 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
+using System.Threading;
 using PubnubSilverlight.Core;
+using Microsoft.Silverlight.Testing;
 
-namespace PubNub_Messaging.Tests
+namespace PubnubSilverlight.UnitTest
 {
     [TestClass]
     public class WhenSubscribedToAChannel
     {
+        ManualResetEvent manualEvent = new ManualResetEvent(false);
+        bool receivedMessage = false;
+
         [TestMethod]
+        [Asynchronous]
         public void ThenItShouldReturnReceivedMessage()
         {
-            string status = "";
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
-            string channel = "my/channel";
 
-            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
-            {
-                //if (e.PropertyName == "ReturnMessage")
-                //{
-                //    Dictionary<string, object> _message = (Dictionary<string, object>)(((Pubnub)sender).ReturnMessage);
-                //    Console.WriteLine("Received Message -> '" + _message["text"] + "'");
-                //    status = _message["text"].ToString();
-                //    Assert.AreEqual("assert", status);
-                //}
-            };
-            pubnub.subscribe(channel);
+            //string channel = "my ~`!@#$%^&*()+=[]\\{}|;':\",./<>?channel";
+            string channel = "my_channel";
 
+            pubnub.subscribe(channel, ThenDoCallback);
+
+            //manualEvent.WaitOne(10000, false); *Changed*
+            Assert.IsTrue(receivedMessage);
         }
+
+        public void ThenDoCallback(object result)
+        {
+            List<object> message = result as List<object>;
+
+            if (message != null && message.Count >= 2)
+            {
+                if (message[1].ToString().Length > 1)
+                {
+                    receivedMessage = true;
+                }
+            }
+            manualEvent.Set();
+            Assert.IsTrue(receivedMessage);
+        }
+
     }
 }

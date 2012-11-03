@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using PubnubSilverlight.Core;
 
-namespace PubNub_Messaging.Tests
+namespace PubnubSilverlight.UnitTest
 {
     [TestClass]
     public class WhenGetRequestHistoryMessages
@@ -14,7 +14,13 @@ namespace PubNub_Messaging.Tests
         [TestMethod]
         public void ThenItShouldReturnHistoryMessages()
         {
-            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            Pubnub pubnub = new Pubnub(
+                "demo",
+                "demo",
+                "",
+                "",
+                false
+            );
             string channel = "my/channel";
 
             pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
@@ -25,11 +31,11 @@ namespace PubNub_Messaging.Tests
         
         static void Pubnub_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            //foreach (object history_message in ((Pubnub)sender).History)
-            //{
-            //    Dictionary<string, object> _messageHistory = (Dictionary<string, object>)(history_message);
-            //    Assert.AreEqual(_messageHistory["text"], "");
-            //}
+            foreach (object history_message in ((Pubnub)sender).History)
+            {
+                Dictionary<string, object> _messageHistory = (Dictionary<string, object>)(history_message);
+                Assert.AreEqual(_messageHistory["text"], "");
+            }
         }
     }
 }

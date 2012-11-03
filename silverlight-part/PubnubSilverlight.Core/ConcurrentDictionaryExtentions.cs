@@ -47,5 +47,27 @@ namespace TvdP.Collections
             return value;
         }
 
+        public static TValue AddOrUpdate<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dictionary, TKey key, TValue value, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException("key");
+            }
+            if (updateValueFactory == null)
+            {
+                throw new ArgumentNullException("updateValueFactory");
+            }
+
+
+            if (dictionary.ContainsKey(key))
+            {
+                return dictionary[key] = value;
+            }
+
+            dictionary.Add(new KeyValuePair<TKey, TValue>(key, value));
+
+            return value;
+        }
+   
     }
 }

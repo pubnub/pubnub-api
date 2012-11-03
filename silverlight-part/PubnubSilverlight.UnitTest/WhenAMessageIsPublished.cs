@@ -2,37 +2,64 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PubnubSilverlight.Core;
-using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel;
+using System.Threading;
+using PubnubSilverlight.Core;
 
-namespace PubNub_Messaging.Tests
+namespace PubnubSilverlight.UnitTest
 {
     [TestClass]
     public class WhenAMessageIsPublished
     {
+        ManualResetEvent manualEvent = new ManualResetEvent(false);
+        bool publishedMessage = false;
+
         [TestMethod]
         public void ThenItShouldReturnSuccessCodeAndInfo()
         {
-            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            publishedMessage = false;
+
+            Pubnub pubnub = new Pubnub(
+                "demo",
+                "demo",
+                "",
+                "",
+                false
+            );
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
-
-            pubnub.publish(channel, message);
+            pubnub.publish(channel, message,ThenDoCallback);
+            manualEvent.WaitOne();
+            Assert.IsTrue(publishedMessage);
         }
 
-        static void Pubnub_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void ThenDoCallback(object result)
         {
-            //Assert.AreEqual("1", ((Pubnub)sender).Publish[0].ToString());
-            //Assert.AreEqual("Sent", ((Pubnub)sender).Publish[1].ToString());
+            List<object> message = result as List<object>;
+
+            if (message != null && message.Count >= 2)
+            {
+                if (message[1].ToString().Length > 1)
+                {
+                    publishedMessage = true;
+                }
+            }
+            manualEvent.Set();
         }
+
 
         [TestMethod]
         public void ThenItShouldGenerateUniqueIdentifier()
         {
-            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            Pubnub pubnub = new Pubnub(
+                "demo",
+                "demo",
+                "",
+                "",
+                false
+            );
 
             Assert.IsNotNull(pubnub.generateGUID());
         }
@@ -40,54 +67,82 @@ namespace PubNub_Messaging.Tests
         [TestMethod]
         public void ThenPublishKeyShouldBeOverriden()
         {
-            Pubnub pubnub = new Pubnub("", "demo", "", "", false);
+            publishedMessage = false;
+
+            Pubnub pubnub = new Pubnub(
+                "",
+                "demo",
+                "",
+                "",
+                false
+            );
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
+            //pubnub.PUBLISH_KEY = "demo";
 
-            pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
-
-            pubnub.PUBLISH_KEY = "demo";
-            Assert.AreEqual(true, pubnub.publish(channel, message));
-
+            pubnub.publish(channel, message, ThenDoCallback);
+            manualEvent.WaitOne();
+            Assert.IsTrue(publishedMessage);
         }
 
         [TestMethod]
         public void ThenPublishKeyShouldNotBeEmptyAfterOverriden()
         {
-            Pubnub pubnub = new Pubnub("", "demo", "", "", false);
+            publishedMessage = false;
+
+            Pubnub pubnub = new Pubnub(
+                "",
+                "demo",
+                "",
+                "",
+                false
+            );
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
-
-            Assert.AreEqual(false, pubnub.publish(channel, message));
+            pubnub.publish(channel, message, ThenDoCallback);
+            manualEvent.WaitOne();
+            Assert.IsTrue(publishedMessage);
         }
 
         [TestMethod]
         public void ThenSecretKeyShouldBeProvidedOptionally()
         {
-            Pubnub pubnub = new Pubnub("demo", "demo");
+            publishedMessage = false;
+            Pubnub pubnub = new Pubnub(
+                "demo",
+                "demo"
+            );
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
-          
-            pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
 
-            Assert.AreEqual(true, pubnub.publish(channel, message));
+            pubnub.publish(channel, message, ThenDoCallback);
+            manualEvent.WaitOne();
 
-            pubnub.SECRET_KEY = "key";
-            Assert.AreEqual(true, pubnub.publish(channel, message));
+            publishedMessage = false;
+            //pubnub.SECRET_KEY = "key";
+
+            pubnub.publish(channel, message, ThenDoCallback);
+            manualEvent.WaitOne();
+            Thread.Sleep(1000);
+            Assert.IsTrue(publishedMessage);
         }
 
         [TestMethod]
         public void IfSSLNotProvidedThenDefaultShouldBeFalse()
         {
-            Pubnub pubnub = new Pubnub("demo", "demo", "");
+            publishedMessage = false;
+            Pubnub pubnub = new Pubnub(
+                "demo",
+                "demo",
+                ""
+            );
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
-
-            Assert.AreEqual(true, pubnub.publish(channel, message));
+            pubnub.publish(channel, message, ThenDoCallback);
+            manualEvent.WaitOne();
+            Assert.IsTrue(publishedMessage);
         }
     }
 }

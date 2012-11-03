@@ -20,7 +20,7 @@ using System.Configuration;
 using Microsoft.Win32;
 using TvdP.Collections;
 
-namespace PubNub_Messaging
+namespace PubnubSilverlight.Core
 {
     // INotifyPropertyChanged provides a standard event for objects to notify clients that one of its properties has changed
 
@@ -2384,7 +2384,9 @@ namespace PubNub_Messaging
         public string GetEncryptionKey()
         {
             //Compute Hash using the SHA256 
-            string strKeySHA256HashRaw = ComputeHash(this.CIPHER_KEY, new SHA256CryptoServiceProvider());
+            //string strKeySHA256HashRaw = ComputeHash(this.CIPHER_KEY, new SHA256CryptoServiceProvider()); *Changed*
+            string strKeySHA256HashRaw = ComputeHash(this.CIPHER_KEY, new System.Security.Cryptography.SHA256Managed());
+            //
             //delete the "-" that appear after every 2 chars
             string strKeySHA256Hash = (strKeySHA256HashRaw.Replace("-", "")).Substring(0, 32);
             //convert to lower case
@@ -2448,7 +2450,8 @@ namespace PubNub_Messaging
                 //decrypt
 
                 //string strDecrypted = System.Text.Encoding.ASCII.GetString(decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length)); *Changed*
-                string strDecrypted = System.Text.Encoding.UTF8.GetString(decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length));
+                var data = decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length);
+                string strDecrypted = Encoding.UTF8.GetString(data, 0, data.Length);
                 //
                 return strDecrypted;
             }
@@ -2470,7 +2473,9 @@ namespace PubNub_Messaging
         private static byte[] md5(string cipher_key)
         {
             MD5 obj = new MD5CryptoServiceProvider();
-            byte[] data = Encoding.Default.GetBytes(cipher_key);
+            //byte[] data = Encoding.Default.GetBytes(cipher_key); *Changed*
+            byte[] data = Encoding.UTF8.GetBytes(cipher_key);
+            //
             return obj.ComputeHash(data);
         }
         /// <summary>
@@ -2590,47 +2595,47 @@ namespace PubNub_Messaging
         private static void checkClientNetworkAvailability(Action<bool> callback)
         {
 
-            if (NetworkInterface.GetIsNetworkAvailable())
-            {
-                NetworkInterface[] netInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-                foreach (NetworkInterface netInterface in netInterfaces)
-                {
-                    IPInterfaceProperties ip = netInterface.GetIPProperties();
-                    if (netInterface.OperationalStatus == OperationalStatus.Up)
-                    {
-                        if (netInterface.NetworkInterfaceType != NetworkInterfaceType.Tunnel
-                            && netInterface.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-                        {
-                            //if (appSwitch.TraceInfo) *Changed*
-                            //{
-                            //    Debug.WriteLine(string.Format("DateTime {0} Network Interface = {1}", DateTime.Now.ToString(), netInterface.Description));
-                            //}
-                            IPInterfaceProperties prop = netInterface.GetIPProperties();
-                            UnicastIPAddressInformationCollection unicast = prop.UnicastAddresses;
+            //if (NetworkInterface.GetIsNetworkAvailable()) *Changed*
+            //{
+            //    NetworkInterface[] netInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            //    foreach (NetworkInterface netInterface in netInterfaces)
+            //    {
+            //        IPInterfaceProperties ip = netInterface.GetIPProperties();
+            //        if (netInterface.OperationalStatus == OperationalStatus.Up)
+            //        {
+            //            if (netInterface.NetworkInterfaceType != NetworkInterfaceType.Tunnel
+            //                && netInterface.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+            //            {
+            //                //if (appSwitch.TraceInfo) *Changed*
+            //                //{
+            //                //    Debug.WriteLine(string.Format("DateTime {0} Network Interface = {1}", DateTime.Now.ToString(), netInterface.Description));
+            //                //}
+            //                IPInterfaceProperties prop = netInterface.GetIPProperties();
+            //                UnicastIPAddressInformationCollection unicast = prop.UnicastAddresses;
 
-                            foreach (UnicastIPAddressInformation uniIP in unicast)
-                            {
-                                IPAddress addrip = uniIP.Address;
-                                if (addrip.AddressFamily == AddressFamily.InterNetworkV6) continue;
+            //                foreach (UnicastIPAddressInformation uniIP in unicast)
+            //                {
+            //                    IPAddress addrip = uniIP.Address;
+            //                    if (addrip.AddressFamily == AddressFamily.InterNetworkV6) continue;
 
-                                if (appSwitch.TraceInfo)
-                                {
-                                    Debug.WriteLine(string.Format("DateTime {0} IP Address = {1}", DateTime.Now.ToString(), addrip.ToString()));
-                                }
+            //                    if (appSwitch.TraceInfo)
+            //                    {
+            //                        Debug.WriteLine(string.Format("DateTime {0} IP Address = {1}", DateTime.Now.ToString(), addrip.ToString()));
+            //                    }
 
-                                InternetState state = new InternetState();
-                                state.ipaddr = addrip;
-                                state.callback = callback;
-                                ThreadPool.QueueUserWorkItem(checkSocketConnect, state);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                callback(false);
-            }
+            //                    InternetState state = new InternetState();
+            //                    state.ipaddr = addrip;
+            //                    state.callback = callback;
+            //                    ThreadPool.QueueUserWorkItem(checkSocketConnect, state);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    callback(false);
+            //}
         }
 
         private static void checkSocketConnect(object internetState)
@@ -2643,16 +2648,16 @@ namespace PubNub_Messaging
             {
                 using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
-                    socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
-                    socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 1000);
-                    
-                    IPEndPoint local = new IPEndPoint(ipaddr, 0);
-                    socket.Bind(local);
-                    socket.Connect("pubsub.pubnub.com", 80);
-                    connected = true;
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Disconnect(true);
-                    socket.Close();
+                    //socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false); *Changed*
+                    //socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 1000); *Changed*
+             
+                    //IPEndPoint local = new IPEndPoint(ipaddr, 0); *Chenged*
+                    //socket.Bind(local);
+                    //socket.Connect("pubsub.pubnub.com", 80);
+                    //connected = true;
+                    //socket.Shutdown(SocketShutdown.Both);
+                    //socket.Disconnect(true);
+                    //socket.Close();
                 }
             }
             catch (ObjectDisposedException objEx)

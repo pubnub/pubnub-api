@@ -32,7 +32,7 @@ namespace PubNub_Messaging
             {
                 for(int index=0; index < message.Count; index++)
                 {
-                    Console.WriteLine(string.Format("[{0}] = {1}",index, message[index].ToString()));
+                    Console.WriteLine(string.Format("[{0}] = {1}", index, message[index].ToString()));
                     object[] msg = message[0] as object[];
                     if (msg != null)
                     {
