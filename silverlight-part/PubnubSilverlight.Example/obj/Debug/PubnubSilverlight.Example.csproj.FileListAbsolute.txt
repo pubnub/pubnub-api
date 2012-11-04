@@ -151,3 +151,4 @@ C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.E
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\PubnubSilverlight.Example.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\XapCacheFile.xml
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\ConcurrentHashtable_Silverlight.dll
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\Dialogs\PublishMessageDialog.g.i.cs

@@ -1176,10 +1176,10 @@ namespace PubNub_Messaging
 
             // Force canonical path and query
             string paq = requestUri.PathAndQuery;
-            FieldInfo flagsFieldInfo = typeof(Uri).GetField("m_Flags", BindingFlags.Instance | BindingFlags.NonPublic);
-            ulong flags = (ulong)flagsFieldInfo.GetValue(requestUri);
-            flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
-            flagsFieldInfo.SetValue(requestUri, flags);
+            //FieldInfo flagsFieldInfo = typeof(Uri).GetField("m_Flags", BindingFlags.Instance | BindingFlags.NonPublic);
+            //ulong flags = (ulong)flagsFieldInfo.GetValue(requestUri);
+            //flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
+            //flagsFieldInfo.SetValue(requestUri, flags);
 
 
             try
@@ -1218,7 +1218,7 @@ namespace PubNub_Messaging
                     {
                         RequestState asynchRequestState = (RequestState)asynchronousResult.AsyncState;
                         HttpWebRequest aRequest = (HttpWebRequest)asynchRequestState.request;
-
+                    
                         if (aRequest != null)
                         {
                             using (HttpWebResponse aResponse = (HttpWebResponse)aRequest.EndGetResponse(asynchronousResult))

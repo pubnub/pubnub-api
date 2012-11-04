@@ -14,37 +14,73 @@
             <ColumnDefinition Width="350" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel HorizontalAlignment="Left" Margin="10 10 0 0">
+        <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="10 30 0 0">
 
-            <Button Content="Publish" ToolTipService.ToolTip="Publish Example" Click="Button_Click_1" Style="{StaticResource ShortButtonStyle}" />
+            <StackPanel Orientation="Horizontal">
 
-            <Button Content="Timestamp" ToolTipService.ToolTip="Timestamp Example" Click="Button_Click_4" Style="{StaticResource ShortButtonStyle}" />
+                <TextBlock Text="Channel Name : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <TextBox Text="my_channel" VerticalAlignment="Center" Foreground="Gray" Width="150" FontFamily="Verdana" FontSize="12" TextChanged="TextBox_TextChanged" />
 
-            <Button Content="HereNow" ToolTipService.ToolTip="HereNow Example" Click="Button_Click_5" Style="{StaticResource ShortButtonStyle}" />
+            </StackPanel>
 
-            <Button Content="Presence" ToolTipService.ToolTip="Presence Example" Click="Button_Click_6" Style="{StaticResource ShortButtonStyle}" />
+            <Grid  Margin="0 20 0 0">
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="5" />
+                    <RowDefinition />
+                    <RowDefinition Height="5" />
+                    <RowDefinition />
+                    <RowDefinition Height="5" />
+                    <RowDefinition />
+                    <RowDefinition Height="5" />
+                    <RowDefinition />
+                    <RowDefinition Height="5" />
+                    <RowDefinition />
+                    <RowDefinition Height="5" />
+                    <RowDefinition />
+                    <RowDefinition Height="5" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-            <Button Content="Subscribe" ToolTipService.ToolTip="Subscribe Example" Click="Button_Click_7" Style="{StaticResource ShortButtonStyle}" />
+                <TextBlock Grid.Column="0" Grid.Row="0"  Text="Subscribe : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <Button  Grid.Column="1" Grid.Row="0" Content="Go!" Width="50" VerticalAlignment="Center" FontFamily="Verdana" FontSize="12" Click="Subscribe_Click" />
+                
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Publish : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <Button Grid.Column="1" Grid.Row="2" Content="Go!" Width="50" VerticalAlignment="Center" FontFamily="Verdana" FontSize="12" Click="Publish_Click" />
 
-            <Button Content="Detailed History" ToolTipService.ToolTip="Detailed History Example" Click="Button_Click_2" Style="{StaticResource ShortButtonStyle}" />
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Presence : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <Button Grid.Column="1" Grid.Row="4" Content="Go!" Width="50" VerticalAlignment="Center" FontFamily="Verdana" FontSize="12" Click="Presence_Click" />
 
-            <Button Content="Detailed History Decrypted" ToolTipService.ToolTip="Detailed History Decrypted Example" Click="Button_Click_3" Style="{StaticResource LongButtonStyle}" />
+                <TextBlock Grid.Column="0" Grid.Row="6" Text="Detailed History : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <Button Grid.Column="1" Grid.Row="6" Content="Go!" Width="50" VerticalAlignment="Center" FontFamily="Verdana" FontSize="12" Click="History_Click" />
 
-            <Button Content="Unencrypted History" ToolTipService.ToolTip="Test Unencrypted History"  Click="Button_Click_8" Style="{StaticResource LongButtonStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="8" Text="Here_Now : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <Button Grid.Column="1" Grid.Row="8" Content="Go!" Width="50" VerticalAlignment="Center" FontFamily="Verdana" FontSize="12" Click="HereNow_Click" />
 
-            <Button Content="Encrypted History" ToolTipService.ToolTip="Test Encrypted History" Click="Button_Click_9" Style="{StaticResource LongButtonStyle}" />
+                <TextBlock Grid.Column="0" Grid.Row="10" Text="Unsubscribe : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <Button Grid.Column="1" Grid.Row="10" Content="Go!" Width="50" VerticalAlignment="Center" FontFamily="Verdana" FontSize="12" Click="Unsubscribe_Click" />
 
-            <Button Content="Unencrypted Detailed History" ToolTipService.ToolTip="Test Unencrypted Detailed History" Click="Button_Click_10" Style="{StaticResource LongButtonStyle}" />
+                <TextBlock Grid.Column="0" Grid.Row="12" Text="Presence-Unsubscribe : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <Button Grid.Column="1" Grid.Row="12" Content="Go!" Width="50" VerticalAlignment="Center" FontFamily="Verdana" FontSize="12" Click="PresenceUnsubscrib_Click" />
 
-            <Button Content="Encrypted Detailed History" ToolTipService.ToolTip="Test Encrypted Detailed History" Click="Button_Click_11" Style="{StaticResource LongButtonStyle}" />
+                <TextBlock Grid.Column="0" Grid.Row="14" Text="Time : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
+                <Button Grid.Column="1" Grid.Row="14" Content="Go!" Width="50" VerticalAlignment="Center" FontFamily="Verdana" FontSize="12" Click="Time_Click" />
 
-            <Button Content="Unencrypted Detailed History Params" ToolTipService.ToolTip="Test Unencrypted Detailed History Params" Click="Button_Click_12" Style="{StaticResource LongButtonStyle}"  />
 
-            <Button Content="Encrypted Detailed History Params" ToolTipService.ToolTip="Test Encrypted Detailed History Params" Click="Button_Click_13" Style="{StaticResource LongButtonStyle}"  />
+
+            </Grid>
+
+          
 
         </StackPanel>
 
-        <ScrollViewer Grid.Column="2" Background="Black">
+        <ScrollViewer Grid.Column="1" Background="Black">
 
             <TextBlock x:Name="ConsoleContainer" Foreground="Aqua" />
 

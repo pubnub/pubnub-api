@@ -1176,15 +1176,15 @@ namespace PubnubSilverlight.Core
             }
 
             Uri requestUri = new Uri(url.ToString());
-
+            
             // Force canonical path and query
             //string paq = requestUri.PathAndQuery; *Changed*
             string paq = requestUri.AbsolutePath + requestUri.Query;
             //
-            FieldInfo flagsFieldInfo = typeof(Uri).GetField("m_Flags", BindingFlags.Instance | BindingFlags.NonPublic);
-            ulong flags = (ulong)flagsFieldInfo.GetValue(requestUri);
-            flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
-            flagsFieldInfo.SetValue(requestUri, flags);
+            //FieldInfo flagsFieldInfo = typeof(Uri).GetField("m_Flags", BindingFlags.Instance | BindingFlags.NonPublic);
+            //ulong flags = (ulong)flagsFieldInfo.GetValue(requestUri);
+            //flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
+            //flagsFieldInfo.SetValue(requestUri, flags);
 
 
             try
@@ -1217,7 +1217,7 @@ namespace PubnubSilverlight.Core
                 {
                     _channelRequest.AddOrUpdate(channelName, pubnubRequestState, (key, oldState) => pubnubRequestState);
                 }
-
+                
                 // Make request with the following inline Asynchronous callback
                 IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback((asynchronousResult) =>
                 {
@@ -1231,7 +1231,7 @@ namespace PubnubSilverlight.Core
                             using (HttpWebResponse aResponse = (HttpWebResponse)aRequest.EndGetResponse(asynchronousResult))
                             {
                                 pubnubRequestState.response = aResponse;
-
+                            
                                 using (StreamReader streamReader = new StreamReader(aResponse.GetResponseStream()))
                                 {
                                     // Deserialize the result
@@ -1350,7 +1350,7 @@ namespace PubnubSilverlight.Core
 
                 }), pubnubRequestState);
 
-                ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
+                //ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
 
                 return true;
             }

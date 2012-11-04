@@ -60,16 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcurrentDictionaryExtentions.cs" />
-    <Compile Include="DetailedHistory_Example.cs" />
-    <Compile Include="Here_Now_Example.cs" />
-    <Compile Include="PresenceUnsubscribe_Example.cs" />
-    <Compile Include="Presence_Example.cs" />
-    <Compile Include="Publish_Example.cs" />
     <Compile Include="Pubnub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubnubV2.cs" />
-    <Compile Include="Pubnub_Example.cs" />
-    <Compile Include="Subscribe_Example.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PubnubSilverlight.Imports\PubnubSilverlight.Imports.csproj">

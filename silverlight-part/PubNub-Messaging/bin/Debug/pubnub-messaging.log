@@ -78,3 +78,1121 @@ DateTime: 11/1/2012 10:17:17 PM, **OnPubnubHeartBeatTimeoutCallback**
 DateTime 11/1/2012 10:17:17 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
 DateTime 11/1/2012 10:17:17 PM IP Address = 192.168.1.3
 DateTime 11/1/2012 10:17:18 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:35:29 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/4/2012 6:35:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:35:29 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:35:29 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:35:29 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:35:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:35:44 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:35:44 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:35:44 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:35:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:35:59 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:35:59 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:35:59 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:36:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:36:14 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:36:14 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:36:14 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:36:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:36:29 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:36:29 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:36:29 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:36:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:36:44 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:36:44 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:36:44 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:36:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:36:59 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/4/2012 6:37:01 PM, OnPubnubHeartBeatTimeoutCallback - No internet connection.
+DateTime: 11/4/2012 6:37:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:37:14 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:37:14 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:37:14 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:37:20 PM, requested subscribe for channel=t1
+DateTime 11/4/2012 6:37:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:37:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:37:21 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:37:22 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/0?uuid=f996be2e-e606-446d-913f-fd24c3f5744f
+DateTime 11/4/2012 6:37:22 PM, JSON for channel=t1 (Subscribe) =[[],"13520470410228013","t1"]
+DateTime 11/4/2012 6:37:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:37:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:37:22 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:37:23 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/13520470410228013?uuid=f996be2e-e606-446d-913f-fd24c3f5744f
+DateTime: 11/4/2012 6:37:37 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:37:37 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/4/2012 6:37:39 PM, OnPubnubHeartBeatTimeoutCallback - No internet connection.
+DateTime 11/4/2012 6:37:39 PM, WebException: The request was aborted: The request was canceled. for URL: http://pubsub.pubnub.com/subscribe/demo/t1/0/13520470410228013?uuid=f996be2e-e606-446d-913f-fd24c3f5744f
+DateTime: 11/4/2012 6:37:39 PM, OnPubnubWebRequestTimeout: No network detected. Request aborted for channel = t1
+DateTime 11/4/2012 6:37:39 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:37:40 PM, Subscribe - No internet connection for t1
+DateTime 11/4/2012 6:37:40 PM, heartbeatTimeout=True, TerminatePendingWebRequest http://pubsub.pubnub.com/subscribe/demo/t1/0/13520470410228013?uuid=f996be2e-e606-446d-913f-fd24c3f5744f
+DateTime 11/4/2012 6:37:40 PM 1 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:37:40 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:37:45 PM 2 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:37:45 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:37:50 PM 3 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:37:50 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/4/2012 6:37:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:37:52 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/4/2012 6:37:54 PM, OnPubnubHeartBeatTimeoutCallback - No internet connection.
+DateTime 11/4/2012 6:37:55 PM 4 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:37:55 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:38:00 PM 5 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:00 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:38:05 PM 6 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:05 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/4/2012 6:38:07 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:38:07 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/4/2012 6:38:09 PM, OnPubnubHeartBeatTimeoutCallback - No internet connection.
+DateTime 11/4/2012 6:38:10 PM 7 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:10 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:38:15 PM 8 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:15 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:38:20 PM 9 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:20 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/4/2012 6:38:22 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:38:22 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/4/2012 6:38:24 PM, OnPubnubHeartBeatTimeoutCallback - No internet connection.
+DateTime 11/4/2012 6:38:25 PM 10 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:25 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:38:30 PM 11 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:30 PM, updateInternetStatus. Internet Available : False
+DateTime 11/4/2012 6:38:35 PM 12 out of 50 tries by callback to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:35 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:38:35 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:38:35 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:38:37 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:38:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:38:37 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:38:37 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:38:40 PM, reconnectNetworkCallback. Stopped callback timer to connect Internet for channel=t1
+DateTime 11/4/2012 6:38:40 PM, reconnectNetworkCallback. Internet Available : True
+DateTime 11/4/2012 6:38:40 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:38:40 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:38:40 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:38:41 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/13520470410228013?uuid=f996be2e-e606-446d-913f-fd24c3f5744f
+DateTime: 11/4/2012 6:38:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:38:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:38:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:38:52 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:39:05 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:39:05 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:39:06 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:39:07 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:39:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:39:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:39:07 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:39:07 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/t1/0/%22publish1%22
+DateTime 11/4/2012 6:39:08 PM, JSON for channel=t1 (Publish) =[1,"Sent","13520471469685186"]
+DateTime 11/4/2012 6:39:08 PM, JSON for channel=t1 (Subscribe) =[["publish1"],"13520471469685186","t1"]
+DateTime 11/4/2012 6:39:08 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:39:08 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:39:08 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:39:09 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/13520471469685186?uuid=f996be2e-e606-446d-913f-fd24c3f5744f
+DateTime: 11/4/2012 6:39:23 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:39:23 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:39:23 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:39:23 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:39:38 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:39:38 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:39:38 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:39:38 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:39:53 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:39:53 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:39:53 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:39:53 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:40:08 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:40:08 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:40:08 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:40:08 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:40:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:40:21 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/4/2012 6:40:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:40:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:40:21 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:44:23 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/4/2012 6:44:23 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:44:23 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:44:23 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:44:24 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:48:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:48:18 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/4/2012 6:48:18 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:48:18 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:48:18 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:48:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:48:33 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:48:33 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:48:33 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:48:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:48:48 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:48:48 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:48:48 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:48:55 PM, requested subscribe for channel=test12
+DateTime 11/4/2012 6:48:55 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:48:55 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:48:55 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:48:56 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/0?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime 11/4/2012 6:48:56 PM, JSON for channel=test12 (Subscribe) =[[],"13520477356057334","test12"]
+DateTime 11/4/2012 6:48:57 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:48:57 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:48:57 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:48:58 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477356057334?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 6:49:11 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:49:12 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:49:12 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:49:12 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:49:12 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:49:12 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:49:12 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:49:14 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/test12/0/%22hi%22
+DateTime 11/4/2012 6:49:14 PM, JSON for channel=test12 (Publish) =[1,"Sent","13520477536300613"]
+DateTime 11/4/2012 6:49:14 PM, JSON for channel=test12 (Subscribe) =[["hi"],"13520477536300612","test12"]
+DateTime 11/4/2012 6:49:14 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:49:14 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:49:15 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:49:15 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477536300612?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 6:49:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:49:29 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:49:29 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:49:30 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:49:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:49:44 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:49:44 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:49:45 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:49:51 PM, JSON for channel=test12 (Subscribe) =[["it works"],"13520477905896550","test12"]
+DateTime 11/4/2012 6:49:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:49:51 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:49:52 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:49:52 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 6:50:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:50:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:50:06 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:50:07 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:50:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:50:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:50:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:50:22 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:50:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:50:36 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:50:36 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:50:37 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:50:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:50:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:50:51 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:50:52 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:51:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:51:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:51:06 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:51:07 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:51:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:51:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:51:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:51:22 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:51:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:51:36 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:51:36 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:51:37 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:51:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:51:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:51:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:51:52 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:52:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:52:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:52:06 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:52:07 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:52:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:52:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:52:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:52:22 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:52:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:52:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:52:37 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:52:37 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:52:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:52:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:52:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:52:52 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:53:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:53:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:53:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:53:07 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:53:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:53:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:53:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:53:22 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:53:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:53:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:53:37 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:53:37 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:53:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:53:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:53:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:53:52 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:54:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:54:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:54:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:54:07 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:54:14 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 6:54:15 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:54:15 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:54:15 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:54:16 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 6:54:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:54:30 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:54:30 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:54:30 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:54:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:54:45 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:54:45 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:54:45 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:54:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:54:59 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:54:59 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:55:00 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:55:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:55:14 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:55:14 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:55:15 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:55:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:55:30 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:55:30 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:55:30 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:55:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:55:45 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:55:45 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:55:45 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:55:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:56:00 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:56:00 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:56:00 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:56:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:56:15 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:56:15 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:56:15 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:56:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:56:30 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:56:30 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:56:30 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:56:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:56:45 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:56:45 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:56:45 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:56:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:57:00 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:57:00 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:57:00 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:57:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:57:15 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:57:15 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:57:15 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:57:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:57:30 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:57:30 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:57:30 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:57:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:57:45 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:57:45 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:57:45 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:57:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:58:00 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:58:00 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:58:00 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:58:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:58:15 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:58:15 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:58:15 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:58:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:58:30 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:58:30 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:58:30 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:58:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:58:45 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:58:45 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:58:45 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:58:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:59:00 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:59:00 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:59:00 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:59:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:59:15 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:59:15 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:59:15 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:59:16 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 6:59:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:59:16 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:59:16 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 6:59:17 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 6:59:31 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:59:31 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:59:31 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:59:31 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 6:59:46 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 6:59:46 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 6:59:46 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 6:59:46 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:00:01 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:00:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:00:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:00:01 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:00:16 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:00:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:00:16 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:00:16 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:00:31 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:00:31 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:00:31 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:00:31 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:00:46 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:00:46 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:00:46 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:00:46 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:01:01 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:01:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:01:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:01:01 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:01:16 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:01:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:01:16 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:01:16 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:01:31 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:01:31 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:01:31 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:01:31 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:01:46 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:01:46 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:01:46 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:01:46 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:02:01 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:02:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:02:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:02:01 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:02:16 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:02:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:02:16 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:02:16 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:02:31 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:02:31 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:02:31 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:02:31 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:02:46 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:02:46 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:02:46 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:02:46 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:03:01 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:03:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:03:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:03:01 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:03:16 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:03:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:03:16 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:03:16 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:03:31 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:03:31 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:03:31 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:03:31 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:03:46 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:03:46 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:03:46 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:03:46 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:04:01 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:04:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:04:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:04:01 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:04:16 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:04:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:04:16 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:04:16 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:04:17 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 7:04:17 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:04:17 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:04:17 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:04:18 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 7:04:32 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:04:32 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:04:32 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:04:32 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:04:47 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:04:47 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:04:47 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:04:47 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:05:02 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:05:02 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:05:02 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:05:02 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:05:17 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:05:17 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:05:17 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:05:17 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:05:32 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:05:32 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:05:32 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:05:32 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:05:47 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:05:47 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:05:47 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:05:47 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:06:02 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:06:02 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:06:02 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:06:02 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:06:17 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:06:17 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:06:17 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:06:17 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:06:32 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:06:32 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:06:32 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:06:32 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:06:47 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:06:47 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:06:47 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:06:47 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:07:02 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:07:02 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:07:02 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:07:02 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:07:17 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:07:17 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:07:17 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:07:17 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:07:32 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:07:32 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:07:32 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:07:32 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:07:47 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:07:47 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:07:47 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:07:47 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:08:02 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:08:02 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:08:02 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:08:02 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:08:17 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:08:17 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:08:17 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:08:17 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:08:32 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:08:32 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:08:32 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:08:32 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:08:47 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:08:47 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:08:47 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:08:47 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:09:02 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:09:02 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:09:02 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:09:02 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:09:17 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:09:17 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:09:17 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:09:17 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:09:18 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 7:09:18 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:09:18 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:09:18 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:09:19 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 7:09:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:09:33 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:09:33 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:09:34 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:09:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:09:48 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:09:48 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:09:48 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:10:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:10:03 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:10:03 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:10:04 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:10:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:10:18 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:10:18 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:10:19 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:10:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:10:33 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:10:33 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:10:34 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:10:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:10:48 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:10:48 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:10:49 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:11:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:11:03 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:11:03 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:11:04 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:11:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:11:18 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:11:18 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:11:19 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:11:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:11:33 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:11:33 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:11:34 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:11:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:11:48 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:11:48 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:11:49 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:12:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:12:03 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:12:03 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:12:04 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:12:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:12:18 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:12:18 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:12:19 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:12:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:12:33 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:12:33 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:12:34 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:12:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:12:48 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:12:48 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:12:49 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:13:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:13:03 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:13:03 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:13:04 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:13:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:13:18 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:13:18 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:13:19 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:13:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:13:33 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:13:33 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:13:34 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:13:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:13:48 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:13:48 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:13:49 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:14:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:14:03 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:14:03 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:14:04 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:14:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:14:18 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:14:18 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:14:19 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:14:19 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 7:14:20 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:14:20 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:14:20 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:14:21 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 7:14:34 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:14:35 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:14:35 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:14:35 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:14:49 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:14:50 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:14:50 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:14:50 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:15:04 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:15:05 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:15:05 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:15:05 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:15:19 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:15:20 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:15:20 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:15:20 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:15:34 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:15:35 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:15:35 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:15:35 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:15:49 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:15:50 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:15:50 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:15:50 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:16:04 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:16:05 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:16:05 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:16:05 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:16:19 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:16:20 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:16:20 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:16:20 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:16:34 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:16:35 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:16:35 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:16:35 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:16:49 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:16:50 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:16:50 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:16:50 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:17:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:17:05 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:17:05 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:17:05 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:17:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:17:20 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:17:20 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:17:20 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:17:35 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:17:35 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:17:35 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:17:35 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:17:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:17:50 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:17:50 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:17:50 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:18:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:18:05 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:18:05 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:18:05 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:18:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:18:20 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:18:20 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:18:20 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:18:35 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:18:35 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:18:35 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:18:35 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:18:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:18:50 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:18:50 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:18:50 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:19:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:19:05 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:19:05 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:19:05 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:19:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:19:20 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:19:20 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:19:20 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:19:21 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 7:19:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:19:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:19:21 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:19:22 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 7:19:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:19:36 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:19:36 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:19:36 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:19:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:19:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:19:51 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:19:51 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:20:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:20:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:20:06 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:20:06 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:20:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:20:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:20:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:20:21 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:20:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:20:36 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:20:36 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:20:36 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:20:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:20:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:20:51 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:20:51 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:21:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:21:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:21:06 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:21:06 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:21:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:21:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:21:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:21:21 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:21:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:21:36 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:21:36 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:21:36 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:21:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:21:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:21:51 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:21:51 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:22:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:22:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:22:06 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:22:06 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:22:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:22:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:22:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:22:21 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:22:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:22:36 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:22:36 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:22:36 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:22:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:22:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:22:51 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:22:51 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:23:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:23:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:23:06 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:23:06 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:23:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:23:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:23:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:23:21 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:23:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:23:36 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:23:36 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:23:36 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:23:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:23:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:23:51 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:23:51 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:24:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:24:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:24:06 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:24:06 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:24:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:24:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:24:21 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:24:21 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:24:22 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 7:24:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:24:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:24:22 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:24:23 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 7:24:37 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:24:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:24:37 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:24:38 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:24:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:24:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:24:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:24:52 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:25:07 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:25:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:25:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:25:07 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:25:22 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:25:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:25:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:25:22 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:25:37 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:25:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:25:37 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:25:38 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:25:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:25:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:25:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:25:52 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:26:07 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:26:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:26:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:26:08 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:26:22 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:26:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:26:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:26:22 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:26:37 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:26:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:26:37 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:26:38 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:26:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:26:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:26:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:26:53 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:27:07 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:27:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:27:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:27:08 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:27:22 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:27:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:27:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:27:23 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:27:37 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:27:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:27:37 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:27:38 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:27:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:27:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:27:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:27:53 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:28:07 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:28:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:28:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:28:08 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:28:22 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:28:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:28:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:28:23 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:28:37 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:28:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:28:37 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:28:38 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:28:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:28:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:28:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:28:53 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:29:07 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:29:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:29:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:29:08 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:29:22 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:29:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:29:22 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:29:23 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:29:23 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 7:29:24 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:29:24 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:29:24 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:29:25 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 7:29:38 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:29:39 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:29:39 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:29:39 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:29:53 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:29:54 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:29:54 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:29:54 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:30:08 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:30:09 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:30:09 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:30:09 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:30:23 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:30:24 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:30:24 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:30:24 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:30:38 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:30:39 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:30:39 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:30:39 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:30:53 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:30:54 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:30:54 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:30:54 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:31:08 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:31:09 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:31:09 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:31:09 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:31:23 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:31:24 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:31:24 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:31:24 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:31:38 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:31:39 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:31:39 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:31:39 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:31:53 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:31:54 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:31:54 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:31:54 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:32:08 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:32:09 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:32:09 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:32:09 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:32:23 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:32:24 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:32:24 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:32:24 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:32:38 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:32:39 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:32:39 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:32:39 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:32:53 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:32:54 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:32:54 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:32:54 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:33:08 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:33:09 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:33:09 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:33:09 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:33:23 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:33:24 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:33:24 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:33:24 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:33:38 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:33:39 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:33:39 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:33:39 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:33:54 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:33:54 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:33:54 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:33:54 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:34:09 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:34:09 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:34:09 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:34:09 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:34:24 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:34:24 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:34:24 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:34:24 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:34:25 PM, JSON for channel=test12 (Subscribe) =[[],"13520477905896550","test12"]
+DateTime 11/4/2012 7:34:25 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:34:25 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:34:25 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:34:26 PM, Request=http://pubsub.pubnub.com/subscribe/demo/test12/0/13520477905896550?uuid=5d33ca93-4243-4ca5-838b-6bea0876a0cf
+DateTime: 11/4/2012 7:34:40 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:34:40 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:34:40 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:34:40 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:34:55 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:34:55 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:34:55 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:34:55 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:35:10 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:35:10 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:35:10 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:35:10 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:35:25 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:35:25 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:35:25 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:35:25 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:35:40 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:35:40 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:35:40 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:35:40 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:35:55 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:35:55 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:35:55 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:35:55 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:36:10 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:36:10 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:36:10 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:36:10 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:37:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:37:03 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/4/2012 7:37:03 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:37:03 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:37:03 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:37:14 PM, requested subscribe for channel=tt1
+DateTime 11/4/2012 7:37:14 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:37:14 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:37:14 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:37:15 PM, Request=http://pubsub.pubnub.com/subscribe/demo/tt1/0/0?uuid=a26aff3d-9681-4190-9d8a-10e5bc5a97ac
+DateTime 11/4/2012 7:37:15 PM, JSON for channel=tt1 (Subscribe) =[[],"13520506343070414","tt1"]
+DateTime 11/4/2012 7:37:15 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:37:15 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:37:15 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:37:16 PM, Request=http://pubsub.pubnub.com/subscribe/demo/tt1/0/13520506343070414?uuid=a26aff3d-9681-4190-9d8a-10e5bc5a97ac
+DateTime 11/4/2012 7:37:19 PM, requested subscribe for channel=tt1
+DateTime 11/4/2012 7:37:19 PM, JSON subscribe response=[0, "Already subscribed"]
+DateTime: 11/4/2012 7:37:30 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:37:30 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:37:30 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:37:30 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:37:33 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:37:33 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:37:33 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:37:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/4/2012 7:38:43 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:41:54 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/4/2012 7:41:54 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:41:55 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:41:55 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:41:55 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:48:43 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/4/2012 7:48:43 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:48:44 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:48:44 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:48:44 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:48:51 PM, requested subscribe for channel=ttt2
+DateTime 11/4/2012 7:48:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:48:51 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:48:52 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:48:57 PM, Request=http://pubsub.pubnub.com/subscribe/demo/ttt2/0/0?uuid=17e4a271-c37f-4f97-ac11-9aed362ee1a0
+DateTime 11/4/2012 7:48:57 PM, JSON for channel=ttt2 (Subscribe) =[[],"13520513361924195","ttt2"]
+DateTime 11/4/2012 7:48:57 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:48:57 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:48:57 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:48:59 PM, Request=http://pubsub.pubnub.com/subscribe/demo/ttt2/0/13520513361924195?uuid=17e4a271-c37f-4f97-ac11-9aed362ee1a0
+DateTime 11/4/2012 7:49:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:49:07 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:49:07 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:49:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/4/2012 7:53:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/4/2012 7:49:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/4/2012 7:55:10 PM, OnPubnubWebRequestTimeout: client request timeout reached.Request aborted for channel = ttt2
+DateTime 11/4/2012 7:56:01 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/ttt2/0/"test1"
+DateTime: 11/4/2012 7:56:01 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:56:01 PM, WebException: The request was aborted: The request was canceled. for URL: http://pubsub.pubnub.com/subscribe/demo/ttt2/0/13520513361924195?uuid=17e4a271-c37f-4f97-ac11-9aed362ee1a0
+DateTime: 11/4/2012 7:56:01 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:56:01 PM, JSON for channel=ttt2 (Publish) =[1,"Sent","13520517602254702"]
+DateTime 11/4/2012 7:56:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:01 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:01 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:02 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:02 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:12 PM, Request=http://pubsub.pubnub.com/subscribe/demo/ttt2/0/13520513361924195?uuid=17e4a271-c37f-4f97-ac11-9aed362ee1a0
+DateTime: 11/4/2012 7:56:12 PM, OnPubnubWebRequestTimeout: resetting the heartbeat timeout
+DateTime 11/4/2012 7:56:12 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:12 PM, JSON for channel=ttt2 (Subscribe) =[["test1"],"13520517602254702","ttt2"]
+DateTime 11/4/2012 7:56:12 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:12 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:12 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:12 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:12 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:12 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:14 PM, Request=http://pubsub.pubnub.com/subscribe/demo/ttt2/0/13520517602254702?uuid=17e4a271-c37f-4f97-ac11-9aed362ee1a0
+DateTime: 11/4/2012 7:56:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:56:27 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:27 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:27 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:42 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/4/2012 7:56:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 7:56:43 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:43 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:43 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:49 PM, requested subscribe for channel=we
+DateTime 11/4/2012 7:56:49 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:49 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:49 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:52 PM, Request=http://pubsub.pubnub.com/subscribe/demo/we/0/0?uuid=b757bbb1-9c74-4223-903e-5ab59dec4961
+DateTime 11/4/2012 7:56:52 PM, JSON for channel=we (Subscribe) =[[],"13520518113642350","we"]
+DateTime 11/4/2012 7:56:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:56:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:56:52 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 7:56:55 PM, Request=http://pubsub.pubnub.com/subscribe/demo/we/0/13520518113642350?uuid=b757bbb1-9c74-4223-903e-5ab59dec4961
+DateTime 11/4/2012 7:57:02 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 7:57:02 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 7:57:03 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 7:57:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/4/2012 8:33:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 8:33:52 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/4/2012 8:33:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 8:33:52 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 8:33:52 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 8:33:58 PM, requested subscribe for channel=ch6
+DateTime 11/4/2012 8:33:58 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 8:33:58 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 8:33:58 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 8:34:00 PM, Request=http://pubsub.pubnub.com/subscribe/demo/ch6/0/0?uuid=260b8452-0d2b-45c4-997a-f33ea65ec0c1
+DateTime 11/4/2012 8:34:01 PM, JSON for channel=ch6 (Subscribe) =[[],"13520540400428218","ch6"]
+DateTime 11/4/2012 8:34:02 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 8:34:02 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 8:34:02 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 8:34:04 PM, Request=http://pubsub.pubnub.com/subscribe/demo/ch6/0/13520540400428218?uuid=260b8452-0d2b-45c4-997a-f33ea65ec0c1
+DateTime: 11/4/2012 8:34:16 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 8:34:17 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 8:34:17 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 8:34:17 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 8:34:29 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 8:34:29 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 8:34:30 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 8:34:31 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 8:34:38 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/ch6/0/"hello!"
+DateTime 11/4/2012 8:34:38 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 8:34:38 PM IP Address = 192.168.1.9
+DateTime: 11/4/2012 8:34:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 8:34:50 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 8:57:31 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/4/2012 8:57:31 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 8:57:31 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 8:57:31 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 8:57:31 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/4/2012 8:57:46 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 8:57:46 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 8:57:46 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 8:57:46 PM, updateInternetStatus. Internet Available : True
+DateTime 11/4/2012 9:03:16 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/4/2012 9:03:16 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/4/2012 9:03:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/4/2012 9:03:16 PM IP Address = 192.168.1.9
+DateTime 11/4/2012 9:03:16 PM, updateInternetStatus. Internet Available : True

@@ -15,9 +15,9 @@ namespace PubnubSilverlight.UnitTest
     {
         ManualResetEvent manualEvent = new ManualResetEvent(false);
         bool receivedMessage = false;
+       
 
         [TestMethod]
-        [Asynchronous]
         public void ThenItShouldReturnReceivedMessage()
         {
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
@@ -26,9 +26,8 @@ namespace PubnubSilverlight.UnitTest
             string channel = "my_channel";
 
             pubnub.subscribe(channel, ThenDoCallback);
-
             //manualEvent.WaitOne(10000, false); *Changed*
-            Assert.IsTrue(receivedMessage);
+            Assert.IsTrue(receivedMessage); 
         }
 
         public void ThenDoCallback(object result)
@@ -42,7 +41,7 @@ namespace PubnubSilverlight.UnitTest
                     receivedMessage = true;
                 }
             }
-            manualEvent.Set();
+            // manualEvent.Set(); *Changed*
             Assert.IsTrue(receivedMessage);
         }
 
