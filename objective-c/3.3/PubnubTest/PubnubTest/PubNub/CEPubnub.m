@@ -774,7 +774,7 @@ typedef enum {
         }
     }
     
-    if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
+    if ([response isKindOfClass:[NSArray class]]) {
         if(!isPresence)
             NSLog(@"Received %i messages from PubNub channel \"%@\"", [[response objectAtIndex:0] count], connection.channel);
         
@@ -915,7 +915,7 @@ typedef enum {
 - (void)handleCommandGetTimeForConnection:(PubNubConnection *)connection response:(id)response
 {
     NSDecimalNumber *number = nil;
-    if ([response isKindOfClass:[NSArray class]] && ([response count] == 1)) {
+    if ([response isKindOfClass:[NSArray class]]) {
         NSLog(@"Retrieved PubNub time '%@'", [response objectAtIndex:0]);
         number = [response objectAtIndex:0];
     } else if (response) {
