@@ -74,6 +74,7 @@ package com.pubnub {
 		private function initKeys(config:Object):void {
 			_ssl = config.ssl;
 			origin = config.origin;
+			trace(ssl);
 			if(config.publish_key){
 				_publishKey = config.publish_key;
 			}

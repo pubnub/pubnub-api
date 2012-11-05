@@ -116,15 +116,14 @@ package org.httpclient {
      */
     public function request(uri:URI, request:HttpRequest):void {
       var onConnect:Function = function(event:Event):void {
-        
-        _dispatcher.dispatchEvent(new HttpRequestEvent(request, null, HttpRequestEvent.CONNECT));
-        
-        if (uri.scheme == "https" && _proxy) {
-          connectProxy(uri, request);
-        } else {
-          sendRequest(uri, request);
-        }
-      };
+		  trace('onConnect');
+		  _dispatcher.dispatchEvent(new HttpRequestEvent(request, null, HttpRequestEvent.CONNECT));
+		  if (uri.scheme == "https" && _proxy) {
+			  connectProxy(uri, request);
+			} else {
+				sendRequest(uri, request);
+			}
+		}
       
       // Connect
       connect(uri, onConnect);
@@ -136,12 +135,13 @@ package org.httpclient {
      * @param onConnect On connect callback
      */
     protected function connect(uri:URI, onConnect:Function = null):void {
+		
       _onConnect = onConnect;
 
       // Create the socket
       var secure:Boolean = (uri.scheme == "https");
       createSocket(secure);
-
+	  
       // Start timer
       _timer.start();
       
@@ -186,7 +186,7 @@ package org.httpclient {
     
       // Prepare response buffer
       _responseBuffer = new HttpResponseBuffer(false, onProxyHeader, onProxyData, onProxyComplete);
-      
+      //trace('@@@ : '  + uri.authority , uri.port);
       var bytes:ByteArray = new ByteArray();
       bytes.writeUTFBytes("CONNECT " + uri.authority + ":" + ((uri.port) ? uri.port : DEFAULT_HTTPS_PORT) + " HTTP/" + HTTP_VERSION + "\r\n\r\n");
       bytes.position = 0;
@@ -202,7 +202,7 @@ package org.httpclient {
      * @param uri URI
      * @param request Request to write
      */
-    protected function sendRequest(uri:URI, request:HttpRequest):void {               
+    protected function sendRequest(uri:URI, request:HttpRequest):void {  
       // Prepare response buffer
       _responseBuffer = new HttpResponseBuffer(request.hasResponseBody, onResponseHeader, onResponseData, onResponseComplete);
       

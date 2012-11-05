@@ -150,6 +150,19 @@ package com.hurlant.util.der
 					var ut:UTCTime = new UTCTime(type, len);
 					ut.setUTCTime(der.readMultiByte(len, "US-ASCII"));
 					return ut;
+					
+				// support for type 12
+				case 0x0C: // V_ASN1_UTF8STRING
+					ps = new PrintableString(type, len);
+					ps.setString(der.readMultiByte(len, "utf-8"));
+					trace(ps.getString())
+					return ps;
+					
+				// support for type 22
+				case 0x16: // V_ASN1_IA5STRING
+					ps = new PrintableString(type, len);
+					ps.setString(der.readMultiByte(len, "x-IA5"));
+					return ps;
 			}
 		}
 		

@@ -19,7 +19,8 @@
         public var channel:String = 'a,b,c';
 
         [Bindable]
-        public var origin:String = 'multiplexing.pubnub.com';
+        public var origin:String = 'pubsub.pubnub.com';
+        //public var origin:String = 'multiplexing.pubnub.com';
 
         [Bindable]
         public var pub_key:String = 'demo';
@@ -32,11 +33,12 @@
 
         [Bindable]
         public var cipher_key:String = '';
+		
+        public var ssl:Boolean = true;
 
         private var consoleCounter:int = 1;
 		
 		protected function init(event:FlexEvent):void{
-			trace('INIT');
 			BindingUtils.bindSetter(updateOrigin, this, "origin");
 		}
 			
@@ -47,7 +49,8 @@
                 publish_key:this.pub_key,
                 sub_key:this.sub_key,
                 secret_key:this.secret_key,
-                cipher_key:this.cipher_key
+                cipher_key:this.cipher_key,
+                ssl:this.ssl
             }
 			
             Pn.instance.addEventListener(PnEvent.INIT, onInit);
