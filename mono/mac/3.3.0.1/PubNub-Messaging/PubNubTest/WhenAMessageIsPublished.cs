@@ -8,7 +8,7 @@ namespace PubNubTest
 {
     [TestFixture]
     public class WhenAMessageIsPublished
-    {       
+    {
         public void NullMessage()
         {
             Pubnub pubnub = new Pubnub(
@@ -156,6 +156,7 @@ namespace PubNubTest
         }
 
         [Test]
+        [ExpectedException(typeof(MissingFieldException))]
         public void NullShouldBeTreatedAsEmpty()
         {
             Pubnub pubnub = new Pubnub(

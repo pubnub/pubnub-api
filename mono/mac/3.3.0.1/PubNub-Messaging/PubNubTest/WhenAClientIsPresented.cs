@@ -39,7 +39,7 @@ namespace PubNubTest
                     Console.WriteLine(strResponse);
                     //Assert.IsNotEmpty(strResponse);
                 }
-                Assert.AreEqual(fields[2], "hello_world-pnpres");
+                Assert.AreEqual("hello_world", fields[2]);
             }
         }
 

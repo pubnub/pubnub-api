@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRecord xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Tests>
+    <TestRecord Name="PubNubTest">
+      <Tests>
+        <TestRecord Name="WhenSubscribedToAChannel">
+          <Tests>
+            <TestRecord Name="ThenItShouldReturnReceivedMessage">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-11-03T22:46:13</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 7.15ms</Message>
+                  <ConsoleOutput>System.Collections.ArrayList
+13519627663737536
+hello_world
+1
+Sent
+13519629816013579
+hello_world
+System.Collections.ArrayList
+13519629816013580
+hello_world
+Resp:Test Message
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+      </Tests>
+    </TestRecord>
+  </Tests>
+</TestRecord>

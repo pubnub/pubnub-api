@@ -60,7 +60,7 @@ namespace PubNubTest
                     "",
                     "enigma",
                     false);
-            string channel = "my_channel";
+            string channel = "testchannel";
 
             //pubnub.CIPHER_KEY = "enigma";
             int total_msg = 10;
@@ -90,7 +90,7 @@ namespace PubNubTest
                 Console.WriteLine("Message # " + i.ToString() + " published");
             }
 
-
+            
             long endtime = Common.Timestamp(pubnub);
 
             Common.deliveryStatus = false;
@@ -177,7 +177,7 @@ namespace PubNubTest
                     "",
                     "",
                     false);
-            string channel = "my_channel";
+            string channel = "testchannel";
             //pubnub.CIPHER_KEY = "";
             int total_msg = 10;
             long starttime = Common.Timestamp(pubnub);
@@ -187,6 +187,7 @@ namespace PubNubTest
                 Common.deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, Common.DisplayReturnMessage);
+                while (!Common.deliveryStatus) ;
                 //long t = Timestamp();
                 //inputs.Add(t, msg);
                 Console.WriteLine("Message # " + i.ToString() + " published");
@@ -198,11 +199,13 @@ namespace PubNubTest
                 Common.deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, Common.DisplayReturnMessage);
+                while (!Common.deliveryStatus) ;
                 //long t = Timestamp();
                 //inputs.Add(t, msg);
                 Console.WriteLine("Message # " + i.ToString() + " published");
             }
 
+            
             long endtime = Common.Timestamp(pubnub);
             while (!Common.deliveryStatus) ;
 
@@ -242,7 +245,7 @@ namespace PubNubTest
                     "",
                     "enigma",
                     false);
-            string channel = "my_channel";
+            string channel = "testchannel";
             //pubnub.CIPHER_KEY = "enigma";
 
             int total_msg = 10;
@@ -252,6 +255,7 @@ namespace PubNubTest
             {
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, Common.DisplayReturnMessage);
+                while (!Common.deliveryStatus) ;
                 //long t = Timestamp();
                 //inputs.Add(t, msg);
                 Console.WriteLine("Message # " + i.ToString() + " published");
@@ -262,6 +266,7 @@ namespace PubNubTest
             {
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, Common.DisplayReturnMessage);
+                while (!Common.deliveryStatus) ;
                 //long t = Timestamp();
                 //inputs.Add(t, msg);
                 Console.WriteLine("Message # " + i.ToString() + " published");
@@ -299,22 +304,24 @@ namespace PubNubTest
         [Test]
         public static void TestUnencryptedDetailedHistoryParams()
         {
-            Pubnub pubnub = new Pubnub(
+           Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
                     "",
                     false);
-            string channel = "my_channel";
-            //pubnub.CIPHER_KEY = "";
+            string channel = "testchannel";
+
             int total_msg = 10;
             long starttime = Common.Timestamp(pubnub);
-            Dictionary<long, string> inputs = new Dictionary<long, string>();
+            
+            
             for (int i = 0; i < total_msg / 2; i++)
             {
                 Common.deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, Common.DisplayReturnMessage);
+                while (!Common.deliveryStatus) ;
                 //long t = Timestamp();
                 //inputs.Add(t, msg);
                 Console.WriteLine("Message # " + i.ToString() + " published");
@@ -326,10 +333,12 @@ namespace PubNubTest
                 Common.deliveryStatus = false;
                 string msg = i.ToString();
                 pubnub.publish(channel, msg, Common.DisplayReturnMessage);
+                while (!Common.deliveryStatus) ;
                 //long t = Timestamp();
                 //inputs.Add(t, msg);
                 Console.WriteLine("Message # " + i.ToString() + " published");
             }
+
 
             long endtime = Common.Timestamp(pubnub);
 
@@ -337,7 +346,6 @@ namespace PubNubTest
 
             Console.WriteLine("DetailedHistory with start & end");
             pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
-            Common.deliveryStatus = false;
             while (!Common.deliveryStatus) ;
             
             Console.WriteLine("DetailedHistory with start & reverse = true");
@@ -418,7 +426,7 @@ namespace PubNubTest
                     "",
                     "",
                     false);
-            string channel = "my_channel";
+            string channel = "testchannel";
             //pubnub.CIPHER_KEY = "";
             string msg = "Test Message";
             Common.deliveryStatus = false;
@@ -456,7 +464,7 @@ namespace PubNubTest
                     "",
                     "enigma",
                     false);
-            string channel = "my_channel";
+            string channel = "testchannel";
             //pubnub.CIPHER_KEY = "enigma";
             string msg = "Test Message";
 
@@ -478,7 +486,7 @@ namespace PubNubTest
                 IList<object> fields = Common.objResponse as IList<object>;
                 Console.WriteLine("fields[0]: " + fields[0]);
                 Console.WriteLine("fields[1]: " + fields[1]);
-                Assert.AreEqual(fields[0], msg);           
+                Assert.AreEqual(msg, fields[0]);           
             }  
 
         }

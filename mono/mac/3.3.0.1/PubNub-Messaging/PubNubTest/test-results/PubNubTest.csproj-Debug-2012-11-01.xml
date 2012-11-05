@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRecord xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Tests>
+    <TestRecord Name="PubNubTest">
+      <Tests>
+        <TestRecord Name="WhenDetailedHistoryIsRequested">
+          <Tests>
+            <TestRecord Name="DetailedHistory_Example">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T14:56:07</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 5.77ms</Message>
+                  <ConsoleOutput>1
+Sent
+13517619716194704
+my_channel
+1
+2
+3
+4
+5
+6
+7
+8
+9
+Test Message
+my_channel
+
+*********** DetailedHistory Messages Received*********** 
+resp:1
+resp:2
+resp:3
+resp:4
+resp:5
+resp:6
+resp:7
+resp:8
+resp:9
+resp:Test Message
+resp:my_channel
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T15:05:33</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 6.28ms</Message>
+                  <ConsoleOutput>1
+Sent
+13517625383011008
+my_channel
+0
+Network connnect error
+my_channel
+
+*********** DetailedHistory Messages Received*********** 
+resp:0
+resp:Network connnect error
+resp:my_channel
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T15:21:27</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 6.07ms</Message>
+                  <ConsoleOutput>1
+Sent
+13517634918810044
+my_channel
+System.Collections.ArrayList
+13517632411061322
+13517634918810044
+my_channel
+
+*********** DetailedHistory Messages Received*********** 
+resp:System.Collections.ArrayList
+resp:13517632411061322
+resp:13517634918810044
+resp:my_channel
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T15:23:29</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 5.63ms</Message>
+                  <ConsoleOutput>1
+Sent
+13517636134039383
+my_channel
+2
+3
+4
+5
+6
+7
+8
+9
+Test Message
+Test Message
+my_channel
+
+*********** DetailedHistory Messages Received*********** 
+resp:2
+resp:3
+resp:4
+resp:5
+resp:6
+resp:7
+resp:8
+resp:9
+resp:Test Message
+resp:Test Message
+resp:my_channel
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TestUnencryptedDetailedHistory">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T15:08:47</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  Expected string length 1 but was 22. Strings differ at index 0.
+  Expected: "1"
+  But was:  "Network connnect error"
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.WhenDetailedHistoryIsRequested.TestUnencryptedDetailedHistory () [0x001b0] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs:230 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>0
+Network connnect error
+Message # 0 published
+0
+Network connnect error
+my_channel
+0
+Message # 1 published
+Network connnect error
+my_channel
+Message # 2 published
+0
+Network connnect error
+my_channel
+Message # 3 published
+0
+Network connnect error
+my_channel
+0
+Message # 4 published
+Network connnect error
+my_channel
+0
+Network connnect error
+Message # 5 published
+0
+Network connnect error
+my_channel
+Message # 6 published
+0
+Network connnect error
+my_channel
+Message # 7 published
+0
+Network connnect error
+my_channel
+Message # 8 published
+0
+Network connnect error
+my_channel
+Message # 9 published
+0
+Network connnect error
+my_channel
+unable to parse data
+0
+Network connnect error
+my_channel
+
+******* DetailedHistory Messages Received ******* 
+resp:0 :: j: 0
+resp:Network connnect error :: j: 1
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T15:09:51</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 34.35ms</Message>
+                  <ConsoleOutput>unable to parse data
+Message # 0 published
+1
+Sent
+13517627981408720
+my_channel
+Message # 1 published
+1
+Sent
+13517628004265697
+my_channel
+Message # 2 published
+1
+Sent
+13517628027204669
+my_channel
+Message # 3 published
+1
+Sent
+13517628050136156
+my_channel
+Message # 4 published
+1
+Sent
+13517628073017673
+my_channel
+unable to parse data
+Message # 5 published
+1
+Sent
+13517628118561523
+my_channel
+Message # 6 published
+1
+Sent
+13517628141350630
+my_channel
+Message # 7 published
+1
+Sent
+13517628164140314
+my_channel
+1
+Sent
+13517628191219381
+my_channel
+Message # 8 published
+Message # 9 published
+1
+Sent
+13517628214270917
+my_channel
+unable to parse data
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+my_channel
+
+******* DetailedHistory Messages Received ******* 
+resp:0 :: j: 0
+resp:1 :: j: 1
+resp:2 :: j: 2
+resp:3 :: j: 3
+resp:4 :: j: 4
+resp:5 :: j: 5
+resp:6 :: j: 6
+resp:7 :: j: 7
+resp:8 :: j: 8
+resp:9 :: j: 9
+resp:my_channel :: j: 10
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T15:17:12</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>1</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>  Expected string length 1 but was 28. Strings differ at index 0.
+  Expected: "0"
+  But was:  "System.Collections.ArrayList"
+  -----------^
+</Message>
+                  <StackTrace>  at NUnit.Framework.Assert.That (System.Object actual, IResolveConstraint expression, System.String message, System.Object[] args) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) [0x00000] in &lt;filename unknown&gt;:0 
+  at PubNubTest.WhenDetailedHistoryIsRequested.TestUnencryptedDetailedHistory () [0x001b0] in /Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs:230 
+  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (System.Reflection.MonoMethod,object,object[],System.Exception&amp;)
+  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x000d5] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/corlib/System.Reflection/MonoMethod.cs:226 </StackTrace>
+                  <ConsoleOutput>unable to parse data
+Message # 0 published
+1
+Sent
+13517632388340619
+my_channel
+Message # 1 published
+1
+Sent
+13517632411061322
+my_channel
+Message # 2 published
+1
+Sent
+13517632433671730
+my_channel
+Message # 3 published
+1
+Sent
+13517632456271421
+my_channel
+Message # 4 published
+1
+Sent
+13517632478936582
+my_channel
+unable to parse data
+Message # 5 published
+1
+Sent
+13517632533677770
+my_channel
+Message # 6 published
+1
+Sent
+13517632556341095
+my_channel
+Message # 7 published
+1
+Sent
+13517632578936793
+my_channel
+Message # 8 published
+1
+Sent
+13517632601475701
+my_channel
+Message # 9 published
+1
+Sent
+13517632624343300
+my_channel
+unable to parse data
+System.Collections.ArrayList
+13517632388340619
+13517632624343300
+my_channel
+
+******* DetailedHistory Messages Received ******* 
+resp:System.Collections.ArrayList :: j: 0
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+        <TestRecord Name="WhenAClientIsPresented">
+          <Tests>
+            <TestRecord Name="IfHereNowIsCalledThenItShouldReturnInfo">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T15:53:26</TestDate>
+                  <Passed>1</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 3.47ms</Message>
+                  <ConsoleOutput>key = uuids
+value = 
+60239199-0c50-4e27-8c6c-bffe117b32ba
+eb69e658-6188-4af5-a186-e4c31450bc7a
+key = occupancy
+value = 2
+hello_world
+System.Collections.Generic.Dictionary`2[System.String,System.Object]
+hello_world
+value:System.Object[]  key:uuids
+value:2  key:occupancy
+60239199-0c50-4e27-8c6c-bffe117b32ba
+eb69e658-6188-4af5-a186-e4c31450bc7a
+</ConsoleOutput>
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="ThenItShouldReturnReceivedMessage">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2012-11-01T15:53:38</TestDate>
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                  <Message>Connection refused</Message>
+                  <StackTrace>  at Mono.Remoting.Channels.Unix.HostConnectionPool.CreateConnection () [0x0002a] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:265 
+  at Mono.Remoting.Channels.Unix.HostConnectionPool.GetConnection () [0x000bb] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:249 
+  at Mono.Remoting.Channels.Unix.UnixConnectionPool.GetConnection (System.String path) [0x00049] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixConnectionPool.cs:104 
+  at Mono.Remoting.Channels.Unix.UnixClientTransportSink.ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, System.IO.Stream requestStream, ITransportHeaders&amp; responseHeaders, System.IO.Stream&amp; responseStream) [0x00025] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/Mono.Posix/Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs:171 
+  at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage (IMessage msg) [0x0006c] in /private/tmp/monobuild/build/BUILD/mono-2.10.9/mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs:157 </StackTrace>
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+      </Tests>
+    </TestRecord>
+  </Tests>
+</TestRecord>

@@ -17,7 +17,7 @@ namespace PubNubConsole
                     "",
                     false);
 
-        static public string channel = "my_channel";
+        static public string channel = "";
 
         static public void Main2()
         {
@@ -31,7 +31,7 @@ namespace PubNubConsole
 
             Console.WriteLine("ENTER Channel Name");
             channel = Console.ReadLine();
-			//channel="hello_world";
+            //channel="hello_world";
 
             Console.WriteLine(string.Format("Channel = {0}",channel));
             Console.WriteLine();
@@ -43,6 +43,7 @@ namespace PubNubConsole
             Console.WriteLine("ENTER 5 FOR Here_Now");
             Console.WriteLine("ENTER 6 FOR Unsubscribe");
             Console.WriteLine("ENTER 7 FOR Presence-Unsubscribe");
+            Console.WriteLine("ENTER 8 FOR Time");
             Console.WriteLine("ENTER 0 FOR EXIT OR QUIT");
 
             bool exitFlag = false;
@@ -51,7 +52,7 @@ namespace PubNubConsole
             while (!exitFlag)
             {
                 string userinput = Console.ReadLine();
-				//userinput = "7";
+                //userinput = "7";
                 switch (userinput)
                 {
                     case "0":
@@ -59,33 +60,42 @@ namespace PubNubConsole
                         break;
                     case "1":
                         Console.WriteLine("Running subscribe()");
-                        pubnub.subscribe(channel, DisplayReturnMessage);
+                        pubnub.subscribe<string>(channel, DisplayReturnMessage);
+                        //pubnub.subscribe<object>(channel, DisplayReturnMessage);
                         break;
                     case "2":
                         Console.WriteLine("Running publish()");
                         Console.WriteLine("Enter the message for publish. To exit loop, enter QUIT");
-					    string publishMsg= Console.ReadLine();
-                        pubnub.publish(channel, publishMsg, DisplayReturnMessage);
+                        string publishMsg= Console.ReadLine();
+                        pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
                         break;
                     case "3":
                         Console.WriteLine("Running presence()");
-                        pubnub.presence(channel, DisplayReturnMessage);
+                        pubnub.presence<string>(channel, DisplayReturnMessage);
+                        //pubnub.presence<object>(channel, DisplayReturnMessage);
                         break;
                     case "4":
                         Console.WriteLine("Running detailed history()");
-                        pubnub.detailedHistory(channel, 1, DisplayReturnMessage);
+                        pubnub.detailedHistory<string>(channel, 1, DisplayReturnMessage);
+                        //pubnub.detailedHistory<object>(channel, 100, DisplayReturnMessage);
                         break;
                     case "5":
                         Console.WriteLine("Running Here_Now()");
-                        pubnub.here_now(channel, DisplayReturnMessage);
+                        pubnub.here_now<string>(channel, DisplayReturnMessage);
+                        //pubnub.here_now<object>(channel, DisplayReturnMessage);
                         break;
                     case "6":
                         Console.WriteLine("Running unsubscribe()");
-                        pubnub.unsubscribe(channel, DisplayReturnMessage);
+                        pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
+                        //pubnub.unsubscribe<object>(channel, DisplayReturnMessage);
                         break;
                     case "7":
                         Console.WriteLine("Running presence-unsubscribe()");
-                        pubnub.presence_unsubscribe(channel, DisplayReturnMessage);
+                        pubnub.presence_unsubscribe<string>(channel, DisplayReturnMessage);
+                        break;
+                    case "8":
+                        Console.WriteLine("Running time()");
+                        pubnub.time<string>(DisplayReturnMessage);
                         break;
                     default:
                         Console.WriteLine("INVALID CHOICE.");
@@ -98,21 +108,37 @@ namespace PubNubConsole
 
         }
 
+        static void DisplayReturnMessage(string result)
+        {
+            Console.WriteLine(result);
+        }
 
-        static void DisplayReturnMessage(object result)
+        static void DisplayReturnMessage (object result)
         {
             IList<object> message = result as IList<object>;
 
-            if (message != null && message.Count >= 2)
-            {
-                for (int index = 0; index < message.Count; index++)
-                {
-                    ParseObject(message[index], 1);
+            if (message != null && message.Count >= 1) {
+                for (int index = 0; index < message.Count; index++) {
+                    ParseObject (message [index], 1);
                 }
+            } else {
+                Console.WriteLine ("unable to parse data");
             }
-            else
-            {
-                Console.WriteLine("unable to parse data");
+            if (result != null) {
+                //if (objResponse != null) {
+                    IList<object> fields = result as IList<object>;
+
+                    if (fields [0] != null) {
+                        var myObjectArray = (from item in fields select item as object).ToArray ();
+                        IEnumerable enumerable = myObjectArray [0] as IEnumerable;
+                        if (enumerable != null) {
+                            foreach (object element in enumerable) {
+                                Console.WriteLine ("Resp:" + element.ToString ());
+                                //bStop = true;
+                            }
+                        }
+                    }
+                //}
             }
         }
 
@@ -123,11 +149,18 @@ namespace PubNubConsole
                 object[] arrResult = (object[])result;
                 foreach (object item in arrResult)
                 {
-                    if (!item.GetType().IsGenericType)
+                    if (item != null)
                     {
-                        if (!item.GetType().IsArray)
+                        if (!item.GetType().IsGenericType)
                         {
-                            Console.WriteLine(item.ToString());
+                            if (!item.GetType().IsArray)
+                            {
+                                Console.WriteLine(item.ToString());
+                            }
+                            else
+                            {
+                                ParseObject(item, loop + 1);
+                            }
                         }
                         else
                         {
@@ -136,7 +169,7 @@ namespace PubNubConsole
                     }
                     else
                     {
-                        ParseObject(item, loop + 1);
+                        Console.WriteLine();
                     }
                 }
             }

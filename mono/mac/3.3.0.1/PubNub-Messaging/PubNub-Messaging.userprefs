@@ -1,27 +1,23 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="PubNubTest/Common.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubNubLib/Pubnub.cs">
     <Files>
-      <File FileName="PubNubLib/Pubnub.cs" Line="585" Column="1" />
-      <File FileName="../../../git/pubnub-api/mono-mac/3.3.0.1/PubNub-Messaging/PubNubLib/Pubnub.cs" Line="473" Column="45" />
-      <File FileName="PubNubTest/WhenAMessageIsPublished.cs" Line="65" Column="24" />
-      <File FileName="PubNubTest/WhenDetailedHistoryIsRequested.cs" Line="38" Column="1" />
-      <File FileName="PubNubTest/Common.cs" Line="82" Column="7" />
-      <File FileName="PubNub-Console/PubNub-Example2.cs" Line="89" Column="1" />
-      <File FileName="PubNub-Console/Main.cs" Line="11" Column="1" />
-      <File FileName="../../../git-master/pubnub-api/csharp/3.3.0.1/PubNub-Messaging/app.config" Line="15" Column="45" />
-      <File FileName="PubNub-Console/PubNub-Example.cs" Line="85" Column="31" />
+      <File FileName="PubNub-Console/PubNub-Example2.cs" Line="435" Column="115" />
+      <File FileName="PubNub-Console/Main.cs" Line="19" Column="4" />
+      <File FileName="PubNubLib/Pubnub.cs" Line="2539" Column="34" />
+      <File FileName="PubNub-Console/PubNub-Example.cs" Line="115" Column="35" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="PubNub-Console" expanded="True" />
-          <Node name="PubNubLib" expanded="True">
+          <Node name="PubNub-Console" expanded="True">
             <Node name="References" expanded="True" />
           </Node>
-          <Node name="PubNubTest" expanded="True">
-            <Node name="Common.cs" selected="True" />
+          <Node name="PubNubLib" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="Pubnub.cs" selected="True" />
           </Node>
+          <Node name="PubNubTest" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">
@@ -30,6 +26,7 @@
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
           <Value>jsonString</Value>
+          <Value>netInterface.OperationalStatus</Value>
         </State>
       </Pad>
       <Pad Id="ConnectionManagerPad">
@@ -37,7 +34,17 @@
       </Pad>
       <Pad Id="MonoDevelop.NUnit.TestPad">
         <State expanded="True">
-          <Node name="PubNubTest" selected="True" />
+          <Node name="PubNubTest" expanded="True">
+            <Node name="PubNubTest" expanded="True" selected="True">
+              <Node name="EncryptionTests" expanded="True" />
+              <Node name="WhenAClientIsPresented" expanded="True" />
+              <Node name="WhenAMessageIsPublished" expanded="True" />
+              <Node name="WhenDetailedHistoryIsRequested" expanded="True" />
+              <Node name="WhenGetRequestHistoryMessages" expanded="True" />
+              <Node name="WhenGetRequestServerTime" expanded="True" />
+              <Node name="WhenSubscribedToAChannel" expanded="True" />
+            </Node>
+          </Node>
         </State>
       </Pad>
     </Pads>
@@ -53,9 +60,6 @@
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs" line="1908" />
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNub-Console/PubNub-Example2.cs" line="207" />
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs" line="99" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubLib/Pubnub.cs" line="1164" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubLib/Pubnub.cs" line="581" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Main.cs" line="11" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

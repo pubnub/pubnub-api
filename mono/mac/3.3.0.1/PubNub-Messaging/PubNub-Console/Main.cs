@@ -16,11 +16,11 @@ namespace PubNubConsole
 			//Publish_Example.PublishDemo();
 
 			//Console.WriteLine ("Hello World!");
-			//Pubnub_Example.Main2();
-			Pubnub_Example2.TestEncryptedDetailedHistoryParams();
+			Pubnub_Example.Main2();
+			//Pubnub_Example2.TestEncryptedDetailedHistoryParams();
 
 			//Subscribe Example
-			//Pubnub_Example2.Subscribe_Example(); //no response
+			//Pubnub_Example2.Subscribe_Example(); //success
 
 			//Publish Example
 			//Pubnub_Example2.Publish_Example(); //Success

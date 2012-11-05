@@ -58,38 +58,39 @@ namespace PubNubTest
         [Test]
         public static void TestUnencryptedHistory()
         {
-            Pubnub pubnub = new Pubnub(
+             Pubnub pubnub = new Pubnub(
                     "demo",
                     "demo",
                     "",
                     "",
                     false);
             string channel = "my_channel";
-            //pubnub.CIPHER_KEY = "";
 
             Common.deliveryStatus = false;
             string message = "Pubnub API Usage Example - Publish";
+            //pubnub.CIPHER_KEY = "enigma";
 
-            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e) {
+            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
+            {
                 if (e.PropertyName == "History")
                 {
                     Console.WriteLine("\n*********** History Messages *********** ");
                     Common.deliveryStatus = true;
                 }
             };
+            Common.deliveryStatus = false;
             pubnub.publish(channel, message, Common.DisplayReturnMessage);
             while (!Common.deliveryStatus) ;
-            pubnub.history(channel, 1);
-            
-            Common.deliveryStatus = false;
 
+            Common.deliveryStatus = false;
+            pubnub.history(channel, 1);
             while (!Common.deliveryStatus) ;
             if (pubnub.History[0].Equals (null)) {
                 Assert.Fail("Null response");
             }
             else
             {
-             Assert.AreEqual(pubnub.History[0], message);
+                Assert.AreEqual(message, pubnub.History[0]);
             }
         }
         
@@ -128,7 +129,7 @@ namespace PubNubTest
             }
             else
             {
-                Assert.AreEqual(pubnub.History[0], message);
+                Assert.AreEqual(message, pubnub.History[0]);
             }
         }  
     }
