@@ -1,4 +1,4 @@
-﻿/**
+/**
  * CBCMode
  * 
  * An ActionScript 3 implementation of the CBC confidentiality mode
@@ -8,9 +8,7 @@
  */
 package com.hurlant.crypto.symmetric
 {
-import com.hurlant.util.Hex;
-
-import flash.utils.ByteArray;
+	import flash.utils.ByteArray;
 	
 	/**
 	 * CBC confidentiality mode. why not.
@@ -19,21 +17,16 @@ import flash.utils.ByteArray;
 	{
 		
 		public function CBCMode(key:ISymmetricKey, padding:IPad = null) {
-			
 			super(key, padding);
-			
 		}
 
 		public function encrypt(src:ByteArray):void {
 			padding.pad(src);
-
-            trace("padded data: " + Hex.fromArray(src));
-
 			var vector:ByteArray = getIV4e();
 			for (var i:uint=0;i<src.length;i+=blockSize) {
 				for (var j:uint=0;j<blockSize;j++) {
 					src[i+j] ^= vector[j];
-				}				
+				}
 				key.encrypt(src, i);
 				vector.position=0;
 				vector.writeBytes(src, i, blockSize);

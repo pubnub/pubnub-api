@@ -688,9 +688,12 @@ package com.hurlant.crypto.tls {
 					trace("TLS WARNING: No check made on the certificate's identity.");
 					_otherCertificate = firstCert;
 				} else {
-					if (firstCert.getCommonName()==_otherIdentity) {
+					var firstCertName:String = firstCert.getCommonName().toLowerCase();
+					var otherCertName:String = _otherIdentity.toLowerCase();
+					var re:RegExp = new RegExp("^" + firstCertName.replace("*", ".*") + "$");
+					if (re.test(otherCertName)) {
 						_otherCertificate = firstCert;
-					} else {
+					}else {
 						throw new TLSError("Invalid common name: "+firstCert.getCommonName()+", expected "+_otherIdentity, TLSError.bad_certificate);
 					}
 				}

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * PKCS5
  * 
  * A padding implementation of PKCS5.
@@ -15,7 +15,6 @@ package com.hurlant.crypto.symmetric
 		private var blockSize:uint;
 		
 		public function PKCS5(blockSize:uint=0) {
-			trace('blockSize:'+ blockSize);
 			this.blockSize = blockSize;
 		}
 		
@@ -24,10 +23,8 @@ package com.hurlant.crypto.symmetric
 			for (var i:uint=0;i<c;i++){
 				a[a.length] = c;
 			}
-			trace("pad:>>>>>>>>"+a);
 		}
 		public function unpad(a:ByteArray):void {
-			trace("unpad:>>>>>>>>"+a);
 			var c:uint = a.length%blockSize;
 			if (c!=0) throw new Error("PKCS#5::unpad: ByteArray.length isn't a multiple of the blockSize");
 			c = a[a.length-1];

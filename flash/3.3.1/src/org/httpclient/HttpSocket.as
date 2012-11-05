@@ -116,7 +116,6 @@ package org.httpclient {
      */
     public function request(uri:URI, request:HttpRequest):void {
       var onConnect:Function = function(event:Event):void {
-		  trace('onConnect');
 		  _dispatcher.dispatchEvent(new HttpRequestEvent(request, null, HttpRequestEvent.CONNECT));
 		  if (uri.scheme == "https" && _proxy) {
 			  connectProxy(uri, request);

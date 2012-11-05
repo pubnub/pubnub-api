@@ -16,7 +16,8 @@
 			import mx.events.*;
 
         [Bindable]
-        public var channel:String = 'a,b,c';
+        public var channel:String = 'my_channel';
+        //public var channel:String = 'a,b,c';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';

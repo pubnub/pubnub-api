@@ -1,4 +1,4 @@
-﻿/**
+/**
  * MD5
  * 
  * An ActionScript 3 implementation of the RSA Data Security, Inc. MD5 Message
