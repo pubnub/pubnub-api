@@ -8,8 +8,7 @@ package com.pubnub.operation {
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class PublishOperation extends Operation {
-		
-		public var origin:String = "0"; 
+		 
 		public var secretKey:String; 
 		public var cipherKey:String = ""; 
 		public var publishKey:String = ""; 

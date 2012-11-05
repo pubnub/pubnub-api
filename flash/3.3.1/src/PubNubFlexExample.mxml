@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
                xmlns:s="library://ns.adobe.com/flex/spark"
-               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="400" minHeight="300">
+               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="400" minHeight="300" creationComplete="init(event)">
     <fx:Declarations>
         <!-- Place non-visual elements (e.g., services, value objects) here -->
     </fx:Declarations>
     <fx:Script>
 		<![CDATA[
-        import com.pubnub.*;
-        import flash.events.*;
-        import flash.external.*;
+			import com.pubnub.*;
+			
+			import flash.events.*;
+			import flash.external.*;
+			
+			import mx.binding.utils.BindingUtils;
+			import mx.events.*;
 
         [Bindable]
         public var channel:String = 'a,b,c';
@@ -31,9 +35,15 @@
 
         private var consoleCounter:int = 1;
 		
+		protected function init(event:FlexEvent):void{
+			trace('INIT');
+			BindingUtils.bindSetter(updateOrigin, this, "origin");
+		}
+			
         protected function onInitBtnClick(event:MouseEvent):void{
             //trace('onInitBtnClick');
             var config:Object = {
+                origin:this.origin,
                 publish_key:this.pub_key,
                 sub_key:this.sub_key,
                 secret_key:this.secret_key,
@@ -57,7 +67,6 @@
         }
 
         private function onSubscribeClick(e:MouseEvent):void {
-
             /*** Non MX Support
              var channels:Array = channel.split(',');
             for each(var i:String  in channels) {
@@ -66,7 +75,6 @@
             */
 
             /*** MX Support */
-
              Pn.subscribe(channel);
 
         }
@@ -154,8 +162,12 @@
                     break;
             }
         }
-
-        ]]>
+		
+		private function updateOrigin(value:String = null):void{
+			Pn.instance.origin = value;
+		}
+			
+		]]>
 	</fx:Script>
 
     <s:Label x="125" y="13" height="10" fontWeight="bold" color="#E01F1F" text="Verify below settings, and then be sure to initialize from Init tab before proceeding."

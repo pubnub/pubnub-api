@@ -15,4 +15,11 @@
 		<nature>com.adobe.flexbuilder.project.flexnature</nature>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] src</name>
+			<type>2</type>
+			<location>D:/Flash/2012/geremy.cohen/work/pubnub-api/flash/3.3.1/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

@@ -19,7 +19,8 @@ package com.pubnub {
 		private var _initialized:Boolean = false;         
 		private var operations:Dictionary;
         private var subscribes:Dictionary;
-		private var origin:String = "http://multiplexing.pubnub.com";
+		private var _origin:String;
+		private var _ssl:Boolean;
 		private var _publishKey:String = "demo";
 		private var _subscribeKey:String = "demo";
 		private var secretKey:String = "";
@@ -54,9 +55,10 @@ package com.pubnub {
 			operations = new Dictionary();
 			subscribes = new Dictionary();
 			ori = Math.floor(Math.random() * 9) + 1;
+			
 			initKeys(config);
             _sessionUUID = PnUtils.getUID();
-			var url:String = origin + "/" + "time" + "/" + 0;
+			var url:String = _origin + "/" + "time" + "/" + 0;
 			
 			// Loads start time token
 			var operation:Operation = getOperation(INIT_OPERATION);
@@ -70,13 +72,8 @@ package com.pubnub {
 		}
 		
 		private function initKeys(config:Object):void {
-			if(config.ssl && config.origin){
-				origin = "https://" + config.origin;
-			}
-			else if (config.origin){
-				origin = "http://" + config.origin;
-			}
-			
+			_ssl = config.ssl;
+			origin = config.origin;
 			if(config.publish_key){
 				_publishKey = config.publish_key;
 			}
@@ -101,17 +98,18 @@ package com.pubnub {
 			if (type == HISTORY_OPERATION) {
 				var history:HistoryOperation = result as HistoryOperation;
 				history.cipherKey = cipherKey;
-				history.origin = origin;	
+				history.origin = _origin;	
 			}else if (type == PUBLISH_OPERATION) {
 				var publish:PublishOperation = result as PublishOperation;
 				publish.cipherKey = cipherKey;
 				publish.secretKey = secretKey;
 				publish.publishKey = _publishKey;
 				publish.subscribeKey = _subscribeKey;
-				publish.origin = origin;	
+				publish.origin = _origin;	
 			}
 			return result;
 		}
+		
 		
 		private function onInitComplete(event:OperationEvent):void {
 			var result:Object = event.data;
@@ -140,7 +138,7 @@ package com.pubnub {
 				return;
 			}
 			
-			subscribe.origin = origin;
+			subscribe.origin = _origin;
 			subscribe.subscribeKey = subscribeKey;
 			subscribe.sessionUUID = sessionUUID;
 			subscribe.cipherKey = cipherKey;
@@ -328,5 +326,27 @@ package com.pubnub {
 		public function get initialized():Boolean {
 			return _initialized;
 		}	
+		
+		public function get origin():String {
+			return _origin;
+		}
+		
+		public function set origin(value:String):void {
+			_origin = value;
+			if (value == null || value.length == 0) throw('Origin value must be defined');
+			if(_ssl){
+				_origin = "https://" + value;
+			}
+			else {
+				_origin = "http://" + value;
+			}
+			for (var name:String in operations) {
+				Operation(operations[name]).origin = _origin;
+			}
+		}
+		
+		public function get ssl():Boolean {
+			return _ssl;
+		}
 	}
 }

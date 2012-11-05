@@ -17,6 +17,7 @@ package com.pubnub.operation {
 		static public const GET_TIMETOKEN:String = 'subscribe_get_timetoken';
 		static public const WITH_RETRY:String = 'subscribe_with_retry';
 		
+		public var origin:String;
 		public var uid:String;
 		public var channel:String;
 		public var sessionUUID:String;
