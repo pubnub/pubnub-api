@@ -1,11 +1,15 @@
 package pubnub
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
 )
+
+const _LIMIT = 1800
+const _ORIGIN = "pubsub.pubnub.com"
 
 type PUBNUB struct {
 	ORIGIN        string
@@ -20,12 +24,12 @@ type PUBNUB struct {
 //Init pubnub struct
 func PubnubInit(publish_key string, subscribe_key string, secret_key string, chipher_key string, ssl_on bool) *PUBNUB {
 	new_pubnub := &PUBNUB{
-		ORIGIN:        "pubsub.pubnub.com",
+		ORIGIN:        _ORIGIN,
 		PUBLISH_KEY:   publish_key,
 		SUBSCRIBE_KEY: subscribe_key,
 		SECRET_KEY:    secret_key,
 		CIPHER_KEY:    chipher_key,
-		LIMIT:         0,
+		LIMIT:         _LIMIT,
 		SSL:           ssl_on,
 	}
 
@@ -39,6 +43,41 @@ func PubnubInit(publish_key string, subscribe_key string, secret_key string, chi
 }
 
 func (pub *PUBNUB) GetTime() []byte {
+	url := ""
+	url += "/time"
+	url += "/0"
+	return pub.HttpRequest(url)
+}
+
+func (pub *PUBNUB) Publish(channel string, message string) []byte {
+	signature := ""
+	if pub.SECRET_KEY != "" {
+		signature = GetHmacSha256(pub.SECRET_KEY, fmt.Sprintf("%s/%s/%s/%s/%s", pub.PUBLISH_KEY, pub.SUBSCRIBE_KEY, pub.SECRET_KEY, channel, message))
+	} else {
+		signature = "0"
+	}
+	url := ""
+	url += "/publish"
+	url += "/" + pub.PUBLISH_KEY
+	url += "/" + pub.SUBSCRIBE_KEY
+	url += "/" + signature
+	url += "/" + channel
+	url += "/0"
+	url += fmt.Sprintf("/{\"msg\":\"%s\"}", message)
+	return pub.HttpRequest(url)
+}
+
+func (pub *PUBNUB) History(channel string, limit int) []byte {
+	url := ""
+	url += "/history"
+	url += "/" + pub.SUBSCRIBE_KEY
+	url += "/" + channel
+	url += "/0"
+	url += "/" + fmt.Sprintf("%d", limit)
+	return pub.HttpRequest(url)
+}
+
+func (pub *PUBNUB) HttpRequest(url string) []byte {
 	httpClient := New()
 	httpClient.ConnectTimeout = time.Second
 	httpClient.ReadWriteTimeout = time.Second
@@ -54,7 +93,7 @@ func (pub *PUBNUB) GetTime() []byte {
 		return DefaultRedirectPolicy(r, v)
 	}
 
-	req, _ := http.NewRequest("GET", pub.ORIGIN+"/time/0", nil)
+	req, _ := http.NewRequest("GET", pub.ORIGIN+url, nil)
 	//log.Printf("%s", req)
 
 	resp, err := httpClient.Do(req)
