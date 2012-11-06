@@ -123,7 +123,7 @@ namespace PubNubConsole
             deliveryStatus = false;
 
             while (!deliveryStatus) ;
-			Console.WriteLine("\n*********** Publish *********** ");
+            Console.WriteLine("\n*********** Publish *********** ");
             if (pubnub.History[0].Equals (null)) {
                 Console.WriteLine("Null response");
             }
@@ -465,8 +465,8 @@ namespace PubNubConsole
             IList<object> fields = objResponse as IList<object>;
             string strSent = fields[1].ToString();
             string strOne = fields[0].ToString();
-			Console.WriteLine("Sent: " + strSent);
-			Console.WriteLine("One: " + strOne);
+            Console.WriteLine("Sent: " + strSent);
+            Console.WriteLine("One: " + strOne);
         }
         
         public static void DetailedHistory_Example()
@@ -564,83 +564,83 @@ namespace PubNubConsole
         }
 
         public static void Subscribe_Example ()
-		{
-			Pubnub pubnub = new Pubnub (
+        {
+            Pubnub pubnub = new Pubnub (
                    "demo",
                    "demo",
                    "",
                    "",
                    false);
-			string channel = "hello_world";
+            string channel = "hello_world";
 
-			deliveryStatus = false;
+            deliveryStatus = false;
 
-			pubnub.subscribe (channel, DisplayReturnMessage); 
+            pubnub.subscribe (channel, DisplayReturnMessage); 
 
-			pubnub.publish (channel, "Test Message", DisplayReturnMessage);
+            pubnub.publish (channel, "Test Message", DisplayReturnMessage);
             
-			bool bStop = false;
-			while (!bStop) {
-				if (objResponse != null) {
+            bool bStop = false;
+            while (!bStop) {
+                if (objResponse != null) {
                     IList<object> fields = objResponse as IList<object>;
 
-				    if (fields [0] != null)
-					{
-				 	    var myObjectArray = (from item in fields select item as object).ToArray ();
-					    IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-					    if (enumerable != null) {
-						    foreach (object element in enumerable) 
-							{
-							    Console.WriteLine ("Resp:" + element.ToString ());
-								bStop = true;
-						    }
-					    }
-				    }
-				}
-			}
+                    if (fields [0] != null)
+                    {
+                         var myObjectArray = (from item in fields select item as object).ToArray ();
+                        IEnumerable enumerable = myObjectArray [0] as IEnumerable;
+                        if (enumerable != null) {
+                            foreach (object element in enumerable) 
+                            {
+                                Console.WriteLine ("Resp:" + element.ToString ());
+                                bStop = true;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public static void Presence_Example()
         {
-			Pubnub pubnub = new Pubnub (
+            Pubnub pubnub = new Pubnub (
                    "demo",
                    "demo",
                    "",
                    "",
                    false);
-			string channel = "hello_world";
+            string channel = "hello_world";
 
-			deliveryStatus = false;
+            deliveryStatus = false;
 
-			pubnub.presence (channel, DisplayReturnMessage); 
-			Pubnub pubnub2 = new Pubnub (
+            pubnub.presence (channel, DisplayReturnMessage); 
+            Pubnub pubnub2 = new Pubnub (
                    "demo",
                    "demo",
                    "",
                    "",
                    false);
 
-			pubnub2.subscribe (channel, DisplayReturnMessage);
+            pubnub2.subscribe (channel, DisplayReturnMessage);
             
-			bool bStop = false;
-			while (!bStop) {
-				if (objResponse != null) {
+            bool bStop = false;
+            while (!bStop) {
+                if (objResponse != null) {
                     IList<object> fields = objResponse as IList<object>;
 
-				    if (fields [0] != null)
-					{
-				 	    var myObjectArray = (from item in fields select item as object).ToArray ();
-					    IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-					    if (enumerable != null) {
-						    foreach (object element in enumerable) 
-							{
-							    Console.WriteLine ("Resp:" + element.ToString ());
-								//bStop = true;
-						    }
-					    }
-				    }
-				}
-			}
+                    if (fields [0] != null)
+                    {
+                         var myObjectArray = (from item in fields select item as object).ToArray ();
+                        IEnumerable enumerable = myObjectArray [0] as IEnumerable;
+                        if (enumerable != null) {
+                            foreach (object element in enumerable) 
+                            {
+                                Console.WriteLine ("Resp:" + element.ToString ());
+                                //bStop = true;
+                            }
+                        }
+                    }
+                }
+            }
 
         }
 

@@ -85,7 +85,6 @@ namespace PubNubTest
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            //pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
             pubnub = new Pubnub(
                 "demo",
                 "demo",
@@ -93,9 +92,7 @@ namespace PubNubTest
                 "",
                 false
             );
-            //pubnub.PUBLISH_KEY = "demo";
             Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
-
         }
 
         [Test]
@@ -112,8 +109,6 @@ namespace PubNubTest
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            //pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
-
             Assert.AreEqual(false, pubnub.publish(channel, message, Common.DisplayReturnMessage));
         }
 
@@ -127,15 +122,12 @@ namespace PubNubTest
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            //pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
-
             Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
             pubnub = new Pubnub(
                 "demo",
                 "demo",
                 "key"
             );
-            //pubnub.SECRET_KEY = "key";
             Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
         }
 
@@ -149,8 +141,6 @@ namespace PubNubTest
             );
             string channel = "hello_world";
             string message = "Pubnub API Usage Example";
-
-            //pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
 
             Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
         }
@@ -168,8 +158,6 @@ namespace PubNubTest
             );
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
-
-            //pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
 
             Assert.AreEqual(false, pubnub.publish(channel, message, Common.DisplayReturnMessage));
         }

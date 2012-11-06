@@ -14,7 +14,7 @@ namespace PubNubConsole
                     "demo",
                     "demo",
                     "",
-                    "",
+                    "enigma",
                     false);
 
         static public string channel = "";

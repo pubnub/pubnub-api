@@ -79,11 +79,11 @@ namespace PubNubTest
                     Console.WriteLine("value:" + entry.Value + "  " + "key:" + entry.Key);
                 }
 
-                object[] objUuid = (object[])message["uuids"];
+                /*object[] objUuid = (object[])message["uuids"];
                 foreach (object obj in objUuid)
                 {
                     Console.WriteLine(obj.ToString()); 
-                }
+                }*/
                 //Assert.AreNotEqual(0, message["occupancy"]);
             }
 

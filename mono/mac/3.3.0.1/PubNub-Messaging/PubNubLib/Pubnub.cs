@@ -1,3 +1,5 @@
+#define TRACE
+
 using System;
 using System.IO;
 using System.Text;
@@ -9,7 +11,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ComponentModel;
 using System.Reflection;
-using System.Web.Script.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
@@ -138,7 +139,7 @@ namespace PubNubLib
                     {
                         if (appSwitch.TraceInfo)
                         {
-                            Console.WriteLine(string.Format("DateTime {0} {1} out of {2} tries by reconnectNetworkCallback to connect Internet for channel={3}", DateTime.Now.ToString(), currentRetry, PUBNUB_NETWORK_CHECK_RETRIES, netState.channel));
+                            Trace.WriteLine(string.Format("DateTime {0} {1} out of {2} tries by reconnectNetworkCallback to connect Internet for channel={3}", DateTime.Now.ToString(), currentRetry, PUBNUB_NETWORK_CHECK_RETRIES, netState.channel));
                         }
                         ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
                         Thread.Sleep(1000);
@@ -153,20 +154,20 @@ namespace PubNubLib
                             reconnectTimer.Dispose();
                             if (appSwitch.TraceInfo)
                             {
-                                Console.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Stopped callback timer to connect Internet for channel={1}", DateTime.Now.ToString(), netState.channel));
+                                Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Stopped callback timer to connect Internet for channel={1}", DateTime.Now.ToString(), netState.channel));
                             }
 
                             bool removeFlag = _channelReconnectTimer.TryRemove(netState.channel, out reconnectTimer);
                             if (!removeFlag && appSwitch.TraceError)
                             {
-                                Console.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Unable to remove timer from dictionary for channel={1}", DateTime.Now.ToString(), netState.channel));
+                                Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Unable to remove timer from dictionary for channel={1}", DateTime.Now.ToString(), netState.channel));
                             }
 
                             if (_pubnetInternetStatus)
                             {
                                 if (appSwitch.TraceInfo)
                                 {
-                                    Console.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Internet Available : {1}", DateTime.Now.ToString(), _pubnetInternetStatus));
+                                    Trace.WriteLine(string.Format("DateTime {0}, reconnectNetworkCallback. Internet Available : {1}", DateTime.Now.ToString(), _pubnetInternetStatus));
                                 }
                                 switch (netState.type)
                                 {
@@ -202,7 +203,7 @@ namespace PubNubLib
                 {
                     if (appSwitch.TraceError)
                     {
-                        Console.WriteLine(string.Format("DateTime {0}, Unknown request state in reconnectNetworkCallback", DateTime.Now.ToString()));
+                        Trace.WriteLine(string.Format("DateTime {0}, Unknown request state in reconnectNetworkCallback", DateTime.Now.ToString()));
                     }
                 }
             }
@@ -210,7 +211,8 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceError)
                 {
-                    Console.WriteLine(string.Format("DateTime {0} method:reconnectNetworkCallback \n Exception Details={1}", DateTime.Now.ToString(), ex.ToString()));
+
+                    Trace.WriteLine(string.Format("DateTime {0} method:reconnectNetworkCallback \n Exception Details={1}", DateTime.Now.ToString(), ex.ToString()));
                 }
             }
         }
@@ -220,7 +222,7 @@ namespace PubNubLib
             SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, Initiated System Event - PowerModeChanged.", DateTime.Now.ToString()));
+                Trace.WriteLine(string.Format("DateTime {0}, Initiated System Event - PowerModeChanged.", DateTime.Now.ToString()));
             }
         }
 
@@ -233,15 +235,15 @@ namespace PubNubLib
                 heartBeatTimer.Change(Timeout.Infinite, Timeout.Infinite);
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, System entered into Suspend Mode.", DateTime.Now.ToString()));
-                    Console.WriteLine(string.Format("DateTime {0}, Disabled Timer for heartbeat ", DateTime.Now.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, System entered into Suspend Mode.", DateTime.Now.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, Disabled Timer for heartbeat ", DateTime.Now.ToString()));
                 }
             }
             else if (e.Mode == PowerModes.Resume)
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()));
                 }
                 _pubnetSystemActive = true;
                 heartBeatTimer.Change(
@@ -262,13 +264,13 @@ namespace PubNubLib
                     currReq.request.Abort();
                     if (appSwitch.TraceInfo)
                     {
-                        Console.WriteLine(string.Format("DateTime {0}, heartbeatTimeout={1}, TerminatePendingWebRequest {2}", DateTime.Now.ToString(), heartbeatTimeout.ToString(), currReq.request.RequestUri.ToString()));
+                        Trace.WriteLine(string.Format("DateTime {0}, heartbeatTimeout={1}, TerminatePendingWebRequest {2}", DateTime.Now.ToString(), heartbeatTimeout.ToString(), currReq.request.RequestUri.ToString()));
                     }
 
                     bool removeKey = _channelRequest.TryRemove(key, out currReq);
                     if (!removeKey && appSwitch.TraceError)
                     {
-                        Console.WriteLine(string.Format("DateTime {0}, heartbeatTimeout={1}, Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(), heartbeatTimeout, key));
+                        Trace.WriteLine(string.Format("DateTime {0}, heartbeatTimeout={1}, Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(), heartbeatTimeout, key));
                     }
                 }
             }
@@ -279,7 +281,7 @@ namespace PubNubLib
             _pubnetInternetStatus = status;
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, updateInternetStatus. Internet Available : {1}", DateTime.Now.ToString(), status));
+                Trace.WriteLine(string.Format("DateTime {0}, updateInternetStatus. Internet Available : {1}", DateTime.Now.ToString(), status));
             }
         }
 
@@ -449,7 +451,7 @@ namespace PubNubLib
             //end changes for monomac
 
             //Added for monomac
-            JavaScriptSerializer ser = new JavaScriptSerializer();
+            //JavaScriptSerializer ser = new JavaScriptSerializer();
             //end changes for monomac
 
             //Added for monomac
@@ -457,7 +459,8 @@ namespace PubNubLib
             {
                 PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
                 //serialize the message
-                message = ser.Serialize(message);
+                //message = ser.Serialize(message);
+                message = JsonConvert.SerializeObject(message);
                 //encrypt and encode
                 message = aes.encrypt(message.ToString());
             }
@@ -482,7 +485,8 @@ namespace PubNubLib
                     //end changes for monomac
 
                     //added for monomac
-                    .Append(ser.Serialize(message));
+                    //.Append(ser.Serialize(message));
+                    .Append(JsonConvert.SerializeObject(message));
                     //end changes for monomac
                     //.Append(msg); // 1
 
@@ -504,7 +508,8 @@ namespace PubNubLib
             //end changes for monomac
 
             //Added for monomac
-            url.Add(ser.Serialize(message));
+            //url.Add(ser.Serialize(message));
+            url.Add(JsonConvert.SerializeObject(message));
             //end changes for monomac
 
             return _urlRequest<T>(url, ResponseType.Publish, usercallback, false);
@@ -592,7 +597,7 @@ namespace PubNubLib
 
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, requested subscribe for channel={1}", DateTime.Now.ToString(), channel));
+                Trace.WriteLine(string.Format("DateTime {0}, requested subscribe for channel={1}", DateTime.Now.ToString(), channel));
             }
 
 
@@ -600,12 +605,13 @@ namespace PubNubLib
             {
                 List<object> result = new List<object>();
                 string jsonString = "[0, \"Already subscribed\"]";
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel);
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, JSON subscribe response={1}", DateTime.Now.ToString(), jsonString));
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON subscribe response={1}", DateTime.Now.ToString(), jsonString));
                 }
                 goToUserCallback<T>(result, usercallback);
             }
@@ -629,7 +635,7 @@ namespace PubNubLib
                     {
                         if (appSwitch.TraceInfo)
                         {
-                            Console.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached.Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel));
+                            Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached.Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel));
                         }
                         request.Abort();
                     }
@@ -638,7 +644,7 @@ namespace PubNubLib
                 {
                     if (appSwitch.TraceError)
                     {
-                        Console.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached. However state is unknown", DateTime.Now.ToString()));
+                        Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached. However state is unknown", DateTime.Now.ToString()));
                     }
                 }
 
@@ -648,7 +654,7 @@ namespace PubNubLib
                     (-1 == PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC) ? -1 : PUBNUB_HEARTBEAT_TIMEOUT_CALLBACK_IN_SEC * 1000);
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: resetting the heartbeat timeout", DateTime.Now.ToString()));
+                    Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: resetting the heartbeat timeout", DateTime.Now.ToString()));
                 }
             }
             else if (!_pubnetInternetStatus)
@@ -661,7 +667,7 @@ namespace PubNubLib
                     {
                         if (appSwitch.TraceInfo)
                         {
-                            Console.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: No network detected. Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel));
+                            Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: No network detected. Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel));
                         }
                         request.Abort();
                     }
@@ -670,7 +676,7 @@ namespace PubNubLib
                 {
                     if (appSwitch.TraceError)
                     {
-                        Console.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: No network detected. However state is unknown", DateTime.Now.ToString()));
+                        Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: No network detected. However state is unknown", DateTime.Now.ToString()));
                     }
                 }
             }
@@ -680,7 +686,7 @@ namespace PubNubLib
         {
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime: {0}, **OnPubnubHeartBeatTimeoutCallback**", DateTime.Now.ToString()));
+                Trace.WriteLine(string.Format("DateTime: {0}, **OnPubnubHeartBeatTimeoutCallback**", DateTime.Now.ToString()));
             }
             ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
             Thread.Sleep(2000);
@@ -688,7 +694,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime: {0}, OnPubnubHeartBeatTimeoutCallback - No internet connection.", DateTime.Now.ToString()));
+                    Trace.WriteLine(string.Format("DateTime: {0}, OnPubnubHeartBeatTimeoutCallback - No internet connection.", DateTime.Now.ToString()));
                 }
                 TerminatePendingWebRequest(true);
             }
@@ -712,7 +718,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceError)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Lost Channel Name for resubscribe", DateTime.Now.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, Lost Channel Name for resubscribe", DateTime.Now.ToString()));
                 }
                 return;
             }
@@ -721,7 +727,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, further re-subscription was stopped for channel {1}", DateTime.Now.ToString(), channelName.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, further re-subscription was stopped for channel {1}", DateTime.Now.ToString(), channelName.ToString()));
                 }
                 return;
             }
@@ -745,7 +751,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceError)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Lost Channel Name for re-presence", DateTime.Now.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, Lost Channel Name for re-presence", DateTime.Now.ToString()));
                 }
                 return;
             }
@@ -783,7 +789,7 @@ namespace PubNubLib
             bool unsubStatus = false;
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, requested unsubscribe for channel={1}", DateTime.Now.ToString(), channel));
+                Trace.WriteLine(string.Format("DateTime {0}, requested unsubscribe for channel={1}", DateTime.Now.ToString(), channel));
             }
             if (_channelSubscription.ContainsKey(channel))
             {
@@ -804,13 +810,14 @@ namespace PubNubLib
                 {
                     jsonString = string.Format("[1, \"Error unsubscribing from {0}\"]", channel);
                 }
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel);
 
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
                 }
                 goToUserCallback<T>(result, usercallback);
             }
@@ -818,12 +825,13 @@ namespace PubNubLib
             {
                 List<object> result = new List<object>();
                 string jsonString = "[0, \"Channel Not Subscribed\"]";
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel);
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
                 }
                 goToUserCallback<T>(result, usercallback);
             }
@@ -843,7 +851,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, further subscription was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, further subscription was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()));
                 }
                 return;
             }
@@ -856,7 +864,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Subscribe - No internet connection for {1}", DateTime.Now.ToString(), channel));
+                    Trace.WriteLine(string.Format("DateTime {0}, Subscribe - No internet connection for {1}", DateTime.Now.ToString(), channel));
                 }
 
                 ReconnectState<T> netState = new ReconnectState<T>();
@@ -888,7 +896,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceError)
                 {
-                    Console.WriteLine(string.Format("DateTime {0} method:_subscribe \n channel={1} \n timetoken={2} \n Exception Details={3}", DateTime.Now.ToString(), channel, timetoken.ToString(), ex.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0} method:_subscribe \n channel={1} \n timetoken={2} \n Exception Details={3}", DateTime.Now.ToString(), channel, timetoken.ToString(), ex.ToString()));
                 }
                 //TODO: Check if we need sleep time
                 System.Threading.Thread.Sleep(1000);
@@ -923,19 +931,20 @@ namespace PubNubLib
             channel = string.Format("{0}-pnpres", channel);
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, requested presence for channel={1}", DateTime.Now.ToString(), channel));
+                Trace.WriteLine(string.Format("DateTime {0}, requested presence for channel={1}", DateTime.Now.ToString(), channel));
             }
 
             if (_channelPresence.ContainsKey(channel))
             {
                 List<object> result = new List<object>();
                 string jsonString = "[0, \"Presence Already subscribed\"]";
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel);
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, JSON presence response={1}", DateTime.Now.ToString(), jsonString));
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON presence response={1}", DateTime.Now.ToString(), jsonString));
                 }
                 goToUserCallback<T>(result, usercallback);
             }
@@ -960,7 +969,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Due to Presence-unsubscribe, further presence was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, Due to Presence-unsubscribe, further presence was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()));
                 }
                 return;
             }
@@ -973,7 +982,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Presence - No internet connection for {1}", DateTime.Now.ToString(), channel));
+                    Trace.WriteLine(string.Format("DateTime {0}, Presence - No internet connection for {1}", DateTime.Now.ToString(), channel));
                 }
 
                 ReconnectState<T> netState = new ReconnectState<T>();
@@ -1004,7 +1013,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceError)
                 {
-                    Console.WriteLine(string.Format("method:_presence \n channel={0} \n timetoken={1} \n Exception Details={2}", channel, timetoken.ToString(), ex.ToString()));
+                    Trace.WriteLine(string.Format("method:_presence \n channel={0} \n timetoken={1} \n Exception Details={2}", channel, timetoken.ToString(), ex.ToString()));
                 }
                 //TODO: Check if we need sleep time
                 System.Threading.Thread.Sleep(1000);
@@ -1029,7 +1038,7 @@ namespace PubNubLib
             bool unsubStatus = false;
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, requested presence-unsubscribe for channel={1}", DateTime.Now.ToString(), channel));
+                Trace.WriteLine(string.Format("DateTime {0}, requested presence-unsubscribe for channel={1}", DateTime.Now.ToString(), channel));
             }
             if (_channelPresence.ContainsKey(channel))
             {
@@ -1050,13 +1059,14 @@ namespace PubNubLib
                 {
                     jsonString = string.Format("[1, \"Error presence-unsubscribing from {0}\"]", channel.Replace("-pnpres", ""));
                 }
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel.Replace("-pnpres", ""));
 
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
                 }
                 goToUserCallback<T>(result, usercallback);
             }
@@ -1064,12 +1074,13 @@ namespace PubNubLib
             {
                 List<object> result = new List<object>();
                 string jsonString = "[0, \"Channel Not Subscribed\"]";
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel.Replace("-pnpres", ""));
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
+                    Trace.WriteLine(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString));
                 }
                 goToUserCallback<T>(result, usercallback);
             }
@@ -1199,7 +1210,7 @@ namespace PubNubLib
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Trace.WriteLine(ex.ToString());
                 return false;
             }
         }
@@ -1264,14 +1275,14 @@ namespace PubNubLib
                 {
                     if (appSwitch.TraceInfo)
                     {
-                        Console.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, request aborted for channel={1}", DateTime.Now.ToString(), channelName));
+                        Trace.WriteLine(string.Format("DateTime {0}, Due to Unsubscribe, request aborted for channel={1}", DateTime.Now.ToString(), channelName));
                     }
                     request.Abort();
                 }
 
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()));
                 }
 
                 RequestState pubnubRequestState = new RequestState();
@@ -1308,7 +1319,7 @@ namespace PubNubLib
 
                                     if (appSwitch.TraceInfo)
                                     {
-                                        Console.WriteLine(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channelName, type.ToString(), jsonString));
+                                        Trace.WriteLine(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channelName, type.ToString(), jsonString));
                                     }
 
                                     result = WrapResultBasedOnResponseType(type, jsonString, url_components, reconnect);
@@ -1320,7 +1331,7 @@ namespace PubNubLib
                         {
                             if (appSwitch.TraceInfo)
                             {
-                                Console.WriteLine(string.Format("DateTime {0}, Request aborted for channel={1}", DateTime.Now.ToString(), channelName));
+                                Trace.WriteLine(string.Format("DateTime {0}, Request aborted for channel={1}", DateTime.Now.ToString(), channelName));
                             }
                         }
 
@@ -1349,7 +1360,7 @@ namespace PubNubLib
 
                         if (appSwitch.TraceError)
                         {
-                            Console.WriteLine(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.Message, requestUri.ToString()));
+                            Trace.WriteLine(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.Message, requestUri.ToString()));
                         }
                         urlRequestCommonExceptionHandler<T>(type, channelName, usercallback);
                     }
@@ -1361,7 +1372,7 @@ namespace PubNubLib
 
                         if (appSwitch.TraceError)
                         {
-                            Console.WriteLine(string.Format("DateTime {0} Exception= {1} for URL: {2}", DateTime.Now.ToString(), ex.ToString(), requestUri.ToString()));
+                            Trace.WriteLine(string.Format("DateTime {0} Exception= {1} for URL: {2}", DateTime.Now.ToString(), ex.ToString(), requestUri.ToString()));
                         }
                         urlRequestCommonExceptionHandler<T>(type, channelName, usercallback);
                     }
@@ -1385,7 +1396,7 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceError)
                 {
-                    Console.WriteLine(string.Format("DateTime {0} Exception={1}", DateTime.Now.ToString(), ex.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0} Exception={1}", DateTime.Now.ToString(), ex.ToString()));
                 }
                 return false;
             }
@@ -1489,8 +1500,14 @@ namespace PubNubLib
 
             if (typeof(T) == typeof(string))
             {
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                usercallbackJSON = jS.Serialize(result);
+                //commented for monomac
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //usercallbackJSON = jS.Serialize(result);
+                //end changes for monomac
+
+                //added for monomac
+                usercallbackJSON = JsonConvert.SerializeObject(result);
+                //end changes for monomac
 
                 Action<string> castUserCallback = usercallback as Action<string>;
                 castUserCallback(usercallbackJSON);
@@ -1507,7 +1524,7 @@ namespace PubNubLib
                 bool remove = _channelRequest.TryRemove(channelName, out currentReq);
                 if (!remove && appSwitch.TraceError)
                 {
-                    Console.WriteLine(string.Format("DateTime {0} Unable to remove request from dictionary for channel ={1}", DateTime.Now.ToString(), channelName));
+                    Trace.WriteLine(string.Format("DateTime {0} Unable to remove request from dictionary for channel ={1}", DateTime.Now.ToString(), channelName));
                 }
             }
         }
@@ -1518,19 +1535,20 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, MAX retries reached. Exiting the subscribe for channel = {1}", DateTime.Now.ToString(), channelName));
+                    Trace.WriteLine(string.Format("DateTime {0}, MAX retries reached. Exiting the subscribe for channel = {1}", DateTime.Now.ToString(), channelName));
                 }
 
                 unsubscribe(channelName, null);
 
                 List<object> errorResult = new List<object>();
                 string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", PUBNUB_NETWORK_CHECK_RETRIES);
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                errorResult = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //errorResult = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 errorResult.Add(channelName);
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString));
+                    Trace.WriteLine(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString));
                 }
                 if (usercallback != null)
                 {
@@ -1562,19 +1580,20 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, MAX retries reached. Exiting the presence for channel = {1}", DateTime.Now.ToString(), channelName));
+                    Trace.WriteLine(string.Format("DateTime {0}, MAX retries reached. Exiting the presence for channel = {1}", DateTime.Now.ToString(), channelName));
                 }
 
                 presence_unsubscribe(channelName.Replace("-pnpres", ""), null);
 
                 List<object> errorResult = new List<object>();
                 string jsonString = string.Format("[0, \"Presence-unsubscribed after {0} failed retries\"]", PUBNUB_NETWORK_CHECK_RETRIES);
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                errorResult = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                //JavaScriptSerializer jS = new JavaScriptSerializer();
+                //errorResult = (List<object>)jS.Deserialize<List<object>>(jsonString);
+                errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 errorResult.Add(channelName);
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0}, Presence JSON network error response={1}", DateTime.Now.ToString(), jsonString));
+                    Trace.WriteLine(string.Format("DateTime {0}, Presence JSON network error response={1}", DateTime.Now.ToString(), jsonString));
                 }
                 if (usercallback != null)
                 {
@@ -1604,12 +1623,13 @@ namespace PubNubLib
         {
             List<object> result = new List<object>();
             string jsonString = "[0, \"Network connnect error\"]";
-            JavaScriptSerializer jS = new JavaScriptSerializer();
-            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            //JavaScriptSerializer jS = new JavaScriptSerializer();
+            //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
             result.Add(channelName);
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, JSON publish response={1}", DateTime.Now.ToString(), jsonString));
+                Trace.WriteLine(string.Format("DateTime {0}, JSON publish response={1}", DateTime.Now.ToString(), jsonString));
             }
             goToUserCallback<T>(result, usercallback);
         }
@@ -1618,12 +1638,13 @@ namespace PubNubLib
         {
             List<object> result = new List<object>();
             string jsonString = "[0, \"Network connnect error\"]";
-            JavaScriptSerializer jS = new JavaScriptSerializer();
-            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            //JavaScriptSerializer jS = new JavaScriptSerializer();
+            //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
             result.Add(channelName);
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, JSON here_now response={1}", DateTime.Now.ToString(), jsonString));
+                Trace.WriteLine(string.Format("DateTime {0}, JSON here_now response={1}", DateTime.Now.ToString(), jsonString));
             }
             goToUserCallback<T>(result, usercallback);
         }
@@ -1632,12 +1653,13 @@ namespace PubNubLib
         {
             List<object> result = new List<object>();
             string jsonString = "[0, \"Network connnect error\"]";
-            JavaScriptSerializer jS = new JavaScriptSerializer();
-            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            //JavaScriptSerializer jS = new JavaScriptSerializer();
+            //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
             result.Add(channelName);
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, JSON detailedHistoryExceptionHandler response={1}", DateTime.Now.ToString(), jsonString));
+                Trace.WriteLine(string.Format("DateTime {0}, JSON detailedHistoryExceptionHandler response={1}", DateTime.Now.ToString(), jsonString));
             }
             goToUserCallback<T>(result, usercallback);
         }
@@ -1646,11 +1668,12 @@ namespace PubNubLib
         {
             List<object> result = new List<object>();
             string jsonString = "[0, \"Network connnect error\"]";
-            JavaScriptSerializer jS = new JavaScriptSerializer();
-            result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            //JavaScriptSerializer jS = new JavaScriptSerializer();
+            //result = (List<object>)jS.Deserialize<List<object>>(jsonString);
+            result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
             if (appSwitch.TraceInfo)
             {
-                Console.WriteLine(string.Format("DateTime {0}, JSON timeExceptionHandler response={1}", DateTime.Now.ToString(), jsonString));
+                Trace.WriteLine(string.Format("DateTime {0}, JSON timeExceptionHandler response={1}", DateTime.Now.ToString(), jsonString));
             }
             goToUserCallback<T>(result, usercallback);
         }
@@ -1667,7 +1690,7 @@ namespace PubNubLib
             List<object> result = new List<object>();
             string channelName = getChannelName(url_components, type);
 
-            JavaScriptSerializer jS = new JavaScriptSerializer();
+            //JavaScriptSerializer jS = new JavaScriptSerializer();
 
             //Added for monomac
             object objResult = JsonConvert.DeserializeObject<object>(jsonString);
@@ -1698,8 +1721,9 @@ namespace PubNubLib
 
                             //added for monomac
                             string strDecrypted = aes.decrypt(message.ToString());
-                            string strDecoded = jS.Deserialize<string>(strDecrypted);
-                            historyDecrypted.Add(strDecoded);
+                            //string strDecoded = jS.Deserialize<string>(strDecrypted);
+                            object objDecoded = JsonConvert.DeserializeObject<object>(strDecrypted);
+                            historyDecrypted.Add(objDecoded);
                             //end changes for monomac
                         }
                         History = historyDecrypted;
@@ -1710,7 +1734,7 @@ namespace PubNubLib
                         List<object> historyDecrypted = new List<object>();
                         foreach (object message in result)
                         {
-                            historyDecrypted.Add(message.ToString());
+                            historyDecrypted.Add(message);
                         }
                         History = historyDecrypted;
                         //end changes for monomac
@@ -1729,8 +1753,9 @@ namespace PubNubLib
                             foreach(object element in enumerable)
                             {
                                 string strDecrypted = aes.decrypt(element.ToString());
-                                string strDecoded = jS.Deserialize<string>(strDecrypted);
-                                historyDecrypted.Add(strDecoded);
+                                //string strDecoded = jS.Deserialize<string>(strDecrypted);
+                                object objDecoded = JsonConvert.DeserializeObject<object>(strDecrypted);
+                                historyDecrypted.Add(objDecoded);
                             }
                         }
                         result = historyDecrypted;
@@ -1745,7 +1770,7 @@ namespace PubNubLib
                         {
                             foreach(object element in enumerable)
                             {
-                                historyDecrypted.Add(element.ToString());
+                                historyDecrypted.Add(element);
                             }
                         }
                         result = historyDecrypted;
@@ -1755,8 +1780,10 @@ namespace PubNubLib
                     result.Add(channelName);
                     break;
                 case ResponseType.Here_Now:
-                    var resultOccupancy = jS.DeserializeObject(jsonString);
-                    Dictionary<string, object> dic = (Dictionary<string, object>)resultOccupancy;
+                    //var resultOccupancy = jS.DeserializeObject(jsonString);
+                    //Dictionary<string, object> dic = (Dictionary<string, object>)resultOccupancy;
+                    Dictionary<string, object> dic = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
+
                     result = new List<object>();
                     result.Add(dic);
                     result.Add(channelName);
@@ -2544,7 +2571,7 @@ namespace PubNubLib
             aesEncryption.IV = System.Text.Encoding.ASCII.GetBytes("0123456789012345");
 
             aesEncryption.Key = System.Text.Encoding.ASCII.GetBytes(GetEncryptionKey());
-            JavaScriptSerializer ser = new JavaScriptSerializer();
+            //JavaScriptSerializer ser = new JavaScriptSerializer();
 
             if (type)
             {
@@ -2706,7 +2733,7 @@ namespace PubNubLib
                 {
                     if (appSwitch.TraceError)
                     {
-                        Console.WriteLine(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()));
+                        Trace.WriteLine(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()));
                     }
                 }
             }
@@ -2727,8 +2754,8 @@ namespace PubNubLib
                     {
                         if (appSwitch.TraceError)
                         {
-                            Console.WriteLine(response.RoundtripTime);
-                            Console.WriteLine(response.Status);
+                            Trace.WriteLine(response.RoundtripTime);
+                            Trace.WriteLine(response.Status);
                         }
                         if(response.Status == IPStatus.Success)
                         {
@@ -2740,7 +2767,7 @@ namespace PubNubLib
                 {
                     if (appSwitch.TraceError)
                     {
-                        Console.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), ex.ToString()));
+                        Trace.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), ex.ToString()));
                     }
                 }
                 callback(connected);
@@ -2749,7 +2776,7 @@ namespace PubNubLib
                 //Commented for monomac
                 //System.Net.Sockets.SocketException
 
-                /*Console.WriteLine(System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable());
+                /*Trace.WriteLine(System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable());
                 NetworkInterface[] netInterfaces = NetworkInterface.GetAllNetworkInterfaces();
                 foreach (NetworkInterface netInterface in netInterfaces)
                 {
@@ -2762,7 +2789,7 @@ namespace PubNubLib
                         {
                             if (appSwitch.TraceInfo)
                             {
-                                Console.WriteLine(string.Format("DateTime {0} Network Interface = {1}", DateTime.Now.ToString(), netInterface.Description));
+                                Trace.WriteLine(string.Format("DateTime {0} Network Interface = {1}", DateTime.Now.ToString(), netInterface.Description));
                             }
                             IPInterfaceProperties prop = netInterface.GetIPProperties();
                             UnicastIPAddressInformationCollection unicast = prop.UnicastAddresses;
@@ -2774,7 +2801,7 @@ namespace PubNubLib
 
                                 if (appSwitch.TraceInfo)
                                 {
-                                    Console.WriteLine(string.Format("DateTime {0} IP Address = {1}", DateTime.Now.ToString(), addrip.ToString()));
+                                    Trace.WriteLine(string.Format("DateTime {0} IP Address = {1}", DateTime.Now.ToString(), addrip.ToString()));
                                 }
 
                                 InternetState state = new InternetState();
@@ -2819,14 +2846,14 @@ namespace PubNubLib
             {
                 if (appSwitch.TraceInfo)
                 {
-                    Console.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), objEx.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), objEx.ToString()));
                 }
             }
             catch (Exception ex)
             {
                 if (appSwitch.TraceError)
                 {
-                    Console.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), ex.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), ex.ToString()));
                 }
             }
             callback(connected);

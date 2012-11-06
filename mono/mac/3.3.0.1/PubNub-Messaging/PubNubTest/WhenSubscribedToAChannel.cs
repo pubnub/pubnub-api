@@ -28,7 +28,7 @@ namespace PubNubTest
             pubnub.subscribe (channel, Common.DisplayReturnMessage); 
             string msg = "Test Message";
             pubnub.publish (channel, msg, Common.DisplayReturnMessage);
-            
+            while (!Common.deliveryStatus);
             bool bStop = false;
             while (!bStop) {
                 if (Common.objResponse != null) {

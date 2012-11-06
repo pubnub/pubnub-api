@@ -1,21 +1,21 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="PubNubLib/Pubnub.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub-Console/PubNub-Example.cs">
     <Files>
       <File FileName="PubNub-Console/PubNub-Example2.cs" Line="435" Column="115" />
       <File FileName="PubNub-Console/Main.cs" Line="19" Column="4" />
-      <File FileName="PubNubLib/Pubnub.cs" Line="2539" Column="34" />
-      <File FileName="PubNub-Console/PubNub-Example.cs" Line="115" Column="35" />
+      <File FileName="PubNubLib/Pubnub.cs" Line="1672" Column="32" />
+      <File FileName="PubNub-Console/PubNub-Example.cs" Line="99" Column="31" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="PubNub-Console" expanded="True">
             <Node name="References" expanded="True" />
+            <Node name="PubNub-Example.cs" selected="True" />
           </Node>
           <Node name="PubNubLib" expanded="True">
             <Node name="References" expanded="True" />
-            <Node name="Pubnub.cs" selected="True" />
           </Node>
           <Node name="PubNubTest" expanded="True" />
         </State>
@@ -35,14 +35,11 @@
       <Pad Id="MonoDevelop.NUnit.TestPad">
         <State expanded="True">
           <Node name="PubNubTest" expanded="True">
-            <Node name="PubNubTest" expanded="True" selected="True">
-              <Node name="EncryptionTests" expanded="True" />
-              <Node name="WhenAClientIsPresented" expanded="True" />
-              <Node name="WhenAMessageIsPublished" expanded="True" />
+            <Node name="PubNubTest" expanded="True">
               <Node name="WhenDetailedHistoryIsRequested" expanded="True" />
-              <Node name="WhenGetRequestHistoryMessages" expanded="True" />
-              <Node name="WhenGetRequestServerTime" expanded="True" />
-              <Node name="WhenSubscribedToAChannel" expanded="True" />
+              <Node name="WhenGetRequestHistoryMessages" expanded="True">
+                <Node name="TestUnencryptedHistory" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>
@@ -60,6 +57,7 @@
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs" line="1908" />
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNub-Console/PubNub-Example2.cs" line="207" />
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs" line="99" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenGetRequestHistoryMessages.cs" line="127" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

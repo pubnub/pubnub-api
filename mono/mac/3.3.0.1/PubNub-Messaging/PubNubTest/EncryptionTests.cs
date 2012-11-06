@@ -39,6 +39,7 @@ namespace PubNubTest
             PubnubCrypto pc = new PubnubCrypto("enigma");
             //deserialized string
             string strMessage= "yay!";
+            //pubnub.publish(channel, strMessage, Common.DisplayReturnMessage);
             //Encrypt
             string enc = pc.encrypt(strMessage);
             Assert.AreEqual("q/xJqqN6qbiZMXYmiQC1Fw==", enc);
@@ -102,6 +103,7 @@ namespace PubNubTest
             PubnubCrypto pc = new PubnubCrypto("enigma");
             //create an empty array object
             object [] objArr = {};
+            //pubnub.publish(channel, objArr, Common.DisplayReturnMessage);
             //serialize
             JavaScriptSerializer js = new JavaScriptSerializer();
             string strArr = js.Serialize(objArr);
@@ -144,6 +146,7 @@ namespace PubNubTest
             PubnubCrypto pc = new PubnubCrypto("enigma");
             //create an object
             Object obj = new Object();
+            //pubnub.publish(channel, obj, Common.DisplayReturnMessage);
             //serialize
             JavaScriptSerializer js = new JavaScriptSerializer();
             string strObj = js.Serialize(obj);
@@ -185,6 +188,7 @@ namespace PubNubTest
             PubnubCrypto pc = new PubnubCrypto("enigma");
             //create an object of the custom class
             CustomClass cc = new CustomClass();
+            //pubnub.publish(channel, cc, Common.DisplayReturnMessage);
             //serialize it
             JavaScriptSerializer js = new JavaScriptSerializer();
             string res = js.Serialize(cc);
@@ -226,6 +230,7 @@ namespace PubNubTest
             PubnubCrypto pc = new PubnubCrypto("enigma");
             //Deserialized
             string strMessage= "Pubnub Messaging API 2";
+            //pubnub.publish(channel, strMessage, Common.DisplayReturnMessage);
             //serialize the message
             JavaScriptSerializer js = new JavaScriptSerializer();
             strMessage= js.Serialize(strMessage);
@@ -265,6 +270,7 @@ namespace PubNubTest
             PubnubCrypto pc = new PubnubCrypto("enigma");
             //non serialized string
             string strMessage= "Pubnub Messaging API 1";
+            //pubnub.publish(channel, strMessage, Common.DisplayReturnMessage);
             //serialize
             JavaScriptSerializer js = new JavaScriptSerializer();
             strMessage= js.Serialize(strMessage);
@@ -304,6 +310,7 @@ namespace PubNubTest
             PubnubCrypto pc = new PubnubCrypto("enigma");
             //input serialized string
             string strMessage= "{\"this stuff\":{\"can get\":\"complicated!\"}}";
+            //pubnub.publish(channel, strMessage, Common.DisplayReturnMessage);
             //encrypt
             string enc = pc.encrypt(strMessage);
 
@@ -337,6 +344,7 @@ namespace PubNubTest
             PubnubCrypto pc = new PubnubCrypto("enigma");
             //serialized string
             string strMessage= "{\"foo\":{\"bar\":\"foobar\"}}";
+            //pubnub.publish(channel, strMessage, Common.DisplayReturnMessage);
             //encrypt
             string enc = pc.encrypt(strMessage);
 
@@ -399,18 +407,9 @@ namespace PubNubTest
         [Test]
         public void TestUnicodeCharsEncryption ()
         {
-            /*string unicodeString = "漢語";
-
-            Console.WriteLine( unicodeString );
-
-            string encoded = EncodeNonAsciiCharacters(unicodeString);
-            Console.WriteLine( encoded );
-
-            string decoded = DecodeEncodedNonAsciiCharacters( encoded );
-            Console.WriteLine( decoded );*/
-
             PubnubCrypto pc = new PubnubCrypto("enigma");
             string strMessage= "漢語";
+            //pubnub.publish(channel, strMessage, Common.DisplayReturnMessage);
 
             JavaScriptSerializer js = new JavaScriptSerializer();
             strMessage= js.Serialize(strMessage);
@@ -464,6 +463,7 @@ namespace PubNubTest
         {
             PubnubCrypto pc = new PubnubCrypto("enigma");
             string strMessage= "ÜÖ";
+            //pubnub.publish(channel, strMessage, Common.DisplayReturnMessage);
 
             JavaScriptSerializer js = new JavaScriptSerializer();
             strMessage= js.Serialize(strMessage);
@@ -473,65 +473,6 @@ namespace PubNubTest
             Assert.AreEqual("stpgsG1DZZxb44J7mFNSzg==", enc);
         }
 
-        /// <summary>
-        /// Test for Publish the and history.
-        /// </summary>
-        /*[Test]
-        public void PublishAndHistory ()
-        {
-            //demo init
-            Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    "",
-                    false);
-            //cipher key
-            pubnub.CIPHER_KEY = "enigma";
-            //channel
-            string channel = "hello_world";
-            //string message
-            string strMsg = "yay!";
-            //publish the message
-            pubnub.publish(channel, strMsg);
-
-            bool deliveryStatus = false;
-
-            string strResponse = "empty";
-            //create an event handler for the proertyChanged event. 
-            //This will be called when we get a response from the server
-            pubnub.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
-            {
-                if (e.PropertyName == "DetailedHistory")
-                {
-                    Console.WriteLine("\n*********** DetailedHistory Messages *********** ");
-                    List<object> lstResponse  = (List<object>)((Pubnub)sender).DetailedHistory;
-                    strResponse = lstResponse[0].ToString();
-                    deliveryStatus = true;
-                }
-            };
-            
-            pubnub.detailedHistory(channel, 1);
-            //wait till the deliveryStatus is true. 
-            //the variable is modified on the PropertyChanged event
-            while (!deliveryStatus) ;
-
-            Assert.AreEqual(strMsg, strResponse);
-        }*/
-        
-        /// <summary>
-        /// Tests the cipher.
-        /// </summary>
-        /*[Test]
-        public void  TestCipher ()
-        {
-            PubnubCrypto pc = new PubnubCrypto("enigma");
-
-            string strCipher = pc.GetEncryptionKey();
-
-            Assert.AreEqual("67a4f45f0d1d9bc606486fc42dc49416", strCipher);
-        }*/
-        
         static string EncodeNonAsciiCharacters( string value ) {
             StringBuilder sb = new StringBuilder();
             foreach( char c in value ) {

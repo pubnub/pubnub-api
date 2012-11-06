@@ -90,7 +90,7 @@ namespace PubNubTest
             }
             else
             {
-                Assert.AreEqual(message, pubnub.History[0]);
+                Assert.AreEqual(message, pubnub.History[0].ToString());
             }
         }
         
@@ -129,7 +129,7 @@ namespace PubNubTest
             }
             else
             {
-                Assert.AreEqual(message, pubnub.History[0]);
+                Assert.AreEqual(message, pubnub.History[0].ToString());
             }
         }  
     }
