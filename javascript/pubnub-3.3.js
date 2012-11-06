@@ -928,7 +928,7 @@ var PDIV          = $('pubnub') || {}
             if (!callback) return log('Missing Callback');
             if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
             
-            data = null;
+            data = {};
             if (jsonp != '0') { data['callback']=jsonp; }
             
             // Send Message
@@ -976,7 +976,7 @@ var PDIV          = $('pubnub') || {}
 PUBNUB = CREATE_PUBNUB({
     'publish_key'   : attr( PDIV, 'pub-key' ),
     'subscribe_key' : attr( PDIV, 'sub-key' ),
-    'ssl'           : attr( PDIV, 'ssl' ) == 'on',
+    'ssl'           : attr( PDIV, 'ssl' ) == 'on' || !document.location.href.indexOf('https'),
     'origin'        : attr( PDIV, 'origin' ),
     'uuid'          : attr( PDIV, 'uuid' )
 });
