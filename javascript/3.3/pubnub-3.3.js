@@ -647,6 +647,7 @@ var PDIV          = $('pubnub') || {}
     ,   SSL           = setup['ssl'] ? 's' : ''
     ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
+    ,   LEAVE         = function(){}
     ,   SELF          = {
         /*
             PUBNUB.history({
@@ -791,6 +792,9 @@ var PDIV          = $('pubnub') || {}
             _unsubscribe(args['channel']);
             _unsubscribe(args['channel'] + PRESENCE_SUFFIX);
 
+            // Announce Leave
+            LEAVE(args['channel']);
+
             function _unsubscribe(channel) {
                 // Leave if there never was a channel.
                 if (!(channel in CHANNELS)) return;
@@ -908,7 +912,7 @@ var PDIV          = $('pubnub') || {}
             }
 
             // Announce Leave Event
-            function leave() {
+            function leave(chan) {
                 var data  = { uuid : UUID }
                 ,   jsonp = jsonp_cb();
 
@@ -920,13 +924,15 @@ var PDIV          = $('pubnub') || {}
                     url      : [
                         origin, 'v2', 'presence',
                         'sub_key', SUBSCRIBE_KEY, 
-                        'channel', encode(channel),
+                        'channel', encode(chan || channel),
                         'leave'
                     ]
                 });
 
                 return true;
             }
+
+            LEAVE = leave;
 
             // onBeforeUnload
             bind( 'beforeunload', window, leave );
