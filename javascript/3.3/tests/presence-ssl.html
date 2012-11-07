@@ -1,0 +1,55 @@
+<!doctype>
+<html>
+<head>
+    <!-- Hey, let's be friends! twitter.com/pubnub -->
+    <title>PubNub Presence SSL Test</title>
+    <meta http-equiv=content-type content=text/html;charset=utf-8>
+
+    <style type=text/css>
+        #instructions {
+            font-size: 50px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id=presence-template></div>
+<div id=presence></div>
+
+<div id=instructions>
+    Open the
+    <a target=console
+    href=http://www.pubnub.com/console?channel=mychannel&origin=zacstest.pubnub.com>Developers Console</a>
+    and watch the presence events section to ensure join/leave.
+</div>
+
+<!-- PUBNUB AT BOTTOM -->
+<div id=pubnub ssl=on origin=zacstest.pubnub.com></div>
+<script src=../pubnub-3.3.js></script>
+<script>(function(){
+
+    var p = PUBNUB.init({
+        publish_key   : "demo",
+        subscribe_key : "demo",
+        ssl           : true,
+        origin        : 'zacstest.pubnub.com'
+    });
+    p.subscribe({
+        channel    : "mychannel",
+        callback   : log,
+        connect    : function(){ log('connect') },
+        disconnect : function(){ log('disconnect') },
+        reconnect  : function(){ log('reconnect') }
+    })
+
+    setTimeout( function() {
+        p.unsubscribe({ channel : "mychannel" });
+    }, 10000 );
+
+    function log(m) { console.log(JSON.stringify(m)) }
+
+})();</script>
+
+</body>
+</html>
