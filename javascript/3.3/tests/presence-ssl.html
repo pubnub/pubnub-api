@@ -6,9 +6,7 @@
     <meta http-equiv=content-type content=text/html;charset=utf-8>
 
     <style type=text/css>
-        #instructions {
-            font-size: 50px;
-        }
+        #instructions { font-size: 50px; }
     </style>
 
 </head>
@@ -20,7 +18,7 @@
 <div id=instructions>
     Open the
     <a target=console
-    href=http://www.pubnub.com/console?channel=mychannel&origin=zacstest.pubnub.com>Developers Console</a>
+    href=http://www.pubnub.com/console?channel=my_channel&origin=zacstest.pubnub.com>Developers Console</a>
     and watch the presence events section to ensure join/leave.
 </div>
 
@@ -36,16 +34,12 @@
         origin        : 'zacstest.pubnub.com'
     });
     p.subscribe({
-        channel    : "mychannel",
+        channel    : "my_channel",
         callback   : log,
         connect    : function(){ log('connect') },
         disconnect : function(){ log('disconnect') },
         reconnect  : function(){ log('reconnect') }
     })
-
-    setTimeout( function() {
-        p.unsubscribe({ channel : "mychannel" });
-    }, 10000 );
 
     function log(m) { console.log(JSON.stringify(m)) }
 
