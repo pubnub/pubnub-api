@@ -5,11 +5,15 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
 const _LIMIT = 1800
 const _ORIGIN = "pubsub.pubnub.com"
+const _TIMEOUT = 310
+
+var timeToken = "0"
 
 type PUBNUB struct {
 	ORIGIN        string
@@ -42,14 +46,16 @@ func PubnubInit(publish_key string, subscribe_key string, secret_key string, chi
 	return new_pubnub
 }
 
-func (pub *PUBNUB) GetTime() []byte {
+func (pub *PUBNUB) GetTime(c chan []byte) {
 	url := ""
 	url += "/time"
 	url += "/0"
-	return pub.HttpRequest(url)
+
+	// send response to channel
+	c <- pub.HttpRequest(url)
 }
 
-func (pub *PUBNUB) Publish(channel string, message string) []byte {
+func (pub *PUBNUB) Publish(channel string, message string, c chan []byte) {
 	signature := ""
 	if pub.SECRET_KEY != "" {
 		signature = GetHmacSha256(pub.SECRET_KEY, fmt.Sprintf("%s/%s/%s/%s/%s", pub.PUBLISH_KEY, pub.SUBSCRIBE_KEY, pub.SECRET_KEY, channel, message))
@@ -64,23 +70,40 @@ func (pub *PUBNUB) Publish(channel string, message string) []byte {
 	url += "/" + channel
 	url += "/0"
 	url += fmt.Sprintf("/{\"msg\":\"%s\"}", message)
-	return pub.HttpRequest(url)
+
+	// send response to channel
+	c <- pub.HttpRequest(url)
 }
 
-func (pub *PUBNUB) History(channel string, limit int) []byte {
+func (pub *PUBNUB) Subscribe(channel string, c chan []byte) {
+	for {
+		url := ""
+		url += "/subscribe"
+		url += "/" + pub.SUBSCRIBE_KEY
+		url += "/" + channel
+		url += "/0"
+		url += "/" + timeToken
+
+		c <- pub.HttpRequest(url)
+	}
+}
+
+func (pub *PUBNUB) History(channel string, limit int, c chan []byte) {
 	url := ""
 	url += "/history"
 	url += "/" + pub.SUBSCRIBE_KEY
 	url += "/" + channel
 	url += "/0"
 	url += "/" + fmt.Sprintf("%d", limit)
-	return pub.HttpRequest(url)
+
+	// send response to channel
+	c <- pub.HttpRequest(url)
 }
 
 func (pub *PUBNUB) HttpRequest(url string) []byte {
 	httpClient := New()
-	httpClient.ConnectTimeout = time.Second
-	httpClient.ReadWriteTimeout = time.Second
+	httpClient.ConnectTimeout = _TIMEOUT * time.Second
+	httpClient.ReadWriteTimeout = _TIMEOUT * time.Second
 
 	// Allow insecure HTTPS connections.  Note: the TLSClientConfig pointer can't change
 	// places, so you can only modify the existing tls.Config object
@@ -111,7 +134,13 @@ func (pub *PUBNUB) HttpRequest(url string) []byte {
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
-	//log.Printf("%s", body)
+
+	//Only for test
+	//Need to create normal response parser
+	timeTokenArr := strings.Split(fmt.Sprintf("%s", body), ",")
+	if len(timeTokenArr) > 1 {
+		timeToken = strings.Replace(timeTokenArr[1], "\"", "", -1)
+	}
 
 	httpClient.FinishRequest(req)
 	return body
