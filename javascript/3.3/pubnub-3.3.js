@@ -536,9 +536,11 @@ function xdr( setup ) {
         done( 0, response );
     };
 
-    script[ASYNC]  = ASYNC;
+    if (!setup.blocking) script[ASYNC] = ASYNC;
+
     script.onerror = function() { done(1) };
     script.src     = setup.url.join(URLBIT);
+
     if (setup.data) {
         var params = [];
         script.src += "?";
@@ -616,8 +618,8 @@ function ajax( setup ) {
             }
             url += params.join(PARAMSBIT);
         }
-        
-        xhr.open( 'GET', url, true );
+
+        xhr.open( 'GET', url, typeof setup.blocking == 'undefined' );
         xhr.send();
     }
     catch(eee) {
@@ -789,13 +791,13 @@ var PDIV          = $('pubnub') || {}
         */
         'unsubscribe' : function(args) {
             // Unsubscribe from both the Channel and the Presence Channel
-            _unsubscribe(args['channel']);
-            _unsubscribe(args['channel'] + PRESENCE_SUFFIX);
+            unsubscribe(args['channel']);
+            unsubscribe(args['channel'] + PRESENCE_SUFFIX);
 
             // Announce Leave
             LEAVE(args['channel']);
 
-            function _unsubscribe(channel) {
+            function unsubscribe(channel) {
                 // Leave if there never was a channel.
                 if (!(channel in CHANNELS)) return;
 
@@ -914,17 +916,19 @@ var PDIV          = $('pubnub') || {}
             // Announce Leave Event
             function leave(chan) {
                 var data  = { uuid : UUID }
-                ,   jsonp = jsonp_cb();
+                ,   jsonp = jsonp_cb()
+                ,   chann = chan || channel;
 
                 if (jsonp != '0') data['callback'] = jsonp;
 
                 xdr({
+                    blocking : 1,
                     callback : jsonp,
                     data     : data,
                     url      : [
                         origin, 'v2', 'presence',
                         'sub_key', SUBSCRIBE_KEY, 
-                        'channel', encode(chan || channel),
+                        'channel', encode(channel),
                         'leave'
                     ]
                 });
