@@ -1,4 +1,4 @@
-
+  
     //
     //  ViewController.m
     //  
@@ -8,7 +8,6 @@
     //
 
 #import "ViewController.h"
-#import "CL_215.h"
 
 typedef enum {
     test_begin_to_end_count=0,
@@ -36,13 +35,14 @@ NSString* midtime = nil;
 NSString* crazy = @" ~`!@#$%^&*(顶顅Ȓ)+=[]\\{}|;\':,./<>?abcd";
 Unittest currentTest;
 int historyCount;
-
+NSString* _uuid=nil;
 
 CEPubnub *pubnub;
 - (void)viewDidLoad
 {
     
     [super viewDidLoad];
+    _uuid=[CEPubnub getUUID];
     
 }
 
@@ -73,9 +73,17 @@ CEPubnub *pubnub;
     [self publish_msgOnStart:0 AndEnd:total_msg/2 AndOffset:total_msg/2];
 }
 
-- (IBAction)unit_test_CL215:(id)sender {
-    CL_215 *cl215=[[CL_215 alloc]init];
-    [cl215 runCL_215UnitTest];
+- (IBAction)presenceLeaveClick:(id)sender {
+   
+  
+    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:@"demo"   cipherKey:@"demo" uuid:_uuid useSSL:NO];
+ 	[pubnub setDelegate:self];
+    NSString * _channel=[NSString stringWithFormat:@"%d", (int)CFAbsoluteTimeGetCurrent()] ;
+    [pubnub presence:_channel];
+    
+     [pubnub performSelector:@selector(subscribe:) withObject:_channel afterDelay:3];
+    
+    [pubnub performSelector:@selector(unsubscribeFromChannel:) withObject:_channel afterDelay:6];
 }
 
 -(void)publish_msgOnStart:(int)start AndEnd:(int)end AndOffset:(int)offset
@@ -267,6 +275,7 @@ CEPubnub *pubnub;
 -(void) pubnub:(CEPubnub *)pubnub didFailFetchHistoryOnChannel:(NSString *)channel withError:(id)error{
 }
 
+
 -(void) pubnub:(CEPubnub *)pubnub didFetchDetailedHistory:(NSArray *)messages forChannel:(NSString *)channel{
     if([[messages objectAtIndex:0] isKindOfClass:[NSArray class]])
     {
@@ -387,6 +396,22 @@ CEPubnub *pubnub;
 }
 
 - (void)pubnub:(CEPubnub *)pubnub presence:(NSDictionary *)message onChannel:(NSString *)channel{
+    NSDictionary* disc=(NSDictionary*)message;
+    NSString *uuid=(NSString *)[disc objectForKey:@"uuid"];
+    NSString *action=(NSString *)[disc objectForKey:@"action"];
+    if([action isEqualToString:@"leave"])
+    {
+        if([uuid isEqualToString:_uuid])
+        {
+            [self LogPass:YES WithMessage:[NSString stringWithFormat:@"channel %@ leave sucussfully.", channel]];
+        }
+    }else if([action isEqualToString:@"join"])
+    {
+        if([uuid isEqualToString:_uuid])
+        {
+            [self LogPass:YES WithMessage:[NSString stringWithFormat:@"channel %@ join sucussfully.", channel]];
+        }
+    }
     
 }
 

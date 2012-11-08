@@ -30,7 +30,8 @@ typedef enum {
     kCommand_FetchHistory,
     kCommand_FetchDetailHistory,
     kCommand_GetTime,
-    kCommand_Here_Now
+    kCommand_Here_Now,
+    kCommand_Leave
 } Command;
 
 @interface PubNubConnection : NSURLConnection {
@@ -128,7 +129,7 @@ typedef enum {
             }
         } else if ([contentType hasPrefix:@"text/javascript"])
         {
-            if(_command== kCommand_Here_Now)
+            if(_command== kCommand_Here_Now || _command == kCommand_Leave)
             {
                 
                 NSError* error = nil;
@@ -455,6 +456,22 @@ typedef enum {
     [self subscribe:[NSString stringWithFormat:@"%@-pnpres", channel]];
 }
 
+-(void)leave:(NSString *)channel
+{
+    if(channel == nil || channel ==@"")
+    {
+        NSLog(@"Missing channel");
+        return;
+    }
+    
+    NSString *url = [NSString stringWithFormat:@"%@/v2/presence/sub_key/%@/channel/%@/leave?uuid=%@", _host, _subscribeKey, [channel urlEscapedString],_uuids];
+    PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_Leave
+                                                                    channel:channel];
+    [_connections addObject:connection];
+}
+
 - (void)unsubscribeFromChannel:(NSString *)channel {
     for (PubNubConnection* connection in [_connections copy]) {
         if ((connection.command == kCommand_ReceiveMessage) && (!channel || [connection.channel isEqualToString:channel])) {
@@ -701,6 +718,9 @@ typedef enum {
                 [self hereNow:response onChannel:connection.channel];
             }
             break;
+        case kCommand_Leave:
+            NSLog(@"Leave sucessfully with %@",response);
+            break;
         }
         default:
                 //     NOT_REACHED();
@@ -757,15 +777,12 @@ typedef enum {
     NSString *timeToken = @"0";
     if(!isPresence)
     {
-        
         if (response == nil  ) {
             for (ChannelStatus* it in [_subscriptions copy]) {
                 if ([it.channel isEqualToString:connection.channel])
                 {
-                    
                     if(it.first && it.connected) {
                         it.connected=NO;
-                        
                         [self disconnectFromChannel:connection.channel];
                     }
                 }
@@ -1010,6 +1027,7 @@ typedef enum {
     if ([_delegate respondsToSelector:@selector(pubnub:DisconnectToChannel:)]) {
         [_delegate pubnub:self DisconnectToChannel:channel];
     }
+    [self leave:channel];
 }
 
 - (void)hereNow:(NSDictionary *)response onChannel:(NSString *)channel
