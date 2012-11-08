@@ -13,123 +13,106 @@ namespace PubNub_Messaging.Tests
     [TestClass]
     public class WhenAMessageIsPublished
     {
-        ManualResetEvent manualEvent = new ManualResetEvent(false);
-        bool publishedMessage = false;
+        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
+        ManualResetEvent manualEvent2 = new ManualResetEvent(false);
+        ManualResetEvent manualEvent3 = new ManualResetEvent(false);
+
+        bool isPublished1 = false;
+        bool isPublished2 = false;
+        bool isPublished3 = false;
 
         [TestMethod]
-        public void ThenItShouldReturnSuccessCodeAndInfo()
+        public void ThenPublishedShouldReturnSuccessCodeAndInfo()
         {
-            publishedMessage = false;
-
-            Pubnub pubnub = new Pubnub(
-                "demo",
-                "demo",
-                "",
-                "",
-                false
-            );
+            isPublished1 = false;
+            Pubnub pubnub = new Pubnub("demo","demo","","",false);
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.publish<string>(channel, message,ThenDoCallback);
-            manualEvent.WaitOne();
-            Assert.IsTrue(publishedMessage,"Publish Failed");
+            pubnub.publish<string>(channel, message, ReturnSuccessCodeCallback);
+            manualEvent1.WaitOne(310*1000);
+
+            Assert.IsTrue(isPublished1, "Publish Failed");
         }
 
-        public void ThenDoCallback(string result)
+        private void ReturnSuccessCodeCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
                 JavaScriptSerializer js = new JavaScriptSerializer();
                 IList receivedObj = (IList)js.DeserializeObject(result);
-                object[] msg = (object[])receivedObj[0];
+                if (receivedObj is object[])
+                {
+                    int statusCode = (int)receivedObj[0];
+                    string statusMsg = (string)receivedObj[1];
+                    if (statusCode == 1 && statusMsg.ToLower() == "sent")
+                    {
+                        isPublished1 = true;
+                    }
+                }
             }
-            manualEvent.Set();
+            manualEvent1.Set();
         }
 
 
         [TestMethod]
-        public void ThenItShouldGenerateUniqueIdentifier()
+        public void ThenPubnubShouldGenerateUniqueIdentifier()
         {
-            Pubnub pubnub = new Pubnub(
-                "demo",
-                "demo",
-                "",
-                "",
-                false
-            );
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
 
             Assert.IsNotNull(pubnub.generateGUID());
         }
 
         [TestMethod]
-        public void ThenPublishKeyShouldBeOverriden()
+        [ExpectedException(typeof(MissingFieldException))]
+        public void ThenPublishKeyShouldNotBeEmpty()
         {
-            publishedMessage = false;
+            Pubnub pubnub = new Pubnub("", "demo", "", "", false);
 
-            Pubnub pubnub = new Pubnub(
-                "",
-                "demo",
-                "",
-                "",
-                false
-            );
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
-            //pubnub.PUBLISH_KEY = "demo";
 
-            pubnub.publish<string>(channel, message, ThenDoCallback);
-            manualEvent.WaitOne();
-            Assert.IsTrue(publishedMessage);
+            pubnub.publish<string>(channel, message, null);
         }
 
-        [TestMethod]
-        public void ThenPublishKeyShouldNotBeEmptyAfterOverriden()
-        {
-            publishedMessage = false;
 
-            Pubnub pubnub = new Pubnub(
-                "",
-                "demo",
-                "",
-                "",
-                false
-            );
+        [TestMethod]
+        public void ThenOptionalSecretKeyShouldBeProvidedInConstructor()
+        {
+            isPublished2 = false;
+            Pubnub pubnub = new Pubnub("demo","demo","key");
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.publish<string>(channel, message, ThenDoCallback);
-            manualEvent.WaitOne();
-            Assert.IsTrue(publishedMessage);
+            pubnub.publish<string>(channel, message, ReturnSecretKeyPublishCallback);
+            manualEvent2.WaitOne(310 * 1000);
+
+            Assert.IsTrue(isPublished2, "Publish Failed with secret key");
         }
 
-        [TestMethod]
-        public void ThenSecretKeyShouldBeProvidedOptionally()
+        private void ReturnSecretKeyPublishCallback(string result)
         {
-            publishedMessage = false;
-            Pubnub pubnub = new Pubnub(
-                "demo",
-                "demo"
-            );
-            string channel = "my/channel";
-            string message = "Pubnub API Usage Example";
-
-            pubnub.publish<string>(channel, message, ThenDoCallback);
-            manualEvent.WaitOne();
-
-            publishedMessage = false;
-            //pubnub.SECRET_KEY = "key";
-
-            pubnub.publish<string>(channel, message, ThenDoCallback);
-            manualEvent.WaitOne();
-            Thread.Sleep(1000);
-            Assert.IsTrue(publishedMessage);
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                IList receivedObj = (IList)js.DeserializeObject(result);
+                if (receivedObj is object[])
+                {
+                    int statusCode = (int)receivedObj[0];
+                    string statusMsg = (string)receivedObj[1];
+                    if (statusCode == 1 && statusMsg.ToLower() == "sent")
+                    {
+                        isPublished2 = true;
+                    }
+                }
+            }
+            manualEvent2.Set();
         }
 
         [TestMethod]
         public void IfSSLNotProvidedThenDefaultShouldBeFalse()
         {
-            publishedMessage = false;
+            isPublished3 = false;
             Pubnub pubnub = new Pubnub(
                 "demo",
                 "demo",
@@ -138,9 +121,28 @@ namespace PubNub_Messaging.Tests
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.publish<string>(channel, message, ThenDoCallback);
-            manualEvent.WaitOne();
-            Assert.IsTrue(publishedMessage);
+            pubnub.publish<string>(channel, message, ReturnNoSSLDefaultFalseCallback);
+            manualEvent3.WaitOne(310 * 1000);
+            Assert.IsTrue(isPublished3, "Publish Failed with no SSL");
+        }
+
+        private void ReturnNoSSLDefaultFalseCallback(string result)
+        {
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                IList receivedObj = (IList)js.DeserializeObject(result);
+                if (receivedObj is object[])
+                {
+                    int statusCode = (int)receivedObj[0];
+                    string statusMsg = (string)receivedObj[1];
+                    if (statusCode == 1 && statusMsg.ToLower() == "sent")
+                    {
+                        isPublished3 = true;
+                    }
+                }
+            }
+            manualEvent3.Set();
         }
     }
 }

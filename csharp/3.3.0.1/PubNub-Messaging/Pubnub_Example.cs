@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Threading;
 
 namespace PubNub_Messaging
 {
@@ -58,6 +59,7 @@ namespace PubNub_Messaging
                     case "1":
                         Console.WriteLine("Running subscribe()");
                         pubnub.subscribe<string>(channel, DisplayReturnMessage);
+                        //System.Threading.Tasks.Task subtask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.subscribe<string>(channel, DisplayReturnMessage));
                         //pubnub.subscribe<object>(channel, DisplayReturnMessage);
                         //pubnub.subscribe(channel, DisplayReturnMessage);
                         break;
@@ -70,6 +72,7 @@ namespace PubNub_Messaging
                     case "3":
                         Console.WriteLine("Running presence()");
                         pubnub.presence<string>(channel, DisplayReturnMessage);
+                        //System.Threading.Tasks.Task pretask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.presence<string>(channel, DisplayReturnMessage));
                         //pubnub.presence<object>(channel, DisplayReturnMessage);
                         break;
                     case "4":

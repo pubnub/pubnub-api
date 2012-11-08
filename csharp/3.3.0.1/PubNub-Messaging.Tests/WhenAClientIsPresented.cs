@@ -13,33 +13,37 @@ namespace PubNub_Messaging.Tests
     [TestClass]
     public class WhenAClientIsPresented
     {
-        ManualResetEvent manualEvent = new ManualResetEvent(false);
-        static bool receivedFlag = false;
+        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
+        ManualResetEvent manualEvent2 = new ManualResetEvent(false);
+        ManualResetEvent manualEvent3 = new ManualResetEvent(false);
+
+        ManualResetEvent manualEvent4 = new ManualResetEvent(false);
+
+        static bool receivedFlag1 = false;
+        static bool receivedFlag2 = false;
 
         [TestMethod]
-        public void ThenItShouldReturnReceivedMessage()
+        public void ThenPresenceShouldReturnReceivedMessage()
         {
-            receivedFlag = false;
+            receivedFlag1 = false;
 
-            Pubnub pubnub = new Pubnub(
-                "demo",
-                "demo",
-                "",
-                "",
-                false
-            );
-            string channel = "hello_world";
-            pubnub.presence<string>(channel, ThenItShouldReturnPresenceMessage);
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            string channel = "my/channel";
+
+            pubnub.presence<string>(channel, ThenPresenceShouldReturnMessage);
 
             //since presence expects from stimulus from sub/unsub...
             pubnub.subscribe<string>(channel, DummyMethodForSubscribe);
-            pubnub.unsubscribe<string>(channel, DummyMethodForSubscribe);
-            
-            manualEvent.WaitOne();
-            Assert.IsTrue(receivedFlag, "Presence message not received");
+            manualEvent1.WaitOne(2000);
+
+            pubnub.unsubscribe<string>(channel, DummyMethodForUnSubscribe);
+            manualEvent3.WaitOne(2000);
+
+            manualEvent2.WaitOne(310 * 1000);
+            Assert.IsTrue(receivedFlag1, "Presence message not received");
         }
 
-        void ThenItShouldReturnPresenceMessage(string receivedMessage)
+        void ThenPresenceShouldReturnMessage(string receivedMessage)
         {
             try
             {
@@ -51,36 +55,30 @@ namespace PubNub_Messaging.Tests
                     var uuid = dic["uuid"].ToString();
                     if (uuid != null)
                     {
-                        receivedFlag = true;
+                        receivedFlag1 = true;
                     }
                 }
             }
             catch { }
             finally
             {
-                manualEvent.Set();
+                manualEvent2.Set();
             }
         }
 
         [TestMethod]
         public void IfHereNowIsCalledThenItShouldReturnInfo()
         {
-            receivedFlag = false;
+            receivedFlag2 = false;
 
-            Pubnub pubnub = new Pubnub(
-                "demo",
-                "demo",
-                "",
-                "",
-                false
-            );
-            string channel = "hello_world";
-            pubnub.here_now<string>(channel, ThenItShouldReturnHereNowkMessage);
-            manualEvent.WaitOne();
-            Assert.IsTrue(receivedFlag, "here_now message not received");
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            string channel = "my/channel";
+            pubnub.here_now<string>(channel, ThenHereNowShouldReturnMessage);
+            manualEvent4.WaitOne();
+            Assert.IsTrue(receivedFlag2, "here_now message not received");
         }
 
-        void ThenItShouldReturnHereNowkMessage(string receivedMessage)
+        void ThenHereNowShouldReturnMessage(string receivedMessage)
         {
             try
             {
@@ -91,20 +89,27 @@ namespace PubNub_Messaging.Tests
                     var dic = ((IDictionary<string, object>)receivedObj[0])["uuids"];
                     if (dic != null)
                     {
-                        receivedFlag = true;
+                        receivedFlag2 = true;
                     }
                 }
             }
             catch { }
             finally
             {
-                manualEvent.Set();
+                manualEvent4.Set();
             }
         }
 
         void DummyMethodForSubscribe(string receivedMessage)
         {
+            manualEvent1.Set();
+            //Dummary callback method for subscribe and unsubscribe to test presence
         }
 
+        void DummyMethodForUnSubscribe(string receivedMessage)
+        {
+            manualEvent3.Set();
+            //Dummary callback method for unsubscribe to test presence
+        }
     }
 }

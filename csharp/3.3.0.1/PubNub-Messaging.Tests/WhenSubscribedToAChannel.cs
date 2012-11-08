@@ -5,46 +5,57 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
 using System.Threading;
+using System.Web.Script.Serialization;
+using System.Collections;
 
 namespace PubNub_Messaging.Tests
 {
     [TestClass]
     public class WhenSubscribedToAChannel
     {
-        ManualResetEvent manualEvent = new ManualResetEvent(false);
+        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
+        ManualResetEvent manualEvent2 = new ManualResetEvent(false);
+
         bool receivedMessage = false;
 
         [TestMethod]
-        public void ThenItShouldReturnReceivedMessage()
+        public void ThenSubscribeShouldReturnReceivedMessage()
         {
-            Pubnub pubnub = new Pubnub(
-                   "demo",
-                   "demo",
-                   "",
-                   "",
-                   false);
+            receivedMessage = false;
+            Pubnub pubnub = new Pubnub("demo","demo","","",false);
 
-            //string channel = "my ~`!@#$%^&*()+=[]\\{}|;':\",./<>?channel";
-            string channel = "my_channel";
+            string channel = "my/channel";
 
-            pubnub.subscribe(channel, ThenDoCallback);
-            manualEvent.WaitOne(10000, false);
-            Assert.IsTrue(receivedMessage);
+            pubnub.subscribe<string>(channel, ReceivedMessageCallback);
+
+            pubnub.publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummayPublishCallback);
+            manualEvent2.WaitOne(310 * 1000);
+
+            manualEvent1.WaitOne(310*1000);
+            Assert.IsTrue(receivedMessage,"WhenSubscribedToAChannel --> ThenItShouldReturnReceivedMessage Failed");
         }
 
-        public void ThenDoCallback(object result)
+        private void ReceivedMessageCallback(string result)
         {
-            List<object> message = result as List<object>;
-
-            if (message != null && message.Count >= 2)
+            if (!string.IsNullOrWhiteSpace(result))
             {
-                if (message[1].ToString().Length > 1)
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                IList receivedObj = (IList)js.DeserializeObject(result);
+                if (receivedObj is object[])
                 {
-                    receivedMessage = true;
+                    object subscribedObj = (object)receivedObj[0];
+                    if (subscribedObj != null)
+                    {
+                        receivedMessage = true;
+                    }
                 }
             }
-            manualEvent.Set();
-            Assert.IsTrue(receivedMessage);
+            manualEvent1.Set();
+        }
+
+        private void dummayPublishCallback(string result)
+        {
+            manualEvent2.Set();
         }
 
     }
