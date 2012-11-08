@@ -30,6 +30,7 @@ public class MenuItemContent {
         addItem(new MenuItem("1", "CL-155"));
         addItem(new MenuItem("2", "CL-165"));
         addItem(new MenuItem("3", "CL-216"));
+        addItem(new MenuItem("4", "CL-259"));
      
     }
 
