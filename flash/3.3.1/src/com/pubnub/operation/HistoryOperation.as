@@ -9,7 +9,6 @@ package com.pubnub.operation {
 	public class HistoryOperation extends Operation {
 		
 		public var sub_key:String;
-		public var origin:String;
 		public var cipherKey:String;
 		
 		override public function send(args:Object):void {

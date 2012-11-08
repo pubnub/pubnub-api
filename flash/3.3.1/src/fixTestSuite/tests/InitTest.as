@@ -24,6 +24,7 @@ package fixTestSuite.tests {
 	import org.hamcrest.core.anything;
 	MockolateRunner;
 	import org.hamcrest.object.nullValue;
+	
 	/**
 	 * https://github.com/flexunit/flexunit
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
@@ -60,7 +61,8 @@ package fixTestSuite.tests {
                 publish_key:this.pub_key,
                 SUB_KEY:SUB_KEY,
                 secret_key:this.secret_key,
-                cipher_key:this.cipher_key
+                cipher_key:this.cipher_key,
+                origin: this.origin
             }
 			
 			//pn = nice(Pn);
@@ -68,9 +70,19 @@ package fixTestSuite.tests {
 			//pn.init(config);
 			
 			operation = nice(Operation);
-			mock(operation).method('send').dispatches(new OperationEvent(OperationEvent.RESULT, { } ));
+			mock(operation).method('send').dispatches(new OperationEvent(OperationEvent.RESULT, {token : '1234567'}));
 			
-			Pn.init(config);
+			//pn = nice(Pn);
+			//stub(pn).method('getOperation').args('init').returns(operation);
+			
+			pn = Pn.instance;
+			pn.addEventListener(PnEvent.INIT, onInit);
+			
+			expect(pn.init(config)).calls(pn.getOperation, ['init']).once();
+			//pn.init(config);
+			//expect(pn.getOperation('init')).returns(operation);
+			//expect(pn).calls('getOperation', '').
+			//Pn.init(config);
 			/*var pn:Pn = nice(Pn);
 			expect(pn.init(config)).dispatches(new OperationEvent(OperationEvent.RESULT, { } ));
 			trace(pn is Pn)*/

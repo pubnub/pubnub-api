@@ -1,4 +1,4 @@
-﻿/**
+/**
  * IVMode
  * 
  * An abstract class for confidentialy modes that rely on an initialization vector.
@@ -31,14 +31,8 @@ package com.hurlant.crypto.symmetric
 		
 		
 		public function IVMode(key:ISymmetricKey, padding:IPad = null) {
-
-            this.key = key;
-
-            trace("mode is set to: " + key);
-			
-			
+			this.key = key;
 			blockSize = key.getBlockSize();
-			
 			if (padding == null) {
 				padding = new PKCS5(blockSize);
 			} else {
@@ -101,7 +95,6 @@ package com.hurlant.crypto.symmetric
 			}
 			lastIV.length=0;
 			lastIV.writeBytes(vec);
-			
 			return vec;
 		}
 		protected function getIV4d():ByteArray {

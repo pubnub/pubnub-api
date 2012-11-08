@@ -16,6 +16,7 @@ package baseTestSuite.tests {
         public var pub_key:String = 'demo';
         public var secret_key:String = '';
         public var cipher_key:String = '';
+        public var ssl:Boolean = true;
 		
 		[Test(async, description="[Pn.init] test")]
 		public function test() : void {
@@ -24,7 +25,9 @@ package baseTestSuite.tests {
                 publish_key:this.pub_key,
                 SUB_KEY:SUB_KEY,
                 secret_key:this.secret_key,
-                cipher_key:this.cipher_key
+                cipher_key:this.cipher_key, 
+                origin:this.origin, 
+				ssl : this.ssl
             }
 			var acyncTimeout:int = 310000;
 			var asyncHandler:Function = Async.asyncHandler(this, onInit, acyncTimeout, null, onInitTimeout);

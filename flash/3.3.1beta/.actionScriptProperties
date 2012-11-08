@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="PubNubTest.mxml" projectUUID="e5dad856-3e04-486d-a8e8-1b322aa34e98" version="10">
+<actionScriptProperties analytics="false" mainApplicationPath="/PubNubTest/[source path] src/PubNubFlexExample.mxml" projectUUID="e5dad856-3e04-486d-a8e8-1b322aa34e98" version="10">
   <compiler additionalCompilerArguments="-locale en_US" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
-    <compilerSourcePath/>
+    <compilerSourcePath>
+      <compilerSourcePathEntry kind="1" linkType="1" path="D:/Flash/2012/geremy.cohen/work/pubnub-api/flash/3.3.1/src"/>
+    </compilerSourcePath>
     <libraryPath defaultLinkType="0">
       <libraryPathEntry kind="4" path="">
         <excludedEntries>
@@ -14,10 +16,12 @@
       <libraryPathEntry kind="1" linkType="1" path="${FLEXUNIT_LIB_LOCATION}/version4libs/FlexProject"/>
       <libraryPathEntry kind="1" linkType="1" path="${FLEXUNIT_LIB_LOCATION}/version4libs/FlexProject_Extended"/>
       <libraryPathEntry kind="1" linkType="1" path="${FLEXUNIT_LOCALE_LOCATION}/version4locale/"/>
+      <libraryPathEntry kind="1" linkType="1" path="D:/Flash/2012/geremy.cohen/work/pubnub-api/flash/3.3.1/lib"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="/PubNubTest/[source path] src/PubNubFlexExample.mxml"/>
     <application path="PubNubTest.mxml"/>
     <application path="baseTestSuite/BaseTestSuite.mxml"/>
   </applications>
