@@ -1,9 +1,9 @@
 package pubnub
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -52,7 +52,11 @@ func (pub *PUBNUB) GetTime(c chan []byte) {
 	url += "/0"
 
 	// send response to channel
-	c <- pub.HttpRequest(url)
+	value, err := pub.HttpRequest(url)
+	c <- value
+	if err != nil {
+		close(c)
+	}
 }
 
 func (pub *PUBNUB) Publish(channel string, message string, c chan []byte) {
@@ -72,7 +76,11 @@ func (pub *PUBNUB) Publish(channel string, message string, c chan []byte) {
 	url += fmt.Sprintf("/{\"msg\":\"%s\"}", message)
 
 	// send response to channel
-	c <- pub.HttpRequest(url)
+	value, err := pub.HttpRequest(url)
+	c <- value
+	if err != nil {
+		close(c)
+	}
 }
 
 func (pub *PUBNUB) Subscribe(channel string, c chan []byte) {
@@ -84,8 +92,21 @@ func (pub *PUBNUB) Subscribe(channel string, c chan []byte) {
 		url += "/0"
 		url += "/" + timeToken
 
-		c <- pub.HttpRequest(url)
+		value, err := pub.HttpRequest(url)
+		c <- value
+		if err != nil {
+			close(c)
+		}
+		//Get timetoken from success response
+		timeTokenArr := strings.Split(fmt.Sprintf("%s", value), ",")
+		if len(timeTokenArr) > 1 {
+			timeToken = strings.Replace(timeTokenArr[1], "\"", "", -1)
+		}
 	}
+}
+
+func (pub *PUBNUB) Unsubscribe(c chan []byte) {
+	close(c)
 }
 
 func (pub *PUBNUB) History(channel string, limit int, c chan []byte) {
@@ -97,10 +118,25 @@ func (pub *PUBNUB) History(channel string, limit int, c chan []byte) {
 	url += "/" + fmt.Sprintf("%d", limit)
 
 	// send response to channel
-	c <- pub.HttpRequest(url)
+	value, err := pub.HttpRequest(url)
+	c <- value
+	if err != nil {
+		close(c)
+	}
 }
 
-func (pub *PUBNUB) HttpRequest(url string) []byte {
+func ResponseParser(response []byte) ([]byte, error) {
+	string_resp := fmt.Sprintf("%s", response)
+
+	//need better investigate this error
+	if strings.Contains(string_resp, "<HTML>") && !strings.Contains(string_resp, "[") {
+		new_error := errors.New("Invalid method in request")
+		return []byte(fmt.Sprintf("Method Not Implemented: %s", new_error.Error())), new_error
+	}
+	return response, nil
+}
+
+func (pub *PUBNUB) HttpRequest(url string) ([]byte, error) {
 	httpClient := New()
 	httpClient.ConnectTimeout = _TIMEOUT * time.Second
 	httpClient.ReadWriteTimeout = _TIMEOUT * time.Second
@@ -121,13 +157,19 @@ func (pub *PUBNUB) HttpRequest(url string) []byte {
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		log.Fatalf("request failed - %s", err.Error())
+		if strings.Contains(err.Error(), "timeout") {
+			return []byte(fmt.Sprintf("%s: Reconnecting from timeout", time.Now().String())), nil
+		} else {
+			//log.Fatalf("request failed - %s", err.Error())
+			return []byte(fmt.Sprintf("Network Error: %s", err.Error())), err
+		}
 	}
 	defer resp.Body.Close()
 
 	conn, err := httpClient.GetConn(req)
 	if err != nil {
-		log.Fatalf("failed to get conn for req")
+		//log.Fatalf("failed to get conn for req")
+		return []byte(fmt.Sprintf("Connection Error: %s", err.Error())), err
 	}
 	if conn != nil {
 		// do something with conn	
@@ -135,13 +177,6 @@ func (pub *PUBNUB) HttpRequest(url string) []byte {
 
 	body, err := ioutil.ReadAll(resp.Body)
 
-	//Only for test
-	//Need to create normal response parser
-	timeTokenArr := strings.Split(fmt.Sprintf("%s", body), ",")
-	if len(timeTokenArr) > 1 {
-		timeToken = strings.Replace(timeTokenArr[1], "\"", "", -1)
-	}
-
 	httpClient.FinishRequest(req)
-	return body
+	return ResponseParser(body)
 }

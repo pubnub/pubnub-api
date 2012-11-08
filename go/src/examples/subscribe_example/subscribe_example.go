@@ -14,6 +14,10 @@ func main() {
 
 	//receive from channel
 	for {
-		log.Printf("%s", <-channel)
+		value, ok := <-channel
+		if !ok {
+			break
+		}
+		log.Printf("%s", value)
 	}
 }
