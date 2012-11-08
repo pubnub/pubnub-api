@@ -1,22 +1,35 @@
 package fixTestSuite.tests {
 	
 	import com.pubnub.*;
+	import com.pubnub.operation.Operation;
+	import com.pubnub.operation.OperationEvent;
 	import flash.events.Event;
+	import mockolate.arg;
+	import mockolate.expect;
+	import mockolate.expectArg;
+	import mockolate.expecting;
+	import mockolate.ingredients.Sequence;
 	import mockolate.mock;
 	import mockolate.nice;
 	import mockolate.prepare;
+	import mockolate.record;
+	import mockolate.replay;
 	import mockolate.runner.MockolateRule;
+	import mockolate.sequence;
+	import mockolate.stub;
+	import mockolate.verify;
 	import org.flexunit.*;
 	import org.flexunit.async.*;
 	import mockolate.runner.MockolateRunner; 
+	import org.hamcrest.core.anything;
 	MockolateRunner;
 	import org.hamcrest.object.nullValue;
 	/**
 	 * https://github.com/flexunit/flexunit
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
-	[RunWith("mockolate.runner.MockolateRunner")]
 	[BeforeClass (order = 1)]
+	//[RunWith("mockolate.runner.MockolateRunner")]
 	public class InitTest {
 		
 		public static const SUB_KEY:String = 'demo';
@@ -31,56 +44,37 @@ package fixTestSuite.tests {
 		[Rule]
 		public var mocks:MockolateRule = new MockolateRule();
 		
-		[Mock]
-		public var date:Date;
-		
-		
+		[Mock(type="strict")] 
 		public var pn:Pn;
 		
+		[Mock(type="strict")] 
+		public var operation:Operation;
 		
-		[Before(async, timeout=5000)]
-		public function prepareMockolates():void{
-			Async.proceedOnEvent(this,
-				prepare(Date),
-				Event.COMPLETE);
-		}
 		
 		
 		//[Test(async, description = "[Pn.init] test")]
 		[Test]
 		public function testInit() : void {
-			//trace(this);
+			
 			 var config:Object = {
                 publish_key:this.pub_key,
                 SUB_KEY:SUB_KEY,
                 secret_key:this.secret_key,
                 cipher_key:this.cipher_key
             }
-			var d:Date = nice(Date);
 			
-			mock(d).method("hours").returns(12);
-			mock(d).method("minutes").returns(0);
-			mock(d).method("seconds").returns(0);
+			//pn = nice(Pn);
+			//mock(pn).method('init').dispatches(new OperationEvent(OperationEvent.RESULT, {}));
+			//pn.init(config);
 			
-			//assertThat(date, nullValue());
-			//nice(Date);
-			//mocks.mock(date).method("hours").returns(12);
-			//mocks.mock(pn).method("init").args(config)
-			//mock(date);
+			operation = nice(Operation);
+			mock(operation).method('send').dispatches(new OperationEvent(OperationEvent.RESULT, { } ));
 			
-			/*mock(date).method("hours").returns(12);
-			mock(date).method("minutes").returns(0);
-			mock(date).method("seconds").returns(0);*/
+			Pn.init(config);
+			/*var pn:Pn = nice(Pn);
+			expect(pn.init(config)).dispatches(new OperationEvent(OperationEvent.RESULT, { } ));
+			trace(pn is Pn)*/
 			
-			//Assert.assertTrue(date.hours == 12);
-			//testObj = Pn.instance;
-			//mock(testObj).method('init').args(config);
-			
-			/*var acyncTimeout:int = 310000;
-			var asyncHandler:Function = Async.asyncHandler(this, onInit, acyncTimeout, null, onInitTimeout);
-			Pn.instance.addEventListener(PnEvent.INIT, asyncHandler);
-			Pn.instance.addEventListener(PnEvent.INIT_ERROR, asyncHandler);
-            Pn.instance.init(config);*/
 		}
 		
 		protected function onInit( event:PnEvent, passThroughData:Object = null ):void {

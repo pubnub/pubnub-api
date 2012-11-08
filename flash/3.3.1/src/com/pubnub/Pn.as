@@ -47,6 +47,7 @@ package com.pubnub {
 		 * @param config
 		 */
 		public function init(config:Object):void {
+			trace(this, 'init')
 			if (_initialized) {
 				unsubscribeAll();
 			}

@@ -26,6 +26,7 @@
 				
             //core.run(InitTest, SubscribeTest, PublishTest, UnsubscribeTest);
             core.run(InitTest);
+            //core.run(CreateMockolatesManually);
             //core.run(LoginDelegateTest);
          }
       ]]>

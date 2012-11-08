@@ -38,7 +38,6 @@ package com.pubnub.operation {
 			_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
 			_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
 			_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
-		
 		}
 		
 		protected function onLoaderError(e:PnURLLoaderEvent):void {
