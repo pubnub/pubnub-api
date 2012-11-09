@@ -259,7 +259,7 @@ typedef enum {
                             uuid:(NSString *)uuid
                           useSSL:(BOOL)useSSL
 {
-    return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:cipherKey  uuid:nil  origin:kDefaultOrigin];
+    return [self initWithPublishKey:publishKey subscribeKey:subscribeKey secretKey:secretKey useSSL:useSSL cipherKey:cipherKey  uuid:uuid  origin:kDefaultOrigin];
 }
 
 - (CEPubnub *)initWithPublishKey:(NSString *)publishKey
