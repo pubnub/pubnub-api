@@ -1,15 +1,4 @@
-package pubnub.api;
-
-import com.ning.http.client.*;
-import com.ning.http.client.AsyncHttpClientConfig.Builder;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URLEncoder;
-import java.util.*;
-import java.util.concurrent.Future;
-import java.util.zip.GZIPInputStream;
+package com.pubnub.api;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -19,10 +8,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Future;
+import java.util.zip.GZIPInputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -31,13 +27,17 @@ import javax.crypto.Mac;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * PubNub 3.2 Real-time Push Cloud API
- * 
- * @author Stephen Blum 3.1
- * @author Leonardo Redmond 3.2 Revision
- * @package pubnub.api
- */
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.ning.http.client.AsyncCompletionHandler;
+import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.AsyncHttpClientConfig;
+import com.ning.http.client.AsyncHttpClientConfig.Builder;
+import com.ning.http.client.Request;
+import com.ning.http.client.RequestBuilder;
+import com.ning.http.client.Response;
+
 public class Pubnub {
 	private String ORIGIN = "pubsub.pubnub.com";
 	private String PUBLISH_KEY = "";
@@ -47,7 +47,7 @@ public class Pubnub {
 	private boolean SSL = false;
 	private String sessionUUID = "";
 	private String parameters = "";
-	
+
 	private class ChannelStatus {
 		String channel;
 		boolean connected, first;
@@ -138,7 +138,7 @@ public class Pubnub {
 	 *            Cipher Key.
 	 * @param boolean SSL Enabled.
 	 */
-	public void init(String publish_key, String subscribe_key,
+	private void init(String publish_key, String subscribe_key,
 			String secret_key, String cipher_key, boolean ssl_on) {
 		this.PUBLISH_KEY = publish_key;
 		this.SUBSCRIBE_KEY = subscribe_key;
@@ -155,7 +155,27 @@ public class Pubnub {
 			this.ORIGIN = "http://" + this.ORIGIN;
 		}
 	}
+	
+	/**
+	 * getResponseByUrl
+	 * 
+	 * Get response by url.
+	 * 
+	 * @param List<String> url
+	 * 
+	 */
+	private JSONArray getResponseByUrl(List<String> url) {
+		JSONArray response = _request(url);
 
+		if (this.CIPHER_KEY.length() > 0) {
+			// Decrypt Messages
+			PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
+			return pc.decryptJSONArray(response);
+		} else {
+			return response;
+		}
+	}
+	
 	/**
 	 * Publish
 	 * 
@@ -183,7 +203,7 @@ public class Pubnub {
 	 *            <String, Object> containing channel name, message.
 	 * @return JSONArray.
 	 */
-	public JSONArray publish(HashMap<String, Object> args) {
+	private JSONArray publish(HashMap<String, Object> args) {
 
 		String channel = (String) args.get("channel");
 		Object message = args.get("message");
@@ -279,7 +299,7 @@ public class Pubnub {
 	 * @param HashMap
 	 *            <String, Object> containing channel name, function callback.
 	 */
-	public void subscribe(HashMap<String, Object> args) {
+	private void subscribe(HashMap<String, Object> args) {
 		args.put("timetoken", "0");
 		this._subscribe(args);
 	}
@@ -362,7 +382,7 @@ public class Pubnub {
 
 				// Wait for Message
 				JSONArray response = _request(url);
-
+                System.out.println(response);
 				// Stop Connection?
 				for (ChannelStatus it : subscriptions) {
 					if (it.channel.equals(channel)) {
@@ -441,7 +461,8 @@ public class Pubnub {
 							message = pc.decrypt(message);
 						}
 						if (callback != null)
-							if (!callback.subscribeCallback(channel, message)) return;
+							if (!callback.successCallback(channel, message))
+								return;
 					} else {
 
 						JSONArray arr = messages.optJSONArray(i);
@@ -453,7 +474,8 @@ public class Pubnub {
 								;
 							}
 							if (callback != null)
-								if(!callback.subscribeCallback(channel, arr)) return;
+								if (!callback.successCallback(channel, arr))
+									return;
 						} else {
 							String msgs = messages.getString(0);
 							if (this.CIPHER_KEY.length() > 0) {
@@ -462,7 +484,8 @@ public class Pubnub {
 								msgs = pc.decrypt(msgs);
 							}
 							if (callback != null)
-								if(!callback.subscribeCallback(channel, msgs)) return;
+								if (!callback.successCallback(channel, msgs))
+									return;
 						}
 					}
 				}
@@ -493,214 +516,12 @@ public class Pubnub {
 	}
 
 	/**
-	 * Presence
-	 * 
-	 * Listen for a message on a channel & add presence info.
-	 * 
-	 * @param HashMap
-	 *            <String, Object> containing channel name, function callback.
-	 */
-	public void presence(HashMap<String, Object> args) {
-		args.put("timetoken", "0");
-		this._presence(args);
-	}
-
-	/**
-	 * Presence - Private Interface
-	 * 
-	 * Implemented by Leonardo Redmond on GitHub
-	 * 
-	 * @param HashMap
-	 *            <String, Object> containing channel name, function callback,
-	 *            timetoken.
-	 */
-	private void _presence(HashMap<String, Object> args) {
-
-		String channel = (String) args.get("channel");
-		String timetoken = (String) args.get("timetoken");
-		Callback callback;
-
-		// Validate Arguments
-		if (args.get("callback") != null) {
-			callback = (Callback) args.get("callback");
-		} else {
-			System.out.println("Invalid Callback.");
-			return;
-		}
-
-		if (channel == null || channel.equals("")) {
-			callback.errorCallback(channel, "Invalid Channel.");
-			return;
-		}
-
-		// Ensure Single Connection
-		if (subscriptions != null && subscriptions.size() > 0) {
-			boolean channel_exist = false;
-			for (ChannelStatus it : subscriptions) {
-				if (it.channel.equals(channel)) {
-					channel_exist = true;
-					break;
-				}
-			}
-			if (!channel_exist) {
-				ChannelStatus cs = new ChannelStatus();
-				cs.channel = channel;
-				cs.connected = true;
-				subscriptions.add(cs);
-			} else {
-				callback.errorCallback(channel, "Already Connected");
-				return;
-			}
-		} else {
-			// New Channel
-			ChannelStatus cs = new ChannelStatus();
-			cs.channel = channel;
-			cs.connected = true;
-			subscriptions = new ArrayList<Pubnub.ChannelStatus>();
-			subscriptions.add(cs);
-		}
-
-		while (true) {
-			try {
-				// Build URL
-				List<String> url = java.util.Arrays.asList("subscribe",
-						this.SUBSCRIBE_KEY, channel, "0", timetoken);
-
-				// Stop Connection?
-				boolean is_disconnect = false;
-				for (ChannelStatus it : subscriptions) {
-					if (it.channel.equals(channel)) {
-						if (!it.connected) {
-							subscriptions.remove(it);
-							callback.disconnectCallback(channel);
-							is_disconnect = true;
-							break;
-						}
-					}
-				}
-				if (is_disconnect)
-					return;
-
-				// Wait for Message
-				JSONArray response = _request(url);
-
-				// Stop Connection?
-				for (ChannelStatus it : subscriptions) {
-					if (it.channel.equals(channel)) {
-						if (!it.connected) {
-							subscriptions.remove(it);
-							callback.disconnectCallback(channel);
-							is_disconnect = true;
-							break;
-						}
-					}
-				}
-
-				if (is_disconnect)
-					return;
-
-				// Problem?
-				if (response == null || response.optInt(1) == 0) {
-					for (ChannelStatus it : subscriptions) {
-						if (it.channel.equals(channel)) {
-							if (it.connected && it.first) {
-								subscriptions.remove(it);
-								callback.disconnectCallback(channel);
-							} else {
-								subscriptions.remove(it);
-								callback.errorCallback(channel,
-										"Lost Network Connection");
-							}
-						}
-
-					}
-					// Ensure Connected (Call Time Function)
-					boolean is_reconnected = false;
-					while (true) {
-						double time_token = this.time();
-						if (time_token == 0.0) {
-
-							Thread.sleep(5000);
-						} else {
-							// Reconnect Callback
-							callback.reconnectCallback(channel);
-							// this._subscribe(args);
-							is_reconnected = true;
-							break;
-						}
-					}
-					if (is_reconnected) {
-						continue;
-					}
-				} else {
-					for (ChannelStatus it : subscriptions) {
-						if (it.channel.equals(channel)) {
-							// Connect Callback
-							if (!it.first) {
-								it.first = true;
-								callback.connectCallback(channel);
-
-								break;
-							}
-						}
-					}
-				}
-
-				JSONArray messages = response.optJSONArray(0);
-
-				// Update TimeToken
-				if (response.optString(1).length() > 0)
-					timetoken = response.optString(1);
-
-				for (int i = 0; messages.length() > i; i++) {
-					JSONObject message = messages.optJSONObject(i);
-					if (message != null) {
-
-						if (this.CIPHER_KEY.length() > 0) {
-							// Decrypt Message
-							PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-							message = pc.decrypt(message);
-						}
-						if (callback != null)
-							if(!callback.presenceCallback(channel, message)) return;
-					} else {
-
-						JSONArray arr = messages.optJSONArray(i);
-						if (arr != null) {
-							if (this.CIPHER_KEY.length() > 0) {
-								PubnubCrypto pc = new PubnubCrypto(
-										this.CIPHER_KEY);
-								arr = pc.decryptJSONArray(arr);
-							}
-							if (callback != null)
-								if (!callback.presenceCallback(channel, arr)) return;
-						} else {
-							String msgs = messages.getString(0);
-							if (this.CIPHER_KEY.length() > 0) {
-								PubnubCrypto pc = new PubnubCrypto(
-										this.CIPHER_KEY);
-								msgs = pc.decrypt(msgs);
-							}
-							if (callback != null)
-								if (!callback.presenceCallback(channel, msgs)) return;
-						}
-					}
-				}
-			} catch (Exception e) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ie) {
-				}
-			}
-		}
-	}
-
-	/**
 	 * Here Now
 	 * 
 	 * Load presence information from a channel
 	 * 
-	 * @param String channel name.
+	 * @param String
+	 *            channel name.
 	 * @return JSONObject of here_now
 	 */
 	public JSONArray here_now(String channel) {
@@ -712,17 +533,10 @@ public class Pubnub {
 		url.add(this.SUBSCRIBE_KEY);
 		url.add("channel");
 		url.add(channel);
-		
-		JSONArray response = _request(url);
 
-		if (this.CIPHER_KEY.length() > 0) {
-			// Decrypt Messages
-			PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-			return pc.decryptJSONArray(response);
-		} else {
-			return response;
-		}
+		return getResponseByUrl(url);
 	}
+
 	/**
 	 * History
 	 * 
@@ -750,7 +564,7 @@ public class Pubnub {
 	 *            response.
 	 * @return JSONArray of history.
 	 */
-	public JSONArray history(HashMap<String, Object> args) {
+	private JSONArray history(HashMap<String, Object> args) {
 
 		String channel = (String) args.get("channel");
 		int limit = Integer.parseInt(args.get("limit").toString());
@@ -763,17 +577,9 @@ public class Pubnub {
 		url.add("0");
 		url.add(Integer.toString(limit));
 
-		JSONArray response = _request(url);
-
-		if (this.CIPHER_KEY.length() > 0) {
-			// Decrypt Messages
-			PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-			return pc.decryptJSONArray(response);
-		} else {
-			return response;
-		}
+		return getResponseByUrl(url);
 	}
-	
+
 	/**
 	 * DetailedHistory
 	 * 
@@ -781,40 +587,35 @@ public class Pubnub {
 	 * 
 	 * @return JSONArray of detailed history.
 	 */
-	public JSONArray detailedHistory(String channel, long start, long end, int count, Boolean reverse) {
+	public JSONArray detailedHistory(String channel, long start, long end,
+			int count, Boolean reverse) {
 		parameters = "";
-		if (count == -1) count = 100;
-		if (count == -1) count = 100;
-        parameters = "?count=" + count;
-        if (reverse)
-            parameters = parameters + "&" + "reverse=" + reverse.toString().toLowerCase();
-        if (start != -1)
-            parameters = parameters + "&" + "start=" + Long.toString(start).toLowerCase();
-        if (end != -1)
-            parameters = parameters + "&" + "end=" + Long.toString(end).toLowerCase();
-        
-        List<String> url = new ArrayList<String>();
-        url.add("v2");
-        url.add("history");
-        url.add("sub-key");
-        url.add(this.SUBSCRIBE_KEY);
-        url.add("channel");
-        url.add(channel);
-        
-        JSONArray response = _request(url);
-        
-        if (this.CIPHER_KEY.length() > 0) {
-        	PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-        	try {
-				return pc.decryptJSONArray(response.getJSONArray(0));
-			} catch (JSONException e) {
-				return response;
-			}
-        } else {
-        	return response;
-        }
+		if (count == -1)
+			count = 100;
+		if (count == -1)
+			count = 100;
+		parameters = "?count=" + count;
+		if (reverse)
+			parameters = parameters + "&" + "reverse="
+					+ reverse.toString().toLowerCase();
+		if (start != -1)
+			parameters = parameters + "&" + "start="
+					+ Long.toString(start).toLowerCase();
+		if (end != -1)
+			parameters = parameters + "&" + "end="
+					+ Long.toString(end).toLowerCase();
+
+		List<String> url = new ArrayList<String>();
+		url.add("v2");
+		url.add("history");
+		url.add("sub-key");
+		url.add(this.SUBSCRIBE_KEY);
+		url.add("channel");
+		url.add(channel);
+		
+		return getResponseByUrl(url);
 	}
-	
+
 	public JSONArray detailedHistory(String channel, long start, boolean reverse) {
 		return detailedHistory(channel, start, -1, -1, reverse);
 	}
@@ -822,6 +623,7 @@ public class Pubnub {
 	public JSONArray detailedHistory(String channel, int count) {
 		return detailedHistory(channel, -1, -1, count, false);
 	}
+
 	/**
 	 * Time
 	 * 
@@ -884,7 +686,7 @@ public class Pubnub {
 		Iterator<String> url_iterator = url_components.iterator();
 		String request_for = url_components.get(0);
 		String request_type = url_components.get(1);
-		
+
 		url.append(this.ORIGIN);
 
 		// Generate URL with UTF-8 Encoding
@@ -906,7 +708,7 @@ public class Pubnub {
 			url.append("?uuid=").append(this.sessionUUID);
 		if (request_for.equals("v2") && request_type.equals("history"))
 			url.append(parameters);
-		
+
 		AsyncHttpClient ahc = null;
 		try {
 			// Prepare Asynchronous HTTP Request
@@ -1048,137 +850,165 @@ public class Pubnub {
 class Base64Encoder {
 
 	// Mapping table from 6-bit nibbles to Base64 characters.
-	private static char[]    map1 = new char[64];
-	   static {
-	      int i=0;
-	      for (char c='A'; c<='Z'; c++) map1[i++] = c;
-	      for (char c='a'; c<='z'; c++) map1[i++] = c;
-	      for (char c='0'; c<='9'; c++) map1[i++] = c;
-	      map1[i++] = '+'; map1[i++] = '/'; 
-	   }
+	private static char[] map1 = new char[64];
+	static {
+		int i = 0;
+		for (char c = 'A'; c <= 'Z'; c++)
+			map1[i++] = c;
+		for (char c = 'a'; c <= 'z'; c++)
+			map1[i++] = c;
+		for (char c = '0'; c <= '9'; c++)
+			map1[i++] = c;
+		map1[i++] = '+';
+		map1[i++] = '/';
+	}
 
 	// Mapping table from Base64 characters to 6-bit nibbles.
-	private static byte[]    map2 = new byte[128];
-	   static {
-	      for (int i=0; i<map2.length; i++) map2[i] = -1;
-	      for (int i=0; i<64; i++) map2[map1[i]] = (byte)i; 
-	   }
-
-	/**
-	* Encodes a string into Base64 format.
-	* No blanks or line breaks are inserted.
-	* 
-	* @param s  a String to be encoded.
-	* @return   A String with the Base64 encoded data.
-	*/
-	public static String encodeString (String s) {
-	   return new String(encode(s.getBytes())); 
+	private static byte[] map2 = new byte[128];
+	static {
+		for (int i = 0; i < map2.length; i++)
+			map2[i] = -1;
+		for (int i = 0; i < 64; i++)
+			map2[map1[i]] = (byte) i;
 	}
 
 	/**
-	* Encodes a byte array into Base64 format.
-	* No blanks or line breaks are inserted.
-	* 
-	* @param in  an array containing the data bytes to be encoded.
-	* @return    A character array with the Base64 encoded data.
-	*/
-	public static char[] encode (byte[] in) {
-	   return encode(in,in.length); 
+	 * Encodes a string into Base64 format. No blanks or line breaks are
+	 * inserted.
+	 * 
+	 * @param s
+	 *            a String to be encoded.
+	 * @return A String with the Base64 encoded data.
+	 */
+	public static String encodeString(String s) {
+		return new String(encode(s.getBytes()));
 	}
 
 	/**
-	* Encodes a byte array into Base64 format.
-	* No blanks or line breaks are inserted.
-	* 
-	* @param in   an array containing the data bytes to be encoded.
-	* @param iLen number of bytes to process in <code>in</code>.
-	* @return     A character array with the Base64 encoded data.
-	*/
-	public static char[] encode (byte[] in, int iLen) {
-	   int oDataLen = (iLen*4+2)/3;       // output length without padding
-	   int oLen = ((iLen+2)/3)*4;         // output length including padding
-	   char[] out = new char[oLen];
-	   int ip = 0;
-	   int op = 0;
-	   while (ip < iLen) {
-	      int i0 = in[ip++] & 0xff;
-	      int i1 = ip < iLen ? in[ip++] & 0xff : 0;
-	      int i2 = ip < iLen ? in[ip++] & 0xff : 0;
-	      int o0 = i0 >>> 2;
-	      int o1 = ((i0 &   3) << 4) | (i1 >>> 4);
-	      int o2 = ((i1 & 0xf) << 2) | (i2 >>> 6);
-	      int o3 = i2 & 0x3F;
-	      out[op++] = map1[o0];
-	      out[op++] = map1[o1];
-	      out[op] = op < oDataLen ? map1[o2] : '='; op++;
-	      out[op] = op < oDataLen ? map1[o3] : '='; op++; }
-	   return out; 
+	 * Encodes a byte array into Base64 format. No blanks or line breaks are
+	 * inserted.
+	 * 
+	 * @param in
+	 *            an array containing the data bytes to be encoded.
+	 * @return A character array with the Base64 encoded data.
+	 */
+	public static char[] encode(byte[] in) {
+		return encode(in, in.length);
 	}
 
 	/**
-	* Decodes a string from Base64 format.
-	* 
-	* @param s  a Base64 String to be decoded.
-	* @return   A String containing the decoded data.
-	* @throws   IllegalArgumentException if the input is not valid Base64 encoded data.
-	*/
-	public static String decodeString (String s) {
-	   return new String(decode(s)); 
+	 * Encodes a byte array into Base64 format. No blanks or line breaks are
+	 * inserted.
+	 * 
+	 * @param in
+	 *            an array containing the data bytes to be encoded.
+	 * @param iLen
+	 *            number of bytes to process in <code>in</code>.
+	 * @return A character array with the Base64 encoded data.
+	 */
+	public static char[] encode(byte[] in, int iLen) {
+		int oDataLen = (iLen * 4 + 2) / 3; // output length without padding
+		int oLen = ((iLen + 2) / 3) * 4; // output length including padding
+		char[] out = new char[oLen];
+		int ip = 0;
+		int op = 0;
+		while (ip < iLen) {
+			int i0 = in[ip++] & 0xff;
+			int i1 = ip < iLen ? in[ip++] & 0xff : 0;
+			int i2 = ip < iLen ? in[ip++] & 0xff : 0;
+			int o0 = i0 >>> 2;
+			int o1 = ((i0 & 3) << 4) | (i1 >>> 4);
+			int o2 = ((i1 & 0xf) << 2) | (i2 >>> 6);
+			int o3 = i2 & 0x3F;
+			out[op++] = map1[o0];
+			out[op++] = map1[o1];
+			out[op] = op < oDataLen ? map1[o2] : '=';
+			op++;
+			out[op] = op < oDataLen ? map1[o3] : '=';
+			op++;
+		}
+		return out;
 	}
 
 	/**
-	* Decodes a byte array from Base64 format.
-	* 
-	* @param s  a Base64 String to be decoded.
-	* @return   An array containing the decoded data bytes.
-	* @throws   IllegalArgumentException if the input is not valid Base64 encoded data.
-	*/
-	public static byte[] decode (String s) {
-	   return decode(s.toCharArray()); 
+	 * Decodes a string from Base64 format.
+	 * 
+	 * @param s
+	 *            a Base64 String to be decoded.
+	 * @return A String containing the decoded data.
+	 * @throws IllegalArgumentException
+	 *             if the input is not valid Base64 encoded data.
+	 */
+	public static String decodeString(String s) {
+		return new String(decode(s));
 	}
 
 	/**
-	* Decodes a byte array from Base64 format.
-	* No blanks or line breaks are allowed within the Base64 encoded data.
-	* 
-	* @param in  a character array containing the Base64 encoded data.
-	* @return    An array containing the decoded data bytes.
-	* @throws    IllegalArgumentException if the input is not valid Base64 encoded data.
-	*/
-	public static byte[] decode (char[] in) {
-	   int iLen = in.length;
-	   if (iLen%4 != 0) throw new IllegalArgumentException ("Length of Base64 encoded input string is not a multiple of 4.");
-	   while (iLen > 0 && in[iLen-1] == '=') iLen--;
-	   int oLen = (iLen*3) / 4;
-	   byte[] out = new byte[oLen];
-	   int ip = 0;
-	   int op = 0;
-	   while (ip < iLen) {
-	      int i0 = in[ip++];
-	      int i1 = in[ip++];
-	      int i2 = ip < iLen ? in[ip++] : 'A';
-	      int i3 = ip < iLen ? in[ip++] : 'A';
-	      if (i0 > 127 || i1 > 127 || i2 > 127 || i3 > 127)
-	         throw new IllegalArgumentException ("Illegal character in Base64 encoded data.");
-	      int b0 = map2[i0];
-	      int b1 = map2[i1];
-	      int b2 = map2[i2];
-	      int b3 = map2[i3];
-	      if (b0 < 0 || b1 < 0 || b2 < 0 || b3 < 0)
-	         throw new IllegalArgumentException ("Illegal character in Base64 encoded data.");
-	      int o0 = ( b0       <<2) | (b1>>>4);
-	      int o1 = ((b1 & 0xf)<<4) | (b2>>>2);
-	      int o2 = ((b2 &   3)<<6) |  b3;
-	      out[op++] = (byte)o0;
-	      if (op<oLen) out[op++] = (byte)o1;
-	      if (op<oLen) out[op++] = (byte)o2; }
-	   return out; 
+	 * Decodes a byte array from Base64 format.
+	 * 
+	 * @param s
+	 *            a Base64 String to be decoded.
+	 * @return An array containing the decoded data bytes.
+	 * @throws IllegalArgumentException
+	 *             if the input is not valid Base64 encoded data.
+	 */
+	public static byte[] decode(String s) {
+		return decode(s.toCharArray());
+	}
+
+	/**
+	 * Decodes a byte array from Base64 format. No blanks or line breaks are
+	 * allowed within the Base64 encoded data.
+	 * 
+	 * @param in
+	 *            a character array containing the Base64 encoded data.
+	 * @return An array containing the decoded data bytes.
+	 * @throws IllegalArgumentException
+	 *             if the input is not valid Base64 encoded data.
+	 */
+	public static byte[] decode(char[] in) {
+		int iLen = in.length;
+		if (iLen % 4 != 0)
+			throw new IllegalArgumentException(
+					"Length of Base64 encoded input string is not a multiple of 4.");
+		while (iLen > 0 && in[iLen - 1] == '=')
+			iLen--;
+		int oLen = (iLen * 3) / 4;
+		byte[] out = new byte[oLen];
+		int ip = 0;
+		int op = 0;
+		while (ip < iLen) {
+			int i0 = in[ip++];
+			int i1 = in[ip++];
+			int i2 = ip < iLen ? in[ip++] : 'A';
+			int i3 = ip < iLen ? in[ip++] : 'A';
+			if (i0 > 127 || i1 > 127 || i2 > 127 || i3 > 127)
+				throw new IllegalArgumentException(
+						"Illegal character in Base64 encoded data.");
+			int b0 = map2[i0];
+			int b1 = map2[i1];
+			int b2 = map2[i2];
+			int b3 = map2[i3];
+			if (b0 < 0 || b1 < 0 || b2 < 0 || b3 < 0)
+				throw new IllegalArgumentException(
+						"Illegal character in Base64 encoded data.");
+			int o0 = (b0 << 2) | (b1 >>> 4);
+			int o1 = ((b1 & 0xf) << 4) | (b2 >>> 2);
+			int o2 = ((b2 & 3) << 6) | b3;
+			out[op++] = (byte) o0;
+			if (op < oLen)
+				out[op++] = (byte) o1;
+			if (op < oLen)
+				out[op++] = (byte) o2;
+		}
+		return out;
 	}
 
 	/**
 	 * This class is not instantiate.
 	 */
-	private Base64Encoder() {}
+	private Base64Encoder() {
+	}
 }
 
 /**
@@ -1188,232 +1018,246 @@ class Base64Encoder {
 
 class PubnubCrypto {
 
-	private final String CIPHER_KEY;  
-	  
-    public PubnubCrypto(String CIPHER_KEY) {
-        this.CIPHER_KEY = CIPHER_KEY;  
-    }  
-  
-    /**
-     * Encrypt
-     * 
-     * @param JSONObject Message to encrypt
-     * @return JSONObject as Encrypted message
-     */
-    @SuppressWarnings("unchecked")
+	private final String CIPHER_KEY;
+
+	public PubnubCrypto(String CIPHER_KEY) {
+		this.CIPHER_KEY = CIPHER_KEY;
+	}
+
+	/**
+	 * Encrypt
+	 * 
+	 * @param JSONObject
+	 *            Message to encrypt
+	 * @return JSONObject as Encrypted message
+	 */
+	@SuppressWarnings("unchecked")
 	public JSONObject encrypt(JSONObject message) {
-    	try {
-    		JSONObject message_encrypted = new JSONObject();
-        	Iterator<String> it = message.keys();
-        	
-	    	while(it.hasNext()) {
-	    		String key = it.next();
-	    		String val = message.getString(key);
-	    		message_encrypted.put(key, encrypt(val));
-	    	}
-	    	return message_encrypted;
+		try {
+			JSONObject message_encrypted = new JSONObject();
+			Iterator<String> it = message.keys();
 
-    	} catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    /**
-     * Decrypt
-     * 
-     * @param JSONObject Encrypted message
-     * @return JSONObject Message decrypted
-     */
-    @SuppressWarnings("unchecked")
+			while (it.hasNext()) {
+				String key = it.next();
+				String val = message.getString(key);
+				message_encrypted.put(key, encrypt(val));
+			}
+			return message_encrypted;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Decrypt
+	 * 
+	 * @param JSONObject
+	 *            Encrypted message
+	 * @return JSONObject Message decrypted
+	 */
+	@SuppressWarnings("unchecked")
 	public JSONObject decrypt(JSONObject message_encrypted) {
-    	try {
-    		JSONObject message_decrypted = new JSONObject();
-        	Iterator<String> it = message_encrypted.keys();
-        	
-	    	while(it.hasNext()) {
-	    		String key = it.next();
-	    		String encrypted_str = message_encrypted.getString(key);
-	    		String decrypted_str = decrypt(encrypted_str);
-	    		message_decrypted.put(key, decrypted_str);
-	    	}
-	    	return message_decrypted;
-    	} catch(Exception e) {
-    		throw new RuntimeException(e);
-    	}
-    }
-    
-    /**
-     * Encrypt JSONArray
-     * 
-     * @param JSONArray - Encrypted JSONArray
-     * @return JSONArray - Decrypted JSONArray
-     */
-    public JSONArray encryptJSONArray(JSONArray jsona_arry) {
-    	try {
-    		JSONArray jsona_decrypted = new JSONArray();
-    		
-    		for (int i = 0; i < jsona_arry.length(); i++) {
-				 Object o = jsona_arry.get(i);
-				 if(o != null) {
-					 if(o instanceof JSONObject) {
-						 jsona_decrypted.put(i, encrypt((JSONObject)o));
-					 } else if(o instanceof JSONArray) {
-						 jsona_decrypted.put(i, encryptJSONArray((JSONArray)o));
-					 } else if(o instanceof String) {
-						 jsona_decrypted.put(i, encrypt(o.toString()));
-					 }
-				 }
-			}
-    		
-    		return jsona_decrypted;
-    		
-    	} catch(Exception e) {
-    		throw new RuntimeException(e);
-    	}
-    }
-    
-    /**
-     * Decrypt JSONArray
-     * 
-     * @param JSONArray - Encrypted JSONArray
-     * @return JSONArray - Decrypted JSONArray
-     */
-    public JSONArray decryptJSONArray(JSONArray jsona_encrypted) {
-    	try {
-    		JSONArray jsona_decrypted = new JSONArray();
-    		
-    		for (int i = 0; i < jsona_encrypted.length(); i++) {
-				 Object o = jsona_encrypted.get(i);
-				 if(o != null) {
-					 if(o instanceof JSONObject) {
-						 jsona_decrypted.put(i, decrypt((JSONObject)o));
-					 } else if(o instanceof JSONArray) {
-						 jsona_decrypted.put(i, decryptJSONArray((JSONArray)o));
-					 } else if(o instanceof String) {
-						 jsona_decrypted.put(i, decrypt(o.toString()));
-					 }
-				 }
-			}
-    		
-    		return jsona_decrypted;
-    		
-    	} catch(Exception e) {
-    		throw new RuntimeException(e);
-    	}
-    }
-    
-    /**
-     * Encrypt
-     * 
-     * @param String plain text to encrypt
-     * @return String cipher text
-     * @throws Exception
-     */
-    public String encrypt(String plain_text) throws Exception {
-        byte[] out = transform(true, plain_text.getBytes());
-        return new String(Base64Encoder.encode(out));
-    }  
-  
-    /**
-     * Decrypt
-     * 
-     * @param String cipherText
-     * @return String
-     * @throws Exception
-     */
-    public String decrypt(String cipher_text) throws Exception {
-    	byte[] out = transform(false, Base64Encoder.decode(cipher_text));
-        return new String(out).trim();
-    }  
-  
-    /**
-     * AES Encryption
-     * 
-     * @param boolean encrypt_or_decrypt ENCRYPT/DECRYPT mode
-     * @param ByteArray input_bytes
-     * @return ByteArray
-     * @throws Exception
-     */
-    private byte[] transform(boolean encrypt_or_decrypt, byte[] input_bytes) throws Exception {  
-    	ByteArrayOutputStream output = new ByteArrayOutputStream();
-    	byte[] iv_bytes = "0123456789012345".getBytes();
-    	byte[] key_bytes = md5(this.CIPHER_KEY);
+		try {
+			JSONObject message_decrypted = new JSONObject();
+			Iterator<String> it = message_encrypted.keys();
 
-    	SecretKeySpec key = new SecretKeySpec(key_bytes, "AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(iv_bytes);
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			while (it.hasNext()) {
+				String key = it.next();
+				String encrypted_str = message_encrypted.getString(key);
+				String decrypted_str = decrypt(encrypted_str);
+				message_decrypted.put(key, decrypted_str);
+			}
+			return message_decrypted;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-        if(encrypt_or_decrypt) {
-	        cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
-	    	ByteArrayInputStream b_in = new ByteArrayInputStream(input_bytes);
-	        CipherInputStream c_in = new CipherInputStream(b_in, cipher);
-	        int ch;
-	        while ((ch = c_in.read()) >= 0) {
-	        	output.write(ch);
-	        }
-	        c_in.close();
-        } else {
-        	cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
-        	CipherOutputStream c_out = new CipherOutputStream(output, cipher);
-        	c_out.write(input_bytes);
-        	c_out.close();
-        }
-        return output.toByteArray();  
-    }
-    
-    /**
-     * Sign Message
-     * 
-     * @param String input
-     * @return String as HashText
-     */
+	/**
+	 * Encrypt JSONArray
+	 * 
+	 * @param JSONArray
+	 *            - Encrypted JSONArray
+	 * @return JSONArray - Decrypted JSONArray
+	 */
+	public JSONArray encryptJSONArray(JSONArray jsona_arry) {
+		try {
+			JSONArray jsona_decrypted = new JSONArray();
+
+			for (int i = 0; i < jsona_arry.length(); i++) {
+				Object o = jsona_arry.get(i);
+				if (o != null) {
+					if (o instanceof JSONObject) {
+						jsona_decrypted.put(i, encrypt((JSONObject) o));
+					} else if (o instanceof JSONArray) {
+						jsona_decrypted.put(i, encryptJSONArray((JSONArray) o));
+					} else if (o instanceof String) {
+						jsona_decrypted.put(i, encrypt(o.toString()));
+					}
+				}
+			}
+
+			return jsona_decrypted;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Decrypt JSONArray
+	 * 
+	 * @param JSONArray
+	 *            - Encrypted JSONArray
+	 * @return JSONArray - Decrypted JSONArray
+	 */
+	public JSONArray decryptJSONArray(JSONArray jsona_encrypted) {
+		try {
+			JSONArray jsona_decrypted = new JSONArray();
+
+			for (int i = 0; i < jsona_encrypted.length(); i++) {
+				Object o = jsona_encrypted.get(i);
+				if (o != null) {
+					if (o instanceof JSONObject) {
+						jsona_decrypted.put(i, decrypt((JSONObject) o));
+					} else if (o instanceof JSONArray) {
+						jsona_decrypted.put(i, decryptJSONArray((JSONArray) o));
+					} else if (o instanceof String) {
+						jsona_decrypted.put(i, decrypt(o.toString()));
+					}
+				}
+			}
+
+			return jsona_decrypted;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Encrypt
+	 * 
+	 * @param String
+	 *            plain text to encrypt
+	 * @return String cipher text
+	 * @throws Exception
+	 */
+	public String encrypt(String plain_text) throws Exception {
+		byte[] out = transform(true, plain_text.getBytes());
+		return new String(Base64Encoder.encode(out));
+	}
+
+	/**
+	 * Decrypt
+	 * 
+	 * @param String
+	 *            cipherText
+	 * @return String
+	 * @throws Exception
+	 */
+	public String decrypt(String cipher_text) throws Exception {
+		byte[] out = transform(false, Base64Encoder.decode(cipher_text));
+		return new String(out).trim();
+	}
+
+	/**
+	 * AES Encryption
+	 * 
+	 * @param boolean encrypt_or_decrypt ENCRYPT/DECRYPT mode
+	 * @param ByteArray
+	 *            input_bytes
+	 * @return ByteArray
+	 * @throws Exception
+	 */
+	private byte[] transform(boolean encrypt_or_decrypt, byte[] input_bytes)
+			throws Exception {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		byte[] iv_bytes = "0123456789012345".getBytes();
+		byte[] key_bytes = md5(this.CIPHER_KEY);
+
+		SecretKeySpec key = new SecretKeySpec(key_bytes, "AES");
+		IvParameterSpec ivSpec = new IvParameterSpec(iv_bytes);
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+
+		if (encrypt_or_decrypt) {
+			cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+			ByteArrayInputStream b_in = new ByteArrayInputStream(input_bytes);
+			CipherInputStream c_in = new CipherInputStream(b_in, cipher);
+			int ch;
+			while ((ch = c_in.read()) >= 0) {
+				output.write(ch);
+			}
+			c_in.close();
+		} else {
+			cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+			CipherOutputStream c_out = new CipherOutputStream(output, cipher);
+			c_out.write(input_bytes);
+			c_out.close();
+		}
+		return output.toByteArray();
+	}
+
+	/**
+	 * Sign Message
+	 * 
+	 * @param String
+	 *            input
+	 * @return String as HashText
+	 */
 	public static String getHMacSHA256(String secret_key, String input) {
 		try {
 			Key KEY = new SecretKeySpec(input.getBytes("UTF-8"), "HmacSHA256");
 			Mac sha256_HMAC = Mac.getInstance("HMACSHA256");
-	    	
+
 			sha256_HMAC.init(KEY);
 			byte[] mac_data = sha256_HMAC.doFinal(secret_key.getBytes());
-	    	
-	    	BigInteger number = new BigInteger(1, mac_data);
-	    	String hashtext = number.toString(16);
-            
-            return hashtext;
+
+			BigInteger number = new BigInteger(1, mac_data);
+			String hashtext = number.toString(16);
+
+			return hashtext;
 		} catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+			throw new RuntimeException(e);
+		}
 	}
+
 	/**
 	 * Get MD5
+	 * 
 	 * @param string
 	 * @return
 	 */
-	public static byte[] md5(String string) { 
-	    byte[] hash; 
-	 
-	    try { 
-	        hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8")); 
-	    } catch (NoSuchAlgorithmException e) { 
-	        throw new RuntimeException("MD5 should be supported!", e); 
-	    } catch (UnsupportedEncodingException e) { 
-	        throw new RuntimeException("UTF-8 should be supported!", e); 
-	    } 
-	 
-	    StringBuilder hex = new StringBuilder(hash.length * 2); 
-	    for (byte b : hash) { 
-	        if ((b & 0xFF) < 0x10) hex.append("0"); 
-	        hex.append(Integer.toHexString(b & 0xFF)); 
-	    }
-	    return hexStringToByteArray(hex.toString());
+	public static byte[] md5(String string) {
+		byte[] hash;
+
+		try {
+			hash = MessageDigest.getInstance("MD5").digest(
+					string.getBytes("UTF-8"));
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException("MD5 should be supported!", e);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("UTF-8 should be supported!", e);
+		}
+
+		StringBuilder hex = new StringBuilder(hash.length * 2);
+		for (byte b : hash) {
+			if ((b & 0xFF) < 0x10)
+				hex.append("0");
+			hex.append(Integer.toHexString(b & 0xFF));
+		}
+		return hexStringToByteArray(hex.toString());
 	}
-	
+
 	public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
-        }
-        return data;
-    }
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character
+					.digit(s.charAt(i + 1), 16));
+		}
+		return data;
+	}
+
 }
