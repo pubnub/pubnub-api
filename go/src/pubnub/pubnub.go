@@ -1,6 +1,7 @@
 package pubnub
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -23,6 +24,10 @@ type PUBNUB struct {
 	CIPHER_KEY    string
 	LIMIT         int
 	SSL           bool
+}
+
+type Message struct {
+	Msg string
 }
 
 //Init pubnub struct
@@ -51,12 +56,23 @@ func (pub *PUBNUB) GetTime(c chan []byte) {
 	url += "/time"
 	url += "/0"
 
-	// send response to channel
 	value, err := pub.HttpRequest(url)
-	c <- value
+
+	// send response to channel
 	if err != nil {
-		close(c)
+		c <- value
+	} else {
+		var response []interface{}
+		json_err := json.Unmarshal(value, &response)
+		if json_err != nil {
+			c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
+			close(c)
+			return
+		}
+
+		c <- []byte(fmt.Sprintf("%0.0f", response[0]))
 	}
+	close(c)
 }
 
 func (pub *PUBNUB) Publish(channel string, message string, c chan []byte) {
@@ -75,12 +91,24 @@ func (pub *PUBNUB) Publish(channel string, message string, c chan []byte) {
 	url += "/0"
 	url += fmt.Sprintf("/{\"msg\":\"%s\"}", message)
 
-	// send response to channel
 	value, err := pub.HttpRequest(url)
-	c <- value
+	// send response to channel
 	if err != nil {
-		close(c)
+		c <- value
+	} else {
+		var response []interface{}
+		json_err := json.Unmarshal(value, &response)
+		if json_err != nil {
+			c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
+			close(c)
+			return
+		}
+
+		c <- []byte(fmt.Sprintf("%0.0f", response[0]))
+		c <- []byte(fmt.Sprintf("%s", response[1]))
+		c <- []byte(fmt.Sprintf("%s", response[2]))
 	}
+	close(c)
 }
 
 func (pub *PUBNUB) Subscribe(channel string, c chan []byte) {
@@ -117,12 +145,24 @@ func (pub *PUBNUB) History(channel string, limit int, c chan []byte) {
 	url += "/0"
 	url += "/" + fmt.Sprintf("%d", limit)
 
-	// send response to channel
 	value, err := pub.HttpRequest(url)
-	c <- value
+
+	// send response to channel
 	if err != nil {
-		close(c)
+		c <- value
+	} else {
+		var messages []Message
+		json_err := json.Unmarshal(value, &messages)
+		if json_err != nil {
+			c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
+			close(c)
+			return
+		}
+		for i := 0; i < len(messages); i++ {
+			c <- []byte(messages[i].Msg)
+		}
 	}
+	close(c)
 }
 
 func ResponseParser(response []byte) ([]byte, error) {
@@ -153,14 +193,12 @@ func (pub *PUBNUB) HttpRequest(url string) ([]byte, error) {
 	}
 
 	req, _ := http.NewRequest("GET", pub.ORIGIN+url, nil)
-	//log.Printf("%s", req)
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		if strings.Contains(err.Error(), "timeout") {
 			return []byte(fmt.Sprintf("%s: Reconnecting from timeout", time.Now().String())), nil
 		} else {
-			//log.Fatalf("request failed - %s", err.Error())
 			return []byte(fmt.Sprintf("Network Error: %s", err.Error())), err
 		}
 	}
@@ -168,7 +206,6 @@ func (pub *PUBNUB) HttpRequest(url string) ([]byte, error) {
 
 	conn, err := httpClient.GetConn(req)
 	if err != nil {
-		//log.Fatalf("failed to get conn for req")
 		return []byte(fmt.Sprintf("Connection Error: %s", err.Error())), err
 	}
 	if conn != nil {

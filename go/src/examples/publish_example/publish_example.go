@@ -13,5 +13,11 @@ func main() {
 	go pub.Publish("my-channel", "hi", channel)
 
 	//receive from channel
-	log.Printf("%s", <-channel)
+	for {
+		value, ok := <-channel
+		if !ok {
+			break
+		}
+		log.Printf("%s", value)
+	}
 }
