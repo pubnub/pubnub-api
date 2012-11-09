@@ -1,0 +1,39 @@
+<!DOCTYPE html public "✰">
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>getUserMedia Video Example</title>
+    <style>
+        button {
+            font-size: 30px;
+            line-height: 60px;
+            width: 300px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div><button id=transmit-voice-button>
+        PUSH-TO-TALK ◼
+    </button></div>
+
+<script id=voice-data type=audio>data:audio/mpeg;base64,/+MYZAADeDlGAKEAAAGgAjwhQAAC//yEaRuQhFAAxwQg/EZ8oGIIO//////y59QIOh//+D4Ph9VAQCAQCAACAAAAdf8RgwFQ/+MYZBAFHE15LMOIAQMIBmAhgBgAfdl4nCEXjelb4VwMF/wVeIP///3oLrCgMyDWM6fo9Tz/6XLR6rAnRaJAMUCIVZbWx6ww/+MYZA4D1AFu3OGAAAIYAlghwAAAcQCbaWJc9n/b/q///0i1nHE2+r/0/7hqrwT8PDOvZmDE014KzAoDNaYsLmn7aNjf/////+MYZBoDnD1keAAjBAL4AlggAAAA9uguT2jqf/V9vpaMs0+l9yAV216n5KvCG0ABiFlH/8prPiOcCIbCMo4Ti0AAQDj4vX///+MYZCQDZANy0AAiAAL4AnpAAAAA/XvoLACzVG73Vf8zP+YRB0voj1/Lf6GaKuX3DBBVRgClSWfo/XxZR4Yb+pBH6sBP/rUO/+MYZDADcJV0wACoDoIQBllAAAAABab7xGe9+oqCZK0g8wuqr+jZ/1rv7dAC078GGSc+5NIgeHz92QFn5dTveE+7sL33LnP0/+MYZD8C4FVuUABMCAIoBligCAAAr/Z2N9GXzGBxZmn5mubuSggZBkUDBgQSUcvUmAid9Cn7vvR/9q01I9fTE+HBniIxJAQE/+MYZFIDVGNyAABGCAJQBlgAAAAABCqBOoUSsQhprP////1okAFUnDRRzf//0W0KSD/wOplVgilmki0RllPIwD6PrZyu1v/6/+MYZGEC0F9+AAAjBgKQBligCAAACV2Egif/Wj7/6DSCS/9NN8MzK35aiXOu7pSZkRFGIQbx4LH7a7Der0kf51H16v0///Wq/+MYZHMDgGd2AAAjCALYBllAAAAAIQz60RQHcTGtMJJHZTMaKE+GBZ0i07//////+ZWBMAf////9rNl39v/VFCEttooA/2CY/+MYZH4DaANseAAjAALYBlzAAAACs/9Cv/ozfSHiDH5lfR4853////9BH7P/3dur/3etQDAcEo2AAAFTiym/lTwkBbyIm8cA/+MYZIoDNFFgEAQjAgJgBlygAAAC8FKSSEl+LBNlMSpf+UiuYSEXQy0NL/ylAEATFFiO3M9WX/xcTF0PQEaYX5TfyAAD/////+MYZJkDpENmZBQnEAMwAmBQAAAA/////QGHhNVMQU1FMy45OC4yVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYZKIDtFWJLKKIAQJIBlihQAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYZK4IUOFijMUUAIMwAmwRgQACVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYZJEAAAGkAOAAAAAAA0gBwAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYZMQAAAGkAAAAAAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV</script>
+<script src=http://pubnub.s3.amazonaws.com/pubnub-3.3.js></script>
+<script src=sound.js></script>
+<script src=recorder.js></script>
+<script src=rawinflate.js></script>
+<script src=rawdeflate.js></script>
+<script src=push-to-talk.js></script>
+<script>(function(){
+
+    push_to_talk({
+        button : 'transmit-voice-button',
+        buffer : 100
+    });
+
+})();</script>
+
+
+</body>
+</html>
