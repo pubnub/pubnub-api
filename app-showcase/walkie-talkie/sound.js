@@ -41,14 +41,14 @@ var sound = (function(){
 
             stop(audio);
             audio.load();
-            audio.play();
+            setTimeout( audio.play, 50 );
 
             // Play a Set Portion of Audio
             clearTimeout(audio.timer);
             if (duration) audio.timer = setTimeout( function() {
                 stop(audio);
                 p.search('body')[0].removeChild(audio);
-            }, duration + 100 );
+            }, duration + 150 );
         },
         stop : function(sound) {
             stop(soundbank[sound]);

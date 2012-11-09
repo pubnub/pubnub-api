@@ -1,21 +1,28 @@
-var push_to_talk = (function(){
+var push_to_talk = function(settings) {
 
+    // -----------------------------------------------------------------------
+    // PubNub and Internal Variables and PubNub
+    // -----------------------------------------------------------------------
     var p = PUBNUB.init({
         publish_key   : 'ea1afbc1-70a3-43c1-990c-ede5cf65a542',
         subscribe_key : 'e19f2bb0-623a-11df-98a1-fbd39d75aa3f'
     })
     ,   signature     = p.uuid()
-    ,   channel       = 'speak'
+    ,   channel       = settings.channel || 'speak'
     ,   voice_streams = {}
     ,   packet        = 1
     ,   transmitting  = false
     ,   intervals     = 47
     ,   buffer_delay  = 500
+    ,   send_buffer   = []
     ,   rec
     ,   transmitting_ival
-    ,   stop_transmission
-    ,   start_transmission;
+    ,   stop_transmission  = function(){}
+    ,   start_transmission = function(){};
 
+    // -----------------------------------------------------------------------
+    // Cross Platform Get Media Device (Microphone Access).
+    // -----------------------------------------------------------------------
     function myGetUserMedia( settings, callback, error ) {
         'webkitGetUserMedia' in navigator && navigator.webkitGetUserMedia(
             settings, callback, error
@@ -36,8 +43,10 @@ var push_to_talk = (function(){
             settings, callback, error
         );
     }
-    window.G = myGetUserMedia;
 
+    // -----------------------------------------------------------------------
+    // Cross Platform Audio Context
+    // -----------------------------------------------------------------------
     function myGetAudioContext() {
         return 'webkitAudioContext' in window && new webkitAudioContext() ||
                'mozAudioContext'    in window && new mozAudioContext()    ||
@@ -95,7 +104,7 @@ var push_to_talk = (function(){
         };
 
     }, function(err) {
-        alert("You Need To Setup Your Browser! (about:flags)",err);
+        //alert("You Need To Setup Your Browser! (about:flags)",err);
     } );
 
     function now() {return+new Date}
@@ -148,17 +157,28 @@ var push_to_talk = (function(){
     }
 
     return function(setup) {
-        var push_button = p.$(setup.button);
+        var push_button = p.$(setup.button)
+        ,   button_text = push_button.innerHTML;;
 
         if ('buffer' in setup) buffer_delay = setup.buffer;
 
         p.bind( 'mousedown,touchstart', push_button, function() {
             start_transmission();
+            push_button.innerHTML = 'TRANSMITTING... &#9728;';
         } );
 
         p.bind( 'mouseup,touchend', push_button, function() {
             stop_transmission();
+            push_button.innerHTML = button_text;
         } );
+
+        // Return Standard Controls.
+        return {
+            stop : function() {
+                stop_transmission();
+                p.unsubscribe({ channel : channel });
+            }
+        };
     }
 
-})();
+};
