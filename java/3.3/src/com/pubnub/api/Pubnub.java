@@ -13,6 +13,7 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -155,13 +156,14 @@ public class Pubnub {
 			this.ORIGIN = "http://" + this.ORIGIN;
 		}
 	}
-	
+
 	/**
 	 * getResponseByUrl
 	 * 
 	 * Get response by url.
 	 * 
-	 * @param List<String> url
+	 * @param List
+	 *            <String> url
 	 * 
 	 */
 	private JSONArray getResponseByUrl(List<String> url) {
@@ -175,7 +177,7 @@ public class Pubnub {
 			return response;
 		}
 	}
-	
+
 	/**
 	 * Publish
 	 * 
@@ -262,16 +264,10 @@ public class Pubnub {
 		}
 
 		// Build URL
-		List<String> url = new ArrayList<String>();
-		url.add("publish");
-		url.add(this.PUBLISH_KEY);
-		url.add(this.SUBSCRIBE_KEY);
-		url.add(signature);
-		url.add(channel);
-		url.add("0");
-		url.add(message.toString());
-
-		return _request(url);
+		String[] urlargs = { "publish", this.PUBLISH_KEY, this.SUBSCRIBE_KEY,
+				signature, channel, "0", message.toString() };
+		
+		return _request(Arrays.asList(urlargs));
 	}
 
 	/**
@@ -382,7 +378,7 @@ public class Pubnub {
 
 				// Wait for Message
 				JSONArray response = _request(url);
-                System.out.println(response);
+				System.out.println(response);
 				// Stop Connection?
 				for (ChannelStatus it : subscriptions) {
 					if (it.channel.equals(channel)) {
@@ -525,16 +521,11 @@ public class Pubnub {
 	 * @return JSONObject of here_now
 	 */
 	public JSONArray here_now(String channel) {
-		List<String> url = new ArrayList<String>();
 
-		url.add("v2");
-		url.add("presence");
-		url.add("sub_key");
-		url.add(this.SUBSCRIBE_KEY);
-		url.add("channel");
-		url.add(channel);
+		String[] urlargs = { "v2", "presence", "sub_key", this.SUBSCRIBE_KEY,
+				"channel", channel };
 
-		return getResponseByUrl(url);
+		return getResponseByUrl(Arrays.asList(urlargs));
 	}
 
 	/**
@@ -569,15 +560,10 @@ public class Pubnub {
 		String channel = (String) args.get("channel");
 		int limit = Integer.parseInt(args.get("limit").toString());
 
-		List<String> url = new ArrayList<String>();
+		String[] urlargs = { "history", this.SUBSCRIBE_KEY, channel, "0",
+				Integer.toString(limit) };
 
-		url.add("history");
-		url.add(this.SUBSCRIBE_KEY);
-		url.add(channel);
-		url.add("0");
-		url.add(Integer.toString(limit));
-
-		return getResponseByUrl(url);
+		return getResponseByUrl(Arrays.asList(urlargs));
 	}
 
 	/**
@@ -605,15 +591,10 @@ public class Pubnub {
 			parameters = parameters + "&" + "end="
 					+ Long.toString(end).toLowerCase();
 
-		List<String> url = new ArrayList<String>();
-		url.add("v2");
-		url.add("history");
-		url.add("sub-key");
-		url.add(this.SUBSCRIBE_KEY);
-		url.add("channel");
-		url.add(channel);
-		
-		return getResponseByUrl(url);
+		String[] urlargs = { "v2", "history", "sub-key", this.SUBSCRIBE_KEY,
+				"channel", channel };
+
+		return getResponseByUrl(Arrays.asList(urlargs));
 	}
 
 	public JSONArray detailedHistory(String channel, long start, boolean reverse) {
@@ -718,7 +699,7 @@ public class Pubnub {
 			ahc = new AsyncHttpClient(config);
 			RequestBuilder rb = new RequestBuilder("GET");
 			rb.setUrl(url.toString());
-			rb.addHeader("V", "3.1");
+			rb.addHeader("V", "3.3");
 			rb.addHeader("User-Agent", "Java");
 			rb.addHeader("Accept-Encoding", "gzip");
 			Request request = rb.build();

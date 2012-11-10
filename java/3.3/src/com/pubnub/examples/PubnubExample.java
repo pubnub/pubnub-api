@@ -39,25 +39,21 @@ class Receiver implements Callback {
 		return true;
 	}
 
-	@Override
 	public void errorCallback(String channel, Object message) {
 		System.err.println("Channel:" + channel + "-"
 				+ message.toString());
 
 	}
 
-	@Override
 	public void connectCallback(String channel) {
 		System.out.println("Connected to channel :" + channel);
 		System.out.println("Waiting for message ...");
 	}
 
-	@Override
 	public void reconnectCallback(String channel) {
 		System.out.println("Reconnected to channel :" + channel);
 	}
 
-	@Override
 	public void disconnectCallback(String channel) {
 		System.out.println("Disconnected to channel :" + channel);
 	}

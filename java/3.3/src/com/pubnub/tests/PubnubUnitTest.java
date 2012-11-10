@@ -46,7 +46,7 @@ public class PubnubUnitTest {
 	@Test
 	public void testSubscribeHashMapOfStringObject() {
 		pubnub.CIPHER_KEY = "";
-		// Callback Interface when a Message is Received
+
 		class Receiver implements Callback {
 
 			public boolean successCallback(String channel, Object message) {
@@ -78,25 +78,21 @@ public class PubnubUnitTest {
 				return false;
 			}
 
-			@Override
 			public void errorCallback(String channel, Object message) {
 				System.err.println("Channel:" + channel + "-"
 						+ message.toString());
 
 			}
 
-			@Override
 			public void connectCallback(String channel) {
 				System.out.println("Connected to channel :" + channel);
 				System.out.println("Waiting for a message from publisher ...");
 			}
 
-			@Override
 			public void reconnectCallback(String channel) {
 				System.out.println("Reconnected to channel :" + channel);
 			}
 
-			@Override
 			public void disconnectCallback(String channel) {
 				System.out.println("Disconnected to channel :" + channel);
 			}
@@ -154,25 +150,21 @@ public class PubnubUnitTest {
 				return false;
 			}
 
-			@Override
 			public void errorCallback(String channel, Object message) {
 				System.err.println("Channel:" + channel + "-"
 						+ message.toString());
 			}
 
-			@Override
 			public void connectCallback(String channel) {
 				System.out.println("Connected to channel :" + channel);
 				System.out
 						.println("Waiting for subscribe or unsubscribe message ...");
 			}
 
-			@Override
 			public void reconnectCallback(String channel) {
 				System.out.println("Reconnected to channel :" + channel);
 			}
 
-			@Override
 			public void disconnectCallback(String channel) {
 				System.out.println("Disconnected to channel :" + channel);
 			}
