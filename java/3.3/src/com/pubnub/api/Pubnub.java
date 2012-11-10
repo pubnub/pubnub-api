@@ -378,7 +378,6 @@ public class Pubnub {
 
 				// Wait for Message
 				JSONArray response = _request(url);
-				System.out.println(response);
 				// Stop Connection?
 				for (ChannelStatus it : subscriptions) {
 					if (it.channel.equals(channel)) {
