@@ -12,9 +12,9 @@ var push_to_talk = function(settings) {
     ,   voice_streams = {}
     ,   packet        = 1
     ,   transmitting  = false
-    ,   intervals     = 47
+    ,   intervals     = 40
+    ,   sample_rate   = 0
     ,   buffer_delay  = 500
-    ,   send_buffer   = []
     ,   rec
     ,   transmitting_ival
     ,   stop_transmission  = function(){}
@@ -59,7 +59,12 @@ var push_to_talk = function(settings) {
         var context = myGetAudioContext();
         var mediaStreamSource = context.createMediaStreamSource(stream);
 
-        rec = new Recorder( mediaStreamSource, { bufferLen : 2048 } );
+        rec = new Recorder( mediaStreamSource, {
+            buffer_size : 1024,
+            sample_rate : sample_rate || mediaStreamSource.context.sampleRate,
+            channels    : settings.setup.channels || 1,
+            bits        : settings.setup.bits     || 16
+        } );
 
         function send_audio(data) {
             p.publish({
@@ -95,7 +100,10 @@ var push_to_talk = function(settings) {
                     reader.onload = function(e){
                         if (e.target.readyState != FileReader.DONE) return;
                         var data = e.target.result;
+                        if (data.length < 120) return;
+
                         send_audio(data);
+                        console.log( data.length );
                     };
 
                     reader.readAsDataURL(blob);
@@ -138,9 +146,10 @@ var push_to_talk = function(settings) {
                 voice_buffers.sort(function(a,b){return a.packet-b.packet}),
                 function(voice) {
                     if (voice.packet <= last) return;
+                    last = voice.packet;
                     setTimeout( function() {
-                        sound.play( signature, voice.data, intervals );
-                    }, (intervals-2) * delay++ );
+                        sound.play( signature, voice.data, intervals*4 );
+                    }, (intervals*.9) * delay++ );
                 }
             );
 
@@ -160,7 +169,11 @@ var push_to_talk = function(settings) {
         var push_button = p.$(setup.button)
         ,   button_text = push_button.innerHTML;;
 
+        settings.setup = setup;
+
         if ('buffer' in setup) buffer_delay = setup.buffer;
+        if ('chunk'  in setup) intervals    = setup.chunk;
+        if ('sample' in setup) sample_rate  = setup.sample;
 
         p.bind( 'mousedown,touchstart', push_button, function() {
             start_transmission();

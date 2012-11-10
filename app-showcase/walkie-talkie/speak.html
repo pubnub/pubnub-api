@@ -12,8 +12,8 @@
     </div>
 
     <div class="center div-container">
-    <button id=transmit-voice-button class="button orange">
-        HOLD-TO-TALK ◼
+    <button id=voice-button class="button orange">
+        <strong>HOLD</strong>-TO-TALK <strong>◼</strong>
     </button>
     </div>
 
@@ -23,14 +23,17 @@
     <script>(function(){
 
         var voice_channel = push_to_talk({
-            channel : 'speak-channel-3'
+            channel  : 'voice-channel-1' // Data Channel Name
         })({
-            button : 'transmit-voice-button',
-            buffer : 500
+            button   : 'voice-button',   // Push-to-Talk Button ID
+            buffer   : 1500,             // Delay Buffer in Miliseconds
+            chunk    : 120,               // Audio Time Slices in Miliseconds
+            channels : 1,                // Mono=1 & Stereo=2
+            sample   : 40500,            // Audio Sample Rate (Hertz)
+            bits     : 16                // Bits Per Sample
         });
 
     })();</script>
-
 
 </body>
 </html>

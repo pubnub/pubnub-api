@@ -25,7 +25,7 @@ a:hover {
     text-align: center;
 }
 
-#transmit-voice-button {
+#voice-button {
     font-size: 40px;
     line-height: 80px;
     width: 550px;
@@ -34,11 +34,6 @@ a:hover {
     font-family: "Helvetica Neue";
     font-weight: 200;
 }
-#transmit-voice-button:active {
-    background: red;
-    color: white;
-}
-
 
 /* button 
 ---------------------------------------------- */
@@ -61,13 +56,6 @@ a:hover {
     -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
     box-shadow: 0 1px 2px rgba(0,0,0,.2);
-}
-.button:hover {
-    text-decoration: none;
-}
-.button:active {
-    position: relative;
-    top: 1px;
 }
 
 .bigrounded {
@@ -169,7 +157,8 @@ a:hover {
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
 }
 .orange:active {
-    color: #fcd3a5;
+    color: #fff;
+    font-weight: 700;
     background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
     background: -moz-linear-gradient(top,  #f47a20,  #faa51a);
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f47a20', endColorstr='#faa51a');

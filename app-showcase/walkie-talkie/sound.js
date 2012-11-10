@@ -41,7 +41,7 @@ var sound = (function(){
 
             stop(audio);
             audio.load();
-            setTimeout( audio.play, 50 );
+            audio.play();
 
             // Play a Set Portion of Audio
             clearTimeout(audio.timer);
