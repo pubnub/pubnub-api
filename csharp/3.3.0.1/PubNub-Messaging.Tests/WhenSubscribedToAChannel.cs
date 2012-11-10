@@ -27,8 +27,9 @@ namespace PubNub_Messaging.Tests
             string channel = "my/channel";
 
             pubnub.subscribe<string>(channel, ReceivedMessageCallback);
+            Thread.Sleep(5000);
 
-            pubnub.publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummayPublishCallback);
+            pubnub.publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummyPublishCallback);
             manualEvent2.WaitOne(310 * 1000);
 
             manualEvent1.WaitOne(310*1000);
@@ -53,7 +54,7 @@ namespace PubNub_Messaging.Tests
             manualEvent1.Set();
         }
 
-        private void dummayPublishCallback(string result)
+        private void dummyPublishCallback(string result)
         {
             manualEvent2.Set();
         }

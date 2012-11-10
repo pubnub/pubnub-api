@@ -22,6 +22,11 @@ namespace PubNub_Messaging.Tests
         public string foo = "hi!";
         public int[] bar = { 1, 2, 3, 4, 5 };
     }
+    class SecretCustomClass
+    {
+        public string foo = "hello!";
+        public int[] bar = { 10, 20, 30, 40, 50 };
+    }
 
     [TestClass]
     public class EncryptionTests

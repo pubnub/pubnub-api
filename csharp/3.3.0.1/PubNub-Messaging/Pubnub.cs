@@ -20,6 +20,8 @@ using System.Configuration;
 using Microsoft.Win32;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace PubNub_Messaging
 {
@@ -325,7 +327,6 @@ namespace PubNub_Messaging
                 throw new ArgumentException("Missing Channel or Message");
             }
 
-            //TODO: Should we validate at constructor level
             if (string.IsNullOrWhiteSpace(this.PUBLISH_KEY) || this.PUBLISH_KEY.Length <= 0)
             {
                 throw new MissingFieldException("Invalid publish key");
@@ -386,43 +387,70 @@ namespace PubNub_Messaging
             return msg;
         }
 
-        private object[] decodeMsg(object[] message, ResponseType type)
+        private List<object> decodeMsg(List<object> message, ResponseType type)
         {
-            object[] msg = message;
-            object[] receivedMsg = new object[0];
+            List<object> receivedMsg = new List<object>();
 
 
-            if (type == ResponseType.Presence)
+            if (type == ResponseType.Presence || type == ResponseType.Publish || type == ResponseType.Time)
             {
-                return msg;
+                return message;
             }
             else if (type == ResponseType.DetailedHistory)
             {
-                receivedMsg = decodeDecryptLoop(msg);
+                receivedMsg = decodeDecryptLoop(message);
             }
             else
             {
-                receivedMsg = decodeDecryptLoop(msg);
+                receivedMsg = decodeDecryptLoop(message);
             }
             return receivedMsg;
         }
 
-        private object[] decodeDecryptLoop(object[] messageArray)
+        private List<object> decodeDecryptLoop(List<object> message)
         {
+            List<object> returnMsg = new List<object>();
             if (this.CIPHER_KEY.Length > 0)
             {
-                List<object> receivedMsg = new List<object>();
-                foreach (object item in messageArray)
+                PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
+                var myObjectArray = (from item in message select item as object).ToArray();
+                IEnumerable enumerable = myObjectArray[0] as IEnumerable;
+                if (enumerable != null)
                 {
-                    PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
-                    string decryptMsg = aes.decrypt(item.ToString());
-                    receivedMsg.Add(decryptMsg);
+                    List<object> receivedMsg = new List<object>();
+                    foreach (object element in enumerable)
+                    {
+                        string decryptMsg = aes.decrypt(element.ToString());
+                        object decodeMsg = JsonConvert.DeserializeObject<object>(decryptMsg);
+                        receivedMsg.Add(decodeMsg);
+                    }
+                    returnMsg.Add(receivedMsg);
                 }
-                return receivedMsg.ToArray();
+
+                for (int index = 1; index < myObjectArray.Length; index++)
+                {
+                    returnMsg.Add(myObjectArray[index]);
+                }
+                return returnMsg;
             }
             else
             {
-                return messageArray;
+                var myObjectArray = (from item in message select item as object).ToArray();
+                IEnumerable enumerable = myObjectArray[0] as IEnumerable;
+                if (enumerable != null)
+                {
+                    List<object> receivedMsg = new List<object>();
+                    foreach (object element in enumerable)
+                    {
+                        receivedMsg.Add(element);
+                    }
+                    returnMsg.Add(receivedMsg);
+                }
+                for (int index = 1; index < myObjectArray.Length; index++)
+                {
+                    returnMsg.Add(myObjectArray[index]);
+                }
+                return returnMsg;
             }
         }
 
@@ -562,7 +590,7 @@ namespace PubNub_Messaging
 
             if (message != null && message.Count >= 3)
             {
-                _subscribe<T>(channelName, (object)message[1], usercallback, false); //TODO
+                _subscribe<T>(channelName, (object)message[1], usercallback, false);
             }
         }
 
@@ -681,8 +709,7 @@ namespace PubNub_Messaging
                 }
                 return;
             }
-            _channelSubscription.AddOrUpdate(channel, Convert.ToInt64(timetoken), (key, oldValue) => Convert.ToInt64(timetoken)); //Store the timetoken
-            Thread.Sleep(1000);
+            _channelSubscription.AddOrUpdate(channel, Convert.ToInt64(timetoken.ToString()), (key, oldValue) => Convert.ToInt64(timetoken.ToString())); //Store the timetoken
 
             if (_channelInternetStatus.ContainsKey(channel) && (!_channelInternetStatus[channel]) && _pubnetSystemActive)
             {
@@ -718,8 +745,6 @@ namespace PubNub_Messaging
                 {
                     Trace.WriteLine(string.Format("DateTime {0} method:_subscribe \n channel={1} \n timetoken={2} \n Exception Details={3}", DateTime.Now.ToString(), channel, timetoken.ToString(), ex.ToString()));
                 }
-                //TODO: Check if we need sleep time
-                System.Threading.Thread.Sleep(1000);
                 this._subscribe<T>(channel, timetoken, usercallback, false);
             }
         }
@@ -793,8 +818,7 @@ namespace PubNub_Messaging
                 }
                 return;
             }
-            _channelPresence.AddOrUpdate(channel, Convert.ToInt64(timetoken), (key, oldValue) => Convert.ToInt64(timetoken)); //Store the timetoken
-            Thread.Sleep(1000);
+            _channelPresence.AddOrUpdate(channel, Convert.ToInt64(timetoken.ToString()), (key, oldValue) => Convert.ToInt64(timetoken.ToString())); //Store the timetoken
 
             if (_channelInternetStatus.ContainsKey(channel) && (!_channelInternetStatus[channel]) && _pubnetSystemActive)
             {
@@ -829,8 +853,6 @@ namespace PubNub_Messaging
                 {
                     Trace.WriteLine(string.Format("method:_presence \n channel={0} \n timetoken={1} \n Exception Details={2}", channel, timetoken.ToString(), ex.ToString()));
                 }
-                //TODO: Check if we need sleep time
-                System.Threading.Thread.Sleep(1000);
                 this._presence<T>(channel, timetoken, usercallback, false);
             }
         }
@@ -1278,7 +1300,7 @@ namespace PubNub_Messaging
                     if (msgs != null && msgs.Length > 0 
                         && _channelSubscription.ContainsKey(channelName) 
                         && _channelSubscription[channelName] > 0
-                        && _channelSubscription[channelName] != Convert.ToInt64(result[1]))
+                        && _channelSubscription[channelName] != Convert.ToInt64(result[1].ToString()))
                     {
                         goToUserCallback<T>(result, usercallback);
                     }
@@ -1290,7 +1312,7 @@ namespace PubNub_Messaging
                     if (msgp != null && msgp.Length > 0 
                         && _channelPresence.ContainsKey(channelName)
                         && _channelPresence[channelName] > 0
-                        && _channelPresence[channelName] != Convert.ToInt64(result[1]))
+                        && _channelPresence[channelName] != Convert.ToInt64(result[1].ToString()))
                     {
                         List<object> dupResult = result.GetRange(0, result.Count);
                         dupResult[2] = ((string)dupResult[2]).Replace("-pnpres", "");
@@ -1334,8 +1356,7 @@ namespace PubNub_Messaging
 
             if (typeof(T) == typeof(string))
             {
-                JavaScriptSerializer jS = new JavaScriptSerializer();
-                usercallbackJSON = jS.Serialize(result);
+                usercallbackJSON = JsonConvert.SerializeObject(result);
 
                 Action<string> castUserCallback = usercallback as Action<string>;
                 castUserCallback(usercallbackJSON);
@@ -1512,12 +1533,12 @@ namespace PubNub_Messaging
             List<object> result = new List<object>();
             string channelName = getChannelName(url_components, type);
 
-            JavaScriptSerializer jS = new JavaScriptSerializer();
-            result = jS.Deserialize<List<object>>(Regex.Replace(jsonString, "\"__type\":\"\\w+\",", "", RegexOptions.IgnoreCase)) as List<object>;
+            object objResult = JsonConvert.DeserializeObject<object>(jsonString); 
+            List<object> result1 = ((IEnumerable)objResult).Cast<object>().ToList();
 
-            if (result != null && result.Count > 0 && result[0] is object[])
+            if (result1 != null && result1.Count > 0)
             {
-                result[0] = decodeMsg((object[])result[0], type);
+                result = decodeMsg(result1, type);
             }
 
 
@@ -1547,8 +1568,7 @@ namespace PubNub_Messaging
                     result.Add(channelName);
                     break;
                 case ResponseType.Here_Now:
-                    var resultOccupancy = jS.DeserializeObject(jsonString);
-                    Dictionary<string, object> dic = (Dictionary<string, object>)resultOccupancy;
+                    Dictionary<string, object> dic = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
                     result = new List<object>();
                     result.Add(dic);
                     result.Add(channelName);
@@ -1652,8 +1672,7 @@ namespace PubNub_Messaging
         // Serialize the given object into JSON string
         public static string SerializeToJsonString(object objectToSerialize)
         {
-            JavaScriptSerializer ser = new JavaScriptSerializer();
-            return ser.Serialize(objectToSerialize);
+            return JsonConvert.SerializeObject(objectToSerialize);
         }
 
         // Deserialize JSON string into List of Objects
