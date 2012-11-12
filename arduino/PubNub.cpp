@@ -11,9 +11,15 @@ bool PubNub::begin(char *publish_key_, char *subscribe_key_, char *origin_)
 	origin = origin_;
 }
 
-EthernetClient *PubNub::publish(char *channel, char *message)
+EthernetClient *PubNub::publish(char *channel, char *message, int timeout)
 {
 	EthernetClient &client = publish_client;
+	unsigned long t_start;
+
+retry:
+	t_start = millis();
+	/* connect() timeout is about 30s, much lower than our usual
+	 * timeout is. */
 	if (!client.connect(origin, 80)) {
 		client.stop();
 		return NULL;
@@ -49,20 +55,32 @@ EthernetClient *PubNub::publish(char *channel, char *message)
 		}
 	}
 
-	if (this->_request_bh(client)) {
+	enum PubNub_BH ret = this->_request_bh(client, t_start, timeout);
+	switch (ret) {
+	case PubNub_BH_OK:
 		/* Success and reached body, return handle to the client
 		 * for further perusal. */
 		return &client;
-	} else {
+	case PubNub_BH_ERROR:
 		/* Failure. */
 		client.stop();
 		return NULL;
+	case PubNub_BH_TIMEOUT:
+		/* Time out. Try again. */
+		client.stop();
+		goto retry;
 	}
 }
 
-PubSubClient *PubNub::subscribe(char *channel)
+PubSubClient *PubNub::subscribe(char *channel, int timeout)
 {
 	PubSubClient &client = subscribe_client;
+	unsigned long t_start;
+
+retry:
+	t_start = millis();
+	/* connect() timeout is about 30s, much lower than our usual
+	 * timeout is. */
 	if (!client.connect(origin, 80)) {
 		client.stop();
 		return NULL;
@@ -75,12 +93,15 @@ PubSubClient *PubNub::subscribe(char *channel)
 	client.print("/0/");
 	client.print(client.server_timetoken());
 
-	if (this->_request_bh(client)) {
+	enum PubNub_BH ret = this->_request_bh(client, t_start, timeout);
+	switch (ret) {
+	case PubNub_BH_OK:
 		/* Success and reached body. We need to eat '[' first,
 		 * as our API contract is to return only the "message body"
 		 * part of reply from subscribe. */
-		while (client.connected() && !client.available()) /* wait */;
-		if (!client.connected() || client.read() != '[') {
+		if (!client.wait_for_data()
+		    || !client.connected()
+		    || client.read() != '[') {
 			/* Something unexpected. */
 			client.stop();
 			return NULL;
@@ -91,16 +112,26 @@ PubSubClient *PubNub::subscribe(char *channel)
 		 * message body. */
 		client.start_body();
 		return &client;
-	} else {
+
+	case PubNub_BH_ERROR:
 		/* Failure. */
 		client.stop();
 		return NULL;
+
+	case PubNub_BH_TIMEOUT:
+		/* Time out. Try again. */
+		client.stop();
+		goto retry;
 	}
 }
 
-EthernetClient *PubNub::history(char *channel, int limit)
+EthernetClient *PubNub::history(char *channel, int limit, int timeout)
 {
 	EthernetClient &client = history_client;
+	unsigned long t_start;
+
+retry:
+	t_start = millis();
 	if (!client.connect(origin, 80)) {
 		client.stop();
 		return NULL;
@@ -113,18 +144,24 @@ EthernetClient *PubNub::history(char *channel, int limit)
 	client.print("/0/");
 	client.print(limit, DEC);
 
-	if (this->_request_bh(client, false)) {
+	enum PubNub_BH ret = this->_request_bh(client, t_start, timeout, false);
+	switch (ret) {
+	case PubNub_BH_OK:
 		/* Success and reached body, return handle to the client
 		 * for further perusal. */
 		return &client;
-	} else {
+	case PubNub_BH_ERROR:
 		/* Failure. */
 		client.stop();
 		return NULL;
+	case PubNub_BH_TIMEOUT:
+		/* Time out. Try again. */
+		client.stop();
+		goto retry;
 	}
 }
 
-bool PubNub::_request_bh(EthernetClient &client, bool chunked)
+enum PubNub_BH PubNub::_request_bh(EthernetClient &client, unsigned long t_start, int timeout, bool chunked)
 {
 	/* Finish the first line of the request. */
 	client.print(" HTTP/1.1\r\n");
@@ -134,10 +171,15 @@ bool PubNub::_request_bh(EthernetClient &client, bool chunked)
 	client.print("\r\nUser-Agent: PubNub-Arduino/1.0\r\nConnection: close\r\n\r\n");
 
 #define WAIT() do { \
-	while (client.connected() && !client.available()) /* wait */; \
+	while (client.connected() && !client.available()) { \
+		/* wait, just check for timeout */ \
+		if (millis() - t_start > (unsigned long) timeout * 1000) { \
+			return PubNub_BH_TIMEOUT; \
+		} \
+	} \
 	if (!client.connected()) { \
 		/* Oops, connection interrupted. */ \
-		return false; \
+		return PubNub_BH_ERROR; \
 	} \
 } while (0)
 
@@ -152,7 +194,7 @@ bool PubNub::_request_bh(EthernetClient &client, bool chunked)
 	if (c != '2') {
 		/* HTTP code that is NOT 2xx means trouble.
 		 * kthxbai */
-		return false;
+		return PubNub_BH_ERROR;
 	}
 
 	/* Skip the rest of headers. */
@@ -179,10 +221,10 @@ bool PubNub::_request_bh(EthernetClient &client, bool chunked)
 		}
 
 		/* Good! Body begins now. */
-		return true;
+		return PubNub_BH_OK;
 	}
 	/* No body means error. */
-	return false;
+	return PubNub_BH_ERROR;
 }
 
 
@@ -213,6 +255,16 @@ int PubSubClient::read(uint8_t *buf, size_t size)
 	return len;
 }
 
+bool PubSubClient::wait_for_data(int timeout)
+{
+	unsigned long t_start = millis();
+	while (connected() && !available()) {
+		if (millis() - t_start > (unsigned long) timeout * 1000)
+			return false; /* Time out. */
+	}
+	return connected();
+}
+
 void PubSubClient::stop()
 {
 	if (!connected() || !json_enabled) {
@@ -221,8 +273,7 @@ void PubSubClient::stop()
 	}
 	/* We are still connected. Read the rest of the stream so that
 	 * we catch the timetoken. */
-	while (connected()) {
-		while (connected() && !available()) /* wait */;
+	while (wait_for_data()) {
 		char ch = read();
 		this->_state_input(ch, NULL, 0);
 	}
@@ -300,8 +351,7 @@ void PubSubClient::_grab_timetoken(uint8_t *nextbuf, size_t nextsize)
 #define WAIT() do { \
 	if (nextsize > 0) \
 		break; \
-	while (connected() && !available()) /* wait */; \
-	if (!connected()) { \
+	if (!wait_for_data()) { \
 		/* Oops, connection interrupted. */ \
 		return; \
 	} \
