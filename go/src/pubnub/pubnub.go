@@ -24,6 +24,7 @@ type PUBNUB struct {
 	CIPHER_KEY    string
 	LIMIT         int
 	SSL           bool
+	UUID          string
 }
 
 type Message struct {
@@ -40,12 +41,18 @@ func PubnubInit(publish_key string, subscribe_key string, secret_key string, chi
 		CIPHER_KEY:    chipher_key,
 		LIMIT:         _LIMIT,
 		SSL:           ssl_on,
+		UUID:          "",
 	}
 
 	if new_pubnub.SSL {
 		new_pubnub.ORIGIN = "https://" + new_pubnub.ORIGIN
 	} else {
 		new_pubnub.ORIGIN = "http://" + new_pubnub.ORIGIN
+	}
+
+	uuid, err := GenUUID()
+	if err == nil {
+		new_pubnub.UUID = uuid
 	}
 
 	return new_pubnub
@@ -119,6 +126,34 @@ func (pub *PUBNUB) Subscribe(channel string, c chan []byte) {
 		url += "/" + channel
 		url += "/0"
 		url += "/" + timeToken
+		if pub.UUID != "" {
+			url += "?uuid=" + pub.UUID
+		}
+
+		value, err := pub.HttpRequest(url)
+		c <- value
+		if err != nil {
+			close(c)
+		}
+		//Get timetoken from success response
+		timeTokenArr := strings.Split(fmt.Sprintf("%s", value), ",")
+		if len(timeTokenArr) > 1 {
+			timeToken = strings.Replace(timeTokenArr[1], "\"", "", -1)
+		}
+	}
+}
+
+func (pub *PUBNUB) Presence(channel string, c chan []byte) {
+	for {
+		url := ""
+		url += "/subscribe"
+		url += "/" + pub.SUBSCRIBE_KEY
+		url += "/" + channel + "-pnpres"
+		url += "/0"
+		url += "/" + timeToken
+		if pub.UUID != "" {
+			url += "?uuid=" + pub.UUID
+		}
 
 		value, err := pub.HttpRequest(url)
 		c <- value
@@ -162,6 +197,19 @@ func (pub *PUBNUB) History(channel string, limit int, c chan []byte) {
 			c <- []byte(messages[i].Msg)
 		}
 	}
+	close(c)
+}
+
+func (pub *PUBNUB) HereNow(channel string, c chan []byte) {
+	url := ""
+	url += "/v2/presence"
+	url += "/sub-key/" + pub.SUBSCRIBE_KEY
+	url += "/channel/" + channel
+
+	value, _ := pub.HttpRequest(url)
+
+	// send response to channel
+	c <- value
 	close(c)
 }
 
