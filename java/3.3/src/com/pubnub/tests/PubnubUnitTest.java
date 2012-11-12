@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
+import com.pubnub.api.PubnubException;
 
 public class PubnubUnitTest {
 	private static boolean deliveryStatus = false;
@@ -101,7 +102,13 @@ public class PubnubUnitTest {
 
 		deliveryStatus = false;
 		// Listen for Messages (Subscribe)
-		pubnub.subscribe(channel, new Receiver());
+		try {
+			pubnub.subscribe(channel, new Receiver());
+		} catch (PubnubException e) {
+			e.printStackTrace();
+			assertTrue(false);
+			return;
+		}
 		JSONObject json = new JSONObject();
 		try {
 			json.put("text", "hi");
@@ -172,7 +179,13 @@ public class PubnubUnitTest {
 
 		deliveryStatus = false;
 		// Listen for Messages (Presence)
-		pubnub.presence(channel, new Receiver());
+		try {
+			pubnub.presence(channel, new Receiver());
+		} catch (PubnubException e) {
+			System.out.println(e);
+            assertTrue(false);
+			return;
+		}
 		while (!deliveryStatus)
 			;
 		assertTrue(deliveryStatus);

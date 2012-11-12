@@ -219,7 +219,6 @@ public class Pubnub {
 			} else {
 				message = obj;
 			}
-			// System.out.println();
 		} else if (message instanceof String) {
 			String obj = (String) message;
 			if (this.CIPHER_KEY.length() > 0) {
@@ -228,7 +227,10 @@ public class Pubnub {
 				try {
 					message = pc.encrypt(obj);
 				} catch (Exception e) {
-					e.printStackTrace();
+					JSONArray jsono = new JSONArray();
+					jsono.put(1);
+					jsono.put("Message Encryption Error");
+					return jsono;
 				}
 			} else {
 				message = obj;
@@ -245,7 +247,6 @@ public class Pubnub {
 			} else {
 				message = obj;
 			}
-			System.out.println();
 		}
 
 		// Generate String to Sign
@@ -266,7 +267,7 @@ public class Pubnub {
 		// Build URL
 		String[] urlargs = { "publish", this.PUBLISH_KEY, this.SUBSCRIBE_KEY,
 				signature, channel, "0", message.toString() };
-		
+
 		return _request(Arrays.asList(urlargs));
 	}
 
@@ -280,7 +281,7 @@ public class Pubnub {
 	 * @param Callback
 	 *            function callback.
 	 */
-	public void subscribe(String channel, Callback callback) {
+	public void subscribe(String channel, Callback callback) throws PubnubException {
 		HashMap<String, Object> args = new HashMap<String, Object>(2);
 		args.put("channel", channel);
 		args.put("callback", callback);
@@ -295,7 +296,7 @@ public class Pubnub {
 	 * @param HashMap
 	 *            <String, Object> containing channel name, function callback.
 	 */
-	private void subscribe(HashMap<String, Object> args) {
+	private void subscribe(HashMap<String, Object> args) throws PubnubException {
 		args.put("timetoken", "0");
 		this._subscribe(args);
 	}
@@ -309,7 +310,7 @@ public class Pubnub {
 	 *            <String, Object> containing channel name, function callback,
 	 *            timetoken.
 	 */
-	private void _subscribe(HashMap<String, Object> args) {
+	private void _subscribe(HashMap<String, Object> args) throws PubnubException {
 
 		String channel = (String) args.get("channel");
 		String timetoken = (String) args.get("timetoken");
@@ -319,8 +320,7 @@ public class Pubnub {
 		if (args.get("callback") != null) {
 			callback = (Callback) args.get("callback");
 		} else {
-			System.out.println("Invalid Callback.");
-			return;
+			throw new PubnubException("Invalid Callback");
 		}
 
 		if (channel == null || channel.equals("")) {
@@ -503,7 +503,7 @@ public class Pubnub {
 	 * @param Callback
 	 *            function callback.
 	 */
-	public void presence(String channel, Callback callback) {
+	public void presence(String channel, Callback callback) throws PubnubException{
 		HashMap<String, Object> args = new HashMap<String, Object>(2);
 		args.put("channel", channel + "-pnpres");
 		args.put("callback", callback);
@@ -675,12 +675,8 @@ public class Pubnub {
 				String url_bit = (String) url_iterator.next();
 				url.append("/").append(_encodeURIcomponent(url_bit));
 			} catch (Exception e) {
-				// e.printStackTrace();
 				JSONArray jsono = new JSONArray();
-				try {
-					jsono.put("Failed UTF-8 Encoding URL.");
-				} catch (Exception jsone) {
-				}
+				jsono.put("Failed UTF-8 Encoding URL.");
 				return jsono;
 			}
 		}
@@ -750,21 +746,18 @@ public class Pubnub {
 
 			// Response If Failed JSONP HTTP Request.
 			JSONArray jsono = new JSONArray();
-			try {
-				if (request_for != null) {
-					if (request_for.equals("time")) {
-						jsono.put("0");
-					} else if (request_for.equals("history")) {
-						jsono.put("Error: Failed JSONP HTTP Request.");
-					} else if (request_for.equals("publish")) {
-						jsono.put("0");
-						jsono.put("Error: Failed JSONP HTTP Request.");
-					} else if (request_for.equals("subscribe")) {
-						jsono.put("0");
-						jsono.put("0");
-					}
+			if (request_for != null) {
+				if (request_for.equals("time")) {
+					jsono.put("0");
+				} else if (request_for.equals("history")) {
+					jsono.put("Error: Failed JSONP HTTP Request.");
+				} else if (request_for.equals("publish")) {
+					jsono.put("0");
+					jsono.put("Error: Failed JSONP HTTP Request.");
+				} else if (request_for.equals("subscribe")) {
+					jsono.put("0");
+					jsono.put("0");
 				}
-			} catch (Exception jsone) {
 			}
 
 			if (ahc != null) {
@@ -774,21 +767,17 @@ public class Pubnub {
 		}
 
 		// Parse JSON String
+
+		if (json.contains("uuids")) {
+			JSONArray resp = new JSONArray();
+			resp.put(json);
+			return resp;
+		}
 		try {
-			if (json.contains("uuids")) {
-				JSONArray resp = new JSONArray();
-				resp.put(json);
-				return resp;
-			}
 			return new JSONArray(json);
 		} catch (Exception e) {
 			JSONArray jsono = new JSONArray();
-
-			try {
-				jsono.put("Error: Failed JSON Parsing.");
-			} catch (Exception jsone) {
-			}
-
+			jsono.put("Error: Failed JSON Parsing.");
 			// Return Failure to Parse
 			return jsono;
 		}

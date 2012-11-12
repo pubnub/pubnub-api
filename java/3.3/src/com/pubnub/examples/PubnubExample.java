@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.Callback;
+import com.pubnub.api.PubnubException;
 
 class Receiver implements Callback {
 
@@ -249,7 +250,12 @@ public class PubnubExample {
 
 
 		// Listen for Messages (Subscribe)
-		pubnub.subscribe(channel, new Receiver());
+		try {
+			pubnub.subscribe(channel, new Receiver());
+		} catch (PubnubException e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	private static void PresenceExample() {
@@ -263,7 +269,12 @@ public class PubnubExample {
 				cipher_key, true);
 
 		// Listen for Messages (Presence)
-		pubnub.presence(channel, new Receiver());
+		try {
+			pubnub.presence(channel, new Receiver());
+		} catch (PubnubException e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	private static void HereNowExample() {
