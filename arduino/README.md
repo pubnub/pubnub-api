@@ -16,6 +16,9 @@ Synopsis
 	}
 
 	void loop() {
+		/* Maintain DHCP lease. */
+		Ethernet.maintain();
+
 		/* Publish message. */
 		EthernetClient *pclient = PubNub.publish(pubchannel, "\"message\"");
 		if (pclient)

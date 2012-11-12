@@ -67,6 +67,8 @@ void flash(int ledPin)
 
 void loop()
 {
+	Ethernet.maintain();
+
 	EthernetClient *client;
 
 	Serial.println("publishing a message");

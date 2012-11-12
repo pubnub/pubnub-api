@@ -60,6 +60,8 @@ void flash(int ledPin)
 
 void loop()
 {
+	Ethernet.maintain();
+
 	EthernetClient *client;
 
 	char msg[64] = "{\"analog\":[";

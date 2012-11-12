@@ -136,6 +136,8 @@ void dumpMessage(Stream &s, aJsonObject *msg)
 
 void loop()
 {
+	Ethernet.maintain();
+
 	EthernetClient *client;
 
 	/* Publish */

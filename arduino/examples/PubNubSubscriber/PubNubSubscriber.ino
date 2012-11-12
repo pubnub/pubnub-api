@@ -60,6 +60,8 @@ void flash(int ledPin)
 
 void loop()
 {
+	Ethernet.maintain();
+
 	PubSubClient *client;
 
 	Serial.println("waiting for a message (subscribe)");
