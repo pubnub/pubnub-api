@@ -62,6 +62,7 @@
             Pn.instance.addEventListener(PnEvent.SUBSCRIBE, onSubscribe);
             Pn.instance.addEventListener(PnEvent.DETAILED_HISTORY, onDetailedHistory);
             Pn.instance.addEventListener(PnEvent.PUBLISH, onPublish);
+            Pn.instance.addEventListener(PnEvent.TIME, onPnTime);
             Pn.init(config);
         }
 		
@@ -155,7 +156,7 @@
             Pn.publish({channel : channel, message : publishMessageTxt.text});
         }
 
-        private function onPublish(e:PnEvent):void {
+        private function onPublish(e:PnEvent):void{
             switch (e.status) {
                 case OperationStatus.DATA:
                     var messages:Array = e.data as Array;
@@ -169,6 +170,22 @@
                     break;
             }
         }
+		
+		private function onTime(e:MouseEvent):void {
+			Pn.time(); 
+		}
+		
+		private function onPnTime(e:PnEvent):void {
+			switch (e.status) {
+                case OperationStatus.DATA:
+                    callExternalInterface("console.log", ("Time [DATA],  : result : " + e.data));
+                    break;
+
+                case OperationStatus.ERROR:
+                    callExternalInterface("console.log", ("Time [ERROR],  : result : " + e.data));
+                    break;
+            }
+		}
 		
 		private function updateOrigin(value:String = null):void{
 			Pn.instance.origin = value;
@@ -233,6 +250,11 @@
             <s:Label x="10" y="14" width="57" color="#4D4C4C" fontStyle="italic" text="message"
                      textAlign="right"/>
             <s:TextInput id="publishMessageTxt" x="75" y="9" width="246" text="hey"  enabled="true"/>
+        </s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" height="100%" label="Time (5)">
+            <s:Button id="timeBtn" x="74" y="39" label="Time"
+                      click="onTime(event)"/>
         </s:NavigatorContent>
     </mx:TabNavigator>
     <s:TextArea id="consoleArea" left="10" right="100" top="360" bottom="10"/>

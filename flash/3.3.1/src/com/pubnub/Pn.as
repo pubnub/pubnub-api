@@ -18,6 +18,7 @@ package com.pubnub {
 		static private const INIT_OPERATION:String = 'init';
 		static private const HISTORY_OPERATION:String = 'history';
 		static private const PUBLISH_OPERATION:String = 'publish';
+		static private const TIME_OPERATION:String = 'time';
 		
 		private var _initialized:Boolean = false;         
 		private var operations:Dictionary;
@@ -270,6 +271,30 @@ package com.pubnub {
 		private function onPublishResult(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.DATA);
 			pnEvent.operation = getOperation(PUBLISH_OPERATION);
+			dispatchEvent(pnEvent);
+		}
+		
+		public static function time():void {
+			instance.time();
+		}
+		
+		public function time():void {
+			throwInit();
+			var operation:Operation = getOperation(TIME_OPERATION);
+			operation.addEventListener(OperationEvent.RESULT, onTimeResult);
+			operation.addEventListener(OperationEvent.FAULT, onTimeFault);
+			operation.send( {
+				url: _origin + "/time/0"
+			});
+		}
+		
+		private function onTimeFault(e:OperationEvent):void {
+			var pnEvent:PnEvent = new PnEvent(PnEvent.TIME, e.data, null, OperationStatus.ERROR);
+			dispatchEvent(pnEvent);
+		}
+		
+		private function onTimeResult(e:OperationEvent):void {
+			var pnEvent:PnEvent = new PnEvent(PnEvent.TIME, e.data, null, OperationStatus.DATA);
 			dispatchEvent(pnEvent);
 		}
 		

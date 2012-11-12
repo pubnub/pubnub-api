@@ -13,6 +13,7 @@ package com.pubnub {
 		public static const SUBSCRIBE:String = 'subscribe';
 		public static const DETAILED_HISTORY:String = 'detailed_history';
 		public static const PUBLISH:String = 'publish';
+		static public const TIME:String = "time";
 		
 		public var operation:Operation;
 		
