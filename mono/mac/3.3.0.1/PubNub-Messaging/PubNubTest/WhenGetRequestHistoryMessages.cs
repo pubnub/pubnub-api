@@ -10,7 +10,7 @@ namespace PubNubTest
     public class WhenGetRequestHistoryMessages
     {
 
-        [Test]
+        
         public void ThenItShouldReturnHistoryMessages ()
         {
             Pubnub pubnub = new Pubnub (
@@ -31,14 +31,14 @@ namespace PubNubTest
                 if (e.PropertyName == "History")
                 {
                     lstHistory = ((Pubnub)sender).History;
-
+           
                     responseStatus = true;
                 }
             };
 
             pubnub.history(channel, 1);
 
-            while (!responseStatus) ;
+            /*while (!responseStatus) ;
 
             string strResponse = "";
             if (lstHistory.Equals (null)) {
@@ -52,10 +52,10 @@ namespace PubNubTest
                     Console.WriteLine("resp:" + strResponse);
                     Assert.IsNotEmpty(strResponse);
                 }
-            }
+            }*/
         }
 
-        [Test]
+       
         public static void TestUnencryptedHistory()
         {
              Pubnub pubnub = new Pubnub(
@@ -94,7 +94,7 @@ namespace PubNubTest
             }
         }
         
-        [Test]
+        
         public static void TestEncryptedHistory()
         {
             Pubnub pubnub = new Pubnub(

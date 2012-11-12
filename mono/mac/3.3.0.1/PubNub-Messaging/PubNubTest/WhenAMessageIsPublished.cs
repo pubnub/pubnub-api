@@ -82,7 +82,7 @@ namespace PubNubTest
                 "",
                 false
             );
-            string channel = "my/channel";
+            string channel = "mychannel";
             string message = "Pubnub API Usage Example";
 
             pubnub = new Pubnub(
@@ -106,7 +106,7 @@ namespace PubNubTest
                 "",
                 false
             );
-            string channel = "my/channel";
+            string channel = "mychannel";
             string message = "Pubnub API Usage Example";
 
             Assert.AreEqual(false, pubnub.publish(channel, message, Common.DisplayReturnMessage));
@@ -119,7 +119,7 @@ namespace PubNubTest
                 "demo",
                 "demo"
             );
-            string channel = "my/channel";
+            string channel = "mychannel";
             string message = "Pubnub API Usage Example";
 
             Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
@@ -156,7 +156,7 @@ namespace PubNubTest
                 null,
                 false
             );
-            string channel = "my/channel";
+            string channel = "mychannel";
             string message = "Pubnub API Usage Example";
 
             Assert.AreEqual(false, pubnub.publish(channel, message, Common.DisplayReturnMessage));
