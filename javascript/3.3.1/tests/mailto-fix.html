@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head> 
+    <title>PubNub JavaScript MailTO Fix</title>
+    <link
+        rel=stylesheet
+        href=http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css
+    >
+</head>
+<body><div class=container>
+
+<!-- NOTICE / TITLE -->
+<div class="alert-message warning">
+    <a class="close" href="#">&#215;</a>
+    <p><strong>PubNub MailTO Test</strong> for JavaScript on Mobile and Desktop Web Browser</p>
+</div>
+
+<!-- BUTTON PANNEL -->
+<div class=well>
+    <a href="mailto:hello@pubnub.com">hello@pubnub.com</a>
+</div>
+<div id=output class=well>0</div>
+
+<div id=pubnub pub-key=demo sub-key=demo></div>
+<script src=http://pubnub.s3.amazonaws.com/pubnub-3.3.1.min.js></script>
+<script>(function(){
+
+var msgs = 1
+,   out  = PUBNUB.$('output');;
+
+PUBNUB.subscribe({
+    channel    : 'mailto-testing',
+    disconnect : function() {},
+    connect    : function() {startitup()},
+    reconnect  : function() {},
+    callback   : function(num) {
+        out.innerHTML += ', ' + num;
+    }
+});
+
+function startitup() {
+    setInterval( function() {
+        PUBNUB.publish({
+            channel : 'mailto-testing',
+            message : msgs++
+        });
+    }, 250 );
+}
+
+})();</script>
+</div></body>
+</html>
