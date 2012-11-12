@@ -20,11 +20,12 @@ import com.pubnub.operation.*;
 		
 		private var _origin:String = "";
 		private var _data:Object;
+		private var _connected:Boolean;
+		private var _channelName:String;
+		
 		private var pingTimeout:int;
 		private var subscribeUID:String;
 		private var subscribeURL:String;
-		private var _connected:Boolean;
-		private var _name:String;
 		private var operations:Dictionary;
 		private var lastToken:String;
 		private var netMonitor:NetMon;
@@ -47,11 +48,25 @@ import com.pubnub.operation.*;
 		}
 		
 		private function onNetMonitorMaxRetries(e:NetMonEvent):void {
-			unsubscribe(_name);
+			unsubscribe(_channelName);
+		}
+		
+		private function leave():void {
+			if (!_connected) return;
+			var operation:Operation = getOperation(Operation.LEAVE);
+			operation.subscribeKey = subscribeKey;
+			operation.channel = _channelName;
+			operation.origin = _origin;
+			var url:String = _origin + "/v2/presence/sub_key/" + subscribeKey + "/channel/" + PnUtils.encode(_channelName) + "/leave?uuid=" + sessionUUID;
+			operation.send({ 
+				url:url, 
+				channel:_channelName, 
+				uid:subscribeUID, 
+				sessionUUID : sessionUUID,
+				operation:Operation.LEAVE } );
 		}
 		
 		private function onNetMonitorHTTPDisable(e:NetMonEvent):void {
-			//trace('Disable : ' + _connected);
 			if (_connected) {
 				waitNetwork = true;
 				clearTimeout(pingTimeout);
@@ -60,7 +75,6 @@ import com.pubnub.operation.*;
 		}
 		
 		private function onNetMonitorHTTPEnable(e:NetMonEvent):void {
-			//trace('Enable : ' + waitNetwork);
 			if (waitNetwork) {
 				waitNetwork = false;
 				if (Settings.RESUME_ON_RECONNECT) { 
@@ -77,7 +91,7 @@ import com.pubnub.operation.*;
 				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, _data));
 				return;
 			}
-			_name = channel;
+			_channelName = channel;
 			netMonitor.stop();
 			subscribeInit();
 		}
@@ -87,12 +101,12 @@ import com.pubnub.operation.*;
 			clearTimeout(pingTimeout);
 			getOperation(Operation.WITH_TIMETOKEN).close();
 			getOperation(Operation.GET_TIMETOKEN).close();
-			subscribeURL = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_name) + "/" + 0;
+			subscribeURL = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName) + "/" + 0;
 			subscribeUID = PnUtils.getUID();
 			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
 			operation.send({ 
 				url:subscribeURL, 
-				channel:_name, 
+				channel:_channelName, 
 				uid:subscribeUID, 
 				sessionUUID : sessionUUID,
 				timetoken:0, 
@@ -107,7 +121,7 @@ import com.pubnub.operation.*;
 			subscribeToken(lastToken);
 			ping();
 			netMonitor.start();
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_name } ));
+			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channelName } ));
 		}
 		
 		private function onSubscribeInitError(e:OperationEvent):void {
@@ -119,7 +133,7 @@ import com.pubnub.operation.*;
 			var operation:Operation = getOperation(Operation.WITH_TIMETOKEN);
 			operation.send({ 
 				url:subscribeURL, 
-				channel:_name, 
+				channel:_channelName, 
 				uid:subscribeUID, 
 				sessionUUID : sessionUUID,
 				timetoken:time, 
@@ -139,7 +153,7 @@ import com.pubnub.operation.*;
                     var msg:* = cipherKey.length > 0 ? PnJSON.parse(PnCrypto.decrypt(cipherKey, messages[i])) : messages[i];
 
                     _data = {
-                        channel:_name,
+                        channel:_channelName,
                         result:[i + 1, msg],
                         //envelope:eventData,
                         timeout:1
@@ -164,11 +178,11 @@ import com.pubnub.operation.*;
 		}
 		
 		public function unsubscribe(name:String):void {
-			if (!_connected || _name != name) {
+			if (!_connected || _channelName != name) {
 				return;
 			}
 			dispose();
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, { channel:_name } ));
+			dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, { channel:_channelName } ));
 		}
 		
 		private function restoreWithLastToken():void {
@@ -195,8 +209,8 @@ import com.pubnub.operation.*;
 			return _connected;
 		}
 		
-		public function get name():String {
-			return _name;
+		public function get channelName():String {
+			return _channelName;
 		}
 		
 		public function get data():Object {
@@ -228,17 +242,20 @@ import com.pubnub.operation.*;
 			netMonitor.removeEventListener(NetMonEvent.HTTP_DISABLE, onNetMonitorHTTPDisable);
 			netMonitor = null;
 			
+			getOperation(Operation.LEAVE).close();
+			
 			operations = null;
 			_data = null;
 		}
 		
 		public function dispose():void {
 			clearTimeout(pingTimeout);
-			_connected = false;
 			waitNetwork = false;
 			netMonitor.stop();
 			getOperation(Operation.GET_TIMETOKEN).close();
 			getOperation(Operation.WITH_TIMETOKEN).close();
+			leave();
+			_connected = false;
 		}
 	}
 }

@@ -160,7 +160,7 @@ package com.hurlant.crypto.tls {
 				trace("TLSEngine shutdown triggered by "+e);
 			}
 			sendRecord(PROTOCOL_ALERT, rec);
-
+			
 			_state = STATE_CLOSED;
 			dispatchEvent(new Event(Event.CLOSE));
 		}
@@ -215,6 +215,7 @@ package com.hurlant.crypto.tls {
 			if (p.length>16384) { 
 				throw new TLSError("Excessive Decrypted TLS Record length: "+p.length, TLSError.record_overflow);
 			}
+			//trace("parseOneRecord : " + type);
 			switch (type) {
 				case PROTOCOL_APPLICATION_DATA:
 					if (_state == STATE_READY) {
@@ -703,10 +704,22 @@ package com.hurlant.crypto.tls {
 		}
 		
 		private function parseAlert(p:ByteArray):void {
+			/*
+			 * Pubnub edits:
+				 The alert type=0 is mean "Close notify"
+				 See at http://en.wikipedia.org/wiki/Transport_Layer_Security#Alert_protocol.
+				 In our case (long polling) it is not a bug.
+			 * */
+			
+			var alertType:int = p[1];
+			if (alertType != 0) {
+				trace("GOT ALERT! type="+p[1]);
+			}else {
+				close();
+			}
 			//throw new Error("Alert not implemented.");
 			// 7.2
-			trace("GOT ALERT! type="+p[1]);
-			close();
+			
 		}
 		private function parseChangeCipherSpec(p:ByteArray):void {
 			p.readUnsignedByte();

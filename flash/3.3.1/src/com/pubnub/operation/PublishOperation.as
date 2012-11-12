@@ -12,7 +12,7 @@ package com.pubnub.operation {
 		public var secretKey:String; 
 		public var cipherKey:String = ""; 
 		public var publishKey:String = ""; 
-		public var subscribeKey:String = ""; 
+		
 		
 		override public function send(args:Object):void {
 			channel = args.channel;

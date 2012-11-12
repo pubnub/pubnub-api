@@ -95,7 +95,6 @@ package com.pubnub {
 		}
 		
 		public function getOperation(type:String):Operation {
-			trace('getOperation : ' + type);
 			var result:Operation = operations[type] || new Operation();
 			operations[type] = result;
 			if (type == HISTORY_OPERATION) {
@@ -179,7 +178,7 @@ package com.pubnub {
 			
 				default: status = OperationStatus.ERROR;		
 			}
-			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, subscribe.name, status));
+			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, subscribe.channelName, status));
 		}
 		
 		
@@ -216,7 +215,7 @@ package com.pubnub {
 		public function unsubscribeAll():void {
 			throwInit();
 			for each(var i:Subscribe  in subscribes) {
-				unsubscribe(i.name);
+				unsubscribe(i.channelName);
 			}
 		}
 		

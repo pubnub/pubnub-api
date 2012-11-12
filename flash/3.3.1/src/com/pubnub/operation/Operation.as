@@ -16,6 +16,7 @@ package com.pubnub.operation {
 		static public const WITH_TIMETOKEN:String = 'subscribe_with_timetoken';
 		static public const GET_TIMETOKEN:String = 'subscribe_get_timetoken';
 		static public const WITH_RETRY:String = 'subscribe_with_retry';
+		static public const LEAVE:String = 'leave';
 		
 		public var origin:String;
 		public var uid:String;
@@ -24,7 +25,7 @@ package com.pubnub.operation {
 		public var parseToJSON:Boolean = true;
 		public var timetoken:*;
 		public var operation:String;
-		
+		public var subscribeKey:String = ""; 
 		
 		protected var _url:String;
 		protected var _loader:PnURLLoader;
@@ -68,7 +69,8 @@ package com.pubnub.operation {
 			//trace(operation, timetoken);
             if (timetoken != null ){
                 url += "/" + timetoken;
-				if (operation == WITH_TIMETOKEN || operation == GET_TIMETOKEN) {
+				if (operation == WITH_TIMETOKEN || 
+					operation == GET_TIMETOKEN) {
 					url += "?uuid=" + sessionUUID;
 				}
             }

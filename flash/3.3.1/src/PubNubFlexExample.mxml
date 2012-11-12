@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
                xmlns:s="library://ns.adobe.com/flex/spark"
-               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="400" minHeight="300">
+               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="400" minHeight="300" creationComplete="init(event)">
     <fx:Declarations>
         <!-- Place non-visual elements (e.g., services, value objects) here -->
     </fx:Declarations>
     <fx:Script>
 		<![CDATA[
-        import com.pubnub.*;
-        import flash.events.*;
-        import flash.external.*;
+		/*
+		 * Flex4 demo for Pubnub service
+		 * define public vars for custom connection.
+		 * */
+			import com.pubnub.*;
+			
+			import flash.events.*;
+			import flash.external.*;
+			
+			import mx.binding.utils.BindingUtils;
+			import mx.events.*;
 
         [Bindable]
-        public var channel:String = 'hello_world';
+        public var channel:String = 'my_channel';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
+        //public var origin:String = 'multiplexing.pubnub.com';
 
         [Bindable]
         public var pub_key:String = 'demo';
@@ -28,16 +37,24 @@
 
         [Bindable]
         public var cipher_key:String = '';
+		
+        public var ssl:Boolean = true;
 
         private var consoleCounter:int = 1;
 		
+		protected function init(event:FlexEvent):void{
+			BindingUtils.bindSetter(updateOrigin, this, "origin");
+		}
+			
         protected function onInitBtnClick(event:MouseEvent):void{
             //trace('onInitBtnClick');
             var config:Object = {
+                origin:this.origin,
                 publish_key:this.pub_key,
                 sub_key:this.sub_key,
                 secret_key:this.secret_key,
-                cipher_key:this.cipher_key
+                cipher_key:this.cipher_key,
+                ssl:this.ssl
             }
 			
             Pn.instance.addEventListener(PnEvent.INIT, onInit);
@@ -57,10 +74,16 @@
         }
 
         private function onSubscribeClick(e:MouseEvent):void {
-            var channels:Array = channel.split(',');
+            /*** Non MX Support
+             var channels:Array = channel.split(',');
             for each(var i:String  in channels) {
                 Pn.subscribe(i);
             }
+            */
+
+            /*** MX Support */
+             Pn.subscribe(channel);
+
         }
 
         private function onSubscribe(e:PnEvent):void {
@@ -68,6 +91,7 @@
             switch (e.status) {
                 case OperationStatus.DATA:
                     callExternalInterface("console.log", ("Subscribe [DATA], channel : " + e.channel + ', result : ' + e.data.result));
+                    trace('result is: ' + e.data.result);
                     break;
 
                 case OperationStatus.CONNECT:
@@ -145,8 +169,12 @@
                     break;
             }
         }
-
-        ]]>
+		
+		private function updateOrigin(value:String = null):void{
+			Pn.instance.origin = value;
+		}
+			
+		]]>
 	</fx:Script>
 
     <s:Label x="125" y="13" height="10" fontWeight="bold" color="#E01F1F" text="Verify below settings, and then be sure to initialize from Init tab before proceeding."
