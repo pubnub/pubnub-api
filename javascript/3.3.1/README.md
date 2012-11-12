@@ -45,7 +45,7 @@ business collaborative solutions, and more.
 ## ADVANCED STYLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=http://cdn.pubnub.com/pubnub-3.3.1.min.js ></script>
+<script src=http://pubnub.s3.amazonaws.com/pubnub-3.3.1.min.js ></script>
 <script>(function(){
     // LISTEN FOR MESSAGES
     PUBNUB.subscribe({
@@ -69,9 +69,36 @@ business collaborative solutions, and more.
         },
         reconnect  : function() {        // CONNECTION RESTORED.
             alert("And we're Back!")
+        },
+        presence   : function(message) { // Presence() example (see console for logged output.)
+            console.log(message, true);
         }
     })
-})();</script>
+})();
+
+</script>
+
+<span onclick="hereNow()">Click Me for Here Now!</span> // here_now() example (see console for logged output.)
+ <br/>
+<span onclick="history()">Click Me for History!</span> // detailedHistory() example (see console for logged output.)
+
+<script type="text/javascript">
+
+    function hereNow() {
+        PUBNUB.here_now({channel:'hello_world', callback:function (message) {
+            console.log(message);
+        }});
+    }
+
+    function history() {
+        PUBNUB.detailedHistory({count:10, channel:'hello_world', callback:function (message) {
+            console.log(message);
+        }});
+}
+
+
+</script>
+
 ```
 
 ## SSL MODE
@@ -81,7 +108,7 @@ business collaborative solutions, and more.
 <script src=https://pubnub.a.ssl.fastly.net/pubnub-3.3.1.min.js></script>
 <script>(function(){
 
-    var pubnub = PUBNUB({
+    var pubnub = PUBNUB.init({
         publish_key   : 'demo',
         subscribe_key : 'demo',
         origin        : 'pubsub.pubnub.com',
@@ -124,4 +151,3 @@ To do this, simply follow this `init` example:
 
 })();</script>
 ```
-
