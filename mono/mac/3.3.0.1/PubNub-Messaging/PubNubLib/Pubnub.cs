@@ -1566,20 +1566,6 @@ namespace PubNubLib
                     _publishMsg.AddOrUpdate(channelName, result, (key, oldValue) => result);
                     break;
                 case ResponseType.History:
-                    /*if (this.CIPHER_KEY.Length > 0)
-                    {
-                        List<object> historyDecrypted = new List<object>();
-                        PubnubCrypto aes = new PubnubCrypto(this.CIPHER_KEY);
-                        foreach (object message in result)
-                        {
-                            historyDecrypted.Add(aes.decrypt(message.ToString()));
-                        }
-                        History = historyDecrypted;
-                    }
-                    else
-                    {
-                        History = result;
-                    }*/
                     result.Add(channelName);
                     break;
                 case ResponseType.DetailedHistory:
