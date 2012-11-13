@@ -7,7 +7,7 @@ function now() {return+new Date}
 // ----------------------------------------------------------------------
 var net = PUBNUB.init({
     publish_key   : 'demo',
-    subscribe_key :'demo'
+    subscribe_key : 'demo'
 })
 ,   channel        = 'performance-meter-' + now() + Math.random()
 ,   start          = now()
@@ -133,7 +133,7 @@ var performance_sent_template = PUBNUB.$('messages-sent-template').innerHTML
 function update_messages_received() {
     performance_sent.innerHTML = PUBNUB.supplant(
         performance_sent_template, {
-            sent : median.length * 2
+            sent : median.length+1
         }
     );
 }
@@ -148,7 +148,8 @@ var set_rps = (function() {
     return function (val) {
         var meter = -90.0 + ((val || 0)*10);
         animate( arrow, [ { d : 0.5, r : meter > 90 ? 90 : meter } ] );
-        rps.innerHTML = ''+Math.ceil(val);
+        rps.innerHTML = ''+Math.floor(lat_avg);
+        //rps.innerHTML = ''+Math.floor(val);
         update_medians();
         draw_graph();
         update_messages_received();
@@ -160,17 +161,17 @@ var set_rps = (function() {
 // ----------------------------------------------------------------------
 var draw_graph = (function(){
     var graph    = PUBNUB.$('performance-graph').getContext("2d")
-    ,   height   = 50
-    ,   barwidth = 20
-    ,   bargap   = 20
-    ,   modrend  = 3
-    ,   barscale = 8
+    ,   height   = 100
+    ,   barwidth = 35
+    ,   bargap   = 5
+    ,   modrend  = 2
+    ,   barscale = 3
     ,   position = 0
-    ,   bgcolor  = "#dfd6b9"
+    ,   bgcolor  = "#80cae8"
     ,   fgcolor  = "#f2efe3";
 
     // Graph Gradient
-    var gradient = graph.createLinearGradient( 0, 0, 0, height * 1.5 );
+    var gradient = graph.createLinearGradient( 0, 0, 0, height * 1.2 );
     gradient.addColorStop( 0, fgcolor );
     gradient.addColorStop( 1, bgcolor );
 
@@ -183,6 +184,9 @@ var draw_graph = (function(){
         graph.fillStyle = bgcolor;
         graph.fillStyle = fgcolor;
         graph.fillRect( 0, 0, 640, height );
+
+        // Dynamic Bargraph Display
+        barscale = (+median_display['5']) / (+median_display['95']);
 
         // Lines
         graph.fillStyle = gradient;

@@ -23,11 +23,13 @@
     <div id=performance-arrow></div>
     <div id=performance-meter-bezel></div>
     <div id=performance-meter-number>0</div>
-    <div id=performance-meter-rps>MPS</div>
+    <div id=performance-meter-rps>ms</div>
 </div>
 <div id=performance-sent></div>
-<canvas id=performance-graph width=640 height=50></canvas>
+<div class=performance-title>Medians</div>
 <div id=performance-medians></div>
+<canvas id=performance-graph width=640 height=100></canvas>
+
 
 <!-- PUBNUB MEDIAN MPS TEMPLATE -->
 <script id=median-template type=template>
@@ -50,7 +52,7 @@
 </script>
 
 <script id=messages-sent-template type=template>
-<div> {sent} <span class=strong>Messages Sent/Received</span></div>
+<div> {sent} <span class=strong> Performance Samples Recorded</span></div>
 </script>
 
 <div id=pubnub></div>
