@@ -120,6 +120,8 @@ socket.on( 'reconnect', function() {
 
 ### User Presence (Room Events: join, leave)
 
+>NOTE: You must enable presence on your PubNub account before this feature is available!  Contact your Account Representative. 
+
 Sometimes you want to put certain sockets in the same room, so that it's easy
 to broadcast to all of them together.
 
