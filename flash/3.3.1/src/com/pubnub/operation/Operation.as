@@ -60,6 +60,7 @@ package com.pubnub.operation {
 		}
 		
 		public function send(args:Object):void {
+			//trace(this, 'send');
 			var url:String = args.url;
 			uid = args.uid;
 			sessionUUID = args.sessionUUID;

@@ -12,13 +12,11 @@
 		 * define public vars for custom connection.
 		 * */
 			import com.pubnub.*;
-			
 			import flash.events.*;
 			import flash.external.*;
-			
-			import mx.binding.utils.BindingUtils;
+			import mx.binding.utils.*;
 			import mx.events.*;
-
+			
         [Bindable]
         public var channel:String = 'my_channel';
 
@@ -48,14 +46,13 @@
 			
         protected function onInitBtnClick(event:MouseEvent):void{
             //trace('onInitBtnClick');
-            var config:Object = {
-                origin:this.origin,
+           var config:Object = {
+                origin:		this.origin,
                 publish_key:this.pub_key,
-                sub_key:this.sub_key,
-                secret_key:this.secret_key,
-                cipher_key:this.cipher_key,
-                ssl:this.ssl
-            }
+                sub_key:	this.sub_key,
+                secret_key:	this.secret_key,
+                cipher_key:	this.cipher_key,
+                ssl:		this.ssl}
 			
             Pn.instance.addEventListener(PnEvent.INIT, onInit);
             Pn.instance.addEventListener(PnEvent.INIT_ERROR, onInitError);

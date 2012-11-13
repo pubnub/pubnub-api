@@ -1,17 +1,18 @@
 package com.pubnub {
 	
+	//namespace ns1;
+	
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
 	import flash.errors.*;
 	import flash.events.*;
-	import flash.utils.*;
-	//import com.pubnub.namespaces.pn_internal;
-
+	import flash.utils.*;	
+	use namespace pn_internal;
+	
 	[Event(name="initError", type="com.pubnub.PnEvent")]
 	[Event(name="init", type="com.pubnub.PnEvent")]
 	public class Pn extends EventDispatcher {
 		
-		//public namespace pn_internal = 'com.pubnub.pn';
 		
 		
 		static private var __instance:Pn;
@@ -33,16 +34,26 @@ package com.pubnub {
         private var _sessionUUID:String = "";
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
 		
+		pn_internal var initOperation:Operation;
+		//pn_internal var timeOperation:Operation;
+		//pn_internal var detailedHistoryOperation:Operation;
+		//pn_internal var publishOperation:Operation;
+		
 		public function Pn() {
 			if (__instance) throw new IllegalOperationError('Use [Pn.instance] getter');
+			setup();
 		}
 		
-		static public function get instance():Pn {
+		private function setup():void {
+			initOperation = new Operation();
+		}
+		
+		public static  function get instance():Pn {
 			__instance ||= new Pn();
 			return __instance;
 		}
 		
-		static public function  init(config:Object):void {
+		public static function  init(config:Object):void {
 			instance.init(config);
 		}
 		
@@ -65,11 +76,10 @@ package com.pubnub {
 			var url:String = _origin + "/" + "time" + "/" + 0;
 			
 			// Loads start time token
-			var operation:Operation = getOperation(INIT_OPERATION);
-			operation.close();
-			operation.send( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
-			operation.addEventListener(OperationEvent.RESULT, onInitComplete);
-			operation.addEventListener(OperationEvent.FAULT, onInitError);
+			initOperation.close();
+			initOperation.addEventListener(OperationEvent.RESULT, onInitComplete);
+			initOperation.addEventListener(OperationEvent.FAULT, onInitError);
+			initOperation.send( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
 			
 			operations[HISTORY_OPERATION] = new HistoryOperation();
 			operations[PUBLISH_OPERATION] = new PublishOperation();
@@ -123,7 +133,6 @@ package com.pubnub {
 		private function onInitError(event:OperationEvent):void {
 			dispatchEvent(new PnEvent(PnEvent.INIT_ERROR, 'Init operation error'));
 		}
-		
 		
 		public static function subscribe(channel:String):void{
 			instance.subscribe(channel);

@@ -1,103 +1,91 @@
 package fixTestSuite.tests {
-	
 	import com.pubnub.*;
-	import com.pubnub.operation.Operation;
-	import com.pubnub.operation.OperationEvent;
-	import flash.events.Event;
-	import mockolate.arg;
-	import mockolate.expect;
-	import mockolate.expectArg;
-	import mockolate.expecting;
-	import mockolate.ingredients.Sequence;
-	import mockolate.mock;
-	import mockolate.nice;
-	import mockolate.prepare;
-	import mockolate.record;
-	import mockolate.replay;
-	import mockolate.runner.MockolateRule;
-	import mockolate.sequence;
-	import mockolate.stub;
-	import mockolate.verify;
+	import com.pubnub.json.*;
+	import com.pubnub.operation.*;
+	import mockolate.*;
+	import mockolate.runner.*;
 	import org.flexunit.*;
 	import org.flexunit.async.*;
-	import mockolate.runner.MockolateRunner; 
-	import org.hamcrest.core.anything;
+	
+	
 	MockolateRunner;
-	import org.hamcrest.object.nullValue;
+	
+	use namespace pn_internal;
 	
 	/**
-	 * https://github.com/flexunit/flexunit
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+		FlexUnit:
+		https://github.com/flexunit/flexunit
+		 
+		Mokolate: 
+		http://mockolate.org/
+	 * 	@author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	[BeforeClass (order = 1)]
-	//[RunWith("mockolate.runner.MockolateRunner")]
 	public class InitTest {
-		
-		public static const SUB_KEY:String = 'demo';
-		public static const CHANNEL:String = 'hello_world';
-        public var origin:String = 'pubsub.pubnub.com';
-        public var pub_key:String = 'demo';
-        public var secret_key:String = '';
-        public var cipher_key:String = '';
-		
-		
 		
 		[Rule]
 		public var mocks:MockolateRule = new MockolateRule();
 		
-		[Mock(type="strict")] 
-		public var pn:Pn;
-		
-		[Mock(type="strict")] 
+		[Mock] 
 		public var operation:Operation;
 		
+		public var pn:Pn;
 		
+		public static const initToken:Number = 13527819890213787;
 		
-		//[Test(async, description = "[Pn.init] test")]
-		[Test]
-		public function testInit() : void {
-			
+		public static var counterInitEvents:int = 0;
+		public static var counterErrorEvents:int = 0;
+		
+		[Test (async, order=1)]
+		public function operationInit() : void {
 			 var config:Object = {
-                publish_key:this.pub_key,
-                SUB_KEY:SUB_KEY,
-                secret_key:this.secret_key,
-                cipher_key:this.cipher_key,
-                origin: this.origin
+                publish_key:'demo',
+                sub_key:'demo',
+                secret_key:'',
+                cipher_key:'',
+                origin: 'pubsub.pubnub.com'
             }
 			
-			//pn = nice(Pn);
-			//mock(pn).method('init').dispatches(new OperationEvent(OperationEvent.RESULT, {}));
-			//pn.init(config);
+			// prepare async handlers
+			var initHandler:Function = Async.asyncHandler( this, onInit, 1000, null, onInitTimeout );
+			var errorHandler:Function = Async.asyncHandler( this, onInitError, 1000, null, onErrorTimeout);
 			
+			// mock operation
 			operation = nice(Operation);
-			mock(operation).method('send').dispatches(new OperationEvent(OperationEvent.RESULT, {token : '1234567'}));
+			mock(operation).method('send').dispatches(new OperationEvent(OperationEvent.RESULT, PnJSON.parse('[' + initToken+ ']') ));
 			
-			//pn = nice(Pn);
-			//stub(pn).method('getOperation').args('init').returns(operation);
-			
-			pn = Pn.instance;
-			pn.addEventListener(PnEvent.INIT, onInit);
-			
-			expect(pn.init(config)).calls(pn.getOperation, ['init']).once();
-			//pn.init(config);
-			//expect(pn.getOperation('init')).returns(operation);
-			//expect(pn).calls('getOperation', '').
-			//Pn.init(config);
-			/*var pn:Pn = nice(Pn);
-			expect(pn.init(config)).dispatches(new OperationEvent(OperationEvent.RESULT, { } ));
-			trace(pn is Pn)*/
-			
+			// configure events handlers
+			Pn.instance.addEventListener(PnEvent.INIT, initHandler);
+			Pn.instance.addEventListener(PnEvent.INIT_ERROR, errorHandler);
+			Pn.instance.initOperation = operation;
+			Pn.instance.init(config);
 		}
 		
-		protected function onInit( event:PnEvent, passThroughData:Object = null ):void {
-			trace(this, event.type, event.data);
-			if (event.type != PnEvent.INIT) {
-				Assert.fail(event.type + ':' + event.data);
-			}
+		[Test (order=2)]
+		public function numInitEvents() : void {
+			Assert.assertTrue(counterInitEvents == 1);
 		}
- 
-		protected function onInitTimeout( passThroughData:Object ):void {
-			 Assert.fail( "Timeout reached before event");	
+		
+		[Test (order=3)]
+		public function numErrorEvents() : void {
+			Assert.assertTrue(counterErrorEvents == 0);
+		}
+			
+		protected function onInit( event:PnEvent, passThroughData:Object = null):void {
+			Assert.assertEquals(event.data, initToken);
+			counterInitEvents++;
+		}
+		
+		protected function onInitTimeout( event:PnEvent, passThroughData:Object = null):void {
+			Assert.fail('init timeout');
+		}
+		
+		protected function onInitError( event:PnEvent, passThroughData:Object = null):void {
+			counterErrorEvents++;
+		}
+		
+		protected function onErrorTimeout( event:PnEvent, passThroughData:Object = null):void {
+			// nothing to do
 		}
 	}
 }
