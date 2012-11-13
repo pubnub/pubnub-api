@@ -14,6 +14,7 @@
 			import com.pubnub.*;
 			import flash.events.*;
 			import flash.external.*;
+			import flash.utils.getTimer;
 			import mx.binding.utils.*;
 			import mx.events.*;
 			
@@ -81,7 +82,6 @@
 
             /*** MX Support */
              Pn.subscribe(channel);
-
         }
 
         private function onSubscribe(e:PnEvent):void {
@@ -149,11 +149,14 @@
             consoleArea.appendText((consoleCounter++) +'. '+ rest + '\n');
         }
 
-        protected function publishBtn_clickHandler(event:MouseEvent):void{
+		private var startPublishTime:Number;
+        protected function publishBtn_clickHandler(event:MouseEvent):void {
+			startPublishTime = getTimer();
             Pn.publish({channel : channel, message : publishMessageTxt.text});
         }
 
-        private function onPublish(e:PnEvent):void{
+        private function onPublish(e:PnEvent):void {
+			trace('publish time : ' + (getTimer() - startPublishTime));
             switch (e.status) {
                 case OperationStatus.DATA:
                     var messages:Array = e.data as Array;

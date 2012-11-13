@@ -35,9 +35,6 @@ package com.pubnub.loader {
 		
 		public function load(url:String):void {
 			this._url = url;
-			//var uri:URI = new URI(url);
-			//trace('uri.scheme : ' + uri.scheme);
-			//trace('uri.scheme : ' + uri.);
 			httpClient.get(new URI(url), listener);
 		}
 		
