@@ -151,4 +151,3 @@ To do this, simply follow this `init` example:
 
 })();</script>
 ```
-
