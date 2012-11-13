@@ -1,6 +1,5 @@
 package {
 	import com.pubnub.*;
-	import com.pubnub.events.*;
 	import flash.display.*;
 	import flash.external.*;
 	import flash.utils.*;
@@ -23,7 +22,8 @@ package {
 				publish_key:"demo",
 				sub_key:"demo",
 				secret_key:"",
-				cipher_key:null
+				cipher_key:null,
+                ssl:false
 			}
 			Pn.init(config);
 			Pn.instance.addEventListener(PnEvent.INIT, onInit);
