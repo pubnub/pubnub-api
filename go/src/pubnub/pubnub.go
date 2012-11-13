@@ -31,6 +31,18 @@ type Message struct {
 	Msg string
 }
 
+type HereNowResponse struct {
+	Uuids     []string
+	Occupancy int
+}
+
+type PresenceResponse struct {
+	Action    string
+	Timestamp float64
+	Uuid      string
+	Occupancy int
+}
+
 //Init pubnub struct
 func PubnubInit(publish_key string, subscribe_key string, secret_key string, chipher_key string, ssl_on bool) *PUBNUB {
 	new_pubnub := &PUBNUB{
@@ -131,14 +143,31 @@ func (pub *PUBNUB) Subscribe(channel string, c chan []byte) {
 		}
 
 		value, err := pub.HttpRequest(url)
-		c <- value
+		// get time token and send response to channel
 		if err != nil {
+			c <- value
 			close(c)
-		}
-		//Get timetoken from success response
-		timeTokenArr := strings.Split(fmt.Sprintf("%s", value), ",")
-		if len(timeTokenArr) > 1 {
-			timeToken = strings.Replace(timeTokenArr[1], "\"", "", -1)
+		} else {
+			index := strings.LastIndex(fmt.Sprintf("%s", value), ",")
+			//If reconnecting from timeout
+			if index < 0 {
+				c <- value
+				continue
+			}
+			timeToken = fmt.Sprintf("%s", value[index+2:len(value)-2])
+			value = value[1:index]
+
+			var messages []Message
+			json_err := json.Unmarshal(value, &messages)
+			if json_err != nil {
+				c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
+				close(c)
+				return
+			}
+
+			for i := 0; i < len(messages); i++ {
+				c <- []byte(messages[i].Msg)
+			}
 		}
 	}
 }
@@ -156,14 +185,34 @@ func (pub *PUBNUB) Presence(channel string, c chan []byte) {
 		}
 
 		value, err := pub.HttpRequest(url)
-		c <- value
+		// get time token and send response to channel
 		if err != nil {
+			c <- value
 			close(c)
-		}
-		//Get timetoken from success response
-		timeTokenArr := strings.Split(fmt.Sprintf("%s", value), ",")
-		if len(timeTokenArr) > 1 {
-			timeToken = strings.Replace(timeTokenArr[1], "\"", "", -1)
+		} else {
+			index := strings.LastIndex(fmt.Sprintf("%s", value), ",")
+			//If reconnecting from timeout
+			if index < 0 {
+				c <- value
+				continue
+			}
+			timeToken = fmt.Sprintf("%s", value[index+2:len(value)-2])
+			value = value[1:index]
+
+			var responses []PresenceResponse
+			json_err := json.Unmarshal(value, &responses)
+			if json_err != nil {
+				c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
+				close(c)
+				return
+			}
+
+			for i := 0; i < len(responses); i++ {
+				c <- []byte(responses[i].Action)
+				c <- []byte(fmt.Sprintf("%0.0f", responses[i].Timestamp)) //float64
+				c <- []byte(responses[i].Uuid)
+				c <- []byte(fmt.Sprintf("%d", responses[i].Occupancy)) //int
+			}
 		}
 	}
 }
@@ -206,10 +255,25 @@ func (pub *PUBNUB) HereNow(channel string, c chan []byte) {
 	url += "/sub-key/" + pub.SUBSCRIBE_KEY
 	url += "/channel/" + channel
 
-	value, _ := pub.HttpRequest(url)
+	value, err := pub.HttpRequest(url)
 
 	// send response to channel
-	c <- value
+	if err != nil {
+		c <- value
+	} else {
+		var hereNowResponse HereNowResponse
+		json_err := json.Unmarshal(value, &hereNowResponse)
+		if json_err != nil {
+			c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
+			close(c)
+			return
+		}
+
+		for i := 0; i < len(hereNowResponse.Uuids); i++ {
+			c <- []byte(fmt.Sprintf("%s", hereNowResponse.Uuids[i]))
+		}
+		c <- []byte(fmt.Sprintf("%d", hereNowResponse.Occupancy))
+	}
 	close(c)
 }
 
