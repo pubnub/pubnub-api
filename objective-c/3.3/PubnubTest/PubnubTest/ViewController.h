@@ -11,7 +11,7 @@
 
 @interface ViewController : UIViewController<CEPubnubDelegate>
 - (IBAction)unit_test_CL148:(id)sender;
-- (IBAction)unit_test_CL215:(id)sender;
+- (IBAction)presenceLeaveClick:(id)sender;
 
 @end
 
