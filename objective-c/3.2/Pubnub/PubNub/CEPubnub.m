@@ -513,7 +513,7 @@ NSDecimalNumber* time_token = 0;
          if ([data length] >0 && error == nil)
          {
              NSArray* resp=    (NSArray *)JSONParseData(data);
-             if ([resp isKindOfClass:[NSArray class]] && ([resp count] == 1)) {
+             if ([resp isKindOfClass:[NSArray class]]) {
                  time_token = [resp objectAtIndex:0];
              }
          }
@@ -683,7 +683,7 @@ NSDecimalNumber* time_token = 0;
                 }
             }
         
-            if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
+            if ([response isKindOfClass:[NSArray class]]) {
                 if(!isPresence)
                     NSLog(@"Received %i messages from PubNub channel \"%@\"", [[response objectAtIndex:0] count], connection.channel);
                 
@@ -778,7 +778,7 @@ NSDecimalNumber* time_token = 0;
         }
         case kCommand_GetTime: {
             NSDecimalNumber* number = nil;
-            if ([response isKindOfClass:[NSArray class]] && ([response count] == 1)) {
+            if ([response isKindOfClass:[NSArray class]]) {
                 NSLog(@"Retrieved PubNub time '%@'", [response objectAtIndex:0]);
                 number = [response objectAtIndex:0];
             } else if (response) {

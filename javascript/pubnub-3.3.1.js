@@ -536,9 +536,11 @@ function xdr( setup ) {
         done( 0, response );
     };
 
-    script[ASYNC]  = ASYNC;
+    if (!setup.blocking) script[ASYNC] = ASYNC;
+
     script.onerror = function() { done(1) };
     script.src     = setup.url.join(URLBIT);
+
     if (setup.data) {
         var params = [];
         script.src += "?";
@@ -606,17 +608,18 @@ function ajax( setup ) {
         xhr.onload  = xhr.onloadend = finished;
         xhr.timeout = XHRTME;
         
-        url = setup.url.join(URLBIT);
+        var url = setup.url.join(URLBIT);
         if (setup.data) {
             var params = [];
+            var key;
             url += "?";
             for (key in setup.data) {
                 params.push(key+"="+setup.data[key]);
             }
             url += params.join(PARAMSBIT);
         }
-        
-        xhr.open( 'GET', url, true );
+
+        xhr.open( 'GET', url, typeof setup.blocking == 'undefined' );
         xhr.send();
     }
     catch(eee) {
@@ -646,6 +649,7 @@ var PDIV          = $('pubnub') || {}
     ,   SSL           = setup['ssl'] ? 's' : ''
     ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
+    ,   LEAVE         = function(){}
     ,   SELF          = {
         /*
             PUBNUB.history({
@@ -661,19 +665,20 @@ var PDIV          = $('pubnub') || {}
             ,   jsonp    = jsonp_cb();
 
             // Make sure we have a Channel
-            if (!channel)  return log('Missing Channel');
-            if (!callback) return log('Missing Callback');
+            if (!channel)       return log('Missing Channel');
+            if (!callback)      return log('Missing Callback');
+            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
 
             // Send Message
             xdr({
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) },
                 callback : jsonp,
                 url      : [
                     ORIGIN, 'history',
                     SUBSCRIBE_KEY, encode(channel),
                     jsonp, limit
-                ],
-                success  : function(response) { callback(response) },
-                fail     : function(response) { log(response) }
+                ]
             });
         },
 
@@ -686,35 +691,35 @@ var PDIV          = $('pubnub') || {}
         */
         'detailedHistory' : function( args, callback ) {
             var callback = args['callback'] || callback 
-            ,   count = args['count'] || 100
+            ,   count    = args['count']    || 100
+            ,   reverse  = args['reverse']  || "false"
             ,   channel  = args['channel']
-            ,   reverse = args['reverse'] || "false"
-            ,   start = args['start']
-            ,   end = args['end']
+            ,   start    = args['start']
+            ,   end      = args['end']
+            ,   params   = {}
             ,   jsonp    = jsonp_cb();
 
             // Make sure we have a Channel
-            if (!channel)  return log('Missing Channel');
-            if (!callback) return log('Missing Callback');
+            if (!channel)       return log('Missing Channel');
+            if (!callback)      return log('Missing Callback');
+            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
 
-			var params = {};
-			params["count"] = count;
+            params["count"]   = count;
             params["reverse"] = reverse;
-            if (start) 
-                params["start"] = start;
-            if (end)
-                params["end"] = end;
+
+            if (start) params["start"] = start;
+            if (end)   params["end"]   = end;
 
             // Send Message
             xdr({
                 callback : jsonp,
+                data     : params,
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) },
                 url      : [
                     ORIGIN, 'v2', 'history',
                     'sub-key', SUBSCRIBE_KEY, 'channel', encode(channel)
-                ],
-                data : params,
-                success  : function(response) { callback(response) },
-                fail     : function(response) { log(response) }
+                ]
             });
         },
 
@@ -756,9 +761,10 @@ var PDIV          = $('pubnub') || {}
             ,   jsonp    = jsonp_cb()
             ,   url;
 
-            if (!message)     return log('Missing Message');
-            if (!channel)     return log('Missing Channel');
-            if (!PUBLISH_KEY) return log('Missing Publish Key');
+            if (!message)       return log('Missing Message');
+            if (!channel)       return log('Missing Channel');
+            if (!PUBLISH_KEY)   return log('Missing Publish Key');
+            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
 
             // If trying to send Object
             message = JSON['stringify'](message);
@@ -785,10 +791,13 @@ var PDIV          = $('pubnub') || {}
         */
         'unsubscribe' : function(args) {
             // Unsubscribe from both the Channel and the Presence Channel
-            _unsubscribe(args['channel']);
-            _unsubscribe(args['channel'] + PRESENCE_SUFFIX);
+            unsubscribe(args['channel']);
+            unsubscribe(args['channel'] + PRESENCE_SUFFIX);
 
-            function _unsubscribe(channel) {
+            // Announce Leave
+            LEAVE(args['channel']);
+
+            function unsubscribe(channel) {
                 // Leave if there never was a channel.
                 if (!(channel in CHANNELS)) return;
 
@@ -808,19 +817,19 @@ var PDIV          = $('pubnub') || {}
             });
         */
         'subscribe' : function( args, callback ) {
-            var channel      = args['channel']
-            ,   callback     = callback || args['callback']
-            ,   subscribe_key= args['subscribe_key'] || SUBSCRIBE_KEY
-            ,   restore      = args['restore']
-            ,   timetoken    = 0
-            ,   error        = args['error'] || function(){}
-            ,   connect      = args['connect'] || function(){}
-            ,   reconnect    = args['reconnect'] || function(){}
-            ,   disconnect   = args['disconnect'] || function(){}
-            ,   presence     = args['presence'] || function(){}
-            ,   disconnected = 0
-            ,   connected    = 0
-            ,   origin       = nextorigin(ORIGIN);
+            var channel       = args['channel']
+            ,   callback      = callback || args['callback']
+            ,   subscribe_key = args['subscribe_key'] || SUBSCRIBE_KEY
+            ,   restore       = args['restore']
+            ,   timetoken     = 0
+            ,   error         = args['error'] || function(){}
+            ,   connect       = args['connect'] || function(){}
+            ,   reconnect     = args['reconnect'] || function(){}
+            ,   disconnect    = args['disconnect'] || function(){}
+            ,   presence      = args['presence'] || function(){}
+            ,   disconnected  = 0
+            ,   connected     = 0
+            ,   origin        = nextorigin(ORIGIN);
 
             // Reduce Status Flicker
             if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
@@ -846,17 +855,18 @@ var PDIV          = $('pubnub') || {}
                 // Connect to PubNub Subscribe Servers
                 CHANNELS[channel].done = xdr({
                     callback : jsonp,
+                    data     : { uuid: UUID },
                     url      : [
                         origin, 'subscribe',
                         subscribe_key, encode(channel),
                         jsonp, timetoken
                     ],
-                    data     : { uuid: UUID },
                     fail : function() {
                         // Disconnect
                         if (!disconnected) {
                             disconnected = 1;
                             disconnect();
+                            leave();
                         }
                         timeout( _connect, SECOND );
                         SELF['time'](function(success){
@@ -903,40 +913,71 @@ var PDIV          = $('pubnub') || {}
                 });
             }
 
+            // Announce Leave Event
+            function leave(chan) {
+                var data  = { uuid : UUID }
+                ,   jsonp = jsonp_cb()
+                ,   chann = chan || channel;
+
+                if (jsonp != '0') data['callback'] = jsonp;
+
+                xdr({
+                    blocking : 1,
+                    callback : jsonp,
+                    data     : data,
+                    url      : [
+                        origin, 'v2', 'presence',
+                        'sub_key', SUBSCRIBE_KEY, 
+                        'channel', encode(channel),
+                        'leave'
+                    ]
+                });
+
+                return true;
+            }
+
+            LEAVE = leave;
+
+            // onBeforeUnload
+            bind( 'beforeunload', window, leave );
+
             // Presence Subscribe
             if (args['presence']) SELF.subscribe({
-                channel  : args['channel'] + PRESENCE_SUFFIX,
-                callback : presence,
-                restore  : args['restore']
+                channel    : args['channel'] + PRESENCE_SUFFIX,
+                callback   : presence,
+                restore    : args['restore'],
+                disconnect : leave
             });
 
             // Begin Recursive Subscribe
             _connect();
         },
+
         'here_now' : function( args, callback ) {
             var callback = args['callback'] || callback 
             ,   channel  = args['channel']
             ,   jsonp    = jsonp_cb()
+            ,   data     = {}
             ,   origin   = nextorigin(ORIGIN);
 
             // Make sure we have a Channel
-            if (!channel)  return log('Missing Channel');
-            if (!callback) return log('Missing Callback');
+            if (!channel)       return log('Missing Channel');
+            if (!callback)      return log('Missing Callback');
+            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
             
-            data = null;
-            if (jsonp != '0') { data['callback']=jsonp; }
-            
+            if (jsonp != '0') data['callback'] = jsonp;
+
             // Send Message
             xdr({
                 callback : jsonp,
+                data     : data,
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) },
                 url      : [
                     origin, 'v2', 'presence',
                     'sub_key', SUBSCRIBE_KEY, 
                     'channel', encode(channel)
-                ],
-                data: data,
-                success  : function(response) { callback(response) },
-                fail     : function(response) { log(response) }
+                ]
             });
         },
 
@@ -946,6 +987,7 @@ var PDIV          = $('pubnub') || {}
         'db'       : db,
         'each'     : each,
         'map'      : map,
+        'grep'     : grep,
         'css'      : css,
         '$'        : $,
         'create'   : create,
@@ -961,8 +1003,8 @@ var PDIV          = $('pubnub') || {}
         'init'     : CREATE_PUBNUB
     };
     
-    if (UUID == '') UUID = SELF.uuid();
-    db.set(SUBSCRIBE_KEY+'uuid', UUID);
+    if (!UUID) UUID = SELF.uuid();
+    db.set( SUBSCRIBE_KEY + 'uuid', UUID );
     
     return SELF;
 };
@@ -971,7 +1013,7 @@ var PDIV          = $('pubnub') || {}
 PUBNUB = CREATE_PUBNUB({
     'publish_key'   : attr( PDIV, 'pub-key' ),
     'subscribe_key' : attr( PDIV, 'sub-key' ),
-    'ssl'           : attr( PDIV, 'ssl' ) == 'on',
+    'ssl'           : !document.location.href.indexOf('https') || attr( PDIV, 'ssl' ) == 'on',
     'origin'        : attr( PDIV, 'origin' ),
     'uuid'          : attr( PDIV, 'uuid' )
 });

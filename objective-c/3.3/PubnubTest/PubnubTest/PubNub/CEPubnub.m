@@ -189,18 +189,29 @@ typedef enum {
                 break;
                 
             default:
-                [_pubNub connection:self didCompleteWithResponse:nil];
+                if([CEPubnub isApplicationActive]){
+                    [_pubNub connection:self didCompleteWithResponse:nil];
+                      NSLog(@"PubNub request failed with error: %@", error);  
+                }else
+                {
+                    [_pubNub performSelector:@selector(_resubscribeToChannel:) withObject:_channel afterDelay:kMinRetryInterval];
+                    [CEPubnub setApplicationActive:YES]; 
+                }
+                 
                 break;
         }
-        NSLog(@"PubNub request failed with error: %@", error);
+      
     }
 }
 
+- (void)connection:(NSURLConnection*)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge{
+}
 @end
 
 @implementation CEPubnub
 
 @synthesize delegate=_delegate;
+ BOOL _appState = YES;
 
 - (CEPubnub *) initWithSubscribeKey:(NSString *)subscribeKey useSSL:(BOOL)useSSL {
     return [self initWithPublishKey:nil subscribeKey:subscribeKey secretKey:nil useSSL:useSSL cipherKey:nil uuid:nil origin:kDefaultOrigin];
@@ -653,6 +664,16 @@ typedef enum {
     return messages;
 }
 
++ (BOOL)isApplicationActive
+{
+    return _appState;
+}
+
++ (void)setApplicationActive:(BOOL)state
+{
+    _appState=state;
+}
+
 - (void)connection:(PubNubConnection *)connection didCompleteWithResponse:(id)response  {
     switch (connection.command) {
         case kCommand_SendMessage:
@@ -774,7 +795,7 @@ typedef enum {
         }
     }
     
-    if ([response isKindOfClass:[NSArray class]] && ([response count] == 2)) {
+    if ([response isKindOfClass:[NSArray class]]) {
         if(!isPresence)
             NSLog(@"Received %i messages from PubNub channel \"%@\"", [[response objectAtIndex:0] count], connection.channel);
         
@@ -915,7 +936,7 @@ typedef enum {
 - (void)handleCommandGetTimeForConnection:(PubNubConnection *)connection response:(id)response
 {
     NSDecimalNumber *number = nil;
-    if ([response isKindOfClass:[NSArray class]] && ([response count] == 1)) {
+    if ([response isKindOfClass:[NSArray class]]) {
         NSLog(@"Retrieved PubNub time '%@'", [response objectAtIndex:0]);
         number = [response objectAtIndex:0];
     } else if (response) {
