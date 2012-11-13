@@ -374,6 +374,7 @@ public class Pubnub {
 							callback.disconnectCallback(channel);
 							isDisconnected = true;
 							subscriptions.remove(it);
+							leave(channel);
 							break;
 						}
 					}
@@ -391,6 +392,7 @@ public class Pubnub {
 							callback.disconnectCallback(channel);
 							isDisconnected = true;
 							subscriptions.remove(it);
+							leave(channel);
 							break;
 						}
 					}
@@ -406,6 +408,7 @@ public class Pubnub {
 							if (it.connected && it.first) {
 								subscriptions.remove(it);
 								callback.disconnectCallback(channel);
+								leave(channel);
 							} else {
 								subscriptions.remove(it);
 								callback.errorCallback(channel,
@@ -662,6 +665,33 @@ public class Pubnub {
 		return _request(url, channel);
 
 	}
+	/**
+	 * 
+	 */
+	public JSONArray leave(String channel) {
+		if (channel == null || channel.equals("")) {
+			JSONArray jsono = new JSONArray();
+			try {
+				jsono.put(0);
+				jsono.put("Missing Channel");
+			} catch (Exception jsone) {
+			}
+			return jsono;
+		}
+
+		// Build URL
+		List<String> url = new ArrayList<String>();
+		url.add("v2");
+		url.add("presence");
+		url.add("sub_key");
+		url.add(this.SUBSCRIBE_KEY);
+		url.add("channel");
+		url.add(channel);
+		url.add("leave");
+		// Return JSONArray
+		return _request(url, channel);
+
+	}
 
 	/**
 	 * Time
@@ -737,6 +767,10 @@ public class Pubnub {
 
 		if (_callFor.equalsIgnoreCase("v2")) {
 			_callFor = url_components.get(1);
+			if(url_components.size()>=6 && url_components.get(6).equals("leave"))
+			{
+				_callFor="leave";
+			}
 		}
 
 		url.append(this.ORIGIN);
@@ -763,6 +797,9 @@ public class Pubnub {
 		}
 		if (_callFor.equalsIgnoreCase("subscribe")) {
 			url.append("/").append("?uuid=" + UUIDs);
+		}
+		if (_callFor.equalsIgnoreCase("leave")) {
+			url.append("?uuid=" + UUIDs);
 		}
 		try {
 
@@ -801,7 +838,7 @@ public class Pubnub {
 
 			return jsono;
 		}
-		if (_callFor.equalsIgnoreCase("presence")) {
+		if (_callFor.equalsIgnoreCase("presence") || _callFor.equalsIgnoreCase("leave")) {
 			try {
 				JSONArray arr = new JSONArray();
 
