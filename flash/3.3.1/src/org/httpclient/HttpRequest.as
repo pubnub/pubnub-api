@@ -57,8 +57,8 @@ package org.httpclient {
      * Include headers here that are global to every request.
      */
     protected function loadDefaultHeaders():void {
-      addHeader("Connection", "close");      
-      
+      //addHeader("Connection", "close");      
+      //addHeader("Connection", "Keep-Alive");      
       //addHeader("Accept-Encoding", "gzip, deflate");
       //addHeader("Accept-Language", "en-us");            
       //addHeader("User-Agent", "as3httpclientlib 0.1");

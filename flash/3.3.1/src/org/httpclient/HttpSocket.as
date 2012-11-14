@@ -6,6 +6,7 @@ package org.httpclient {
   
   import com.adobe.net.URI;
   import com.hurlant.crypto.tls.TLSSocket;
+  import flash.utils.getTimer;
   
   import flash.net.Socket;
   import flash.utils.ByteArray;
@@ -115,17 +116,16 @@ package org.httpclient {
      * @param request HTTP request
      */
     public function request(uri:URI, request:HttpRequest):void {
-      var onConnect:Function = function(event:Event):void {
-		  _dispatcher.dispatchEvent(new HttpRequestEvent(request, null, HttpRequestEvent.CONNECT));
-		  if (uri.scheme == "https" && _proxy) {
-			  connectProxy(uri, request);
+		var onConnect:Function = function(event:Event):void {
+			_dispatcher.dispatchEvent(new HttpRequestEvent(request, null, HttpRequestEvent.CONNECT));
+			if (uri.scheme == "https" && _proxy) { 
+				connectProxy(uri, request);
 			} else {
 				sendRequest(uri, request);
 			}
 		}
-      
-      // Connect
-      connect(uri, onConnect);
+		
+		connect(uri, onConnect);
     }
    
     /**
@@ -134,7 +134,6 @@ package org.httpclient {
      * @param onConnect On connect callback
      */
     protected function connect(uri:URI, onConnect:Function = null):void {
-		
       _onConnect = onConnect;
 
       // Create the socket
@@ -157,16 +156,19 @@ package org.httpclient {
      * Send CONNECT request for https proxy
      * @param uri URI
      */
+	private var temp:Number
     protected function connectProxy(uri:URI, request:HttpRequest):void {
       var proxyResponse:HttpResponse;
 
       var onProxyHeader:Function = function(response:HttpResponse):void {
+		  //trace('onProxyHeader')
         proxyResponse = response;
       };
 
       var onProxyData:Function = function(bytes:ByteArray):void {};
 
       var onProxyComplete:Function = function(contentLength:Number):void {
+		  //trace('onProxyComplete')
         _timer.stop();
         if (proxyResponse.isSuccess) {
           var socket:TLSSocket = new TLSSocket();
@@ -209,7 +211,10 @@ package org.httpclient {
       var headerBytes:ByteArray = request.getHeader(uri, _proxy, HTTP_VERSION);
       
       // Debug
-      Log.debug("Header:\n" + headerBytes.readUTFBytes(headerBytes.length));
+	  var hStr:String = "Header:\n" + headerBytes.readUTFBytes(headerBytes.length);
+	  //trace(hStr);
+	  Log.level = Log.DEBUG;
+      Log.debug(hStr);
       headerBytes.position = 0;
       
       _socket.writeBytes(headerBytes);      

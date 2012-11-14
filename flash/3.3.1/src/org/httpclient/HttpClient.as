@@ -154,8 +154,12 @@ package org.httpclient {
      * @param uri
      * @param listener Listener (if null, the client is the listener)
      */
-    public function get(uri:URI, listener:HttpListener = null):void {
-      request(uri, new Get(), -1, listener);
+    public function get(uri:URI, listener:HttpListener = null, headers:Array = null):void {
+		if (headers) {
+			var getHeader:HttpHeader = new HttpHeader(headers);
+		}
+		var getRequest:HttpRequest = new Get(getHeader);
+		request(uri, getRequest, -1, listener);
     }
     
     /**

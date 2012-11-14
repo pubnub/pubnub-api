@@ -4,12 +4,13 @@
  */
 package org.httpclient.http {
   
+  import org.httpclient.HttpHeader;
   import org.httpclient.HttpRequest;
   
   public class Get extends HttpRequest {
     
-    public function Get() {      
-      super("GET");
+    public function Get(header:HttpHeader = null, body:* = null) {      
+      super("GET", header, body);
     }
     
     override public function get hasRequestBody():Boolean {

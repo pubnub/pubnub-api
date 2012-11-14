@@ -13,6 +13,7 @@ package com.pubnub.loader {
 		
 		private var _destroyed:Boolean;
 		public var httpClient:HttpClient;
+		public var headers:Array = [{ name: "Connection", value: "Keep-Alive" }];
 		private var listener:HttpListener;
 		private var _url:String;
 		private var timeout:Number;
@@ -27,15 +28,19 @@ package com.pubnub.loader {
 		private function init():void {
 			var uri:URI = new URI(_url);
 			httpClient = new HttpClient(null, timeout);
+			
 			listener = new HttpListener();
 			listener.addEventListener(HttpDataEvent.DATA, onHttpData);
 			listener.addEventListener(HttpErrorEvent.ERROR, onHttpDataError);
 			listener.addEventListener(HttpErrorEvent.TIMEOUT_ERROR, onHttpDataError);
+			
+			//httpHeader = new HttpHeader(
 		}
 		
 		public function load(url:String):void {
 			this._url = url;
-			httpClient.get(new URI(url), listener);
+			httpClient.get(new URI(url), listener, headers);
+			//httpClient.get(new URI(url), listener);
 		}
 		
 		private function onHttpDataError(e:HttpErrorEvent):void {
