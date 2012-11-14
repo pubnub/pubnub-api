@@ -14,7 +14,7 @@ namespace PubNub_Messaging
                     "demo",
                     "",
                     "",
-                    false);
+                    true);
 
         static public bool deliveryStatus = false;
         static public string channel = "";

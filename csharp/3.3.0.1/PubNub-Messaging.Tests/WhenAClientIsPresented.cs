@@ -7,6 +7,9 @@ using System.ComponentModel;
 using System.Threading;
 using System.Web.Script.Serialization;
 using System.Collections;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace PubNub_Messaging.Tests
 {
@@ -49,9 +52,8 @@ namespace PubNub_Messaging.Tests
             {
                 if (!string.IsNullOrWhiteSpace(receivedMessage))
                 {
-                    JavaScriptSerializer js = new JavaScriptSerializer();
-                    IList receivedObj = (IList)js.DeserializeObject(receivedMessage);
-                    var dic = (IDictionary<string, object>)((object[])receivedObj[0])[0];
+                    object[] receivedObj = JsonConvert.DeserializeObject<object[]>(receivedMessage);
+                    JContainer dic = receivedObj[0] as JContainer;
                     var uuid = dic["uuid"].ToString();
                     if (uuid != null)
                     {
@@ -65,6 +67,8 @@ namespace PubNub_Messaging.Tests
                 manualEvent2.Set();
             }
         }
+
+
 
         [TestMethod]
         public void IfHereNowIsCalledThenItShouldReturnInfo()
