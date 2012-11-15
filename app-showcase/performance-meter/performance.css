@@ -77,7 +77,6 @@ body, div, img {
     font-size: 22px;
     font-weight: 800;
     border-radius: 3px;
-    background: #ebe7d5;
 }
 #performance-medians {
     margin-top: 10px;
@@ -127,6 +126,6 @@ body, div, img {
     border-top: 1px solid rgba(0,0,0,0.1);
     border-bottom: 1px solid rgba(0,0,0,0.1);
     width: 640px;
-    height: 100px;
+    height: 50px;
 }
 

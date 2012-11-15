@@ -161,11 +161,11 @@ var set_rps = (function() {
 // ----------------------------------------------------------------------
 var draw_graph = (function(){
     var graph    = PUBNUB.$('performance-graph').getContext("2d")
-    ,   height   = 100
+    ,   height   = 50
     ,   barwidth = 35
     ,   bargap   = 5
     ,   modrend  = 2
-    ,   barscale = 3
+    ,   barscale = 2
     ,   position = 0
     ,   bgcolor  = "#80cae8"
     ,   fgcolor  = "#f2efe3";
@@ -174,6 +174,9 @@ var draw_graph = (function(){
     var gradient = graph.createLinearGradient( 0, 0, 0, height * 1.2 );
     gradient.addColorStop( 0, fgcolor );
     gradient.addColorStop( 1, bgcolor );
+
+    graph.font        = "11px Helvetica";
+    graph.strokeStyle = '#444';
 
     return function(values) {
         // Rate Limit Canvas Painting
@@ -186,19 +189,23 @@ var draw_graph = (function(){
         graph.fillRect( 0, 0, 640, height );
 
         // Dynamic Bargraph Display
-        barscale = (+median_display['5']) / (+median_display['95']);
+        barscale = (+median_display['98']) / (+median_display['5']) * 0.5;
 
         // Lines
         graph.fillStyle = gradient;
         PUBNUB.each( median_display, function( key, latency ) {
-            latency = latency / barscale;
-            latency = latency > height ? height : latency;
+            var height_mod = latency / barscale;
+            height_mod = height_mod > height ? height : height_mod;
 
-            graph.fillRect(
-                position * (barwidth + bargap) + (bargap / 2),
-                height - latency,
-                barwidth,
-                height
+            var left = position * (barwidth + bargap) + (bargap / 2)
+            ,   top  = height - height_mod;
+
+            // Draw Bar
+            graph.fillRect( left, top, barwidth, height );
+            graph.strokeText(
+                Math.floor(latency),
+                left + (barwidth - (""+latency).length * 6) / 2,
+                (top < 15 ? 15 : top) - 4
             );
 
             position++;
