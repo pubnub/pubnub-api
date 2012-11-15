@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.sample.pubnubunittest.unittest.CL_155;
 import com.sample.pubnubunittest.unittest.CL_165;
 import com.sample.pubnubunittest.unittest.CL_216;
+import com.sample.pubnubunittest.unittest.CL_259;
 
 public class ItemDetailFragment extends Fragment {
 
@@ -80,6 +81,14 @@ public class ItemDetailFragment extends Fragment {
 			case 2:
 				CL_165 cl165= new CL_165();
 				cl165.RunUnitTest(handler);
+				break;
+			case 3:
+				CL_216 cl216= new CL_216();
+				cl216.RunUnitTest(handler);
+				break;
+			case 4:
+				CL_259 cl259= new CL_259();
+				cl259.RunUnitTest(handler);
 				break;
 			default:
 				break;
