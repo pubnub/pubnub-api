@@ -13,7 +13,6 @@ E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.UnitTest\Bin\Debu
 E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.UnitTest\obj\Debug\PubnubSilverlight.UnitTest.dll
 E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.UnitTest\obj\Debug\PubnubSilverlight.UnitTest.pdb
 E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.UnitTest\obj\Debug\XapCacheFile.xml
-C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\obj\Debug\PubnubSilverlight.UnitTest.csprojResolveAssemblyReference.cache
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.UnitTest.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.UnitTest.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\AppManifest.xaml
@@ -26,6 +25,7 @@ C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.U
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.Imports.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.Core.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.Imports.pdb
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\obj\Debug\PubnubSilverlight.UnitTest.csprojResolveAssemblyReference.cache
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\obj\Debug\PubnubSilverlight.UnitTest.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\obj\Debug\PubnubSilverlight.UnitTest.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\obj\Debug\XapCacheFile.xml

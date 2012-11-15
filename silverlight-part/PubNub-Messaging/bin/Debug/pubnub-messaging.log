@@ -1196,3 +1196,909 @@ DateTime: 11/4/2012 9:03:16 PM, **OnPubnubHeartBeatTimeoutCallback**
 DateTime 11/4/2012 9:03:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
 DateTime 11/4/2012 9:03:16 PM IP Address = 192.168.1.9
 DateTime 11/4/2012 9:03:16 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:43:22 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/11/2012 6:43:22 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:43:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:43:22 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:43:23 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:43:32 PM, requested subscribe for channel=testX
+DateTime 11/11/2012 6:43:32 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:43:32 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:43:33 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:43:34 PM, Request=http://pubsub.pubnub.com/subscribe/demo/testX/0/0?uuid=bde5c56b-a386-4341-8523-34fc635fc0c7
+DateTime 11/11/2012 6:43:34 PM, JSON for channel=testX (Subscribe) =[[],"13526522092778595"]
+DateTime 11/11/2012 6:43:34 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:43:34 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:43:35 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:43:35 PM, Request=http://pubsub.pubnub.com/subscribe/demo/testX/0/13526522092778595?uuid=bde5c56b-a386-4341-8523-34fc635fc0c7
+DateTime 11/11/2012 6:43:38 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:43:38 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:43:38 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:43:40 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/testX/0/"hi"
+DateTime 11/11/2012 6:43:40 PM, JSON for channel=testX (Subscribe) =[["hi"],"13526522155729028"]
+DateTime 11/11/2012 6:43:40 PM, JSON for channel=testX (Publish) =[1,"Sent","13526522155729029"]
+DateTime 11/11/2012 6:43:41 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:43:41 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:43:41 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:43:42 PM, Request=http://pubsub.pubnub.com/subscribe/demo/testX/0/13526522155729028?uuid=bde5c56b-a386-4341-8523-34fc635fc0c7
+DateTime: 11/11/2012 6:43:55 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:43:56 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:43:56 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:43:56 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:44:10 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:44:11 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:44:11 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:44:11 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:44:14 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:44:14 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:44:14 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:44:16 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/testX/0/"hi2"
+DateTime 11/11/2012 6:44:16 PM, JSON for channel=testX (Subscribe) =[["hi2"],"13526522513863360"]
+DateTime 11/11/2012 6:44:16 PM, JSON for channel=testX (Publish) =[1,"Sent","13526522513863359"]
+DateTime 11/11/2012 6:44:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:44:16 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:44:17 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:44:17 PM, Request=http://pubsub.pubnub.com/subscribe/demo/testX/0/13526522513863360?uuid=bde5c56b-a386-4341-8523-34fc635fc0c7
+DateTime: 11/11/2012 6:44:31 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:44:31 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:44:31 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:44:32 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:44:50 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/11/2012 6:44:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:44:50 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:44:50 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:44:51 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:45:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:45:05 PM, requested subscribe for channel=t1
+DateTime 11/11/2012 6:45:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:06 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:06 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:06 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:06 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:07 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/0?uuid=9732fa44-286f-459c-bcfa-91840c84487f
+DateTime 11/11/2012 6:45:07 PM, JSON for channel=t1 (Subscribe) =[[],"13526523026990724"]
+DateTime 11/11/2012 6:45:08 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:08 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:08 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:09 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/13526523026990724?uuid=9732fa44-286f-459c-bcfa-91840c84487f
+DateTime 11/11/2012 6:45:11 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:11 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:11 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:13 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/t1/0/"hi"
+DateTime 11/11/2012 6:45:14 PM, JSON for channel=t1 (Publish) =[1,"Sent","13526523093035312"]
+DateTime 11/11/2012 6:45:14 PM, JSON for channel=t1 (Subscribe) =[["hi"],"13526523093035312"]
+DateTime 11/11/2012 6:45:14 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:14 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:14 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:15 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/13526523093035312?uuid=9732fa44-286f-459c-bcfa-91840c84487f
+DateTime 11/11/2012 6:45:28 PM, requested presence for channel=t1-pnpres
+DateTime 11/11/2012 6:45:29 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:29 PM IP Address = 192.168.1.7
+DateTime: 11/11/2012 6:45:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:45:29 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:29 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:29 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:29 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:31 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1-pnpres/0/0?uuid=9732fa44-286f-459c-bcfa-91840c84487f
+DateTime 11/11/2012 6:45:31 PM, JSON for channel=t1-pnpres (Presence) =[[],"13526523032172704"]
+DateTime 11/11/2012 6:45:31 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:31 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:56:12 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/11/2012 6:56:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:56:13 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:56:13 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:56:13 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:56:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:56:28 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:56:28 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:56:28 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:56:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:56:43 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:56:43 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:56:43 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:56:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:56:58 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:56:58 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:56:58 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:57:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:57:13 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:57:13 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:57:13 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:57:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:57:28 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:57:28 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:57:28 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:57:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:57:43 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:57:43 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:57:43 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:57:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:57:58 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:57:58 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:57:58 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:58:13 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:58:13 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:58:13 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:58:13 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:58:28 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:58:28 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:58:28 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:58:28 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:58:43 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:58:43 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:58:43 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:58:43 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:58:58 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:58:58 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:58:58 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:58:58 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/11/2012 6:59:13 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:59:13 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:59:13 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:59:13 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:59:18 PM, requested subscribe for channel=tt33
+DateTime 11/11/2012 6:59:19 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:59:19 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:59:19 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:09:21 PM, Initiated System Event - PowerModeChanged.
+DateTime: 11/15/2012 11:09:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:09:21 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:09:21 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:09:21 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:09:21 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:09:21 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:09:21 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:09:21 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:09:34 PM, requested subscribe for channel=y3
+DateTime 11/15/2012 11:09:35 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:09:35 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:09:35 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:09:35 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:09:35 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.143:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:09:35 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:09:35 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/15/2012 11:09:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:09:42 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:09:42 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:09:42 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:09:42 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:09:42 PM, Request=http://pubsub.pubnub.com/subscribe/demo/y3/0/0?uuid=90751b08-c40a-48e8-b7b5-23519680d28c
+DateTime 11/15/2012 11:09:43 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.64.49:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:09:43 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:09:43 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/15/2012 11:09:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:09:51 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:09:51 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:09:51 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:09:51 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:09:51 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:09:51 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:09:51 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:10:17 PM, JSON for channel=y3 (Subscribe) =[[],"13530138056815486"]
+DateTime: 11/15/2012 11:10:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:10:37 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:10:37 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:10:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:10:37 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:10:37 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:10:37 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:10:37 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:10:37 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:10:37 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:10:37 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:10:37 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:10:37 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:10:37 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:10:38 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:10:39 PM, Request=http://pubsub.pubnub.com/subscribe/demo/y3/0/13530138056815486?uuid=90751b08-c40a-48e8-b7b5-23519680d28c
+DateTime: 11/15/2012 11:10:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:10:52 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:10:52 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:10:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:10:52 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:10:52 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:10:52 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:10:52 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/15/2012 11:11:06 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:11:07 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:11:07 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:11:07 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:11:07 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:11:07 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.143:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:11:07 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:11:07 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/15/2012 11:11:21 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:11:22 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:11:22 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:11:22 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:11:22 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:11:22 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:11:22 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:11:22 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:11:35 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:11:35 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:11:35 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:11:35 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:11:35 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:11:35 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:11:35 PM, updateInternetStatus. Internet Available : True
+DateTime: 11/15/2012 11:11:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:11:44 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:11:44 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:11:44 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:11:44 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:11:51 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/y3/0/"hello"
+DateTime: 11/15/2012 11:11:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:11:51 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:11:51 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:11:51 PM, updateInternetStatus. Internet Available : False
+DateTime: 11/15/2012 11:11:52 PM, OnPubnubWebRequestTimeout: No network detected. Request aborted for channel = y3
+DateTime: 11/15/2012 11:11:53 PM, OnPubnubWebRequestTimeout: No network detected. Request aborted for channel = y3
+DateTime 11/15/2012 11:11:54 PM, WebException: The request was aborted: The request was canceled. for URL: http://pubsub.pubnub.com/publish/demo/demo/0/y3/0/"hello"
+DateTime 11/15/2012 11:11:54 PM, WebException: The request was aborted: The request was canceled. for URL: http://pubsub.pubnub.com/subscribe/demo/y3/0/13530138056815486?uuid=90751b08-c40a-48e8-b7b5-23519680d28c
+DateTime 11/15/2012 11:11:54 PM, JSON publish response=[0, "Network connnect error"]
+DateTime 11/15/2012 11:11:54 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:11:54 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:11:54 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:11:54 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:11:55 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.143:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:11:55 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:11:55 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:11:55 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:11:55 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:11:55 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:11:55 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:11:55 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.143:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:11:55 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:11:55 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:11:56 PM, Request=http://pubsub.pubnub.com/subscribe/demo/y3/0/13530138056815486?uuid=90751b08-c40a-48e8-b7b5-23519680d28c
+DateTime 11/15/2012 11:11:59 PM, JSON for channel=y3 (Subscribe) =[["hello"],"13530139128207744"]
+DateTime: 11/15/2012 11:13:07 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/15/2012 11:13:08 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:13:08 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:13:08 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:13:08 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:13:08 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:13:08 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:13:08 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:13:08 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:13:08 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.64.49:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:13:08 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:13:08 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:13:08 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:13:08 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:13:08 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:13:09 PM, Request=http://pubsub.pubnub.com/subscribe/demo/y3/0/13530139128207744?uuid=90751b08-c40a-48e8-b7b5-23519680d28c
+DateTime 11/15/2012 11:13:16 PM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/15/2012 11:13:16 PM IP Address = 192.168.173.1
+DateTime 11/15/2012 11:13:16 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/15/2012 11:13:16 PM IP Address = 192.168.1.6
+DateTime 11/15/2012 11:13:17 PM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.143:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/15/2012 11:13:17 PM, updateInternetStatus. Internet Available : False
+DateTime 11/15/2012 11:13:17 PM, updateInternetStatus. Internet Available : True
+DateTime 11/15/2012 11:13:18 PM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/y3/0/"fff"
+DateTime 11/15/2012 11:13:22 PM, JSON for channel=y3 (Publish) =[1,"Sent","13530140000245788"]
+DateTime 11/15/2012 11:13:28 PM, JSON for channel=y3 (Subscribe) =[["fff"],"13530140000245788"]
+DateTime: 11/15/2012 11:13:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/15/2012 11:14:00 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:15:03 AM, Initiated System Event - PowerModeChanged.
+DateTime: 11/16/2012 12:15:03 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:15:04 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:15:04 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:15:04 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:15:04 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:15:04 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.143:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:15:04 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:15:04 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:26:58 AM, Initiated System Event - PowerModeChanged.
+DateTime: 11/16/2012 12:26:58 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:26:58 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:26:58 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:26:58 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:26:58 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:26:58 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:26:58 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:26:59 AM, updateInternetStatus. Internet Available : True
+DateTime: 11/16/2012 12:27:13 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:27:13 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:27:13 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:27:13 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:27:13 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:27:13 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:27:13 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:27:13 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:27:21 AM, requested subscribe for channel=my_channelxxx
+DateTime 11/16/2012 12:27:22 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:27:22 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:27:22 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:27:22 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:27:22 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:27:22 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:27:22 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:27:23 AM, Request=http://pubsub.pubnub.com/subscribe/demo/my_channelxxx/0/0?uuid=bfa620b1-b0aa-4c90-9338-be6aa532e74b
+DateTime 11/16/2012 12:27:25 AM, JSON for channel=my_channelxxx (Subscribe) =[[],"13530184468171583"]
+DateTime 11/16/2012 12:27:26 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:27:26 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:27:26 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:27:26 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:27:26 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:27:26 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:27:26 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:27:27 AM, Request=http://pubsub.pubnub.com/subscribe/demo/my_channelxxx/0/13530184468171583?uuid=bfa620b1-b0aa-4c90-9338-be6aa532e74b
+DateTime 11/16/2012 12:27:30 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:27:30 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:27:30 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:27:30 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:27:30 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:27:30 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:27:30 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:27:32 AM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/my_channelxxx/0/"hello"
+DateTime 11/16/2012 12:27:32 AM, JSON for channel=my_channelxxx (Publish) =[1,"Sent","13530184537368339"]
+DateTime 11/16/2012 12:27:32 AM, JSON for channel=my_channelxxx (Subscribe) =[["hello"],"13530184537368340"]
+DateTime 11/16/2012 12:27:33 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:27:33 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:27:33 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:27:33 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:27:33 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:27:33 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:27:33 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:27:34 AM, Request=http://pubsub.pubnub.com/subscribe/demo/my_channelxxx/0/13530184537368340?uuid=bfa620b1-b0aa-4c90-9338-be6aa532e74b
+DateTime: 11/16/2012 12:27:47 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:27:48 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:27:48 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:27:48 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:27:48 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:27:48 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:27:48 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:27:48 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:27:57 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:27:57 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:27:57 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:27:57 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:27:57 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:27:57 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:27:57 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:27:59 AM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/my_channelxxx/0/"test!"
+DateTime 11/16/2012 12:27:59 AM, JSON for channel=my_channelxxx (Publish) =[1,"Sent","13530184803028731"]
+DateTime 11/16/2012 12:27:59 AM, JSON for channel=my_channelxxx (Subscribe) =[["test!"],"13530184803028732"]
+DateTime 11/16/2012 12:27:59 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:27:59 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:27:59 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:27:59 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:27:59 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:27:59 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:28:00 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:28:00 AM, Request=http://pubsub.pubnub.com/subscribe/demo/my_channelxxx/0/13530184803028732?uuid=bfa620b1-b0aa-4c90-9338-be6aa532e74b
+DateTime: 11/16/2012 12:28:14 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:28:14 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:28:14 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:28:14 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:28:14 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:28:14 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:28:14 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:28:15 AM, updateInternetStatus. Internet Available : True
+DateTime: 11/16/2012 12:28:29 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:28:29 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:28:29 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:28:29 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:28:29 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:28:29 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:28:29 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:28:30 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:28:43 AM, requested subscribe for channel=my_channelxxx
+DateTime 11/16/2012 12:28:43 AM, JSON subscribe response=[0, "Already subscribed"]
+DateTime: 11/16/2012 12:28:44 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:28:44 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:28:44 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:28:44 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:28:44 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:28:44 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:28:44 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:28:45 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:28:51 AM, Initiated System Event - PowerModeChanged.
+DateTime: 11/16/2012 12:28:51 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:28:51 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:28:51 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:28:51 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:28:51 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:28:51 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:28:51 AM, updateInternetStatus. Internet Available : False
+DateTime: 11/16/2012 12:28:53 AM, OnPubnubHeartBeatTimeoutCallback - No internet connection.
+DateTime 11/16/2012 12:28:54 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:28:59 AM, requested subscribe for channel=test
+DateTime 11/16/2012 12:29:00 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:29:00 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:29:00 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:29:00 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:29:00 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:29:00 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:29:00 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:29:01 AM, Request=http://pubsub.pubnub.com/subscribe/demo/test/0/0?uuid=8af21a7f-7746-4a08-b8ae-0decd9c4497f
+DateTime 11/16/2012 12:29:05 AM, JSON for channel=test (Subscribe) =[[],"13530185460392698"]
+DateTime 11/16/2012 12:29:05 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:29:05 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:29:05 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:29:05 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:29:05 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:29:05 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:29:05 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:29:06 AM, Request=http://pubsub.pubnub.com/subscribe/demo/test/0/13530185460392698?uuid=8af21a7f-7746-4a08-b8ae-0decd9c4497f
+DateTime 11/16/2012 12:29:10 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:29:10 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:29:10 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:29:10 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:29:10 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:29:10 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:29:10 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:29:12 AM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/test/0/"hello!"
+DateTime 11/16/2012 12:29:12 AM, JSON for channel=test (Subscribe) =[["hello!"],"13530185537240588"]
+DateTime 11/16/2012 12:29:12 AM, JSON for channel=test (Publish) =[1,"Sent","13530185537240588"]
+DateTime 11/16/2012 12:29:13 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:29:13 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:29:13 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:29:13 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:29:13 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:29:13 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:29:13 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:29:14 AM, Request=http://pubsub.pubnub.com/subscribe/demo/test/0/13530185537240588?uuid=8af21a7f-7746-4a08-b8ae-0decd9c4497f
+DateTime: 11/16/2012 12:29:27 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:29:28 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:29:28 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:29:28 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:29:28 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:29:28 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:29:28 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:29:28 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:29:32 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:29:32 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:29:32 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:29:32 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:29:32 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:29:32 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:29:32 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:29:34 AM, Request=http://pubsub.pubnub.com/publish/demo/demo/0/test/0/"test2"
+DateTime 11/16/2012 12:29:34 AM, JSON for channel=test (Subscribe) =[["test2"],"13530185756554080"]
+DateTime 11/16/2012 12:29:34 AM, JSON for channel=test (Publish) =[1,"Sent","13530185756554081"]
+DateTime 11/16/2012 12:29:35 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:29:35 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:29:35 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:29:35 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:29:35 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:29:35 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:29:35 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:29:36 AM, Request=http://pubsub.pubnub.com/subscribe/demo/test/0/13530185756554080?uuid=8af21a7f-7746-4a08-b8ae-0decd9c4497f
+DateTime: 11/16/2012 12:29:49 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:29:50 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:29:50 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:29:50 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:29:50 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:29:50 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:29:50 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:29:50 AM, updateInternetStatus. Internet Available : True
+DateTime: 11/16/2012 12:30:04 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:30:05 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:30:05 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:30:05 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:30:05 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:30:05 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:30:05 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:30:05 AM, updateInternetStatus. Internet Available : True
+DateTime: 11/16/2012 12:30:19 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:30:20 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:30:20 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:30:20 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:30:20 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:30:20 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:30:20 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:30:20 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:30:33 AM, Initiated System Event - PowerModeChanged.
+DateTime: 11/16/2012 12:30:33 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:30:34 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:30:34 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:30:34 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:30:34 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:30:34 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:30:34 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:30:34 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:30:38 AM, Initiated System Event - PowerModeChanged.
+DateTime: 11/16/2012 12:30:38 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:30:38 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:30:38 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:30:38 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:30:38 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:30:38 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:30:38 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:30:38 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:30:45 AM, requested subscribe for channel=test
+DateTime 11/16/2012 12:30:46 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:30:46 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:30:46 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:30:46 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:30:46 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:30:46 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:30:46 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:30:47 AM, Request=http://pizza.pubnub.com/subscribe/demo/test/0/0?uuid=0751f7d3-953b-4af7-9005-3fe07bd2eacc
+DateTime: 11/16/2012 12:30:53 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:30:53 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:30:53 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:30:53 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:30:53 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:30:53 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.143:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:30:53 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:30:54 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:31:10 AM, Initiated System Event - PowerModeChanged.
+DateTime: 11/16/2012 12:31:10 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:31:10 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:31:10 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:31:10 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:31:10 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:31:10 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.64.49:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:31:10 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:31:11 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:31:22 AM, requested subscribe for channel=test
+DateTime 11/16/2012 12:31:23 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:31:23 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:31:23 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:31:23 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:31:23 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.64.49:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:31:23 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:31:23 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:31:24 AM, Request=http://pizza.pubnub.com/subscribe/demo/test/0/0?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime: 11/16/2012 12:31:25 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:31:26 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:31:26 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:31:26 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:31:26 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:31:26 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.64.49:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:31:26 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:31:26 AM, updateInternetStatus. Internet Available : True
+DateTime: 11/16/2012 12:31:40 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:31:41 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:31:41 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:31:41 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:31:41 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:31:41 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.64.49:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:31:41 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:31:41 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:31:45 AM, JSON for channel=test (Subscribe) =[[],"13530187064581375"]
+DateTime 11/16/2012 12:31:46 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:31:46 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:31:46 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:31:46 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:31:46 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.64.49:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:31:46 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:31:46 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:31:47 AM, Request=http://pizza.pubnub.com/subscribe/demo/test/0/13530187064581375?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime: 11/16/2012 12:32:00 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:32:01 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:01 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:01 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:01 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:01 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:01 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:01 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:01 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:01 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:01 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:01 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:01 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:01 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:01 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:03 AM, Request=http://pizza.pubnub.com/publish/demo/demo/0/test/0/"works"
+DateTime 11/16/2012 12:32:03 AM, JSON for channel=test (Publish) =[1,"Sent","13530187246190659"]
+DateTime 11/16/2012 12:32:03 AM, JSON for channel=test (Subscribe) =[["works"],"13530187246190660"]
+DateTime 11/16/2012 12:32:04 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:04 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:04 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:04 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:04 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:04 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:04 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:05 AM, Request=http://pizza.pubnub.com/subscribe/demo/test/0/13530187246190660?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime 11/16/2012 12:32:14 AM, JSON for channel=test (Subscribe) =[["yep"],"13530187350583590"]
+DateTime 11/16/2012 12:32:15 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:15 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:15 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:15 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:15 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:15 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:15 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:16 AM, Request=http://pizza.pubnub.com/subscribe/demo/test/0/13530187350583590?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime 11/16/2012 12:32:22 AM, requested presence for channel=test-pnpres
+DateTime 11/16/2012 12:32:23 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:23 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:23 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:23 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:23 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:23 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:23 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:25 AM, Request=http://pizza.pubnub.com/subscribe/demo/test-pnpres/0/0?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime 11/16/2012 12:32:25 AM, JSON for channel=test-pnpres (Presence) =[[],"13530187466099017"]
+DateTime 11/16/2012 12:32:26 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:26 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:26 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:26 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:26 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:26 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:26 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:28 AM, Request=http://pizza.pubnub.com/subscribe/demo/test-pnpres/0/13530187466099017?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime 11/16/2012 12:32:35 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:35 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:35 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:35 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:35 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:35 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:35 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:37 AM, Request=http://pizza.pubnub.com/v2/history/sub-key/demo/channel/test?count=100
+DateTime: 11/16/2012 12:32:40 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:32:41 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:41 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:41 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:41 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:41 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:41 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:41 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:45 AM, WebException: The remote server returned an error: (502) Bad Gateway. for URL: http://pizza.pubnub.com/subscribe/demo/test-pnpres/0/13530187466099017?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime 11/16/2012 12:32:45 AM, WebException: The remote server returned an error: (502) Bad Gateway. for URL: http://pizza.pubnub.com/subscribe/demo/test/0/13530187350583590?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime 11/16/2012 12:32:46 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:46 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:46 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:46 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:46 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:46 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:46 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:46 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:46 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:46 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:46 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:46 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:46 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:46 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:47 AM, Request=http://pizza.pubnub.com/subscribe/demo/test/0/13530187350583590?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime 11/16/2012 12:32:48 AM, Request=http://pizza.pubnub.com/subscribe/demo/test-pnpres/0/13530187466099017?uuid=9b17608e-4467-4ade-8200-44c7d1ca33b3
+DateTime 11/16/2012 12:32:52 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:52 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:52 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:52 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:52 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:52 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:52 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:32:54 AM, Request=http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/test
+DateTime: 11/16/2012 12:32:55 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:32:56 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:32:56 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:32:56 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:32:56 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:32:56 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.255:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:32:56 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:32:56 AM, updateInternetStatus. Internet Available : True
+DateTime: 11/16/2012 12:33:10 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:33:11 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:33:11 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:33:11 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:33:11 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:33:11 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:33:11 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:33:11 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:33:14 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:33:14 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:33:14 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:33:14 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:33:14 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:33:14 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:33:14 AM, updateInternetStatus. Internet Available : True
+DateTime 11/16/2012 12:33:16 AM, Request=http://pizza.pubnub.com/time/0
+DateTime 11/16/2012 12:33:17 AM, WebException: The remote server returned an error: (504) Gateway Timeout. for URL: http://pizza.pubnub.com/v2/history/sub-key/demo/channel/test?count=100
+DateTime 11/16/2012 12:33:17 AM, JSON detailedHistoryExceptionHandler response=[0, "Network connnect error"]
+DateTime: 11/16/2012 12:33:25 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:33:26 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:33:26 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:33:26 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:33:26 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:33:26 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.95.244:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:33:26 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:33:26 AM, updateInternetStatus. Internet Available : True
+DateTime: 11/16/2012 12:33:40 AM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/16/2012 12:33:41 AM Network Interface = Microsoft Virtual WiFi Miniport Adapter
+DateTime 11/16/2012 12:33:41 AM IP Address = 192.168.173.1
+DateTime 11/16/2012 12:33:41 AM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/16/2012 12:33:41 AM IP Address = 192.168.1.6
+DateTime 11/16/2012 12:33:41 AM checkSocketConnect Error. System.Net.Sockets.SocketException (0x80004005): A socket operation was attempted to an unreachable network 54.247.64.49:80
+   at System.Net.Sockets.Socket.Connect(IPAddress[] addresses, Int32 port)
+   at System.Net.Sockets.Socket.Connect(String host, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2628
+DateTime 11/16/2012 12:33:41 AM, updateInternetStatus. Internet Available : False
+DateTime 11/16/2012 12:33:41 AM, updateInternetStatus. Internet Available : True

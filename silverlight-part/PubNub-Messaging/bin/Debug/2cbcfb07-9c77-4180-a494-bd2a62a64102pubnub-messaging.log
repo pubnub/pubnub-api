@@ -1,0 +1,24 @@
+DateTime: 11/11/2012 6:44:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:44:52 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/11/2012 6:44:52 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:44:52 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:44:52 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:04 PM, requested subscribe for channel=t1
+DateTime 11/11/2012 6:45:04 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:04 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:05 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:05 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/0?uuid=32832909-b71e-4838-a036-79b88f7caf7b
+DateTime 11/11/2012 6:45:06 PM, JSON for channel=t1 (Subscribe) =[[],"13526523011697589"]
+DateTime 11/11/2012 6:45:06 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:06 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:06 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:07 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/13526523011697589?uuid=32832909-b71e-4838-a036-79b88f7caf7b
+DateTime 11/11/2012 6:45:14 PM, JSON for channel=t1 (Subscribe) =[["hi"],"13526523093035312"]
+DateTime 11/11/2012 6:45:14 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:14 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:14 PM, updateInternetStatus. Internet Available : True
+DateTime 11/11/2012 6:45:15 PM, Request=http://pubsub.pubnub.com/subscribe/demo/t1/0/13526523093035312?uuid=32832909-b71e-4838-a036-79b88f7caf7b
+DateTime: 11/11/2012 6:45:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/11/2012 6:45:29 PM Network Interface = 2x2 11a/b/g/n Wireless LAN PCI Express Half Mini Card Adapter
+DateTime 11/11/2012 6:45:29 PM IP Address = 192.168.1.7
+DateTime 11/11/2012 6:45:29 PM, updateInternetStatus. Internet Available : True

@@ -100,10 +100,9 @@ namespace PubnubSilverlight.Example.Views
         }
 
 
-    
 
 
-
+        
 
         private static void DisplayReturnMessage(object result)
         {
@@ -124,9 +123,9 @@ namespace PubnubSilverlight.Example.Views
 
         private static void ParseObject(object result, int loop)
         {
-            if (result is object[])
+            if (result is IList<object>)
             {
-                object[] arrResult = (object[])result;
+                IList<object> arrResult = (IList<object>)result;
                 foreach (object item in arrResult)
                 {
                     if (!item.GetType().IsGenericType)
@@ -152,7 +151,7 @@ namespace PubnubSilverlight.Example.Views
                 foreach (KeyValuePair<string, object> pair in itemList)
                 {
                     Console.WriteLine(string.Format("key = {0}", pair.Key));
-                    if (pair.Value is object[])
+                    if (pair.Value is IList<object>)
                     {
                         Console.WriteLine("value = ");
                         ParseObject(pair.Value, loop);

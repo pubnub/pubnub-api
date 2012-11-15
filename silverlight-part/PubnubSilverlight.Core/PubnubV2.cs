@@ -73,7 +73,8 @@ namespace PubnubSilverlight.Core
         private List<object> _Time = new List<object>();
 
         // Pubnub Core API implementation
-        private string ORIGIN = "pubsub.pubnub.com";
+        //private string ORIGIN = "pubsub.pubnub.com";
+        private string ORIGIN = "pizza.pubnub.com";
         private int LIMIT = 1800; // Temporary setup, remove limit as server will handle this.
         private string PUBLISH_KEY = "";
         private string SUBSCRIBE_KEY = "";
@@ -792,22 +793,22 @@ namespace PubnubSilverlight.Core
             ClientNetworkStatus.checkInternetStatus(_pubnetSystemActive, updateInternetStatus);
             Thread.Sleep(1000);
 
-            if (!_pubnetInternetStatus && _pubnetSystemActive)
-            {
-                //if (appSwitch.TraceInfo) *Changed*
-                //{
-                //    Debug.WriteLine(string.Format("DateTime {0}, Subscribe - No internet connection for {1}", DateTime.Now.ToString(), channel));
-                //}
+            //if (!_pubnetInternetStatus && _pubnetSystemActive) *Changed!!!*
+            //{
+            //    //if (appSwitch.TraceInfo) *Changed*
+            //    //{
+            //    //    Debug.WriteLine(string.Format("DateTime {0}, Subscribe - No internet connection for {1}", DateTime.Now.ToString(), channel));
+            //    //}
 
-                ReconnectState netState = new ReconnectState();
-                netState.channel = channel;
-                netState.type = ResponseType.Subscribe;
-                netState.callback = usercallback;
-                netState.timetoken = timetoken;
+            //    ReconnectState netState = new ReconnectState();
+            //    netState.channel = channel;
+            //    netState.type = ResponseType.Subscribe;
+            //    netState.callback = usercallback;
+            //    netState.timetoken = timetoken;
 
-                reconnectNetwork(netState);
-                return;
-            }
+            //    reconnectNetwork(netState);
+            //    return;
+            //}
 
 
             // Begin recursive subscribe
@@ -1185,12 +1186,13 @@ namespace PubnubSilverlight.Core
             //ulong flags = (ulong)flagsFieldInfo.GetValue(requestUri);
             //flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
             //flagsFieldInfo.SetValue(requestUri, flags);
-
-
+           
+           
             try
             {
                 // Create Request
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUri);
+               
                 //request.Timeout = PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000; *Changed*
 
                 //
@@ -1208,7 +1210,7 @@ namespace PubnubSilverlight.Core
                 //{
                 //    Debug.WriteLine(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()));
                 //}
-
+                
                 RequestState pubnubRequestState = new RequestState();
                 pubnubRequestState.request = request;
                 pubnubRequestState.channel = channelName;
@@ -1217,8 +1219,21 @@ namespace PubnubSilverlight.Core
                 {
                     _channelRequest.AddOrUpdate(channelName, pubnubRequestState, (key, oldState) => pubnubRequestState);
                 }
-                
+
+                try
+                {
+                    //Request(request.RequestUri.ToString());
+                }
+                catch (Exception)
+                {
+                    
+                    throw;
+                }
+
+
                 // Make request with the following inline Asynchronous callback
+                #region a
+
                 IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback((asynchronousResult) =>
                 {
                     try
@@ -1231,7 +1246,7 @@ namespace PubnubSilverlight.Core
                             using (HttpWebResponse aResponse = (HttpWebResponse)aRequest.EndGetResponse(asynchronousResult))
                             {
                                 pubnubRequestState.response = aResponse;
-                            
+
                                 using (StreamReader streamReader = new StreamReader(aResponse.GetResponseStream()))
                                 {
                                     // Deserialize the result
@@ -1348,8 +1363,10 @@ namespace PubnubSilverlight.Core
                         }
                     }
 
-                }), pubnubRequestState);
+                }),pubnubRequestState);
 
+                #endregion
+                
                 //ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
 
                 return true;
@@ -1363,7 +1380,6 @@ namespace PubnubSilverlight.Core
                 return false;
             }
         }
-
         /* COPY OF _request method END  */
 
         private void responseToUserCallback(List<object> result, ResponseType type, string channelName, Action<object> usercallback)
@@ -1371,16 +1387,18 @@ namespace PubnubSilverlight.Core
             switch (type)
             {
                 case ResponseType.Subscribe:
-                    object[] msgs = result[0] as object[];
-                    if (msgs != null && msgs.Length > 0 && _channelSubscription.ContainsKey(channelName))
+                    //*Changed*
+                    IList msgs = result[0] as IList;
+                    if (msgs != null && msgs.Count > 0 && _channelSubscription.ContainsKey(channelName))
                     {
                         usercallback(result.AsReadOnly());
                         removeChannelRequest(channelName);
                     }
                     break;
                 case ResponseType.Presence:
-                    object[] msgp = result[0] as object[];
-                    if (msgp != null && msgp.Length > 0 && _channelPresence.ContainsKey(channelName))
+                    //*Changed*
+                    IList msgp = result[0] as IList;
+                    if (msgp != null && msgp.Count > 0 && _channelPresence.ContainsKey(channelName))
                     {
                         List<object> dupResult = result.GetRange(0, result.Count);
                         dupResult[2] = ((string)dupResult[2]).Replace("-pnpres", "");

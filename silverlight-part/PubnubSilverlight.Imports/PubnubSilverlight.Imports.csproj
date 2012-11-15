@@ -47,6 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
@@ -55,6 +56,7 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayList.cs" />
     <Compile Include="AtlasWeb.cs" />
     <Compile Include="HttpEncoder.cs" />
     <Compile Include="ScriptIgnoreAttribute.cs" />

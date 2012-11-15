@@ -72,7 +72,7 @@ namespace PubNub_Messaging
         private List<object> _Time = new List<object>();
 
         // Pubnub Core API implementation
-        private string ORIGIN = "pubsub.pubnub.com";
+        private string ORIGIN = "pizza.pubnub.com";
         private int LIMIT = 1800; // Temporary setup, remove limit as server will handle this.
         private string PUBLISH_KEY = "";
         private string SUBSCRIBE_KEY = "";
@@ -797,13 +797,13 @@ namespace PubNub_Messaging
                 {
                     Trace.WriteLine(string.Format("DateTime {0}, Subscribe - No internet connection for {1}", DateTime.Now.ToString(), channel));
                 }
-
+            
                 ReconnectState netState = new ReconnectState();
                 netState.channel = channel;
                 netState.type = ResponseType.Subscribe;
                 netState.callback = usercallback;
                 netState.timetoken = timetoken;
-
+             
                 reconnectNetwork(netState);
                 return;
             }
