@@ -6,9 +6,9 @@
 	<property name="source" value="1.5" />
 	<path id="pubnub.classpath">
 		<pathelement location="bin" />
-		<pathelement location="lib/json-20090211.jar" />
 		<pathelement location="lib/async-http-client-1.6.5-shaded.jar" />
 		<pathelement location="lib/junit.jar" />
+		<pathelement location="lib/json.jar" />
 		<pathelement location="lib/slf4j-nop-1.6.2.jar" />
 	</path>
 	<target name="init">
@@ -66,7 +66,7 @@
 				<attribute name="Company" value="Pubnub" />
 				<attribute name="Project" value="pubnub-api" />
 				<attribute name="Java-Version" value="${java.version}" />
-				<attribute name="Rsrc-Class-Path" value="./ org.hamcrest.core_1.1.0.v20090501071000.jar slf4j-nop-1.6.2.jar async-http-client-1.6.5-shaded.jar junit.jar" />
+				<attribute name="Rsrc-Class-Path" value="./ org.hamcrest.core_1.1.0.v20090501071000.jar slf4j-nop-1.6.2.jar async-http-client-1.6.5-shaded.jar junit.jar json.jar" />
 				<attribute name="Class-Path" value="." />
 				<attribute name="Rsrc-Main-Class" value="@{jar.classname}" />
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
