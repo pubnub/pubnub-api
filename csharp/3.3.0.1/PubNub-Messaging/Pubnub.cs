@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if (!__MonoCS__)
+#define TRACE
+#endif
+
+using System;
 using System.IO;
 using System.Text;
 using System.Net;
@@ -15,7 +19,6 @@ using System.Net.Sockets;
 using System.Configuration;
 using Microsoft.Win32;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -75,7 +78,6 @@ namespace PubNub_Messaging
 
         // Pubnub Core API implementation
         private string ORIGIN = "pubsub.pubnub.com";
-        private int LIMIT = 1800; // Temporary setup, remove limit as server will handle this.
         private string PUBLISH_KEY = "";
         private string SUBSCRIBE_KEY = "";
         private string SECRET_KEY = "";
@@ -1223,22 +1225,16 @@ namespace PubNub_Messaging
             if (type == ResponseType.DetailedHistory)
                 url.Append(parameters);
 
-            // Temporary fail if string too long
-            if (url.Length > this.LIMIT)
-            {
-                result.Add(0);
-                result.Add("Message Too Long.");
-                // return result;
-            }
-
             Uri requestUri = new Uri(url.ToString());
 
+            #if (!__MonoCS__)
             // Force canonical path and query
             string paq = requestUri.PathAndQuery;
             FieldInfo flagsFieldInfo = typeof(Uri).GetField("m_Flags", BindingFlags.Instance | BindingFlags.NonPublic);
             ulong flags = (ulong)flagsFieldInfo.GetValue(requestUri);
             flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
             flagsFieldInfo.SetValue(requestUri, flags);
+            #endif
 
             // Create Request
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUri);
@@ -1301,13 +1297,6 @@ namespace PubNub_Messaging
             if (type == ResponseType.DetailedHistory)
                 url.Append(parameters);
 
-            // Temporary fail if string too long
-            if (url.Length > this.LIMIT)
-            {
-                result.Add(0);
-                result.Add("Message Too Long.");
-                // return result;
-            }
 
             Uri requestUri = new Uri(url.ToString());
 
@@ -2827,6 +2816,42 @@ namespace PubNub_Messaging
 
         private static void checkClientNetworkAvailability(Action<bool> callback)
         {
+            #if (__MonoCS__)
+            bool connected = false;
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                Ping netMon = new Ping();
+
+                try
+                {
+                    PingReply response = netMon.Send("pubsub.pubnub.com");
+                    if (response != null)
+                    {
+                        if (appSwitch.TraceError)
+                        {
+                            Trace.WriteLine(response.RoundtripTime);
+                            Trace.WriteLine(response.Status);
+                        }
+                        if(response.Status == IPStatus.Success)
+                        {
+                            connected = true;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (appSwitch.TraceError)
+                    {
+                        Trace.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), ex.ToString()));
+                    }
+                }
+                callback(connected);
+            }
+            else
+            {
+                callback(connected);
+            }
+            #else
             if (NetworkInterface.GetIsNetworkAvailable())
             {
                 NetworkInterface[] netInterfaces = NetworkInterface.GetAllNetworkInterfaces();
@@ -2860,6 +2885,7 @@ namespace PubNub_Messaging
             {
                 callback(false);
             }
+            #endif
         }
 
         private static void checkSocketConnect(object internetState)
