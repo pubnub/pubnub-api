@@ -2862,7 +2862,6 @@ namespace PubNub_Messaging
                     }
                 }
                 callback(connected);
-                //end changes for monomac
             }
             else
             {
