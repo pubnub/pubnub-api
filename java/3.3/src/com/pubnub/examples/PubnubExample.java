@@ -62,12 +62,20 @@ class Receiver implements Callback {
 }
 
 public class PubnubExample {
+	static String publish_key = "demo";
+	static String subscribe_key = "demo";
+	static String secret_key = "demo";
+	static String cipher_key = "enigma"; // (Cipher key is optional)
+	static String channel = "hello_world";
+	static Pubnub pubnub = null;
 
 	/**
 	 * @param params
 	 */
 	public static void main(String[] params) {
 
+		pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
+				cipher_key, true);
 		System.out.println("\nRunning publish()");
 		PublishExample();
 
@@ -92,16 +100,9 @@ public class PubnubExample {
 	}
 
 	private static void PublishExample() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = "enigma"; // (Cipher key is optional)
-		String channel = "hello_world";
 
 		int publish_message_count = 1;
 
-		Pubnub pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
-				cipher_key, true);
 		int count = 0;
 		while (true) {
 			if (count >= publish_message_count)
@@ -152,16 +153,7 @@ public class PubnubExample {
 	}
 
 	private static void HistoryExample() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = "enigma"; // (Cipher key is optional)
-		String channel = "hello_world";
 		int limit = 1;
-
-		Pubnub pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
-				cipher_key, true);
-
 
 		// Get History
 		JSONArray response = pubnub.history(channel, limit);
@@ -189,15 +181,8 @@ public class PubnubExample {
 	}
 
 	private static void DetailedHistoryExample() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = "enigma"; // (Cipher key is optional)
-		String channel = "hello_world";
 		int count = 1;
 
-		Pubnub pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
-				cipher_key, true);
 
 		// Get History
 		JSONArray response = pubnub.detailedHistory(channel, count);
@@ -225,29 +210,12 @@ public class PubnubExample {
 	}
 
 	private static void TimestampExample() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-
-		Pubnub pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
-				cipher_key, true);
 
 		// Print Server Time
 		System.out.println("Time: " + Double.toString(pubnub.time()));
 	}
 
 	private static void SubscribeExample() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		String channel = "hello_world";
-
-		Pubnub pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
-				cipher_key, true);
-
-
 
 		// Listen for Messages (Subscribe)
 		try {
@@ -259,14 +227,6 @@ public class PubnubExample {
 	}
 
 	private static void PresenceExample() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		String channel = "hello_world";
-
-		Pubnub pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
-				cipher_key, true);
 
 		// Listen for Messages (Presence)
 		try {
@@ -278,14 +238,6 @@ public class PubnubExample {
 	}
 
 	private static void HereNowExample() {
-		String publish_key = "demo";
-		String subscribe_key = "demo";
-		String secret_key = "demo";
-		String cipher_key = ""; // (Cipher key is optional)
-		String channel = "hello_world";
-
-		Pubnub pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
-				cipher_key, true);
 
 		// Get Here Now
 		JSONArray response = pubnub.here_now(channel);

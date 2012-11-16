@@ -48,6 +48,12 @@ public class Pubnub {
 	private boolean SSL = false;
 	private String sessionUUID = "";
 	private String parameters = "";
+    private AsyncHttpClient ahc = null;
+
+    protected void finalize() {
+        if (ahc)
+            ahc.close();
+    }
 
 	private class ChannelStatus {
 		String channel;
@@ -155,6 +161,9 @@ public class Pubnub {
 		} else {
 			this.ORIGIN = "http://" + this.ORIGIN;
 		}
+        Builder cb = new AsyncHttpClientConfig.Builder();
+        cb.setRequestTimeoutInMs(310000);
+        ahc = new AsyncHttpClient(cb.build());
 	}
 
 	/**
@@ -685,13 +694,7 @@ public class Pubnub {
 		if (request_for.equals("v2") && request_type.equals("history"))
 			url.append(parameters);
 
-		AsyncHttpClient ahc = null;
 		try {
-			// Prepare Asynchronous HTTP Request
-			Builder cb = new AsyncHttpClientConfig.Builder();
-			cb.setRequestTimeoutInMs(310000);
-			AsyncHttpClientConfig config = cb.build();
-			ahc = new AsyncHttpClient(config);
 			RequestBuilder rb = new RequestBuilder("GET");
 			rb.setUrl(url.toString());
 			rb.addHeader("V", "3.3");
@@ -740,7 +743,6 @@ public class Pubnub {
 						}
 					});
 			json = f.get();
-			ahc.close();
 
 		} catch (Exception e) {
 
@@ -760,9 +762,6 @@ public class Pubnub {
 				}
 			}
 
-			if (ahc != null) {
-				ahc.close();
-			}
 			return jsono;
 		}
 
