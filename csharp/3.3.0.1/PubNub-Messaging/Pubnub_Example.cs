@@ -9,12 +9,7 @@ namespace PubNub_Messaging
 {
     public class Pubnub_Example
     {
-        static public Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    "",
-                    true);
+        static public Pubnub pubnub;
 
         static public bool deliveryStatus = false;
         static public string channel = "";
@@ -34,6 +29,34 @@ namespace PubNub_Messaging
 
             Console.WriteLine(string.Format("Channel = {0}",channel));
             Console.WriteLine();
+
+            Console.WriteLine("Enable SSL? ENTER Y for Yes, else N");
+            string enableSSL = Console.ReadLine();
+            if (enableSSL.Trim().ToLower() == "y")
+            {
+                Console.WriteLine("SSL Enabled");
+            }
+            else
+            {
+                Console.WriteLine("SSL NOT Enabled");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("ENTER cipher key for encryption feature.");
+            Console.WriteLine("If you don't want to avail at this time, press ENTER.");
+            string cipheryKey = Console.ReadLine();
+            if (cipheryKey.Trim().Length > 0)
+            {
+                Console.WriteLine("Cipher key provided.");
+            }
+            else
+            {
+                Console.WriteLine("No Cipher key provided");
+            }
+            Console.WriteLine();
+
+            pubnub = new Pubnub("demo", "demo", "", cipheryKey,
+                (enableSSL.Trim().ToLower() == "y") ? true : false);
 
             Console.WriteLine("ENTER 1 FOR Subscribe");
             Console.WriteLine("ENTER 2 FOR Publish");

@@ -5,13 +5,9 @@ using System.Net;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.ComponentModel;
 using System.Reflection;
-using System.Web.Script.Serialization;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Net.NetworkInformation;
@@ -1315,8 +1311,8 @@ namespace PubNub_Messaging
 
             Uri requestUri = new Uri(url.ToString());
 
-            if ((type == ResponseType.Publish || type == ResponseType.Subscribe || type == ResponseType.Presence)
-                && (!IsRunningOnMono()))
+            #if (!__MonoCS__)
+            if ((type == ResponseType.Publish || type == ResponseType.Subscribe || type == ResponseType.Presence))
             {
                 // Force canonical path and query
                 string paq = requestUri.PathAndQuery;
@@ -1325,7 +1321,7 @@ namespace PubNub_Messaging
                 flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
                 flagsFieldInfo.SetValue(requestUri, flags);
             }
-
+            #endif
 
             try
             {
@@ -1360,7 +1356,9 @@ namespace PubNub_Messaging
                         (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? Timeout.Infinite : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000);
                 }
                 {
+                    #if (!__MonoCS__)
                     request.ServicePoint.SetTcpKeepAlive(true, PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000, 1000);
+                    #endif
                 }
 
                 if (appSwitch.TraceInfo)
@@ -1497,17 +1495,14 @@ namespace PubNub_Messaging
 
                 }), pubnubRequestState);
 
-                if (!IsRunningOnMono())
-                {
-                    ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
-                }
-                else
-                {
+                #if (__MonoCS__)
                     if (!asyncResult.AsyncWaitHandle.WaitOne(PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000))
                     {
                         OnPubnubWebRequestTimeout(pubnubRequestState, true);
                     }
-                }
+                #else
+                    ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
+                #endif
                 return true;
             }
             catch (System.Exception ex)
@@ -1965,12 +1960,7 @@ namespace PubNub_Messaging
         // Deserialize JSON string into List of Objects
         public static List<object> DeserializeToListOfObject(string jsonString)
         {
-            using (MemoryStream ms = new MemoryStream(Encoding.Unicode.GetBytes(jsonString)))
-            {
-                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<object>));
-
-                return (List<object>)serializer.ReadObject(ms);
-            }
+            return JsonConvert.DeserializeObject<List<object>>(jsonString);
         }
 
         private string _encodeURIcomponent(string s, ResponseType type)
@@ -2033,11 +2023,6 @@ namespace PubNub_Messaging
             double timestamp = unixNanoSecondTime / 10000000;
             DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp);
             return dt;
-        }
-
-        public static bool IsRunningOnMono()
-        {
-            return Type.GetType("Mono.Runtime") != null;
         }
     }
 
