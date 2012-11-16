@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
-               xmlns:s="library://ns.adobe.com/flex/spark"
-               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="400" minHeight="300" creationComplete="init(event)">
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:ns1="*"
+			   minWidth="400" minHeight="300" creationComplete="init(event)">
     <fx:Declarations>
         <!-- Place non-visual elements (e.g., services, value objects) here -->
     </fx:Declarations>
@@ -17,6 +19,7 @@
 			import flash.utils.getTimer;
 			import mx.binding.utils.*;
 			import mx.events.*;
+			import utils.Perfomance;
 			
         [Bindable]
         public var channel:String = 'my_channel';
@@ -40,8 +43,10 @@
         public var ssl:Boolean = true;
 
         private var consoleCounter:int = 1;
+        private var perfomance:Perfomance;
 		
-		protected function init(event:FlexEvent):void{
+		protected function init(event:FlexEvent):void {
+			perfomance = new Perfomance(perfomanceTestView.getChildAt(0));
 			BindingUtils.bindSetter(updateOrigin, this, "origin");
 		}
 			
@@ -65,10 +70,12 @@
         }
 		
         private function onInit(e:PnEvent):void {
+			//if (perfomance.isRun) return;
             callExternalInterface("console.log", ("Pn init : " + Pn.instance.sessionUUID));
         }
 
         private function onInitError(e:PnEvent):void {
+			//if (perfomance.isRun) return;
             callExternalInterface("console.log", ("onInitError"));
         }
 
@@ -85,7 +92,7 @@
         }
 
         private function onSubscribe(e:PnEvent):void {
-
+			//if (perfomance.isRun) return;
             switch (e.status) {
                 case OperationStatus.DATA:
                     callExternalInterface("console.log", ("Subscribe [DATA], channel : " + e.channel + ', result : ' + e.data.result));
@@ -123,6 +130,7 @@
         }
 
         private function onDetailedHistory(e:PnEvent):void {
+			//if (perfomance.isRun) return;
             switch (e.status) {
                 case OperationStatus.DATA:
                     var messages:Array = e.data as Array;
@@ -156,6 +164,7 @@
         }
 
         private function onPublish(e:PnEvent):void {
+			//if (perfomance.isRun) return;
 			trace('publish time : ' + (getTimer() - startPublishTime));
             switch (e.status) {
                 case OperationStatus.DATA:
@@ -176,6 +185,7 @@
 		}
 		
 		private function onPnTime(e:PnEvent):void {
+			//if (perfomance.isRun) return;
 			switch (e.status) {
                 case OperationStatus.DATA:
                     callExternalInterface("console.log", ("Time [DATA],  : result : " + e.data));
@@ -190,6 +200,14 @@
 		private function updateOrigin(value:String = null):void{
 			Pn.instance.origin = value;
 		}
+		
+		private function onStartPerfomanceTest(e:MouseEvent):void {
+			perfomance.start();
+		}
+		
+		private function onStopPerfomanceTest(e:MouseEvent):void {
+			perfomance.stop();
+		}
 			
 		]]>
 	</fx:Script>
@@ -202,7 +220,7 @@
     <s:TextInput id="channelTxt" x="68" y="34" width="246" text="@{channel}"/>
     <s:Label x="28" y="67" color="#4D4C4C" fontStyle="italic" text="Origin"/>
     <s:TextInput id="originTxt" x="68" y="63" width="246" text="@{origin}"/>
-    <mx:TabNavigator left="10" right="10" top="108" height="230">
+    <mx:TabNavigator left="10" right="10" top="108" bottom="140" selectedIndex="5">
         <s:NavigatorContent width="100%" height="100%" label="Init (1)">
             <s:Label x="16" y="30" color="#4D4C4C" fontStyle="italic" text="secret_key" textAlign="right"/>
             <s:TextInput id="secretKeyTxt" x="81" y="25" width="246" text="@{secret_key}"/>
@@ -253,13 +271,29 @@
         </s:NavigatorContent>
 		
 		<s:NavigatorContent width="100%" height="100%" label="Time (5)">
-            <s:Button id="timeBtn" x="74" y="39" label="Time"
+            <s:Button id="timeBtn" x="5" y="10" label="Time"
                       click="onTime(event)"/>
         </s:NavigatorContent>
+		
+		<s:NavigatorContent width="100%" height="100%" label="Perfomance Test (6)">
+            <s:Button x="10" y="0" label="Start"
+                      click="onStartPerfomanceTest(event)"/>
+			
+			<s:Button x="90" y="0" label="Stop"
+					  click="onStopPerfomanceTest(event)"/>
+			
+			
+			<s:Scroller x="10" y="30" width="100%" height="100%">
+				<s:VGroup width="100%" height="100%">
+					<ns1:PerfomanceTestView x="10" y="29" id="perfomanceTestView">
+					</ns1:PerfomanceTestView>
+				</s:VGroup>
+			</s:Scroller>
+        </s:NavigatorContent>
     </mx:TabNavigator>
-    <s:TextArea id="consoleArea" left="10" right="100" top="360" bottom="10"/>
-    <s:Button id="clearConsoleBtn" right="10" top="360" width="80" label="Clear"
-              click="OnClearConsoleBtnClick(event)"/>
+    <s:TextArea id="consoleArea" left="10" right="100" bottom="10" height="120"/>
+    <s:Button id="clearConsoleBtn" right="10" bottom="110" width="80" height="21" label="Clear"
+			  click="OnClearConsoleBtnClick(event)"/>
     <s:Label x="343" y="67" color="#4D4C4C" fontStyle="italic" text="sub_key" textAlign="right"/>
     <s:TextInput id="subKeyTxt" x="398" y="62" width="246" text="@{sub_key}"/>
     <s:Label x="324" y="38" color="#4D4C4C" fontStyle="italic" text="publish_key" textAlign="right"/>
