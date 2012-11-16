@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PubNubLib;
 
 namespace PubNub_Messaging
 {
     internal static class DetailedHistory_Example
     {
+        /*public static void Main()
+        {
+            DetailedHistoryCountDemo();
+            Console.ReadLine();
+        }*/
+
         internal static void DetailedHistoryCountDemo()
         {
             Pubnub pubnub = new Pubnub(

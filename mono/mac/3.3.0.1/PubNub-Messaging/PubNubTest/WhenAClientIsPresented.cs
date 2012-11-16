@@ -1,5 +1,5 @@
 using System;
-using PubNubLib;
+using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -25,6 +25,9 @@ namespace PubNubTest
             Common.deliveryStatus = false;
 
             pubnub.presence(channel, Common.DisplayReturnMessage);
+            //while (!Common.deliveryStatus) ;
+            Common.objResponse = null;
+            pubnub.subscribe(channel, Common.DisplayReturnMessage);
             while (!Common.deliveryStatus) ;
 
             string strResponse = "";
@@ -57,7 +60,7 @@ namespace PubNubTest
             string channel = "hello_world";
 
             Common.deliveryStatus = false;
-
+            Common.objResponse = null;
             pubnub.here_now(channel, Common.DisplayReturnMessage);
             while (!Common.deliveryStatus) ;
 
@@ -103,7 +106,7 @@ namespace PubNubTest
             string channel = "hello_world";
 
             Common.deliveryStatus = false;
-
+            Common.objResponse = null;
             pubnub.here_now(channel, Common.DisplayReturnMessage);
             while (!Common.deliveryStatus) ;
 

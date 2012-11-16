@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using PubNubLib;
 using System.Collections;
 
-namespace PubNubConsole
+namespace PubNub_Messaging
 {
     public class Pubnub_Example2
     {

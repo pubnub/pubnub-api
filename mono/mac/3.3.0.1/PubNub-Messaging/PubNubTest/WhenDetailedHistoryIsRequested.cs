@@ -1,5 +1,5 @@
 using System;
-using PubNubLib;
+using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -32,6 +32,7 @@ namespace PubNubTest
        ; 
 
      Common.deliveryStatus = false;
+     Common.objResponse = null;
      pubnub.detailedHistory(channel, 1, Common.DisplayReturnMessage);
      while (!Common.deliveryStatus)
        ;
@@ -52,13 +53,17 @@ namespace PubNubTest
             if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
                      Console.WriteLine("Resp:" + element.ToString());
                     }
+                }
+                else
+                {
+                    Assert.Fail("No response");
                 }
              }
         }
@@ -73,7 +78,7 @@ namespace PubNubTest
                 "",
                 "enigma",
                 false);
-          string channel = "testchannel";
+          string channel = "hello_world";
 
           //pubnub.CIPHER_KEY = "enigma";
           int total_msg = 10;
@@ -106,9 +111,10 @@ namespace PubNubTest
           long endtime = Common.Timestamp(pubnub);
 
           Common.deliveryStatus = false;
-
+          Common.objResponse = null;
           Console.WriteLine("DetailedHistory with start & end");
           pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
+
           while (!Common.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = true");
@@ -124,8 +130,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -136,11 +142,17 @@ namespace PubNubTest
                        j++;
                     }
                 }
+                else
+                {
+                    Assert.Fail("No response");
+                }
              }
           }  
           
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, Common.DisplayReturnMessage);
+
           while (!Common.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = false");
@@ -156,8 +168,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -168,12 +180,18 @@ namespace PubNubTest
                        j++;
                     }
                 }
+                else
+                {
+                    Assert.Fail("No response");
+                }
              }
           }  
 
           
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, Common.DisplayReturnMessage);
+
           while (!Common.deliveryStatus) ;
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
           strResponse = "";
@@ -188,8 +206,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -199,6 +217,10 @@ namespace PubNubTest
                           Assert.AreEqual(j.ToString(), strResponse);
                        j++;
                     }
+                }
+                else
+                {
+                    Assert.Fail("No response");
                 }
              }            
           }  
@@ -246,6 +268,7 @@ namespace PubNubTest
           while (!Common.deliveryStatus) ;
 
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, total_msg, Common.DisplayReturnMessage);
           Common.deliveryStatus = false;
           while (!Common.deliveryStatus) ;
@@ -264,8 +287,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -275,6 +298,10 @@ namespace PubNubTest
                           Assert.AreEqual(j.ToString(), strResponse);
                        j++;
                     }
+                }
+                else
+                {
+                    Assert.Fail("No response");
                 }
              }            
           }  
@@ -320,7 +347,7 @@ namespace PubNubTest
           while (!Common.deliveryStatus) ;
 
           
-
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, total_msg, Common.DisplayReturnMessage);
           Common.deliveryStatus = false;
           while (!Common.deliveryStatus) ;
@@ -337,8 +364,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -348,6 +375,10 @@ namespace PubNubTest
                           Assert.AreEqual(j.ToString(), strResponse);
                        j++;
                     }
+                }
+                else
+                {
+                    Assert.Fail("No response");
                 }
              }          
           }  
@@ -395,7 +426,7 @@ namespace PubNubTest
           long endtime = Common.Timestamp(pubnub);
 
           Common.deliveryStatus = false;
-
+          Common.objResponse = null;
           Console.WriteLine("DetailedHistory with start & end");
           pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
@@ -413,8 +444,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -425,10 +456,15 @@ namespace PubNubTest
                        j++;
                     }
                 }
+                else
+                {
+                    Assert.Fail("No response");
+                }
              }            
           }  
           
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
           
@@ -445,8 +481,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -457,11 +493,16 @@ namespace PubNubTest
                        j++;
                     }
                 }
+                else
+                {
+                    Assert.Fail("No response");
+                }
              }            
           }  
 
           
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
@@ -477,8 +518,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -488,6 +529,10 @@ namespace PubNubTest
                           Assert.AreEqual(j.ToString(), strResponse);
                        j++;
                     }
+                }
+                else
+                {
+                    Assert.Fail("No response");
                 }
              }           
           }  
@@ -506,10 +551,12 @@ namespace PubNubTest
           //pubnub.CIPHER_KEY = "";
           string msg = "Test Message";
           Common.deliveryStatus = false;
+
           pubnub.publish(channel, msg, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
  
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, 10, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
           Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
@@ -525,8 +572,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -534,6 +581,10 @@ namespace PubNubTest
                        Console.WriteLine(String.Format("resp:{0}", strResponse));
                        Assert.IsNotEmpty(strResponse);
                     }
+                }
+                else
+                {
+                    Assert.Fail("No response");
                 }
              }
           }  
@@ -557,6 +608,7 @@ namespace PubNubTest
           while (!Common.deliveryStatus) ;
 
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, 1, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
           Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
@@ -573,8 +625,15 @@ namespace PubNubTest
                 var myObjectArray = (from item in fields select item as object).ToArray();
                 
                 IList<object> myObjectList = myObjectArray[0] as IList<object>;
-                Console.WriteLine("myObjectList[0]: " + myObjectList[0]);
-                Assert.AreEqual(msg, myObjectList[0]);
+                if (fields [0] != null)
+                {
+                    Console.WriteLine("myObjectList[0]: " + myObjectList[0]);
+                    Assert.AreEqual(msg, myObjectList[0]);
+                }
+                else
+                {
+                    Assert.Fail("NULL response");
+                }
              }
           }  
        }
@@ -621,7 +680,7 @@ namespace PubNubTest
           long endtime = Common.Timestamp(pubnub);
 
           Common.deliveryStatus = false;
-
+          Common.objResponse = null;
           Console.WriteLine("DetailedHistory with start & end");
           pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
@@ -639,8 +698,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -651,10 +710,15 @@ namespace PubNubTest
                        j++;
                     }
                 }
+                else
+                {
+                    Assert.Fail("No response");
+                }
              }             
           }  
           
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
           
@@ -671,8 +735,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -683,11 +747,15 @@ namespace PubNubTest
                        j++;
                     }
                 }
+                else
+                {
+                    Assert.Fail("No response");
+                }
              }            
           }  
 
-          
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
@@ -703,8 +771,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -714,6 +782,10 @@ namespace PubNubTest
                           Assert.AreEqual(j.ToString(), strResponse);
                        j++;
                     }
+                }
+                else
+                {
+                    Assert.Fail("No response");
                 }
              }             
           }  
@@ -761,7 +833,7 @@ namespace PubNubTest
           long endtime = Common.Timestamp(pubnub);
 
           Common.deliveryStatus = false;
-
+          Common.objResponse = null;
           Console.WriteLine("DetailedHistory with start & end");
           pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
@@ -779,8 +851,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -791,10 +863,15 @@ namespace PubNubTest
                        j++;
                     }
                 }
+                else
+                {
+                    Assert.Fail("No response");
+                }
              }            
           }  
           
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
           
@@ -811,8 +888,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -823,11 +900,16 @@ namespace PubNubTest
                        j++;
                     }
                 }
+                else
+                {
+                    Assert.Fail("No response");
+                }
              }             
           }  
 
           
           Common.deliveryStatus = false;
+          Common.objResponse = null;
           pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, Common.DisplayReturnMessage);
           while (!Common.deliveryStatus) ;
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
@@ -843,8 +925,8 @@ namespace PubNubTest
              if (fields [0] != null)
              {
                var myObjectArray = (from item in fields select item as object).ToArray();
-               IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-               if (enumerable != null)
+               IList<object> enumerable = myObjectArray [0] as IList<object>;
+               if ((enumerable != null) && (enumerable.Count > 0))
                 {
                   foreach (object element in enumerable)
                     {
@@ -854,6 +936,10 @@ namespace PubNubTest
                           Assert.AreEqual(j.ToString(), strResponse);
                        j++;
                     }
+                }
+                else
+                {
+                    Assert.Fail("No response");
                 }
              }             
           }  

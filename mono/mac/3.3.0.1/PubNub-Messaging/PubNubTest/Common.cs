@@ -1,5 +1,5 @@
 using System;
-using PubNubLib;
+using PubNub_Messaging;
 using System.Collections.Generic;
 using System.ComponentModel;
 

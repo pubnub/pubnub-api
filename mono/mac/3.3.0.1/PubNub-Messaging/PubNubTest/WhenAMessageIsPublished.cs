@@ -1,5 +1,5 @@
 using System;
-using PubNubLib;
+using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace PubNubTest
             string message = null;
 
             Common.deliveryStatus = false;
-
+            Common.objResponse = null;
             pubnub.publish(channel, message, Common.DisplayReturnMessage);
             //wait till the response is received from the server
             while (!Common.deliveryStatus) ;
@@ -48,7 +48,7 @@ namespace PubNubTest
             string message = "Pubnub API Usage Example";
 
             Common.deliveryStatus = false;
-
+            Common.objResponse = null;
             pubnub.publish(channel, message, Common.DisplayReturnMessage);
             //wait till the response is received from the server
             while (!Common.deliveryStatus) ;

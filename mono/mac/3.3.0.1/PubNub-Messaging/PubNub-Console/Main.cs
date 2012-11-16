@@ -1,7 +1,6 @@
 using System;
-using PubNub_Messaging;
 
-namespace PubNubConsole
+namespace PubNub_Messaging
 {
     class MainClass
     {

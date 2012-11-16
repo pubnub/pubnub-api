@@ -1,5 +1,5 @@
 using System;
-using PubNubLib;
+using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -25,6 +25,7 @@ namespace PubNubTest
             Common.deliveryStatus = false;
 
             pubnub.time(Common.DisplayReturnMessage);
+            Common.objResponse = null;
             while (!Common.deliveryStatus) ;
 
             IList<object> fields = Common.objResponse as IList<object>;

@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNubLib", "PubNubLib\PubNubLib.csproj", "{9C21E9C5-6F22-4A30-B4BA-E7A94E26710E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNub-Messaging", "PubNub-Console\PubNub-Messaging.csproj", "{9A973E1B-A9F2-400F-A5DE-C95C085A50EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNub-Console", "PubNub-Console\PubNub-Console.csproj", "{9A973E1B-A9F2-400F-A5DE-C95C085A50EC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNubTest", "PubNubTest\PubNubTest.csproj", "{255601CE-AEDB-4634-912D-68C0A3C30308}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNub-Messaging.Tests", "PubNubTest\PubNub-Messaging.Tests.csproj", "{255601CE-AEDB-4634-912D-68C0A3C30308}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,14 +24,8 @@ Global
 		{9A973E1B-A9F2-400F-A5DE-C95C085A50EC}.Debug|x86.Build.0 = Debug|x86
 		{9A973E1B-A9F2-400F-A5DE-C95C085A50EC}.Release|x86.ActiveCfg = Release|x86
 		{9A973E1B-A9F2-400F-A5DE-C95C085A50EC}.Release|x86.Build.0 = Release|x86
-		{9C21E9C5-6F22-4A30-B4BA-E7A94E26710E}.AppStore|x86.ActiveCfg = Debug|Any CPU
-		{9C21E9C5-6F22-4A30-B4BA-E7A94E26710E}.AppStore|x86.Build.0 = Debug|Any CPU
-		{9C21E9C5-6F22-4A30-B4BA-E7A94E26710E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9C21E9C5-6F22-4A30-B4BA-E7A94E26710E}.Debug|x86.Build.0 = Debug|Any CPU
-		{9C21E9C5-6F22-4A30-B4BA-E7A94E26710E}.Release|x86.ActiveCfg = Release|Any CPU
-		{9C21E9C5-6F22-4A30-B4BA-E7A94E26710E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = PubNub-Console\PubNub-Console.csproj
+		StartupItem = PubNub-Console\PubNub-Messaging.csproj
 	EndGlobalSection
 EndGlobal

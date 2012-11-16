@@ -1,10 +1,11 @@
 using System;
-using PubNubLib;
+using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using System.Threading;
 
 
 namespace PubNubTest
@@ -13,7 +14,7 @@ namespace PubNubTest
     public class WhenSubscribedToAChannel
     {
        [Test]
-       public void ThenItShouldReturnReceivedMessage ()
+       public void ThenItShouldReturnReceivedMessage () 
        {
 
           Pubnub pubnub = new Pubnub (
@@ -24,34 +25,26 @@ namespace PubNubTest
                 false);
           string channel = "hello_world";
 
-          Common.deliveryStatus = false;
+          //Common.deliveryStatus = false;
 
           pubnub.subscribe (channel, Common.DisplayReturnMessage); 
+          Thread.Sleep(3000);
           string msg = "Test Message";
-          pubnub.publish (channel, msg, Common.DisplayReturnMessage);
+          Common.objResponse = null;
+          pubnub.publish (channel, msg, DisplayReturnMessageDummmy);
           Common.deliveryStatus = false;
           while (!Common.deliveryStatus);
-          bool bStop = false;
-          while (!bStop) {
              if (Common.objResponse != null) {
                 IList<object> fields = Common.objResponse as IList<object>;
 
                 if (fields [0] != null)
                 {
                     var myObjectArray = (from item in fields select item as object).ToArray ();
-                    IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-                    if (enumerable != null) {
-                       foreach (object element in enumerable) 
-                       {
-                          Console.WriteLine ("Resp:" + element.ToString ());
-                          Assert.AreEqual(msg, element.ToString());
-                          bStop = true;
-                       }
-                    }
+                    Assert.AreEqual(msg, myObjectArray[0].ToString());
                 }
              }
-          }
        }
+        
        [Test]
        public void ThenItShouldReturnReceivedMessageCipher ()
        {
@@ -65,37 +58,43 @@ namespace PubNubTest
           string channel = "hello_world";
 
           Common.deliveryStatus = false;
-
+          Common.objResponse = null;
           pubnub.subscribe (channel, Common.DisplayReturnMessage); 
           string msg = "Test Message";
-          pubnub.publish (channel, msg, Common.DisplayReturnMessage);
+          pubnub.publish (channel, msg, DisplayReturnMessageDummmy);
           Common.deliveryStatus = false;
           while (!Common.deliveryStatus);
             
-          bool bStop = false;
-          while (!bStop) {
-             if (Common.objResponse != null) {
-                IList<object> fields = Common.objResponse as IList<object>;
-
-                if (fields [0] != null)
-                {
-                    var myObjectArray = (from item in fields select item as object).ToArray ();
-                    IEnumerable enumerable = myObjectArray [0] as IEnumerable;
-                    if (enumerable != null) {
-                       foreach (object element in enumerable) 
-                       {
-                          PubnubCrypto aes = new PubnubCrypto("enigma");
-                          
-                          Console.WriteLine ("Resp:" + element.ToString ());
-                          //non serialized input
-                          Assert.AreEqual("\""+msg+"\"", aes.decrypt(element.ToString()));
-                          bStop = true;
-                       }
-                    }
-                }
-             }
+            if (Common.objResponse != null) {
+              IList<object> fields = Common.objResponse as IList<object>;
+              
+              if (fields [0] != null)
+              {
+                var myObjectArray = (from item in fields select item as object).ToArray ();
+                Console.WriteLine ("Resp:" + myObjectArray[0].ToString ());
+                Assert.AreEqual(msg, myObjectArray[0].ToString());
+              }
           }
        }
+
+       public static void DisplayReturnMessageDummmy(object result)
+        {
+            IList<object> message = result as IList<object>;
+
+            if (message != null && message.Count >= 2)
+            {
+                for (int index = 0; index < message.Count; index++)
+                {
+                    //ParseObject(message[index], 1);
+                }
+            }
+            else
+            {
+                Console.WriteLine("unable to parse data");
+            }
+            //deliveryStatus = true;
+            //objResponse = result;
+        }
     }
 }
 
