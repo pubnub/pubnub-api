@@ -21,22 +21,23 @@ namespace PubNubTest
                 false
             );
             string channel = "hello_world";
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
 
-            Common.deliveryStatus = false;
-
-            pubnub.presence(channel, Common.DisplayReturnMessage);
-            //while (!Common.deliveryStatus) ;
-            Common.objResponse = null;
-            pubnub.subscribe(channel, Common.DisplayReturnMessage);
-            while (!Common.deliveryStatus) ;
+            pubnub.presence(channel, cm.DisplayReturnMessage);
+            //while (!cm.deliveryStatus) ;
+            cm.objResponse = null;
+            pubnub.subscribe(channel, cm.DisplayReturnMessage);
+            while (!cm.deliveryStatus) ;
 
             string strResponse = "";
-            if (Common.objResponse.Equals (null)) {
+            if (cm.objResponse.Equals (null)) {
                 Assert.Fail("Null response");
             }
             else
             {
-                IList<object> fields = Common.objResponse as IList<object>;
+                IList<object> fields = cm.objResponse as IList<object>;
                 foreach (object item in fields)
                 {
                     strResponse = item.ToString();
@@ -58,19 +59,19 @@ namespace PubNubTest
                false
            );
             string channel = "hello_world";
-
-            Common.deliveryStatus = false;
-            Common.objResponse = null;
-            pubnub.here_now(channel, Common.DisplayReturnMessage);
-            while (!Common.deliveryStatus) ;
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
+            pubnub.here_now(channel, cm.DisplayReturnMessage);
+            while (!cm.deliveryStatus) ;
 
             string strResponse = "";
-            if (Common.objResponse.Equals (null)) {
+            if (cm.objResponse.Equals (null)) {
                 Assert.Fail("Null response");
             }
             else
             {
-                IList<object> fields = Common.objResponse as IList<object>;
+                IList<object> fields = cm.objResponse as IList<object>;
                 foreach(object lst in fields)
                 {
                     strResponse = lst.ToString();
@@ -104,19 +105,20 @@ namespace PubNubTest
                false
            );
             string channel = "hello_world";
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
 
-            Common.deliveryStatus = false;
-            Common.objResponse = null;
-            pubnub.here_now(channel, Common.DisplayReturnMessage);
-            while (!Common.deliveryStatus) ;
+            pubnub.here_now(channel, cm.DisplayReturnMessage);
+            while (!cm.deliveryStatus) ;
 
             string strResponse = "";
-            if (Common.objResponse.Equals (null)) {
+            if (cm.objResponse.Equals (null)) {
                 Assert.Fail("Null response");
             }
             else
             {
-                IList<object> fields = Common.objResponse as IList<object>;
+                IList<object> fields = cm.objResponse as IList<object>;
                 foreach(object lst in fields)
                 {
                     strResponse = lst.ToString();

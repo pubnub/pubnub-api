@@ -25,17 +25,19 @@ namespace PubNubTest
                 false);
           string channel = "hello_world";
 
-          //Common.deliveryStatus = false;
+          Common cm = new Common();
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
 
-          pubnub.subscribe (channel, Common.DisplayReturnMessage); 
+          pubnub.subscribe (channel, cm.DisplayReturnMessage); 
           Thread.Sleep(3000);
           string msg = "Test Message";
-          Common.objResponse = null;
+          cm.objResponse = null;
           pubnub.publish (channel, msg, DisplayReturnMessageDummmy);
-          Common.deliveryStatus = false;
-          while (!Common.deliveryStatus);
-             if (Common.objResponse != null) {
-                IList<object> fields = Common.objResponse as IList<object>;
+          cm.deliveryStatus = false;
+          while (!cm.deliveryStatus);
+             if (cm.objResponse != null) {
+                IList<object> fields = cm.objResponse as IList<object>;
 
                 if (fields [0] != null)
                 {
@@ -57,16 +59,17 @@ namespace PubNubTest
                 false);
           string channel = "hello_world";
 
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.subscribe (channel, Common.DisplayReturnMessage); 
+          Common cm = new Common();
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.subscribe (channel, cm.DisplayReturnMessage); 
           string msg = "Test Message";
           pubnub.publish (channel, msg, DisplayReturnMessageDummmy);
-          Common.deliveryStatus = false;
-          while (!Common.deliveryStatus);
+          cm.deliveryStatus = false;
+          while (!cm.deliveryStatus);
             
-            if (Common.objResponse != null) {
-              IList<object> fields = Common.objResponse as IList<object>;
+            if (cm.objResponse != null) {
+              IList<object> fields = cm.objResponse as IList<object>;
               
               if (fields [0] != null)
               {

@@ -24,26 +24,29 @@ namespace PubNubTest
      );
      string channel = "hello_world";
 
-     Common.deliveryStatus = false;
+     Common cm = new Common();
+     cm.deliveryStatus = false;
+     cm.objResponse = null;
+
      //publish a test message. 
-     pubnub.publish(channel, "Test message", Common.DisplayReturnMessage);
+     pubnub.publish(channel, "Test message", cm.DisplayReturnMessage);
              
-     while (!Common.deliveryStatus)
+     while (!cm.deliveryStatus)
        ; 
 
-     Common.deliveryStatus = false;
-     Common.objResponse = null;
-     pubnub.detailedHistory(channel, 1, Common.DisplayReturnMessage);
-     while (!Common.deliveryStatus)
+     cm.deliveryStatus = false;
+     cm.objResponse = null;
+     pubnub.detailedHistory(channel, 1, cm.DisplayReturnMessage);
+     while (!cm.deliveryStatus)
        ;
 
      string strResponse = "";
-     if (Common.objResponse.Equals(null))
+     if (cm.objResponse.Equals(null))
        {
         Assert.Fail("Null response");
        } else
         {
-          IList<object> fields = Common.objResponse as IList<object>;
+          IList<object> fields = cm.objResponse as IList<object>;
           foreach (object item in fields)
             {
              strResponse = item.ToString();
@@ -82,50 +85,54 @@ namespace PubNubTest
 
           //pubnub.CIPHER_KEY = "enigma";
           int total_msg = 10;
-          long starttime = Common.Timestamp(pubnub);
+
+          Common cm = new Common();
+          cm.deliveryStatus = false;
+          cm.objResponse = null;          
           
+          long starttime = cm.Timestamp(pubnub);
           
           for (int i = 0; i < total_msg / 2; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
-          long midtime = Common.Timestamp(pubnub);
+          long midtime = cm.Timestamp(pubnub);
           for (int i = total_msg / 2; i < total_msg; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
           
-          long endtime = Common.Timestamp(pubnub);
+          long endtime = cm.Timestamp(pubnub);
 
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
           Console.WriteLine("DetailedHistory with start & end");
-          pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
+          pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, cm.DisplayReturnMessage);
 
-          while (!Common.deliveryStatus) ;
+          while (!cm.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = true");
           string strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -149,21 +156,21 @@ namespace PubNubTest
              }
           }  
           
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, Common.DisplayReturnMessage);
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, cm.DisplayReturnMessage);
 
-          while (!Common.deliveryStatus) ;
+          while (!cm.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = false");
           strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = total_msg / 2;
              if (fields [0] != null)
              {
@@ -188,20 +195,20 @@ namespace PubNubTest
           }  
 
           
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, Common.DisplayReturnMessage);
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, cm.DisplayReturnMessage);
 
-          while (!Common.deliveryStatus) ;
+          while (!cm.deliveryStatus) ;
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
           strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -238,51 +245,54 @@ namespace PubNubTest
           string channel = "testchannel";
           //pubnub.CIPHER_KEY = "";
           int total_msg = 10;
-          long starttime = Common.Timestamp(pubnub);
+
+          Common cm = new Common();
+          long starttime = cm.Timestamp(pubnub);
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
           Dictionary<long, string> inputs = new Dictionary<long,string>();
           for (int i = 0; i < total_msg / 2; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
-          long midtime = Common.Timestamp(pubnub);
+          long midtime = cm.Timestamp(pubnub);
           for (int i = total_msg / 2; i < total_msg; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
-          
-          long endtime = Common.Timestamp(pubnub);
-          while (!Common.deliveryStatus) ;
+          long endtime = cm.Timestamp(pubnub);
+          while (!cm.deliveryStatus) ;
 
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, total_msg, Common.DisplayReturnMessage);
-          Common.deliveryStatus = false;
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, total_msg, cm.DisplayReturnMessage);
+          cm.deliveryStatus = false;
+          while (!cm.deliveryStatus) ;
 
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
 
           string strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -320,46 +330,50 @@ namespace PubNubTest
           //pubnub.CIPHER_KEY = "enigma";
 
           int total_msg = 10;
-          long starttime = Common.Timestamp(pubnub);
+          Common cm = new Common();
+          long starttime = cm.Timestamp(pubnub);
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+
           Dictionary<long, string> inputs = new Dictionary<long, string>();
           for (int i = 0; i < total_msg / 2; i++)
           {
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
-          long midtime = Common.Timestamp(pubnub);
+          long midtime = cm.Timestamp(pubnub);
           for (int i = total_msg / 2; i < total_msg; i++)
           {
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
-          long endtime = Common.Timestamp(pubnub);
-          while (!Common.deliveryStatus) ;
+          long endtime = cm.Timestamp(pubnub);
+          while (!cm.deliveryStatus) ;
 
           
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, total_msg, Common.DisplayReturnMessage);
-          Common.deliveryStatus = false;
-          while (!Common.deliveryStatus) ;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, total_msg, cm.DisplayReturnMessage);
+          cm.deliveryStatus = false;
+          while (!cm.deliveryStatus) ;
           Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
           string strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -396,50 +410,53 @@ namespace PubNubTest
           string channel = "testchannel";
 
           int total_msg = 10;
-          long starttime = Common.Timestamp(pubnub);
-          
+
+          Common cm = new Common();
+          long starttime = cm.Timestamp(pubnub);
+          cm.deliveryStatus = false;
+          cm.objResponse = null;          
           
           for (int i = 0; i < total_msg / 2; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
-          long midtime = Common.Timestamp(pubnub);
+          long midtime = cm.Timestamp(pubnub);
           for (int i = total_msg / 2; i < total_msg; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
 
-          long endtime = Common.Timestamp(pubnub);
+          long endtime = cm.Timestamp(pubnub);
 
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
           Console.WriteLine("DetailedHistory with start & end");
-          pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = true");
           string strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -463,20 +480,20 @@ namespace PubNubTest
              }            
           }  
           
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = false");
           strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = total_msg / 2;
              if (fields [0] != null)
              {
@@ -501,19 +518,19 @@ namespace PubNubTest
           }  
 
           
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
           strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -550,24 +567,26 @@ namespace PubNubTest
           string channel = "testchannel";
           //pubnub.CIPHER_KEY = "";
           string msg = "Test Message";
-          Common.deliveryStatus = false;
+          Common cm = new Common();
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
 
-          pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
  
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, 10, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, 10, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
           
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
 
              if (fields [0] != null)
              {
@@ -602,24 +621,26 @@ namespace PubNubTest
           string channel = "testchannel";
           //pubnub.CIPHER_KEY = "enigma";
           string msg = "Test Message";
+          Common cm = new Common();
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
 
-          Common.deliveryStatus = false;
-          pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
 
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, 1, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, 1, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
           
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              if (fields [0] != null)
              {
                 var myObjectArray = (from item in fields select item as object).ToArray();
@@ -651,49 +672,52 @@ namespace PubNubTest
 
           //pubnub.CIPHER_KEY = "enigma";
           int total_msg = 10;
-          long starttime = Common.Timestamp(pubnub);
-          
+
+          Common cm = new Common();
+          long starttime = cm.Timestamp(pubnub);
+          cm.deliveryStatus = false;
+          cm.objResponse = null;          
           
           for (int i = 0; i < total_msg / 2; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
-          long midtime = Common.Timestamp(pubnub);
+          long midtime = cm.Timestamp(pubnub);
           for (int i = total_msg / 2; i < total_msg; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
           
-          long endtime = Common.Timestamp(pubnub);
+          long endtime = cm.Timestamp(pubnub);
 
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
           Console.WriteLine("DetailedHistory with start & end");
-          pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = true");
           string strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -717,20 +741,20 @@ namespace PubNubTest
              }             
           }  
           
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = false");
           strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = total_msg / 2;
              if (fields [0] != null)
              {
@@ -754,19 +778,19 @@ namespace PubNubTest
              }            
           }  
 
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
           strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -804,49 +828,51 @@ namespace PubNubTest
 
           //pubnub.CIPHER_KEY = "enigma";
           int total_msg = 10;
-          long starttime = Common.Timestamp(pubnub);
-          
+          Common cm = new Common();
+          long starttime = cm.Timestamp(pubnub);
+          cm.deliveryStatus = false;
+          cm.objResponse = null;          
           
           for (int i = 0; i < total_msg / 2; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
 
-          long midtime = Common.Timestamp(pubnub);
+          long midtime = cm.Timestamp(pubnub);
           for (int i = total_msg / 2; i < total_msg; i++)
           {
-             Common.deliveryStatus = false;
+             cm.deliveryStatus = false;
              string msg = i.ToString();
-             pubnub.publish(channel, msg, Common.DisplayReturnMessage);
-             while (!Common.deliveryStatus) ;
+             pubnub.publish(channel, msg, cm.DisplayReturnMessage);
+             while (!cm.deliveryStatus) ;
              //long t = Timestamp();
              //inputs.Add(t, msg);
              Console.WriteLine("Message # " + i.ToString() + " published");
           }
           
-          long endtime = Common.Timestamp(pubnub);
+          long endtime = cm.Timestamp(pubnub);
 
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
           Console.WriteLine("DetailedHistory with start & end");
-          pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = true");
           string strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {
@@ -870,20 +896,20 @@ namespace PubNubTest
              }            
           }  
           
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           
           Console.WriteLine("DetailedHistory with start & reverse = false");
           strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = total_msg / 2;
              if (fields [0] != null)
              {
@@ -908,19 +934,19 @@ namespace PubNubTest
           }  
 
           
-          Common.deliveryStatus = false;
-          Common.objResponse = null;
-          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, Common.DisplayReturnMessage);
-          while (!Common.deliveryStatus) ;
+          cm.deliveryStatus = false;
+          cm.objResponse = null;
+          pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, cm.DisplayReturnMessage);
+          while (!cm.deliveryStatus) ;
           Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
           strResponse = "";
-          if (Common.objResponse.Equals(null))
+          if (cm.objResponse.Equals(null))
           {
             Assert.Fail("Null response");
           } 
           else
           {
-             IList<object> fields = Common.objResponse as IList<object>;
+             IList<object> fields = cm.objResponse as IList<object>;
              int j = 0;
              if (fields [0] != null)
              {

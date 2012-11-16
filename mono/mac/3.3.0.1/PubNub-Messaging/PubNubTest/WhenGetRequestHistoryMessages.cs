@@ -21,8 +21,11 @@ namespace PubNubTest
             );
             string channel = "hello_world";
             bool responseStatus = false;
-            //publish a test message. 
-            pubnub.publish (channel, "Test message", Common.DisplayReturnMessage);
+            //publish a test message.
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
+            pubnub.publish (channel, "Test message", cm.DisplayReturnMessage);
 
             List<object> lstHistory = null;
 
@@ -64,8 +67,10 @@ namespace PubNubTest
                     "",
                     false);
             string channel = "my_channel";
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
 
-            Common.deliveryStatus = false;
             string message = "Pubnub API Usage Example - Publish";
             //pubnub.CIPHER_KEY = "enigma";
 
@@ -74,16 +79,16 @@ namespace PubNubTest
                 if (e.PropertyName == "History")
                 {
                     Console.WriteLine("\n*********** History Messages *********** ");
-                    Common.deliveryStatus = true;
+                    cm.deliveryStatus = true;
                 }
             };
-            Common.deliveryStatus = false;
-            pubnub.publish(channel, message, Common.DisplayReturnMessage);
-            while (!Common.deliveryStatus) ;
+            cm.deliveryStatus = false;
+            pubnub.publish(channel, message, cm.DisplayReturnMessage);
+            while (!cm.deliveryStatus) ;
 
-            Common.deliveryStatus = false;
+            cm.deliveryStatus = false;
             pubnub.history(channel, 1);
-            while (!Common.deliveryStatus) ;
+            while (!cm.deliveryStatus) ;
             if (pubnub.History[0].Equals (null)) {
                 Assert.Fail("Null response");
             }
@@ -103,8 +108,10 @@ namespace PubNubTest
                     "enigma",
                     false);
             string channel = "my_channel";
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
 
-            Common.deliveryStatus = false;
             string message = "Pubnub API Usage Example - Publish";
             //pubnub.CIPHER_KEY = "enigma";
 
@@ -113,16 +120,16 @@ namespace PubNubTest
                 if (e.PropertyName == "History")
                 {
                     Console.WriteLine("\n*********** History Messages *********** ");
-                    Common.deliveryStatus = true;
+                    cm.deliveryStatus = true;
                 }
             };
-            Common.deliveryStatus = false;
-            pubnub.publish(channel, message, Common.DisplayReturnMessage);
-            while (!Common.deliveryStatus) ;
+            cm.deliveryStatus = false;
+            pubnub.publish(channel, message, cm.DisplayReturnMessage);
+            while (!cm.deliveryStatus) ;
 
-            Common.deliveryStatus = false;
+            cm.deliveryStatus = false;
             pubnub.history(channel, 1);
-            while (!Common.deliveryStatus) ;
+            while (!cm.deliveryStatus) ;
             if (pubnub.History[0].Equals (null)) {
                 Assert.Fail("Null response");
             }

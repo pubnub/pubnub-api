@@ -22,12 +22,14 @@ namespace PubNubTest
             string channel = "hello_world";
             string message = null;
 
-            Common.deliveryStatus = false;
-            Common.objResponse = null;
-            pubnub.publish(channel, message, Common.DisplayReturnMessage);
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
+
+            pubnub.publish(channel, message, cm.DisplayReturnMessage);
             //wait till the response is received from the server
-            while (!Common.deliveryStatus) ;
-            IList<object> fields = Common.objResponse as IList<object>;
+            while (!cm.deliveryStatus) ;
+            IList<object> fields = cm.objResponse as IList<object>;
             string strSent = fields[1].ToString();
             string strOne = fields[0].ToString();
             Assert.AreEqual("Sent", strSent);
@@ -47,12 +49,14 @@ namespace PubNubTest
             string channel = "hello_world";
             string message = "Pubnub API Usage Example";
 
-            Common.deliveryStatus = false;
-            Common.objResponse = null;
-            pubnub.publish(channel, message, Common.DisplayReturnMessage);
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
+
+            pubnub.publish(channel, message, cm.DisplayReturnMessage);
             //wait till the response is received from the server
-            while (!Common.deliveryStatus) ;
-            IList<object> fields = Common.objResponse as IList<object>;
+            while (!cm.deliveryStatus) ;
+            IList<object> fields = cm.objResponse as IList<object>;
             string strSent = fields[1].ToString();
             string strOne = fields[0].ToString();
             Assert.AreEqual("Sent", strSent);
@@ -93,7 +97,8 @@ namespace PubNubTest
                 "",
                 false
             );
-            Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
+            Common cm = new Common();
+            Assert.AreEqual(true, pubnub.publish(channel, message, cm.DisplayReturnMessage));
         }
 
         [Test]
@@ -109,8 +114,8 @@ namespace PubNubTest
             );
             string channel = "mychannel";
             string message = "Pubnub API Usage Example";
-
-            Assert.AreEqual(false, pubnub.publish(channel, message, Common.DisplayReturnMessage));
+            Common cm = new Common();
+            Assert.AreEqual(false, pubnub.publish(channel, message, cm.DisplayReturnMessage));
         }
 
         [Test]
@@ -122,14 +127,14 @@ namespace PubNubTest
             );
             string channel = "mychannel";
             string message = "Pubnub API Usage Example";
-
-            Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
+            Common cm = new Common();
+            Assert.AreEqual(true, pubnub.publish(channel, message, cm.DisplayReturnMessage));
             pubnub = new Pubnub(
                 "demo",
                 "demo",
                 "key"
             );
-            Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
+            Assert.AreEqual(true, pubnub.publish(channel, message, cm.DisplayReturnMessage));
         }
 
         [Test]
@@ -142,8 +147,8 @@ namespace PubNubTest
             );
             string channel = "hello_world";
             string message = "Pubnub API Usage Example";
-
-            Assert.AreEqual(true, pubnub.publish(channel, message, Common.DisplayReturnMessage));
+            Common cm = new Common();
+            Assert.AreEqual(true, pubnub.publish(channel, message, cm.DisplayReturnMessage));
         }
 
         [Test]
@@ -159,8 +164,8 @@ namespace PubNubTest
             );
             string channel = "mychannel";
             string message = "Pubnub API Usage Example";
-
-            Assert.AreEqual(false, pubnub.publish(channel, message, Common.DisplayReturnMessage));
+            Common cm = new Common();
+            Assert.AreEqual(false, pubnub.publish(channel, message, cm.DisplayReturnMessage));
         }
     }
 }

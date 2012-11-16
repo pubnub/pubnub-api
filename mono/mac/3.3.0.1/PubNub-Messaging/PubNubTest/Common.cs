@@ -7,10 +7,10 @@ namespace PubNubTest
 {
   public class Common
   {
-      static public object objResponse = null;
-      static public bool deliveryStatus = false;
+        public object objResponse = null;
+        public bool deliveryStatus = false;
 
-      public static void DisplayReturnMessage(object result)
+        public void DisplayReturnMessage(object result)
         {
             IList<object> message = result as IList<object>;
 
@@ -29,7 +29,7 @@ namespace PubNubTest
             objResponse = result;
         }
 
-        static void ParseObject(object result, int loop)
+        void ParseObject(object result, int loop)
         {
             if (result is object[])
             {
@@ -76,7 +76,7 @@ namespace PubNubTest
             }
         }
 
-        public static long Timestamp(Pubnub pubnub)
+        public long Timestamp(Pubnub pubnub)
         {
             deliveryStatus = false;
 

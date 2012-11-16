@@ -22,13 +22,15 @@ namespace PubNubTest
             );
             
             string strResponse = "";
-            Common.deliveryStatus = false;
+            Common cm = new Common();
+            cm.deliveryStatus = false;
+            cm.objResponse = null;
 
-            pubnub.time(Common.DisplayReturnMessage);
-            Common.objResponse = null;
-            while (!Common.deliveryStatus) ;
+            pubnub.time(cm.DisplayReturnMessage);
+            cm.objResponse = null;
+            while (!cm.deliveryStatus) ;
 
-            IList<object> fields = Common.objResponse as IList<object>;
+            IList<object> fields = cm.objResponse as IList<object>;
             strResponse = fields[0].ToString();
             Console.WriteLine(strResponse);
             Assert.AreNotEqual("0",strResponse);
