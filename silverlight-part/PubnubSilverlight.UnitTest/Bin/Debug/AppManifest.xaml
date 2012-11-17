@@ -3,8 +3,9 @@
     <AssemblyPart x:Name="PubnubSilverlight.UnitTest" Source="PubnubSilverlight.UnitTest.dll" />
     <AssemblyPart x:Name="Microsoft.Silverlight.Testing" Source="Microsoft.Silverlight.Testing.dll" />
     <AssemblyPart x:Name="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight" Source="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll" />
+    <AssemblyPart x:Name="Newtonsoft.Json" Source="Newtonsoft.Json.dll" />
     <AssemblyPart x:Name="PubnubSilverlight.Core" Source="PubnubSilverlight.Core.dll" />
-    <AssemblyPart x:Name="ConcurrentHashtable_Silverlight" Source="ConcurrentHashtable_Silverlight.dll" />
     <AssemblyPart x:Name="PubnubSilverlight.Imports" Source="PubnubSilverlight.Imports.dll" />
+    <AssemblyPart x:Name="ConcurrentHashtable_Silverlight" Source="ConcurrentHashtable_Silverlight.dll" />
   </Deployment.Parts>
 </Deployment>

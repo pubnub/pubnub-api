@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .settings
 *~
 *.swp
@@ -16,3 +17,22 @@ node_modules
 /j2me/3.3/nbproject
 /flash/3.3.1beta/obj/*.old
 /flash/3.3.1beta/obj/PubNubTestConfig.xml
+=======
+.settings
+*~
+*.swp
+*.pyc
+*.class
+*.iml
+/flash/*/out
+/android/*/*/gen
+/android/*/*/bin
+/android/*/*/out
+.DS_Store
+node_modules
+.idea*
+/csharp/*/PubNub-Messaging*/bin/*
+/csharp/*/PubNub-Messaging*/bin/*
+/csharp/*/PubNub-Messaging*/obj/*
+/j2me/3.3/nbproject
+>>>>>>> origin/CL-200

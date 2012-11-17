@@ -20,7 +20,7 @@
 
                 <TextBlock Text="Channel Name : " VerticalAlignment="Center" FontFamily="Verdana" FontSize="14" />
                 <TextBox Text="my_channel" VerticalAlignment="Center" Foreground="Gray" Width="150" FontFamily="Verdana" FontSize="12" TextChanged="TextBox_TextChanged" />
-
+                
             </StackPanel>
 
             <Grid  Margin="0 20 0 0">

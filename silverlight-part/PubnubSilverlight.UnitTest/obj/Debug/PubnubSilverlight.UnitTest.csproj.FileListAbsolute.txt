@@ -29,3 +29,4 @@ C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.U
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\obj\Debug\PubnubSilverlight.UnitTest.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\obj\Debug\PubnubSilverlight.UnitTest.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\obj\Debug\XapCacheFile.xml
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\Newtonsoft.Json.dll

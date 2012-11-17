@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using System.Collections;
+using System.Threading;
 
 namespace PubNub_Messaging
 {
     public class Pubnub_Example
     {
-        static public Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    "",
-                    false);
+        static public Pubnub pubnub;
 
         static public bool deliveryStatus = false;
-        static public string channel = "my_channel";
-        static public string message = "Pubnub API Usage Example - Publish";
+        static public string channel = "";
 
         static public void Main()
         {
@@ -35,7 +29,35 @@ namespace PubNub_Messaging
 
             Console.WriteLine(string.Format("Channel = {0}",channel));
             Console.WriteLine();
-            
+
+            Console.WriteLine("Enable SSL? ENTER Y for Yes, else N");
+            string enableSSL = Console.ReadLine();
+            if (enableSSL.Trim().ToLower() == "y")
+            {
+                Console.WriteLine("SSL Enabled");
+            }
+            else
+            {
+                Console.WriteLine("SSL NOT Enabled");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("ENTER cipher key for encryption feature.");
+            Console.WriteLine("If you don't want to avail at this time, press ENTER.");
+            string cipheryKey = Console.ReadLine();
+            if (cipheryKey.Trim().Length > 0)
+            {
+                Console.WriteLine("Cipher key provided.");
+            }
+            else
+            {
+                Console.WriteLine("No Cipher key provided");
+            }
+            Console.WriteLine();
+
+            pubnub = new Pubnub("demo", "demo", "", cipheryKey,
+                (enableSSL.Trim().ToLower() == "y") ? true : false);
+
             Console.WriteLine("ENTER 1 FOR Subscribe");
             Console.WriteLine("ENTER 2 FOR Publish");
             Console.WriteLine("ENTER 3 FOR Presence");
@@ -59,37 +81,45 @@ namespace PubNub_Messaging
                         break;
                     case "1":
                         Console.WriteLine("Running subscribe()");
-                        pubnub.subscribe(channel, DisplayReturnMessage);
+                        pubnub.subscribe<string>(channel, DisplayReturnMessage);
+                        //System.Threading.Tasks.Task subtask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.subscribe<string>(channel, DisplayReturnMessage));
+                        //pubnub.subscribe<object>(channel, DisplayReturnMessage);
+                        //pubnub.subscribe(channel, DisplayReturnMessage);
                         break;
                     case "2":
                         Console.WriteLine("Running publish()");
                         Console.WriteLine("Enter the message for publish. To exit loop, enter QUIT");
                         string publishMsg = Console.ReadLine();
-                        pubnub.publish(channel, publishMsg, DisplayReturnMessage);
+                        pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
                         break;
                     case "3":
                         Console.WriteLine("Running presence()");
-                        pubnub.presence(channel, DisplayReturnMessage);
+                        pubnub.presence<string>(channel, DisplayReturnMessage);
+                        //System.Threading.Tasks.Task pretask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.presence<string>(channel, DisplayReturnMessage));
+                        //pubnub.presence<object>(channel, DisplayReturnMessage);
                         break;
                     case "4":
                         Console.WriteLine("Running detailed history()");
-                        pubnub.detailedHistory(channel, 100, DisplayReturnMessage);
+                        pubnub.detailedHistory<string>(channel, 100, DisplayReturnMessage);
+                        //pubnub.detailedHistory<object>(channel, 100, DisplayReturnMessage);
                         break;
                     case "5":
                         Console.WriteLine("Running Here_Now()");
-                        pubnub.here_now(channel, DisplayReturnMessage);
+                        pubnub.here_now<string>(channel, DisplayReturnMessage);
+                        //pubnub.here_now<object>(channel, DisplayReturnMessage);
                         break;
                     case "6":
                         Console.WriteLine("Running unsubscribe()");
-                        pubnub.unsubscribe(channel, DisplayReturnMessage);
+                        pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
+                        //pubnub.unsubscribe<object>(channel, DisplayReturnMessage);
                         break;
                     case "7":
                         Console.WriteLine("Running presence-unsubscribe()");
-                        pubnub.presence_unsubscribe(channel, DisplayReturnMessage);
+                        pubnub.presence_unsubscribe<string>(channel, DisplayReturnMessage);
                         break;
                     case "8":
                         Console.WriteLine("Running time()");
-                        pubnub.time(DisplayReturnMessage);
+                        pubnub.time<string>(DisplayReturnMessage);
                         break;
                     default:
                         Console.WriteLine("INVALID CHOICE.");
@@ -102,6 +132,11 @@ namespace PubNub_Messaging
 
         }
 
+        static void DisplayReturnMessage(string result)
+        {
+            Console.WriteLine(result);
+        }
+        
         static void DisplayReturnMessage(object result)
         {
             IList<object> message = result as IList<object>;
@@ -126,11 +161,18 @@ namespace PubNub_Messaging
                 object[] arrResult = (object[])result;
                 foreach (object item in arrResult)
                 {
-                    if (!item.GetType().IsGenericType)
+                    if (item != null)
                     {
-                        if (!item.GetType().IsArray)
+                        if (!item.GetType().IsGenericType)
                         {
-                            Console.WriteLine(item.ToString());
+                            if (!item.GetType().IsArray)
+                            {
+                                Console.WriteLine(item.ToString());
+                            }
+                            else
+                            {
+                                ParseObject(item, loop + 1);
+                            }
                         }
                         else
                         {
@@ -139,8 +181,8 @@ namespace PubNub_Messaging
                     }
                     else
                     {
-                        ParseObject(item, loop + 1);
-                    }
+                        Console.WriteLine();
+                   }
                 }
             }
             else if (result.GetType().IsGenericType && (result.GetType().Name == typeof(Dictionary<,>).Name))

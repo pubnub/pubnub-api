@@ -50,6 +50,9 @@
       <HintPath>..\Libraries\ConcurrentHashtable_Silverlight.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Libraries\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Windows" />
     <Reference Include="system" />
@@ -60,9 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcurrentDictionaryExtentions.cs" />
-    <Compile Include="Pubnub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubnubV2.cs" />
+    <Compile Include="PubnubV3.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PubnubSilverlight.Imports\PubnubSilverlight.Imports.csproj">

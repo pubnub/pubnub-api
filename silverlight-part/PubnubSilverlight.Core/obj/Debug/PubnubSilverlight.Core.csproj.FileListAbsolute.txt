@@ -13,3 +13,4 @@ C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.C
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\obj\Debug\PubnubSilverlight.Core.csprojResolveAssemblyReference.cache
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\obj\Debug\PubnubSilverlight.Core.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\obj\Debug\PubnubSilverlight.Core.pdb
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\Newtonsoft.Json.dll

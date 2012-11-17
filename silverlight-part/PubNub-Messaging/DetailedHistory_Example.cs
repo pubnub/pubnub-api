@@ -7,6 +7,12 @@ namespace PubNub_Messaging
 {
     internal static class DetailedHistory_Example
     {
+        public static void Main()
+        {
+            DetailedHistoryCountDemo();
+            Console.ReadLine();
+        }
+
         internal static void DetailedHistoryCountDemo()
         {
             Pubnub pubnub = new Pubnub(
@@ -61,7 +67,7 @@ namespace PubNub_Messaging
                             }
                             else
                             {
-                                Console.WriteLine(string.Format("Unhandled type {0}", item.ToString()));
+                                Console.WriteLine(string.Format("Unhandled type {0}",item.ToString()));
                             }
                         }
                     }

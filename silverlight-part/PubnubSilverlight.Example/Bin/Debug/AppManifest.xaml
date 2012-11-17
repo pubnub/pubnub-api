@@ -8,6 +8,7 @@
     <AssemblyPart x:Name="System.Windows.Controls" Source="System.Windows.Controls.dll" />
     <AssemblyPart x:Name="System.Windows.Controls.Navigation" Source="System.Windows.Controls.Navigation.dll" />
     <AssemblyPart x:Name="ConcurrentHashtable_Silverlight" Source="ConcurrentHashtable_Silverlight.dll" />
+    <AssemblyPart x:Name="Newtonsoft.Json" Source="Newtonsoft.Json.dll" />
     <AssemblyPart x:Name="PubnubSilverlight.Imports" Source="PubnubSilverlight.Imports.dll" />
   </Deployment.Parts>
 </Deployment>

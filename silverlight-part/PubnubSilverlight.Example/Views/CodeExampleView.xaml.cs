@@ -25,10 +25,13 @@ namespace PubnubSilverlight.Example.Views
 
         #region "Properties and Members"
 
-        static public Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+        static public Pubnub pubnub;
+
         static public bool deliveryStatus = false;
-        static public string channel = "my_channel";
-        static public string message = "Pubnub API Usage Example - Publish";
+        static public string channel = "";
+
+        static public bool enableSSL = false;
+        static public string cipheryKey = string.Empty;
        
         #endregion
 
@@ -37,12 +40,48 @@ namespace PubnubSilverlight.Example.Views
             InitializeComponent();
 
             Console.Container = ConsoleContainer;
+
+            MessageBoxResult result = MessageBox.Show("Enable SSL?", "Settings", MessageBoxButton.OKCancel);
+            if (result == MessageBoxResult.OK)
+            {
+                enableSSL = true;
+                Console.WriteLine("SSL Enabled");
+            }
+            else
+            {
+                Console.WriteLine("SSL NOT Enabled");
+            }
+
+            MessageBoxResult cipherKeyView = MessageBox.Show("Do you want enter cipher key for encryption feature?", "Settings", MessageBoxButton.OKCancel);
+            if (cipherKeyView == MessageBoxResult.OK)
+            {
+                PublishMessageDialog view = new PublishMessageDialog();
+
+                view.Show();
+
+                view.Closed += (obj, args) =>
+                {
+                    if (view.DialogResult == true)
+                    {
+                        cipheryKey = view.Message.Text;
+                        Console.WriteLine("Cipher key provided.");
+                    }
+                };
+            }
+            else
+            {
+                Console.WriteLine("No Cipher key provided.");
+                cipheryKey = string.Empty;
+            }
+
+            pubnub = new Pubnub("demo", "demo", "", cipheryKey, enableSSL);
+
         }
 
         private void Subscribe_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Running subscribe()");
-            pubnub.subscribe(channel, DisplayReturnMessage);
+            pubnub.subscribe<string>(channel, DisplayReturnMessage);
         }
 
         private void Publish_Click(object sender, RoutedEventArgs e)
@@ -58,7 +97,7 @@ namespace PubnubSilverlight.Example.Views
                 if (view.DialogResult == true)
                 {
                     string publishMsg = view.Message.Text;
-                    pubnub.publish(channel, publishMsg, DisplayReturnMessage);
+                    pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
                 }
             };
         }
@@ -66,45 +105,50 @@ namespace PubnubSilverlight.Example.Views
         private void Presence_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Running presence()");
-            pubnub.presence(channel, DisplayReturnMessage);
+            pubnub.presence<string>(channel, DisplayReturnMessage);
         }
 
         private void History_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Running detailed history()");
-            pubnub.detailedHistory(channel, 100, DisplayReturnMessage);
+            pubnub.detailedHistory<string>(channel, 100, DisplayReturnMessage);
         }
 
         private void HereNow_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Running Here_Now()");
-            pubnub.here_now(channel, DisplayReturnMessage);
+            pubnub.here_now<string>(channel, DisplayReturnMessage);
         }
 
         private void Unsubscribe_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Running unsubscribe()");
-            pubnub.unsubscribe(channel, DisplayReturnMessage);
+            pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
         }
 
         private void PresenceUnsubscrib_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Running presence-unsubscribe()");
-            pubnub.presence_unsubscribe(channel, DisplayReturnMessage);
+            pubnub.presence_unsubscribe<string>(channel, DisplayReturnMessage);
         }
 
         private void Time_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Running time()");
-            pubnub.time(DisplayReturnMessage);
+            pubnub.time<string>(DisplayReturnMessage);
         }
 
 
 
 
-        
 
-        private static void DisplayReturnMessage(object result)
+
+        static void DisplayReturnMessage(string result)
+        {
+            Console.WriteLine(result);
+        }
+
+        static void DisplayReturnMessage(object result)
         {
             IList<object> message = result as IList<object>;
 
@@ -121,18 +165,25 @@ namespace PubnubSilverlight.Example.Views
             }
         }
 
-        private static void ParseObject(object result, int loop)
+        static void ParseObject(object result, int loop)
         {
-            if (result is IList<object>)
+            if (result is object[])
             {
-                IList<object> arrResult = (IList<object>)result;
+                object[] arrResult = (object[])result;
                 foreach (object item in arrResult)
                 {
-                    if (!item.GetType().IsGenericType)
+                    if (item != null)
                     {
-                        if (!item.GetType().IsArray)
+                        if (!item.GetType().IsGenericType)
                         {
-                            Console.WriteLine(item.ToString());
+                            if (!item.GetType().IsArray)
+                            {
+                                Console.WriteLine(item.ToString());
+                            }
+                            else
+                            {
+                                ParseObject(item, loop + 1);
+                            }
                         }
                         else
                         {
@@ -141,7 +192,7 @@ namespace PubnubSilverlight.Example.Views
                     }
                     else
                     {
-                        ParseObject(item, loop + 1);
+                        Console.WriteLine("");
                     }
                 }
             }
@@ -151,7 +202,7 @@ namespace PubnubSilverlight.Example.Views
                 foreach (KeyValuePair<string, object> pair in itemList)
                 {
                     Console.WriteLine(string.Format("key = {0}", pair.Key));
-                    if (pair.Value is IList<object>)
+                    if (pair.Value is object[])
                     {
                         Console.WriteLine("value = ");
                         ParseObject(pair.Value, loop);
