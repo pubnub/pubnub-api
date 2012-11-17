@@ -51,9 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WhenSubscribedToAChannel.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="WhenAClientIsPresented.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PubNub-Messaging\PubNub-Messaging.csproj">

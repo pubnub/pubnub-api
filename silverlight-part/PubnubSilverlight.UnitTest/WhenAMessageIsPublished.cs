@@ -10,26 +10,13 @@ using System.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PubnubSilverlight.Core;
+using Microsoft.Silverlight.Testing;
 
 namespace PubnubSilverlight.UnitTest
 {
     [TestClass]
-    public class WhenAMessageIsPublished
+    public class WhenAMessageIsPublished : SilverlightTest
     {
-        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
-        ManualResetEvent manualEvent2 = new ManualResetEvent(false);
-        ManualResetEvent manualEvent3 = new ManualResetEvent(false);
-
-        ManualResetEvent mreUnencryptObjectPub = new ManualResetEvent(false);
-        ManualResetEvent mreEncryptObjectPub = new ManualResetEvent(false);
-        ManualResetEvent mreEncryptPub = new ManualResetEvent(false);
-        ManualResetEvent mreSecretEncryptPub = new ManualResetEvent(false);
-        ManualResetEvent mreEncryptDH = new ManualResetEvent(false);
-        ManualResetEvent mreSecretEncryptDH = new ManualResetEvent(false);
-        ManualResetEvent mreUnencryptDH = new ManualResetEvent(false);
-        ManualResetEvent mreUnencryptObjectDH = new ManualResetEvent(false);
-        ManualResetEvent mreEncryptObjectDH = new ManualResetEvent(false);
-
         bool isPublished2 = false;
         bool isPublished3 = false;
 
@@ -56,7 +43,21 @@ namespace PubnubSilverlight.UnitTest
         string messageObjectForUnencryptPublish = "";
         string messageObjectForEncryptPublish = "";
 
+        bool isCheck = false;
+        bool isUnencryptCheck = false;
+        bool isUnencryptObjectPubCheck = false;
+        bool isUnencryptObjectDHCheck = false;
+        bool isEncryptObjectPubCheck = false;
+        bool isEncryptObjectDHCheck = false;
+        bool isEncryptPubCheck = false;
+        bool isEncryptDHCheck = false;
+        bool isSecretEncryptPubCheck = false;
+        bool isSecretEncryptDHCheck = false;
+        bool isCkeck2 = false;
+        bool isCkeck3 = false;
+
         [TestMethod]
+        [Asynchronous]
         public void ThenUnencryptPublishShouldReturnSuccessCodeAndInfo()
         {
             isUnencryptPublished = false;
@@ -64,116 +65,28 @@ namespace PubnubSilverlight.UnitTest
             string channel = "my/channel";
             string message = messageForUnencryptPublish;
 
-            pubnub.publish<string>(channel, message, ReturnSuccessUnencryptPublishCodeCallback);
-            manualEvent1.WaitOne(310*1000);
+            EnqueueCallback(() => pubnub.publish<string>(channel, message, ReturnSuccessUnencryptPublishCodeCallback));
+            EnqueueConditional(() => isCheck);
 
-            if (!isUnencryptPublished)
+            EnqueueCallback(() => 
             {
-                Assert.IsTrue(isUnencryptPublished, "Unencrypt Publish Failed");
-            }
-            else
-            {
-                pubnub.detailedHistory<string>(channel, -1, unEncryptPublishTimetoken, -1, false, CaptureUnencryptDetailedHistoryCallback);
-                mreUnencryptDH.WaitOne(310 * 1000);
-                Assert.IsTrue(isUnencryptDH, "Unable to match the successful unencrypt Publish");
-            }
+                if (!isUnencryptPublished)
+                {
+                    Assert.IsTrue(isUnencryptPublished, "Unencrypt Publish Failed");
+                }
+                else
+                {
+                    EnqueueCallback(() => pubnub.detailedHistory<string>(channel, -1, unEncryptPublishTimetoken, -1, false, CaptureUnencryptDetailedHistoryCallback));
+                    EnqueueConditional(() => isUnencryptCheck);
+                    EnqueueCallback(() => Assert.IsTrue(isUnencryptDH, "Unable to match the successful unencrypt Publish"));
+                }
+            });
+
+            EnqueueTestComplete();
         }
 
-        [TestMethod]
-        public void ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo()
-        {
-            isUnencryptObjectPublished = false;
-            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
-            string channel = "my/channel";
-            object message = new CustomClass();
-            messageObjectForUnencryptPublish = JsonConvert.SerializeObject(message);
-
-            pubnub.publish<string>(channel, message, ReturnSuccessUnencryptObjectPublishCodeCallback);
-            mreUnencryptObjectPub.WaitOne(310 * 1000);
-
-            if (!isUnencryptObjectPublished)
-            {
-                Assert.IsTrue(isUnencryptObjectPublished, "Unencrypt Publish Failed");
-            }
-            else
-            {
-                pubnub.detailedHistory<string>(channel, -1, unEncryptObjectPublishTimetoken, -1, false, CaptureUnencryptObjectDetailedHistoryCallback);
-                mreUnencryptObjectDH.WaitOne(310 * 1000);
-                Assert.IsTrue(isUnencryptObjectDH, "Unable to match the successful unencrypt object Publish");
-            }
-        }
-
-        [TestMethod]
-        public void ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo()
-        {
-            isEncryptObjectPublished = false;
-            Pubnub pubnub = new Pubnub("demo", "demo", "", "enigma", false);
-            string channel = "my/channel";
-            object message = new SecretCustomClass();
-            messageObjectForEncryptPublish = JsonConvert.SerializeObject(message);
-
-            pubnub.publish<string>(channel, message, ReturnSuccessEncryptObjectPublishCodeCallback);
-            mreEncryptObjectPub.WaitOne(310 * 1000);
-
-            if (!isEncryptObjectPublished)
-            {
-                Assert.IsTrue(isEncryptObjectPublished, "Encrypt Object Publish Failed");
-            }
-            else
-            {
-                pubnub.detailedHistory<string>(channel, -1, encryptObjectPublishTimetoken, -1, false, CaptureEncryptObjectDetailedHistoryCallback);
-                mreEncryptObjectDH.WaitOne(310 * 1000);
-                Assert.IsTrue(isEncryptObjectDH, "Unable to match the successful encrypt object Publish");
-            }
-        }
-
-        [TestMethod]
-        public void ThenEncryptPublishShouldReturnSuccessCodeAndInfo()
-        {
-            isEncryptPublished = false;
-            Pubnub pubnub = new Pubnub("demo", "demo", "", "enigma", false);
-            string channel = "my/channel";
-            string message = messageForEncryptPublish;
-
-            pubnub.publish<string>(channel, message, ReturnSuccessEncryptPublishCodeCallback);
-            mreEncryptPub.WaitOne(310 * 1000);
-
-            if (!isEncryptPublished)
-            {
-                Assert.IsTrue(isEncryptPublished, "Encrypt Publish Failed");
-            }
-            else
-            {
-                pubnub.detailedHistory<string>(channel, -1, encryptPublishTimetoken, -1, false, CaptureEncryptDetailedHistoryCallback);
-                mreEncryptDH.WaitOne(310 * 1000);
-                Assert.IsTrue(isEncryptDH, "Unable to decrypt the successful Publish");
-            }
-        }
-
-        [TestMethod]
-        public void ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo()
-        {
-            isSecretEncryptPublished = false;
-            Pubnub pubnub = new Pubnub("demo", "demo", "key", "enigma", false);
-            string channel = "my/channel";
-            string message = messageForSecretEncryptPublish;
-
-            pubnub.publish<string>(channel, message, ReturnSuccessSecretEncryptPublishCodeCallback);
-            mreSecretEncryptPub.WaitOne(310 * 1000);
-
-            if (!isSecretEncryptPublished)
-            {
-                Assert.IsTrue(isSecretEncryptPublished, "Secret Encrypt Publish Failed");
-            }
-            else
-            {
-                pubnub.detailedHistory<string>(channel, -1, secretEncryptPublishTimetoken, -1, false, CaptureSecretEncryptDetailedHistoryCallback);
-                mreSecretEncryptDH.WaitOne(310 * 1000);
-                Assert.IsTrue(isSecretEncryptDH, "Unable to decrypt the successful Secret key Publish");
-            }
-        }
-
-        private void ReturnSuccessUnencryptPublishCodeCallback(string result)
+        [Asynchronous]
+        public void ReturnSuccessUnencryptPublishCodeCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
@@ -189,10 +102,61 @@ namespace PubnubSilverlight.UnitTest
                     }
                 }
             }
-            manualEvent1.Set();
+            isCheck = true;
         }
 
-        private void ReturnSuccessUnencryptObjectPublishCodeCallback(string result)
+        [Asynchronous]
+        public void CaptureUnencryptDetailedHistoryCallback(string result)
+        {
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
+                if (receivedObj is object[])
+                {
+                    JArray jObj = JArray.Parse(receivedObj[0].ToString());
+                    if (jObj[0].ToString() == messageForUnencryptPublish)
+                    {
+                        isUnencryptDH = true;
+                    }
+                }
+            }
+
+            isUnencryptCheck = true;
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo()
+        {
+            isUnencryptObjectPublished = false;
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            string channel = "my/channel";
+
+            object message = new CustomClass();
+            messageObjectForUnencryptPublish = JsonConvert.SerializeObject(message);
+
+            EnqueueCallback(() => pubnub.publish<string>(channel, message, ReturnSuccessUnencryptObjectPublishCodeCallback));
+            EnqueueConditional(() => isUnencryptObjectPubCheck);
+
+            EnqueueCallback(() =>
+            {
+                if (!isUnencryptObjectPublished)
+                {
+                    Assert.IsTrue(isUnencryptObjectPublished, "Unencrypt Publish Failed");
+                }
+                else
+                {
+                    EnqueueCallback(() => pubnub.detailedHistory<string>(channel, -1, unEncryptObjectPublishTimetoken, -1, false, CaptureUnencryptObjectDetailedHistoryCallback));
+                    EnqueueConditional(() => isUnencryptObjectDHCheck);
+                    EnqueueCallback(() => Assert.IsTrue(isUnencryptObjectDH, "Unable to match the successful unencrypt object Publish"));
+                }
+            });
+
+            EnqueueTestComplete();
+        }
+
+        [Asynchronous]
+        public void ReturnSuccessUnencryptObjectPublishCodeCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
@@ -208,10 +172,60 @@ namespace PubnubSilverlight.UnitTest
                     }
                 }
             }
-            mreUnencryptObjectPub.Set();
+            isUnencryptObjectPubCheck = true;
         }
 
-        private void ReturnSuccessEncryptObjectPublishCodeCallback(string result)
+        [Asynchronous]
+        public void CaptureUnencryptObjectDetailedHistoryCallback(string result)
+        {
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
+                if (receivedObj is object[])
+                {
+                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
+                    if (jArr[0].ToString(Formatting.None) == messageObjectForUnencryptPublish)
+                    {
+                        isUnencryptObjectDH = true;
+                    }
+                }
+            }
+
+            isUnencryptObjectDHCheck = true;
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo()
+        {
+            isEncryptObjectPublished = false;
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "enigma", false);
+            string channel = "my/channel";
+            object message = new SecretCustomClass();
+            messageObjectForEncryptPublish = JsonConvert.SerializeObject(message);
+
+            EnqueueCallback(() => pubnub.publish<string>(channel, message, ReturnSuccessEncryptObjectPublishCodeCallback));
+            EnqueueConditional(() => isEncryptObjectPubCheck);
+
+            EnqueueCallback(() =>
+            {
+                if (!isEncryptObjectPublished)
+                {
+                    Assert.IsTrue(isEncryptObjectPublished, "Encrypt Object Publish Failed");
+                }
+                else
+                {
+                   EnqueueCallback(() => pubnub.detailedHistory<string>(channel, -1, encryptObjectPublishTimetoken, -1, false, CaptureEncryptObjectDetailedHistoryCallback));
+                   EnqueueConditional(() => isEncryptObjectDHCheck);
+                   EnqueueCallback(() => Assert.IsTrue(isEncryptObjectDH, "Unable to match the successful encrypt object Publish"));
+                }
+            });
+
+            EnqueueTestComplete();
+        }
+
+        [Asynchronous]
+        public void ReturnSuccessEncryptObjectPublishCodeCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
@@ -227,10 +241,59 @@ namespace PubnubSilverlight.UnitTest
                     }
                 }
             }
-            mreEncryptObjectPub.Set();
+            isEncryptObjectPubCheck = true;
         }
 
-        private void ReturnSuccessEncryptPublishCodeCallback(string result)
+        [Asynchronous]
+        public void CaptureEncryptObjectDetailedHistoryCallback(string result)
+        {
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
+                if (receivedObj is object[])
+                {
+                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
+                    if (jArr[0].ToString(Formatting.None) == messageObjectForEncryptPublish)
+                    {
+                        isEncryptObjectDH = true;
+                    }
+                }
+            }
+
+            isEncryptObjectDHCheck = true;
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void ThenEncryptPublishShouldReturnSuccessCodeAndInfo()
+        {
+            isEncryptPublished = false;
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "enigma", false);
+            string channel = "my/channel";
+            string message = messageForEncryptPublish;
+
+            EnqueueCallback(() => pubnub.publish<string>(channel, message, ReturnSuccessEncryptPublishCodeCallback));
+            EnqueueConditional(() => isEncryptPubCheck);
+       
+            EnqueueCallback(() =>
+            {
+                if (!isEncryptPublished)
+                {
+                    Assert.IsTrue(isEncryptPublished, "Encrypt Publish Failed");
+                }
+                else
+                {
+                    EnqueueCallback(() => pubnub.detailedHistory<string>(channel, -1, encryptPublishTimetoken, -1, false, CaptureEncryptDetailedHistoryCallback));
+                    EnqueueConditional(() => isEncryptDHCheck);
+                    EnqueueCallback(() => Assert.IsTrue(isEncryptDH, "Unable to decrypt the successful Publish"));
+                }
+            });
+
+            EnqueueTestComplete();
+        }
+
+        [Asynchronous]
+        public void ReturnSuccessEncryptPublishCodeCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
@@ -246,10 +309,59 @@ namespace PubnubSilverlight.UnitTest
                     }
                 }
             }
-            mreEncryptPub.Set();
+            isEncryptPubCheck = true;
         }
 
-        private void ReturnSuccessSecretEncryptPublishCodeCallback(string result)
+        [Asynchronous]
+        public void CaptureEncryptDetailedHistoryCallback(string result)
+        {
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
+                if (receivedObj is object[])
+                {
+                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
+                    if (jArr[0].ToString() == messageForEncryptPublish)
+                    {
+                        isEncryptDH = true;
+                    }
+                }
+            }
+
+            isEncryptDHCheck = true;
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        public void ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo()
+        {
+            isSecretEncryptPublished = false;
+            Pubnub pubnub = new Pubnub("demo", "demo", "key", "enigma", false);
+            string channel = "my/channel";
+            string message = messageForSecretEncryptPublish;
+
+            EnqueueCallback(() => pubnub.publish<string>(channel, message, ReturnSuccessSecretEncryptPublishCodeCallback));
+            EnqueueConditional(() => isSecretEncryptPubCheck);
+
+            EnqueueCallback(() =>
+            {
+                if (!isSecretEncryptPublished)
+                {
+                    Assert.IsTrue(isSecretEncryptPublished, "Secret Encrypt Publish Failed");
+                }
+                else
+                {
+                    EnqueueCallback(() => pubnub.detailedHistory<string>(channel, -1, secretEncryptPublishTimetoken, -1, false, CaptureSecretEncryptDetailedHistoryCallback));
+                    EnqueueConditional(() => isSecretEncryptDHCheck);
+                    EnqueueCallback(() => Assert.IsTrue(isSecretEncryptDH, "Unable to decrypt the successful Secret key Publish"));
+                }
+            });
+
+            EnqueueTestComplete();
+        }
+
+        [Asynchronous]
+        public void ReturnSuccessSecretEncryptPublishCodeCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
@@ -265,81 +377,10 @@ namespace PubnubSilverlight.UnitTest
                     }
                 }
             }
-            mreSecretEncryptPub.Set();
+            isSecretEncryptPubCheck = true;
         }
 
-        private void CaptureUnencryptDetailedHistoryCallback(string result)
-        {
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
-                {
-                    JArray jObj = JArray.Parse(receivedObj[0].ToString());
-                    if (jObj[0].ToString() == messageForUnencryptPublish)
-                    {
-                        isUnencryptDH = true;
-                    }
-                }
-            }
-
-            mreUnencryptDH.Set();
-        }
-
-        private void CaptureUnencryptObjectDetailedHistoryCallback(string result)
-        {
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
-                {
-                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
-                    if (jArr[0].ToString(Formatting.None) == messageObjectForUnencryptPublish)
-                    {
-                        isUnencryptObjectDH = true;
-                    }
-                }
-            }
-
-            mreUnencryptObjectDH.Set();
-        }
-
-        private void CaptureEncryptObjectDetailedHistoryCallback(string result)
-        {
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
-                {
-                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
-                    if (jArr[0].ToString(Formatting.None) == messageObjectForEncryptPublish)
-                    {
-                        isEncryptObjectDH = true;
-                    }
-                }
-            }
-
-            mreEncryptObjectDH.Set();
-        }
-
-        private void CaptureEncryptDetailedHistoryCallback(string result)
-        {
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
-                {
-                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
-                    if (jArr[0].ToString() == messageForEncryptPublish)
-                    {
-                        isEncryptDH = true;
-                    }
-                }
-            }
-
-            mreEncryptDH.Set();
-        }
-
+        [Asynchronous]
         private void CaptureSecretEncryptDetailedHistoryCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
@@ -355,7 +396,7 @@ namespace PubnubSilverlight.UnitTest
                 }
             }
 
-            mreSecretEncryptDH.Set();
+            isSecretEncryptDHCheck = true;
         }
 
         [TestMethod]
@@ -378,22 +419,24 @@ namespace PubnubSilverlight.UnitTest
             pubnub.publish<string>(channel, message, null);
         }
 
-
         [TestMethod]
+        [Asynchronous]
         public void ThenOptionalSecretKeyShouldBeProvidedInConstructor()
         {
             isPublished2 = false;
-            Pubnub pubnub = new Pubnub("demo","demo","key");
+            Pubnub pubnub = new Pubnub("demo", "demo", "key");
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.publish<string>(channel, message, ReturnSecretKeyPublishCallback);
-            manualEvent2.WaitOne(310 * 1000);
+            EnqueueCallback(() => pubnub.publish<string>(channel, message, ReturnSecretKeyPublishCallback));
+            EnqueueConditional(() => isCkeck2);
+            EnqueueCallback(() => Assert.IsTrue(isPublished2, "Publish Failed with secret key"));
 
-            Assert.IsTrue(isPublished2, "Publish Failed with secret key");
+            EnqueueTestComplete();
         }
 
-        private void ReturnSecretKeyPublishCallback(string result)
+        [Asynchronous]
+        public void ReturnSecretKeyPublishCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
@@ -408,7 +451,7 @@ namespace PubnubSilverlight.UnitTest
                     }
                 }
             }
-            manualEvent2.Set();
+            isCkeck2 = true;
         }
 
         [TestMethod]
@@ -419,12 +462,15 @@ namespace PubnubSilverlight.UnitTest
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.publish<string>(channel, message, ReturnNoSSLDefaultFalseCallback);
-            manualEvent3.WaitOne(310 * 1000);
-            Assert.IsTrue(isPublished3, "Publish Failed with no SSL");
+            EnqueueCallback(() => pubnub.publish<string>(channel, message, ReturnNoSSLDefaultFalseCallback));
+            EnqueueConditional(() => isCkeck3);
+            EnqueueCallback(() => Assert.IsTrue(isPublished3, "Publish Failed with no SSL"));
+
+            EnqueueTestComplete();
         }
 
-        private void ReturnNoSSLDefaultFalseCallback(string result)
+        [Asynchronous]
+        public void ReturnNoSSLDefaultFalseCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
@@ -439,7 +485,7 @@ namespace PubnubSilverlight.UnitTest
                     }
                 }
             }
-            manualEvent3.Set();
+            isCkeck3 = true;
         }
     }
 }

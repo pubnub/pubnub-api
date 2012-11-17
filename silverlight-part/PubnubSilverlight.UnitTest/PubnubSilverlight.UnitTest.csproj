@@ -95,6 +95,12 @@
     </Compile>
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WhenAClientIsPresented.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WhenAMessageIsPublished.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="WhenGetRequestServerTime.cs">
       <SubType>Code</SubType>
     </Compile>

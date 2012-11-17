@@ -10,12 +10,10 @@ C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.E
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\System.Windows.Controls.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\System.Windows.Controls.Navigation.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\ConcurrentHashtable_Silverlight.dll
-C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Imports.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Core.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.UnitTest.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\System.Windows.Controls.xml
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\System.Windows.Controls.Navigation.xml
-C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Imports.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\ar\System.Windows.Controls.resources.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\bg\System.Windows.Controls.resources.dll
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\ca\System.Windows.Controls.resources.dll
@@ -77,3 +75,5 @@ C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.E
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\PubnubSilverlight.Example.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\XapCacheFile.xml
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\Newtonsoft.Json.dll
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Imports.dll
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Imports.pdb

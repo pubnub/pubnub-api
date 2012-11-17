@@ -56,8 +56,8 @@ namespace PubnubSilverlight.Core
 
             private static bool _pubnetSystemActive = true;
 
+         
             //private static TraceSwitch appSwitch = new TraceSwitch("PubnubTraceSwitch", "Pubnub Trace Switch in config file"); *Changed*
-
 
             // Publish
             private ConcurrentDictionary<string, object> _publishMsg = new ConcurrentDictionary<string, object>();
