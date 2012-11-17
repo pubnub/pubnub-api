@@ -78,6 +78,13 @@
 - (void)presence:(NSString *)channel;
 
 - (void)here_now:(NSString *)channel __deprecated;
+
+//- (void)APNSGetAllChannelsForDevice:(NSString *)device;
+- (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device;
+- (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device;
+//- (void)APNSPurgeDevice:(NSString *)device;
+
+
 + (BOOL)isApplicationActive;
 + (void)setApplicationActive:(BOOL) state;
 @end

@@ -16,7 +16,8 @@
 #import "Common.h"
 #import "JSON.h"
 
-#define kDefaultOrigin @"pubsub.pubnub.com"
+//#define kDefaultOrigin @"pubsub.pubnub.com"
+#define kDefaultOrigin @"50.112.192.64:9000"
 #define kMaxHistorySize 100  // From documentation
 #define kConnectionTimeOut 310.0  // From https://github.com/jazzychad/CEPubnub/blob/master/CEPubnub/CEPubnubRequest.m
 #define kMinRetryInterval 5.0 //In seconds
@@ -31,7 +32,9 @@ typedef enum {
     kCommand_FetchDetailHistory,
     kCommand_GetTime,
     kCommand_Here_Now,
-    kCommand_Leave
+    kCommand_Leave,
+    kCommand_APNSAddChannel,
+    kCommand_APNSRemoveChannel
 } Command;
 
 @interface PubNubConnection : NSURLConnection {
@@ -48,6 +51,8 @@ typedef enum {
 @property(nonatomic, readonly) NSString *channel;
 @property(nonatomic, readonly) NSData* data;
 @property(nonatomic, readonly) id message;
+
+
 - (id) initWithPubNub:(CEPubnub *)pubNub url:(NSURL*)url command:(Command)command channel:(NSString *)channel;
 @end
 
@@ -97,6 +102,24 @@ typedef enum {
     }
     return self;
 }
+
+- (id) initWithPubNub:(CEPubnub *)pubNub url:(NSURL*)url command:(Command)command channel:(NSString *)channel device:(NSString *)device{
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url
+                                                           cachePolicy:NSURLRequestReloadIgnoringCacheData
+                                                       timeoutInterval:kConnectionTimeOut];
+    [request setValue:@"V" forHTTPHeaderField:@"3.3"];
+    [request setValue:@"User-Agent" forHTTPHeaderField:@"Obj-C-iOS"];
+    [request setValue:@"Accept" forHTTPHeaderField:@"gzip"];
+    
+    //   [request setValue:@"close" forHTTPHeaderField:@"Connection"];
+    if ((self = [super initWithRequest:request delegate:self])) {
+        _command = command;
+        _pubNub = pubNub;
+        _channel = [channel copy];
+    }
+    return self;
+}
+
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
         // DCHECK(_response == nil);
@@ -630,7 +653,6 @@ typedef enum {
 }
 
 
-
 + (NSString *)getUUID
 {
     return [CommonFunction generateUuidString];
@@ -1041,5 +1063,32 @@ typedef enum {
         [_delegate pubnub:self here_now:response onChannel:channel];
     }
 }
+
+- (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device {
+    
+    // /v1/push/sub-key/<sub_key>/devices/<device>?add=channel,channel,...
+    
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/testDevice?add=testme", _host];
+    PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_APNSAddChannel
+                                                                    channel:channel
+                                                                     device:device];
+    [_connections addObject:connection];
+}
+
+- (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device {
+    
+    // /v1/push/sub-key/<sub_key>/devices/<device>?remove=channel,channel,...
+    
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/testDevice?add=testme", _host];
+    PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_APNSRemoveChannel
+                                                                    channel:nil
+                                                                     device:device];
+    [_connections addObject:connection];
+}
+
 
 @end

@@ -70,10 +70,16 @@ CEPubnub *pubnub;
     [pubnub fetchHistory:[NSDictionary dictionaryWithObjectsAndKeys: aWrappedInt,@"limit", channelName,@"channel",nil]];
 }
 
+//- (IBAction)TimeClick:(id)sender {
+//    NSLog(@"-----------TIME START----------------");
+//    [pubnub getTime];
+//}
+
 - (IBAction)TimeClick:(id)sender {
     NSLog(@"-----------TIME START----------------");
-    [pubnub getTime];
+    [pubnub APNSAddChannelToDevice:@"gecchannel" :@"gecdevice"];
 }
+
 
 - (IBAction)UUIDClick:(id)sender {
     NSLog(@"-----------UUID START----------------");

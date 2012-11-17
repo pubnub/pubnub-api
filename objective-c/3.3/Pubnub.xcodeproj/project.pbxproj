@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A762EC88165715870095E12C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A762EC87165715870095E12C /* Default-568h@2x.png */; };
 		C8C1CDD81611C71100FE66B6 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = C8C1CDD71611C71100FE66B6 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C8C1CDDB1611CC3C00FE66B6 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C8C1CDDA1611CC3C00FE66B6 /* JSON.m */; };
 		C8FD4D38153D447200D0A418 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FD4D37153D447200D0A418 /* UIKit.framework */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A762EC87165715870095E12C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C8C1CDD61611C71100FE66B6 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		C8C1CDD71611C71100FE66B6 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		C8C1CDD91611CC1A00FE66B6 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 		C8FD4D28153D447100D0A418 = {
 			isa = PBXGroup;
 			children = (
+				A762EC87165715870095E12C /* Default-568h@2x.png */,
 				C8FD4D3D153D447200D0A418 /* Pubnub */,
 				C8FD4D36153D447200D0A418 /* Frameworks */,
 				C8FD4D34153D447200D0A418 /* Products */,
@@ -190,6 +193,7 @@
 			files = (
 				C8FD4D42153D447200D0A418 /* InfoPlist.strings in Resources */,
 				C8FD4D85153D505500D0A418 /* MainWindow_iPhone.xib in Resources */,
+				A762EC88165715870095E12C /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
