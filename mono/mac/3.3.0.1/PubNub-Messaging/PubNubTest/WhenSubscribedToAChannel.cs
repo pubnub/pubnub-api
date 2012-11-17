@@ -63,6 +63,7 @@ namespace PubNubTest
           cm.deliveryStatus = false;
           cm.objResponse = null;
           pubnub.subscribe (channel, cm.DisplayReturnMessage); 
+          Thread.Sleep(3000);
           string msg = "Test Message";
           pubnub.publish (channel, msg, DisplayReturnMessageDummmy);
           cm.deliveryStatus = false;
