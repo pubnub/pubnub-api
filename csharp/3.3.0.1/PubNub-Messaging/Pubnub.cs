@@ -32,6 +32,7 @@ namespace PubNub_Messaging
         const int PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC = 15; 
         const int PUBNUB_NETWORK_CHECK_RETRIES = 50;
         const int PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC = 10;
+        const bool OVERRIDE_TCP_KEEP_ALIVE = false;
 
         // Common property changed event
         public event PropertyChangedEventHandler PropertyChanged;
@@ -74,8 +75,6 @@ namespace PubNub_Messaging
         // Timestamp
         private List<object> _Time = new List<object>();
 
-        private bool _overrideTcpKeepAlive =  false;
-
         // Pubnub Core API implementation
         private string ORIGIN = "pubsub.pubnub.com";
         private string PUBLISH_KEY = "";
@@ -109,8 +108,6 @@ namespace PubNub_Messaging
                 this.ORIGIN = "https://" + this.ORIGIN;
             else
                 this.ORIGIN = "http://" + this.ORIGIN;
-
-            _overrideTcpKeepAlive = Boolean.Parse(ConfigurationManager.AppSettings["OverrideTcpKeepAlive"].ToString());
 
             //Initiate System Events for PowerModeChanged - to monitor suspend/resume
             initiatePowerModeCheck();
@@ -232,14 +229,14 @@ namespace PubNub_Messaging
             {
                 _pubnetSystemActive = false;
                 TerminatePendingWebRequest();
-                if (_overrideTcpKeepAlive)
+                if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
                     heartBeatTimer.Change(Timeout.Infinite, Timeout.Infinite);
                 }
                 if (appSwitch.TraceInfo)
                 {
                     Trace.WriteLine(string.Format("DateTime {0}, System entered into Suspend Mode.", DateTime.Now.ToString()));
-                    if (_overrideTcpKeepAlive)
+                    if (OVERRIDE_TCP_KEEP_ALIVE)
                     {
                         Trace.WriteLine(string.Format("DateTime {0}, Disabled Timer for heartbeat ", DateTime.Now.ToString()));
                     }
@@ -248,7 +245,7 @@ namespace PubNub_Messaging
             else if (e.Mode == PowerModes.Resume)
             {
                 _pubnetSystemActive = true;
-                if (_overrideTcpKeepAlive)
+                if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
                     heartBeatTimer.Change(
                         (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000,
@@ -257,7 +254,7 @@ namespace PubNub_Messaging
                 if (appSwitch.TraceInfo)
                 {
                     Trace.WriteLine(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()));
-                    if (_overrideTcpKeepAlive)
+                    if (OVERRIDE_TCP_KEEP_ALIVE)
                     {
                         Trace.WriteLine(string.Format("DateTime {0}, Enabled Timer for heartbeat ", DateTime.Now.ToString()));
                     }
@@ -684,7 +681,7 @@ namespace PubNub_Messaging
                     }
                 }
 
-                if (_overrideTcpKeepAlive)
+                if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
                     //reset heart beat time because http request already timedout
                     heartBeatTimer.Change(
@@ -712,7 +709,7 @@ namespace PubNub_Messaging
 
                 if (_channelInternetStatus.ContainsKey(currentState.channel)
                     && (currentState.type == ResponseType.Subscribe || currentState.type == ResponseType.Presence)
-                    && _overrideTcpKeepAlive)
+                    && OVERRIDE_TCP_KEEP_ALIVE)
                 {
                     _channelInternetStatus[currentState.channel] = networkConnection;
 
@@ -917,7 +914,7 @@ namespace PubNub_Messaging
                     return;
                 }
 
-                if (_overrideTcpKeepAlive)
+                if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
                     if (appSwitch.TraceInfo)
                     {
@@ -1042,7 +1039,7 @@ namespace PubNub_Messaging
                     return;
                 }
 
-                if (_overrideTcpKeepAlive)
+                if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
                     if (appSwitch.TraceInfo)
                     {
@@ -1337,7 +1334,7 @@ namespace PubNub_Messaging
                     _channelRequest.AddOrUpdate(channelName, pubnubRequestState, (key, oldState) => pubnubRequestState);
                 }
 
-                if (_overrideTcpKeepAlive)
+                if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
                     //Eventhough heart-beat is disabled, run one time to check internet connection by setting dueTime=0
                     heartBeatTimer = new System.Threading.Timer(
@@ -1378,7 +1375,7 @@ namespace PubNub_Messaging
                                     string jsonString = streamReader.ReadToEnd();
                                     streamReader.Close();
 
-                                    if (_overrideTcpKeepAlive)
+                                    if (OVERRIDE_TCP_KEEP_ALIVE)
                                     {
                                         heartBeatTimer.Change(
                                             (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000,
@@ -1439,7 +1436,7 @@ namespace PubNub_Messaging
                             || webEx.Status == WebExceptionStatus.ConnectFailure //Sending Keep-alive packet failed (No network)/Server is down.
                             || webEx.Status == WebExceptionStatus.ServerProtocolViolation//Problem with proxy or ISP
                             || webEx.Status == WebExceptionStatus.ProtocolError
-                            ) && (!_overrideTcpKeepAlive))
+                            ) && (!OVERRIDE_TCP_KEEP_ALIVE))
                         {
                             //internet connection problem.
                             if (appSwitch.TraceError)
@@ -2816,116 +2813,37 @@ namespace PubNub_Messaging
 
         private static void checkClientNetworkAvailability(Action<bool> callback)
         {
-            #if (__MonoCS__)
-            bool connected = false;
-            if (NetworkInterface.GetIsNetworkAvailable())
-            {
-                Ping netMon = new Ping();
-
-                try
-                {
-                    PingReply response = netMon.Send("pubsub.pubnub.com");
-                    if (response != null)
-                    {
-                        if (appSwitch.TraceError)
-                        {
-                            Trace.WriteLine(response.RoundtripTime);
-                            Trace.WriteLine(response.Status);
-                        }
-                        if(response.Status == IPStatus.Success)
-                        {
-                            connected = true;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (appSwitch.TraceError)
-                    {
-                        Trace.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), ex.ToString()));
-                    }
-                }
-                callback(connected);
-            }
-            else
-            {
-                callback(connected);
-            }
-            #else
-            if (NetworkInterface.GetIsNetworkAvailable())
-            {
-                NetworkInterface[] netInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-                foreach (NetworkInterface netInterface in netInterfaces)
-                {
-                    IPInterfaceProperties ip = netInterface.GetIPProperties();
-                    if (netInterface.OperationalStatus == OperationalStatus.Up)
-                    {
-                        if (netInterface.NetworkInterfaceType != NetworkInterfaceType.Tunnel
-                            && netInterface.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-                        {
-                            IPInterfaceProperties prop = netInterface.GetIPProperties();
-                            UnicastIPAddressInformationCollection unicast = prop.UnicastAddresses;
-
-                            foreach (UnicastIPAddressInformation uniIP in unicast)
-                            {
-                                IPAddress addrip = uniIP.Address;
-                                if (addrip.AddressFamily != AddressFamily.InterNetwork) continue;
-
-                                InternetState state = new InternetState();
-                                state.ipaddr = addrip;
-                                state.callback = callback;
-                                ThreadPool.QueueUserWorkItem(checkSocketConnect, state);
-                                mres.Wait();
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                callback(false);
-            }
-            #endif
+            InternetState state = new InternetState();
+            state.callback = callback;
+            ThreadPool.QueueUserWorkItem(checkSocketConnect, state);
+            mres.Wait();
         }
 
         private static void checkSocketConnect(object internetState)
         {
-            bool connected = false;
             InternetState state = internetState as InternetState;
-            IPAddress ipaddr = state.ipaddr;
             Action<bool> callback = state.callback;
             try
             {
-                using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+                using (UdpClient udp = new UdpClient("pubsub.pubnub.com", 80))
                 {
-                    socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                    IPAddress localAddr = ((IPEndPoint)udp.Client.LocalEndPoint).Address;
+                    udp.Close();
 
-                    IPEndPoint local = new IPEndPoint(ipaddr, 0);
-                    socket.Bind(local);
-                    socket.Connect("pubsub.pubnub.com", 80);
-                    connected = true;
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Disconnect(true);
-                    socket.Close();
-                }
-            }
-            catch (ObjectDisposedException objEx)
-            {
-                if (appSwitch.TraceVerbose)
-                {
-                    Trace.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), objEx.ToString()));
+                    if (appSwitch.TraceVerbose)
+                    {
+                        Trace.WriteLine(string.Format("DateTime {0} checkInternetStatus LocalIP: {1}", DateTime.Now.ToString(), localAddr.ToString()));
+                    }
+                    callback(true);
                 }
             }
             catch (Exception ex)
             {
-                if (appSwitch.TraceVerbose)
+                if (appSwitch.TraceError)
                 {
-                    Trace.WriteLine(string.Format("DateTime {0} checkSocketConnect Error. {1}", DateTime.Now.ToString(), ex.ToString()));
+                    Trace.WriteLine(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()));                
                 }
-            }
-            if (callback != null)
-            {
-                callback(connected);
+                callback(false);
             }
             mres.Set();
         }
