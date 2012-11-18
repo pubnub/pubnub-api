@@ -2880,13 +2880,15 @@ namespace PubNub_Messaging
             Action<bool> callback = state.callback;
             try
             {
-                UdpClient u = new UdpClient ("pubsub.pubnub.com", 80);
-                IPAddress localAddr = ((IPEndPoint)u.Client.LocalEndPoint).Address;
-                if (appSwitch.TraceVerbose)
-                {
-                    Trace.WriteLine(string.Format("DateTime {0} checkInternetStatus Localip: {1}", DateTime.Now.ToString(), localAddr.ToString()));
-                }
-                callback(true);
+                using(UdpClient u = new UdpClient ("pubsub.pubnub.com", 80))
+				{
+	                IPAddress localAddr = ((IPEndPoint)u.Client.LocalEndPoint).Address;
+	                if (appSwitch.TraceVerbose)
+	                {
+	                    Trace.WriteLine(string.Format("DateTime {0} checkInternetStatus Localip: {1}", DateTime.Now.ToString(), localAddr.ToString()));
+	                }
+	                callback(true);
+				}
             }
             catch (Exception ex)
             {
