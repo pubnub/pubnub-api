@@ -34,7 +34,8 @@ typedef enum {
     kCommand_Here_Now,
     kCommand_Leave,
     kCommand_APNSAddChannel,
-    kCommand_APNSRemoveChannel
+    kCommand_APNSRemoveChannel,
+    kCommand_APNSGetAllChannels
 } Command;
 
 @interface PubNubConnection : NSURLConnection {
@@ -103,6 +104,9 @@ typedef enum {
     return self;
 }
 
+
+    // For APNS
+
 - (id) initWithPubNub:(CEPubnub *)pubNub url:(NSURL*)url command:(Command)command channel:(NSString *)channel device:(NSString *)device{
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url
                                                            cachePolicy:NSURLRequestReloadIgnoringCacheData
@@ -143,6 +147,7 @@ typedef enum {
             NSError* error = nil;
             
             if ([NSJSONSerialization class]) {
+                
                 id result= [NSJSONSerialization JSONObjectWithData:_data options:kNilOptions error:&error];
                 if (error != nil) result = nil;
                 [_pubNub connection:self didCompleteWithResponse:result];
@@ -715,8 +720,17 @@ typedef enum {
 
 - (void)connection:(PubNubConnection *)connection didCompleteWithResponse:(id)response  {
     switch (connection.command) {
+        
         case kCommand_SendMessage:
             [self handleCommandSendMessageForConnection:connection response:response];
+            break;
+        
+        case kCommand_APNSAddChannel:
+            [self handleAPNSAddChannel:connection response:response];
+            break;
+
+        case kCommand_APNSRemoveChannel:
+            [self handleAPNSRemoveChannel:connection response:response];
             break;
             
         case kCommand_ReceiveMessage:
@@ -740,10 +754,14 @@ typedef enum {
                 [self hereNow:response onChannel:connection.channel];
             }
             break;
+
         case kCommand_Leave:
             NSLog(@"Leave sucessfully with %@",response);
             break;
         }
+
+            
+            
         default:
                 //     NOT_REACHED();
             NSLog(@"ERROR::didCompleteWithResponse Command Not Set..");
@@ -754,16 +772,72 @@ typedef enum {
 
 #pragma mark - command handlers for -connection:didCompleteWithResponse:
 
+
+
+- (void)handleAPNSAddChannel:(PubNubConnection *)connection response:(id)response
+{
+    BOOL success = NO;
+    NSString *error = nil;
+    if(response)
+            
+    {
+        if ([response isKindOfClass:[NSArray class]])
+        {
+            NSArray *arra = (NSArray*)response;
+            
+            success = [[arra objectAtIndex:0] boolValue];
+            if(success == NO)
+            {
+                error = [arra objectAtIndex:1];
+            }
+        }
+    }
+    
+    if (success) {
+        NSLog(@"APNS Add Channel Success: %@", response);
+    } else {
+        NSLog(@"APNS Add Channel Failed: %@", response);
+    }
+}
+
+- (void)handleAPNSRemoveChannel:(PubNubConnection *)connection response:(id)response
+{
+    BOOL success = NO;
+    NSString *error = nil;
+    if(response)
+        
+    {
+        if ([response isKindOfClass:[NSArray class]])
+        {
+            NSArray *arra = (NSArray*)response;
+            
+            success = [[arra objectAtIndex:0] boolValue];
+            if(success == NO)
+            {
+                error = [arra objectAtIndex:1];
+            }
+        }
+    }
+    
+    if (success) {
+        NSLog(@"APNS Remove Channel Success: %@", response);
+    } else {
+        NSLog(@"APNS Remove Channel Failed: %@", response);
+    }
+}
+
+
 - (void)handleCommandSendMessageForConnection:(PubNubConnection *)connection response:(id)response
 {
     BOOL success = NO;
     NSString *error = nil;
     NSArray *array=nil;
     if(response)
+        
     {
         if ([response isKindOfClass:[NSArray class]])
         {
-            NSArray *arra= (NSArray*)response;
+            NSArray *arra = (NSArray*)response;
             if([arra count] > 2)
             {
                 success = [[arra objectAtIndex:0] boolValue];
@@ -997,6 +1071,16 @@ typedef enum {
     // else if (deprecated one exists)
     //     call deprecated one
 
+
+- (void)didSucceedAPNSAddChannel:(NSString *)channel
+                                withResponse:(id)response
+                                     device:(id)device
+{
+    if ([_delegate respondsToSelector:@selector(pubnub:didSucceedPublishingMessageToChannel:withResponse:message:)]) {
+        [_delegate pubnub:self didSucceedPublishingMessageToChannel:channel withResponse:response message:device];
+    }
+    
+}
 
 - (void)didSucceedPublishingMessageToChannel:(NSString *)channel
                                 withResponse:(id)response

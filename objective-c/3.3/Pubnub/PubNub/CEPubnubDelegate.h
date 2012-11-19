@@ -5,6 +5,12 @@
 @protocol CEPubnubDelegate <NSObject>
 
 @optional
+
+- (void)pubnub:(CEPubnub *)pubnub
+didSucceedAPNSAddChannel:(NSString *)channel
+  withResponse:(id)response
+       device:(id)device;
+
 - (void)pubnub:(CEPubnub *)pubnub
     didSucceedPublishingMessageToChannel:(NSString *)channel
     withResponse:(id)response

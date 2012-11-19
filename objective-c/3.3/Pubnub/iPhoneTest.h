@@ -22,6 +22,9 @@
 - (IBAction)Here_Now:(id)sender;
 - (IBAction)Presence:(id)sender;
 - (IBAction)DetailedHistoryClick:(id)sender;
+- (IBAction)APNSRegClick:(id)sender;
+- (IBAction)APNSUnregClick:(id)sender;
+
 
 @property (retain, nonatomic) IBOutlet UITextView *txt;
 
