@@ -1,7 +1,8 @@
 <?php
 require_once('PubnubAES.php');
+
 /**
- * PubNub 3.3 Real-time Push Cloud API
+ * PubNub 3.3.1 Real-time Push Cloud API
  * @package Pubnub
  */
 class Pubnub
@@ -13,6 +14,11 @@ class Pubnub
     private $CIPHER_KEY = '';
     private $SSL = false;
     private $SESSION_UUID = '';
+
+    // New style response contains channel after timetoken
+    // Old style response does not
+
+    private $NEW_STYLE_RESPONSE = true;
 
     /**
      * Pubnub
@@ -51,6 +57,11 @@ class Pubnub
 
         if ($origin)
             $this->ORIGIN = $origin;
+
+        if ($this->ORIGIN == "pubsub.pubnub.com") {
+            trigger_error("Before running in production, please contact support@pubnub.com for your custom origin.", E_USER_NOTICE);
+        }
+
 
         if ($ssl)
             $this->ORIGIN = 'https://' . $this->ORIGIN;
@@ -203,8 +214,17 @@ class Pubnub
                     continue;
                 }
 
+
+
                 $messages = $response[0];
                 $timetoken = $response[1];
+
+                if (count($response) == 3) {
+                    $derivedChannel = $response[2];
+                }   else {
+                    $derivedChannel = $channel;
+                }
+
 
                 if (!count($messages)) {
                     continue;
@@ -212,7 +232,10 @@ class Pubnub
 
                 $receivedMessages = $this->decodeAndDecrypt($messages, $mode);
 
-                $returnArray = array($receivedMessages, $timetoken);
+
+                $returnArray =  $this->NEW_STYLE_RESPONSE ?  array($receivedMessages, $timetoken, $derivedChannel) : array($receivedMessages, $timetoken);
+
+                # Call once for each message for each channel
 
                 $cbReturn = $callback($returnArray);
 
@@ -252,7 +275,7 @@ class Pubnub
         } elseif ($mode == "detailedHistory") {
 
             $messageArray = $messages[0];
-            $receivedMessages = $this->decodeDecryptLoop($messageArray);
+            $receivedMessages = array($this->decodeDecryptLoop($messageArray), $messages[1], $messages[2]);
         }
 
         return $receivedMessages;
@@ -456,7 +479,7 @@ class Pubnub
         curl_setopt($ch, CURLOPT_HTTPHEADER, $pubnubHeaders);
         curl_setopt($ch, CURLOPT_USERAGENT, "PHP");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 310);
 
         curl_setopt($ch, CURLOPT_URL, $urlString);
 
