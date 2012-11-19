@@ -5,9 +5,8 @@ Open 3.3.0.1/PubNub-Messaging/PubNub-Console/PubNub-Messaging.csproj, the exampl
 
 3.3.0.1/PubNub-Messaging/PubNubTest contains the Unit test cases.
 
-Please ensure that in order to run on Mono the key "OverrideTcpKeepAlive" in the config of both the console application and unit tests should be set to "true"
-  <!-- the value of OverrideTcpKeepAlive must be true for Mono -->
-    <add key="OverrideTcpKeepAlive" value="true"/>  
+Please ensure that in order to run on Mono the constant in the pubnub.cs file should be set to "true"
+OVERRIDE_TCP_KEEP_ALIVE = true;
 
 Dev environment setup:
 - MAC OS X 10.7.4 (Lion)
