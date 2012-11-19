@@ -1,4 +1,4 @@
-﻿#if (!__MonoCS__)
+﻿#if (__MonoCS__)
 #define TRACE
 #endif
 
@@ -827,22 +827,23 @@ namespace PubNub_Messaging
 
             if (_channelSubscription.ContainsKey(channel))
             {
-                if (_channelRequest.ContainsKey(channel))
-                {
-                    long unsubValue;
-                    unsubStatus = _channelSubscription.TryRemove(channel, out unsubValue);
-                    if (unsubStatus)
-                    {
-                        jsonString = string.Format("[1, \"Unsubscribed from {0}\"]", channel);
-                    }
-                    else
-                    {
-                        jsonString = string.Format("[1, \"Error unsubscribing from {0}\"]", channel);
-                    }
+                long unsubValue;
+                unsubStatus = _channelSubscription.TryRemove(channel, out unsubValue);
 
-                    HttpWebRequest storedRequest = _channelRequest[channel].request;
-                    storedRequest.Abort();
+                if (unsubStatus)
+                {
+                    if (_channelRequest.ContainsKey(channel))
+                    {
+                        HttpWebRequest storedRequest = _channelRequest[channel].request;
+                        storedRequest.Abort();
+                    }
+                    jsonString = string.Format("[1, \"Unsubscribed from {0}\"]", channel);
                 }
+                else
+                {
+                    jsonString = string.Format("[1, \"Error unsubscribing from {0}\"]", channel);
+                }
+
 
                 
                 result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
