@@ -45,7 +45,11 @@ package com.pubnub {
 		}
 		
 		private function setup():void {
+			operations = new Dictionary();
 			initOperation = new Operation();
+			operations[INIT_OPERATION] = initOperation;
+			operations[HISTORY_OPERATION] = new HistoryOperation();
+			operations[PUBLISH_OPERATION] = new PublishOperation();
 		}
 		
 		public static  function get instance():Pn {
@@ -80,9 +84,6 @@ package com.pubnub {
 			initOperation.addEventListener(OperationEvent.RESULT, onInitComplete);
 			initOperation.addEventListener(OperationEvent.FAULT, onInitError);
 			initOperation.send( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
-			
-			operations[HISTORY_OPERATION] = new HistoryOperation();
-			operations[PUBLISH_OPERATION] = new PublishOperation();
 		}
 		
 		private function initKeys(config:Object):void {
@@ -164,7 +165,7 @@ package com.pubnub {
 			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet"); 
 		}
 		
-		private function getSubscribe(name:String):Subscribe {
+		pn_internal function getSubscribe(name:String):Subscribe {
 			var result:Subscribe = subscribes[name] || new Subscribe();
 			subscribes[name] = result;
 			return result;
