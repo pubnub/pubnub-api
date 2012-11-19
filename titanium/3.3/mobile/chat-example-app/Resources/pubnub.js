@@ -38,6 +38,7 @@ THE SOFTWARE.
 var NOW     = 1
 ,   MAGIC   = /\$?{([\w\-]+)}/g
 ,   URLBIT  = '/'
+,   PARAMSBIT  = '&'
 ,   SECOND  = 1000
 ,   ANDROID = Ti.Platform.name.toLowerCase().indexOf('android') >= 0
 ,   XHRTME  = 140000;
@@ -62,20 +63,6 @@ var db = (function(){
     };
 })();
 
-/**
- * NEXTORIGIN
- * ==========
- * var next_origin = nextorigin();
- */
-var nextorigin = (function() {
-    var ori = Math.floor(Math.random() * 9) + 1;
-    return function(origin) {
-        return origin.indexOf('pubsub') > 0
-            && origin.replace(
-             'pubsub', 'ps' + (++ori < 10 ? ori : ori=1)
-            ) || origin;
-    }
-})();
 
 /**
  * UPDATER
@@ -183,7 +170,7 @@ function encode(path) {
 }
 
 /**
- * Titanium XHR Request (Android)
+ * Titanium XHR Request 
  * ==============================
  *  xdr({
  *     url     : ['http://www.blah.com/url'],
@@ -191,7 +178,16 @@ function encode(path) {
  *     fail    : function() {}
  *  });
  */
-function xdra( setup ) {
+function xdr( setup ) {
+    var url = setup.url.join(URLBIT);
+    if (setup.data) {
+        var params = [];
+        url += "?";
+        for (key in setup.data) {
+            params.push(key+"="+setup.data[key]);
+        } 
+        url += params.join(PARAMSBIT);
+    }
     var xhr
     ,   finished = function() {
             if (loaded) return;
@@ -231,7 +227,7 @@ function xdra( setup ) {
         xhr.onload  = finished;
         xhr.timeout = XHRTME;
 
-        xhr.open( 'GET', setup.url.join(URLBIT), true );
+        xhr.open( 'GET', url, true );
         xhr.send();
     }
     catch(eee) {
@@ -242,75 +238,6 @@ function xdra( setup ) {
     // Return 'done'
     return done;
 }
-
-/**
- * Titanium TCP Sockets
- * ====================
- *  xdr({
- *     url     : ['http://www.blah.com/url'],
- *     success : function(response) {},
- *     fail    : function() {}
- *  });
- */
-function xdr(setup) {
-    if (ANDROID) return xdra(setup);
-
-    var url      = setup.url.join(URLBIT)
-    ,   body     = []
-    ,   data     = ""
-    ,   rbuffer  = Ti.createBuffer({ length : 2048 })
-    ,   wbuffer  = Ti.createBuffer({ value : "GET " + url + " HTTP/1.0\n\n"})
-    ,   failed   = 0
-    ,   fail     = function() {
-            if (failed) return;
-            failed = 1;
-            (setup.fail || function(){})();
-        }
-    ,   success  = setup.success || function(){}
-    ,   sock     = Ti.Network.Socket.createTCP({
-        host      : url.split(URLBIT)[2],
-        port      : 80,
-        mode      : Ti.Network.READ_WRITE_MODE,
-        timeout   : XHRTME,
-        error     : fail,
-        connected : function() {
-            sock.write(wbuffer);
-            read();
-        }
-    });
-
-    function read() {
-        Ti.Stream.read( sock, rbuffer, function(stream) { 
-            if (+stream.bytesProcessed > -1) {
-                data = Ti.Codec.decodeString({
-                    source : rbuffer,
-                    length : +stream.bytesProcessed
-                });
-
-                body.push(data);
-                rbuffer.clear();
-
-                return timeout( read, 1 );
-            }
-
-            try {
-                data = JSON['parse'](
-                    body.join('').split('\r\n').slice(-1)
-                );
-            }
-            catch (r) { 
-                return fail();
-            }
-
-            sock.close();
-            success(data);
-        } );
-    }
- 
-    try      { sock.connect() }
-    catch(k) { return fail()  }
-}
-
 
 /* =-====================================================================-= */
 /* =-====================================================================-= */
@@ -327,6 +254,7 @@ var DEMO          = 'demo'
     ,   SSL           = setup['ssl'] ? 's' : ''
     ,   ORIGIN        = 'http' + SSL + '://' +
                         (setup['origin'] || 'pubsub.pubnub.com')
+    ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
     ,   SELF          = {
         /*
             PUBNUB.history({
@@ -343,7 +271,7 @@ var DEMO          = 'demo'
             // Make sure we have a Channel
             if (!channel)  return log('Missing Channel');
             if (!callback) return log('Missing Callback');
-
+	  
             // Send Message
             xdr({
                 url      : [
@@ -351,6 +279,42 @@ var DEMO          = 'demo'
                     SUBSCRIBE_KEY, encode(channel),
                     0, limit
                 ],
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) }
+            });
+        },
+
+        /*
+            PUBNUB.detailedHistory({
+                channel  : 'my_chat_channel',
+                count : 100,
+                callback : function(messages) { console.log(messages) }
+            });
+        */
+        'detailedHistory' : function( args, callback ) {
+            var callback = args['callback'] || callback 
+            ,   channel  = args['channel'];
+
+            // Make sure we have a Channel
+            if (!channel)  return log('Missing Channel');
+            if (!callback) return log('Missing Callback');
+            
+            var params = {};
+            params['count'] = args['count'] || 100;
+            params['reverse'] = args['reverse'] || 'false';
+            if (args['start']) 
+                params['start'] = args['start'];
+            if (args['end'])
+                params['end'] = args['end'];
+
+            // Send Message
+            xdr({
+                url      : [
+                    ORIGIN, 'v2', 'history',
+                    'sub-key', SUBSCRIBE_KEY, 
+                    'channel', encode(channel)
+                ],
+                data : params,
                 success  : function(response) { callback(response) },
                 fail     : function(response) { log(response) }
             });
@@ -371,14 +335,12 @@ var DEMO          = 'demo'
             PUBNUB.uuid(function(uuid) { console.log(uuid) });
         */
         'uuid' : function(callback) {
-            xdr({
-                url      : [
-                    'http' + SSL +
-                    '://pubnub-prod.appspot.com/uuid?callback=0'
-                ],
-                success  : function(response) { callback(response[0]) },
-                fail     : function() { callback(0) }
+            var u = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
             });
+            if (callback) callback(u);
+            return u;
         },
 
         /*
@@ -401,7 +363,6 @@ var DEMO          = 'demo'
 
             // Make sure message is small enough.
             if (message.length > LIMIT) return log('Message Too Big');
-
             // Send Message
             xdr({
                 success  : function(response) { callback(response) },
@@ -421,6 +382,7 @@ var DEMO          = 'demo'
         'unsubscribe' : function(args) {
             var channel = args['channel'];
 
+            log('unsubscribing');
             // Leave if there never was a channel.
             if (!(channel in CHANNELS)) return;
 
@@ -450,7 +412,7 @@ var DEMO          = 'demo'
             ,   disconnect   = args['disconnect'] || function(){}
             ,   disconnected = 0
             ,   connected    = 0
-            ,   origin       = nextorigin(ORIGIN);
+            ,   origin       = ORIGIN;
 
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
@@ -463,6 +425,7 @@ var DEMO          = 'demo'
             if (CHANNELS[channel].connected) return log('Already Connected');
                 CHANNELS[channel].connected = 1;
 
+            log('subscribing');
             // Recurse Subscribe
             function pubnub() {
                 var jsonp = jsonp_cb();
@@ -478,6 +441,7 @@ var DEMO          = 'demo'
                         SUBSCRIBE_KEY, encode(channel),
                         jsonp, timetoken
                     ],
+                    data     : { uuid: UUID },
                     fail : function() {
                         // Disconnect
                         if (!disconnected) {
@@ -525,6 +489,43 @@ var DEMO          = 'demo'
             // Begin Recursive Subscribe
             pubnub();
         },
+        'here_now' : function( args, callback ) {
+            var callback = args['callback'] || callback 
+            ,   channel  = args['channel']
+            ,   jsonp    = jsonp_cb()
+            ,   origin   = ORIGIN;
+
+            // Make sure we have a Channel
+            if (!channel)  return log('Missing Channel');
+            if (!callback) return log('Missing Callback');
+            
+            data = null;
+            if (jsonp != '0') { data['callback']=jsonp; }
+            
+            // Send Message
+            xdr({
+                callback : jsonp,
+                url      : [
+                    origin, 'v2', 'presence',
+                    'sub_key', SUBSCRIBE_KEY, 
+                    'channel', encode(channel)
+                ],
+                data: data,
+                success  : function(response) { callback(response) },
+                fail     : function(response) { log(response) }
+            });
+        },
+        /*
+            PUBNUB.presence({
+                channel  : 'my_chat'
+                callback : function(message) { console.log(message) }
+            });
+        */
+        'presence' : function( args, callback ) {
+
+            args['channel'] += '-pnpres';
+            SELF.subscribe( args, callback );
+        },
 
         // Expose PUBNUB Functions
         'db'       : db,
@@ -535,6 +536,9 @@ var DEMO          = 'demo'
         'init'     : CREATE_PUBNUB
     };
 
+    if (UUID == '') UUID = SELF.uuid();
+    db.set(SUBSCRIBE_KEY+'uuid', UUID);
+    
     return SELF;
 };
 

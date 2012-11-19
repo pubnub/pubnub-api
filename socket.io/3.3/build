@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cat ./socket.io.js | java -jar /opt/minify/compiler.jar > socket.io.tmp
+cat ../javascript/pubnub-3.1.min.js crypto.js socket.io.tmp > socket.io.min.js
+rm socket.io.tmp
+gzip -c9 socket.io.min.js > socket.io.min.js.gz

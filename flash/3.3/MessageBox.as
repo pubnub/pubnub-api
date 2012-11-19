@@ -6,6 +6,7 @@ import flash.text.TextField;
 import PubNub.*;
 
 import flash.external.ExternalInterface;
+import flash.utils.setTimeout;
 
 public class MessageBox extends Sprite {
 
@@ -23,7 +24,7 @@ public class MessageBox extends Sprite {
             publish_key:"demo",
             sub_key:"demo",
             secret_key:"",
-            cipher_key:"enigma"
+            cipher_key:null
         }
         pubnub.init(config);
 
@@ -49,32 +50,40 @@ public class MessageBox extends Sprite {
             ExternalInterface.call("console.log", ("init()"));
             ExternalInterface.call("console.log", ("my uuid is " + pubnub.getSessionUUID()));
 
-            PubNub.PubNub.publish({
-                        callback:onPresenceHandler,
-                        channel:channelName,
-                        message:"The JSON class lets applications import and export data using JavaScript Object Notation (JSON) format. JSON is an industry-standard data interchange format that is described at http://www.json.org."}
-            );
-
-            PubNub.PubNub.publish({
-                        callback:onPresenceHandler,
-                        channel:channelName,
-                        message:"Pubnub Messaging API 1"}
-            );
+//            PubNub.PubNub.publish({
+//                        callback:onPresenceHandler,
+//                        channel:channelName,
+//                        message:"The JSON class lets applications import and export data using JavaScript Object Notation (JSON) format. JSON is an industry-standard data interchange format that is described at http://www.json.org."}
+//            );
+//
+//            PubNub.PubNub.publish({
+//                        callback:onPresenceHandler,
+//                        channel:channelName,
+//                        message:"Pubnub Messaging API 1"}
+//            );
 
             // Subscribe
             PubNub.PubNub.subscribe({
                 callback:onSubscribeHandler,
                 channel:channelName
             });
-//
-//            // Presence
+
+            // Presence
 //            PubNub.PubNub.subscribe({
 //                callback:onPresenceHandler,
 //                channel:channelName + "-pnpres"
 //            });
 
+            setTimeout(unsub, 5000);
+
         }
 
+        function unsub():void {
+            PubNub.PubNub.unsubscribe({
+                callback:onSubscribeHandler,
+                channel:"hello_world"
+            });
+        }
 
         function onSubscribeHandler(evt:PubNubEvent):void {
             ExternalInterface.call("console.log", ("subscribe event received."));
@@ -98,10 +107,10 @@ public class MessageBox extends Sprite {
         }
 
         // here_now()
-        pubnub.here_now({
-            callback:onHereNowHandler,
-            channel:channelName
-        });
+//        pubnub.here_now({
+//            callback:onHereNowHandler,
+//            channel:channelName
+        //});
 
 //
 //            private function onPresenceHandler(evt:PubNubEvent):void {

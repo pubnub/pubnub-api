@@ -1,0 +1,14 @@
+C:\Users\UltrA\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.dll
+C:\Users\UltrA\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.pdb
+C:\Users\UltrA\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Imports\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\UltrA\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.dll
+C:\Users\UltrA\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.pdb
+E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.dll
+E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.pdb
+E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.Imports\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.dll
+E:\Projects\Pubnub\PubnubSilverlight.Example\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.pdb
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.dll
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.pdb
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.dll
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.pdb

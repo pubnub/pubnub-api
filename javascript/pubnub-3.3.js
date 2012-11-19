@@ -606,9 +606,10 @@ function ajax( setup ) {
         xhr.onload  = xhr.onloadend = finished;
         xhr.timeout = XHRTME;
         
-        url = setup.url.join(URLBIT);
+        var url = setup.url.join(URLBIT);
         if (setup.data) {
             var params = [];
+            var key;
             url += "?";
             for (key in setup.data) {
                 params.push(key+"="+setup.data[key]);
@@ -663,6 +664,7 @@ var PDIV          = $('pubnub') || {}
             // Make sure we have a Channel
             if (!channel)  return log('Missing Channel');
             if (!callback) return log('Missing Callback');
+            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
 
             // Send Message
             xdr({
@@ -696,6 +698,7 @@ var PDIV          = $('pubnub') || {}
             // Make sure we have a Channel
             if (!channel)  return log('Missing Channel');
             if (!callback) return log('Missing Callback');
+            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
 
 			var params = {};
 			params["count"] = count;
@@ -759,6 +762,7 @@ var PDIV          = $('pubnub') || {}
             if (!message)     return log('Missing Message');
             if (!channel)     return log('Missing Channel');
             if (!PUBLISH_KEY) return log('Missing Publish Key');
+            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
 
             // If trying to send Object
             message = JSON['stringify'](message);
@@ -922,6 +926,7 @@ var PDIV          = $('pubnub') || {}
             // Make sure we have a Channel
             if (!channel)  return log('Missing Channel');
             if (!callback) return log('Missing Callback');
+            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
             
             data = null;
             if (jsonp != '0') { data['callback']=jsonp; }

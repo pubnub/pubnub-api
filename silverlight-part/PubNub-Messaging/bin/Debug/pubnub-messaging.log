@@ -1,0 +1,4 @@
+DateTime 11/16/2012 11:49:35 PM, WebException: System.Net.WebException: The remote server returned an error: (504) Gateway Timeout.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.<>c__DisplayClass21`1.<_urlRequest>b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1378 for URL: http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/test
+DateTime 11/16/2012 11:49:35 PM, _urlRequest - Internet connection problem

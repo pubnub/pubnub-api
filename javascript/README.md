@@ -108,7 +108,7 @@ business collaborative solutions, and more.
 <script src=https://pubnub.a.ssl.fastly.net/pubnub-3.3.min.js></script>
 <script>(function(){
 
-    var pubnub = PUBNUB({
+    var pubnub = PUBNUB.init({
         publish_key   : 'demo',
         subscribe_key : 'demo',
         origin        : 'pubsub.pubnub.com',
