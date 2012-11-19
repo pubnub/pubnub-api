@@ -34,6 +34,16 @@ func setupMockServer(t *testing.T) {
 	http.HandleFunc("/test", testHandler)
 	http.HandleFunc("/post", postHandler)
 	http.HandleFunc("/redirect", redirectHandler)
+	http.HandleFunc("/time/", timePubnubHandler)
+	http.HandleFunc("/publish/demo/demo/", publishPubnubSuccessHandler)
+	http.HandleFunc("/publish/demo/demo-fail/", publishPubnubFailHandler)
+	http.HandleFunc("/history/demo/test-channel/", historyPubnubHandler)
+	http.HandleFunc("/history/demo/no-history-channel/", noHistoryPubnubHandler)
+	http.HandleFunc("/v2/presence/sub-key/demo/channel/test-channel", hereNowPubnubHandler)
+	http.HandleFunc("/v2/presence/sub-key/demo/channel/no-here-now-channel", noHereNowPubnubHandler)
+	//http.HandleFunc("/subscribe/demo/test-channel/0/", subscribePubnubHandler)
+	//http.HandleFunc("/subscribe/demo/test-channel-pnpres/0/", presencePubnubHandler)
+
 	ln, err := net.Listen("tcp", ":0")
 	if err != nil {
 		t.Fatalf("failed to listen - %s", err.Error())
