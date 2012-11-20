@@ -35,7 +35,8 @@ typedef enum {
     kCommand_Leave,
     kCommand_APNSAddChannel,
     kCommand_APNSRemoveChannel,
-    kCommand_APNSGetAllChannels
+    kCommand_APNSGetAllChannels,
+    kCommand_APNSPurgeAllChannels
 } Command;
 
 @interface PubNubConnection : NSURLConnection {
@@ -737,6 +738,10 @@ typedef enum {
             [self handleAPNSGetAllChannels:connection response:response];
             break;
             
+        case kCommand_APNSPurgeAllChannels:
+            [self handleAPNSPurgeAllChannels:connection response:response];
+            break;
+            
         case kCommand_ReceiveMessage:
             [self handleCommandReceiveMessageForConnection:connection response:response];
             break;
@@ -776,6 +781,31 @@ typedef enum {
 
 #pragma mark - command handlers for -connection:didCompleteWithResponse:
 
+- (void)handleAPNSPurgeAllChannels:(PubNubConnection *)connection response:(id)response
+{
+    BOOL success = NO;
+    NSString *error = nil;
+    if(response)
+        
+    {
+        if ([response isKindOfClass:[NSArray class]])
+        {
+            NSArray *arra = (NSArray*)response;
+            
+            success = [[arra objectAtIndex:0] boolValue];
+            if(success == NO)
+            {
+                error = [arra objectAtIndex:1];
+            }
+        }
+    }
+    
+    if (success) {
+        NSLog(@"APNS Purged all Channels Success: %@", response);
+    } else {
+        NSLog(@"APNS Purged all Channel Failed: %@", response);
+    }
+}
 
 - (void)handleAPNSGetAllChannels:(PubNubConnection *)connection response:(id)response
 {
@@ -1209,5 +1239,17 @@ typedef enum {
     [_connections addObject:connection];
 }
 
+- (void)APNSPurgeDevice:(NSString *)device {
+    
+    //  /v1/push/sub-key/<sub_key>/devices/<device>/remove
+    
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/%@/remove", _host, device];
+    PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_APNSPurgeAllChannels
+                                                                    channel:nil
+                                                                     device:device];
+    [_connections addObject:connection];
+}
 
 @end

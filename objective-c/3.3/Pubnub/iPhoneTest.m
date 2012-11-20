@@ -76,18 +76,24 @@ CEPubnub *pubnub;
 }
 
 - (IBAction)APNSRegClick:(id)sender {
-    NSLog(@"-----------Reg START----------------");
+    NSLog(@"-----------APNS Reg START----------------");
     [pubnub APNSAddChannelToDevice:@"gecchannel" :@"gecdevice"];
 }
 
 - (IBAction)APNSUnregClick:(id)sender {
-    NSLog(@"-----------Unreg START----------------");
+    NSLog(@"-----------APNS Unreg START----------------");
     [pubnub APNSRemoveChannelFromDevice:@"gecchannel" :@"gecdevice"];
 }
 
 - (IBAction)APNSGetAllClick:(id)sender {
     NSLog(@"-----------APNS GetAll START----------------");
     [pubnub APNSGetAllChannelsForDevice:@"gecdevice"];
+}
+
+
+- (IBAction)APNSPurgeAllClick:(id)sender {
+    NSLog(@"-----------APNS Purge All START----------------");
+    [pubnub APNSPurgeDevice:@"gecdevice"];
 }
 
 - (IBAction)UUIDClick:(id)sender {

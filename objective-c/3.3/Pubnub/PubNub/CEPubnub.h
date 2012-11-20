@@ -79,10 +79,12 @@
 
 - (void)here_now:(NSString *)channel __deprecated;
 
+// APNS Support
+
 - (void)APNSGetAllChannelsForDevice:(NSString *)device;
 - (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device;
 - (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device;
-//- (void)APNSPurgeDevice:(NSString *)device;
+- (void)APNSPurgeDevice:(NSString *)device;
 
 
 + (BOOL)isApplicationActive;
