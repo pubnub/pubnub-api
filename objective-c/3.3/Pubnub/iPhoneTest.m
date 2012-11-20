@@ -85,6 +85,11 @@ CEPubnub *pubnub;
     [pubnub APNSRemoveChannelFromDevice:@"gecchannel" :@"gecdevice"];
 }
 
+- (IBAction)APNSGetAllClick:(id)sender {
+    NSLog(@"-----------APNS GetAll START----------------");
+    [pubnub APNSGetAllChannelsForDevice:@"gecdevice"];
+}
+
 - (IBAction)UUIDClick:(id)sender {
     NSLog(@"-----------UUID START----------------");
     NSLog(@"UUID::: %@",[CEPubnub getUUID]);

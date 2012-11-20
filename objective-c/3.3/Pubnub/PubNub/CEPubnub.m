@@ -732,6 +732,10 @@ typedef enum {
         case kCommand_APNSRemoveChannel:
             [self handleAPNSRemoveChannel:connection response:response];
             break;
+
+        case kCommand_APNSGetAllChannels:
+            [self handleAPNSGetAllChannels:connection response:response];
+            break;
             
         case kCommand_ReceiveMessage:
             [self handleCommandReceiveMessageForConnection:connection response:response];
@@ -773,6 +777,24 @@ typedef enum {
 #pragma mark - command handlers for -connection:didCompleteWithResponse:
 
 
+- (void)handleAPNSGetAllChannels:(PubNubConnection *)connection response:(id)response
+{
+    if(response) {
+        if ([response isKindOfClass:[NSArray class]])
+        {
+            NSArray *arra = (NSArray*)response;
+            if ([arra count] == 0) {
+                NSLog(@"APNS got all channels for this device: None!");
+            } else {
+                NSLog(@"APNS got all channels for this device: %@", response);
+            }
+                            
+        }
+        else {
+            NSLog(@"Error getting all APNS channels for this device: %@", response);
+        }
+    }
+}
 
 - (void)handleAPNSAddChannel:(PubNubConnection *)connection response:(id)response
 {
@@ -1152,7 +1174,7 @@ typedef enum {
     
     // /v1/push/sub-key/<sub_key>/devices/<device>?add=channel,channel,...
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/testDevice?add=testme", _host];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/%@?add=%@", _host, device, channel];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSAddChannel
@@ -1163,12 +1185,25 @@ typedef enum {
 
 - (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device {
     
-    // /v1/push/sub-key/<sub_key>/devices/<device>?remove=channel,channel,...
+    //  /v1/push/sub-key/<sub_key>/devices/<device>?remove=channel,channel,...
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/testDevice?add=testme", _host];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/%@?remove=%@", _host, device, channel];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSRemoveChannel
+                                                                    channel:nil
+                                                                     device:device];
+    [_connections addObject:connection];
+}
+
+- (void)APNSGetAllChannelsForDevice:(NSString *)device {
+    
+    //  /v1/push/sub-key/<sub_key>/devices/<device>
+    
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/%@", _host, device];
+    PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
+                                                                        url:[NSURL URLWithString:url]
+                                                                    command:kCommand_APNSGetAllChannels
                                                                     channel:nil
                                                                      device:device];
     [_connections addObject:connection];

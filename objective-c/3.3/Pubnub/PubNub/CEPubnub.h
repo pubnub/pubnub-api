@@ -79,7 +79,7 @@
 
 - (void)here_now:(NSString *)channel __deprecated;
 
-//- (void)APNSGetAllChannelsForDevice:(NSString *)device;
+- (void)APNSGetAllChannelsForDevice:(NSString *)device;
 - (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device;
 - (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device;
 //- (void)APNSPurgeDevice:(NSString *)device;
