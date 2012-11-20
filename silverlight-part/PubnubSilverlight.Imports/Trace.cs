@@ -19,7 +19,7 @@ namespace System.Diagnostics
         private static IsolatedStorageFileStream _storageFileStream = null;
         private static StreamWriter _streamWriter = null;
 
-        public static Trace()
+        public Trace()
         {
             _storageFile = IsolatedStorageFile.GetUserStoreForApplication();
             _storageFileStream = _storageFile.OpenFile("Trace.log", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);

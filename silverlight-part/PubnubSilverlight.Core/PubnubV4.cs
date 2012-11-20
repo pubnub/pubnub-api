@@ -27,14 +27,14 @@ using Newtonsoft.Json.Linq;
 
 
 
-namespace PubNub_Messaging
+namespace PubnubSilverlight.Core
 {
     // INotifyPropertyChanged provides a standard event for objects to notify clients that one of its properties has changed
 
     public class Pubnub : INotifyPropertyChanged
     {
         const int PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC = 310;
-        const int PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC = 15; 
+        const int PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC = 15;
         const int PUBNUB_NETWORK_CHECK_RETRIES = 50;
         const int PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC = 10;
         const bool OVERRIDE_TCP_KEEP_ALIVE = true;
@@ -143,14 +143,14 @@ namespace PubNub_Messaging
                             WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Retry {3} of {4}", DateTime.Now.ToString(), netState.channel, netState.type, _channelInternetRetry[netState.channel], PUBNUB_NETWORK_CHECK_RETRIES), TraceLevel.Info);
                         }
                     }
-                    
+
                     if (_channelInternetStatus[netState.channel])
                     {
                         if (_channelReconnectTimer.ContainsKey(netState.channel))
                         {
                             _channelReconnectTimer[netState.channel].Change(Timeout.Infinite, Timeout.Infinite);
                             _channelReconnectTimer[netState.channel].Dispose();
-                               }
+                        }
 
                         WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Internet Available : {3}", DateTime.Now.ToString(), netState.channel, netState.type, _channelInternetStatus[netState.channel]), TraceLevel.Info);
                         switch (netState.type)
@@ -199,7 +199,7 @@ namespace PubNub_Messaging
 
         private void initiatePowerModeCheck()
         {
-            #if (!SILVERLIGHT)
+#if (!SILVERLIGHT)
             try
             {
                 SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
@@ -210,10 +210,10 @@ namespace PubNub_Messaging
                 WriteToLog(string.Format("DateTime {0} No support for System Event - PowerModeChanged.", DateTime.Now.ToString()), TraceLevel.Error);
                 WriteToLog(string.Format("DateTime {0} {1}", DateTime.Now.ToString(), ex.ToString()), TraceLevel.Error);
             }
-            #endif
+#endif
         }
 
-        #if (!SILVERLIGHT)
+#if (!SILVERLIGHT)
         void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
             if (e.Mode == PowerModes.Suspend)
@@ -250,7 +250,7 @@ namespace PubNub_Messaging
                 }
             }
         }
-        #endif
+#endif
         private void TerminatePendingWebRequest()
         {
             TerminatePendingWebRequest(null);
@@ -291,13 +291,13 @@ namespace PubNub_Messaging
             }
         }
 
-        #if (!SILVERLIGHT)
+#if (!SILVERLIGHT)
         ~Pubnub()
         {
             //detach
             SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
         }
-        #endif
+#endif
         /**
          * PubNub 3.0 API
          * 
@@ -419,7 +419,7 @@ namespace PubNub_Messaging
         {
             return detailedHistory<T>(channel, -1, -1, count, false, usercallback);
         }
-        
+
         /**
          * Publish
          * 
@@ -636,7 +636,7 @@ namespace PubNub_Messaging
 
         void OnPubnubWebRequestTimeout(object state, bool timeout)
         {
-           if (timeout)
+            if (timeout)
             {
                 RequestState currentState = state as RequestState;
                 if (currentState != null)
@@ -772,7 +772,7 @@ namespace PubNub_Messaging
 
             bool unsubStatus = false;
             WriteToLog(string.Format("DateTime {0}, requested unsubscribe for channel={1}", DateTime.Now.ToString(), channel), TraceLevel.Info);
-            
+
             string jsonString = "";
             List<object> result = new List<object>();
 
@@ -796,7 +796,7 @@ namespace PubNub_Messaging
                 }
 
 
-                
+
                 result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel);
 
@@ -930,7 +930,7 @@ namespace PubNub_Messaging
             else
             {
                 _channelPresence.GetOrAdd(channel, 0);
-                resetInternetCheckSettings(channel); 
+                resetInternetCheckSettings(channel);
                 this._presence<T>(channel, 0, usercallback, false);
             }
         }
@@ -1021,7 +1021,7 @@ namespace PubNub_Messaging
             {
                 long unsubPreValue;
                 unsubStatus = _channelPresence.TryRemove(channel, out unsubPreValue);
-                
+
                 if (unsubStatus)
                 {
                     if (_channelRequest.ContainsKey(channel))
@@ -1132,14 +1132,14 @@ namespace PubNub_Messaging
 
             Uri requestUri = new Uri(url.ToString());
 
-            #if ((!__MonoCS__) && (!SILVERLIGHT))
+#if ((!__MonoCS__) && (!SILVERLIGHT))
             // Force canonical path and query
             string paq = requestUri.PathAndQuery;
             FieldInfo flagsFieldInfo = typeof(Uri).GetField("m_Flags", BindingFlags.Instance | BindingFlags.NonPublic);
             ulong flags = (ulong)flagsFieldInfo.GetValue(requestUri);
             flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
             flagsFieldInfo.SetValue(requestUri, flags);
-            #endif
+#endif
 
             // Create Request
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUri);
@@ -1205,7 +1205,7 @@ namespace PubNub_Messaging
 
             Uri requestUri = new Uri(url.ToString());
 
-            #if ((!__MonoCS__) && (!SILVERLIGHT))
+#if ((!__MonoCS__) && (!SILVERLIGHT))
             if ((type == ResponseType.Publish || type == ResponseType.Subscribe || type == ResponseType.Presence))
             {
                 // Force canonical path and query
@@ -1215,19 +1215,19 @@ namespace PubNub_Messaging
                 flags &= ~((ulong)0x30); // Flags.PathNotCanonical|Flags.QueryNotCanonical
                 flagsFieldInfo.SetValue(requestUri, flags);
             }
-            #endif
+#endif
 
             try
             {
                 // Create Request
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUri);
-                #if (!SILVERLIGHT)
+#if (!SILVERLIGHT)
                 request.Timeout = PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000;
-                #endif
+#endif
                 if ((!_channelSubscription.ContainsKey(channelName) && type == ResponseType.Subscribe)
                     || (!_channelPresence.ContainsKey(channelName) && type == ResponseType.Presence))
                 {
-                    WriteToLog(string.Format("DateTime {0}, Due to Unsubscribe, request aborted for channel={1}", DateTime.Now.ToString(), channelName),TraceLevel.Info);
+                    WriteToLog(string.Format("DateTime {0}, Due to Unsubscribe, request aborted for channel={1}", DateTime.Now.ToString(), channelName), TraceLevel.Info);
                     request.Abort();
                 }
 
@@ -1250,9 +1250,9 @@ namespace PubNub_Messaging
                 }
                 else
                 {
-                    #if ((!__MonoCS__) && (!SILVERLIGHT))
+#if ((!__MonoCS__) && (!SILVERLIGHT))
                     request.ServicePoint.SetTcpKeepAlive(true, PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000, 1000);
-                    #endif
+#endif
                 }
                 WriteToLog(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()), TraceLevel.Info);
 
@@ -1326,7 +1326,7 @@ namespace PubNub_Messaging
                             state.request.Abort();
                         }
 
-                        #if (!SILVERLIGHT)
+#if (!SILVERLIGHT)
                         if ((webEx.Status == WebExceptionStatus.NameResolutionFailure //No network
                             || webEx.Status == WebExceptionStatus.ConnectFailure //Sending Keep-alive packet failed (No network)/Server is down.
                             || webEx.Status == WebExceptionStatus.ServerProtocolViolation//Problem with proxy or ISP
@@ -1353,7 +1353,7 @@ namespace PubNub_Messaging
                                 Thread.Sleep(PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC * 1000);
                             }
                         }
-                        #endif
+#endif
                         urlRequestCommonExceptionHandler<T>(type, channelName, usercallback);
                     }
                     catch (Exception ex)
@@ -1368,14 +1368,14 @@ namespace PubNub_Messaging
 
                 }), pubnubRequestState);
 
-                #if (__MonoCS__)
+#if (__MonoCS__)
                     if (!asyncResult.AsyncWaitHandle.WaitOne(PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000))
                     {
                         OnPubnubWebRequestTimeout(pubnubRequestState, true);
                     }
-                #else
-                    ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
-                #endif
+#else
+                ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
+#endif
                 return true;
             }
             catch (System.Exception ex)
@@ -1423,8 +1423,8 @@ namespace PubNub_Messaging
             switch (type)
             {
                 case ResponseType.Subscribe:
-                    var msgs = (from item in result 
-                                         select item as object).ToArray();
+                    var msgs = (from item in result
+                                select item as object).ToArray();
                     if (msgs != null && msgs.Length > 0)
                     {
                         List<object> msgList = msgs[0] as List<object>;
@@ -1445,8 +1445,8 @@ namespace PubNub_Messaging
                     removeChannelRequest(channelName);
                     break;
                 case ResponseType.Presence:
-                    var msgp = (from item in result 
-                                         select item as object).ToArray();
+                    var msgp = (from item in result
+                                select item as object).ToArray();
                     if (msgp != null && msgp.Length > 0)
                     {
                         JArray msgArr = msgp[0] as JArray;
@@ -1544,7 +1544,7 @@ namespace PubNub_Messaging
                 errorResult.Add(channelName);
 
                 WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
-                
+
                 if (usercallback != null)
                 {
                     goToUserCallback<T>(errorResult, usercallback);
@@ -1657,7 +1657,7 @@ namespace PubNub_Messaging
             List<object> result = new List<object>();
             string channelName = getChannelName(url_components, type);
 
-            object objResult = JsonConvert.DeserializeObject<object>(jsonString); 
+            object objResult = JsonConvert.DeserializeObject<object>(jsonString);
             List<object> result1 = ((IEnumerable)objResult).Cast<object>().ToList();
 
             if (result1 != null && result1.Count > 0)
@@ -1703,40 +1703,40 @@ namespace PubNub_Messaging
                 case ResponseType.Subscribe:
                     result.Add(channelName);
                     _subscribeMsg.AddOrUpdate(channelName, result, (key, oldValue) =>
-                                                {
-                                                    if (reconnect)
-                                                    {
-                                                        List<object> oldResult = oldValue as List<object>;
-                                                        if (oldResult != null)
-                                                        {
-                                                            result[1] = oldResult[1];
-                                                        }
-                                                        return result;
-                                                    }
-                                                    else
-                                                    {
-                                                        return result;
-                                                    }
-                                                });
+                    {
+                        if (reconnect)
+                        {
+                            List<object> oldResult = oldValue as List<object>;
+                            if (oldResult != null)
+                            {
+                                result[1] = oldResult[1];
+                            }
+                            return result;
+                        }
+                        else
+                        {
+                            return result;
+                        }
+                    });
                     break;
                 case ResponseType.Presence:
                     result.Add(channelName);
                     _presenceMsg.AddOrUpdate(channelName, result, (key, oldValue) =>
-                                                {
-                                                    if (reconnect)
-                                                    {
-                                                        List<object> oldResult = oldValue as List<object>;
-                                                        if (oldResult != null)
-                                                        {
-                                                            result[1] = oldResult[1];
-                                                        }
-                                                        return result;
-                                                    }
-                                                    else
-                                                    {
-                                                        return result;
-                                                    }
-                                                });
+                    {
+                        if (reconnect)
+                        {
+                            List<object> oldResult = oldValue as List<object>;
+                            if (oldResult != null)
+                            {
+                                result[1] = oldResult[1];
+                            }
+                            return result;
+                        }
+                        else
+                        {
+                            return result;
+                        }
+                    });
 
                     break;
                 case ResponseType.Leave:
@@ -1763,7 +1763,7 @@ namespace PubNub_Messaging
                 }
             }
         }
-        
+
         /// <summary>
         /// Retrieves the channel name from the url components
         /// </summary>
@@ -1902,7 +1902,7 @@ namespace PubNub_Messaging
 
         public static long translateDateTimeToPubnubUnixNanoSeconds(DateTime dotNetUTCDateTime)
         {
-            TimeSpan ts = dotNetUTCDateTime - new DateTime(1970, 1, 1,0,0,0,DateTimeKind.Utc);
+            TimeSpan ts = dotNetUTCDateTime - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             long timestamp = Convert.ToInt64(ts.TotalSeconds) * 10000000;
             return timestamp;
         }
@@ -1922,7 +1922,7 @@ namespace PubNub_Messaging
         Error = 1,
         Warning = 2,
         Info = 3,
-       Verbose = 4,
+        Verbose = 4,
     }
 #endif
     /// <summary>
@@ -2539,12 +2539,12 @@ namespace PubNub_Messaging
          */
         private string EncryptOrDecrypt(bool type, string plainStr)
         {
-            #if (SILVERLIGHT)
+#if (SILVERLIGHT)
             AesManaged aesEncryption = new AesManaged();
             //get ASCII bytes of the string
             aesEncryption.IV = System.Text.Encoding.UTF8.GetBytes("0123456789012345");
             aesEncryption.Key = System.Text.Encoding.UTF8.GetBytes(GetEncryptionKey());
-            #else
+#else
                 RijndaelManaged aesEncryption = new RijndaelManaged();
                 //Mode CBC
                 aesEncryption.Mode = CipherMode.CBC;
@@ -2553,7 +2553,7 @@ namespace PubNub_Messaging
                 //get ASCII bytes of the string
                 aesEncryption.IV = System.Text.Encoding.ASCII.GetBytes("0123456789012345");
                 aesEncryption.Key = System.Text.Encoding.ASCII.GetBytes(GetEncryptionKey());
-            #endif
+#endif
             aesEncryption.KeySize = 256;
             aesEncryption.BlockSize = 128;
 
@@ -2561,11 +2561,11 @@ namespace PubNub_Messaging
             {
                 ICryptoTransform crypto = aesEncryption.CreateEncryptor();
                 plainStr = EncodeNonAsciiCharacters(plainStr);
-                #if (SILVERLIGHT)
-                    byte[] plainText = Encoding.UTF8.GetBytes(plainStr);
-                #else
+#if (SILVERLIGHT)
+                byte[] plainText = Encoding.UTF8.GetBytes(plainStr);
+#else
                     byte[] plainText = Encoding.ASCII.GetBytes(plainStr);
-                #endif
+#endif
 
                 //encrypt
                 byte[] cipherText = crypto.TransformFinalBlock(plainText, 0, plainText.Length);
@@ -2580,12 +2580,12 @@ namespace PubNub_Messaging
                     byte[] decryptedBytes = Convert.FromBase64CharArray(plainStr.ToCharArray(), 0, plainStr.Length);
 
                     //decrypt
-                    #if (SILVERLIGHT)
-                        var data = decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length);
-                        string strDecrypted = Encoding.UTF8.GetString(data, 0, data.Length);
-                    #else
+#if (SILVERLIGHT)
+                    var data = decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length);
+                    string strDecrypted = Encoding.UTF8.GetString(data, 0, data.Length);
+#else
                         string strDecrypted = System.Text.Encoding.ASCII.GetString(decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length));
-                    #endif
+#endif
 
                     return strDecrypted;
                 }
@@ -2616,11 +2616,11 @@ namespace PubNub_Messaging
         private static byte[] md5(string cipher_key)
         {
             MD5 obj = new MD5CryptoServiceProvider();
-            #if (SILVERLIGHT)
-                byte[] data = Encoding.UTF8.GetBytes(cipher_key);
-            #else
+#if (SILVERLIGHT)
+            byte[] data = Encoding.UTF8.GetBytes(cipher_key);
+#else
                 byte[] data = Encoding.Default.GetBytes(cipher_key);
-            #endif
+#endif
             return obj.ComputeHash(data);
         }
         /// <summary>
@@ -2758,11 +2758,11 @@ namespace PubNub_Messaging
             InternetState state = new InternetState();
             state.callback = callback;
             ThreadPool.QueueUserWorkItem(checkSocketConnect, state);
-            #if (SILVERLIGHT)
+#if (SILVERLIGHT)
             mres.WaitOne();
-            #else
+#else
             mres.Wait();
-            #endif
+#endif
         }
 
         private static void checkSocketConnect(object internetState)
@@ -2776,7 +2776,7 @@ namespace PubNub_Messaging
                 {
                     SocketAsyncEventArgs sae = new SocketAsyncEventArgs();
                     sae.UserToken = state;
-                    sae.RemoteEndPoint = new DnsEndPoint("pubsub.pubnub.com",80);
+                    sae.RemoteEndPoint = new DnsEndPoint("pubsub.pubnub.com", 80);
                     sae.Completed += new EventHandler<SocketAsyncEventArgs>(socketAsync_Completed);
                     socket.ConnectAsync(sae);
                     mreSocketAsync.WaitOne(1000);
@@ -2802,7 +2802,7 @@ namespace PubNub_Messaging
             mres.Set();
         }
 
-        #if (SILVERLIGHT)
+#if (SILVERLIGHT)
         static void socketAsync_Completed(object sender, SocketAsyncEventArgs e)
         {
             if (e.LastOperation == SocketAsyncOperation.Connect)
@@ -2816,7 +2816,7 @@ namespace PubNub_Messaging
                 mreSocketAsync.Set();
             }
         }
-        #endif
+#endif
 
         private static void WriteToLog(string str, TraceLevel traceLevel)
         {

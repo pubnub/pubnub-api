@@ -136,7 +136,7 @@ namespace PubNub_Messaging
         {
             Console.WriteLine(result);
         }
-        
+
         static void DisplayReturnMessage(object result)
         {
             IList<object> message = result as IList<object>;

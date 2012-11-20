@@ -10,13 +10,14 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Navigation;
-using PubnubSilverlight.Core;
+//using PubnubSilverlight.Core;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using Microsoft.Silverlight.Testing;
 using PubnubSilverlight.Example.Dialogs;
+using PubNub_Messaging;
 
 namespace PubnubSilverlight.Example.Views
 {
