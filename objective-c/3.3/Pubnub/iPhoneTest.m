@@ -77,23 +77,28 @@ CEPubnub *pubnub;
 
 - (IBAction)APNSRegClick:(id)sender {
     NSLog(@"-----------APNS Reg START----------------");
-    [pubnub APNSAddChannelToDevice:@"gecchannel" :@"gecdevice"];
+    NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
+    NSLog(@"Device ID: %@", deviceName);
+    [pubnub APNSAddChannelToDevice:@"gecchannel" :deviceName];
 }
 
 - (IBAction)APNSUnregClick:(id)sender {
     NSLog(@"-----------APNS Unreg START----------------");
-    [pubnub APNSRemoveChannelFromDevice:@"gecchannel" :@"gecdevice"];
+    NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
+    [pubnub APNSRemoveChannelFromDevice:@"gecchannel" :deviceName];
 }
 
 - (IBAction)APNSGetAllClick:(id)sender {
     NSLog(@"-----------APNS GetAll START----------------");
-    [pubnub APNSGetAllChannelsForDevice:@"gecdevice"];
+    NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
+    [pubnub APNSGetAllChannelsForDevice:deviceName];
 }
 
 
 - (IBAction)APNSPurgeAllClick:(id)sender {
     NSLog(@"-----------APNS Purge All START----------------");
-    [pubnub APNSPurgeDevice:@"gecdevice"];
+    NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
+    [pubnub APNSPurgeDevice:deviceName];
 }
 
 - (IBAction)UUIDClick:(id)sender {
