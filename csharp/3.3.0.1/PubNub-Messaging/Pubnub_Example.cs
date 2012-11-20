@@ -3,17 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Threading;
 
 namespace PubNub_Messaging
 {
     public class Pubnub_Example
     {
-        static public Pubnub pubnub = new Pubnub(
-                    "demo",
-                    "demo",
-                    "",
-                    "",
-                    false);
+        static public Pubnub pubnub;
 
         static public bool deliveryStatus = false;
         static public string channel = "";
@@ -33,6 +29,34 @@ namespace PubNub_Messaging
 
             Console.WriteLine(string.Format("Channel = {0}",channel));
             Console.WriteLine();
+
+            Console.WriteLine("Enable SSL? ENTER Y for Yes, else N");
+            string enableSSL = Console.ReadLine();
+            if (enableSSL.Trim().ToLower() == "y")
+            {
+                Console.WriteLine("SSL Enabled");
+            }
+            else
+            {
+                Console.WriteLine("SSL NOT Enabled");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("ENTER cipher key for encryption feature.");
+            Console.WriteLine("If you don't want to avail at this time, press ENTER.");
+            string cipheryKey = Console.ReadLine();
+            if (cipheryKey.Trim().Length > 0)
+            {
+                Console.WriteLine("Cipher key provided.");
+            }
+            else
+            {
+                Console.WriteLine("No Cipher key provided");
+            }
+            Console.WriteLine();
+
+            pubnub = new Pubnub("demo", "demo", "", cipheryKey,
+                (enableSSL.Trim().ToLower() == "y") ? true : false);
 
             Console.WriteLine("ENTER 1 FOR Subscribe");
             Console.WriteLine("ENTER 2 FOR Publish");
@@ -58,6 +82,7 @@ namespace PubNub_Messaging
                     case "1":
                         Console.WriteLine("Running subscribe()");
                         pubnub.subscribe<string>(channel, DisplayReturnMessage);
+                        //System.Threading.Tasks.Task subtask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.subscribe<string>(channel, DisplayReturnMessage));
                         //pubnub.subscribe<object>(channel, DisplayReturnMessage);
                         //pubnub.subscribe(channel, DisplayReturnMessage);
                         break;
@@ -70,6 +95,7 @@ namespace PubNub_Messaging
                     case "3":
                         Console.WriteLine("Running presence()");
                         pubnub.presence<string>(channel, DisplayReturnMessage);
+                        //System.Threading.Tasks.Task pretask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.presence<string>(channel, DisplayReturnMessage));
                         //pubnub.presence<object>(channel, DisplayReturnMessage);
                         break;
                     case "4":
