@@ -7,10 +7,6 @@ import (
 	"testing"
 )
 
-func TestPubnubInit(t *testing.T) {
-	//test body
-}
-
 //Moc server hendlers
 func timePubnubHandler(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "[13533127815769808]")
@@ -40,7 +36,7 @@ func noHereNowPubnubHandler(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "{\"uuids\":[], \"occupancy\":0}")
 }
 
-/*func subscribePubnubHandler(w http.ResponseWriter, req *http.Request) {
+func subscribePubnubHandler(w http.ResponseWriter, req *http.Request) {
 	if timeToken == "0" {
 		io.WriteString(w, "[[], \"13533127815769808\"]")
 	} else {
@@ -54,7 +50,27 @@ func presencePubnubHandler(w http.ResponseWriter, req *http.Request) {
 	} else {
 		io.WriteString(w, "[[{\"action\": \"join\", \"timestamp\": 1345720165, \"uuid\": \"1975\", \"occupancy\":3}],\"13533127815769808\"]")
 	}
-}*/
+}
+
+func TestPubnubInit(t *testing.T) {
+	testPUBNUB := PubnubInit("demo_pub_key", "demo_sub_key", "demo_sec_key", "demo_cipher_key", false)
+
+	if testPUBNUB.ORIGIN != "http://"+_ORIGIN {
+		t.Fatalf("Failed initialization origin url")
+	}
+	if testPUBNUB.PUBLISH_KEY != "demo_pub_key" {
+		t.Fatalf("Failed initialization publish key")
+	}
+	if testPUBNUB.SUBSCRIBE_KEY != "demo_sub_key" {
+		t.Fatalf("Failed initialization subscribe key")
+	}
+	if testPUBNUB.SECRET_KEY != "demo_sec_key" {
+		t.Fatalf("Failed initialization secret key")
+	}
+	if testPUBNUB.CIPHER_KEY != "demo_cipher_key" {
+		t.Fatalf("Failed initialization cipher key")
+	}
+}
 
 func TestGetTime(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
@@ -79,6 +95,8 @@ func TestSuccessPublish(t *testing.T) {
 
 	publish_channel_1 := make(chan []byte)
 	publish_channel_2 := make(chan []byte)
+	publish_channel_3 := make(chan []byte)
+	publish_channel_4 := make(chan []byte)
 	var response []byte
 
 	go testPUBNUB.Publish("test-channel", "test", publish_channel_1)
@@ -104,7 +122,37 @@ func TestSuccessPublish(t *testing.T) {
 		response = append(response, value...)
 	}
 	if fmt.Sprintf("%s", response) != "1Sent13533127815769808" {
-		t.Fatalf("Failed to publish message without chipher key: %s", response)
+		t.Fatalf("Failed to publish message with chipher key: %s", response)
+	}
+
+	testPUBNUB.CIPHER_KEY = ""
+	testPUBNUB.SECRET_KEY = "itsmysecret"
+	response = []byte{}
+	go testPUBNUB.Publish("test-channel", "test", publish_channel_3)
+	for {
+		value, ok := <-publish_channel_3
+		if !ok {
+			break
+		}
+		response = append(response, value...)
+	}
+	if fmt.Sprintf("%s", response) != "1Sent13533127815769808" {
+		t.Fatalf("Failed to publish message with secret key: %s", response)
+	}
+
+	testPUBNUB.CIPHER_KEY = "enigma"
+	testPUBNUB.SECRET_KEY = "itsmysecret"
+	response = []byte{}
+	go testPUBNUB.Publish("test-channel", "test", publish_channel_4)
+	for {
+		value, ok := <-publish_channel_4
+		if !ok {
+			break
+		}
+		response = append(response, value...)
+	}
+	if fmt.Sprintf("%s", response) != "1Sent13533127815769808" {
+		t.Fatalf("Failed to publish message with cipher and secret keys: %s", response)
 	}
 }
 
@@ -207,7 +255,7 @@ func TestHereNow(t *testing.T) {
 	//need add tests for here now request with chipher key
 }
 
-/*func TestSubscribe(t *testing.T) {
+func TestSubscribe(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
 
 	testPUBNUB := PubnubInit("demo", "demo", "", "", false)
@@ -225,11 +273,37 @@ func TestHereNow(t *testing.T) {
 		response = append(response, value...)
 		break
 	}
-	testPUBNUB.Unsubscribe(subscribe_channel)
 
 	if fmt.Sprintf("%s", response) != "hi" {
 		t.Fatalf("Failed to subscribe without chipher key: %s", response)
 	}
 	//need add tests for subscribe with chipher key
 
-}*/
+}
+
+func TestPresence(t *testing.T) {
+	starter.Do(func() { setupMockServer(t) })
+
+	testPUBNUB := PubnubInit("demo", "demo", "", "", false)
+	testPUBNUB.ORIGIN = "http://" + addr.String()
+	testPUBNUB.UUID = "aa1686b0-cee8-012f-ba60-70def1fd2b7f"
+	timeToken = "0"
+
+	presence_channel := make(chan []byte)
+
+	var response []byte
+
+	go testPUBNUB.Presence("test-channel", presence_channel)
+	for i := 0; i < 4; i++ {
+		value, ok := <-presence_channel
+		if !ok {
+			break
+		}
+		response = append(response, value...)
+	}
+
+	if fmt.Sprintf("%s", response) != "join134572016519753" {
+		t.Fatalf("Failed to presence without chipher key: %s", response)
+	}
+	//need add tests for presence with chipher key
+}

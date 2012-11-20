@@ -41,8 +41,8 @@ func setupMockServer(t *testing.T) {
 	http.HandleFunc("/history/demo/no-history-channel/", noHistoryPubnubHandler)
 	http.HandleFunc("/v2/presence/sub-key/demo/channel/test-channel", hereNowPubnubHandler)
 	http.HandleFunc("/v2/presence/sub-key/demo/channel/no-here-now-channel", noHereNowPubnubHandler)
-	//http.HandleFunc("/subscribe/demo/test-channel/0/", subscribePubnubHandler)
-	//http.HandleFunc("/subscribe/demo/test-channel-pnpres/0/", presencePubnubHandler)
+	http.HandleFunc("/subscribe/demo/test-channel/0/", subscribePubnubHandler)
+	http.HandleFunc("/subscribe/demo/test-channel-pnpres/0/", presencePubnubHandler)
 
 	ln, err := net.Listen("tcp", ":0")
 	if err != nil {
