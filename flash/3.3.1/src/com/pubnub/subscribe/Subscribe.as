@@ -9,7 +9,7 @@ import com.pubnub.operation.*;
 	
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class Subscribe extends EventDispatcher {
 		//public static const RESUME_ON_RECONNECT:Boolean = true;

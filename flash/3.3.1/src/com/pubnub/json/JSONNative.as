@@ -1,7 +1,7 @@
 package com.pubnub.json {
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class JSONNative {
 		

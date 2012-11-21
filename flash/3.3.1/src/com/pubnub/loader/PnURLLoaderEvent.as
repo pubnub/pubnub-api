@@ -3,7 +3,7 @@ package com.pubnub.loader {
 	
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class PnURLLoaderEvent extends Event {
 		

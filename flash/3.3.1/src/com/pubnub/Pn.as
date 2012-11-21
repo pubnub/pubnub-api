@@ -1,7 +1,5 @@
 package com.pubnub {
 	
-	//namespace ns1;
-	
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
 	import flash.errors.*;

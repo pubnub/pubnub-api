@@ -6,7 +6,7 @@ package com.pubnub.operation {
 	import flash.utils.getTimer;
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class PublishOperation extends Operation {
 		 

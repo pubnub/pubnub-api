@@ -4,7 +4,7 @@ package com.pubnub.environment {
 	
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	[Event(name="restore_from_sleep", type="com.pubnub.environment.SysMonEvent")]
 	public class SysMon extends EventDispatcher {

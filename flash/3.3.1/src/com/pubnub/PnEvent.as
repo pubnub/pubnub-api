@@ -4,7 +4,7 @@ package com.pubnub {
 	
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class PnEvent extends Event {
 		

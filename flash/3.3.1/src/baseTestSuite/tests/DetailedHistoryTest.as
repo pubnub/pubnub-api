@@ -6,7 +6,7 @@ package baseTestSuite.tests {
 	import org.flexunit.async.Async;
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	[BeforeClass (order=4)]
 	public class DetailedHistoryTest {

@@ -18,7 +18,7 @@ package fixTestSuite.tests {
 		 
 		Mokolate: 
 		http://mockolate.org/
-	 * 	@author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * 	@author firsoff maxim, support@pubnub.com
 	 */
 	[BeforeClass (order = 1)]
 	public class InitTest {

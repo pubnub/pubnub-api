@@ -5,7 +5,7 @@ package com.pubnub.loader {
 	import org.httpclient.events.*;
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	[Event(name="PnURLLoaderEvent.error", type="com.pubnub.loader.PnURLLoaderEvent")]
 	[Event(name="PnURLLoaderEvent.complete", type="com.pubnub.loader.PnURLLoaderEvent")]

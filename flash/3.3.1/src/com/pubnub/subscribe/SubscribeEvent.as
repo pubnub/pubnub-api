@@ -3,7 +3,7 @@ package com.pubnub.subscribe {
 	
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class SubscribeEvent extends Event {
 		

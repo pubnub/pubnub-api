@@ -4,7 +4,7 @@ package baseTestSuite.tests {
 	import org.flexunit.async.*;
 	/**
 	 * ...
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	[BeforeClass (order=3)]
 	public class PublishTest {

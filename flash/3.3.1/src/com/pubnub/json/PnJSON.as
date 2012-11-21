@@ -4,7 +4,7 @@ package com.pubnub.json {
 	 * try/catch consruction is more slow! 
 	 * you can choose native or 3d party JSON libs for optimization.
 	 * 
-	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
+	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class PnJSON {
 		
