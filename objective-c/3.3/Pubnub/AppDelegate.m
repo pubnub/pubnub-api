@@ -11,8 +11,10 @@
 #import "CEPubnub.h"
 
 @implementation AppDelegate
-
 @synthesize window = _window;
+@synthesize apnsID;
+
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -30,6 +32,15 @@
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
 	NSLog(@"My token is: %@", deviceToken);
+    
+    NSString *devToken = [[[[deviceToken description]
+                            stringByReplacingOccurrencesOfString:@"<"withString:@""]
+                           stringByReplacingOccurrencesOfString:@">" withString:@""]
+                          stringByReplacingOccurrencesOfString: @" " withString: @""];
+    
+    apnsID = devToken;
+    
+    
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error

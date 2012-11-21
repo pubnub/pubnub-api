@@ -8,6 +8,7 @@
 
 #import "iPhoneTest.h"
 #import "CEPubnub.h"
+#import "AppDelegate.h"
 
 @interface iPhoneTest ()
 
@@ -76,6 +77,9 @@ CEPubnub *pubnub;
 }
 
 - (IBAction)APNSRegClick:(id)sender {
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSLog(@"I hope this works: %@", appDelegate.apnsID);
+    
     NSLog(@"-----------APNS Reg START----------------");
     NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
     NSLog(@"Device ID: %@", deviceName);
