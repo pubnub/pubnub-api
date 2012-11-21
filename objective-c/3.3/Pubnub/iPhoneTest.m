@@ -78,31 +78,35 @@ CEPubnub *pubnub;
 
 - (IBAction)APNSRegClick:(id)sender {
     AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    NSLog(@"I hope this works: %@", appDelegate.apnsID);
     
     NSLog(@"-----------APNS Reg START----------------");
-    NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
-    NSLog(@"Device ID: %@", deviceName);
-    [pubnub APNSAddChannelToDevice:@"gecchannel" :deviceName];
+
+    [pubnub APNSAddChannelToDevice:@"gecchannel" :appDelegate.apnsID];
 }
 
 - (IBAction)APNSUnregClick:(id)sender {
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+
     NSLog(@"-----------APNS Unreg START----------------");
-    NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
-    [pubnub APNSRemoveChannelFromDevice:@"gecchannel" :deviceName];
+
+    [pubnub APNSRemoveChannelFromDevice:@"gecchannel" :appDelegate.apnsID];
 }
 
 - (IBAction)APNSGetAllClick:(id)sender {
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+
     NSLog(@"-----------APNS GetAll START----------------");
-    NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
-    [pubnub APNSGetAllChannelsForDevice:deviceName];
+
+    [pubnub APNSGetAllChannelsForDevice :appDelegate.apnsID];
 }
 
 
 - (IBAction)APNSPurgeAllClick:(id)sender {
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+
     NSLog(@"-----------APNS Purge All START----------------");
-    NSString*  deviceName= [[UIDevice currentDevice] uniqueIdentifier];
-    [pubnub APNSPurgeDevice:deviceName];
+
+    [pubnub APNSPurgeDevice :appDelegate.apnsID];
 }
 
 - (IBAction)UUIDClick:(id)sender {

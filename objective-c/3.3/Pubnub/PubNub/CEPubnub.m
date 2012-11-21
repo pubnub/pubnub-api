@@ -17,7 +17,7 @@
 #import "JSON.h"
 
 //#define kDefaultOrigin @"pubsub.pubnub.com"
-#define kDefaultOrigin @"50.112.192.64:9000"
+#define kDefaultOrigin @"apns.pubnub.com"
 #define kMaxHistorySize 100  // From documentation
 #define kConnectionTimeOut 310.0  // From https://github.com/jazzychad/CEPubnub/blob/master/CEPubnub/CEPubnubRequest.m
 #define kMinRetryInterval 5.0 //In seconds
@@ -1204,7 +1204,7 @@ typedef enum {
     
     // /v1/push/sub-key/<sub_key>/devices/<device>?add=channel,channel,...
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/%@?add=%@", _host, device, channel];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/%@?add=%@", _host, device, channel];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSAddChannel
@@ -1217,7 +1217,7 @@ typedef enum {
     
     //  /v1/push/sub-key/<sub_key>/devices/<device>?remove=channel,channel,...
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/%@?remove=%@", _host, device, channel];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/%@?remove=%@", _host, device, channel];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSRemoveChannel
@@ -1230,7 +1230,7 @@ typedef enum {
     
     //  /v1/push/sub-key/<sub_key>/devices/<device>
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/%@", _host, device];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/%@", _host, device];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSGetAllChannels
@@ -1243,7 +1243,7 @@ typedef enum {
     
     //  /v1/push/sub-key/<sub_key>/devices/<device>/remove
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/demo/devices/%@/remove", _host, device];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/%@/remove", _host, device];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSPurgeAllChannels
