@@ -732,22 +732,25 @@ public class Pubnub {
 	 */
 	public void unsubscribe(HashMap<String, Object> args) {
 		String channel = (String) args.get("channel");
-		for (ChannelStatus it : subscriptions) {
-			if (it.channel.equals(channel) && it.connected) {
-				it.connected = false;
-				it.first = false;
-				break;
+		if (subscriptions != null) {
+			for (ChannelStatus it : subscriptions) {
+				if (it.channel.equals(channel) && it.connected) {
+					it.connected = false;
+					it.first = false;
+					break;
+				}
 			}
 		}
-		Enumeration<String> e = connection.keys();
-		while (e.hasMoreElements()) {
-
-			String ch = (String) e.nextElement();
-			if (ch.equals(channel)) {
-				HttpClient http = (HttpClient) connection.get(ch);
-				http.getConnectionManager().shutdown();
-				if (connection.containsKey(ch))
-					connection.remove(ch);
+		if (connection != null) {
+			Enumeration<String> e = connection.keys();
+			while (e.hasMoreElements()) {
+				String ch = (String) e.nextElement();
+				if (ch.equals(channel)) {
+					HttpClient http = (HttpClient) connection.get(ch);
+					http.getConnectionManager().shutdown();
+					if (connection.containsKey(ch))
+						connection.remove(ch);
+				}
 			}
 		}
 	}
