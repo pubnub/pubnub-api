@@ -45,6 +45,7 @@ package com.pubnub {
 		}
 		
 		private function setup():void {
+			trace('setup');
 			operations = new Dictionary();
 			initOperation = new Operation();
 			operations[INIT_OPERATION] = initOperation;
@@ -71,7 +72,6 @@ package com.pubnub {
 				unsubscribeAll();
 			}
 			_initialized = false;
-			operations = new Dictionary();
 			subscribes = new Dictionary();
 			ori = Math.floor(Math.random() * 9) + 1;
 			
