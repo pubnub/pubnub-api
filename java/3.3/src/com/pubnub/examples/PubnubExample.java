@@ -185,7 +185,7 @@ public class PubnubExample {
 
 
         // Get History
-        JSONArray response = pubnub.detailedHistory(channel, count);
+        JSONArray response = pubnub.detailedHistory(channel, count, false);
 
         // Print Response from PubNub JSONP REST Service
         System.out.println(response);
