@@ -1373,7 +1373,7 @@ namespace PubNub_Messaging
                     {
                         OnPubnubWebRequestTimeout(pubnubRequestState, true);
                     }
-                #else
+                #elif (!SILVERLIGHT)
                     ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
                 #endif
                 return true;
@@ -2776,9 +2776,11 @@ namespace PubNub_Messaging
                 {
                     SocketAsyncEventArgs sae = new SocketAsyncEventArgs();
                     sae.UserToken = state;
-                    sae.RemoteEndPoint = new DnsEndPoint("pubsub.pubnub.com",80);
+                    //sae.RemoteEndPoint = new DnsEndPoint("pubsub.pubnub.com",80); *Changed*
+                    sae.RemoteEndPoint = new DnsEndPoint("pizza.pubnub.com", 80);
                     sae.Completed += new EventHandler<SocketAsyncEventArgs>(socketAsync_Completed);
-                    socket.ConnectAsync(sae);
+                    bool test = socket.ConnectAsync(sae);
+
                     mreSocketAsync.WaitOne(1000);
                     //socket.Shutdown(SocketShutdown.Both);
                     socket.Close();

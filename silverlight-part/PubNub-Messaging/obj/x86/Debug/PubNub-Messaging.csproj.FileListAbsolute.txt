@@ -11,3 +11,6 @@ C:\Pandu\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\Newtonsof
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\Newtonsoft.Json.xml
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.exe
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.pdb
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\obj\x86\Debug\PubNub-Messaging.csprojResolveAssemblyReference.cache
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\Newtonsoft.Json.xml

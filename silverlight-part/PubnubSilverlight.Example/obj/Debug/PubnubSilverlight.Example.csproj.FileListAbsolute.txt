@@ -158,3 +158,5 @@ C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\XapCacheFile.xml
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\Newtonsoft.Json.pdb
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\Newtonsoft.Json.xml
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\Newtonsoft.Json.pdb
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\Newtonsoft.Json.xml
