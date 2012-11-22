@@ -629,9 +629,8 @@ public class Pubnub {
         if (count == -1)
             count = 100;
 
-        parameters = "?reverse=" + reverse.toString().toLowerCase();
-
-        parameters = parameters + "&" + "count=" + count;
+        parameters = "?count=" + count;
+        parameters = parameters + "&" + "reverse=" + reverse.toString().toLowerCase();
 
         if (start != -1)
             parameters = parameters + "&" + "start="
