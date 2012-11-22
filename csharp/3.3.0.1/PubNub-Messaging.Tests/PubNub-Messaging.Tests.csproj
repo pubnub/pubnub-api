@@ -34,13 +34,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\PubNub-Messaging\bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization.Json, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\System.Runtime.Serialization.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
@@ -57,9 +57,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WhenDetailedHistoryIsRequested.cs" />
-    <Compile Include="WhenGetRequestHistoryMessage.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="WhenGetRequestServerTime.cs">
       <SubType>Code</SubType>
     </Compile>
