@@ -18,6 +18,7 @@
 
 //#define kDefaultOrigin @"pubsub.pubnub.com"
 #define kDefaultOrigin @"apns.pubnub.com"
+
 #define kMaxHistorySize 100  // From documentation
 #define kConnectionTimeOut 310.0  // From https://github.com/jazzychad/CEPubnub/blob/master/CEPubnub/CEPubnubRequest.m
 #define kMinRetryInterval 5.0 //In seconds
@@ -1200,55 +1201,63 @@ typedef enum {
     }
 }
 
-- (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device {
+- (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device :(NSString *)subKey {
     
     // /v1/push/sub-key/<sub_key>/devices/<device>?add=channel,channel,...
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/%@?add=%@", _host, device, channel];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/%@/devices/%@?add=%@", _host, subKey, device, channel];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSAddChannel
                                                                     channel:channel
                                                                      device:device];
+    NSLog(@"APNS: %@", url);
+    
     [_connections addObject:connection];
 }
 
-- (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device {
+- (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device :(NSString *)subKey {
     
-    //  /v1/push/sub-key/<sub_key>/devices/<device>?remove=channel,channel,...
+    //  /v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/<device>?remove=channel,channel,...
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/%@?remove=%@", _host, device, channel];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/%@/devices/%@?remove=%@", _host, subKey, device, channel];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSRemoveChannel
                                                                     channel:nil
                                                                      device:device];
+    NSLog(@"APNS: %@", url);
+
     [_connections addObject:connection];
 }
 
-- (void)APNSGetAllChannelsForDevice:(NSString *)device {
+- (void)APNSGetAllChannelsForDevice:(NSString *)device :(NSString *)subKey {
     
     //  /v1/push/sub-key/<sub_key>/devices/<device>
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/%@", _host, device];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/%@/devices/%@", _host, subKey, device];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSGetAllChannels
                                                                     channel:nil
                                                                      device:device];
+    NSLog(@"APNS: %@", url);
+
     [_connections addObject:connection];
 }
 
-- (void)APNSPurgeDevice:(NSString *)device {
+- (void)APNSPurgeDevice:(NSString *)device :(NSString *)subKey {
     
     //  /v1/push/sub-key/<sub_key>/devices/<device>/remove
     
-    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f/devices/%@/remove", _host, device];
+    NSString *url = [NSString stringWithFormat:@"%@/v1/push/sub-key/%@/devices/%@/remove", _host, subKey, device];
     PubNubConnection* connection = [[PubNubConnection alloc] initWithPubNub:self
                                                                         url:[NSURL URLWithString:url]
                                                                     command:kCommand_APNSPurgeAllChannels
                                                                     channel:nil
                                                                      device:device];
+    NSLog(@"APNS: %@", url);
+
     [_connections addObject:connection];
 }
 

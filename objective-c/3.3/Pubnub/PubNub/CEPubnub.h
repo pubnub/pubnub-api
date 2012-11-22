@@ -81,10 +81,10 @@
 
 // APNS Support
 
-- (void)APNSGetAllChannelsForDevice:(NSString *)device;
-- (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device;
-- (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device;
-- (void)APNSPurgeDevice:(NSString *)device;
+- (void)APNSGetAllChannelsForDevice:(NSString *)device :(NSString *)subKey;
+- (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device :(NSString *)subKey;
+- (void)APNSRemoveChannelFromDevice:(NSString *)channel :(NSString *)device :(NSString *)subKey;
+- (void)APNSPurgeDevice:(NSString *)device :(NSString *)subKey;
 
 
 + (BOOL)isApplicationActive;

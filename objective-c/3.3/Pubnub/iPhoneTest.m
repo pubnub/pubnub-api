@@ -24,14 +24,22 @@
 
 NSString *channelName;
 CEPubnub *pubnub;
+
+//NSString *channelName = @"hello_world", *publish_key = @"demo", *subscribe_key = @"demo";
+//NSString *secret_key = @"demo", *cipher_key = nil;
+//BOOL ssl_on = false;
+
+NSString *channelName = @"my_channel", *publish_key = @"pub-889bc8f3-828f-4dad-8587-033ff24aa8d3", *subscribe_key = @"sub-1fcfb5de-32bb-11e2-b5e7-c3a7c6c9cd2f";
+NSString *secret_key = nil, *cipher_key = nil;
+BOOL ssl_on = NO;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        // Do any additional setup after loading the view, typically from a nib.
-    channelName=@"hello_world";
-    pubnub = [[CEPubnub alloc] initWithPublishKey:@"demo" subscribeKey:@"demo" secretKey:nil   cipherKey:nil useSSL:NO];
-        //subscribe to a few channels
 	
+    channelName=@"my_channel";
+    pubnub = [[CEPubnub alloc] initWithPublishKey:publish_key subscribeKey:subscribe_key secretKey:secret_key   cipherKey:cipher_key useSSL:ssl_on];
+    
 	[pubnub setDelegate:self];
 }
 
@@ -81,7 +89,7 @@ CEPubnub *pubnub;
     
     NSLog(@"-----------APNS Reg START----------------");
 
-    [pubnub APNSAddChannelToDevice:@"gecchannel" :appDelegate.apnsID];
+    [pubnub APNSAddChannelToDevice :channelName :appDelegate.apnsID :subscribe_key];
 }
 
 - (IBAction)APNSUnregClick:(id)sender {
@@ -89,7 +97,7 @@ CEPubnub *pubnub;
 
     NSLog(@"-----------APNS Unreg START----------------");
 
-    [pubnub APNSRemoveChannelFromDevice:@"gecchannel" :appDelegate.apnsID];
+    [pubnub APNSRemoveChannelFromDevice:channelName :appDelegate.apnsID :subscribe_key];
 }
 
 - (IBAction)APNSGetAllClick:(id)sender {
@@ -97,7 +105,7 @@ CEPubnub *pubnub;
 
     NSLog(@"-----------APNS GetAll START----------------");
 
-    [pubnub APNSGetAllChannelsForDevice :appDelegate.apnsID];
+    [pubnub APNSGetAllChannelsForDevice :appDelegate.apnsID :subscribe_key];
 }
 
 
@@ -106,7 +114,7 @@ CEPubnub *pubnub;
 
     NSLog(@"-----------APNS Purge All START----------------");
 
-    [pubnub APNSPurgeDevice :appDelegate.apnsID];
+    [pubnub APNSPurgeDevice :appDelegate.apnsID :subscribe_key];
 }
 
 - (IBAction)UUIDClick:(id)sender {
@@ -149,9 +157,7 @@ CEPubnub *pubnub;
     //Unit-Test
     //=========================================================================
 
-NSString *publish_key = @"demo", *subscribe_key = @"demo";
-NSString *secret_key = @"demo", *cipher_key = nil;
-BOOL ssl_on = false;
+
 NSMutableArray *many_channels;
 NSMutableDictionary *status;
     // -----------------------------------------------------------------------
