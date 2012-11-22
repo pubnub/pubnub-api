@@ -16,6 +16,7 @@ package com.pubnub.operation {
 		
 		
 		override public function send(args:Object):void {
+			//var temp:Number = getTimer();
 			channel = args.channel;
 			var message:String = args.message;
 			if (channel == null || message == null) {
@@ -38,6 +39,7 @@ package com.pubnub.operation {
 			
 			uid = PnUtils.getUID();
 			_url = origin + "/" + "publish" + "/" + publishKey + "/" + subscribeKey + "/" + signature + "/" + PnUtils.encode(channel) + "/" + 0 + "/" +PnUtils.encode(serializedMessage as String);
+			//trace(getTimer() - temp);
 			_loader.load(this._url);
 		}
 		

@@ -56,6 +56,8 @@ package org.httpclient {
     private var _proxy:URI;
     
     private var _closed:Boolean;
+	
+	private var temp:Number;
         
     /**
      * Create HTTP socket.
@@ -64,6 +66,7 @@ package org.httpclient {
      * @param timeout Timeout (in millis); Defaults to 60 seconds.
      */
     public function HttpSocket(dispatcher:EventDispatcher, timeout:Number = 60000, proxy:URI = null) {
+		//trace('dasdasd');
       _dispatcher = dispatcher;
       _timer = new HttpTimer(timeout, onTimeout);
       _proxy = proxy;
@@ -116,7 +119,9 @@ package org.httpclient {
      * @param request HTTP request
      */
     public function request(uri:URI, request:HttpRequest):void {
+		temp = getTimer();
 		var onConnect:Function = function(event:Event):void {
+			trace('onConnect# : ' + (getTimer() - temp));
 			_dispatcher.dispatchEvent(new HttpRequestEvent(request, null, HttpRequestEvent.CONNECT));
 			if (uri.scheme == "https" && _proxy) { 
 				connectProxy(uri, request);
@@ -124,17 +129,22 @@ package org.httpclient {
 				sendRequest(uri, request);
 			}
 		}
-		
+		//trace(uri);
 		connect(uri, onConnect);
     }
    
+	
+	
     /**
      * Connect (to URI).
      * @param uri Resource to connect to
      * @param onConnect On connect callback
      */
     protected function connect(uri:URI, onConnect:Function = null):void {
-      _onConnect = onConnect;
+		
+		
+		
+		_onConnect = onConnect;
 
       // Create the socket
       var secure:Boolean = (uri.scheme == "https");
@@ -156,7 +166,6 @@ package org.httpclient {
      * Send CONNECT request for https proxy
      * @param uri URI
      */
-	private var temp:Number
     protected function connectProxy(uri:URI, request:HttpRequest):void {
       var proxyResponse:HttpResponse;
 
@@ -250,6 +259,8 @@ package org.httpclient {
      * Socket data available.
      */
     private function onSocketData(event:ProgressEvent):void {
+		
+		
       while (_socket && _socket.connected && _socket.bytesAvailable) {        
         _timer.reset();
         try {           
@@ -261,7 +272,8 @@ package org.httpclient {
           
           // Write to response buffer
           _responseBuffer.writeBytes(bytes);
-          
+		  var ct:Number = getTimer();
+          trace('onSocketData : ' + (ct - temp));
         } catch(e:EOFError) {
           Log.debug("EOF");
           _dispatcher.dispatchEvent(new HttpErrorEvent(HttpErrorEvent.ERROR, false, false, "EOF", 1));          
@@ -308,12 +320,16 @@ package org.httpclient {
     // Events (Socket listeners)
     //
 
-    private function onConnect(event:Event):void {    
+    private function onConnect(event:Event):void { 
+		var ct:Number = getTimer();
+		trace('onConnect' + (ct - temp))
       // Internal callback (does dispatch as well)
       if (_onConnect != null) _onConnect(event);            
     }
     
     private function onClose(event:Event):void {
+		var ct:Number = getTimer();
+		trace('onClose : ' + (ct - temp));
       _dispatcher.dispatchEvent(event.clone());
       
       // If we are not a chunked response and we didn't get content length

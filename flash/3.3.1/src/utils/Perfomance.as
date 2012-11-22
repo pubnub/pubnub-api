@@ -30,8 +30,9 @@ package utils {
 		private var median:Array
 		private var medlen:Number;
 		private var updateInterval:int;
+		private var publishTimeout:int;
 		private var view:DisplayObjectContainer;
-		private const MAX_LATENCY:Number = 1000;
+		private const MAX_LATENCY:Number = 2000;
 		
 		public function Perfomance(view:DisplayObject) {
 			super();
@@ -59,6 +60,7 @@ package utils {
 		
 		public function stop():void {
 			clearInterval(updateInterval);
+			clearTimeout(publishTimeout);
 			_isRun = false;
 			latencyAvg = 0;
 			sent = 0;
@@ -77,6 +79,7 @@ package utils {
 		}
 		
 		private function onPnSubscribe(e:PnEvent):void {
+			//trace(e.status);
 			 switch (e.status) {
                 case OperationStatus.DATA:
 					if (e.channel == channel && 
@@ -86,8 +89,8 @@ package utils {
 						var latency:Number = delta || median[1];
 						latencyAvg = Math.floor((latency + latencyAvg) / 2);
 						median.push(latency);
-						update();
-						publish();
+						//update();
+						setTimeout(publish, 100);
 					}
                     break;
 

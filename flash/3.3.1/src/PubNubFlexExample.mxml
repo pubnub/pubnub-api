@@ -40,13 +40,14 @@
         [Bindable]
         public var cipher_key:String = '';
 		
-        public var ssl:Boolean = true;
+        public var ssl:Boolean = false;
 
         private var consoleCounter:int = 1;
         private var perfomance:Perfomance;
 		
 		protected function init(event:FlexEvent):void {
 			perfomance = new Perfomance(perfomanceTestView.getChildAt(0));
+			perfomance.ssl = ssl;
 			BindingUtils.bindSetter(updateOrigin, this, "origin");
 		}
 			

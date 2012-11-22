@@ -115,7 +115,7 @@ package org.httpclient {
       var dispatcher:EventDispatcher = null;
       if (listener != null) dispatcher = listener.register();
       else dispatcher = this;
-      _socket = new HttpSocket(dispatcher, timeout, _proxy);
+      _socket ||= new HttpSocket(dispatcher, timeout, _proxy);
       _socket.request(uri, request);
     }
     
