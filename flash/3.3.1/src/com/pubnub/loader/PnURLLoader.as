@@ -13,7 +13,7 @@ package com.pubnub.loader {
 		
 		private var _destroyed:Boolean;
 		public var httpClient:HttpClient;
-		public var headers:Array = [{ name: "Connection", value: "Keep-Alive" }];
+		public static const headers:Array = [{ name: "Connection", value: "Keep-Alive" }];
 		private var listener:HttpListener;
 		private var _url:String;
 		private var timeout:Number;

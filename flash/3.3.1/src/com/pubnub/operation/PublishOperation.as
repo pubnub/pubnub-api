@@ -1,9 +1,11 @@
 package com.pubnub.operation {
 	import com.adobe.crypto.*;
+	import com.adobe.net.URI;
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
 	import flash.utils.getTimer;
+	import org.httpclient.HttpHeader;
 	/**
 	 * ...
 	 * @author firsoff maxim, support@pubnub.com
@@ -14,6 +16,8 @@ package com.pubnub.operation {
 		public var cipherKey:String = ""; 
 		public var publishKey:String = ""; 
 		
+		
+		private var expLoader:ExperimentURLLoader;
 		
 		override public function send(args:Object):void {
 			//var temp:Number = getTimer();
@@ -41,6 +45,10 @@ package com.pubnub.operation {
 			_url = origin + "/" + "publish" + "/" + publishKey + "/" + subscribeKey + "/" + signature + "/" + PnUtils.encode(channel) + "/" + 0 + "/" +PnUtils.encode(serializedMessage as String);
 			//trace(getTimer() - temp);
 			_loader.load(this._url);
+			
+			//var uri:URI = new URI(url);
+			//expLoader ||= new ExperimentURLLoader();
+			//expLoader.load(uri);
 		}
 		
 		override protected function onLoaderData(e:PnURLLoaderEvent):void {

@@ -264,7 +264,7 @@ package com.pubnub {
 		
 		public function publish(args:Object):void {
 			throwInit();
-			var publishOperation:PublishOperation = getOperation(PUBLISH_OPERATION) as PublishOperation;
+			var publishOperation:Operation = getOperation(PUBLISH_OPERATION) as Operation;
 			publishOperation.addEventListener(OperationEvent.RESULT, onPublishResult);
 			publishOperation.addEventListener(OperationEvent.FAULT, onPublishFault);
 			publishOperation.send(args);

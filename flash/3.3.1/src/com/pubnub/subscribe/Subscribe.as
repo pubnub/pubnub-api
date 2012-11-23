@@ -38,6 +38,7 @@ import com.pubnub.operation.*;
 		
 		private function init():void {
 			operations = new Dictionary();
+			//operations[Operation.WITH_TIMETOKEN] = new ExperimentOperation();
 			netMonitor = new NetMon();
 			netMonitor.reconnectDelay = Settings.CONNECTION_HEARTBEAT_INTERVAL;
 			netMonitor.forceReconnectDelay = Settings.RECONNECT_HEARTBEAT_TIMEOUT;

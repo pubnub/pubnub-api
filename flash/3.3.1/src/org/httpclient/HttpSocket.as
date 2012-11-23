@@ -77,9 +77,14 @@ package org.httpclient {
      * Create Socket or TLSSocket depending on URI scheme (http or https).
      */
     protected function createSocket(secure:Boolean = false):void {      
-      if (secure && !_proxy) _socket = new TLSSocket();
-      else _socket = new Socket();
-      
+		//trace('createSocket');
+		//var oldSoket:* = _socket;
+		if (secure && !_proxy) {
+			_socket = new TLSSocket();
+		}else {
+			_socket = new Socket();
+		}
+		//trace(oldSoket == _socket);
       _socket.addEventListener(Event.CONNECT, onConnect);       
       _socket.addEventListener(Event.CLOSE, onClose);
       _socket.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
@@ -121,7 +126,7 @@ package org.httpclient {
     public function request(uri:URI, request:HttpRequest):void {
 		temp = getTimer();
 		var onConnect:Function = function(event:Event):void {
-			trace('onConnect# : ' + (getTimer() - temp));
+			//trace('#onConnect# : ' + (getTimer() - temp));
 			_dispatcher.dispatchEvent(new HttpRequestEvent(request, null, HttpRequestEvent.CONNECT));
 			if (uri.scheme == "https" && _proxy) { 
 				connectProxy(uri, request);
@@ -141,8 +146,6 @@ package org.httpclient {
      * @param onConnect On connect callback
      */
     protected function connect(uri:URI, onConnect:Function = null):void {
-		
-		
 		
 		_onConnect = onConnect;
 
@@ -273,7 +276,7 @@ package org.httpclient {
           // Write to response buffer
           _responseBuffer.writeBytes(bytes);
 		  var ct:Number = getTimer();
-          trace('onSocketData : ' + (ct - temp));
+          //trace('onSocketData : ' + (ct - temp));
         } catch(e:EOFError) {
           Log.debug("EOF");
           _dispatcher.dispatchEvent(new HttpErrorEvent(HttpErrorEvent.ERROR, false, false, "EOF", 1));          
@@ -322,14 +325,14 @@ package org.httpclient {
 
     private function onConnect(event:Event):void { 
 		var ct:Number = getTimer();
-		trace('onConnect' + (ct - temp))
+		//trace('onConnect' + (ct - temp))
       // Internal callback (does dispatch as well)
       if (_onConnect != null) _onConnect(event);            
     }
     
     private function onClose(event:Event):void {
 		var ct:Number = getTimer();
-		trace('onClose : ' + (ct - temp));
+		//trace('onClose : ' + (ct - temp));
       _dispatcher.dispatchEvent(event.clone());
       
       // If we are not a chunked response and we didn't get content length
