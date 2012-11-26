@@ -7,7 +7,7 @@ test('PUBNUB JavaScript API', function (test) {
         subscribe_key : 'demo'
     });
 
-    test.plan(14);
+    test.plan(15);
 
     test.ok(PUBNUB);
 
