@@ -31,6 +31,7 @@
 - (void)pubnub:(CEPubnub *)pubnub connectToChannel:(NSString *)channel;
 - (void)pubnub:(CEPubnub *)pubnub disconnectFromChannel:(NSString *)channel;
 - (void)pubnub:(CEPubnub *)pubnub reconnectToChannel:(NSString *)channel;
+- (void)pubnub:(CEPubnub *)pubnub maxRetryAttemptCompleted:(NSString *)channel;
 
 - (void)pubnub:(CEPubnub *)pubnub presence:(NSDictionary *)message onChannel:(NSString *)channel;
 - (void)pubnub:(CEPubnub *)pubnub hereNow:(NSDictionary *)message onChannel:(NSString *)channel;

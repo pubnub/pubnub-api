@@ -283,6 +283,10 @@ CEPubnub *_pubnubtemp;
     }
 }
 
+- (void)pubnub:(CEPubnub *)pubnub maxRetryAttemptCompleted:(NSString *)channel
+{
+    NSLog(@"Max Retry Attempt Completed  Channel:%@",channel);
+}
 @end
 
 
