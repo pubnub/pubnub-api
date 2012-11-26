@@ -30,6 +30,14 @@
  * Adding support for multiple chunks is going to be possible, not so
  * trivial though if we are to shield the user application from chunked
  * encoding. Note that /history still uses non-chunked encoding.
+ *
+ * (vi) The optional timeout parameter allows you to specify a timeout
+ * period after which the subscribe call shall be retried. Note
+ * that this timeout is applied only for reading response, not for
+ * connecting or sending data; use retransmission parameters of
+ * the Ethernet library to tune this. As a rule of thumb, timeout
+ * smaller than 30 seconds may still block longer with flaky
+ * network. Default server-side timeout of PubNub API is 300s.
  */
 
 
@@ -56,6 +64,10 @@ public:
 	virtual int read(uint8_t *buf, size_t size);
 	virtual void stop();
 
+	/* Block until data is available. Returns false in case the
+	 * connection goes down or timeout expires. */
+	bool wait_for_data(int timeout = 305);
+
 	/* Enable the JSON state machine. */
 	void start_body();
 
@@ -75,6 +87,12 @@ private:
 	char timetoken[22];
 };
 
+
+enum PubNub_BH {
+	PubNub_BH_OK,
+	PubNub_BH_ERROR,
+	PubNub_BH_TIMEOUT,
+};
 
 class PubNub {
 public:
@@ -100,6 +118,7 @@ public:
 	     client = publish("demo", "\"lala\"");
 	     if (!client) return; // error
 	     while (client->connected()) {
+	       // More sophisticated code will want to add timeout handling here
 	       while (client->connected() && !client->available()) ; // wait
 	       char c = client->read();
 	       Serial.print(c);
@@ -111,8 +130,9 @@ public:
 	 *
 	 * @param string channel required channel name.
 	 * @param string message required message string in JSON format.
+	 * @param string timeout optional timeout in seconds.
 	 * @return string Stream-ish object with reply message or NULL on error. */
-	EthernetClient *publish(char *channel, char *message);
+	EthernetClient *publish(char *channel, char *message, int timeout = 305);
 
 	/**
 	 * Subscribe
@@ -129,8 +149,9 @@ public:
 	 * include the time token present in the raw reply.
 	 *
 	 * @param string channel required channel name.
+	 * @param string timeout optional timeout in seconds.
 	 * @return string Stream-ish object with reply message or NULL on error. */
-	PubSubClient *subscribe(char *channel);
+	PubSubClient *subscribe(char *channel, int timeout = 305);
 
 	/**
 	 * History
@@ -139,11 +160,12 @@ public:
 	 *
 	 * @param string channel required channel name.
 	 * @param int limit optional number of messages to retrieve.
+	 * @param string timeout optional timeout in seconds.
 	 * @return string Stream-ish object with reply message or NULL on error. */
-	EthernetClient *history(char *channel, int limit = 10);
+	EthernetClient *history(char *channel, int limit = 10, int timeout = 305);
 
 private:
-	bool _request_bh(EthernetClient &client, bool chunked = true);
+	enum PubNub_BH _request_bh(EthernetClient &client, unsigned long t_start, int timeout, bool chunked = true);
 
 	char *publish_key, *subscribe_key;
 	char *origin;
