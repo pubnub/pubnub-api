@@ -20,7 +20,7 @@
 #define kMaxHistorySize 100  // From documentation
 #define kConnectionTimeOut 310.0  // From https://github.com/jazzychad/CEPubnub/blob/master/CEPubnub/CEPubnubRequest.m
 #define kMinRetryInterval 5.0 //In seconds
-#define kMinRetry -1
+#define kMinRetry 3 // -1 for indefinite retry attempts
 #define kInitialTimeToken @"0"
 
 typedef enum {
@@ -870,6 +870,22 @@ typedef enum {
         }else if(_tryCount <= kMinRetry)
         {
             [self performSelector:@selector(_resubscribeToChannel:) withObject:connection.channel afterDelay:kMinRetryInterval];
+        }else
+        {
+            for (ChannelStatus* it in [_subscriptions copy]) {
+                if ([it.channel isEqualToString:connection.channel])
+                {
+                    it.connected=false;
+                    it.first=false;
+                    [_subscriptions removeObject:it];
+                    break;
+                }
+            }
+             _tryCount=0;
+            [_connections removeObject:connection];
+            if ([_delegate respondsToSelector:@selector(pubnub:maxRetryAttemptCompleted:)]) {
+                [_delegate pubnub:self maxRetryAttemptCompleted:connection.channel];
+            }
         }
     }
 }

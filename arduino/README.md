@@ -16,22 +16,23 @@ Synopsis
 	}
 
 	void loop() {
-		EthernetClient *client;
+		/* Maintain DHCP lease. */
+		Ethernet.maintain();
+
 		/* Publish message. */
-		client = PubNub.publish(pubchannel, "\"message\"");
-		if (client)
-			client->stop();
+		EthernetClient *pclient = PubNub.publish(pubchannel, "\"message\"");
+		if (pclient)
+			pclient->stop();
 
 		/* Wait for news. */
-		client = PubNub.subscribe(subchannel);
-		if (!client) return; // error
+		PubSubClient *sclient = PubNub.subscribe(subchannel);
+		if (!sclient) return; // error
 		char buffer[64]; size_t buflen = 0;
-		while (client->connected()) {
-			while (client->connected() && !client->available()) ; // wait
-			buffer[buflen++] = client->read();
+		while (sclient->wait_for_data()) {
+			buffer[buflen++] = sclient->read();
 		}
 		buffer[buflen] = 0;
-		client->stop();
+		sclient->stop();
 
 		/* Print received message. You will want to look at it from
 		 * your code instead. */
@@ -57,7 +58,7 @@ history requests each at once.
 
 The origin parameter is optional, defaulting to "pubsub.pubnub.com".
 
-``EthernetClient *publish(char *channel, char *message)``
+``EthernetClient *publish(char *channel, char *message, int timeout)``
 ---------------------------------------------------------
 
 Send a message (assumed to be well-formed JSON) to a given channel.
@@ -66,13 +67,18 @@ Returns NULL in case of error, instead an instance of EthernetClient
 that you can use to read the reply to the publish command. If you
 don't care about it, call ``client->stop()`` right away.
 
+The timeout parameter is optional, defaulting to 305. See also
+a note about timeouts below.
+
 ``PubSubClient *subscribe(char *channel)``
 ------------------------------------------
 
 Listen for a message on a given channel. The function will block
 and return when a message arrives. NULL is returned in case of error.
 The return type is PubSubClient, but from user perspective, you can
-work with it exactly like with EthernetClient.
+work with it exactly like with EthernetClient; it also provides
+an extra convenience method ``wait_for_data()`` that allows you
+to wait for more data with sensible timeout.
 
 Typically, you will run this function from loop() function to keep
 listening for messages indefinitely.
@@ -88,11 +94,17 @@ able to handle that. Note that the reply specifically does not
 include the time token present in the raw reply from PubNub;
 no need to worry about that.
 
-``EthernetClient *history(char *channel, int limit)``
+The timeout parameter is optional, defaulting to 305. See also
+a note about timeouts below.
+
+``EthernetClient *history(char *channel, int limit, int timeout)``
 -----------------------------------------------------
 
 Receive list of the last messages published on the given channel.
 The limit argument is optional and defaults to 10.
+
+The timeout parameter is optional, defaulting to 305. See also
+a note about timeouts below.
 
 Installation
 ============
@@ -127,3 +139,11 @@ adding auto-detection would be straightforward if that ever changes.
 Adding support for multiple chunks is going to be possible, not so
 trivial though if we are to shield the user application from chunked
 encoding. Note that /history still uses non-chunked encoding.
+
+* The optional timeout parameter allows you to specify a timeout
+period after which the subscribe call shall be retried. Note
+that this timeout is applied only for reading response, not for
+connecting or sending data; use retransmission parameters of
+the Ethernet library to tune this. As a rule of thumb, timeout
+smaller than 30 seconds may still block longer with flaky
+network. Default server-side timeout of PubNub API is 300s.

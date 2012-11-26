@@ -7,7 +7,7 @@
 
   This is achieved by integration with the aJson library. You will need
   a version featuring Wiring Stream integration, that can be found
-  at http://github.com/pasky/ajson as of 2012-11-01.
+  at http://github.com/interactive-matter/aJson as of 2012-11-12.
 
   Circuit:
   * Ethernet shield attached to pins 10, 11, 12, 13
@@ -136,6 +136,8 @@ void dumpMessage(Stream &s, aJsonObject *msg)
 
 void loop()
 {
+	Ethernet.maintain();
+
 	EthernetClient *client;
 
 	/* Publish */
