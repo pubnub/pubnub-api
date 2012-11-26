@@ -2,6 +2,7 @@ package com.pubnub.operation {
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
+	import com.pubnub.net.URLLoader;
 	import flash.events.*;
 	import org.httpclient.events.*;
 	
@@ -28,7 +29,8 @@ package com.pubnub.operation {
 		public var subscribeKey:String = ""; 
 		
 		protected var _url:String;
-		protected var _loader:PnURLLoader;
+		//protected var _loader:PnURLLoader;
+		protected var _loader:*;
 		protected var _destroyed:Boolean;
 		
 		public function Operation() {
@@ -37,7 +39,8 @@ package com.pubnub.operation {
 		}
 		
 		protected function init():void {
-			_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
+			//_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
+			_loader = new URLLoader();
 			_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
 			_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
 		}
