@@ -67,6 +67,8 @@ void flash(int ledPin)
 
 void loop()
 {
+	Ethernet.maintain();
+
 	EthernetClient *client;
 
 	Serial.println("publishing a message");
@@ -86,18 +88,17 @@ void loop()
 	flash(pubLedPin);
 
 	Serial.println("waiting for a message (subscribe)");
-	client = PubNub.subscribe(channel);
-	if (!client) {
+	PubSubClient *pclient = PubNub.subscribe(channel);
+	if (!pclient) {
 		Serial.println("subscription error");
 		delay(1000);
 		return;
 	}
-	while (client->connected()) {
-		while (client->connected() && !client->available()) ; // wait
-		char c = client->read();
+	while (pclient->wait_for_data()) {
+		char c = pclient->read();
 		Serial.print(c);
 	}
-	client->stop();
+	pclient->stop();
 	Serial.println();
 	flash(subLedPin);
 

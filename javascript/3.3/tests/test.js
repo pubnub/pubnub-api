@@ -1,5 +1,4 @@
 var test    = require('testling');
-var PUBNUB  = require('./pubnub-3.3');
 var channel = 'unit-test-pubnub-channel';
 
 test('PUBNUB JavaScript API', function (test) {
@@ -8,7 +7,7 @@ test('PUBNUB JavaScript API', function (test) {
         subscribe_key : 'demo'
     });
 
-    test.plan(14);
+    test.plan(15);
 
     test.ok(PUBNUB);
 
@@ -76,6 +75,5 @@ test('PUBNUB JavaScript API', function (test) {
             time_test();
         }
     });
-
 });
 
