@@ -1039,7 +1039,8 @@ PUBNUB['time'](function(t){ timeout( function() {
 }, SECOND ); }); }
 
 // Bind for PUBNUB Readiness to Subscribe
-bind( 'load', window, function(){ timeout( ready, 0 ) } );
+if (document.readyState === "complete") { ready(); }
+else bind( 'load', window, function(){ timeout( ready, 0 ) } );
 
 // Create Interface for Opera Flash
 PUBNUB['rdx'] = function( id, data ) {
