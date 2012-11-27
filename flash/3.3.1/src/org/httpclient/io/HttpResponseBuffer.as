@@ -78,13 +78,16 @@ package org.httpclient.io {
       if (!_responseHeader) {
         _buffer.write(bytes);
       
-        var line:String = _buffer.readLine(true);              
+        var line:String = _buffer.readLine(true);  
+		//trace(line);
         while (line != null) {          
           
           // If empty line, then we reached the end of the header
           if (line == "") {
             _responseHeader = parseHeader(_headerData);
             Log.debug("Response header:\n" + _responseHeader);
+            //trace("Response header:\n" + _responseHeader);
+            //trace("Response header:\n" + _responseHeader.code);
           
             // Notify
             _onResponseHeader(_responseHeader);
@@ -101,7 +104,10 @@ package org.httpclient.io {
               // Pass any extra as payload
               var payload:ByteArray = _buffer.readAvailable();
               Log.debug("Response payload (from parsing header): " + payload.length);              
+              //trace("Response payload (from parsing header): " + payload.length, payload.readUTFBytes(payload.bytesAvailable));              
+                           
               _isPayloadDone = handlePayload(payload);
+			  
               break;
             }            
           
@@ -110,17 +116,22 @@ package org.httpclient.io {
           }
           
           line = _buffer.readLine(true);  
-		  trace(line);
+		  //trace(line);
         }    
               
       } else {
         Log.debug("Response payload: " + bytes.length);
         _isPayloadDone = handlePayload(bytes);
+		 //trace("Response payload (from parsing header): " + _isPayloadDone,bytes.bytesAvailable,  (bytes.readUTFBytes(bytes.bytesAvailable)) );
       }
       
       // Check if complete
       Log.debug("Has response body? " + _hasResponseBody + "; Payload done? " + _isPayloadDone);
-      if (!_hasResponseBody || _isPayloadDone) _onResponseComplete(_responseHeader);
+      if (!_hasResponseBody || _isPayloadDone) {
+		  //var ba:ByteArray = _responseBody.readAvailable()
+		  //trace(ba.readUTFBytes(ba.bytesAvailable), ba.bytesAvailable);
+		  _onResponseComplete(_responseHeader);
+	  }
     }
     
     /**
@@ -145,6 +156,7 @@ package org.httpclient.io {
           _bodyBytesRead += bytes.length;
         }
         Log.debug("Bytes read (body): " + _bodyBytesRead + ", content length: " + _responseHeader.contentLength);
+        //trace("Bytes read (body): " + _bodyBytesRead + ", content length: " + _responseHeader.contentLength);
         return (_responseHeader.contentLength != -1 && _bodyBytesRead >= _responseHeader.contentLength);
       }
     }

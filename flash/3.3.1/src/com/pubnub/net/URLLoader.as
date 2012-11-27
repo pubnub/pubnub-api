@@ -1,5 +1,6 @@
 package com.pubnub.net {
 	import com.adobe.net.URI;
+	import com.pubnub.loader.PnURLLoaderEvent;
 	import flash.errors.EOFError;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -26,6 +27,8 @@ package com.pubnub.net {
 		private var uri:URI;
 		private var request:URLRequest;
 		private var responseBuffer:HttpResponseBuffer;
+		private var answer:ByteArray = new ByteArray();
+		private var temp:ByteArray = new ByteArray();
 		
 		public function URLLoader() {
 			super(null);
@@ -42,27 +45,29 @@ package com.pubnub.net {
 		}
 		
 		private function onSocketData(e:ProgressEvent):void {
-			
+			//trace('onSocketData');
+			temp.clear();
 			while (socketHasData()) {        
 				//_timer.reset();
 				try {           
 					// Load data from socket
-					var bytes:ByteArray = new ByteArray();
-					socket.readBytes(bytes, 0, socket.bytesAvailable);                       
-					bytes.position = 0;
-					
-					// Write to response buffer
-					responseBuffer.writeBytes(bytes);
-					//var ct:Number = getTimer();
-					//trace('onSocketData : ' + (ct - temp));
-				} catch(e:EOFError) {
-					//Log.debug("EOF");
-					//_dispatcher.dispatchEvent(new HttpErrorEvent(HttpErrorEvent.ERROR, false, false, "EOF", 1));          
-					//break;
+					//var bytes:ByteArray = new ByteArray();
+					socket.readBytes(temp);
+					answer.position = answer.bytesAvailable;
+					temp.readBytes(answer, answer.bytesAvailable);
+				} catch (e:Error) {
+					// dispatch error
+					break;
 				}                           
 			}
-			trace('onSocketData');
+			
+			answer.position = 0;
+			//bytes.position = 0;
+			//trace(bytes.readUTFBytes(bytes.bytesAvailable));
+			trace(answer.readUTFBytes(answer.bytesAvailable));
+			trace('--------------------------------');
 			//trace(responseBuffer.header)
+			//bytes.clear();
 		}
 		
 		private function socketHasData():Boolean {
@@ -82,7 +87,7 @@ package com.pubnub.net {
 		}
 		
 		private function onConnect(e:Event):void {
-			trace('onConnect');
+			//trace('onConnect');
 			sendRequest(uri, request);
 		}
 		
@@ -136,18 +141,21 @@ package com.pubnub.net {
 		}
 		
 		private function onResponseHeader(response:HttpResponse):void {
-			trace('onResponseHeader');
+			//trace('onResponseHeader');
 			//Log.debug("Response: " + response.code);
 			//dispatchEvent(new HttpStatusEvent(response));
 		}
 		
 		private function onResponseData(bytes:ByteArray):void {
-			trace('onResponseData : ' + bytes.readUTFBytes(bytes.bytesAvailable));
-			//dispatchEvent(new HttpDataEvent(bytes));
+			var str:String = bytes.readUTFBytes(bytes.bytesAvailable);
+			//trace('onResponseData : ' + str);
+			bytes.position = 0;
+			dispatchEvent(new HttpDataEvent(bytes));
+			dispatchEvent(new PnURLLoaderEvent(PnURLLoaderEvent.COMPLETE, str));
 		}
 		
 		private function onResponseComplete(response:HttpResponse):void {
-			trace('onResponseComplete');
+			//trace('onResponseComplete');
 			//Log.debug("Response complete");
 			//if (!(_socket is TLSSocket)) close(); // Don't close TLSSocket; it has a bug I think
 			//close();

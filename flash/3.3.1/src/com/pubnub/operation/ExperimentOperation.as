@@ -1,6 +1,8 @@
 package com.pubnub.operation {
 	import com.adobe.net.URI;
 	import com.pubnub.loader.ExperimentURLLoader;
+	import com.pubnub.loader.PnURLLoaderEvent;
+	import com.pubnub.net.URLLoader;
 	import org.httpclient.HttpHeader;
 	/**
 	 * ...
@@ -14,7 +16,7 @@ package com.pubnub.operation {
 			super();
 		}
 		
-		override public function send(args:Object):void {
+		/*override public function send(args:Object):void {
 			//super.send(args);
 			trace(this, 'send');
 			var url:String = args.url;
@@ -47,7 +49,16 @@ package com.pubnub.operation {
 			var headers:HttpHeader = new HttpHeader();
 			expLoader ||= new ExperimentURLLoader();
 			//expLoader.load(
-		}
+		}*/
+		
+			override protected function init():void {
+				trace(this);
+				//super.init();
+				//_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
+				_loader = new URLLoader();
+				_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
+				_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
+			}
 		
 	}
 

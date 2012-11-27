@@ -224,7 +224,7 @@ package org.httpclient {
       
       // Debug
 	  var hStr:String = "Header:\n" + headerBytes.readUTFBytes(headerBytes.length);
-	  trace(hStr);
+	  //trace(hStr);
 	  //Log.level = Log.DEBUG;
       Log.debug(hStr);
       headerBytes.position = 0;

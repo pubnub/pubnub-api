@@ -4,6 +4,7 @@ package com.pubnub.operation {
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
+	import com.pubnub.net.URLLoader;
 	import flash.utils.getTimer;
 	import org.httpclient.HttpHeader;
 	/**
@@ -17,7 +18,7 @@ package com.pubnub.operation {
 		public var publishKey:String = ""; 
 		
 		
-		private var expLoader:ExperimentURLLoader;
+		//private var expLoader:ExperimentURLLoader;
 		
 		override public function send(args:Object):void {
 			//var temp:Number = getTimer();
@@ -49,6 +50,15 @@ package com.pubnub.operation {
 			//var uri:URI = new URI(url);
 			//expLoader ||= new ExperimentURLLoader();
 			//expLoader.load(uri);
+		}
+		
+		override protected function init():void {
+			trace(this);
+			//super.init();
+			//_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
+			_loader = new URLLoader();
+			_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
+			_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
 		}
 		
 		override protected function onLoaderData(e:PnURLLoaderEvent):void {
