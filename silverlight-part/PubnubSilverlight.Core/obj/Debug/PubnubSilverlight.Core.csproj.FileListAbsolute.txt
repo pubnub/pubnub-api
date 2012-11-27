@@ -24,5 +24,3 @@ C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\New
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\Newtonsoft.Json.xml
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\obj\Debug\PubnubSilverlight.Core.dll
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\obj\Debug\PubnubSilverlight.Core.pdb
-C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\Newtonsoft.Json.pdb
-C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\Newtonsoft.Json.xml

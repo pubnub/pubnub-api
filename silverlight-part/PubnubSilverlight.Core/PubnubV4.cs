@@ -1373,7 +1373,7 @@ namespace PubnubSilverlight.Core
                     {
                         OnPubnubWebRequestTimeout(pubnubRequestState, true);
                     }
-#else
+#elif !(SILVERLIGHT)
                 ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout), pubnubRequestState, PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000, true);
 #endif
                 return true;
@@ -2530,21 +2530,28 @@ namespace PubnubSilverlight.Core
             return strKeySHA256Hash.ToLower();
         }
 
-        /**
-         * EncryptOrDecrypt
-         * 
-         * Basic function for encrypt or decrypt a string
-         * for encrypt type = true
-         * for decrypt type = false
-         */
+            /**
+             * EncryptOrDecrypt
+             * 
+             * Basic function for encrypt or decrypt a string
+             * for encrypt type = true
+             * for decrypt type = false
+             */
         private string EncryptOrDecrypt(bool type, string plainStr)
         {
 #if (SILVERLIGHT)
             AesManaged aesEncryption = new AesManaged();
-            //get ASCII bytes of the string
-            aesEncryption.IV = System.Text.Encoding.UTF8.GetBytes("0123456789012345");
-            aesEncryption.Key = System.Text.Encoding.UTF8.GetBytes(GetEncryptionKey());
-#else
+#endif
+
+            aesEncryption.KeySize = 256;
+            aesEncryption.BlockSize = 128;
+
+#if (SILVERLIGHT)
+            aesEncryption.IV = Encoding.UTF8.GetBytes("0123456789012345");
+            aesEncryption.Key = Encoding.UTF8.GetBytes(GetEncryptionKey());
+#endif
+
+#if !(SILVERLIGHT)
                 RijndaelManaged aesEncryption = new RijndaelManaged();
                 //Mode CBC
                 aesEncryption.Mode = CipherMode.CBC;
@@ -2554,8 +2561,6 @@ namespace PubnubSilverlight.Core
                 aesEncryption.IV = System.Text.Encoding.ASCII.GetBytes("0123456789012345");
                 aesEncryption.Key = System.Text.Encoding.ASCII.GetBytes(GetEncryptionKey());
 #endif
-            aesEncryption.KeySize = 256;
-            aesEncryption.BlockSize = 128;
 
             if (type)
             {
@@ -2563,10 +2568,7 @@ namespace PubnubSilverlight.Core
                 plainStr = EncodeNonAsciiCharacters(plainStr);
 #if (SILVERLIGHT)
                 byte[] plainText = Encoding.UTF8.GetBytes(plainStr);
-#else
-                    byte[] plainText = Encoding.ASCII.GetBytes(plainStr);
 #endif
-
                 //encrypt
                 byte[] cipherText = crypto.TransformFinalBlock(plainText, 0, plainText.Length);
                 return Convert.ToBase64String(cipherText);
@@ -2583,13 +2585,11 @@ namespace PubnubSilverlight.Core
 #if (SILVERLIGHT)
                     var data = decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length);
                     string strDecrypted = Encoding.UTF8.GetString(data, 0, data.Length);
-#else
-                        string strDecrypted = System.Text.Encoding.ASCII.GetString(decrypto.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length));
 #endif
 
                     return strDecrypted;
                 }
-                catch
+                catch (Exception ex)
                 {
                     return "**DECRYPT ERROR**";
                 }
