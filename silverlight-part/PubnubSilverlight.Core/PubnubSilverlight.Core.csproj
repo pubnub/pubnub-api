@@ -68,7 +68,7 @@
     <Compile Include="ConcurrentDictionaryExtentions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubnubV2.cs" />
-    <Compile Include="PubnubV3.cs" />
+    <Compile Include="PubnubV4.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PubnubSilverlight.Imports\PubnubSilverlight.Imports.csproj">
