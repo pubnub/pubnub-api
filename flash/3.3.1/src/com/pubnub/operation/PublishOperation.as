@@ -5,6 +5,7 @@ package com.pubnub.operation {
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
 	import com.pubnub.net.URLLoader;
+	import flash.events.Event;
 	import flash.utils.getTimer;
 	import org.httpclient.HttpHeader;
 	/**
@@ -18,9 +19,15 @@ package com.pubnub.operation {
 		public var publishKey:String = ""; 
 		
 		
+		public function PublishOperation():void {
+			super();
+			parseToJSON = false;
+		}
+		
+		
 		//private var expLoader:ExperimentURLLoader;
 		
-		override public function send(args:Object):void {
+		override public function createURL(args:Object):void {
 			//var temp:Number = getTimer();
 			channel = args.channel;
 			var message:String = args.message;
@@ -45,25 +52,17 @@ package com.pubnub.operation {
 			uid = PnUtils.getUID();
 			_url = origin + "/" + "publish" + "/" + publishKey + "/" + subscribeKey + "/" + signature + "/" + PnUtils.encode(channel) + "/" + 0 + "/" +PnUtils.encode(serializedMessage as String);
 			//trace(getTimer() - temp);
-			_loader.load(this._url);
+			//_loader.load(this._url);
 			
 			//var uri:URI = new URI(url);
 			//expLoader ||= new ExperimentURLLoader();
 			//expLoader.load(uri);
 		}
 		
-		override protected function init():void {
-			trace(this);
-			//super.init();
-			//_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
-			_loader = new URLLoader();
-			_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
-			_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
-		}
-		
-		override protected function onLoaderData(e:PnURLLoaderEvent):void {
+		override protected function onLoaderComplete(e:Event):void {
+			//trace(this, 'onLoaderComplete');
 			try {
-				dispatchEvent(new OperationEvent(OperationEvent.RESULT, PnJSON.parse(String(e.data))));
+				dispatchEvent(new OperationEvent(OperationEvent.RESULT, PnJSON.parse(String(e.target.data))));
 			}
 			catch (e:*){
 				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [-1, "[Pn.publish()] JSON.parse error"] ));

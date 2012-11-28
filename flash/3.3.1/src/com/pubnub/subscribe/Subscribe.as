@@ -3,6 +3,7 @@ package com.pubnub.subscribe {
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
 import com.pubnub.json.PnJSON;
+import com.pubnub.net.Connection;
 import com.pubnub.operation.*;
 	import flash.events.*;
 	import flash.utils.*;
@@ -38,14 +39,14 @@ import com.pubnub.operation.*;
 		
 		private function init():void {
 			operations = new Dictionary();
-			operations[Operation.WITH_TIMETOKEN] = new ExperimentOperation();
+			operations[Operation.WITH_TIMETOKEN] = new Operation();
 			netMonitor = new NetMon();
 			netMonitor.reconnectDelay = Settings.CONNECTION_HEARTBEAT_INTERVAL;
 			netMonitor.forceReconnectDelay = Settings.RECONNECT_HEARTBEAT_TIMEOUT;
 			netMonitor.maxForceReconnectRetries = Settings.MAX_RECONNECT_RETRIES;
-			netMonitor.addEventListener(NetMonEvent.HTTP_ENABLE, onNetMonitorHTTPEnable);
-			netMonitor.addEventListener(NetMonEvent.HTTP_DISABLE, onNetMonitorHTTPDisable);
-			netMonitor.addEventListener(NetMonEvent.MAX_RETRIES, onNetMonitorMaxRetries);
+			//netMonitor.addEventListener(NetMonEvent.HTTP_ENABLE, onNetMonitorHTTPEnable);
+			//netMonitor.addEventListener(NetMonEvent.HTTP_DISABLE, onNetMonitorHTTPDisable);
+			//netMonitor.addEventListener(NetMonEvent.MAX_RETRIES, onNetMonitorMaxRetries);
 		}
 		
 		private function onNetMonitorMaxRetries(e:NetMonEvent):void {
@@ -59,12 +60,13 @@ import com.pubnub.operation.*;
 			operation.channel = _channelName;
 			operation.origin = _origin;
 			var url:String = _origin + "/v2/presence/sub_key/" + subscribeKey + "/channel/" + PnUtils.encode(_channelName) + "/leave?uuid=" + sessionUUID;
-			operation.send({ 
+			operation.createURL({ 
 				url:url, 
 				channel:_channelName, 
 				uid:subscribeUID, 
 				sessionUUID : sessionUUID,
 				operation:Operation.LEAVE } );
+			Connection.load(operation);
 		}
 		
 		private function onNetMonitorHTTPDisable(e:NetMonEvent):void {
@@ -105,7 +107,7 @@ import com.pubnub.operation.*;
 			subscribeURL = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName) + "/" + 0;
 			subscribeUID = PnUtils.getUID();
 			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
-			operation.send({ 
+			operation.createURL({ 
 				url:subscribeURL, 
 				channel:_channelName, 
 				uid:subscribeUID, 
@@ -114,13 +116,16 @@ import com.pubnub.operation.*;
 				operation:Operation.GET_TIMETOKEN } );
 			operation.addEventListener(OperationEvent.RESULT, onSubscribeInitResult);
 			operation.addEventListener(OperationEvent.FAULT, onSubscribeInitError);
+			//Connection.load(operation);
+			Connection.loadWithKeepAlive(operation);
 		}
 		
 		private function onSubscribeInitResult(e:OperationEvent):void {
 			lastToken =  e.data[1];
 			_connected = true;
-			subscribeToken(lastToken);
-			ping();
+			trace('onSubscribeInitResult : ' + lastToken);
+			
+			subscribeLastToken();
 			netMonitor.start();
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channelName } ));
 		}
@@ -132,7 +137,7 @@ import com.pubnub.operation.*;
 		
 		private function subscribeToken(time:String):void {
 			var operation:Operation = getOperation(Operation.WITH_TIMETOKEN);
-			operation.send({ 
+			operation.createURL({ 
 				url:subscribeURL, 
 				channel:_channelName, 
 				uid:subscribeUID, 
@@ -141,9 +146,13 @@ import com.pubnub.operation.*;
 				operation:Operation.WITH_TIMETOKEN } );
 			operation.addEventListener(OperationEvent.RESULT, onSubscribeResult);
 			operation.addEventListener(OperationEvent.FAULT, onSubscribeError);
+			//Connection.load(operation);
+			Connection.loadWithKeepAlive(operation);
 		}
 
         private function onSubscribeResult(e:OperationEvent):void {
+			
+			
             var eventData:Object = e.data;
             lastToken = eventData[1];
             var messages:Array = eventData[0];
@@ -163,17 +172,20 @@ import com.pubnub.operation.*;
                     dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, _data));
                 }
             }
+			
+			//trace('onSubscribeResult : ' + _data.result[1].text, lastToken);
             subscribeLastToken();
         }
 
         private function subscribeLastToken():void {
-			//trace('subscribeLastToken : ' + lastToken);
+			trace('subscribeLastToken : ' + lastToken);
 			getOperation(Operation.WITH_TIMETOKEN).close();
 			subscribeToken(lastToken);
 			ping();
 		}
 		
 		private function onSubscribeError(e:OperationEvent):void {
+			trace('onSubscribeError');
 			_data = [ -1, 'Connect channel error'];
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, _data ));
 		}
@@ -202,8 +214,8 @@ import com.pubnub.operation.*;
 		}
 		
 		private function ping():void {
-			clearTimeout(pingTimeout);
-			pingTimeout = setTimeout(subscribeLastToken, Settings.OPERATION_TIMEOUT);
+			//clearTimeout(pingTimeout);
+			//pingTimeout = setTimeout(subscribeLastToken, Settings.OPERATION_TIMEOUT);
 		}
 		
 		public function get connected():Boolean {

@@ -41,7 +41,7 @@ package utils {
 		
 		public function start():void {
 			_isRun = true;
-			channel = 'performance-meter-' + getTimer() + Math.random();
+			channel = 'performance-meter-' + Math.floor(getTimer() + Math.random());
 			sent = 0;
 			latencyAvg = 0;
 			clearInterval(updateInterval);
@@ -75,11 +75,12 @@ package utils {
 		}
 		
 		private function onPnInit(e:PnEvent):void {
+			trace('-------------INIT----------------');
 			Pn.subscribe(channel);	
 		}
 		
 		private function onPnSubscribe(e:PnEvent):void {
-			//trace(e.status);
+			trace('-------------SUBSCRIBE---------------- ' + e.status);
 			 switch (e.status) {
                 case OperationStatus.DATA:
 					if (e.channel == channel && 
@@ -123,7 +124,9 @@ package utils {
 		}
 		
 		private function publish():void {
+			trace('--------------PUBLISH------------------');
 			startPublishTime = getTimer();
+			channel = 'demo';
 			Pn.publish( { 
 				channel : channel, 
 				message : message } );

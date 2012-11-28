@@ -171,7 +171,7 @@
                 case OperationStatus.DATA:
                     var messages:Array = e.data as Array;
                     callExternalInterface("console.log", ("Publish [DATA], url : " + e.operation.url));
-                    callExternalInterface("console.log", ("Publish [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
+                    if(messages) callExternalInterface("console.log", ("Publish [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
                     break;
 
                 case OperationStatus.ERROR:

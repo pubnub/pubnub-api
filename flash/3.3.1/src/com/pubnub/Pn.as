@@ -1,5 +1,7 @@
 package com.pubnub {
 	
+	import com.pubnub.net.Connection;
+	import com.pubnub.net.URLLoader;
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
 	import flash.errors.*;
@@ -32,6 +34,11 @@ package com.pubnub {
         private var _sessionUUID:String = "";
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
 		
+		
+		private var keepAliveLoader:URLLoader;
+		private var loader:URLLoader;
+		
+		
 		pn_internal var initOperation:Operation;
 		//pn_internal var timeOperation:Operation;
 		//pn_internal var detailedHistoryOperation:Operation;
@@ -43,7 +50,7 @@ package com.pubnub {
 		}
 		
 		private function setup():void {
-			trace('setup');
+			
 			operations = new Dictionary();
 			initOperation = new Operation();
 			operations[INIT_OPERATION] = initOperation;
@@ -78,10 +85,10 @@ package com.pubnub {
 			var url:String = _origin + "/" + "time" + "/" + 0;
 			
 			// Loads start time token
-			initOperation.close();
 			initOperation.addEventListener(OperationEvent.RESULT, onInitComplete);
 			initOperation.addEventListener(OperationEvent.FAULT, onInitError);
-			initOperation.send( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
+			initOperation.createURL( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
+			Connection.load(initOperation);
 		}
 		
 		private function initKeys(config:Object):void {
@@ -243,7 +250,7 @@ package com.pubnub {
 			var history:HistoryOperation = getOperation(HISTORY_OPERATION) as HistoryOperation;
 			history.addEventListener(OperationEvent.RESULT, onHistoryResult);
 			history.addEventListener(OperationEvent.FAULT, onHistoryFault);
-			history.send(args);
+			history.createURL(args);
 		}
 		
 		private function onHistoryResult(e:OperationEvent):void {
@@ -267,7 +274,9 @@ package com.pubnub {
 			var publishOperation:Operation = getOperation(PUBLISH_OPERATION) as Operation;
 			publishOperation.addEventListener(OperationEvent.RESULT, onPublishResult);
 			publishOperation.addEventListener(OperationEvent.FAULT, onPublishFault);
-			publishOperation.send(args);
+			publishOperation.createURL(args);
+			Connection.loadWithKeepAlive(publishOperation);
+			//Connection.load(publishOperation);
 		}
 		
 		private function onPublishFault(e:OperationEvent):void {
@@ -291,7 +300,7 @@ package com.pubnub {
 			var operation:Operation = getOperation(TIME_OPERATION);
 			operation.addEventListener(OperationEvent.RESULT, onTimeResult);
 			operation.addEventListener(OperationEvent.FAULT, onTimeFault);
-			operation.send( {
+			operation.createURL( {
 				url: _origin + "/time/0"
 			});
 		}

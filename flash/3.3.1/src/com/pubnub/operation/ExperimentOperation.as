@@ -55,9 +55,9 @@ package com.pubnub.operation {
 				trace(this);
 				//super.init();
 				//_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
-				_loader = new URLLoader();
-				_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
-				_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
+				//_loader = new URLLoader();
+				//_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderComplete);
+				//_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
 			}
 		
 	}

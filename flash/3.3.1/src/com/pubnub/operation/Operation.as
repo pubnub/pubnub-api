@@ -2,7 +2,7 @@ package com.pubnub.operation {
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
-	import com.pubnub.net.URLLoader;
+	import com.pubnub.net.*;
 	import flash.events.*;
 	import org.httpclient.events.*;
 	
@@ -29,8 +29,7 @@ package com.pubnub.operation {
 		public var subscribeKey:String = ""; 
 		
 		protected var _url:String;
-		//protected var _loader:PnURLLoader;
-		protected var _loader:*;
+		//protected var _loader:URLLoader;
 		protected var _destroyed:Boolean;
 		
 		public function Operation() {
@@ -39,30 +38,18 @@ package com.pubnub.operation {
 		}
 		
 		protected function init():void {
-			//_loader = new PnURLLoader(Settings.OPERATION_TIMEOUT);
-			_loader = new URLLoader();
-			_loader.addEventListener(PnURLLoaderEvent.COMPLETE, onLoaderData);
-			_loader.addEventListener(PnURLLoaderEvent.ERROR, onLoaderError);
+			
 		}
 		
 		protected function onLoaderError(e:PnURLLoaderEvent):void {
 			dispatchEvent(new OperationEvent(OperationEvent.FAULT,e.data ));
 		}
 		
-		protected function onLoaderData(e:PnURLLoaderEvent):void {
-			var result:* = e.data;
-			if (parseToJSON) {
-				try {
-					result = PnJSON.parse(result);
-				}catch (err:Error){
-					dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:'Error JSON parse', id:'-1' } ));
-					return;
-				}
-			}
-			dispatchEvent(new OperationEvent(OperationEvent.RESULT, result));
+		protected function onLoaderComplete(e:Event):void {
+			
 		}
 		
-		public function send(args:Object):void {
+		public function createURL(args:Object):void {
 			//trace(this, 'send');
 			var url:String = args.url;
 			uid = args.uid;
@@ -86,36 +73,46 @@ package com.pubnub.operation {
 					url = args.url + "&" + args.params;
 			}
 			this._url = url;
-			//trace(operation, url);
-			_loader.load(this._url);
 		}
 		
+		
+		
+		
 		public function close():void {
-			try {
-				_loader.close();
-			}catch (err:Error) {}
 		}
 		
 		public function destroy():void {
 			if (_destroyed) return;
 			_destroyed = true;
-			_loader.removeEventListener(HttpDataEvent.DATA, onLoaderData);
-			_loader.removeEventListener(HttpErrorEvent.ERROR, onLoaderError);
-			_loader.removeEventListener(HttpErrorEvent.TIMEOUT_ERROR, onLoaderError);
-			_loader.destroy();
-			_loader = null;
 		}
 		
 		public function get destroyed():Boolean {
 			return _destroyed;
 		}
 		
-		public function get loader():PnURLLoader {
-			return _loader;
-		}
-		
 		public function get url():String {
 			return _url;
 		}
+		
+		
+		public function onData(data:Object = null):void {
+			//trace(this, 'onLoaderComplete');
+			var result:Object = data;
+			if (parseToJSON) {
+				try {
+					result = PnJSON.parse(String(data));
+				}catch (err:Error) {
+					//trace('dasdasdasdasd');
+					dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:'Error JSON parse', id:'-1' } ));
+					return;
+				}
+			}
+			dispatchEvent(new OperationEvent(OperationEvent.RESULT, result));
+		}
+		
+		public function onError(data:Object = null):void {
+			
+		}
+		
 	}
 }

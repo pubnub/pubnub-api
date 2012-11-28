@@ -2,6 +2,8 @@ package com.pubnub.operation {
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
+	import com.pubnub.net.URLLoader;
+	import flash.events.Event;
 	/**
 	 * ...
 	 * @author firsoff maxim, support@pubnub.com
@@ -11,14 +13,17 @@ package com.pubnub.operation {
 		public var sub_key:String;
 		public var cipherKey:String;
 		
-		override public function send(args:Object):void {
+		public function HistoryOperation():void {
+			super();
+		}
+		
+		override public function createURL(args:Object):void {
 			channel = args.channel;
 			sub_key = args['sub-key'];
 			_url = origin + "/v2/history/sub-key/" + sub_key + "/channel/" + PnUtils.encode(args.channel); 
 			if (args.start || args.end || args.reverse || args.count) {
 				_url += extractOptionalParams(args);
             }
-			_loader.load(_url);
 		}
 		
 		private function extractOptionalParams(args:Object):String {
@@ -54,8 +59,9 @@ package com.pubnub.operation {
             return result;
         }
 		
-		override protected function onLoaderData(e:PnURLLoaderEvent):void {
-			var data:* = e.data;
+		override protected function onLoaderComplete(e:Event):void {
+			trace(this, 'onLoaderComplete');
+			var data:* = e.target.data;
 			try {
 				var result:Object = PnJSON.parse(data);
 				var messages:Array = [];
