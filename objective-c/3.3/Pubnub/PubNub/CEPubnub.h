@@ -78,6 +78,7 @@
 - (void)presence:(NSString *)channel;
 
 - (void)here_now:(NSString *)channel __deprecated;
+- (NSString *)sessionUUID;
 
 // APNS Support
 

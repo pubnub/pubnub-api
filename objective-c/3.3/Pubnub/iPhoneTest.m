@@ -348,8 +348,10 @@ CEPubnub *_pubnubtemp;
     // unless you use this method for observation of other notifications
     // as well.
     
-    if ([[notification name] isEqualToString:@"PubNubForegroundNotification"])
-        NSLog (@"Successfully received receivePubNubForegroundNotification!");
+    NSLog (@"Successfully received receivePubNubForegroundNotification!");
+    NSString *message = [ [pubnub sessionUUID] stringByAppendingString:@" has joined the channel.";
+    
+    [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:channelName,@"channel", message, @"message", nil]];
 }
 
 - (void) receivePubNubBackgroundNotification:(NSNotification *) notification
@@ -358,8 +360,10 @@ CEPubnub *_pubnubtemp;
     // unless you use this method for observation of other notifications
     // as well.
     
-    if ([[notification name] isEqualToString:@"PubNubBackgroundNotification"])
-        NSLog (@"Successfully received receivePubNubBackgroundNotification!");
+    NSLog (@"Successfully received receivePubNubBackgroundNotification!");
+    NSString *message = [ [pubnub sessionUUID] stringByAppendingString:@" has left the channel."];
+    
+    [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:channelName,@"channel", message, @"message", nil]];
 }
 
 

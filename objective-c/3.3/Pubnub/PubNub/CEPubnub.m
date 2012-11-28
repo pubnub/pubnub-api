@@ -1202,6 +1202,10 @@ typedef enum {
     }
 }
 
+- (NSString *)sessionUUID{
+    return _uuids;
+}
+
 - (void)APNSAddChannelToDevice:(NSString *)channel :(NSString *)device :(NSString *)subKey {
     
     // /v1/push/sub-key/<sub_key>/devices/<device>?add=channel,channel,...
