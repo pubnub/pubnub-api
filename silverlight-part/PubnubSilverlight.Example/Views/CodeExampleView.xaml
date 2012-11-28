@@ -82,7 +82,7 @@
 
         <ScrollViewer Grid.Column="1" Background="Black">
 
-            <TextBlock x:Name="ConsoleContainer" Foreground="Aqua" />
+            <TextBlock x:Name="ConsoleContainer" Foreground="Aqua" TextWrapping="Wrap" />
 
         </ScrollViewer>
 
