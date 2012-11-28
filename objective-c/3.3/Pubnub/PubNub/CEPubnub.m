@@ -304,9 +304,6 @@ typedef enum {
 
 - (void)dealloc {
     
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    
     for (PubNubConnection* connection in _connections) {
         [connection cancel];
     }
@@ -1247,19 +1244,6 @@ typedef enum {
                                                                     channel:nil
                                                                      device:device];
     NSLog(@"APNS: %@", url);
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(receivePubNubForegroundNotification:)
-                                                 name:@"PubNubForegroundNotification"
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(receivePubNubBackgroundNotification:)
-                                                 name:@"PubNubBackgroundNotification"
-                                               object:nil];
-    
-    
-    NSLog(@"added observer.");
 
     [_connections addObject:connection];
 }
@@ -1278,27 +1262,5 @@ typedef enum {
 
     [_connections addObject:connection];
 }
-
-
-- (void) receivePubNubForegroundNotification:(NSNotification *) notification
-{
-    // [notification name] should always be @"TestNotification"
-    // unless you use this method for observation of other notifications
-    // as well.
-    
-    if ([[notification name] isEqualToString:@"PubNubForegroundNotification"])
-        NSLog (@"Successfully received receivePubNubForegroundNotification!");
-}
-
-- (void) receivePubNubBackgroundNotification:(NSNotification *) notification
-{
-    // [notification name] should always be @"TestNotification"
-    // unless you use this method for observation of other notifications
-    // as well.
-        
-    if ([[notification name] isEqualToString:@"PubNubBackgroundNotification"])
-        NSLog (@"Successfully received receivePubNubBackgroundNotification!");
-}
-
 
 @end

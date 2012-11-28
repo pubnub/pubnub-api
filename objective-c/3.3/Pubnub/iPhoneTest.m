@@ -40,6 +40,19 @@ BOOL ssl_on = NO;
     channelName=@"my_channel";
     pubnub = [[CEPubnub alloc] initWithPublishKey:publish_key subscribeKey:subscribe_key secretKey:secret_key   cipherKey:cipher_key useSSL:ssl_on];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receivePubNubForegroundNotification:)
+                                                 name:@"PubNubForegroundNotification"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receivePubNubBackgroundNotification:)
+                                                 name:@"PubNubBackgroundNotification"
+                                               object:nil];
+    
+    NSLog(@"Added notification observers.");
+    
+    
 	[pubnub setDelegate:self];
 }
 
@@ -323,6 +336,33 @@ CEPubnub *_pubnubtemp;
     }
 }
 
+
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void) receivePubNubForegroundNotification:(NSNotification *) notification
+{
+    // [notification name] should always be @"TestNotification"
+    // unless you use this method for observation of other notifications
+    // as well.
+    
+    if ([[notification name] isEqualToString:@"PubNubForegroundNotification"])
+        NSLog (@"Successfully received receivePubNubForegroundNotification!");
+}
+
+- (void) receivePubNubBackgroundNotification:(NSNotification *) notification
+{
+    // [notification name] should always be @"TestNotification"
+    // unless you use this method for observation of other notifications
+    // as well.
+    
+    if ([[notification name] isEqualToString:@"PubNubBackgroundNotification"])
+        NSLog (@"Successfully received receivePubNubBackgroundNotification!");
+}
+
+
 @end
 
 
@@ -335,11 +375,6 @@ CEPubnub *_pubnubtemp;
     return delHolder;
 }
 
--(id)init
-{
-    delHolder=self;
-    return self ;
-}
 
 -(void)test:(BOOL)state message:(NSString *)message
 {
@@ -413,6 +448,13 @@ CEPubnub *_pubnubtemp;
 - (void)pubnub:(CEPubnub *)pubnub reconnectToChannel:(NSString *)channel
 {
     NSLog(@"Re-Connect to Channel:   %@",channel);
+}
+
+
+-(id)init
+{
+    delHolder=self;
+    return self ;
 }
 
 @end
