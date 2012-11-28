@@ -349,7 +349,7 @@ CEPubnub *_pubnubtemp;
     // as well.
     
     NSLog (@"Successfully received receivePubNubForegroundNotification!");
-    NSString *message = [ [pubnub sessionUUID] stringByAppendingString:@" has joined the channel.";
+    NSString *message = [ [pubnub sessionUUID] stringByAppendingString:@" has joined the channel."];
     
     [pubnub publish:[NSDictionary dictionaryWithObjectsAndKeys:channelName,@"channel", message, @"message", nil]];
 }

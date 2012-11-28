@@ -43,6 +43,40 @@
     
 }
 
+
+// This will fire if the application is running and in the foreground, and you receive an APNS notification
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    NSString *message = nil;
+    
+    id alert = [userInfo objectForKey:@"aps"];
+    
+    NSLog(@"%@", userInfo);
+    NSLog(@"%@", alert);
+
+    
+    if ([alert isKindOfClass:[NSString class]]) {
+        message = alert;
+    } else
+        
+        if ([alert isKindOfClass:[NSDictionary class]]) {
+        message = [alert objectForKey:@"alert"];
+    }
+    if (alert) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Received while running in the foreground!"
+                                                            message:message  delegate:self
+                                                  cancelButtonTitle:@"Thanks PubNub!"
+                                                  otherButtonTitles:nil];
+        [alertView show];
+        [self performSelector:@selector(byeAlert:) withObject:alertView afterDelay:2];
+    }
+}
+
+-(void)byeAlert:(UIAlertView*)x{
+	[x dismissWithClickedButtonIndex:-1 animated:YES];
+}
+
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {
 	NSLog(@"Failed to get token, error: %@", error);
