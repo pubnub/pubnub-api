@@ -376,7 +376,7 @@ function user_joined(message) {
     ,   mouse = Sprite.create({
         image : {
             url : 'http://www.pubnub.com/static/mouse.png',
-            width : 350,
+            width : 600,
             height : 30,
             offset : {
                 top : 36,
@@ -406,17 +406,19 @@ function user_joined(message) {
     PUBNUB.css( mouse.node, {
         'fontWeight' : 'bold',
         'padding'    : '5px 0 0 20px',
-        'fontSize'   : '15px',
-        'textShadow' : 'rgba(0,0,0,0.9) 1px 1px 2px',
+        'fontSize'   : '30px',
+        'textShadow' : 'rgba(0,0,0,0.5) 1px 1px 2px',
         // 'box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
         // 'border-radius' : '5px',
         // '-moz-box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
         // '-moz-border-radius' : '5px',
-        '-webkit-box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
-        '-webkit-border-radius' : '5px',
-        'opacity'    : 0.0,
-        'backgroundColor' : 'rgba(255,255,255,0.6)',
-        'color'      : '#'+(message['uuid']||'000000').slice(-6)//'#000'
+        //'-webkit-box-shadow' : '1px 1px 5px rgba(0,0,0,0.5)',
+        //'-webkit-border-radius' : '5px',
+        '-webkit-filter' : 'invert(1)',
+        //'-webkit-transform' : 'scale(10)',
+        //'opacity'    : 0.0,
+        //'backgroundColor' : 'rgba(255,255,255,0.8)',
+        'color'      : "#d34"//'#'+(message['uuid']||'000').slice(-6)//'#000'
     } );
 
     // Save UUID
@@ -602,8 +604,8 @@ bind( 'touchmove',  document, send );
 bind( 'touchstart', document, send );
 bind( 'touchend',   document, send );
 bind( 'keydown',    document, monopuff );
-bind( 'mousedown',  document, bluralize );
-bind( 'click',      document, bluralize );
+//bind( 'mousedown',  document, bluralize );
+//bind( 'click',      document, bluralize );
 
 // Setup For Any Input Event.
 PUBNUB.each( PUBNUB.search('input'), function(input) {
