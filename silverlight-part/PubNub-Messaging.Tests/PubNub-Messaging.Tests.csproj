@@ -50,8 +50,13 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EncryptionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WhenAClientIsPresented.cs" />
+    <Compile Include="WhenAMessageIsPublished.cs" />
+    <Compile Include="WhenDetailedHistoryIsRequested.cs" />
+    <Compile Include="WhenGetRequestServerTime.cs" />
+    <Compile Include="WhenSubscribedToAChannel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PubNub-Messaging\PubNub-Messaging.csproj">

@@ -455,6 +455,7 @@ namespace PubnubSilverlight.UnitTest
         }
 
         [TestMethod]
+        [Asynchronous]
         public void IfSSLNotProvidedThenDefaultShouldBeFalse()
         {
             isPublished3 = false;

@@ -75,8 +75,6 @@ C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.E
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\PubnubSilverlight.Example.pdb
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\XapCacheFile.xml
 C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\Newtonsoft.Json.dll
-C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Imports.dll
-C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Imports.pdb
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Example.dll
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Example.pdb
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\AppManifest.xaml
@@ -158,3 +156,5 @@ C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\XapCacheFile.xml
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\Newtonsoft.Json.pdb
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\Newtonsoft.Json.xml
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Imports.dll
+C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Imports.pdb
