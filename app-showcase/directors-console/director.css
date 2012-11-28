@@ -1,9 +1,16 @@
 body, h1, div, p {
     font-family: "Helvetica Neue";
 }
-h1 {
+h1, h2 {
+    color: #e15;
+    font-family: "Helvetica Neue";
     font-size: 90px;
-    text-shadow: 20px 20px 40px #444;
+    text-shadow: 20px 20px 40px #aaa;
+}
+h2 {
+    font-family: "Helvetica Neue";
+    font-weight: 200;
+    margin: 5px 0;
 }
 button {
     cursor: pointer;

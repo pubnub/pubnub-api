@@ -1,22 +1,15 @@
 (function(){
 
     var p       = PUBNUB.init({ publish_key: 'demo', subscribe_key : 'demo' })
-    ,   channel = 'my_channel'
-    ,   btn     = {
-        image : p.$('image'),
-        video : p.$('video'),
-        html  : p.$('html')
-    };
+    ,   channel = 'my_channel';
 
-    function bind(button) {
-        p.bind( 'mousedown,touchstart', button, function() {
-            send(p.attr( button, 'source' ));
-        } );
-    }
-
-    bind(btn.image);
-    bind(btn.video);
-    bind(btn.html);
+    p.bind( 'mousedown,touchstart', p.$('buttons'), function(e) {
+        var target = e.target || e.srcElement;
+        send(
+            p.attr( target, 'source' ) ||
+            p.attr( target.parentNode, 'source' )
+        );
+    } );
 
     function send(data) {
         p.publish({
