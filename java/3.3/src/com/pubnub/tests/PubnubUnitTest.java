@@ -317,7 +317,13 @@ public class PubnubUnitTest {
         long midtime = (long) pubnub.time();
         publishForDetailedHistory(channel, total_msg / 2, total_msg / 2, inputs);
         long endtime = (long) pubnub.time();
-
+        
+        try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+        
         JSONArray response = null;
 
         response = pubnub.detailedHistory(channel, starttime, endtime);
