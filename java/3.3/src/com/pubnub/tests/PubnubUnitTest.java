@@ -319,10 +319,10 @@ public class PubnubUnitTest {
         long endtime = (long) pubnub.time();
         
         try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
+            Thread.sleep(3000);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
         
         JSONArray response = null;
 
