@@ -54,6 +54,7 @@ package com.pubnub {
 		 */
 		public static function encode(args:String):String{
 			return escape(args);
+			
 		}
 	}
 

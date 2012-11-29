@@ -75,16 +75,17 @@ package utils {
 		}
 		
 		private function onPnInit(e:PnEvent):void {
-			trace('-------------INIT----------------');
+			//trace('-------------INIT----------------');
 			Pn.subscribe(channel);	
 		}
 		
 		private function onPnSubscribe(e:PnEvent):void {
-			trace('-------------SUBSCRIBE---------------- ' + e.status);
+			//trace('-------------SUBSCRIBE---------------- ' + e.status);
 			 switch (e.status) {
                 case OperationStatus.DATA:
+					//trace(e.data.result[1].text , message);
 					if (e.channel == channel && 
-						e.data.result[1] == message) {
+						e.data.result[1].text == message) {
 						sent++;
 						var delta:Number  = getTimer() - startPublishTime;
 						var latency:Number = delta || median[1];
@@ -124,9 +125,9 @@ package utils {
 		}
 		
 		private function publish():void {
-			trace('--------------PUBLISH------------------');
+			//trace('--------------PUBLISH------------------');
 			startPublishTime = getTimer();
-			channel = 'demo';
+			//channel = 'demo';
 			Pn.publish( { 
 				channel : channel, 
 				message : message } );

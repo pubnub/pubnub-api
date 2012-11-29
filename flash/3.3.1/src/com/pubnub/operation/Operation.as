@@ -96,7 +96,7 @@ package com.pubnub.operation {
 		
 		
 		public function onData(data:Object = null):void {
-			//trace(this, 'onLoaderComplete');
+			//trace(this, data);
 			var result:Object = data;
 			if (parseToJSON) {
 				try {

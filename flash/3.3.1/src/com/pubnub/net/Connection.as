@@ -32,6 +32,7 @@ package com.pubnub.net {
 			loaderKA.addEventListener(IOErrorEvent.IO_ERROR, onKALoaderError);
 			
 			loader = new URLLoader();
+			loader.keepAlive = true;
 			loader.addEventListener(Event.COMPLETE, onLoaderComplete);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, onLoaderError);
 			
@@ -51,7 +52,12 @@ package com.pubnub.net {
 		}
 		
 		private function send(operation:Operation):void {
-			loader.load(operation.url);
+			if (loader.connectPending) {
+				// wait....
+			}else {
+				loader.load(operation.url);
+			}
+			
 		}
 		
 		public static function loadWithKeepAlive(operation:Operation):void {
@@ -59,13 +65,8 @@ package com.pubnub.net {
 		}
 		
 		public function loadWithKeepAlive(operation:Operation):void {
-			
-			trace('loadWithKeepAlive : ' + queueKA.length, isSubscriptionOperation(lastOperation));
-			queueKA.push(operation);
-			if (queueKA.length == 1 || isSubscriptionOperation(lastOperation)) {
-				sendKA(operation);
-			}
-			this.lastOperation = operation;
+			//trace('loadWithKeepAlive : ' + queueKA.length, isSubscriptionOperation(lastOperation));
+			sendKA(operation);
 		}
 		
 		private function sendKA(operation:Operation):void {
@@ -74,38 +75,22 @@ package com.pubnub.net {
 			loaderKA.load(operation.url);
 		}
 		
-		private function isSubscriptionOperation(operation:Operation):Boolean {
-			if (!operation) return false;
-			trace(operation.url);
-			return (operation.url.indexOf('subscribe') > -1);
-		}
-		
 		private function onKALoaderComplete(e:Event):void {
+			trace('onKALoaderComplete : ' + lastOperation.url);
 			var data:Object = e.target.data;
-			var operation:Operation = queueKA.pop();
-			if (queueKA.length > 0) {
-				sendKA(queueKA[0]);
-			}
-			//this.operation.onData(data);
-			operation.onData(data);
-			
-			//trace('onKALoaderComplete : ' + queueKA.length);
+			lastOperation.onData(data);
 		}
 		
 		private function onKALoaderError(e:IOErrorEvent):void {
-			//trace('onKALoaderError : ' + queueKA.length);
-			var operation:Operation = queueKA.pop();
-			operation.onError(e.target.data);
-			if (queueKA.length > 0) {
-				sendKA(queueKA[0]);
-			}
+			trace('onKALoaderError : ' + lastOperation);
+			lastOperation.onError(e.target.data);
+			//lastOperation = null;
 		}
 		
 		private function onLoaderComplete(e:Event):void {
-			
 			var operation:Operation = queue.pop();
-			operation.onData(e.target.data);
-			//trace(this, 'onLoaderComplete : ' + queue.length, queue[0]);
+			trace('onLoaderComplete : ' + operation);
+			if(operation) operation.onData(e.target.data);
 			if (queue.length > 0) {
 				send(queue[0]);
 			}
@@ -113,7 +98,8 @@ package com.pubnub.net {
 		
 		private function onLoaderError(e:IOErrorEvent):void {
 			var operation:Operation = queue.pop();
-			operation.onError(e.target.data);
+			trace('onLoaderError : ' + operation);
+			if(operation) operation.onError(e.target.data);
 			if (queue.length > 0) {
 				send(queue[0]);
 			}

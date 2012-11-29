@@ -123,8 +123,7 @@ import com.pubnub.operation.*;
 		private function onSubscribeInitResult(e:OperationEvent):void {
 			lastToken =  e.data[1];
 			_connected = true;
-			trace('onSubscribeInitResult : ' + lastToken);
-			
+			//trace('onSubscribeInitResult : ' + lastToken);
 			subscribeLastToken();
 			netMonitor.start();
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channelName } ));
@@ -137,6 +136,7 @@ import com.pubnub.operation.*;
 		
 		private function subscribeToken(time:String):void {
 			var operation:Operation = getOperation(Operation.WITH_TIMETOKEN);
+			//operation.parseToJSON = false;
 			operation.createURL({ 
 				url:subscribeURL, 
 				channel:_channelName, 
@@ -151,8 +151,6 @@ import com.pubnub.operation.*;
 		}
 
         private function onSubscribeResult(e:OperationEvent):void {
-			
-			
             var eventData:Object = e.data;
             lastToken = eventData[1];
             var messages:Array = eventData[0];

@@ -23,10 +23,12 @@ package com.pubnub.net {
     
 		// url
 		protected var _url:String;
+		protected var uri:URI;
 	
 		
 		public function URLRequest(url:String = null) {
 			_url = url;
+			uri = new URI(url);
 			// Create default header
 			loadDefaultHeaders();
 		}
@@ -69,19 +71,16 @@ package com.pubnub.net {
 			_method = value;
 		}
 		
-		/**
-		 * Get header.
-		 *
-		 *  TODO: There is alot of escaping here. Don't think URI class expects to get escaped values out in pieces
-		 *  It only gives you fully escape on full URI toString.
-		 */
-		public function getHeader(uri:URI):ByteArray {
-			
+		public function toByteArray():ByteArray{
 			uri.forceEscape();      
-			var bytes:ByteArray = new ByteArray();
+			var result:ByteArray = new ByteArray();
 			var path:String = uri.path;
-			if (!path) path = "/";
-			else path = URI.fastEscapeChars(path, kUriPathEscapeBitmap);
+			if (!path) {
+				path = "/";
+			}
+			else {
+				path = URI.fastEscapeChars(path, kUriPathEscapeBitmap);
+			}
 			
 			// Escape params manually; and escape alot
 			var query:Object = uri.getQueryByMap();
@@ -96,16 +95,16 @@ package com.pubnub.net {
 			
 			var host:String = uri.authority;
 			if (uri.port) host += ":" + uri.port;
-			bytes.writeUTFBytes(_method + " " + path + " HTTP/" + version + "\r\n");
-			bytes.writeUTFBytes("Host: " + host + "\r\n");
+			result.writeUTFBytes(_method + " " + path + " HTTP/" + version + "\r\n");
+			result.writeUTFBytes("Host: " + host + "\r\n");
 			
 			if (!header.isEmpty) {
-				bytes.writeUTFBytes(header.content);
+				result.writeUTFBytes(header.content);
 			}
 			
-			bytes.writeUTFBytes("\r\n");
-			bytes.position = 0;
-			return bytes;
+			result.writeUTFBytes("\r\n");
+			result.position = 0;
+			return result;
 		}
 		
 		public function toString():String {

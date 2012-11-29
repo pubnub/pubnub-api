@@ -275,7 +275,7 @@ package com.pubnub {
 			publishOperation.addEventListener(OperationEvent.RESULT, onPublishResult);
 			publishOperation.addEventListener(OperationEvent.FAULT, onPublishFault);
 			publishOperation.createURL(args);
-			Connection.loadWithKeepAlive(publishOperation);
+			Connection.load(publishOperation);
 			//Connection.load(publishOperation);
 		}
 		
@@ -286,6 +286,7 @@ package com.pubnub {
 		}
 		
 		private function onPublishResult(e:OperationEvent):void {
+			trace('onPublishResult')
 			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.DATA);
 			pnEvent.operation = getOperation(PUBLISH_OPERATION);
 			dispatchEvent(pnEvent);

@@ -36,7 +36,8 @@ package com.pubnub.operation {
 				return;
 			}
 			var signature:String = "0";
-			var serializedMessage:String = PnJSON.stringify(message);
+			var packageMessage:Object = packageToJSON(message);
+			var serializedMessage:String = PnJSON.stringify(packageMessage);
 			if (secretKey){
 				// Create the signature for this message                
 				var concat:String = publishKey + "/" + subscribeKey + "/" + secretKey + "/" + channel + "/" + serializedMessage;
@@ -51,18 +52,17 @@ package com.pubnub.operation {
 			
 			uid = PnUtils.getUID();
 			_url = origin + "/" + "publish" + "/" + publishKey + "/" + subscribeKey + "/" + signature + "/" + PnUtils.encode(channel) + "/" + 0 + "/" +PnUtils.encode(serializedMessage as String);
-			//trace(getTimer() - temp);
-			//_loader.load(this._url);
-			
-			//var uri:URI = new URI(url);
-			//expLoader ||= new ExperimentURLLoader();
-			//expLoader.load(uri);
 		}
 		
-		override protected function onLoaderComplete(e:Event):void {
-			//trace(this, 'onLoaderComplete');
+		private function packageToJSON(message:String):Object{
+			return { text:message };
+		}
+		
+		override public function onData(data:Object = null):void {
+			//super.onData(data);
+			//trace(this, data);
 			try {
-				dispatchEvent(new OperationEvent(OperationEvent.RESULT, PnJSON.parse(String(e.target.data))));
+				dispatchEvent(new OperationEvent(OperationEvent.RESULT, PnJSON.parse(String(data))));
 			}
 			catch (e:*){
 				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [-1, "[Pn.publish()] JSON.parse error"] ));

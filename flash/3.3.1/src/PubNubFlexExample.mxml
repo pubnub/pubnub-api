@@ -14,6 +14,7 @@
 		 * define public vars for custom connection.
 		 * */
 			import com.pubnub.*;
+			import com.pubnub.json.PnJSON;
 			import flash.events.*;
 			import flash.external.*;
 			import flash.utils.getTimer;
@@ -40,6 +41,10 @@
         [Bindable]
         public var cipher_key:String = '';
 		
+		[Bindable]
+        public var publishMessageText:String = 'hey';
+        //public var publishMessageText:String = '{"text":"hey"}';
+		
         public var ssl:Boolean = false;
 
         private var consoleCounter:int = 1;
@@ -49,6 +54,12 @@
 			perfomance = new Perfomance(perfomanceTestView.getChildAt(0));
 			perfomance.ssl = ssl;
 			BindingUtils.bindSetter(updateOrigin, this, "origin");
+			
+			//trace('channel' +  PnUtils.encode(channel));
+			//trace('publishMessageText' +  PnJSON.stringify(publishMessageText));
+			//trace('hey' +  PnJSON.parse('{"text":"hey"}'));
+			//var o:Object = PnJSON.parse('{\"text\":\"hey\"}');
+			//trace('hey' +  o);
 		}
 			
         protected function onInitBtnClick(event:MouseEvent):void{
@@ -165,13 +176,14 @@
         }
 
         private function onPublish(e:PnEvent):void {
+			trace('onPublish : ' + e.status)
 			//if (perfomance.isRun) return;
 			trace('publish time : ' + (getTimer() - startPublishTime));
             switch (e.status) {
                 case OperationStatus.DATA:
                     var messages:Array = e.data as Array;
-                    callExternalInterface("console.log", ("Publish [DATA], url : " + e.operation.url));
-                    if(messages) callExternalInterface("console.log", ("Publish [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
+                    //callExternalInterface("console.log", ("Publish [DATA], url : " + e.operation.url));
+                    if(messages) callExternalInterface("console.log", ("Publish [DATA], channel : " + e.channel + ', result : [' + messages.join(',') + ']'));
                     break;
 
                 case OperationStatus.ERROR:
@@ -268,7 +280,7 @@
                       click="publishBtn_clickHandler(event)"/>
             <s:Label x="10" y="14" width="57" color="#4D4C4C" fontStyle="italic" text="message"
                      textAlign="right"/>
-            <s:TextInput id="publishMessageTxt" x="75" y="9" width="246" text="hey"  enabled="true"/>
+            <s:TextInput id="publishMessageTxt" x="75" y="9" width="246" text="@{publishMessageText}"  enabled="true"/>
         </s:NavigatorContent>
 		
 		<s:NavigatorContent width="100%" height="100%" label="Time (5)">
