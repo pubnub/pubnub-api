@@ -37,9 +37,26 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.AsyncHttpClientConfig.Builder;
+import com.ning.http.client.PerRequestConfig;
 import com.ning.http.client.Request;
 import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
+
+
+class PubnubHttpRequest {
+	private Request request;
+	private String[] errorsMessages;
+	public PubnubHttpRequest(Request request, String[] errorsMessages){
+		this.errorsMessages = errorsMessages;
+		this.request = request;
+	}
+	public String[] errorMessages(){
+		return this.errorsMessages;
+	}
+	public Request request(){
+		return this.request;
+	}
+}
 
 public class Pubnub {
     private String ORIGIN = "pubsub.pubnub.com";
@@ -52,7 +69,46 @@ public class Pubnub {
     private String parameters = "";
     private AsyncHttpClient ahc = null;
     private RequestBuilder rb = null;
+    private int FAST_API_TIMEOUT_MS = 5000;
 
+    private Request	getRequest(List<String> url_components) {
+    	return getRequest(url_components, 0);
+    }
+    	
+    private Request	getRequest(List<String> url_components, int requestTimeout) {
+        StringBuilder url = new StringBuilder();
+        Iterator<String> url_iterator = url_components.iterator();
+        String request_for = url_components.get(0);
+        String request_type = url_components.get(1);
+
+        url.append(this.ORIGIN);
+
+        // Generate URL with UTF-8 Encoding
+        while (url_iterator.hasNext()) {
+            String url_bit = (String) url_iterator.next();
+            url.append("/").append(_encodeURIcomponent(url_bit));
+        }
+        if (request_for.equals("subscribe") || request_for.equals("presence"))
+            url.append("?uuid=").append(this.sessionUUID);
+
+        if (request_for.equals("v2") && request_type.equals("history"))
+            url.append(parameters);
+    	
+        rb = new RequestBuilder("GET");
+        
+        rb.addHeader("V", "3.3");
+        rb.addHeader("User-Agent", "Java");
+        rb.addHeader("Accept-Encoding", "gzip");
+        rb.setUrl(url.toString());
+        
+        if (requestTimeout > 0) {
+           	PerRequestConfig prc = new PerRequestConfig();
+           	prc.setRequestTimeoutInMs(requestTimeout);
+           	rb.setPerRequestConfig(prc);
+         }
+        return rb.build();
+    }
+    
     protected void finalize() {
         if (ahc != null)
             ahc.close();
@@ -182,8 +238,8 @@ public class Pubnub {
      *            <String> url
      * 
      */
-    private JSONArray getResponseByUrl(List<String> url, boolean decrypt) {
-        return _getResponseByUrl(url, decrypt, -1);
+    private JSONArray getResponseByUrl(PubnubHttpRequest phr, boolean decrypt) {
+        return _getResponseByUrl(phr, decrypt, -1);
     }
 
     /**
@@ -195,8 +251,8 @@ public class Pubnub {
      *            <String> url
      * 
      */
-    private JSONArray getResponseByUrl(List<String> url, int index) {
-        return _getResponseByUrl(url, true, index);
+    private JSONArray getResponseByUrl(PubnubHttpRequest phr, int index) {
+        return _getResponseByUrl(phr, true, index);
     }
 
     /**
@@ -208,8 +264,8 @@ public class Pubnub {
      *            <String> url
      * 
      */
-    private JSONArray getResponseByUrl(List<String> url) {
-        return _getResponseByUrl(url, true, -1);
+    private JSONArray getResponseByUrl(PubnubHttpRequest phr) {
+        return _getResponseByUrl(phr, true, -1);
     }
 
     /**
@@ -221,9 +277,9 @@ public class Pubnub {
      *            <String> url
      * 
      */
-    private JSONArray _getResponseByUrl(List<String> url, boolean decrypt,
+    private JSONArray _getResponseByUrl(PubnubHttpRequest phr, boolean decrypt,
             int index) {
-        JSONArray response = _request(url);
+        JSONArray response = _request(phr);
 
         if (this.CIPHER_KEY.length() > 0 && decrypt) {
             // Decrypt Messages
@@ -259,7 +315,25 @@ public class Pubnub {
         HashMap<String, Object> args = new HashMap<String, Object>(2);
         args.put("channel", channel);
         args.put("message", message);
-        return publish(args);
+        return publish(args, FAST_API_TIMEOUT_MS);
+    }
+    
+    /**
+     * Publish
+     * 
+     * Send a message to a channel.
+     * 
+     * @param String
+     *            channel name.
+     * @param JSONObject
+     *            message.
+     * @return JSONArray.
+     */
+    public JSONArray publish(String channel, JSONObject message, int requestTimeoutInMs) {
+        HashMap<String, Object> args = new HashMap<String, Object>(2);
+        args.put("channel", channel);
+        args.put("message", message);
+        return publish(args, requestTimeoutInMs);
     }
 
     /**
@@ -271,10 +345,11 @@ public class Pubnub {
      *            <String, Object> containing channel name, message.
      * @return JSONArray.
      */
-    private JSONArray publish(HashMap<String, Object> args) {
+    private JSONArray publish(HashMap<String, Object> args, int requestTimeoutInMs) {
 
         String channel = (String) args.get("channel");
         Object message = args.get("message");
+        String[] errorMessages = {"0", "Error: Failed JSONP HTTP Request" };
 
         if (message instanceof JSONObject) {
             JSONObject obj = (JSONObject) message;
@@ -331,8 +406,8 @@ public class Pubnub {
         // Build URL
         String[] urlargs = { "publish", this.PUBLISH_KEY, this.SUBSCRIBE_KEY,
                 signature, channel, "0", message.toString() };
-
-        return _request(Arrays.asList(urlargs));
+    
+        return _request( new PubnubHttpRequest(getRequest( Arrays.asList(urlargs), requestTimeoutInMs), errorMessages));
     }
 
     /**
@@ -378,6 +453,7 @@ public class Pubnub {
     private void _subscribe(HashMap<String, Object> args)
     throws PubnubException {
 
+    	String[] errorMessages = {"0", "0"}; 
         String channel = (String) args.get("channel");
         String timetoken = (String) args.get("timetoken");
         Callback callback;
@@ -435,7 +511,7 @@ public class Pubnub {
                     return;
 
                 // Wait for Message
-                JSONArray response = _request(url);
+                JSONArray response = _request(new PubnubHttpRequest(getRequest(url), errorMessages));
                 // Stop Connection?
 
                 if (subscriptions.get(channel) != null
@@ -561,6 +637,9 @@ public class Pubnub {
         subscribe(args);
     }
 
+    public JSONArray here_now(String channel) {
+    	return here_now(channel, FAST_API_TIMEOUT_MS);
+    }
     /**
      * Here Now
      * 
@@ -570,12 +649,12 @@ public class Pubnub {
      *            channel name.
      * @return JSONObject of here_now
      */
-    public JSONArray here_now(String channel) {
-
+    public JSONArray here_now(String channel, int requestTimeout) {
+    	String[] errorMessages = {};
         String[] urlargs = { "v2", "presence", "sub_key", this.SUBSCRIBE_KEY,
                 "channel", channel };
 
-        return getResponseByUrl(Arrays.asList(urlargs), false);
+        return getResponseByUrl( new PubnubHttpRequest(getRequest(Arrays.asList(urlargs), requestTimeout), errorMessages)  , false);
     }
 
     /**
@@ -588,11 +667,15 @@ public class Pubnub {
      * @param int limit history count response.
      * @return JSONArray of history.
      */
-    public JSONArray history(String channel, int limit) {
+    public JSONArray history(String channel, int limit, int requestTimeout) {
         HashMap<String, Object> args = new HashMap<String, Object>(2);
         args.put("channel", channel);
         args.put("limit", limit);
-        return history(args);
+        return history(args,requestTimeout);
+    }
+    
+    public JSONArray history(String channel, int limit) {
+    	return history(channel, limit, FAST_API_TIMEOUT_MS);
     }
 
     /**
@@ -605,15 +688,16 @@ public class Pubnub {
      *            response.
      * @return JSONArray of history.
      */
-    private JSONArray history(HashMap<String, Object> args) {
+    private JSONArray history(HashMap<String, Object> args, int requestTimeout) {
 
         String channel = (String) args.get("channel");
+        String[] errorMessages = {"0", "Error: Failed JSONP HTTP Request" };
         int limit = Integer.parseInt(args.get("limit").toString());
 
         String[] urlargs = { "history", this.SUBSCRIBE_KEY, channel, "0",
                 Integer.toString(limit) };
 
-        return getResponseByUrl(Arrays.asList(urlargs));
+        return getResponseByUrl(new PubnubHttpRequest(getRequest(Arrays.asList(urlargs), requestTimeout), errorMessages));
     }
 
     /**
@@ -624,7 +708,8 @@ public class Pubnub {
      * @return JSONArray of detailed history.
      */
     public JSONArray detailedHistory(String channel, long start, long end,
-            int count, Boolean reverse) {
+            int count, Boolean reverse, int requestTimeout) {
+    	String[] errorMessages = {"0", "Error: Failed JSONP HTTP Request" };
         parameters = "";
         if (count == -1)
             count = 100;
@@ -642,28 +727,52 @@ public class Pubnub {
         String[] urlargs = { "v2", "history", "sub-key", this.SUBSCRIBE_KEY,
                 "channel", channel };
 
-        return getResponseByUrl(Arrays.asList(urlargs), 0);
+        return getResponseByUrl(new PubnubHttpRequest(getRequest(Arrays.asList(urlargs), requestTimeout), errorMessages), 0);
     }
 
+    public JSONArray detailedHistory(String channel, long start, long end,
+            int count, Boolean reverse) {
+    	return detailedHistory(channel, start, end, count, reverse, FAST_API_TIMEOUT_MS);
+    }
     public JSONArray detailedHistory(String channel, long start, boolean reverse) {
-        return detailedHistory(channel, start, -1, -1, reverse);
+        return detailedHistory(channel, start, -1, -1, reverse, FAST_API_TIMEOUT_MS);
+    }
+    
+    public JSONArray detailedHistory(String channel, long start, boolean reverse, int requestTimeout) {
+        return detailedHistory(channel, start, -1, -1, reverse, requestTimeout);
     }
 
     public JSONArray detailedHistory(String channel, long start, long end) {
-        return detailedHistory(channel, start, end, -1, false);
+        return detailedHistory(channel, start, end, -1, false, FAST_API_TIMEOUT_MS);
+    }
+    
+    public JSONArray detailedHistory(String channel, long start, long end, int requestTime) {
+        return detailedHistory(channel, start, end, -1, false, requestTime);
     }
 
     public JSONArray detailedHistory(String channel, long start, long end,
             boolean reverse) {
-        return detailedHistory(channel, start, end, -1, reverse);
+        return detailedHistory(channel, start, end, -1, reverse, FAST_API_TIMEOUT_MS);
     }
 
+    public JSONArray detailedHistory(String channel, long start, long end,
+            boolean reverse, int requestTimeout) {
+        return detailedHistory(channel, start, end, -1, reverse, requestTimeout);
+    }
+    
     public JSONArray detailedHistory(String channel, int count, boolean reverse) {
-        return detailedHistory(channel, -1, -1, count, reverse);
+        return detailedHistory(channel, -1, -1, count, reverse, FAST_API_TIMEOUT_MS);
+    }
+    public JSONArray detailedHistory(String channel, int count, boolean reverse, int requestTimeout) {
+        return detailedHistory(channel, -1, -1, count, reverse, requestTimeout);
     }
 
     public JSONArray detailedHistory(String channel, boolean reverse) {
-        return detailedHistory(channel, -1, -1, -1, reverse);
+        return detailedHistory(channel, -1, -1, -1, reverse, FAST_API_TIMEOUT_MS);
+    }
+    
+    public JSONArray detailedHistory(String channel, boolean reverse, int requestTimeout) {
+        return detailedHistory(channel, -1, -1, -1, reverse, requestTimeout);
     }
 
     /**
@@ -675,11 +784,11 @@ public class Pubnub {
      */
     public double time() {
         List<String> url = new ArrayList<String>();
-
+        String[] errorMessages = {"0"};
         url.add("time");
         url.add("0");
 
-        JSONArray response = _request(url);
+        JSONArray response = _request( new PubnubHttpRequest(getRequest(url,FAST_API_TIMEOUT_MS), errorMessages));
 
         return response.optDouble(0);
     }
@@ -712,48 +821,22 @@ public class Pubnub {
             it.first = false;
         }
     }
+    
 
     /**
      * Request URL
      * 
      * @param List
      *            <String> request of url directories.
+     * @param int request timeout in milliseconds
      * @return JSONArray from JSON response.
      */
-    private JSONArray _request(List<String> url_components) {
+    private JSONArray _request(PubnubHttpRequest phr) {
         String json = "";
-        StringBuilder url = new StringBuilder();
-        Iterator<String> url_iterator = url_components.iterator();
-        String request_for = url_components.get(0);
-        String request_type = url_components.get(1);
-
-        url.append(this.ORIGIN);
-
-        // Generate URL with UTF-8 Encoding
-        while (url_iterator.hasNext()) {
-            try {
-                String url_bit = (String) url_iterator.next();
-                url.append("/").append(_encodeURIcomponent(url_bit));
-            } catch (Exception e) {
-                return new JSONArray().put("Failed UTF-8 Encoding URL.");
-            }
-        }
-        if (request_for.equals("subscribe") || request_for.equals("presence"))
-            url.append("?uuid=").append(this.sessionUUID);
-
-        if (request_for.equals("v2") && request_type.equals("history"))
-            url.append(parameters);
-
+ 
         try {
-            rb = new RequestBuilder("GET");
-            rb.addHeader("V", "3.3");
-            rb.addHeader("User-Agent", "Java");
-            rb.addHeader("Accept-Encoding", "gzip");
-            rb.setUrl(url.toString());
-            Request request = rb.build();
-
             // Execute Request
-            Future<String> f = ahc.executeRequest(request,
+            Future<String> f = ahc.executeRequest(phr.request(),
                     new AsyncCompletionHandler<String>() {
 
                 @Override
@@ -797,27 +880,16 @@ public class Pubnub {
 
             // Response If Failed JSONP HTTP Request.
             JSONArray jsono = new JSONArray();
-            if (request_for != null) {
-                if (request_for.equals("time")) {
-                    jsono.put("0");
-                } else if (request_for.equals("history")) {
-                    jsono.put("Error: Failed JSONP HTTP Request.");
-                } else if (request_for.equals("publish")) {
-                    jsono.put("0");
-                    jsono.put("Error: Failed JSONP HTTP Request.");
-                } else if (request_for.equals("subscribe")) {
-                    jsono.put("0");
-                    jsono.put("0");
-                }
+            for (String s: phr.errorMessages()) {
+            	jsono.put(s);
             }
-
             return jsono;
         }
 
         // Parse JSON String
-        if (json.contains("uuids")) {
+ /*       if (json.contains("uuids")) {
             return new JSONArray().put(json);
-        }
+        }*/
         try {
             return new JSONArray(json);
         } catch (JSONException e) {
