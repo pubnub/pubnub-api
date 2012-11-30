@@ -12,9 +12,13 @@ package com.pubnub.net {
 		private var _message:String;
 		private var _body:String;
 		private var _headers:Array;
-		private const END_LINE:String = '\r\n';
+		private var _isChunked:Boolean;
+		public static const END_LINE:String = '\r\n';
 		
-		public function URLResponse(bytes:ByteArray = null) {
+		private var _request:URLRequest;
+		
+		public function URLResponse(bytes:ByteArray = null, request:URLRequest = null) {
+			_request = request;
 			fromBytesArray(bytes);
 		}
 		
@@ -28,7 +32,6 @@ package com.pubnub.net {
 			parseBody();
 		}
 		
-		
 		/**
 		 * Parse HTTP response header.
 		 * @param lines Lines in header
@@ -37,6 +40,9 @@ package com.pubnub.net {
 		protected function parseHeader():void {
 			var ind:int = _rawData.indexOf(END_LINE + END_LINE);
 			var rawString:String = _rawData.substr(0, ind);
+			
+			_headers = getHeaders(rawString);
+			_isChunked = isChunked(_headers);
 			var lines:/*String*/Array = rawString.split(END_LINE);
 			var firstLine:String = lines[0];
 			
@@ -48,21 +54,7 @@ package com.pubnub.net {
 				_code = matches[2];
 				_message = matches[3];
 			}else {
-				//throw new Error("Invalid header: " + firstLine + ", matches: " + matches);
 				trace("Invalid header: " + firstLine + ", matches: " + matches);
-			}
-			
-			var line:String;
-			for (var i:Number = 1; i < lines.length; i++) {
-				line = lines[i];
-				ind = line.indexOf(":");
-				if (ind != -1) {
-					var name:String = line.substring(0, ind);
-					var value:String = line.substring(ind + 1, line.length);
-					_headers.push( { name: name, value: value } );
-				} else {
-					trace("Invalid header: " + line);
-				}
 			}
 		}
 		
@@ -73,20 +65,60 @@ package com.pubnub.net {
 			var ind:int = _rawData.indexOf(separator);
 			var bodyRawStr:String = _rawData.substr(ind + separator.length, _rawData.length);
 			
-			var lines:/*String*/Array = bodyRawStr.split(END_LINE);
-			var len:int = lines.length;
-			var i:int = 0;
-			for (i; i < len; i++) {
-				var size:int= int(lines[i]);
-				var data:String = lines[i+1];
-				if (size > 0) {
-					_body += data;
-					i++;
-				}else {
-					// end of body data
-					break;
+			if (_isChunked) {
+				var lines:/*String*/Array = bodyRawStr.split(END_LINE);
+				var len:int = lines.length;
+				var i:int = 0;
+				for (i; i < len; i++) {
+					var size:int= int(lines[i]);
+					var data:String = lines[i+1];
+					if (size > 0) {
+						_body += data;
+						i++;
+					}else {
+						// end of body data
+						break;
+					}
+				}
+			}else {
+				_body = bodyRawStr;
+			}
+		}
+		
+		static public function isChunked(headers:Array):Boolean{
+			if (headers && headers.length > 1) {
+				for each(var o:Object  in headers) {
+					var name:String = String(o.name).toLowerCase();
+					var value:String = String(o.value).toLowerCase();
+					if (name == 'transfer-encoding' && value == 'chunked') {
+						return true;
+					}
 				}
 			}
+			return false;
+		}
+		
+		static public function getHeaders(str:String):Array {
+			var result:Array = [];
+			var ind:int = str.indexOf(END_LINE + END_LINE);
+			if (ind > -1) {
+				return null;
+			}
+			var headerString:String = str.substr(0, ind);
+			var lines:/*String*/Array = str.split(END_LINE);
+			var line:String;
+			for (var i:Number = 1; i < lines.length; i++) {
+				line = lines[i];
+				ind = line.indexOf(":");
+				if (ind != -1) {
+					var name:String = line.substring(0, ind);
+					var value:String = line.substring(ind + 1, line.length);
+					result.push( { name: name, value: value } );
+				} else {
+					trace("Invalid header: " + line);
+				}
+			}
+			return result;
 		}
 		
 		
@@ -110,6 +142,10 @@ package com.pubnub.net {
 		
 		public function get message():String {
 			return _message;
+		}
+		
+		public function get request():URLRequest {
+			return _request;
 		}
 		
 		public function dispose():void {

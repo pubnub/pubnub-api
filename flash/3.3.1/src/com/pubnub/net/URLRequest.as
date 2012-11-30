@@ -38,14 +38,13 @@ package com.pubnub.net {
 		 */
 		protected function loadDefaultHeaders():void {
 			_header = new URLRequestHeader();
-			//addHeader("Connection", "close");      
-			_header.add("Connection", "Keep-Alive");      
-			//addHeader("Accept-Encoding", "gzip, deflate");
-			//addHeader("Accept-Language", "en-us");            
-			//addHeader("User-Agent", "as3httpclientlib 0.1");
-			//addHeader("Accept", "*/*");
+			_header.add("Connection", "Keep-Alive"); 
 		}
 		
+		public function destroy():void {
+			_header.destroy();
+			_header = null;
+		}
 		
 		/**
 		 * Set content type.
@@ -98,8 +97,8 @@ package com.pubnub.net {
 			result.writeUTFBytes(_method + " " + path + " HTTP/" + version + "\r\n");
 			result.writeUTFBytes("Host: " + host + "\r\n");
 			
-			if (!header.isEmpty) {
-				result.writeUTFBytes(header.content);
+			if (!_header.isEmpty) {
+				result.writeUTFBytes(_header.content);
 			}
 			
 			result.writeUTFBytes("\r\n");

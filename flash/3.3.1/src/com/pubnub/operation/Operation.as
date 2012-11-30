@@ -4,6 +4,8 @@ package com.pubnub.operation {
 	import com.pubnub.loader.*;
 	import com.pubnub.net.*;
 	import flash.events.*;
+	import flash.net.URLRequestMethod;
+	import org.casalib.events.RemovableEventDispatcher;
 	import org.httpclient.events.*;
 	
 	/**
@@ -12,13 +14,14 @@ package com.pubnub.operation {
 	 */
 	[Event(name="OperationEvent.fault", type="com.pubnub.operation.OperationEvent")]
 	[Event(name="OperationEvent.result", type="com.pubnub.operation.OperationEvent")]
-	public class Operation extends EventDispatcher {
+	public class Operation extends RemovableEventDispatcher {
 		
 		static public const WITH_TIMETOKEN:String = 'subscribe_with_timetoken';
 		static public const GET_TIMETOKEN:String = 'subscribe_get_timetoken';
 		static public const WITH_RETRY:String = 'subscribe_with_retry';
 		static public const LEAVE:String = 'leave';
 		
+		public var keepAlive:Boolean = true;
 		public var origin:String;
 		public var uid:String;
 		public var channel:String;
@@ -27,9 +30,9 @@ package com.pubnub.operation {
 		public var timetoken:*;
 		public var operation:String;
 		public var subscribeKey:String = ""; 
+		protected var _request:URLRequest;
 		
 		protected var _url:String;
-		//protected var _loader:URLLoader;
 		protected var _destroyed:Boolean;
 		
 		public function Operation() {
@@ -38,15 +41,7 @@ package com.pubnub.operation {
 		}
 		
 		protected function init():void {
-			
-		}
-		
-		protected function onLoaderError(e:PnURLLoaderEvent):void {
-			dispatchEvent(new OperationEvent(OperationEvent.FAULT,e.data ));
-		}
-		
-		protected function onLoaderComplete(e:Event):void {
-			
+			// abstract
 		}
 		
 		public function createURL(args:Object):void {
@@ -72,27 +67,35 @@ package com.pubnub.operation {
 				else
 					url = args.url + "&" + args.params;
 			}
-			this._url = url;
+			
+			
+			_url = url;
+			createRequest();
 		}
 		
-		
-		
-		
-		public function close():void {
+		protected function createRequest():void {
+			_request = new URLRequest(url);
+			_request.method = URLRequestMethod.GET;
+			//_request.header = new URLRequestHeader([ { name: "Connection", value: "Keep-Alive" } ]);
+			_request.header = new URLRequestHeader();
 		}
 		
-		public function destroy():void {
+		override public function destroy():void {
+			super.destroy();
 			if (_destroyed) return;
 			_destroyed = true;
-		}
-		
-		public function get destroyed():Boolean {
-			return _destroyed;
+			_request.destroy();
+			_request = null;
 		}
 		
 		public function get url():String {
 			return _url;
 		}
+		
+		public function get request():URLRequest {
+			return _request;
+		}
+		
 		
 		
 		public function onData(data:Object = null):void {

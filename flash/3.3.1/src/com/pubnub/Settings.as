@@ -31,6 +31,9 @@ package com.pubnub {
 		// time in millseconds to wait for web server to return a response. DO NOT CHANGE unless requested by support
 		public static const OPERATION_TIMEOUT:uint = 310000;
 		
+		// for wait a response, ms 
+		public static const SYNC_CHANNEL_TIMEOUT:uint = 5000;
+		
 
 	}
 }

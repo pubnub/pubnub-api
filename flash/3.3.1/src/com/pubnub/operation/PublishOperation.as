@@ -4,7 +4,6 @@ package com.pubnub.operation {
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
-	import com.pubnub.net.URLLoader;
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	import org.httpclient.HttpHeader;
@@ -52,6 +51,7 @@ package com.pubnub.operation {
 			
 			uid = PnUtils.getUID();
 			_url = origin + "/" + "publish" + "/" + publishKey + "/" + subscribeKey + "/" + signature + "/" + PnUtils.encode(channel) + "/" + 0 + "/" +PnUtils.encode(serializedMessage as String);
+			createRequest();
 		}
 		
 		private function packageToJSON(message:String):Object{
@@ -59,8 +59,6 @@ package com.pubnub.operation {
 		}
 		
 		override public function onData(data:Object = null):void {
-			//super.onData(data);
-			//trace(this, data);
 			try {
 				dispatchEvent(new OperationEvent(OperationEvent.RESULT, PnJSON.parse(String(data))));
 			}

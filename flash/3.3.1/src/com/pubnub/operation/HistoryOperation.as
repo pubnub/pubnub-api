@@ -2,7 +2,6 @@ package com.pubnub.operation {
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
-	import com.pubnub.net.URLLoader;
 	import flash.events.Event;
 	/**
 	 * ...
@@ -59,11 +58,11 @@ package com.pubnub.operation {
             return result;
         }
 		
-		override protected function onLoaderComplete(e:Event):void {
-			trace(this, 'onLoaderComplete');
-			var data:* = e.target.data;
+		override public function onData(data:Object = null):void {
+			//trace(this, 'onLoaderComplete');
+			//var data:* = e.target.data;
 			try {
-				var result:Object = PnJSON.parse(data);
+				var result:Object = PnJSON.parse(String(data));
 				var messages:Array = [];
 				var mess:Object;
 				if(result) {

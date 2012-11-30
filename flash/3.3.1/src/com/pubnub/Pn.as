@@ -1,7 +1,6 @@
 package com.pubnub {
 	
 	import com.pubnub.net.Connection;
-	import com.pubnub.net.URLLoader;
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
 	import flash.errors.*;
@@ -23,7 +22,9 @@ package com.pubnub {
 		
 		private var _initialized:Boolean = false;         
 		private var operations:Dictionary;
+		private var operations_vector:Vector.<Operation>
         private var subscribes:Dictionary;
+        private var factory:Dictionary;
 		private var _origin:String;
 		private var _ssl:Boolean;
 		private var _publishKey:String = "demo";
@@ -33,30 +34,23 @@ package com.pubnub {
 		private var startTimeToken:Number = 0;
         private var _sessionUUID:String = "";
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
-		
-		
-		private var keepAliveLoader:URLLoader;
-		private var loader:URLLoader;
-		
-		
-		pn_internal var initOperation:Operation;
-		//pn_internal var timeOperation:Operation;
-		//pn_internal var detailedHistoryOperation:Operation;
-		//pn_internal var publishOperation:Operation;
-		
+			
 		public function Pn() {
 			if (__instance) throw new IllegalOperationError('Use [Pn.instance] getter');
 			setup();
 		}
 		
 		private function setup():void {
-			
+			operations_vector = new Vector.<Operation>;
 			operations = new Dictionary();
-			initOperation = new Operation();
-			operations[INIT_OPERATION] = initOperation;
+			factory = new Dictionary();
+			factory[INIT_OPERATION] = createInitOperation; 
+			factory[PUBLISH_OPERATION] = createPublishOperation; 
 			operations[HISTORY_OPERATION] = new HistoryOperation();
 			operations[PUBLISH_OPERATION] = new PublishOperation();
 		}
+		
+		
 		
 		public static  function get instance():Pn {
 			__instance ||= new Pn();
@@ -85,10 +79,40 @@ package com.pubnub {
 			var url:String = _origin + "/" + "time" + "/" + 0;
 			
 			// Loads start time token
+			var operation:Operation = createOperation(	INIT_OPERATION, {
+														url:url, 
+														channel:"system", 
+														uid:INIT_OPERATION, 
+														sessionUUID : _sessionUUID })
+			Connection.sendSync(operation);
+		}
+		
+		
+		private function createOperation(type:String, args:Object):Operation {
+			var op:Operation = factory[type].call(null, args);
+			operations_vector.push(op);
+			return op;
+		}
+		
+		private function createInitOperation(args:Object = null):Operation{
+			var initOperation:Operation = new Operation();
 			initOperation.addEventListener(OperationEvent.RESULT, onInitComplete);
 			initOperation.addEventListener(OperationEvent.FAULT, onInitError);
-			initOperation.createURL( { url:url, channel:"system", uid:INIT_OPERATION, sessionUUID : _sessionUUID } );
-			Connection.load(initOperation);
+			initOperation.createURL(args);
+			return initOperation;
+		}
+		
+		private function createPublishOperation(args:Object = null):Operation{
+			var publish:PublishOperation = new PublishOperation();
+			publish.cipherKey = cipherKey;
+			publish.secretKey = secretKey;
+			publish.publishKey = _publishKey;
+			publish.subscribeKey = _subscribeKey;
+			publish.origin = _origin;	
+			publish.createURL(args);
+			publish.addEventListener(OperationEvent.RESULT, onPublishResult);
+			publish.addEventListener(OperationEvent.FAULT, onPublishFault);
+			return publish;
 		}
 		
 		private function initKeys(config:Object):void {
@@ -134,10 +158,20 @@ package com.pubnub {
 			startTimeToken = result[0];
 			_initialized = true;
 			dispatchEvent(new PnEvent(PnEvent.INIT, startTimeToken));
+			destroyOperation(event.target as Operation);
+		}
+		
+		private function destroyOperation(op:Operation):void {
+			op.destroy();
+			var ind:int = operations_vector.indexOf(op);
+			if (ind > -1) {
+				operations_vector.splice(ind, 1);
+			}
 		}
 		
 		private function onInitError(event:OperationEvent):void {
-			dispatchEvent(new PnEvent(PnEvent.INIT_ERROR, 'Init operation error'));
+			dispatchEvent(new PnEvent(PnEvent.INIT_ERROR, Errors.INIT_OPERATION_ERROR));
+			destroyOperation(event.target as Operation);
 		}
 		
 		public static function subscribe(channel:String):void{
@@ -271,12 +305,8 @@ package com.pubnub {
 		
 		public function publish(args:Object):void {
 			throwInit();
-			var publishOperation:Operation = getOperation(PUBLISH_OPERATION) as Operation;
-			publishOperation.addEventListener(OperationEvent.RESULT, onPublishResult);
-			publishOperation.addEventListener(OperationEvent.FAULT, onPublishFault);
-			publishOperation.createURL(args);
-			Connection.load(publishOperation);
-			//Connection.load(publishOperation);
+			var publishOperation:Operation = createOperation(PUBLISH_OPERATION, args)
+			Connection.sendSync(publishOperation);
 		}
 		
 		private function onPublishFault(e:OperationEvent):void {
@@ -286,7 +316,7 @@ package com.pubnub {
 		}
 		
 		private function onPublishResult(e:OperationEvent):void {
-			trace('onPublishResult')
+			//trace('onPublishResult');
 			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.DATA);
 			pnEvent.operation = getOperation(PUBLISH_OPERATION);
 			dispatchEvent(pnEvent);
@@ -347,12 +377,17 @@ package com.pubnub {
 		}
 		
 		public function dispose():void {
-			getOperation(HISTORY_OPERATION).close();
-			getOperation(INIT_OPERATION).close();
-			getOperation(PUBLISH_OPERATION).close();
+			//getOperation(HISTORY_OPERATION).close();
+			//getOperation(INIT_OPERATION).close();
+			//getOperation(PUBLISH_OPERATION).close();
 			for each(var s:Subscribe  in subscribes) {
 				s.dispose();
 			}
+			for each(var i:Operation  in operations) {
+				i.destroy();
+			}
+			
+			Connection.close();
 		}
 		
 		public function get sessionUUID():String {
