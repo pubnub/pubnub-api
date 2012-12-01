@@ -8,6 +8,8 @@ Open 3.3.0.1/PubNub-Messaging/PubNub-Console/PubNub-Messaging.csproj, the exampl
 Please ensure that in order to run on Mono the constant in the pubnub.cs file should be set to "true"
 OVERRIDE_TCP_KEEP_ALIVE = true;
 
+In the app.config both the projects the value of the key "initializeData" should be full path with rw access default value="/tmp/pubnub-messaging.log".
+
 Dev environment setup:
 - ubuntu 12.04
 - Mono Develop 2.8.6.3+dfsg-2 or higher 
