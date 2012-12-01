@@ -9,10 +9,9 @@ Please ensure that in order to run on Mono the constant in the pubnub.cs file sh
 OVERRIDE_TCP_KEEP_ALIVE = true;
 
 Dev environment setup:
-- MAC OS X 10.7.4 (Lion)
-- Mono Develop 3.0.3.2
-- Xcode 4.3.4
-- Mono 2.10.9 
+- ubuntu 12.04
+- Mono Develop 2.8.6.3+dfsg-2 or higher 
+- Mono 2.10.8.1 or higher 
 
 Report an issue, or email us at support if there are any additional questions or comments.
 
