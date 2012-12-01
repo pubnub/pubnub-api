@@ -69,6 +69,7 @@ public class Pubnub {
     private String parameters = "";
     private AsyncHttpClient ahc = null;
     private RequestBuilder rb = null;
+    private int API_TIMEOUT_MS = 310000;
     private int FAST_API_TIMEOUT_MS = 5000;
     private int DEFAULT_CONN_TIMEOUT_MS = 10000;
 
@@ -226,7 +227,7 @@ public class Pubnub {
             this.ORIGIN = "http://" + this.ORIGIN;
         }
         Builder cb = new AsyncHttpClientConfig.Builder();
-        cb.setRequestTimeoutInMs(310000);
+        cb.setRequestTimeoutInMs(API_TIMEOUT_MS);
         cb.setConnectionTimeoutInMs(DEFAULT_CONN_TIMEOUT_MS);
         ahc = new AsyncHttpClient(cb.build());
     }
