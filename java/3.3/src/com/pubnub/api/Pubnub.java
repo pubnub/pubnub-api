@@ -44,18 +44,18 @@ import com.ning.http.client.Response;
 
 
 class PubnubHttpRequest {
-	private Request request;
-	private String[] errorsMessages;
-	public PubnubHttpRequest(Request request, String[] errorsMessages){
-		this.errorsMessages = errorsMessages;
-		this.request = request;
-	}
-	public String[] errorMessages(){
-		return this.errorsMessages;
-	}
-	public Request request(){
-		return this.request;
-	}
+    private Request request;
+    private String[] errorsMessages;
+    public PubnubHttpRequest(Request request, String[] errorsMessages){
+        this.errorsMessages = errorsMessages;
+        this.request = request;
+    }
+    public String[] errorMessages(){
+        return this.errorsMessages;
+    }
+    public Request request(){
+        return this.request;
+    }
 }
 
 public class Pubnub {
@@ -73,11 +73,11 @@ public class Pubnub {
     private int FAST_API_TIMEOUT_MS = 5000;
     private int DEFAULT_CONN_TIMEOUT_MS = 10000;
 
-    private Request	getRequest(List<String> url_components) {
-    	return getRequest(url_components, 0);
+    private Request    getRequest(List<String> url_components) {
+        return getRequest(url_components, 0);
     }
-    	
-    private Request	getRequest(List<String> url_components, int requestTimeout) {
+        
+    private Request    getRequest(List<String> url_components, int requestTimeout) {
         StringBuilder url = new StringBuilder();
         Iterator<String> url_iterator = url_components.iterator();
         String request_for = url_components.get(0);
@@ -95,7 +95,7 @@ public class Pubnub {
 
         if (request_for.equals("v2") && request_type.equals("history"))
             url.append(parameters);
-    	
+        
         rb = new RequestBuilder("GET");
         
         rb.addHeader("V", "3.3");
@@ -104,9 +104,9 @@ public class Pubnub {
         rb.setUrl(url.toString());
         
         if (requestTimeout > 0) {
-           	PerRequestConfig prc = new PerRequestConfig();
-           	prc.setRequestTimeoutInMs(requestTimeout);
-           	rb.setPerRequestConfig(prc);
+               PerRequestConfig prc = new PerRequestConfig();
+               prc.setRequestTimeoutInMs(requestTimeout);
+               rb.setPerRequestConfig(prc);
          }
         return rb.build();
     }
@@ -456,7 +456,7 @@ public class Pubnub {
     private void _subscribe(HashMap<String, Object> args)
     throws PubnubException {
 
-    	String[] errorMessages = {"0", "0"}; 
+        String[] errorMessages = {"0", "0"}; 
         String channel = (String) args.get("channel");
         String timetoken = (String) args.get("timetoken");
         Callback callback;
@@ -641,7 +641,7 @@ public class Pubnub {
     }
 
     public JSONArray here_now(String channel) {
-    	return here_now(channel, FAST_API_TIMEOUT_MS);
+        return here_now(channel, FAST_API_TIMEOUT_MS);
     }
     /**
      * Here Now
@@ -653,7 +653,7 @@ public class Pubnub {
      * @return JSONObject of here_now
      */
     public JSONArray here_now(String channel, int requestTimeout) {
-    	String[] errorMessages = {};
+        String[] errorMessages = {};
         String[] urlargs = { "v2", "presence", "sub_key", this.SUBSCRIBE_KEY,
                 "channel", channel };
 
@@ -678,7 +678,7 @@ public class Pubnub {
     }
     
     public JSONArray history(String channel, int limit) {
-    	return history(channel, limit, FAST_API_TIMEOUT_MS);
+        return history(channel, limit, FAST_API_TIMEOUT_MS);
     }
 
     /**
@@ -712,7 +712,7 @@ public class Pubnub {
      */
     public JSONArray detailedHistory(String channel, long start, long end,
             int count, Boolean reverse, int requestTimeout) {
-    	String[] errorMessages = {"0", "Error: Failed JSONP HTTP Request" };
+        String[] errorMessages = {"0", "Error: Failed JSONP HTTP Request" };
         parameters = "";
         if (count == -1)
             count = 100;
@@ -735,7 +735,7 @@ public class Pubnub {
 
     public JSONArray detailedHistory(String channel, long start, long end,
             int count, Boolean reverse) {
-    	return detailedHistory(channel, start, end, count, reverse, FAST_API_TIMEOUT_MS);
+        return detailedHistory(channel, start, end, count, reverse, FAST_API_TIMEOUT_MS);
     }
     public JSONArray detailedHistory(String channel, long start, boolean reverse) {
         return detailedHistory(channel, start, -1, -1, reverse, FAST_API_TIMEOUT_MS);
@@ -884,7 +884,7 @@ public class Pubnub {
             // Response If Failed JSONP HTTP Request.
             JSONArray jsono = new JSONArray();
             for (String s: phr.errorMessages()) {
-            	jsono.put(s);
+                jsono.put(s);
             }
             return jsono;
         }
