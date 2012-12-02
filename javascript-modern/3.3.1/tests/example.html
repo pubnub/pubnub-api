@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head> 
+    <title>PubNub JavaScript CommonJS</title>
+    <link
+        rel=stylesheet
+        href=http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css
+    >
+</head>
+<body><div class=container>
+
+</div>
+<script src=../pubnub-3.3.1-common.js></script>
+<script src=../pubnub-3.3.1.js></script>
+<script>(function() {
+    // ----------------------------------------------
+    // INIT
+    // ----------------------------------------------
+    var channel = 'my_channel'
+    ,   pubnub  = PUBNUB({
+        publish_key   : 'demo',
+        subscribe_key : 'demo',
+        ssl           : false,
+        origin        : 'pubsub.pubnub.com'
+    });
+
+    // ----------------------------------------------
+    // Establish a Connection
+    // ----------------------------------------------
+    log('Opening a Connection.');
+    pubnub.subscribe({
+        channel  : channel,
+        connect  : ready,
+        callback : receive
+    });
+
+    // ----------------------------------------------
+    // Connection Is Open Now and Ready
+    // ----------------------------------------------
+    function ready() {
+        log('Connection Established.');
+        send('hello');
+    }
+
+    // ----------------------------------------------
+    // Received Message
+    // ----------------------------------------------
+    function receive(message) {
+        log('Received a Message.');
+        log(message);
+        log('Closing Connection');
+        pubnub.unsubscribe({ channel : channel });
+    }
+
+    // ----------------------------------------------
+    // Send a Message
+    // ----------------------------------------------
+    function send(message) {
+        log('Starting to Send a Message.');
+        pubnub.publish({
+            channel : channel,
+            message : message,
+            callback : send_complete
+        });
+    }
+
+    // ----------------------------------------------
+    // Send Request Finished with Status
+    // ----------------------------------------------
+    function send_complete(details) {
+        log('Message Sent Done.');
+        log(details);
+    }
+
+    // ----------------------------------------------
+    // Send Request Finished with Status
+    // ----------------------------------------------
+    function log(message) {
+        console.log(message);
+    }
+
+})();</script>
+</body>
+</html>

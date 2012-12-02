@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head> 
+    <title>PubNub JavaScript CommonJS</title>
+    <link
+        rel=stylesheet
+        href=http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css
+    >
+</head>
+<body><div class=container></div>
+<script>(function() {
+
+    var worker = new Worker("./webworker.js")
+
+    worker.onmessage = function(evt){
+        console.log(JSON.stringify(evt.data))
+    };
+
+})();</script>
+</body>
+</html>
