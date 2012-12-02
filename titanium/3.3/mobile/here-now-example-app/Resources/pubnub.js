@@ -254,9 +254,7 @@ function xdr_tcp(setup) {
  *     fail    : function() {}
  *  });
  */
-function xdr( setup ) {
-
-    if(setup.native_tcp_socket == true) return xdr_tcp(setup);
+function xdr_http_client( setup ) {
 
     var url = setup.url.join(URLBIT);
     if (setup.data) {
@@ -334,6 +332,7 @@ var DEMO          = 'demo'
     ,   ORIGIN        = 'http' + SSL + '://' +
                         (setup['origin'] || 'pubsub.pubnub.com')
     ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
+    ,   xdr           = setup['native_tcp_socket'] ? xdr_tcp : xdr_http_client
     ,   SELF          = {
         /*
             PUBNUB.history({
@@ -350,7 +349,7 @@ var DEMO          = 'demo'
             // Make sure we have a Channel
             if (!channel)  return log('Missing Channel');
             if (!callback) return log('Missing Callback');
-	  
+      
             // Send Message
             xdr({
                 url      : [
