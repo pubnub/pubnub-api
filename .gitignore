@@ -16,3 +16,7 @@ node_modules
 /j2me/3.3/nbproject
 /silverlight-part/*/Debug/*
 /silverlight-part/*/obj/*
+/csharp-windows-phone/*/packages/*
+/csharp-windows-phone/*/packages.config
+/csharp-windows-phone/*/*/bin/*
+/csharp-windows-phone/*/*/obj/*
