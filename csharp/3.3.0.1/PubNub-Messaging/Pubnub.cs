@@ -74,7 +74,7 @@ namespace PubNub_Messaging
         private List<object> _Time = new List<object>();
 
         // Pubnub Core API implementation
-        private string ORIGIN = "pizza.pubnub.com";
+        private string ORIGIN = "pubsub.pubnub.com";
         private string PUBLISH_KEY = "";
         private string SUBSCRIBE_KEY = "";
         private string SECRET_KEY = "";
@@ -526,7 +526,7 @@ namespace PubNub_Messaging
                     foreach (object element in enumerable)
                     {
                         string decryptMsg = aes.decrypt(element.ToString());
-                        object decodeMsg = JsonConvert.DeserializeObject<object>(decryptMsg);
+                        object decodeMsg = (decryptMsg == "**DECRYPT ERROR**") ? decryptMsg : JsonConvert.DeserializeObject<object>(decryptMsg);
                         receivedMsg.Add(decodeMsg);
                     }
                     returnMsg.Add(receivedMsg);
