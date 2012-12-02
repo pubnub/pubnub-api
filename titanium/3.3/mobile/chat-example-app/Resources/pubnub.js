@@ -170,6 +170,82 @@ function encode(path) {
 }
 
 /**
+ * Titanium TCP Sockets
+ * ====================
+ *  xdr({
+ *     url     : ['http://www.blah.com/url'],
+ *     success : function(response) {},
+ *     fail    : function() {}
+ *  });
+ */
+function xdr_tcp(setup) {
+ 
+    var url      = setup.url.join(URLBIT);
+    if (setup.data) {
+        var params = [];
+        url += "?";
+        for (key in setup.data) {
+            params.push(key+"="+setup.data[key]);
+        } 
+        url += params.join(PARAMSBIT);
+    }
+    log(url);
+    var body     = []
+    ,   data     = ""
+    ,   rbuffer  = Ti.createBuffer({ length : 2048 })
+    ,   wbuffer  = Ti.createBuffer({ value : "GET " + url + " HTTP/1.0\n\n"})
+    ,   failed   = 0
+    ,   fail     = function() {
+            if (failed) return;
+            failed = 1;
+            (setup.fail || function(){})();
+        }
+    ,   success  = setup.success || function(){}
+    ,   sock     = Ti.Network.Socket.createTCP({
+        host      : url.split(URLBIT)[2],
+        port      : 80,
+        mode      : Ti.Network.READ_WRITE_MODE,
+        timeout   : XHRTME,
+        error     : fail,
+        connected : function() {
+            sock.write(wbuffer);
+            read();
+        }
+    });
+
+    function read() {
+        Ti.Stream.read( sock, rbuffer, function(stream) { 
+            if (+stream.bytesProcessed > -1) {
+                data = Ti.Codec.decodeString({
+                    source : rbuffer,
+                    length : +stream.bytesProcessed
+                });
+
+                body.push(data);
+                rbuffer.clear();
+
+                return timeout( read, 1 );
+            }
+
+            try {
+                data = JSON['parse'](
+                    body.join('').split('\r\n').slice(-1)
+                );
+            }
+            catch (r) { 
+                return fail();
+            }
+
+            sock.close();
+            success(data);
+        } );
+    }
+ 
+    try      { sock.connect() }
+    catch(k) { return fail()  }
+}
+
+/**
  * Titanium XHR Request 
  * ==============================
  *  xdr({
@@ -179,6 +255,9 @@ function encode(path) {
  *  });
  */
 function xdr( setup ) {
+
+    if(setup.native_tcp_socket == true) return xdr_tcp(setup);
+
     var url = setup.url.join(URLBIT);
     if (setup.data) {
         var params = [];
