@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.security.Key;
 import java.security.MessageDigest;
@@ -69,15 +71,21 @@ public class Pubnub {
     private String parameters = "";
     private AsyncHttpClient ahc = null;
     private RequestBuilder rb = null;
-    private int API_TIMEOUT_MS = 310000;
+    private int PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC = 310;
+    private int PUBNUB_NETWORK_CHECK_RETRIES = 50;
+    private int PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC = 10;
+    
+    private int API_TIMEOUT_MS = PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000;
     private int FAST_API_TIMEOUT_MS = 5000;
     private int DEFAULT_CONN_TIMEOUT_MS = 10000;
+    private int PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_MS = 
+            PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC * 1000;
 
-    private Request    getRequest(List<String> url_components) {
+    private Request getRequest(List<String> url_components) {
         return getRequest(url_components, 0);
     }
         
-    private Request    getRequest(List<String> url_components, int requestTimeout) {
+    private Request getRequest(List<String> url_components, int requestTimeout) {
         StringBuilder url = new StringBuilder();
         Iterator<String> url_iterator = url_components.iterator();
         String request_for = url_components.get(0);
@@ -542,11 +550,12 @@ public class Pubnub {
                     }
                     // Ensure Connected (Call Time Function)
                     boolean is_reconnected = false;
-                    while (true) {
+                    int retries = 0;
+                    while (true && retries < PUBNUB_NETWORK_CHECK_RETRIES) {
                         double time_token = this.time();
+                        retries++;
                         if (time_token == 0.0) {
-
-                            Thread.sleep(5000);
+                            Thread.sleep(PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_MS);
                         } else {
                             // Reconnect Callback
                             callback.reconnectCallback(channel);
@@ -557,6 +566,13 @@ public class Pubnub {
                     }
                     if (is_reconnected) {
                         continue;
+                    } else {
+                        HashMap<String, Object> args1 = new HashMap<String, Object>(1);
+                        args.put("channel", channel);
+                        this.unsubscribe(args1);
+                        callback.errorCallback(channel,
+                                " Unsubscribed after " + String.valueOf(PUBNUB_NETWORK_CHECK_RETRIES) + "failed retries");
+                        return;
                     }
                 } else {
                     ChannelStatus it = null;
@@ -879,8 +895,14 @@ public class Pubnub {
             });
             json = f.get();
 
-        } catch (Exception e) {
-
+        }
+        catch (ConnectException e) {
+            return new JSONArray().put("0").put("0").put("Network Connect Error");
+        }
+        catch (SocketTimeoutException e) {
+            return new JSONArray().put("0").put("1").put("Network Connect Error");
+        }
+        catch (Exception e) {
             // Response If Failed JSONP HTTP Request.
             JSONArray jsono = new JSONArray();
             for (String s: phr.errorMessages()) {
