@@ -1,8 +1,7 @@
-
 ##### YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 ##### http://www.pubnub.com/account
 
-## PubNub 3.3 Real-time Cloud Push API - JAVA
+## PubNub 3.3 Real-time Cloud Push API - GWT
 
 www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/tutorial/java-push-api
@@ -10,6 +9,7 @@ http://www.pubnub.com/tutorial/java-push-api
 Please reference the unit-tests and examples for usage on basic functionality, 
 including presence(), here_now(), and detailedHistory().
 
-JDK 1.7 required to run the precompiled tests and examples in 3.3/test. Example usage:
+To run the example app, copy the pubnubexample.war in gwt/3.3/examples/PubnubExample/ to the webapps dir of tomcat,
+and restart tomcat. Then visit <tomcat url>:<port>/pubnubexample/PubnubExample.html
 
-/opt/jdk1.7.0_04/bin/java -jar PubnubUnitTest.jar
+You can find a running demo of the example app running here: http://geremy.pubnub.com:8080/pubnubexample/PubnubExample.html
