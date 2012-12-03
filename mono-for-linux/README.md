@@ -1,5 +1,7 @@
 # PubNub 3.3.0.1 Web Data Push Cloud-Hosted API - C# Mono 2.10.9 
-##PubNub C Sharp Usage
+##PubNub C Sharp (Mono for Linux) Usage
+
+For a video walkthrough, check out https://vimeo.com/54805917 !
 
 Open 3.3.0.1/PubNub-Messaging/PubNub-Console/PubNub-Messaging.csproj, the example Pubnub_Example.cs should demonstrate all functionality, asyncronously using delegates. The main functionality lies in the pubnub.cs file.
 
