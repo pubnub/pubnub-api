@@ -63,6 +63,12 @@ package com.pubnub.net {
 			instance.sendSyncOperation(operation);
 		}
 		
+		private function sendSyncOperation(operation:Operation):void {
+			//trace('sendSyncOperation : ' + operation.url);
+			syncOperations.push(operation);
+			syncLoader.load(operation.request);
+		}
+		
 		public static function removeSyncOperations(vector:Vector.<Operation>):void {
 			if (vector && vector.length) {
 				var temp:Vector.<Operation> = new Vector.<Operation>;
@@ -82,11 +88,7 @@ package com.pubnub.net {
 			}
 		}
 		
-		private function sendSyncOperation(operation:Operation):void {
-			//trace('sendSyncOperation : ' + operation.url);
-			syncOperations.push(operation);
-			syncLoader.load(operation.request);
-		}
+		
 		
 		private function onSyncLoaderComplete(e:URLLoaderEvent):void {
 			var response:URLResponse = e.data as URLResponse;
@@ -94,8 +96,7 @@ package com.pubnub.net {
 			//trace('onSyncLoaderComplete : ' + op, syncOperations.length, response.body);
 			if (op) {
 				op.onData(response.body);
-			}
-			
+			}	
 		}
 		
 		private function popSyncOperation(request:URLRequest):Operation {
@@ -113,9 +114,11 @@ package com.pubnub.net {
 		
 		private function onSyncLoaderError(e:URLLoaderEvent):void {
 			var response:URLResponse = e.data as URLResponse;
-			var op:Operation = popSyncOperation(e.data.request);
-			if (op) {
-				op.onError(response.body);
+			if (response) {
+				var op:Operation = popSyncOperation(e.data.request);
+				if (op) {
+					op.onError(response.body);
+				}
 			}
 		}
 		

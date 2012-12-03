@@ -14,13 +14,14 @@
 		 * define public vars for custom connection.
 		 * */
 			import com.pubnub.*;
-			import com.pubnub.json.PnJSON;
+			import com.pubnub.json.*;
+			import com.pubnub.operation.*;
 			import flash.events.*;
 			import flash.external.*;
-			import flash.utils.getTimer;
+			import flash.utils.*;
 			import mx.binding.utils.*;
 			import mx.events.*;
-			import utils.Perfomance;
+			import utils.*;
 			
         [Bindable]
         public var channel:String = 'my_channel';
@@ -54,12 +55,6 @@
 			perfomance = new Perfomance(perfomanceTestView.getChildAt(0));
 			perfomance.ssl = ssl;
 			BindingUtils.bindSetter(updateOrigin, this, "origin");
-			
-			//trace('channel' +  PnUtils.encode(channel));
-			//trace('publishMessageText' +  PnJSON.stringify(publishMessageText));
-			//trace('hey' +  PnJSON.parse('{"text":"hey"}'));
-			//var o:Object = PnJSON.parse('{\"text\":\"hey\"}');
-			//trace('hey' +  o);
 		}
 			
         protected function onInitBtnClick(event:MouseEvent):void{
@@ -176,7 +171,7 @@
         }
 
         private function onPublish(e:PnEvent):void {
-			trace('onPublish : ' + e.status)
+			//trace('onPublish : ' + e.status)
 			//if (perfomance.isRun) return;
 			trace('publish time : ' + (getTimer() - startPublishTime));
             switch (e.status) {

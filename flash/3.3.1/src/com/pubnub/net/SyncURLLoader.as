@@ -39,15 +39,8 @@ package com.pubnub.net {
 		
 		override protected function onConnect(e:Event):void {
 			//trace('onConnect');
-			connectionPending = false;
 			request = queue.pop();
 			sendRequest(request);
-		}
-		
-		override protected function onClose(e:Event):void {
-			trace('onClose');
-			super.onClose(e);
-			connect();
 		}
 		
 		override protected function sendRequest(request:URLRequest):void {

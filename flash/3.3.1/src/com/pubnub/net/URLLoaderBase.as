@@ -26,7 +26,6 @@ package com.pubnub.net {
 		protected var _response:URLResponse;
 		protected var answer:ByteArray = new ByteArray();
 		protected var temp:ByteArray = new ByteArray();
-		protected var connectionPending:Boolean;
 		
 		protected var _destroyed:Boolean;
 		
@@ -107,25 +106,23 @@ package com.pubnub.net {
 		
 		protected function onClose(e:Event):void {
 			// abstract
-			trace('onClose');
+			//trace('onClose');
 		}
 		
 		protected function onConnect(e:Event):void {
 			//trace('onConnect');
-			connectionPending = false;
 			sendRequest(request);
 		}
 		
 		public function get ready():Boolean { return socket && socket.connected ; }
 		
 		public function close():void {
-			//trace('CLOSE');
+			trace('CLOSE');
 			if (socket.connected) {
 				socket.close();
 			}
 			destroyResponce();
 			request = null;
-			connectionPending = false;
 		}
 		
 		public function load(request:URLRequest):void {
@@ -185,9 +182,6 @@ package com.pubnub.net {
 		}
 		
 		protected function connect():void {
-			//trace('connect');
-			if (connectionPending) return;
-			connectionPending = true;
 			socket.connect(uri.authority, DEFAULT_HTTP_PORT);
 		}
 		

@@ -1,11 +1,11 @@
 package com.pubnub {
 	
-	import com.pubnub.net.Connection;
+	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
 	import flash.errors.*;
 	import flash.events.*;
-	import flash.utils.*;	
+	import flash.utils.*;
 	use namespace pn_internal;
 	
 	[Event(name="initError", type="com.pubnub.PnEvent")]
@@ -15,14 +15,13 @@ package com.pubnub {
 		
 		
 		static private var __instance:Pn;
-		static private const INIT_OPERATION:String = 'init';
-		static private const HISTORY_OPERATION:String = 'history';
-		static private const PUBLISH_OPERATION:String = 'publish';
-		static private const TIME_OPERATION:String = 'time';
+		static public const INIT_OPERATION:String = 'init';
+		static public const HISTORY_OPERATION:String = 'history';
+		static public const PUBLISH_OPERATION:String = 'publish';
+		static public const TIME_OPERATION:String = 'time';
 		
 		private var _initialized:Boolean = false;         
-		private var operations:Dictionary;
-		private var operations_vector:Vector.<Operation>
+		private var operations:Vector.<Operation>
         private var subscribes:Dictionary;
         private var factory:Dictionary;
 		private var _origin:String;
@@ -41,16 +40,13 @@ package com.pubnub {
 		}
 		
 		private function setup():void {
-			operations_vector = new Vector.<Operation>;
-			operations = new Dictionary();
+			operations = new Vector.<Operation>;
 			factory = new Dictionary();
-			factory[INIT_OPERATION] = createInitOperation; 
-			factory[PUBLISH_OPERATION] = createPublishOperation; 
-			operations[HISTORY_OPERATION] = new HistoryOperation();
-			operations[PUBLISH_OPERATION] = new PublishOperation();
+			factory[INIT_OPERATION] = 		createInitOperation; 
+			factory[PUBLISH_OPERATION] = 	createPublishOperation; 
+			factory[HISTORY_OPERATION] = 	createDetailedHistoryOperation; 
+			factory[TIME_OPERATION] = 		createTimeOperation; 
 		}
-		
-		
 		
 		public static  function get instance():Pn {
 			__instance ||= new Pn();
@@ -61,10 +57,7 @@ package com.pubnub {
 			instance.init(config);
 		}
 		
-		/**
-		 * origin = https:// or http://
-		 * @param config
-		 */
+		/*------------------- INIT --------------------------------*/
 		public function init(config:Object):void {
 			//trace(this, 'init')
 			if (_initialized) {
@@ -76,81 +69,21 @@ package com.pubnub {
 			
 			initKeys(config);
             _sessionUUID = PnUtils.getUID();
-			var url:String = _origin + "/" + "time" + "/" + 0;
 			
 			// Loads start time token
-			var operation:Operation = createOperation(	INIT_OPERATION, {
-														url:url, 
-														channel:"system", 
-														uid:INIT_OPERATION, 
-														sessionUUID : _sessionUUID })
+			var operation:Operation = createOperation(INIT_OPERATION)
 			Connection.sendSync(operation);
 		}
 		
 		
-		private function createOperation(type:String, args:Object):Operation {
-			var op:Operation = factory[type].call(null, args);
-			operations_vector.push(op);
-			return op;
-		}
-		
 		private function createInitOperation(args:Object = null):Operation{
-			var initOperation:Operation = new Operation();
-			initOperation.addEventListener(OperationEvent.RESULT, onInitComplete);
-			initOperation.addEventListener(OperationEvent.FAULT, onInitError);
-			initOperation.createURL(args);
-			return initOperation;
-		}
-		
-		private function createPublishOperation(args:Object = null):Operation{
-			var publish:PublishOperation = new PublishOperation();
-			publish.cipherKey = cipherKey;
-			publish.secretKey = secretKey;
-			publish.publishKey = _publishKey;
-			publish.subscribeKey = _subscribeKey;
-			publish.origin = _origin;	
-			publish.createURL(args);
-			publish.addEventListener(OperationEvent.RESULT, onPublishResult);
-			publish.addEventListener(OperationEvent.FAULT, onPublishFault);
-			return publish;
-		}
-		
-		private function initKeys(config:Object):void {
-			_ssl = config.ssl;
-			origin = config.origin;
-			if(config.publish_key){
-				_publishKey = config.publish_key;
-			}
-			
-			if(config.sub_key){
-				_subscribeKey = config.sub_key;
-			}
-			
-			if(config.secret_key){
-				secretKey = config.secret_key;
-			}
-			
-			if(config.cipher_key){
-				cipherKey = config.cipher_key;
-			}
-		}
-		
-		public function getOperation(type:String):Operation {
-			var result:Operation = operations[type] || new Operation();
-			operations[type] = result;
-			if (type == HISTORY_OPERATION) {
-				var history:HistoryOperation = result as HistoryOperation;
-				history.cipherKey = cipherKey;
-				history.origin = _origin;	
-			}else if (type == PUBLISH_OPERATION) {
-				var publish:PublishOperation = result as PublishOperation;
-				publish.cipherKey = cipherKey;
-				publish.secretKey = secretKey;
-				publish.publishKey = _publishKey;
-				publish.subscribeKey = _subscribeKey;
-				publish.origin = _origin;	
-			}
-			return result;
+			var init:InitOperation = new InitOperation();/*initOperation.uid = INIT_OPERATION;*/
+			init.sessionUUID = _sessionUUID;
+			init.origin = _origin;
+			init.addEventListener(OperationEvent.RESULT, onInitComplete);
+			init.addEventListener(OperationEvent.FAULT, onInitError);
+			init.createURL(null);
+			return init;
 		}
 		
 		private function onInitComplete(event:OperationEvent):void {
@@ -161,19 +94,13 @@ package com.pubnub {
 			destroyOperation(event.target as Operation);
 		}
 		
-		private function destroyOperation(op:Operation):void {
-			op.destroy();
-			var ind:int = operations_vector.indexOf(op);
-			if (ind > -1) {
-				operations_vector.splice(ind, 1);
-			}
-		}
-		
 		private function onInitError(event:OperationEvent):void {
 			dispatchEvent(new PnEvent(PnEvent.INIT_ERROR, Errors.INIT_OPERATION_ERROR));
 			destroyOperation(event.target as Operation);
 		}
 		
+		
+		/*---------------SUBSCRIBE---------------*/
 		public static function subscribe(channel:String):void{
 			instance.subscribe(channel);
 		}
@@ -183,7 +110,7 @@ package com.pubnub {
 			var subscribe:Subscribe = getSubscribe(channel);
 			if (subscribe.connected) {
 				dispatchEvent(new PnEvent(	PnEvent.SUBSCRIBE, { 
-											result: [ -1, 'AlreadyConnected'] },
+											result: [ -1, Errors.ALREADY_CONNECTED] },
 											channel, 
 											OperationStatus.ERROR ));
 				return;
@@ -194,20 +121,10 @@ package com.pubnub {
 			subscribe.sessionUUID = sessionUUID;
 			subscribe.cipherKey = cipherKey;
 			subscribe.subscribe(channel);
-			subscribe.addEventListener(SubscribeEvent.CONNECT, onSubscribe);
-			subscribe.addEventListener(SubscribeEvent.DATA, onSubscribe);
-			subscribe.addEventListener(SubscribeEvent.DISCONNECT, onSubscribe);
-			subscribe.addEventListener(SubscribeEvent.ERROR, onSubscribe);
-		}
-		
-		private function throwInit():void {
-			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet"); 
-		}
-		
-		pn_internal function getSubscribe(name:String):Subscribe {
-			var result:Subscribe = subscribes[name] || new Subscribe();
-			subscribes[name] = result;
-			return result;
+			subscribe.addEventListener(SubscribeEvent.CONNECT, 		onSubscribe);
+			subscribe.addEventListener(SubscribeEvent.DATA, 		onSubscribe);
+			subscribe.addEventListener(SubscribeEvent.DISCONNECT, 	onSubscribe);
+			subscribe.addEventListener(SubscribeEvent.ERROR, 		onSubscribe);
 		}
 		
 		private function onSubscribe(e:SubscribeEvent):void {
@@ -231,19 +148,11 @@ package com.pubnub {
 			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, subscribe.channelName, status));
 		}
 		
-		
-		/**
-		 * UnSubscription Wrapper
-		 * @param  channel
-		 */
+		/*---------------UNSUBSCRIBE---------------*/
 		public static function unsubscribe(channel:String):void {             
 			instance.unsubscribe(channel);
 		}
 
-		/**
-		 * UnSubscribes to a channel
-		 * @param channel
-		 */
 		public function unsubscribe(channel:String):void {
 			throwInit(); 
 			if (hasChannel(channel)) {
@@ -252,6 +161,15 @@ package com.pubnub {
 			}else {
 				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, [-1, 'Channel not found'], channel, OperationStatus.ERROR));
 			}
+			removeSubscribeEvents(subscribe);
+		}
+		
+		private function removeSubscribeEvents(subscribe:Subscribe):void {
+			if (!subscribe) return;
+			subscribe.removeEventListener(SubscribeEvent.CONNECT, onSubscribe);
+			subscribe.removeEventListener(SubscribeEvent.DATA, onSubscribe);
+			subscribe.removeEventListener(SubscribeEvent.DISCONNECT, onSubscribe);
+			subscribe.removeEventListener(SubscribeEvent.ERROR, onSubscribe);
 		}
 		
 		private function hasChannel(name:String):Boolean {
@@ -266,9 +184,11 @@ package com.pubnub {
 			throwInit();
 			for each(var i:Subscribe  in subscribes) {
 				unsubscribe(i.channelName);
+				delete subscribes[i.channelName];
 			}
 		}
 		
+		/*---------------DETAILED HISTORY---------------*/
 		public function detailedHistory(args:Object):void {
 			throwInit();
 			var channel:String = args.channel;
@@ -280,25 +200,36 @@ package com.pubnub {
 				dispatchEvent(new PnEvent(PnEvent.DETAILED_HISTORY, [ -1, 'Channel and subKey are missing'], channel, OperationStatus.ERROR));
 				return;
 			}
-			
-			var history:HistoryOperation = getOperation(HISTORY_OPERATION) as HistoryOperation;
-			history.addEventListener(OperationEvent.RESULT, onHistoryResult);
-			history.addEventListener(OperationEvent.FAULT, onHistoryFault);
-			history.createURL(args);
+			//trace('DH');
+			var operation:Operation = createOperation(HISTORY_OPERATION, args);
+			Connection.sendSync(operation);
 		}
 		
 		private function onHistoryResult(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.DATA);
-			pnEvent.operation = getOperation(HISTORY_OPERATION);
+			pnEvent.operation = e.target as Operation;
 			dispatchEvent(pnEvent);
+			destroyOperation(e.target as Operation)
 		}
 		
 		private function onHistoryFault(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.ERROR);
-			pnEvent.operation = getOperation(HISTORY_OPERATION);
+			pnEvent.operation = e.target as Operation;
 			dispatchEvent(pnEvent);
+			destroyOperation(e.target as Operation);
 		}
 		
+		private function createDetailedHistoryOperation(args:Object = null):Operation{
+			var history:HistoryOperation = new HistoryOperation();
+			history.cipherKey = cipherKey;
+			history.origin = _origin;	
+			history.createURL(args);
+			history.addEventListener(OperationEvent.RESULT, onHistoryResult);
+			history.addEventListener(OperationEvent.FAULT, onHistoryFault);
+			return history;
+		}
+		
+		/*---------------PUBLISH---------------*/
 		public static function publish(args:Object):void {
 			instance.publish(args);
 		}
@@ -311,56 +242,115 @@ package com.pubnub {
 		
 		private function onPublishFault(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.ERROR);
-			pnEvent.operation = getOperation(PUBLISH_OPERATION);
+			pnEvent.operation = e.target as Operation;
 			dispatchEvent(pnEvent);
+			destroyOperation(e.target as Operation);
 		}
 		
 		private function onPublishResult(e:OperationEvent):void {
-			//trace('onPublishResult');
 			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.DATA);
-			pnEvent.operation = getOperation(PUBLISH_OPERATION);
+			pnEvent.operation = e.target as Operation;
 			dispatchEvent(pnEvent);
+			destroyOperation(e.target as Operation);
 		}
 		
+		private function createPublishOperation(args:Object = null):Operation{
+			var publish:PublishOperation = new PublishOperation();
+			publish.cipherKey = cipherKey;
+			publish.secretKey = secretKey;
+			publish.publishKey = _publishKey;
+			publish.subscribeKey = _subscribeKey;
+			publish.origin = _origin;	
+			publish.createURL(args);
+			publish.addEventListener(OperationEvent.RESULT, onPublishResult);
+			publish.addEventListener(OperationEvent.FAULT, onPublishFault);
+			return publish;
+		}
+		
+		
+		/*---------------TIME---------------*/
 		public static function time():void {
 			instance.time();
 		}
 		
 		public function time():void {
 			throwInit();
-			var operation:Operation = getOperation(TIME_OPERATION);
+			var operation:Operation = createOperation(TIME_OPERATION);
 			operation.addEventListener(OperationEvent.RESULT, onTimeResult);
 			operation.addEventListener(OperationEvent.FAULT, onTimeFault);
-			operation.createURL( {
-				url: _origin + "/time/0"
-			});
+			Connection.sendSync(operation);
 		}
 		
 		private function onTimeFault(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.TIME, e.data, null, OperationStatus.ERROR);
 			dispatchEvent(pnEvent);
+			destroyOperation(e.target as Operation);
 		}
 		
 		private function onTimeResult(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.TIME, e.data, null, OperationStatus.DATA);
 			dispatchEvent(pnEvent);
+			destroyOperation(e.target as Operation);
 		}
+		
+		
+		private function createTimeOperation(args:Object = null):Operation{
+			var time:Operation = new Operation();
+			time.addEventListener(OperationEvent.RESULT, onTimeResult);
+			time.addEventListener(OperationEvent.FAULT, onTimeFault);
+			time.createURL({url: _origin + "/time/0"});
+			return time;
+		}
+		
+		
+		private function createOperation(type:String, args:Object = null):Operation {
+			var op:Operation = factory[type].call(null, args);
+			operations.push(op);
+			return op;
+		}
+		
+		
+		private function initKeys(config:Object):void {
+			_ssl = config.ssl;
+			origin = config.origin;
+			if(config.publish_key){
+				_publishKey = config.publish_key;
+			}
+			
+			if(config.sub_key){
+				_subscribeKey = config.sub_key;
+			}
+			
+			if(config.secret_key){
+				secretKey = config.secret_key;
+			}
+			
+			if(config.cipher_key){
+				cipherKey = config.cipher_key;
+			}
+		}
+		
+		private function destroyOperation(op:Operation):void {
+			op.destroy();
+			var ind:int = operations.indexOf(op);
+			if (ind > -1) {
+				operations.splice(ind, 1);
+			}
+		}
+		
+		private function throwInit():void {
+			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet"); 
+		}
+		
+		pn_internal function getSubscribe(name:String):Subscribe {
+			var result:Subscribe = subscribes[name] || new Subscribe();
+			subscribes[name] = result;
+			return result;
+		}
+		
 		
 		public function destroy():void {
 			dispose();
-			
-			// destroy all operations
-			var operation:Operation = getOperation(HISTORY_OPERATION);
-			operation.removeEventListener(OperationEvent.RESULT, onHistoryResult);
-			operation.removeEventListener(OperationEvent.FAULT, onHistoryFault);
-			
-			operation = getOperation(INIT_OPERATION);
-			operation.removeEventListener(OperationEvent.RESULT, onInitComplete);
-			operation.removeEventListener(OperationEvent.FAULT, onInitError);
-			
-			operation = getOperation(PUBLISH_OPERATION);
-			operation.removeEventListener(OperationEvent.RESULT, onPublishResult);
-			operation.removeEventListener(OperationEvent.FAULT, onPublishFault);
 			
 			for each(var o:Operation in operations) {
 				o.destroy();
@@ -368,6 +358,7 @@ package com.pubnub {
 			
 			for each(var s:Subscribe  in subscribes) {
 				s.destroy();
+				removeSubscribeEvents(s);
 			}
 			
 			operations = null;
@@ -377,16 +368,10 @@ package com.pubnub {
 		}
 		
 		public function dispose():void {
-			//getOperation(HISTORY_OPERATION).close();
-			//getOperation(INIT_OPERATION).close();
-			//getOperation(PUBLISH_OPERATION).close();
-			for each(var s:Subscribe  in subscribes) {
-				s.dispose();
-			}
-			for each(var i:Operation  in operations) {
-				i.destroy();
-			}
-			
+			for each(var s:Subscribe  in subscribes) { s.dispose(); };
+			subscribes = new Dictionary();
+			for each(var i:Operation  in operations) { i.destroy(); };
+			operations.length = 0;
 			Connection.close();
 		}
 		
@@ -414,13 +399,15 @@ package com.pubnub {
 			_origin = value;
 			if (value == null || value.length == 0) throw('Origin value must be defined');
 			if(_ssl){
-				_origin = "https://" + value;
+				//_origin = "https://" + value;
+				_origin = "http://" + value;
 			}
 			else {
 				_origin = "http://" + value;
 			}
-			for (var name:String in operations) {
-				Operation(operations[name]).origin = _origin;
+			
+			for each(var op:Operation  in operations) {
+				op.origin = _origin;
 			}
 		}
 		

@@ -16,13 +16,14 @@ package com.pubnub.operation {
 			super();
 		}
 		
-		override public function createURL(args:Object):void {
+		override public function createURL(args:Object = null):void {
 			channel = args.channel;
 			sub_key = args['sub-key'];
 			_url = origin + "/v2/history/sub-key/" + sub_key + "/channel/" + PnUtils.encode(args.channel); 
 			if (args.start || args.end || args.reverse || args.count) {
 				_url += extractOptionalParams(args);
             }
+			createRequest();
 		}
 		
 		private function extractOptionalParams(args:Object):String {
@@ -59,7 +60,7 @@ package com.pubnub.operation {
         }
 		
 		override public function onData(data:Object = null):void {
-			//trace(this, 'onLoaderComplete');
+			trace(this, 'onLoaderComplete');
 			//var data:* = e.target.data;
 			try {
 				var result:Object = PnJSON.parse(String(data));

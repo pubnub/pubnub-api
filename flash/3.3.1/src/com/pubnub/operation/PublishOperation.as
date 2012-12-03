@@ -26,7 +26,7 @@ package com.pubnub.operation {
 		
 		//private var expLoader:ExperimentURLLoader;
 		
-		override public function createURL(args:Object):void {
+		override public function createURL(args:Object = null):void {
 			//var temp:Number = getTimer();
 			channel = args.channel;
 			var message:String = args.message;

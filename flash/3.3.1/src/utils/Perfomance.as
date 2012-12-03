@@ -2,6 +2,7 @@ package utils {
 	import com.greensock.*;
 	import com.greensock.easing.*;
 	import com.pubnub.*;
+	import com.pubnub.operation.*;
 	import flash.display.*;
 	import flash.events.*;
 	import flash.text.*;

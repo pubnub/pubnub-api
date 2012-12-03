@@ -44,7 +44,7 @@ package com.pubnub.operation {
 			// abstract
 		}
 		
-		public function createURL(args:Object):void {
+		public function createURL(args:Object = null):void {
 			//trace(this, 'send');
 			var url:String = args.url;
 			uid = args.uid;
