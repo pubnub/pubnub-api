@@ -1,7 +1,7 @@
 (function(){
 
     var p       = PUBNUB.init({ publish_key: 'demo', subscribe_key : 'demo' })
-    ,   channel = 'my_channel';
+    ,   channel = 'my_directors_channel';
 
     p.bind( 'mousedown,touchstart', p.$('buttons'), function(e) {
         var target = e.target || e.srcElement;
