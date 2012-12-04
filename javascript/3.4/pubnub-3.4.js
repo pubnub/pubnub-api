@@ -97,7 +97,7 @@ var db = (function(){
  * var next_origin = nextorigin();
  */
 var nextorigin = (function() {
-    var max = 100
+    var max = 20
     ,   ori = Math.floor(Math.random() * max);
     return function(origin) {
         return origin.indexOf('pubsub') > 0
@@ -109,7 +109,7 @@ var nextorigin = (function() {
 
 /**
  * UPDATER
- * ======
+ * =======
  * var timestamp = unique();
  */
 function updater( fun, rate ) {
@@ -502,6 +502,7 @@ var PDIV          = $('pubnub') || {}
 ,   CREATE_PUBNUB = function(setup) {
     var CHANNELS      = {}
     ,   SUB_RECEIVER  = null
+    ,   SUB_BUFF_WAIT = 0
     ,   TIMETOKEN     = 0
     ,   DISCONNECTED  = 0
     ,   CONNECTED     = 0
@@ -663,8 +664,7 @@ var PDIV          = $('pubnub') || {}
             ,   reconnect     = args['reconnect']     || function(){}
             ,   disconnect    = args['disconnect']    || function(){}
             ,   presence      = args['presence']      || function(){}
-            ,   restore       = args['restore']
-            ,   origin        = nextorigin(ORIGIN);
+            ,   restore       = args['restore'];
 
             // Reduce Status Flicker
             if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
@@ -697,7 +697,7 @@ var PDIV          = $('pubnub') || {}
 
             // Evented Subscribe
             function _connect() {
-                var origin   = nextorigin(ORIGIN);
+                var origin   = nextorigin(ORIGIN)
                 ,   jsonp    = jsonp_cb()
                 ,   channels = generate_channel_list(CHANNELS);
 
@@ -710,12 +710,9 @@ var PDIV          = $('pubnub') || {}
                     callback : jsonp,
                     data     : { uuid: UUID },
                     url      : [
-                        origin,
-                        'subscribe',
-                        subscribe_key,
-                        encode(),
-                        jsonp,
-                        TIMETOKEN
+                        origin, 'subscribe',
+                        subscribe_key, encode(channels),
+                        jsonp, TIMETOKEN
                     ],
                     fail : function() {
                         // Disconnect
@@ -795,15 +792,13 @@ var PDIV          = $('pubnub') || {}
                 if (jsonp != '0') data['callback'] = jsonp;
 
                 xdr({
-                    blocking : 1,
+                    blocking : !args['noleave'],
                     timeout  : 2000,
                     callback : jsonp,
                     data     : data,
                     url      : [
-                        origin, 'v2', 'presence',
-                        'sub_key', SUBSCRIBE_KEY, 
-                        'channel', encode(channel),
-                        'leave'
+                        origin, 'v2', 'presence', 'sub_key',
+                        SUBSCRIBE_KEY, 'channel', encode(channel), 'leave'
                     ]
                 });
 
@@ -816,18 +811,39 @@ var PDIV          = $('pubnub') || {}
             bind( 'beforeunload', window, leave );
 
             // Presence Subscribe
-            if (args['presence']) SELF.subscribe({
-                channel    : args['channel'] + PRESENCE_SUFFIX,
-                callback   : presence,
-                restore    : args['restore'],
-                disconnect : leave
-            });
+            if (args['presence']) {
+
+                // Subscribe Presence Channel
+                SELF.subscribe({
+                    channel  : args['channel'] + PRESENCE_SUFFIX,
+                    restore  : args['restore'],
+                    callback : args['presence']
+                });
+
+                // See Who's Here Now
+                SELF['here_now']({
+                    channel  : args['channel'],
+                    callback : function(here) {
+                        each( 'uuids' in here ? here['uuids'] : [],
+                        function(uuid) {
+                            args['presence']({
+                                action    : 'join',
+                                uuid      : uuid,
+                                timestamp : rnow(),
+                                occupancy : here['occupancy'] || 1
+                            });
+                        } );
+                    }
+                });
+
+            }
 
             // Close Previous Subscribe Connection
             SUB_RECEIVER && SUB_RECEIVER();
 
             // Begin Recursive Subscribe
-            (CONNECT = _connect)();
+            clearTimeout(SUB_BUFF_WAIT);
+            SUB_BUFF_WAIT = timeout( CONNECT = _connect, 100 );
         },
 
         'here_now' : function( args, callback ) {
