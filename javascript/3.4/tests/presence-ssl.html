@@ -1,0 +1,60 @@
+<!doctype>
+<html>
+<head>
+    <!-- Hey, let's be friends! twitter.com/pubnub -->
+    <title>PubNub Presence SSL Test</title>
+    <meta http-equiv=content-type content=text/html;charset=utf-8>
+
+    <style type=text/css>
+        #instructions { font-size: 50px; }
+        #disconnect   { font-size: 50px; cursor: pointer; }
+    </style>
+
+</head>
+<body>
+
+<div id=instructions>
+    Open the
+    <a target=console
+    href=http://www.pubnub.com/console?channel=my_channel&origin=pubsub.pubnub.com>Developers Console</a>
+    and watch the presence events section to ensure join/leave.
+</div>
+
+<button id=disconnect>Leave</button>
+
+<!-- PUBNUB AT BOTTOM -->
+<div id=pubnub ssl=on origin=pubsub.pubnub.com></div>
+<script src=../pubnub-3.4.js></script>
+<script>(function(){
+
+    var p = PUBNUB.init({
+        publish_key   : "demo",
+        subscribe_key : "demo",
+        ssl           : true,
+        origin        : 'pubsub.pubnub.com'
+    });
+
+    p.subscribe({
+        channel    : "my_channel",
+        callback   : log,
+        connect    : function(){ log('connect') },
+        disconnect : function(){ log('disconnect') },
+        reconnect  : function(){ log('reconnect') }
+    });
+
+    p.bind( 'mousedown,touchstart', p.$('disconnect'), function() {
+        p.unsubscribe({ channel : "my_channel" } );
+    } );
+
+    function log(m) {
+        var data = JSON.stringify(m)
+        ,   div  = PUBNUB.create('div');
+        div.innerHTML = data;
+        console.log(data);
+        PUBNUB.search('body')[0].appendChild(div);
+    }
+
+})();</script>
+
+</body>
+</html>
