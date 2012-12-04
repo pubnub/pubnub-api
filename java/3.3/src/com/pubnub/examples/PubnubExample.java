@@ -65,7 +65,7 @@ public class PubnubExample {
     static String publish_key = "demo";
     static String subscribe_key = "demo";
     static String secret_key = "demo";
-    static String cipher_key = "enigma"; // (Cipher key is optional)
+    static String cipher_key = ""; // (Cipher key is optional)
     static String channel = "hello_world";
     static Pubnub pubnub = null;
 
@@ -91,8 +91,8 @@ public class PubnubExample {
         System.out.println("\nRunning detailedHistory()");
         DetailedHistoryExample();
 
-        System.out.println("\nRunning presence()");
-        PresenceExample();
+//        System.out.println("\nRunning presence()");
+//        PresenceExample();
 
         System.out.println("\nRunning subscribe()");
         SubscribeExample();
