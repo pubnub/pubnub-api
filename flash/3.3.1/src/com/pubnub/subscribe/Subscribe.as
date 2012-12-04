@@ -29,15 +29,16 @@ package com.pubnub.subscribe {
 		private var pingTimeout:int;
 		private var subscribeUID:String;
 		private var subscribeURL:String;
+		private var subscribePNPresURL:String;
 		private var lastToken:String;
 		private var netMonitor:NetMon;
 		private var waitNetwork:Boolean;
 		private var factory:Dictionary;
 		private var operations:/*Operation*/Array;
 		private var connections:/*ConnectionBase*/Array;
-		private var pnpresConnection:ConnectionBase;
-		private var subscribeConnection:ConnectionBase;
-		
+		private static var pnpresConnection:ConnectionBase;
+		private static var subscribeConnection:ConnectionBase;
+		private static const PNP_RES_PREFIX:String = '-pnpres';
 		
 		public function Subscribe() {
 			super(null);
@@ -49,12 +50,13 @@ package com.pubnub.subscribe {
 			factory[Operation.GET_TIMETOKEN] = getOperationGetTimetoken;
 			factory[Operation.WITH_TIMETOKEN] = getOperationWithTimetoken;
 			factory[Operation.LEAVE] = getOperationLeave;
+			factory[Operation.PNPRES_GET_TIMETOKEN] = getOperationPNPResGetTimetoken;
 			
 			operations = [];
 			connections = [];
 			
-			pnpresConnection = new AsyncConnection();
-			subscribeConnection = new AsyncConnection();
+			pnpresConnection ||= new AsyncConnection();
+			subscribeConnection ||= new AsyncConnection();
 			
 			netMonitor = new NetMon();
 			netMonitor.reconnectDelay = Settings.CONNECTION_HEARTBEAT_INTERVAL;
@@ -90,20 +92,28 @@ package com.pubnub.subscribe {
 		private function subscribeInit():void {
 			//trace('subscribeInit');
 			clearTimeout(pingTimeout);
-			subscribeURL = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName) + "/" + 0;
+			subscribeURL = 			_origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName) + "/" + 0;
+			//subscribePNPresURL = 	_origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName + PNP_RES_PREFIX) + "/" + 0;
 			subscribeUID = PnUtils.getUID();
-			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
-			Pn.pn_internal::syncConnection.sendOperation(operation);
-			//subscribeConnection.sendOperation(operation);
+			
+			var operation:Operation;
+			
+			/*// pnp res init
+			var pnpOperation:Operation = getOperation(Operation.PNPRES_GET_TIMETOKEN);
+			pnpresConnection.sendOperation(pnpOperation);*/
+			
+			var subsOperation:Operation = getOperation(Operation.GET_TIMETOKEN);
+			subscribeConnection.sendOperation(subsOperation);	
 		}
 		
 		private function onSubscribeInitResult(e:OperationEvent):void {
+			trace('onSubscribeInitResult : ' + lastToken);
 			lastToken =  e.data[1];
 			_connected = true;
-			trace('onSubscribeInitResult : ' + lastToken);
 			subscribeLastToken();
 			netMonitor.start();
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channelName } ));
+			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channelNam
+			e } ));
 			destroyOperation(e.target as Operation);
 		}
 		
@@ -155,8 +165,6 @@ package com.pubnub.subscribe {
 			destroyOperation(e.target as Operation);
 		}
 		
-		
-		
 		private function getOperation(type:String, args:Object = null):Operation {
 			var op:Operation = factory[type].call(null, args);
 			operations.push(op);
@@ -184,6 +192,30 @@ package com.pubnub.subscribe {
 			operation.addEventListener(OperationEvent.FAULT, onSubscribeInitError);
 			return operation;
 		}
+		
+		private function getOperationPNPResGetTimetoken(args:Object = null):Operation {
+			trace('getOperationPNPResGetTimetoken');
+			var operation:Operation = new Operation();
+			operation.createURL({ 
+				url:subscribePNPresURL, 
+				channel:(_channelName + PNP_RES_PREFIX) , 
+				uid:subscribeUID, 
+				sessionUUID : sessionUUID,
+				timetoken:0, 
+				operation:Operation.GET_TIMETOKEN } );
+			operation.addEventListener(OperationEvent.RESULT, onPnpResSubscribeInitResult);
+			operation.addEventListener(OperationEvent.FAULT, onPnpResSubscribeInitError);
+			return operation;
+		}
+		
+		private function onPnpResSubscribeInitError(e:OperationEvent):void {
+			trace('onPnpResSubscribeInitError');
+		}
+		
+		private function onPnpResSubscribeInitResult(e:OperationEvent):void {
+			trace('onPnpResSubscribeInitResult');
+		}
+		
 		
 		private function getOperationWithTimetoken(time:String):Operation {
 			var operation:Operation = new Operation();
@@ -244,10 +276,6 @@ package com.pubnub.subscribe {
 			}
 		}
 			
-		
-		
-		
-		
 		private function restoreWithLastToken():void {
 			subscribeToken(lastToken);
 		}

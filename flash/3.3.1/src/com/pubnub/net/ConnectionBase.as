@@ -56,14 +56,14 @@ package com.pubnub.net {
 			if (_destroyed) return;
 			loader.removeEventListener(URLLoaderEvent.COMPLETE, onComplete)
 			loader.removeEventListener(URLLoaderEvent.ERROR, onError);
-			dispose();
+			close();
 			loader = null;
 			_destroyed = true;
 			queue = null;
 			operation = null;
 		}
 		
-		public function dispose():void {
+		public function close():void {
 			queue.length = 0;
 			loader.close();
 		}

@@ -7,7 +7,10 @@ package com.pubnub.net {
 	 */
 	public class SyncConnection extends ConnectionBase {
 		
+		private var busy:Boolean;
+		
 		override public function sendOperation(operation:Operation):void {
+			trace('sendOperation : ' + operation.url, ready);
 			super.sendOperation(operation);
 			if (ready) {
 				doSendOperation(operation);
@@ -18,6 +21,9 @@ package com.pubnub.net {
 		}
 		
 		private function doSendOperation(operation:Operation):void {
+			if (busy) return;
+			trace('doSendOperation : ' + operation.url);
+			busy = true;
 			this.operation = operation;
 			loader.load(operation.request);
 		}
@@ -28,13 +34,25 @@ package com.pubnub.net {
 			}
 		}
 		
+		override public function close():void {
+			super.close();
+			busy = false;
+		}
+		
 		override protected function onConnect(e:Event):void {
 			super.onConnect(e);
 			sendNextOperation();
 		}
 		
+		override protected function get ready():Boolean {
+			return super.ready && !busy;
+		}
+		
 		override protected function onComplete(e:URLLoaderEvent):void {
+			trace('onComplete : ' + operation.url)
+			
 			super.onComplete(e);
+			busy = false;
 			sendNextOperation();
 		}
 	}

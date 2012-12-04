@@ -44,7 +44,7 @@ package com.pubnub.net {
 		}
 		
 		protected function onSocketData(e:ProgressEvent):void {
-			//trace('------onSocketData------' + socket.bytesAvailable);
+			trace('------onSocketData------' + socket.bytesAvailable);
 			temp.clear();
 			while (socketHasData()) {        
 				//_timer.reset();
@@ -62,11 +62,12 @@ package com.pubnub.net {
 			var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
 			var endSymbol:String = getEndSymbol(tempStr);
 			
-			//trace('onData : ' + tempStr.indexOf(endSymbol));
+			
 			
 			if (tempStr.indexOf(endSymbol) != -1) {
 				onResponce(answer)
 				answer.clear();	
+				
 			}
 		}
 		
@@ -82,7 +83,7 @@ package com.pubnub.net {
 		protected function onResponce(bytes:ByteArray):void {
 			try {
 				_response = new URLResponse(bytes, request);
-				//trace(_response.body);
+				trace('onResponce : ' + _response.body);
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.COMPLETE, _response));
 			}catch (err:Error){
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.ERROR, _response));
@@ -173,7 +174,7 @@ package com.pubnub.net {
 			requestBytes.position = 0;
 			// Debug
 			//var hStr:String = "Header:\n" + requestBytes.readUTFBytes(requestBytes.length);
-			//trace(hStr);
+			trace('socket.connected : ' + socket.connected);
 			socket.writeBytes(requestBytes);      
 			socket.flush();
 		}

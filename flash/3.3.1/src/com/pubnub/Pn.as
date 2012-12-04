@@ -20,7 +20,7 @@ package com.pubnub {
 		static public const PUBLISH_OPERATION:String = 'publish';
 		static public const TIME_OPERATION:String = 'time';
 		
-		private const PRESENCE_PREFIX:String = '-pnpres';
+		
 		
 		private var _initialized:Boolean = false;         
 		private var operations:Vector.<Operation>
@@ -124,16 +124,14 @@ package com.pubnub {
 			
 			//var pnSubscribe:Subscribe = getSubscribe(channel + PRESENCE_PREFIX);
 			
-			/*subscribe.origin = 			pnSubscribe.origin = 		_origin;
-			subscribe.subscribeKey = 	pnSubscribe.subscribeKey = 	subscribeKey;
-			subscribe.sessionUUID = 	pnSubscribe.sessionUUID = 	sessionUUID;
-			subscribe.cipherKey = 		pnSubscribe.cipherKey = 	cipherKey;
-*/			
+			
 			
 			subscribe.origin = 			_origin;
 			subscribe.subscribeKey = 	subscribeKey;
 			subscribe.sessionUUID = 	sessionUUID;
 			subscribe.cipherKey = 		cipherKey;
+			
+			//subscribe.cipherKey = 		cipherKey;
 
 			subscribe.subscribe(channel);
 			/*//pnSubscribe.subscribe(channel + PRESENCE_PREFIX);
