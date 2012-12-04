@@ -528,6 +528,7 @@ var PDIV          = $('pubnub') || {}
             ,   start    = args['start']
             ,   end      = args['end']
             ,   params   = {}
+            ,   origin   = nextorigin(ORIGIN)
             ,   jsonp    = jsonp_cb();
 
             // Make sure we have a Channel
@@ -548,7 +549,7 @@ var PDIV          = $('pubnub') || {}
                 success  : function(response) { callback(response) },
                 fail     : function(response) { log(response) },
                 url      : [
-                    ORIGIN, 'v2', 'history',
+                    origin, 'v2', 'history',
                     'sub-key', SUBSCRIBE_KEY, 'channel', encode(channel)
                 ]
             });
@@ -696,10 +697,12 @@ var PDIV          = $('pubnub') || {}
 
             // Evented Subscribe
             function _connect() {
-                var jsonp = jsonp_cb();
+                var origin   = nextorigin(ORIGIN);
+                ,   jsonp    = jsonp_cb()
+                ,   channels = generate_channel_list(CHANNELS);
 
                 // Stop Connection
-                if (!CHANNELS[channel].connected) return;
+                if (!channels) return;
 
                 // Connect to PubNub Subscribe Servers
                 SUB_RECEIVER = xdr({
@@ -710,7 +713,7 @@ var PDIV          = $('pubnub') || {}
                         origin,
                         'subscribe',
                         subscribe_key,
-                        encode(generate_channel_list(CHANNELS)),
+                        encode(),
                         jsonp,
                         TIMETOKEN
                     ],
@@ -780,8 +783,9 @@ var PDIV          = $('pubnub') || {}
 
             // Announce Leave Event
             function leave(chan) {
-                var data  = { uuid : UUID }
-                ,   jsonp = jsonp_cb();
+                var data   = { uuid : UUID }
+                ,   origin = nextorigin(ORIGIN)
+                ,   jsonp  = jsonp_cb();
 
                 // Prevent Leaving a Presence Channel
                 if ( channel.indexOf(PRESENCE_SUFFIX) ===
