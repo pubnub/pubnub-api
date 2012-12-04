@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build-jar" name="Pubnub">
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+    <path id="GWT SDK [GWT - 2.3.0].libraryclasspath">
+        <pathelement location="../lib/gwt-2.3.0/gwt-user.jar"/>
+        <pathelement location="../lib/gwt-2.3.0/gwt-dev.jar"/>
+        <pathelement location="../lib/gwt-2.3.0/validation-api-1.0.0.GA.jar"/>
+        <pathelement location="../lib/gwt-2.3.0/validation-api-1.0.0.GA-sources.jar"/>
+    </path>
+    <path id="Pubnub.classpath">
+        <path refid="GWT SDK [GWT - 2.3.0].libraryclasspath"/>
+    </path>
+    <target name="clean">
+        <delete file="PubnubGwt.jar">
+			<fileset dir="src" includes="**/*.class"/>
+        </delete>
+    </target>
+    <target depends="build" name="build-jar">
+    	<jar basedir="src" destfile="PubnubGwt.jar" filesonly="true"/>
+    </target>
+    <target name="build">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac srcdir="src" source="${source}" target="${target}" excludes="**/*.class">
+            <classpath refid="Pubnub.classpath"/>
+        </javac>
+    </target>
+</project>
