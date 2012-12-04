@@ -34,8 +34,6 @@ package com.pubnub.net {
 			init();
 		}
 		
-		
-		
 		protected function init():void {
 			socket = new Socket();
 			socket.addEventListener(Event.CONNECT, onConnect);       
@@ -84,6 +82,7 @@ package com.pubnub.net {
 		protected function onResponce(bytes:ByteArray):void {
 			try {
 				_response = new URLResponse(bytes, request);
+				//trace(_response.body);
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.COMPLETE, _response));
 			}catch (err:Error){
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.ERROR, _response));
@@ -110,8 +109,7 @@ package com.pubnub.net {
 		}
 		
 		protected function onConnect(e:Event):void {
-			//trace('onConnect');
-			sendRequest(request);
+			dispatchEvent(e);
 		}
 		
 		public function get ready():Boolean { return socket && socket.connected ; }
@@ -126,11 +124,10 @@ package com.pubnub.net {
 		}
 		
 		public function load(request:URLRequest):void {
-			if (!request) return;
 			this.request = request;
 			uri = new URI(request.url);
 			destroyResponce();
-			// abstract
+			sendRequest(request);
 		}
 		
 		private function destroyResponce():void {
@@ -166,7 +163,7 @@ package com.pubnub.net {
 			if (ready) {
 				doSendRequest(request);
 			}else {
-				connect();
+				connect(request);
 			}
 		}
 		
@@ -175,13 +172,14 @@ package com.pubnub.net {
 			var requestBytes:ByteArray = request.toByteArray();
 			requestBytes.position = 0;
 			// Debug
-			//var hStr:String = "Header:\n" + headerBytes.readUTFBytes(headerBytes.length);
+			//var hStr:String = "Header:\n" + requestBytes.readUTFBytes(requestBytes.length);
 			//trace(hStr);
 			socket.writeBytes(requestBytes);      
 			socket.flush();
 		}
 		
-		protected function connect():void {
+		public function connect(request:URLRequest):void {
+			var uri:URI = new URI(request.url);
 			socket.connect(uri.authority, DEFAULT_HTTP_PORT);
 		}
 		

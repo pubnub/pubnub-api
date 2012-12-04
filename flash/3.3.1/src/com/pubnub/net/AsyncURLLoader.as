@@ -13,13 +13,41 @@ package com.pubnub.net {
 	[Event(name="URLLoaderEvent.error", type="com.pubnub.net.URLLoaderEvent")]
 	public class AsyncURLLoader extends URLLoaderBase {
 		
-		public function AsyncURLLoader () {
-			super();
+		private var queue:Array;
+		
+		override protected function init():void {
+			super.init();
+			queue = [];
 		}
 		
 		override public function load(request:URLRequest):void {
+			//trace('load : ' + request.url);
 			super.load(request);
 			sendRequest(request);
+		}
+		
+		override protected function sendRequest(request:URLRequest):void {
+			if (ready) {
+				doSendRequest(request);
+			}else {
+				connect(request);
+				queue.push(request);
+			}
+		}
+		
+		override protected function onConnect(e:Event):void {
+			if (queue.length > 0) {
+				var r:URLRequest = queue.pop();
+				sendRequest(request);
+			}
+		}
+		
+		override protected function doSendRequest(request:URLRequest):void {
+			super.doSendRequest(request);
+			if (queue.length > 0) {
+				var r:URLRequest = queue.pop();
+				sendRequest(request);
+			}
 		}
 	}
 }

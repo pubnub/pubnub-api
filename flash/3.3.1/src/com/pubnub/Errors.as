@@ -9,6 +9,7 @@ package com.pubnub {
 		static public const INIT_OPERATION_ERROR:String = "init_operation_error";
 		static public const ALREADY_CONNECTED:String = "already_connected";
 		static public const SUBSCRIBE_INIT_ERROR:String = "subscribe_init_error";
+		static public const SUBSCRIBE_CHANNEL_ERROR:String = "subscribe_chanel_error";
 		
 	}
 

@@ -20,6 +20,8 @@ package com.pubnub {
 		static public const PUBLISH_OPERATION:String = 'publish';
 		static public const TIME_OPERATION:String = 'time';
 		
+		private const PRESENCE_PREFIX:String = '-pnpres';
+		
 		private var _initialized:Boolean = false;         
 		private var operations:Vector.<Operation>
         private var subscribes:Dictionary;
@@ -33,6 +35,8 @@ package com.pubnub {
 		private var startTimeToken:Number = 0;
         private var _sessionUUID:String = "";
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
+		static pn_internal var syncConnection:SyncConnection;
+		
 			
 		public function Pn() {
 			if (__instance) throw new IllegalOperationError('Use [Pn.instance] getter');
@@ -46,6 +50,7 @@ package com.pubnub {
 			factory[PUBLISH_OPERATION] = 	createPublishOperation; 
 			factory[HISTORY_OPERATION] = 	createDetailedHistoryOperation; 
 			factory[TIME_OPERATION] = 		createTimeOperation; 
+			syncConnection = new SyncConnection();
 		}
 		
 		public static  function get instance():Pn {
@@ -72,7 +77,8 @@ package com.pubnub {
 			
 			// Loads start time token
 			var operation:Operation = createOperation(INIT_OPERATION)
-			Connection.sendSync(operation);
+			//Connection.sendSync(operation);
+			syncConnection.sendOperation(operation);
 		}
 		
 		
@@ -116,15 +122,37 @@ package com.pubnub {
 				return;
 			}
 			
-			subscribe.origin = _origin;
-			subscribe.subscribeKey = subscribeKey;
-			subscribe.sessionUUID = sessionUUID;
-			subscribe.cipherKey = cipherKey;
+			//var pnSubscribe:Subscribe = getSubscribe(channel + PRESENCE_PREFIX);
+			
+			/*subscribe.origin = 			pnSubscribe.origin = 		_origin;
+			subscribe.subscribeKey = 	pnSubscribe.subscribeKey = 	subscribeKey;
+			subscribe.sessionUUID = 	pnSubscribe.sessionUUID = 	sessionUUID;
+			subscribe.cipherKey = 		pnSubscribe.cipherKey = 	cipherKey;
+*/			
+			
+			subscribe.origin = 			_origin;
+			subscribe.subscribeKey = 	subscribeKey;
+			subscribe.sessionUUID = 	sessionUUID;
+			subscribe.cipherKey = 		cipherKey;
+
 			subscribe.subscribe(channel);
+			/*//pnSubscribe.subscribe(channel + PRESENCE_PREFIX);
+			//trace(channel + PRESENCE_PREFIX);
+			var subs:Array = [subscribe, pnSubscribe];
+			for each(var s:Subscribe in subs) {
+				s.addEventListener(SubscribeEvent.CONNECT, 		onSubscribe);
+				s.addEventListener(SubscribeEvent.DATA, 		onSubscribe);
+				s.addEventListener(SubscribeEvent.DISCONNECT, 	onSubscribe);
+				s.addEventListener(SubscribeEvent.ERROR, 		onSubscribe);
+			}*/
+			
+			
 			subscribe.addEventListener(SubscribeEvent.CONNECT, 		onSubscribe);
 			subscribe.addEventListener(SubscribeEvent.DATA, 		onSubscribe);
 			subscribe.addEventListener(SubscribeEvent.DISCONNECT, 	onSubscribe);
 			subscribe.addEventListener(SubscribeEvent.ERROR, 		onSubscribe);
+			
+			// pnp press channel
 		}
 		
 		private function onSubscribe(e:SubscribeEvent):void {
@@ -202,7 +230,7 @@ package com.pubnub {
 			}
 			//trace('DH');
 			var operation:Operation = createOperation(HISTORY_OPERATION, args);
-			Connection.sendSync(operation);
+			syncConnection.sendOperation(operation);
 		}
 		
 		private function onHistoryResult(e:OperationEvent):void {
@@ -236,8 +264,9 @@ package com.pubnub {
 		
 		public function publish(args:Object):void {
 			throwInit();
-			var publishOperation:Operation = createOperation(PUBLISH_OPERATION, args)
-			Connection.sendSync(publishOperation);
+			var operation:Operation = createOperation(PUBLISH_OPERATION, args)
+			//Connection.sendSync(operation);
+			syncConnection.sendOperation(operation);
 		}
 		
 		private function onPublishFault(e:OperationEvent):void {
@@ -278,7 +307,8 @@ package com.pubnub {
 			var operation:Operation = createOperation(TIME_OPERATION);
 			operation.addEventListener(OperationEvent.RESULT, onTimeResult);
 			operation.addEventListener(OperationEvent.FAULT, onTimeFault);
-			Connection.sendSync(operation);
+			//Connection.sendSync(operation);
+			syncConnection.sendOperation(operation);
 		}
 		
 		private function onTimeFault(e:OperationEvent):void {
@@ -293,7 +323,6 @@ package com.pubnub {
 			destroyOperation(e.target as Operation);
 		}
 		
-		
 		private function createTimeOperation(args:Object = null):Operation{
 			var time:Operation = new Operation();
 			time.addEventListener(OperationEvent.RESULT, onTimeResult);
@@ -302,13 +331,11 @@ package com.pubnub {
 			return time;
 		}
 		
-		
 		private function createOperation(type:String, args:Object = null):Operation {
 			var op:Operation = factory[type].call(null, args);
 			operations.push(op);
 			return op;
 		}
-		
 		
 		private function initKeys(config:Object):void {
 			_ssl = config.ssl;

@@ -10,10 +10,12 @@ package com.pubnub.net {
 	public class Connection {
 		
 		static private var __instance:Connection;
+		
 		private var syncLoader:SyncURLLoader;
+		private var syncOperations:Vector.<Operation>;
+		
 		private var asyncLoader:AsyncURLLoader;
 		private var asyncOperation:Operation;
-		private var syncOperations:Vector.<Operation>;
 		
 		public function Connection() {
 			if (__instance) throw ('Use [Connection.instance] getter');
@@ -69,12 +71,12 @@ package com.pubnub.net {
 			syncLoader.load(operation.request);
 		}
 		
-		public static function removeSyncOperations(vector:Vector.<Operation>):void {
-			if (vector && vector.length) {
+		public static function removeSyncOperations(array:Array):void {
+			if (array && array.length) {
 				var temp:Vector.<Operation> = new Vector.<Operation>;
 				for each(var intern:Operation  in instance.syncOperations) {
 					var uniq:Boolean = true;
-					for each(var extern:Operation  in vector) {
+					for each(var extern:Operation  in array) {
 						if (intern == extern) {
 							uniq = false;
 							break;

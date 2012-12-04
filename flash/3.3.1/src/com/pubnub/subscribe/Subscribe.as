@@ -3,10 +3,13 @@ package com.pubnub.subscribe {
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
 	import com.pubnub.json.PnJSON;
+	import com.pubnub.net.AsyncConnection;
 	import com.pubnub.net.Connection;
+	import com.pubnub.net.ConnectionBase;
 	import com.pubnub.operation.*;
 	import flash.events.*;
 	import flash.utils.*;
+	use namespace pn_internal;
 	
 	/**
 	 * ...
@@ -30,11 +33,15 @@ package com.pubnub.subscribe {
 		private var netMonitor:NetMon;
 		private var waitNetwork:Boolean;
 		private var factory:Dictionary;
-		private var operations:Vector.<Operation>
+		private var operations:/*Operation*/Array;
+		private var connections:/*ConnectionBase*/Array;
+		private var pnpresConnection:ConnectionBase;
+		private var subscribeConnection:ConnectionBase;
+		
 		
 		public function Subscribe() {
 			super(null);
-			init();
+			init();	
 		}
 		
 		private function init():void {
@@ -42,7 +49,13 @@ package com.pubnub.subscribe {
 			factory[Operation.GET_TIMETOKEN] = getOperationGetTimetoken;
 			factory[Operation.WITH_TIMETOKEN] = getOperationWithTimetoken;
 			factory[Operation.LEAVE] = getOperationLeave;
-			operations = new Vector.<Operation>;
+			
+			operations = [];
+			connections = [];
+			
+			pnpresConnection = new AsyncConnection();
+			subscribeConnection = new AsyncConnection();
+			
 			netMonitor = new NetMon();
 			netMonitor.reconnectDelay = Settings.CONNECTION_HEARTBEAT_INTERVAL;
 			netMonitor.forceReconnectDelay = Settings.RECONNECT_HEARTBEAT_TIMEOUT;
@@ -68,9 +81,81 @@ package com.pubnub.subscribe {
 				return;
 			}
 			dispose();
-			Connection.closeAsyncChannel();
+			//Connection.closeAsyncChannel();
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, { channel:_channelName } ));
 		}
+		
+		
+		/*---------------------------INIT SUBSCRIBE---------------------------*/
+		private function subscribeInit():void {
+			//trace('subscribeInit');
+			clearTimeout(pingTimeout);
+			subscribeURL = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName) + "/" + 0;
+			subscribeUID = PnUtils.getUID();
+			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
+			Pn.pn_internal::syncConnection.sendOperation(operation);
+			//subscribeConnection.sendOperation(operation);
+		}
+		
+		private function onSubscribeInitResult(e:OperationEvent):void {
+			lastToken =  e.data[1];
+			_connected = true;
+			trace('onSubscribeInitResult : ' + lastToken);
+			subscribeLastToken();
+			netMonitor.start();
+			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channelName } ));
+			destroyOperation(e.target as Operation);
+		}
+		
+		private function onSubscribeInitError(e:OperationEvent):void {
+			_data = [ -1, Errors.SUBSCRIBE_INIT_ERROR];
+			dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, _data));
+			destroyOperation(e.target as Operation);
+		}
+		
+		
+		/*---------------------------CONNECT TO SUBSCRIBE---------------------------*/
+		private function subscribeToken(time:String):void {
+			var operation:Operation = getOperation(Operation.WITH_TIMETOKEN, time);
+			//Connection.sendAsync(operation);
+			subscribeConnection.sendOperation(operation);
+		}
+
+        private function onSubscribeResult(e:OperationEvent):void {
+            var eventData:Object = e.data;
+            lastToken = eventData[1];
+            var messages:Array = eventData[0];
+            if (messages) {
+                for (var i:int = 0; i < messages.length; i++) {
+                    var msg:* = cipherKey.length > 0 ? PnJSON.parse(PnCrypto.decrypt(cipherKey, messages[i])) : messages[i];
+                    _data = {
+                        channel:_channelName,
+                        result:[i + 1, msg],
+                        //envelope:eventData,
+                        timeout:1
+                    }
+                    dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, _data));
+                }
+            }
+			//trace('onSubscribeResult : ' + _data.result[1].text, lastToken);
+			destroyOperation(e.target as Operation);
+            subscribeLastToken();
+        }
+
+        private function subscribeLastToken():void {
+			//trace('subscribeLastToken : ' + lastToken);
+			subscribeToken(lastToken);
+			ping();
+		}
+		
+		private function onSubscribeError(e:OperationEvent):void {
+			trace('onSubscribeError');
+			_data = [ -1, Errors.SUBSCRIBE_CHANNEL_ERROR];
+			dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, _data ));
+			destroyOperation(e.target as Operation);
+		}
+		
+		
 		
 		private function getOperation(type:String, args:Object = null):Operation {
 			var op:Operation = factory[type].call(null, args);
@@ -159,69 +244,9 @@ package com.pubnub.subscribe {
 			}
 		}
 			
-		private function subscribeInit():void {
-			//trace('subscribeInit');
-			clearTimeout(pingTimeout);
-			subscribeURL = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName) + "/" + 0;
-			subscribeUID = PnUtils.getUID();
-			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
-			Connection.sendAsync(operation);
-		}
 		
-		private function onSubscribeInitResult(e:OperationEvent):void {
-			lastToken =  e.data[1];
-			_connected = true;
-			//trace('onSubscribeInitResult : ' + lastToken);
-			subscribeLastToken();
-			netMonitor.start();
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channelName } ));
-			destroyOperation(e.target as Operation);
-		}
 		
-		private function onSubscribeInitError(e:OperationEvent):void {
-			_data = [ -1, Errors.SUBSCRIBE_INIT_ERROR];
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, _data));
-			destroyOperation(e.target as Operation);
-		}
 		
-		private function subscribeToken(time:String):void {
-			var operation:Operation = getOperation(Operation.WITH_TIMETOKEN, time);
-			Connection.sendAsync(operation);
-		}
-
-        private function onSubscribeResult(e:OperationEvent):void {
-            var eventData:Object = e.data;
-            lastToken = eventData[1];
-            var messages:Array = eventData[0];
-            if (messages) {
-                for (var i:int = 0; i < messages.length; i++) {
-                    var msg:* = cipherKey.length > 0 ? PnJSON.parse(PnCrypto.decrypt(cipherKey, messages[i])) : messages[i];
-                    _data = {
-                        channel:_channelName,
-                        result:[i + 1, msg],
-                        //envelope:eventData,
-                        timeout:1
-                    }
-                    dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, _data));
-                }
-            }
-			//trace('onSubscribeResult : ' + _data.result[1].text, lastToken);
-			destroyOperation(e.target as Operation);
-            subscribeLastToken();
-        }
-
-        private function subscribeLastToken():void {
-			//trace('subscribeLastToken : ' + lastToken);
-			subscribeToken(lastToken);
-			ping();
-		}
-		
-		private function onSubscribeError(e:OperationEvent):void {
-			trace('onSubscribeError');
-			_data = [ -1, 'Connect channel error'];
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, _data ));
-			destroyOperation(e.target as Operation);
-		}
 		
 		private function restoreWithLastToken():void {
 			subscribeToken(lastToken);
@@ -273,7 +298,7 @@ package com.pubnub.subscribe {
 			netMonitor.stop();
 			leave();
 			_connected = false;
-			Connection.removeSyncOperations(operations);
+			//Connection.removeSyncOperations(operations);
 			destroyAllOperations();
 		}
 		
