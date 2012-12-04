@@ -41,7 +41,13 @@ function subscribe(channel) { pubnub.subscribe({
     disconnect : function()    {log('NETWORK DISCONNECTED!!!')},
     reconnect  : function()    {log('NETWORK RECONNECTED!!!')},
     presence   : function()    {log('PRESENCE: "'+channel+'".')},
-    callback   : function(msg) {log('CHANNEL "'+channel+'": ' + msg)}
+    callback   : function( message, envelope, channel ) {
+        log(
+            'CHANNEL "' + channel +
+            '": ' +
+            JSON.stringify(message)
+        );
+    }
 }) }
 
 subscribe(['h','j','i','k']); // Will Subscribe in ORDER

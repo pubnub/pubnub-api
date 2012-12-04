@@ -719,7 +719,6 @@ var PDIV          = $('pubnub') || {}
                         if (!DISCONNECTED) {
                             DISCONNECTED = 1;
                             disconnect();
-                            leave();
                         }
                         timeout( _connect, SECOND );
                         SELF['time'](function(success){
@@ -763,14 +762,15 @@ var PDIV          = $('pubnub') || {}
 
                             return function() {
                                 var channel = list.shift();
-                                return channel in CHANNELS     &&
+                                return [channel in CHANNELS     &&
                                     CHANNELS[channel].callback ||
-                                    callback;
+                                    callback, channel];
                             };
                         })();
 
                         each( messages[0], function(msg) {
-                            next_callback()( msg, messages );
+                            var next = next_callback();
+                            next[0]( msg, messages, next[1] );
                         } );
 
                         timeout( _connect, 10 );
