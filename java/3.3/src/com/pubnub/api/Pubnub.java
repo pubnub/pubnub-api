@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
@@ -45,6 +44,11 @@ import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
 
 
+/**
+ * @author Pubnub
+ *
+ */
+@SuppressWarnings("deprecation")
 class PubnubHttpRequest {
     private Request request;
     private String[] errorsMessages;
@@ -60,6 +64,13 @@ class PubnubHttpRequest {
     }
 }
 
+
+/**
+ * Pubnub object facilitates querying channels for messages and listening on channels for presence/message events
+ * @author Pubnub
+ * 
+ */
+
 public class Pubnub {
     private String ORIGIN = "pubsub.pubnub.com";
     private String PUBLISH_KEY = "";
@@ -71,20 +82,88 @@ public class Pubnub {
     private String parameters = "";
     private AsyncHttpClient ahc = null;
     private RequestBuilder rb = null;
-    private int PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC = 310;
+    private int PUBNUB_WEBREQUEST_CALLBACK_INTERVAL = 310000;
     private int PUBNUB_NETWORK_CHECK_RETRIES = 50;
-    private int PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC = 10;
+    private int PUBNUB_WEBREQUEST_RETRY_INTERVAL = 10000;
+    private int PUBNUB_FAST_WEBREQUEST_TIMEOUT = 5000;
+    private int PUBNUB_DEFAULT_CONN_TIMEOUT = 10000;
     
-    private int API_TIMEOUT_MS = PUBNUB_WEBREQUEST_CALLBACK_INTERVAL_IN_SEC * 1000;
-    private int FAST_API_TIMEOUT_MS = 5000;
-    private int DEFAULT_CONN_TIMEOUT_MS = 10000;
-    private int PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_MS = 
-            PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC * 1000;
+    /** Sets wait time for Presence/Subscribe API
+     * @param interval Time interval in milliseconds for which the API's like Presence and Subscribe will block
+     */
+    public void setWebRequestCallbackInterval(int interval){
+        this.PUBNUB_WEBREQUEST_CALLBACK_INTERVAL = interval;
+    }
+    /**
+     *  Sets number of retries to be made for network availability check
+     * @param count No of times attempt will be made to check network availability
+     */
+    public void setNetworkCheckRetriesCount(int count) {
+        this.PUBNUB_NETWORK_CHECK_RETRIES = count;
+    }
+    /**
+     *  Sets time interval between consecutive network availability checks
+     * @param interval Time interval in milliseconds between each attempt for network connectivity check
+     */
+    public void setWebRequestRetryInterval(int interval) {
+        this.PUBNUB_WEBREQUEST_RETRY_INTERVAL = interval;;
+    }
+    /**
+     *  Sets timeout values for publish, history, detailedHistory, time, here_now
+     * @param timeout timeout value in milliseconds for api's publish, history, here_now, detailedHistory, time
+     */
+    public void setFastWebRequestTimeout(int timeout) {
+        this.PUBNUB_FAST_WEBREQUEST_TIMEOUT = timeout;
+    }
+    /** Sets the timeout value for TCP connections made by API to Pubnub Servers
+     * @param timeout timeout value in milliseconds for tcp connection attempt.
+     */
+    public void setConnectionTimeout(int timeout) {
+        this.PUBNUB_DEFAULT_CONN_TIMEOUT = timeout;
+    }
+    
+    
+    /** 
+     * Returns Time interval in milliseconds for which the API's like Presence and Subscribe will block
+     * @return Time interval in milliseconds for which the API's like Presence and Subscribe will block 
+     */
+    public int getWebRequestCallbackInterval(){
+        return this.PUBNUB_WEBREQUEST_CALLBACK_INTERVAL;
+    }
+    /** 
+     * Returns No of times attempt will be made to check network availability
+     * @return No of times attempt will be made to check network availability 
+     */    
+    public int getNetworkCheckRetriesCount() {
+        return this.PUBNUB_NETWORK_CHECK_RETRIES;
+    }
+    /** 
+     * Returns time interval in milliseconds between each attempt for network connectivity check
+     * @return Time interval in milliseconds between each attempt for network connectivity check 
+     */
+    public int getWebRequestRetryInterval() {
+        return this.PUBNUB_WEBREQUEST_RETRY_INTERVAL;
+    }
+    /** 
+     * Returns timeout value in milliseconds for api's publish, history, here_now, detailedHistory, uuid, time
+     * @return timeout value in milliseconds for api's publish, history, here_now, detailedHistory, uuid, time
+     */    
+    public int getFastWebRequestTimeout() {
+        return this.PUBNUB_FAST_WEBREQUEST_TIMEOUT;
+    }
+    /** 
+     * Returns the timeout value for TCP connections made by api
+     * @return the timeout value for TCP connections made by api 
+     */    
+    public int getConnectionTimeout() {
+        return this.PUBNUB_DEFAULT_CONN_TIMEOUT;
+    }
 
     private Request getRequest(List<String> url_components) {
         return getRequest(url_components, 0);
     }
         
+    @SuppressWarnings({ "deprecation"})
     private Request getRequest(List<String> url_components, int requestTimeout) {
         StringBuilder url = new StringBuilder();
         Iterator<String> url_iterator = url_components.iterator();
@@ -136,19 +215,14 @@ public class Pubnub {
     private HashMap<String, ChannelStatus> subscriptions;
 
     /**
-     * PubNub 3.1 with Cipher Key
      * 
-     * Prepare PubNub State.
+     * Constructor for Pubnub Class
      * 
-     * @param String
-     *            Publish Key.
-     * @param String
-     *            Subscribe Key.
-     * @param String
-     *            Secret Key.
-     * @param String
-     *            Cipher Key.
-     * @param boolean SSL Enabled.
+     * @param publish_key Publish Key
+     * @param subscribe_key Subscribe Key
+     * @param secret_key Secret Key
+     * @param cipher_key Cipher Key
+     * @param ssl_on SSL enabled ?
      */
     public Pubnub(String publish_key, String subscribe_key, String secret_key,
             String cipher_key, boolean ssl_on) {
@@ -156,17 +230,13 @@ public class Pubnub {
     }
 
     /**
-     * PubNub 3.0
      * 
-     * Prepare PubNub Class State.
+     * Constructor for Pubnub Class
      * 
-     * @param String
-     *            Publish Key.
-     * @param String
-     *            Subscribe Key.
-     * @param String
-     *            Secret Key.
-     * @param boolean SSL Enabled.
+     * @param publish_key Publish Key
+     * @param subscribe_key Subscribe Key
+     * @param secret_key Secret Key
+     * @param ssl_on SSL enabled ?
      */
     public Pubnub(String publish_key, String subscribe_key, String secret_key,
             boolean ssl_on) {
@@ -174,49 +244,37 @@ public class Pubnub {
     }
 
     /**
-     * PubNub 2.0 Compatibility
      * 
-     * Prepare PubNub Class State.
+     * Constructor for Pubnub Class
      * 
-     * @param String
-     *            Publish Key.
-     * @param String
-     *            Subscribe Key.
+     * @param publish_key Publish Key
+     * @param subscribe_key Subscribe Key
      */
     public Pubnub(String publish_key, String subscribe_key) {
         this.init(publish_key, subscribe_key, "", "", false);
     }
 
     /**
-     * PubNub 3.0 without SSL
      * 
-     * Prepare PubNub Class State.
+     * Constructor for Pubnub Class
      * 
-     * @param String
-     *            Publish Key.
-     * @param String
-     *            Subscribe Key.
-     * @param String
-     *            Secret Key.
+     * @param publish_key Publish Key
+     * @param subscribe_key Subscribe Key
+     * @param secret_key Secret Key
      */
     public Pubnub(String publish_key, String subscribe_key, String secret_key) {
         this.init(publish_key, subscribe_key, secret_key, "", false);
     }
 
     /**
-     * Init
+
+     * Initialize PubNub Object State.
      * 
-     * Prepare PubNub Class State.
-     * 
-     * @param String
-     *            Publish Key.
-     * @param String
-     *            Subscribe Key.
-     * @param String
-     *            Secret Key.
-     * @param String
-     *            Cipher Key.
-     * @param boolean SSL Enabled.
+     * @param publish_key
+     * @param subscribe_key
+     * @param secret_key
+     * @param cipher_key
+     * @param ssl_onn
      */
     private void init(String publish_key, String subscribe_key,
             String secret_key, String cipher_key, boolean ssl_on) {
@@ -235,8 +293,8 @@ public class Pubnub {
             this.ORIGIN = "http://" + this.ORIGIN;
         }
         Builder cb = new AsyncHttpClientConfig.Builder();
-        cb.setRequestTimeoutInMs(API_TIMEOUT_MS);
-        cb.setConnectionTimeoutInMs(DEFAULT_CONN_TIMEOUT_MS);
+        cb.setRequestTimeoutInMs(PUBNUB_WEBREQUEST_CALLBACK_INTERVAL);
+        cb.setConnectionTimeoutInMs(PUBNUB_DEFAULT_CONN_TIMEOUT);
         ahc = new AsyncHttpClient(cb.build());
     }
 
@@ -245,21 +303,18 @@ public class Pubnub {
      * 
      * Get response by url.
      * 
-     * @param List
-     *            <String> url
-     * 
+     * @param phr PubnubHttpRequest 
+     * @param decrypt Decryption enabled ?
      */
     private JSONArray getResponseByUrl(PubnubHttpRequest phr, boolean decrypt) {
         return _getResponseByUrl(phr, decrypt, -1);
     }
 
     /**
-     * getResponseByUrl
-     * 
      * Get response by url.
      * 
-     * @param List
-     *            <String> url
+     * @param phr PubnubHttpRequest
+     * @param index
      * 
      */
     private JSONArray getResponseByUrl(PubnubHttpRequest phr, int index) {
@@ -267,26 +322,19 @@ public class Pubnub {
     }
 
     /**
-     * getResponseByUrl
-     * 
      * Get response by url.
-     * 
-     * @param List
-     *            <String> url
-     * 
+     * @param phr PubnubHttpRequest
      */
     private JSONArray getResponseByUrl(PubnubHttpRequest phr) {
         return _getResponseByUrl(phr, true, -1);
     }
 
-    /**
-     * getResponseByUrl
-     * 
+    /*
      * Get response by url.
      * 
-     * @param List
-     *            <String> url
-     * 
+     * @param phr PubnubHttpRequest 
+     * @param decrypt Decryption enabled ?
+     * @param index
      */
     private JSONArray _getResponseByUrl(PubnubHttpRequest phr, boolean decrypt,
             int index) {
@@ -312,51 +360,42 @@ public class Pubnub {
     }
 
     /**
-     * Publish
-     * 
      * Send a message to a channel.
      * 
-     * @param String
-     *            channel name.
-     * @param JSONObject
-     *            message.
-     * @return JSONArray.
+     * @param channel Channel name
+     * @param message JSONObject to be published
+     * @return JSONArray of response
      */
     public JSONArray publish(String channel, JSONObject message) {
         HashMap<String, Object> args = new HashMap<String, Object>(2);
         args.put("channel", channel);
         args.put("message", message);
-        return publish(args, FAST_API_TIMEOUT_MS);
+        return publish(args, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     
     /**
-     * Publish
-     * 
      * Send a message to a channel.
      * 
-     * @param String
-     *            channel name.
-     * @param JSONObject
-     *            message.
-     * @return JSONArray.
+     * @param channel Channel name
+     * @param message JSONObject of message to be published
+     * @param requestTimeout timeout value in milliseconds for this request
+     * @return JSONArray of response
      */
-    public JSONArray publish(String channel, JSONObject message, int requestTimeoutInMs) {
+    public JSONArray publish(String channel, JSONObject message, int requestTimeout) {
         HashMap<String, Object> args = new HashMap<String, Object>(2);
         args.put("channel", channel);
         args.put("message", message);
-        return publish(args, requestTimeoutInMs);
+        return publish(args, requestTimeout);
     }
 
     /**
-     * Publish
-     * 
      * Send a message to a channel.
      * 
-     * @param HashMap
-     *            <String, Object> containing channel name, message.
-     * @return JSONArray.
+     * @param args HashMap of <String, Object> containing channel name, message.
+     * @param requestTimeout timeout value in milliseconds for this request
+     * @return JSONArray of response
      */
-    private JSONArray publish(HashMap<String, Object> args, int requestTimeoutInMs) {
+    private JSONArray publish(HashMap<String, Object> args, int requestTimeout) {
 
         String channel = (String) args.get("channel");
         Object message = args.get("message");
@@ -418,18 +457,16 @@ public class Pubnub {
         String[] urlargs = { "publish", this.PUBLISH_KEY, this.SUBSCRIBE_KEY,
                 signature, channel, "0", message.toString() };
     
-        return _request( new PubnubHttpRequest(getRequest( Arrays.asList(urlargs), requestTimeoutInMs), errorMessages));
+        return _request( new PubnubHttpRequest(getRequest( Arrays.asList(urlargs), requestTimeout), errorMessages));
     }
 
     /**
-     * Subscribe
      * 
      * Listen for a message on a channel.
      * 
-     * @param String
-     *            channel name.
-     * @param Callback
-     *            function callback.
+     * @param channel Channel name for subscribing
+     * @param callback Callback
+     * @exception PubnubException Throws PubnubException if Callback is null
      */
     public void subscribe(String channel, Callback callback)
     throws PubnubException {
@@ -440,12 +477,11 @@ public class Pubnub {
     }
 
     /**
-     * Subscribe
      * 
      * Listen for a message on a channel.
      * 
-     * @param HashMap
-     *            <String, Object> containing channel name, function callback.
+     * @param args HashMap <String, Object> containing channel name, function callback.
+     * @exception PubnubException Throws PubnubException if Callback is missing
      */
     private void subscribe(HashMap<String, Object> args) throws PubnubException {
         args.put("timetoken", "0");
@@ -457,7 +493,7 @@ public class Pubnub {
      * 
      * Patch provided by petereddy on GitHub
      * 
-     * @param HashMap
+     * @param args HashMap
      *            <String, Object> containing channel name, function callback,
      *            timetoken.
      */
@@ -483,8 +519,6 @@ public class Pubnub {
 
         // Ensure Single Connection
         if (subscriptions != null && subscriptions.size() > 0) {
-            boolean channel_exist = false;
-
             if (subscriptions.get(channel) == null) {
                 ChannelStatus cs = new ChannelStatus();
                 cs.channel = channel;
@@ -555,7 +589,7 @@ public class Pubnub {
                         double time_token = this.time();
                         retries++;
                         if (time_token == 0.0) {
-                            Thread.sleep(PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_MS);
+                            Thread.sleep(PUBNUB_WEBREQUEST_RETRY_INTERVAL);
                         } else {
                             // Reconnect Callback
                             callback.reconnectCallback(channel);
@@ -639,14 +673,12 @@ public class Pubnub {
     }
 
     /**
-     * Presence
      * 
-     * Listen for a message on a channel & add presence info.
+     * Listen for presence of subscribers on a channel
      * 
-     * @param String
-     *            channel name.
-     * @param Callback
-     *            function callback.
+     * @param channel Name of the channel on which to listen for join/leave i.e. presence events
+     * @param callback Callback 
+     * @exception PubnubException Throws PubnubException if Callback is null
      */
     public void presence(String channel, Callback callback)
     throws PubnubException {
@@ -656,17 +688,22 @@ public class Pubnub {
         subscribe(args);
     }
 
+    
+    /**
+     * Read presence information from a channel
+     * @param channel
+     * @return JSONArray of uuid's currently subscribing to a channel
+     */
     public JSONArray here_now(String channel) {
-        return here_now(channel, FAST_API_TIMEOUT_MS);
+        return here_now(channel, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     /**
-     * Here Now
      * 
-     * Load presence information from a channel
+     * Read presence information from a channel
      * 
-     * @param String
-     *            channel name.
-     * @return JSONObject of here_now
+     * @param channel Channel name
+     * @param requestTimeout timeout in milliseconds for this request
+     * @return Array of uuid's currently subscribing to a channel
      */
     public JSONArray here_now(String channel, int requestTimeout) {
         String[] errorMessages = {};
@@ -677,14 +714,13 @@ public class Pubnub {
     }
 
     /**
-     * History
      * 
-     * Load history from a channel.
+     * Read history from a channel.
      * 
-     * @param String
-     *            channel name.
-     * @param int limit history count response.
-     * @return JSONArray of history.
+     * @param channel Channel Name
+     * @param limit Upper limit on number of messages in response
+     * @param requestTimeout timeout in milliseconds for this request
+     * @return JSONArray of message history on a channel.
      */
     public JSONArray history(String channel, int limit, int requestTimeout) {
         HashMap<String, Object> args = new HashMap<String, Object>(2);
@@ -692,19 +728,24 @@ public class Pubnub {
         args.put("limit", limit);
         return history(args,requestTimeout);
     }
-    
+    /**
+     * 
+     * Read history from a channel.
+     * 
+     * @param channel Channel Name
+     * @param limit Upper limit on number of messages in response.
+     * @return JSONArray of message history on a channel.
+     */
     public JSONArray history(String channel, int limit) {
-        return history(channel, limit, FAST_API_TIMEOUT_MS);
+        return history(channel, limit, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
 
     /**
-     * History
      * 
-     * Load history from a channel.
+     * Read history from a channel.
      * 
-     * @param HashMap
-     *            <String, Object> containing channel name, limit history count
-     *            response.
+     * @param args HashMap of <String, Object> containing channel name, limit history count
+     * @param requestTimeout timeout in milliseconds for this request
      * @return JSONArray of history.
      */
     private JSONArray history(HashMap<String, Object> args, int requestTimeout) {
@@ -720,10 +761,14 @@ public class Pubnub {
     }
 
     /**
-     * DetailedHistory
      * 
-     * DetailedHistory from PubNub Cloud.
-     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param end End time
+     * @param count Upper limit on number of messages to be returned
+     * @param reverse True if messages need to be in reverse order
+     * @param requestTimeout Timeout value in milliseconds for this request
      * @return JSONArray of detailed history.
      */
     public JSONArray detailedHistory(String channel, long start, long end,
@@ -748,58 +793,134 @@ public class Pubnub {
 
         return getResponseByUrl(new PubnubHttpRequest(getRequest(Arrays.asList(urlargs), requestTimeout), errorMessages), 0);
     }
-
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param end End time
+     * @param count Upper limit on number of messages to be returned
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, long start, long end,
             int count, Boolean reverse) {
-        return detailedHistory(channel, start, end, count, reverse, FAST_API_TIMEOUT_MS);
+        return detailedHistory(channel, start, end, count, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, long start, boolean reverse) {
-        return detailedHistory(channel, start, -1, -1, reverse, FAST_API_TIMEOUT_MS);
+        return detailedHistory(channel, start, -1, -1, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
-    
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param reverse True if messages need to be in reverse order
+     * @param requestTimeout Timeout value in milliseconds for this request
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, long start, boolean reverse, int requestTimeout) {
         return detailedHistory(channel, start, -1, -1, reverse, requestTimeout);
     }
-
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param end End time
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, long start, long end) {
-        return detailedHistory(channel, start, end, -1, false, FAST_API_TIMEOUT_MS);
+        return detailedHistory(channel, start, end, -1, false, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     
     public JSONArray detailedHistory(String channel, long start, long end, int requestTime) {
         return detailedHistory(channel, start, end, -1, false, requestTime);
     }
-
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param end End time
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, long start, long end,
             boolean reverse) {
-        return detailedHistory(channel, start, end, -1, reverse, FAST_API_TIMEOUT_MS);
+        return detailedHistory(channel, start, end, -1, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
-
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param end End time
+     * @param reverse True if messages need to be in reverse order
+     * @param requestTimeout Timeout value in milliseconds for this request
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, long start, long end,
             boolean reverse, int requestTimeout) {
         return detailedHistory(channel, start, end, -1, reverse, requestTimeout);
     }
-    
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param count Upper limit on number of messages to be returned
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, int count, boolean reverse) {
-        return detailedHistory(channel, -1, -1, count, reverse, FAST_API_TIMEOUT_MS);
+        return detailedHistory(channel, -1, -1, count, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param count Upper limit on number of messages to be returned
+     * @param reverse True if messages need to be in reverse order
+     * @param requestTimeout Timeout value in milliseconds for this request
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, int count, boolean reverse, int requestTimeout) {
         return detailedHistory(channel, -1, -1, count, reverse, requestTimeout);
     }
-
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
     public JSONArray detailedHistory(String channel, boolean reverse) {
-        return detailedHistory(channel, -1, -1, -1, reverse, FAST_API_TIMEOUT_MS);
+        return detailedHistory(channel, -1, -1, -1, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
-    
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param reverse True if messages need to be in reverse order
+     * @param requestTimeout Timeout value in milliseconds for this request
+     * @return JSONArray of detailed history.
+     */    
     public JSONArray detailedHistory(String channel, boolean reverse, int requestTimeout) {
         return detailedHistory(channel, -1, -1, -1, reverse, requestTimeout);
     }
 
     /**
-     * Time
+     * Read current time from PubNub Cloud.
      * 
-     * Timestamp from PubNub Cloud.
-     * 
-     * @return double timestamp.
+     * @return current timestamp.
      */
     public double time() {
         List<String> url = new ArrayList<String>();
@@ -807,17 +928,15 @@ public class Pubnub {
         url.add("time");
         url.add("0");
 
-        JSONArray response = _request( new PubnubHttpRequest(getRequest(url,FAST_API_TIMEOUT_MS), errorMessages));
+        JSONArray response = _request( new PubnubHttpRequest(getRequest(url,PUBNUB_FAST_WEBREQUEST_TIMEOUT), errorMessages));
 
         return response.optDouble(0);
     }
 
     /**
-     * UUID
+     * Get 32 digit UUID generation at client side.
      * 
-     * 32 digit UUID generation at client side.
-     * 
-     * @return String uuid.
+     * @return uuid.
      */
     public static String uuid() {
         UUID uuid = UUID.randomUUID();
@@ -825,12 +944,9 @@ public class Pubnub {
     }
 
     /**
-     * Unsubscribe
+     * Unsubscribe/Disconnect from channel.
      * 
-     * Unsubscribe/Disconnect to channel.
-     * 
-     * @param HashMap
-     *            <String, Object> containing channel name.
+     * @param args HashMap of <String, Object> containing channel name.
      */
     public void unsubscribe(HashMap<String, Object> args) {
         String channel = (String) args.get("channel");
@@ -843,8 +959,6 @@ public class Pubnub {
     
 
     /**
-     * Request URL
-     * 
      * @param List
      *            <String> request of url directories.
      * @param int request timeout in milliseconds
@@ -912,9 +1026,9 @@ public class Pubnub {
         }
 
         // Parse JSON String
- /*       if (json.contains("uuids")) {
+        if (json.contains("uuids")) {
             return new JSONArray().put(json);
-        }*/
+        }
         try {
             return new JSONArray(json);
         } catch (JSONException e) {

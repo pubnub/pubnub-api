@@ -3,7 +3,6 @@ package com.pubnub.tests;
 import static java.lang.System.*;
 import static org.junit.Assert.*;
 
-import java.util.HashMap;
 import java.util.Iterator;
 
 import org.json.JSONArray;
@@ -73,8 +72,6 @@ public class PubnubUnitTest {
     static String cipher_key = "enigma"; // (Cipher key is optional)
     static String channel = "hello_world";
     static Pubnub pubnub = null;
-    private int limit = 1;
-
     @Test
     public void testPublishHashMapOfStringObject() {
         pubnub = new Pubnub(publish_key, subscribe_key, secret_key, cipher_key,
@@ -127,15 +124,7 @@ public class PubnubUnitTest {
         return;
     }
 
-    class SubscribeReceiver extends Receiver {
-        @Override 
-        public void connectCallback(String channel) {
-        }
-        @Override 
-        public boolean successCallback(String channel, Object     message) { 
-            return false; 
-        } 
-    }
+ 
     /**
      * 
      */
@@ -145,7 +134,15 @@ public class PubnubUnitTest {
         Pubnub pubnub_p = new Pubnub(publish_key, subscribe_key, secret_key,"", true); 
         final Pubnub pubnub_s = new Pubnub(publish_key,subscribe_key, secret_key, "", true);
 
-        // Callback Interface when a Message is Received
+        class SubscribeReceiver extends Receiver {
+            @Override 
+            public void connectCallback(String channel) {
+            }
+            @Override 
+            public boolean successCallback(String channel, Object     message) { 
+                return false; 
+            } 
+        }
 
 
         // Callback Interface when a Message is Received
@@ -297,7 +294,7 @@ public class PubnubUnitTest {
             } catch (JSONException e) {
                 fail("FAIL: JSON Exception in publishForDetailedHistory");
             }
-            JSONArray response = pubnub.publish(channel, json);
+            pubnub.publish(channel, json);
             if (inputs != null)
                 inputs[i] = msg;
         }
@@ -319,10 +316,10 @@ public class PubnubUnitTest {
         long endtime = (long) pubnub.time();
         
         try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
+            Thread.sleep(3000);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
         
         JSONArray response = null;
 
