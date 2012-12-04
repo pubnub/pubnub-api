@@ -664,6 +664,7 @@ var PDIV          = $('pubnub') || {}
             ,   reconnect     = args['reconnect']     || function(){}
             ,   disconnect    = args['disconnect']    || function(){}
             ,   presence      = args['presence']      || function(){}
+            ,   origin        = nextorigin(ORIGIN)
             ,   restore       = args['restore'];
 
             // Reduce Status Flicker
@@ -697,8 +698,7 @@ var PDIV          = $('pubnub') || {}
 
             // Evented Subscribe
             function _connect() {
-                var origin   = nextorigin(ORIGIN)
-                ,   jsonp    = jsonp_cb()
+                var jsonp    = jsonp_cb()
                 ,   channels = generate_channel_list(CHANNELS);
 
                 // Stop Connection
@@ -720,6 +720,10 @@ var PDIV          = $('pubnub') || {}
                             DISCONNECTED = 1;
                             disconnect();
                         }
+
+                        // New Origin on Failed Connection
+                        origin = nextorigin(ORIGIN);
+
                         timeout( _connect, SECOND );
                         SELF['time'](function(success){
                             // Reconnect

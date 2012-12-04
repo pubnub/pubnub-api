@@ -37,10 +37,10 @@ var pubnub = PUBNUB.init({
 
 function subscribe(channel) { pubnub.subscribe({
     channel    : channel,
-    connect    : function()    {log('NETWORK CONNECTED!!!')},
-    disconnect : function()    {log('NETWORK DISCONNECTED!!!')},
-    reconnect  : function()    {log('NETWORK RECONNECTED!!!')},
-    presence   : function()    {log('PRESENCE: "'+channel+'".')},
+    connect    : function() { log('NETWORK CONNECTED!!!') },
+    disconnect : function() { log('NETWORK DISCONNECTED!!!') },
+    reconnect  : function() { log('NETWORK RECONNECTED!!!') },
+    presence   : function() { log('PRESENCE: "'+channel+'".') },
     callback   : function( message, envelope, channel ) {
         log(
             'CHANNEL "' + channel +
