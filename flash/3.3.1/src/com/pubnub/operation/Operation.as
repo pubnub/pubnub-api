@@ -18,7 +18,7 @@ package com.pubnub.operation {
 		
 		static public const WITH_TIMETOKEN:String = 'subscribe_with_timetoken';
 		static public const GET_TIMETOKEN:String = 'subscribe_get_timetoken';
-		static public const PNPRES_GET_TIMETOKEN:String = 'pnpres_subscribe_get_timetoken';
+		//static public const PNPRES_GET_TIMETOKEN:String = 'pnpres_subscribe_get_timetoken';
 		static public const WITH_RETRY:String = 'subscribe_with_retry';
 		static public const LEAVE:String = 'leave';
 		

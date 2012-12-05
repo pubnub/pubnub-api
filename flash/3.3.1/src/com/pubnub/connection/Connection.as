@@ -1,24 +1,27 @@
-package com.pubnub.net {
+package com.pubnub.connection {
+	import com.pubnub.net.URLLoader;
+	import com.pubnub.net.URLLoaderEvent;
+	import com.pubnub.net.URLResponse;
 	import com.pubnub.operation.Operation;
 	import flash.events.Event;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
-	public class ConnectionBase {
+	public class Connection {
 		
-		protected var loader:URLLoaderBase;
+		protected var loader:URLLoader;
 		protected var _destroyed:Boolean;
 		protected var queue:/*Operation*/Array;
 		protected var operation:Operation;
 		
-		public function ConnectionBase() {
+		public function Connection() {
 			init();
 		}
 		
 		protected function init():void {
 			queue = [];
-			loader = new URLLoaderBase();
+			loader = new URLLoader();
 			loader.addEventListener(URLLoaderEvent.COMPLETE, onComplete)
 			loader.addEventListener(URLLoaderEvent.ERROR, onError);
 			loader.addEventListener(Event.CONNECT, onConnect);
@@ -39,7 +42,7 @@ package com.pubnub.net {
 		
 		protected function onComplete(e:URLLoaderEvent):void {
 			var response:URLResponse = e.data as URLResponse;
-			if (operation) {
+			if (operation && !operation.destroyed) {
 				operation.onData(response.body);
 			}
 		}

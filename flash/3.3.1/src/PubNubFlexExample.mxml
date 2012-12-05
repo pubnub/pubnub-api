@@ -70,11 +70,14 @@
             Pn.instance.addEventListener(PnEvent.INIT, onInit);
             Pn.instance.addEventListener(PnEvent.INIT_ERROR, onInitError);
             Pn.instance.addEventListener(PnEvent.SUBSCRIBE, onSubscribe);
+            Pn.instance.addEventListener(PnEvent.PRESENCE, onPresence);
             Pn.instance.addEventListener(PnEvent.DETAILED_HISTORY, onDetailedHistory);
             Pn.instance.addEventListener(PnEvent.PUBLISH, onPublish);
             Pn.instance.addEventListener(PnEvent.TIME, onPnTime);
             Pn.init(config);
         }
+		
+		
 		
         private function onInit(e:PnEvent):void {
 			//if (perfomance.isRun) return;
@@ -103,7 +106,6 @@
             switch (e.status) {
                 case OperationStatus.DATA:
                     callExternalInterface("console.log", ("Subscribe [DATA], channel : " + e.channel + ', result : ' + e.data.result));
-                    trace('result is: ' + e.data.result);
                     break;
 
                 case OperationStatus.CONNECT:
@@ -119,6 +121,10 @@
                     break;
             }
         }
+		
+		private function onPresence(e:PnEvent):void {
+			 callExternalInterface("console.log", ("Presence, channel : " + e.channel + ', result : ' + e.data));
+		}
 
         protected function OnClearConsoleBtnClick(event:MouseEvent):void{
             consoleCounter = 1;

@@ -11,7 +11,7 @@ package com.pubnub.net {
 	 */
 	[Event(name="URLLoaderEvent.complete", type="com.pubnub.net.URLLoaderEvent")]
 	[Event(name="URLLoaderEvent.error", type="com.pubnub.net.URLLoaderEvent")]
-	public class URLLoaderBase extends EventDispatcher {
+	public class URLLoader extends EventDispatcher {
 		
 		public static const DEFAULT_HTTP_PORT:uint = 80;   
 		public static const DEFAULT_HTTPS_PORT:uint = 443; 
@@ -29,7 +29,7 @@ package com.pubnub.net {
 		
 		protected var _destroyed:Boolean;
 		
-		public function URLLoaderBase() {
+		public function URLLoader() {
 			super(null);
 			init();
 		}
@@ -44,7 +44,7 @@ package com.pubnub.net {
 		}
 		
 		protected function onSocketData(e:ProgressEvent):void {
-			trace('------onSocketData------' + socket.bytesAvailable);
+			//trace('------onSocketData------' + socket.bytesAvailable);
 			temp.clear();
 			while (socketHasData()) {        
 				//_timer.reset();
@@ -62,12 +62,9 @@ package com.pubnub.net {
 			var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
 			var endSymbol:String = getEndSymbol(tempStr);
 			
-			
-			
 			if (tempStr.indexOf(endSymbol) != -1) {
 				onResponce(answer)
 				answer.clear();	
-				
 			}
 		}
 		
@@ -83,7 +80,7 @@ package com.pubnub.net {
 		protected function onResponce(bytes:ByteArray):void {
 			try {
 				_response = new URLResponse(bytes, request);
-				trace('onResponce : ' + _response.body);
+				//trace('onResponce : ' + _response.body);
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.COMPLETE, _response));
 			}catch (err:Error){
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.ERROR, _response));
@@ -174,7 +171,7 @@ package com.pubnub.net {
 			requestBytes.position = 0;
 			// Debug
 			//var hStr:String = "Header:\n" + requestBytes.readUTFBytes(requestBytes.length);
-			trace('socket.connected : ' + socket.connected);
+			//trace('socket.connected : ' + socket.connected);
 			socket.writeBytes(requestBytes);      
 			socket.flush();
 		}

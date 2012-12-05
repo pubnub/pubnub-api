@@ -14,6 +14,7 @@ package com.pubnub {
 		public static const DETAILED_HISTORY:String = 'detailed_history';
 		public static const PUBLISH:String = 'publish';
 		static public const TIME:String = "time";
+		static public const PRESENCE:String = "presence";
 		
 		public var operation:Operation;
 		

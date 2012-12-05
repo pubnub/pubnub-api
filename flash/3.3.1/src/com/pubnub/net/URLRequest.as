@@ -42,7 +42,7 @@ package com.pubnub.net {
 		}
 		
 		public function destroy():void {
-			_header.destroy();
+			if(_header) _header.destroy();
 			_header = null;
 		}
 		

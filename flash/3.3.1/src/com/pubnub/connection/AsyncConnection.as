@@ -1,11 +1,11 @@
-package com.pubnub.net {
+package com.pubnub.connection {
 	import com.pubnub.operation.Operation;
 	import flash.events.Event;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
-	public class AsyncConnection extends ConnectionBase {
+	public class AsyncConnection extends Connection {
 		
 		override public function sendOperation(operation:Operation):void {
 			super.sendOperation(operation);
@@ -19,7 +19,7 @@ package com.pubnub.net {
 		
 		override protected function onConnect(e:Event):void {
 			super.onConnect(e);
-			trace('onConnect: ' + queue.length, ready);
+			//trace('onConnect: ' + queue.length, ready);
 			//return;
 			if (queue.length > 0) {
 				for (var i:int = 0; i < queue.length; i++) {

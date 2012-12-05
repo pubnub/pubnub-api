@@ -1,5 +1,7 @@
 package com.pubnub {
 	
+	import com.pubnub.connection.SyncConnection;
+	import com.pubnub.json.PnJSON;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
@@ -19,12 +21,13 @@ package com.pubnub {
 		static public const HISTORY_OPERATION:String = 'history';
 		static public const PUBLISH_OPERATION:String = 'publish';
 		static public const TIME_OPERATION:String = 'time';
+		static public const PRESENCE_PREFIX:String = "-pnpres";
 		
 		
 		
 		private var _initialized:Boolean = false;         
-		private var operations:Vector.<Operation>
-        private var subscribes:Dictionary;
+		private var operations:/*Operation*/Array;
+        private var subscribes:/*Subscribe*/Array;
         private var factory:Dictionary;
 		private var _origin:String;
 		private var _ssl:Boolean;
@@ -44,7 +47,6 @@ package com.pubnub {
 		}
 		
 		private function setup():void {
-			operations = new Vector.<Operation>;
 			factory = new Dictionary();
 			factory[INIT_OPERATION] = 		createInitOperation; 
 			factory[PUBLISH_OPERATION] = 	createPublishOperation; 
@@ -66,10 +68,11 @@ package com.pubnub {
 		public function init(config:Object):void {
 			//trace(this, 'init')
 			if (_initialized) {
-				unsubscribeAll();
+				dispose();
 			}
 			_initialized = false;
-			subscribes = new Dictionary();
+			subscribes = [];
+			operations = [];
 			ori = Math.floor(Math.random() * 9) + 1;
 			
 			initKeys(config);
@@ -122,38 +125,21 @@ package com.pubnub {
 				return;
 			}
 			
-			//var pnSubscribe:Subscribe = getSubscribe(channel + PRESENCE_PREFIX);
-			
-			
 			
 			subscribe.origin = 			_origin;
 			subscribe.subscribeKey = 	subscribeKey;
 			subscribe.sessionUUID = 	sessionUUID;
 			subscribe.cipherKey = 		cipherKey;
-			
-			//subscribe.cipherKey = 		cipherKey;
-
-			subscribe.subscribe(channel);
-			/*//pnSubscribe.subscribe(channel + PRESENCE_PREFIX);
-			//trace(channel + PRESENCE_PREFIX);
-			var subs:Array = [subscribe, pnSubscribe];
-			for each(var s:Subscribe in subs) {
-				s.addEventListener(SubscribeEvent.CONNECT, 		onSubscribe);
-				s.addEventListener(SubscribeEvent.DATA, 		onSubscribe);
-				s.addEventListener(SubscribeEvent.DISCONNECT, 	onSubscribe);
-				s.addEventListener(SubscribeEvent.ERROR, 		onSubscribe);
-			}*/
-			
-			
 			subscribe.addEventListener(SubscribeEvent.CONNECT, 		onSubscribe);
 			subscribe.addEventListener(SubscribeEvent.DATA, 		onSubscribe);
 			subscribe.addEventListener(SubscribeEvent.DISCONNECT, 	onSubscribe);
 			subscribe.addEventListener(SubscribeEvent.ERROR, 		onSubscribe);
-			
-			// pnp press channel
+			subscribe.addEventListener(PnEvent.PRESENCE, 			dispatchEvent);
+			subscribe.connect(channel);
 		}
-		
+			
 		private function onSubscribe(e:SubscribeEvent):void {
+			trace('onSubscribe');
 			var subscribe:Subscribe = e.target as Subscribe;
 			var status:String;
 			switch (e.type) {
@@ -181,8 +167,9 @@ package com.pubnub {
 
 		public function unsubscribe(channel:String):void {
 			throwInit(); 
-			if (hasChannel(channel)) {
-				var subscribe:Subscribe = getSubscribe(channel);
+			var subscribe:Subscribe = getSubscribeFromArray(channel);
+			trace(subscribe.channelName);
+			if (subscribe) {
 				subscribe.unsubscribe(channel);
 			}else {
 				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, [-1, 'Channel not found'], channel, OperationStatus.ERROR));
@@ -194,12 +181,18 @@ package com.pubnub {
 			if (!subscribe) return;
 			subscribe.removeEventListener(SubscribeEvent.CONNECT, onSubscribe);
 			subscribe.removeEventListener(SubscribeEvent.DATA, onSubscribe);
+			subscribe.removeEventListener(PnEvent.PRESENCE, dispatchEvent);
 			subscribe.removeEventListener(SubscribeEvent.DISCONNECT, onSubscribe);
 			subscribe.removeEventListener(SubscribeEvent.ERROR, onSubscribe);
 		}
 		
-		private function hasChannel(name:String):Boolean {
-			return subscribes[name];
+		private function getSubscribeFromArray(name:String):Subscribe {
+			for each(var s:Subscribe in subscribes) {
+				if (s.channelName == name) {
+					return s;
+				}
+			}
+			return null;
 		}
 		
 		public static function unsubscribeAll():void {
@@ -208,9 +201,9 @@ package com.pubnub {
 		
 		public function unsubscribeAll():void {
 			throwInit();
+			//trace('subscribes : ' + subscribes.length);
 			for each(var i:Subscribe  in subscribes) {
 				unsubscribe(i.channelName);
-				delete subscribes[i.channelName];
 			}
 		}
 		
@@ -294,7 +287,6 @@ package com.pubnub {
 			return publish;
 		}
 		
-		
 		/*---------------TIME---------------*/
 		public static function time():void {
 			instance.time();
@@ -368,24 +360,16 @@ package com.pubnub {
 		}
 		
 		pn_internal function getSubscribe(name:String):Subscribe {
-			var result:Subscribe = subscribes[name] || new Subscribe();
-			subscribes[name] = result;
+			var result:Subscribe = getSubscribeFromArray(name);
+			if (!result) {
+				result = new Subscribe();
+				subscribes.push(result);
+			}
 			return result;
 		}
 		
-		
 		public function destroy():void {
-			dispose();
-			
-			for each(var o:Operation in operations) {
-				o.destroy();
-			}
-			
-			for each(var s:Subscribe  in subscribes) {
-				s.destroy();
-				removeSubscribeEvents(s);
-			}
-			
+			dispose();	
 			operations = null;
 			subscribes = null;
 			_initialized = false;
@@ -393,11 +377,17 @@ package com.pubnub {
 		}
 		
 		public function dispose():void {
-			for each(var s:Subscribe  in subscribes) { s.dispose(); };
-			subscribes = new Dictionary();
-			for each(var i:Operation  in operations) { i.destroy(); };
+			unsubscribeAll();
+			
+			for each(var o:Operation in operations) {
+				o.destroy();
+			}
+			
+			for each(var s:Subscribe  in subscribes) {
+				s.destroy();
+			}
+			subscribes.length = 0;
 			operations.length = 0;
-			Connection.close();
 		}
 		
 		public function get sessionUUID():String {

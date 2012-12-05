@@ -1,16 +1,17 @@
-package com.pubnub.net {
+package com.pubnub.connection {
+	import com.pubnub.net.URLLoaderEvent;
 	import com.pubnub.operation.Operation;
 	import flash.events.Event;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
-	public class SyncConnection extends ConnectionBase {
+	public class SyncConnection extends Connection {
 		
 		private var busy:Boolean;
 		
 		override public function sendOperation(operation:Operation):void {
-			trace('sendOperation : ' + operation.url, ready);
+			//trace('sendOperation : ' + operation.url, ready);
 			super.sendOperation(operation);
 			if (ready) {
 				doSendOperation(operation);
@@ -22,7 +23,7 @@ package com.pubnub.net {
 		
 		private function doSendOperation(operation:Operation):void {
 			if (busy) return;
-			trace('doSendOperation : ' + operation.url);
+			//trace('doSendOperation : ' + operation.url);
 			busy = true;
 			this.operation = operation;
 			loader.load(operation.request);
