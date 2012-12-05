@@ -10,7 +10,8 @@ package com.pubnub.subscribe {
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class Subscribe extends RemovableEventDispatcher {
-		private var _channelName:String;
+		
+		static public const PRESENCE_PREFIX:String = "-pnpres";
 		
 		public var subscribeKey:String;
 		public var sessionUUID:String;
@@ -18,10 +19,9 @@ package com.pubnub.subscribe {
 		
 		protected var _origin:String;
 		protected var _connectionUID:String;
-		
 		protected var subscribe:SubscribeChannel;
-		protected var presence:PresenceChannel
-		
+		protected var presence:PresenceChannel;
+		private var _channelName:String;
 		
 		public function Subscribe() {
 			super(null);
@@ -40,9 +40,10 @@ package com.pubnub.subscribe {
 			presence.addEventListener(SubscribeEvent.DATA, 		dispatchEventPresence);
 		}
 		
-		private function test(e:*):void {
-			trace('dasdasdasdasd');
-		}
+		/*private function test(e:SubscribeEvent):void {
+			//trace('dddddddddddddddddddddddd');
+			dispatchEvent(e);
+		}*/
 		
 		private function dispatchEventPresence(e:SubscribeEvent):void {
 			var str:String = PnJSON.stringify(e.data.result);
@@ -51,12 +52,7 @@ package com.pubnub.subscribe {
 		
 		public function connect(channelName:String):void {
 			trace('connect : ' + channelName);
-			trace('connect : ' + _origin);
-			trace('connect : ' + subscribeKey);
-			trace('connect : ' + sessionUUID);
-			trace('connect : ' + cipherKey);
-			_channelName = channelName;
-			
+			this._channelName = channelName;
 			subscribe.origin = 			presence.origin = 		_origin;
 			subscribe.subscribeKey = 	presence.subscribeKey =	subscribeKey;
 			subscribe.sessionUUID = 	presence.sessionUUID =	sessionUUID;
@@ -64,26 +60,30 @@ package com.pubnub.subscribe {
 			subscribe.connect(channelName);
 			
 			presence.connectionUID = subscribe.connectionUID;
-			presence.connect(channelName);
+			presence.connect(channelName + PRESENCE_PREFIX);
 		}
 		
-		public function unsubscribe(channelName:String):void {
-			subscribe.unsubscribe();
-			presence.unsubscribe();
+		public function disconnect():void {
+			trace('disconnect : ' + _channelName);
+			subscribe.disconnect();
+			presence.disconnect();
 		}
 		
 		override public function destroy():void {
+			//trace(this, 'destroy');
 			if (_isDestroyed) return;
-			super.destroy();
+			
+			subscribe.destroy();
 			subscribe.removeEventListener(SubscribeEvent.CONNECT, 		dispatchEvent);
 			subscribe.removeEventListener(SubscribeEvent.DATA, 			dispatchEvent);
 			subscribe.removeEventListener(SubscribeEvent.DISCONNECT, 	dispatchEvent);
 			subscribe.removeEventListener(SubscribeEvent.ERROR, 		dispatchEvent);
-			subscribe.destroy();
+			
 			
 			presence.destroy();
 			presence.removeEventListener(SubscribeEvent.DATA, 		dispatchEventPresence);
 			
+			super.destroy();
 			presence = null;
 			subscribe = null;
 		}

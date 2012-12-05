@@ -76,12 +76,12 @@ package utils {
 		}
 		
 		private function onPnInit(e:PnEvent):void {
-			//trace('-------------INIT----------------');
+			trace('-------------INIT----------------');
 			Pn.subscribe(channel);	
 		}
 		
 		private function onPnSubscribe(e:PnEvent):void {
-			//trace('-------------SUBSCRIBE---------------- ' + e.status);
+			trace('-------------SUBSCRIBE---------------- ' + e.status);
 			 switch (e.status) {
                 case OperationStatus.DATA:
 					//trace(e.data.result[1].text , message);
@@ -126,7 +126,7 @@ package utils {
 		}
 		
 		private function publish():void {
-			//trace('--------------PUBLISH------------------');
+			trace('--------------PUBLISH------------------');
 			startPublishTime = getTimer();
 			//channel = 'demo';
 			Pn.publish( { 

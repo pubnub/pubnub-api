@@ -112,6 +112,8 @@ package com.pubnub.net {
 		
 		public function get ready():Boolean { return socket && socket.connected ; }
 		
+		public function get connected():Boolean { return socket && socket.connected ; }
+		
 		public function close():void {
 			trace('CLOSE');
 			if (socket.connected) {

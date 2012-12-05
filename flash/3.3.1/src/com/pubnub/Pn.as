@@ -21,7 +21,7 @@ package com.pubnub {
 		static public const HISTORY_OPERATION:String = 'history';
 		static public const PUBLISH_OPERATION:String = 'publish';
 		static public const TIME_OPERATION:String = 'time';
-		static public const PRESENCE_PREFIX:String = "-pnpres";
+		
 		
 		
 		
@@ -139,7 +139,7 @@ package com.pubnub {
 		}
 			
 		private function onSubscribe(e:SubscribeEvent):void {
-			trace('onSubscribe');
+			//trace('onSubscribe');
 			var subscribe:Subscribe = e.target as Subscribe;
 			var status:String;
 			switch (e.type) {
@@ -168,9 +168,11 @@ package com.pubnub {
 		public function unsubscribe(channel:String):void {
 			throwInit(); 
 			var subscribe:Subscribe = getSubscribeFromArray(channel);
-			trace(subscribe.channelName);
 			if (subscribe) {
-				subscribe.unsubscribe(channel);
+				subscribe.disconnect();
+				/*subscribe.destroy();
+				var ind:int = subscribes.indexOf(subscribe);
+				subscribes.splice(ind, 1);*/
 			}else {
 				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, [-1, 'Channel not found'], channel, OperationStatus.ERROR));
 			}

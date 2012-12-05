@@ -61,6 +61,7 @@ package com.pubnub.subscribe {
 		}
 		
 		public function connect(channel:String):void {
+			trace(this, ' connect:' +channel, _connected);
 			if (_connected) {
 				_data = [ -1, Errors.ALREADY_CONNECTED];
 				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, _data));
@@ -71,11 +72,10 @@ package com.pubnub.subscribe {
 			connectInit();
 		}
 		
-		public function unsubscribe():void {
+		public function disconnect():void {
 			if (!_connected) {
 				return;
 			}
-			
 			dispose();
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, { channel:_channelName } ));
 		}
@@ -87,14 +87,14 @@ package com.pubnub.subscribe {
 			clearTimeout(pingTimeout);
 			url = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName) + "/" + 0;
 			_connectionUID = PnUtils.getUID();
-			trace(this, ' subscribeInit : ' + url);
+			//trace(this, ' connectInit : ' + url);
 			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
 			connection.sendOperation(operation);	
 		}
 		
 		protected function onConnectInit(e:OperationEvent):void {
-			trace('onSubscribeInitResult : ' + lastToken);
 			lastToken =  e.data[1];
+			//trace(this, ' onConnectInit : ' + lastToken, hasEventListener(SubscribeEvent.CONNECT));
 			_connected = true;
 			connectLastToken();
 			netMonitor.start();
@@ -129,7 +129,7 @@ package com.pubnub.subscribe {
                     dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, _data));
                 }
             }
-			//trace('onSubscribeResult : ' + _data.result[1].text, lastToken);
+			//trace('onConnect : ' + _data.result[1].text, lastToken);
 			destroyOperation(e.target as Operation);
             connectLastToken();
         }
@@ -141,11 +141,20 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onConnectError(e:OperationEvent):void {
-			trace('onSubscribeError');
+			trace('onSubscribeError!');
 			_data = [ -1, Errors.SUBSCRIBE_CHANNEL_ERROR];
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, _data ));
 			destroyOperation(e.target as Operation);
 		}
+		
+		/*---------------------------LEAVE---------------------------------*/
+		protected function leave():void {
+			if (!_connected) return;
+			trace(this, 'leave : ' + _connected);
+			var operation:Operation = getOperation(Operation.LEAVE);
+			Pn.pn_internal::syncConnection.sendOperation(operation);
+		}
+		
 		
 		protected function getOperation(type:String, args:Object = null):Operation {
 			var op:Operation = factory[type].call(null, args);
@@ -207,15 +216,10 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onNetMonitorMaxRetries(e:NetMonEvent):void {
-			unsubscribe();
+			disconnect();
 		}
 		
-		protected function leave():void {
-			if (!_connected) return;
-			trace(this, 'leave : ' + _connected);
-			var operation:Operation = getOperation(Operation.LEAVE);
-			Pn.pn_internal::syncConnection.sendOperation(operation);
-		}
+		
 		
 		protected function onNetMonitorHTTPDisable(e:NetMonEvent):void {
 			if (_connected) {
@@ -303,6 +307,7 @@ package com.pubnub.subscribe {
 			waitNetwork = false;
 			netMonitor.stop();
 			_connected = false;
+			connection.close();
 			destroyAllOperations();
 		}
 		

@@ -1,5 +1,6 @@
 package {
 	import com.pubnub.*;
+	import com.pubnub.operation.OperationStatus;
 	import flash.display.*;
 	import flash.external.*;
 	import flash.utils.*;
@@ -17,7 +18,7 @@ package {
         public var sub_key:String = 'demo';
         public var secret_key:String = '';
         public var cipher_key:String = '';
-        public var ssl:Boolean = true;
+        public var ssl:Boolean = false;
 		
 		public function PubNubAS3Example():void {
 			super();
@@ -36,7 +37,12 @@ package {
 			Pn.instance.addEventListener(PnEvent.INIT, onInit);
             Pn.instance.addEventListener(PnEvent.INIT_ERROR, onInitError);
             Pn.instance.addEventListener(PnEvent.SUBSCRIBE, onSubscribe);
+            Pn.instance.addEventListener(PnEvent.PRESENCE, onPresence);
             Pn.init(config);
+		}
+		
+		private function onPresence(e:PnEvent):void {
+			callExternalInterface("console.log", ("Presence, channel : " + e.channel + ', result : ' + e.data));
 		}
 		
 		private function onInitError(e:PnEvent):void {

@@ -11,12 +11,14 @@ package com.pubnub.connection {
 		private var busy:Boolean;
 		
 		override public function sendOperation(operation:Operation):void {
-			//trace('sendOperation : ' + operation.url, ready);
+			//trace('sendOperation : ' + ready, loader.ready, loader.connected, busy);
 			super.sendOperation(operation);
 			if (ready) {
 				doSendOperation(operation);
 			}else {
-				loader.connect(operation.request);
+				if (loader.connected == false) {
+					loader.connect(operation.request);
+				}
 				queue.push(operation);
 			}
 		}
@@ -50,8 +52,7 @@ package com.pubnub.connection {
 		}
 		
 		override protected function onComplete(e:URLLoaderEvent):void {
-			trace('onComplete : ' + operation.url)
-			
+			//trace('onComplete : ' + operation.url)
 			super.onComplete(e);
 			busy = false;
 			sendNextOperation();
