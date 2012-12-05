@@ -13,6 +13,7 @@
 #ifndef PNContants_h
 #define PNContants_h
 
-static NSString * const kPNDefaultHost = @"pubsub.pubnub.com";
+static NSString * const kPNDefaultOriginHost = @"pubsub.pubnub.com";
+static BOOL const kPNSecureConnectionByDefault = YES;
 
 #endif // PNContants_h

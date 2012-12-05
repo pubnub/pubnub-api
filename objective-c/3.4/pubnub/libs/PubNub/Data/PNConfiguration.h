@@ -19,7 +19,7 @@
 #pragma mark Properties
 
 // Stores reference on services host name
-@property (nonatomic, copy) NSString *host;
+@property (nonatomic, copy) NSString *origin;
 
 // Stores reference on keys which is required
 // to establish connection and send packets to it
@@ -33,7 +33,6 @@
 @property (nonatomic, assign, getter = shouldUseSecureConnection) BOOL useSecureConnection;
 
 
-
 #pragma mark - Class methods
 
 /**
@@ -44,15 +43,27 @@
 + (PNConfiguration *)defaultConfiguration;
 
 /**
+ * Retrieve reference on lightweight configuration which
+ * require only few parameters from user
+ */
++ (PNConfiguration *)configurationWithPublishKey:(NSString *)publishKey
+                                    subscribeKey:(NSString *)subscribeKey
+                                       secretKey:(NSString *)secretKey;
++ (PNConfiguration *)configurationForOrigin:(NSString *)originHostName
+                                 publishKey:(NSString *)publishKey 
+                               subscribeKey:(NSString *)subscribeKey
+                                  secretKey:(NSString *)secretKey;
+
+/**
  * Retrieve reference on configuration with full
  * set of options specified by user
  */
-+ (PNConfiguration *)configurationForHost:(NSString *)originHostName
-                               publishKey:(NSString *)publishKey
-                             subscribeKey:(NSString *)subscribeKey
-                                secretKey:(NSString *)secretKey
-                                cipherKey:(NSString *)cipherKey
-                      useSecureConnection:(BOOL)shouldUseSecureConnection;
++ (PNConfiguration *)configurationForOrigin:(NSString *)originHostName
+                                 publishKey:(NSString *)publishKey
+                               subscribeKey:(NSString *)subscribeKey
+                                  secretKey:(NSString *)secretKey
+                                  cipherKey:(NSString *)cipherKey
+                        useSecureConnection:(BOOL)shouldUseSecureConnection;
 
 
 #pragma mark - Instance methods
@@ -61,12 +72,12 @@
  * Initialize configuration instance with specified
  * set of parameters
  */
-- (id)initWithHost:(NSString *)originHostName
-        publishKey:(NSString *)publishKey
-      subscribeKey:(NSString *)subscribeKey
-         secretKey:(NSString *)secretKey
-         cipherKey:(NSString *)cipherKey
-   useSecureConnection:(BOOL)shouldUseSecureConnection;
+- (id)initWithOrigin:(NSString *)originHostName
+          publishKey:(NSString *)publishKey
+        subscribeKey:(NSString *)subscribeKey
+           secretKey:(NSString *)secretKey
+           cipherKey:(NSString *)cipherKey
+ useSecureConnection:(BOOL)shouldUseSecureConnection;
 
 /**
  * Check whether configuration is valid or not

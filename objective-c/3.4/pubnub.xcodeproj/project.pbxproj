@@ -75,6 +75,9 @@
 		79C322A9166E0568006DB535 /* PNConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNConfiguration.m; sourceTree = "<group>"; };
 		79C322AC166E063B006DB535 /* PNDefaultConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNDefaultConfiguration.h; sourceTree = "<group>"; };
 		79C322BC166E1358006DB535 /* PNContants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNContants.h; sourceTree = "<group>"; };
+		79F84AFA166F60450005E3B1 /* PNMacro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNMacro.h; sourceTree = "<group>"; };
+		79F84B03166F72000005E3B1 /* PNImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNImports.h; sourceTree = "<group>"; };
+		79F84B05166F74A80005E3B1 /* PubNub+Protected.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PubNub+Protected.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -288,6 +291,7 @@
 		79C3229B166E0266006DB535 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				79F84B05166F74A80005E3B1 /* PubNub+Protected.h */,
 				79C3229E166E0291006DB535 /* PubNub.h */,
 				79C3229F166E0291006DB535 /* PubNub.m */,
 			);
@@ -300,6 +304,8 @@
 				79C322A2166E02F5006DB535 /* Protocols */,
 				79C322AC166E063B006DB535 /* PNDefaultConfiguration.h */,
 				79C322BC166E1358006DB535 /* PNContants.h */,
+				79F84B03166F72000005E3B1 /* PNImports.h */,
+				79F84AFA166F60450005E3B1 /* PNMacro.h */,
 			);
 			path = Misc;
 			sourceTree = "<group>";

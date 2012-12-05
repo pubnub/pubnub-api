@@ -8,14 +8,36 @@
 
 #import "PNAppDelegate.h"
 #import "PNViewController.h"
+#import "PNImports.h"
 
 
-#pragma mark Public interface methods
+#pragma mark Private interface methods
+
+@interface PNAppDelegate ()
+
+
+#pragma mark - Instance methods
+
+- (void)initializePubNubClient;
+
+
+@end
+
+
+#pragma mark - Public interface methods
 
 @implementation PNAppDelegate
 
 
 #pragma mark - Instance methods
+
+- (void)initializePubNubClient {
+    
+    // Performing intial PubNub client configuration
+    [PubNub setConfiguration:[PNConfiguration defaultConfiguration]];
+    [PubNub setClientIdentifier:nil];
+}
+
 
 #pragma mark - UIApplication delegate methods
 
