@@ -501,13 +501,12 @@ var PDIV          = $('pubnub') || {}
 ,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
     var CHANNELS      = {}
-    ,   SUB_CALLBACK  = null
-    ,   SUB_CHANNEL   = null
-    ,   SUB_RECEIVER  = null
+    ,   SUB_CALLBACK  = 0
+    ,   SUB_CHANNEL   = 0
+    ,   SUB_RECEIVER  = 0
+    ,   SUB_RESTORE   = 0
     ,   SUB_BUFF_WAIT = 0
     ,   TIMETOKEN     = 0
-    ,   DISCONNECTED  = 0
-    ,   CONNECTED     = 0
     ,   PUBLISH_KEY   = setup['publish_key']   || ''
     ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
     ,   SSL           = setup['ssl'] ? 's' : ''
@@ -659,7 +658,6 @@ var PDIV          = $('pubnub') || {}
             var channel       = args['channel']
             ,   callback      = callback              || args['callback']
             ,   callback      = callback              || args['message']
-            ,   subscribe_key = args['subscribe_key'] || SUBSCRIBE_KEY
             ,   error         = args['error']         || function(){}
             ,   connect       = args['connect']       || function(){}
             ,   reconnect     = args['reconnect']     || function(){}
@@ -667,6 +665,9 @@ var PDIV          = $('pubnub') || {}
             ,   presence      = args['presence']      || 0
             ,   restore       = args['restore']
             ,   origin        = nextorigin(ORIGIN);
+
+            // Restore Enabled?
+            if (restore) SUB_RESTORE = 1;
 
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
@@ -696,6 +697,7 @@ var PDIV          = $('pubnub') || {}
                 // Subscribe Presence Channel
                 SELF.subscribe({
                     channel  : channel + PRESENCE_SUFFIX,
+                    restore  : 0,
                     callback : presence
                 });
 
@@ -732,7 +734,7 @@ var PDIV          = $('pubnub') || {}
                     data     : { uuid: UUID },
                     url      : [
                         origin, 'subscribe',
-                        subscribe_key, encode(channels),
+                        SUBSCRIBE_KEY, encode(channels),
                         jsonp, TIMETOKEN
                     ],
                     fail : function() {
@@ -772,10 +774,10 @@ var PDIV          = $('pubnub') || {}
 
                         // Restore Previous Connection Point if Needed
                         // Also Update Timetoken
-                        restore = db.set(
+                        SUB_RESTORE = db.set(
                             SUBSCRIBE_KEY,
-                            TIMETOKEN = restore && db.get(
-                                subscribe_key + channel
+                            TIMETOKEN = SUB_RESTORE && db.get(
+                                SUBSCRIBE_KEY
                             ) || messages[1]
                         );
 
@@ -913,7 +915,8 @@ var PDIV          = $('pubnub') || {}
 PUBNUB = CREATE_PUBNUB({
     'publish_key'   : attr( PDIV, 'pub-key' ),
     'subscribe_key' : attr( PDIV, 'sub-key' ),
-    'ssl'           : !document.location.href.indexOf('https') || attr( PDIV, 'ssl' ) == 'on',
+    'ssl'           : !document.location.href.indexOf('https') ||
+                      attr( PDIV, 'ssl' ) == 'on',
     'origin'        : attr( PDIV, 'origin' ),
     'uuid'          : attr( PDIV, 'uuid' )
 });
