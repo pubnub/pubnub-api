@@ -487,7 +487,7 @@ function generate_channel_list(channels) {
     each( channels, function( channel, status ) {
         if (status.subscribed) list.push(channel);
     } );
-    return list.sort().join(',');
+    return list.sort();
 }
 
 /* =-====================================================================-= */
@@ -697,7 +697,6 @@ var PDIV          = $('pubnub') || {}
                 // Subscribe Presence Channel
                 SELF.subscribe({
                     channel  : channel + PRESENCE_SUFFIX,
-                    restore  : 0,
                     callback : presence
                 });
 
@@ -722,7 +721,7 @@ var PDIV          = $('pubnub') || {}
             // Evented Subscribe
             function _connect() {
                 var jsonp    = jsonp_cb()
-                ,   channels = generate_channel_list(CHANNELS);
+                ,   channels = generate_channel_list(CHANNELS).join(',');
 
                 // Stop Connection
                 if (!channels) return;
@@ -739,12 +738,11 @@ var PDIV          = $('pubnub') || {}
                     ],
                     fail : function() {
                         // Disconnect
-                        each( channels.split(','), function(channel) {
-                            if (!CHANNELS[channel].disconnected) {
-                                CHANNELS[channel].disconnected = 1;
-                                CHANNELS[channel].disconnect();
-                            }
-                        } );
+                        each_channel(function(channel){
+                            if (channel.disconnected) return;
+                            channel.disconnected = 1;
+                            channel.disconnect();
+                        });
 
                         // New Origin on Failed Connection
                         origin = nextorigin(ORIGIN);
@@ -752,34 +750,30 @@ var PDIV          = $('pubnub') || {}
                         // Reconnect
                         timeout( _connect, SECOND );
                         SELF['time'](function(success){
-                            each( channels.split(','), function(channel) {
-                                if (success&&CHANNELS[channel].disconnected){
-                                    CHANNELS[channel].disconnected = 0;
-                                    CHANNELS[channel].reconnect();
+                            each_channel(function(channel){
+                                if (success && channel.disconnected){
+                                    channel.disconnected = 0;
+                                    channel.reconnect();
                                 }
-                                else {
-                                    CHANNELS[channel].error();
-                                }
-                            } );
+                                else channel.error();
+                            });
                         });
                     },
                     success : function(messages) {
                         // Connect
-                        each( channels.split(','), function(channel) {
-                            if (!CHANNELS[channel].connected) {
-                                CHANNELS[channel].connected = 1;
-                                CHANNELS[channel].connect();
-                            }
-                        } );
+                        each_channel(function(channel){
+                            if (channel.connected) return;
+                            channel.connected = 1;
+                            channel.connect();
+                        });
 
                         // Restore Previous Connection Point if Needed
-                        // Also Update Timetoken
-                        SUB_RESTORE = db.set(
-                            SUBSCRIBE_KEY,
-                            TIMETOKEN = SUB_RESTORE && db.get(
-                                SUBSCRIBE_KEY
-                            ) || messages[1]
-                        );
+                        if (!TIMETOKEN && SUB_RESTORE)
+                             TIMETOKEN = db.get(SUBSCRIBE_KEY);
+                        else TIMETOKEN = messages[1]
+
+                        // Update Saved Timetoken
+                        db.set( SUBSCRIBE_KEY, messages[1] );
 
                         // Route Channel <---> Callback for Message
                         var next_callback = (function() {
@@ -831,8 +825,6 @@ var PDIV          = $('pubnub') || {}
                     ]
                 });
             };
-
-//TODO here_now executes 4 times if you usub...? or sub?
 
             CONNECT = function() {
                 // Close Previous Subscribe Connection
@@ -898,6 +890,12 @@ var PDIV          = $('pubnub') || {}
         'updater'  : updater,
         'init'     : CREATE_PUBNUB
     };
+
+    function each_channel(callback) {
+        each( generate_channel_list(CHANNELS), function(channel) {
+            callback(CHANNELS[channel]||{});
+        } );
+    }
     
     if (!UUID) UUID = SELF.uuid();
     db.set( SUBSCRIBE_KEY + 'uuid', UUID );

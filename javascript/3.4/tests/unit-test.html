@@ -47,7 +47,7 @@
     <td>{message}</td>
 </script>
 
-<div id=pubnub pub-key=demo sub-key=demo origin=alskdytwueiuszacstest.pubnub.com></div>
+<div id=pubnub pub-key=demo sub-key=demo origin=pubsub.pubnub.com></div>
 <script src=../pubnub-3.4.js></script>
 <script>(function(){
 
@@ -151,9 +151,9 @@
             p.history({
                 limit    : 1,
                 channel  : channel,
-                callback : function(messages) {
-                    test( messages, 'History Response' );
-                    test( messages[0].test === "test", 'History Content' );
+                callback : function(data) {
+                    test( data, 'History Response' );
+                    test( data[0][0].test === "test", 'History Content' );
                 }
             });
         }
