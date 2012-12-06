@@ -161,11 +161,11 @@
         p.subscribe({
             channel  : channel,
             connect  : publish_test,
-            callback : function( message, stack ) {
+            callback : function( message, envelope, chan ) {
                 p.unsubscribe({ channel : channel });
                 test( message, 'Subscribe Message' );
                 test( message.test === "test", 'Subscribe Message Data' );
-                test( stack[1], 'TimeToken Returned: ' + stack[1] );
+                test( envelope[1], 'TimeToken Returned: ' + envelope[1] );
             }
         });
 
@@ -182,14 +182,11 @@
                     test( chan, 'Many Connections: ' + conn + ' Connected!' );
                     p.publish({ channel : chan, message : chan });
                 },
-                callback : function(message) {
+                callback : function( message, envelope, chan ) {
+                    p.unsubscribe({ channel : chan });
                     test(
                         chan === message,
                         'Many Connections: ' + conn + ' Received'
-                    );
-                    setTimeout(
-                        function() { p.unsubscribe({ channel : chan }) },
-                        5000
                     );
                 }
             });
@@ -198,24 +195,30 @@
         /* ------------------------------------------------------------------
         --- TESTING NEW CONNECTION RESTORE FEATURE
         ------------------------------------------------------------------ */
-        var restore_channel = 'restore-channel'+Math.random();
-        p.subscribe({
+        //return;
+        var restore_channel = 'restore-channel'+Math.random()
+        ,   p2              = PUBNUB.init({
+            publish_key   : 'demo',
+            subscribe_key : 'demo'
+        });
+
+        p2.subscribe({
             restore  : true,
             channel  : restore_channel,
             callback : function(){},
             connect  : function() {
-                p.unsubscribe({ channel : restore_channel });
+                p2.unsubscribe({ channel : restore_channel });
 
                 // Send Message While Not Connected
-                p.publish({
+                p2.publish({
                     channel  : restore_channel,
                     message  : 'test',
                     callback : function() {
-                        p.subscribe({
+                        p2.subscribe({
                             restore  : true,
                             channel  : restore_channel,
                             callback : function( message, stack ) {
-                                p.unsubscribe({ channel : restore_channel });
+                                p2.unsubscribe({ channel : restore_channel });
                                 test(
                                     message === "test",
                                     'Subscribe Restore'
@@ -226,17 +229,6 @@
                 });
             }
         });
-
-        
-    /*
-    restore    : true,
-    disconnect : function() {
-    },
-    reconnect  : function() {
-    },
-    connect    : function() {
-    },
-    */
 
     }
     start_test();

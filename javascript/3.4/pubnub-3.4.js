@@ -498,7 +498,7 @@ function generate_channel_list(channels) {
 
 var PDIV          = $('pubnub') || {}
 ,   READY         = 0
-,   READY_BUFFER  = []
+,   READY_BUFFER  = {}
 ,   CREATE_PUBNUB = function(setup) {
     var CHANNELS      = {}
     ,   SUB_CALLBACK  = 0
@@ -763,6 +763,7 @@ var PDIV          = $('pubnub') || {}
                         // Connect
                         each_channel(function(channel){
                             if (channel.connected) return;
+                            console.log('connected!', !channel.connected,generate_channel_list(CHANNELS));
                             channel.connected = 1;
                             channel.connect();
                         });
@@ -783,7 +784,8 @@ var PDIV          = $('pubnub') || {}
                             return function() {
                                 var channel = list.shift()||'';
                                 return [
-                                    CHANNELS[channel].callback||SUB_CALLBACK,
+                                    (CHANNELS[channel]||{})
+                                    .callback||SUB_CALLBACK,
                                     (channel||SUB_CHANNEL)
                                     .split(PRESENCE_SUFFIX)[0]
                                 ];
@@ -896,7 +898,7 @@ var PDIV          = $('pubnub') || {}
             callback(CHANNELS[channel]||{});
         } );
     }
-    
+
     if (!UUID) UUID = SELF.uuid();
     db.set( SUBSCRIBE_KEY + 'uuid', UUID );
 
