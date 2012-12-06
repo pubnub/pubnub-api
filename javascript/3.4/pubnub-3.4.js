@@ -485,7 +485,7 @@ function ajax( setup ) {
 function generate_channel_list(channels) {
     var list = [];
     each( channels, function( channel, status ) {
-        if (status.connected) list.push(channel);
+        if (status.subscribed) list.push(channel);
     } );
     return list.sort().join(',');
 }
@@ -501,6 +501,8 @@ var PDIV          = $('pubnub') || {}
 ,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
     var CHANNELS      = {}
+    ,   SUB_CALLBACK  = null
+    ,   SUB_CHANNEL   = null
     ,   SUB_RECEIVER  = null
     ,   SUB_BUFF_WAIT = 0
     ,   TIMETOKEN     = 0
@@ -550,8 +552,8 @@ var PDIV          = $('pubnub') || {}
                 success  : function(response) { callback(response) },
                 fail     : function(response) { log(response) },
                 url      : [
-                    origin, 'v2', 'history',
-                    'sub-key', SUBSCRIBE_KEY, 'channel', encode(channel)
+                    origin, 'v2', 'history', 'sub-key',
+                    SUBSCRIBE_KEY, 'channel', encode(channel)
                 ]
             });
         },
@@ -623,30 +625,28 @@ var PDIV          = $('pubnub') || {}
                 data     : { uuid: UUID }
             });
         },
+
         /*
             PUBNUB.unsubscribe({ channel : 'my_chat' });
         */
         'unsubscribe' : function(args) {
-            // Unsubscribe from both the Channel and the Presence Channel
-            unsubscribe(args['channel']);
-            unsubscribe(args['channel'] + PRESENCE_SUFFIX);
+            var channel = args['channel'];
 
-            // Announce Leave
-            LEAVE(args['channel']);
+            // Prepare Channel(s)
+            channel = map( (
+                channel.join ? channel.join(',') : ''+channel
+            ).split(','), function(channel) {
+                return channel + ',' + channel + PRESENCE_SUFFIX;
+            } ).join(',');
 
-            // Open Connection if Any Channels Left
-            CONNECT();
+            // Iterate over Channels
+            each( channel.split(','), function(channel) {
+                LEAVE(channel);
+                CHANNELS[channel] = {};
+            } );
 
-            function unsubscribe(channel) {
-                // Leave if there never was a channel.
-                if (!(channel in CHANNELS)) return;
-
-                // Disable Channel
-                CHANNELS[channel].connected = 0;
-
-                // Abort and/or Remove Script
-                SUB_RECEIVER && SUB_RECEIVER()
-            }
+            // ReOpen Connection if Any Channels Left
+            if (READY) CONNECT();
         },
 
         /*
@@ -658,43 +658,64 @@ var PDIV          = $('pubnub') || {}
         'subscribe' : function( args, callback ) {
             var channel       = args['channel']
             ,   callback      = callback              || args['callback']
+            ,   callback      = callback              || args['message']
             ,   subscribe_key = args['subscribe_key'] || SUBSCRIBE_KEY
             ,   error         = args['error']         || function(){}
             ,   connect       = args['connect']       || function(){}
             ,   reconnect     = args['reconnect']     || function(){}
             ,   disconnect    = args['disconnect']    || function(){}
-            ,   presence      = args['presence']      || function(){}
-            ,   origin        = nextorigin(ORIGIN)
-            ,   restore       = args['restore'];
-
-            // Reduce Status Flicker
-            if (!READY) return READY_BUFFER.push([ args, callback, SELF ]);
+            ,   presence      = args['presence']      || 0
+            ,   restore       = args['restore']
+            ,   origin        = nextorigin(ORIGIN);
 
             // Make sure we have a Channel
             if (!channel)       return log('Missing Channel');
             if (!callback)      return log('Missing Callback');
             if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
 
-            // If is an Array
-            if (channel.join) channel = channel.join(',');
+            // Setup Channel(s)
+            each( (channel.join ? channel.join(',') : ''+channel).split(','),
+            function(channel) {
+                var settings = CHANNELS[channel] || {};
 
-            // If User used Commas in Channels
-            if (channel.indexOf(',') > 0) {
-                each( channel.split(','), function(channel) {
-                    args['channel'] = channel;
-                    SELF['subscribe']( args, callback );
-                } );
-                return;
-            }
+                // Store Channel State
+                CHANNELS[SUB_CHANNEL = channel] = {
+                    connected    : settings.connected,
+                    disconnected : settings.disconnected,
+                    subscribed   : 1,
+                    callback     : SUB_CALLBACK = callback,
+                    connect      : connect,
+                    error        : error,
+                    disconnect   : disconnect,
+                    reconnect    : reconnect
+                };
 
-            if (!(channel in CHANNELS)) CHANNELS[channel] = {};
+                // Presence Enabled?
+                if (!presence) return;
 
-            // Make sure we have a Channel
-            if (CHANNELS[channel].connected) return log('Already Connected');
-                CHANNELS[channel].connected = 1;
+                // Subscribe Presence Channel
+                SELF.subscribe({
+                    channel  : channel + PRESENCE_SUFFIX,
+                    callback : presence
+                });
 
-            // Register Callback
-            CHANNELS[channel].callback = callback;
+                // Presence Subscribed?
+                if (settings.subscribed) return;
+
+                // See Who's Here Now
+                SELF['here_now']({
+                    channel  : channel,
+                    callback : function(here) {
+                        each( 'uuids' in here ? here['uuids'] : [],
+                        function(uuid) { presence( {
+                            action    : 'join',
+                            uuid      : uuid,
+                            timestamp : rnow(),
+                            occupancy : here['occupancy'] || 1
+                        }, here, channel ); } );
+                    }
+                });
+            } );
 
             // Evented Subscribe
             function _connect() {
@@ -716,40 +737,38 @@ var PDIV          = $('pubnub') || {}
                     ],
                     fail : function() {
                         // Disconnect
-                        if (!DISCONNECTED) {
-                            DISCONNECTED = 1;
-                            disconnect();
-                        }
+                        each( channels.split(','), function(channel) {
+                            if (!CHANNELS[channel].disconnected) {
+                                CHANNELS[channel].disconnected = 1;
+                                CHANNELS[channel].disconnect();
+                            }
+                        } );
 
                         // New Origin on Failed Connection
                         origin = nextorigin(ORIGIN);
 
+                        // Reconnect
                         timeout( _connect, SECOND );
                         SELF['time'](function(success){
-                            // Reconnect
-                            if (success && DISCONNECTED) {
-                                DISCONNECTED = 0;
-                                reconnect();
-                            }
-                            else {
-                                error();
-                            }
+                            each( channels.split(','), function(channel) {
+                                if (success&&CHANNELS[channel].disconnected){
+                                    CHANNELS[channel].disconnected = 0;
+                                    CHANNELS[channel].reconnect();
+                                }
+                                else {
+                                    CHANNELS[channel].error();
+                                }
+                            } );
                         });
                     },
                     success : function(messages) {
-                        if (!CHANNELS[channel].connected) return;
-
                         // Connect
-                        if (!CONNECTED) {
-                            CONNECTED = 1;
-                            connect();
-                        }
-
-                        // Reconnect
-                        if (DISCONNECTED) {
-                            DISCONNECTED = 0;
-                            reconnect();
-                        }
+                        each( channels.split(','), function(channel) {
+                            if (!CHANNELS[channel].connected) {
+                                CHANNELS[channel].connected = 1;
+                                CHANNELS[channel].connect();
+                            }
+                        } );
 
                         // Restore Previous Connection Point if Needed
                         // Also Update Timetoken
@@ -760,15 +779,18 @@ var PDIV          = $('pubnub') || {}
                             ) || messages[1]
                         );
 
+                        // Route Channel <---> Callback for Message
                         var next_callback = (function() {
-                            var channels = (messages.length > 2 ? messages[2] : '')
+                            var channels = (messages.length>2?messages[2]:'')
                             ,   list     = channels.split(',');
 
                             return function() {
-                                var channel = list.shift();
-                                return [channel in CHANNELS     &&
-                                    CHANNELS[channel].callback ||
-                                    callback, channel];
+                                var channel = list.shift()||'';
+                                return [
+                                    CHANNELS[channel].callback||SUB_CALLBACK,
+                                    (channel||SUB_CHANNEL)
+                                    .split(PRESENCE_SUFFIX)[0]
+                                ];
                             };
                         })();
 
@@ -783,20 +805,21 @@ var PDIV          = $('pubnub') || {}
             }
 
             // Announce Leave Event
-            function leave(chan) {
+            LEAVE = function(channel) {
                 var data   = { uuid : UUID }
                 ,   origin = nextorigin(ORIGIN)
                 ,   jsonp  = jsonp_cb();
 
+                // Don't Double Leave
+                if (!CHANNELS[channel].subscribed) return;
+
                 // Prevent Leaving a Presence Channel
-                if ( channel.indexOf(PRESENCE_SUFFIX) ===
-                     channel.length - PRESENCE_SUFFIX.length
-                ) return true;
+                if (channel.indexOf(PRESENCE_SUFFIX) > 0) return;
 
                 if (jsonp != '0') data['callback'] = jsonp;
 
                 xdr({
-                    blocking : !args['noleave'],
+                    blocking : 1,
                     timeout  : 2000,
                     callback : jsonp,
                     data     : data,
@@ -805,49 +828,24 @@ var PDIV          = $('pubnub') || {}
                         SUBSCRIBE_KEY, 'channel', encode(channel), 'leave'
                     ]
                 });
+            };
 
-                return true;
-            }
+//TODO here_now executes 4 times if you usub...? or sub?
 
-            LEAVE = leave;
+            CONNECT = function() {
+                // Close Previous Subscribe Connection
+                SUB_RECEIVER && SUB_RECEIVER();
 
-            // onBeforeUnload
-            bind( 'beforeunload', window, leave );
+                // Begin Recursive Subscribe
+                clearTimeout(SUB_BUFF_WAIT);
+                SUB_BUFF_WAIT = timeout( _connect, 100 );
+            };
 
-            // Presence Subscribe
-            if (args['presence']) {
+            // Reduce Status Flicker
+            if (!READY) return READY_BUFFER[SUBSCRIBE_KEY] = CONNECT;
 
-                // Subscribe Presence Channel
-                SELF.subscribe({
-                    channel  : args['channel'] + PRESENCE_SUFFIX,
-                    restore  : args['restore'],
-                    callback : args['presence']
-                });
-
-                // See Who's Here Now
-                SELF['here_now']({
-                    channel  : args['channel'],
-                    callback : function(here) {
-                        each( 'uuids' in here ? here['uuids'] : [],
-                        function(uuid) {
-                            args['presence']({
-                                action    : 'join',
-                                uuid      : uuid,
-                                timestamp : rnow(),
-                                occupancy : here['occupancy'] || 1
-                            });
-                        } );
-                    }
-                });
-
-            }
-
-            // Close Previous Subscribe Connection
-            SUB_RECEIVER && SUB_RECEIVER();
-
-            // Begin Recursive Subscribe
-            clearTimeout(SUB_BUFF_WAIT);
-            SUB_BUFF_WAIT = timeout( CONNECT = _connect, 100 );
+            // Connect Now
+            CONNECT();
         },
 
         'here_now' : function( args, callback ) {
@@ -901,6 +899,12 @@ var PDIV          = $('pubnub') || {}
     
     if (!UUID) UUID = SELF.uuid();
     db.set( SUBSCRIBE_KEY + 'uuid', UUID );
+
+    // Add Leave Functions
+    bind( 'beforeunload', window, function() {
+        each( CHANNELS, LEAVE );
+        return true;
+    } );
     
     return SELF;
 };
@@ -929,9 +933,7 @@ function ready() { PUBNUB['time'](rnow);
 PUBNUB['time'](function(t){ timeout( function() {
     if (READY) return;
     READY = 1;
-    each( READY_BUFFER, function(sub) {
-        sub[2]['subscribe']( sub[0], sub[1] )
-    } );
+    each( READY_BUFFER, function( _, connect ) { connect() } );
 }, SECOND ); }); }
 
 // Bind for PUBNUB Readiness to Subscribe
