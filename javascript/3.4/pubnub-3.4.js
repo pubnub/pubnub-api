@@ -641,7 +641,7 @@ var PDIV          = $('pubnub') || {}
 
             // Iterate over Channels
             each( channel.split(','), function(channel) {
-                LEAVE(channel);
+                if (READY) LEAVE( channel, 0 );
                 CHANNELS[channel] = {};
             } );
 
@@ -878,20 +878,11 @@ var PDIV          = $('pubnub') || {}
     if (!UUID) UUID = SELF.uuid();
     db.set( SUBSCRIBE_KEY + 'uuid', UUID );
 
-    // Add Leave Functions
-    bind( 'beforeunload', window, function() {
-        each( CHANNELS, LEAVE );
-        return true;
-    } );
-
     // Announce Leave Event
-    function LEAVE(channel) {
+    LEAVE = function( channel, blocking ) {
         var data   = { uuid : UUID }
         ,   origin = nextorigin(ORIGIN)
         ,   jsonp  = jsonp_cb();
-
-        // Prevent Double Leave
-        if (channel in CHANNELS&&!CHANNELS[channel].subscribed)return;
 
         // Prevent Leaving a Presence Channel
         if (channel.indexOf(PRESENCE_SUFFIX) > 0) return;
@@ -899,7 +890,7 @@ var PDIV          = $('pubnub') || {}
         if (jsonp != '0') data['callback'] = jsonp;
 
         xdr({
-            blocking : 1,
+            blocking : blocking,
             timeout  : 2000,
             callback : jsonp,
             data     : data,
@@ -909,7 +900,13 @@ var PDIV          = $('pubnub') || {}
             ]
         });
     };
-    
+
+    // Add Leave Functions
+    bind( 'beforeunload', window, function() {
+        each_channel(function(ch){ LEAVE( ch.name, 1 ) });
+        return true;
+    } );
+
     return SELF;
 };
 

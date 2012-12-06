@@ -65,6 +65,7 @@ subscribe('d');   // Prevent Duplicate Subscribe
 subscribe('d');   // Prevent Duplicate Subscribe
 unsubscribe('f');
 subscribe('x');
+setTimeout( function() {unsubscribe('a');}, 4000 );
 
 /*
 pre-split all channel names.
