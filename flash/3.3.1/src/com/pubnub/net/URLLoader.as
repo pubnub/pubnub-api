@@ -1,5 +1,6 @@
 package com.pubnub.net {
 	import com.adobe.net.*;
+	import flash.errors.IOError;
 	import flash.events.*;
 	import flash.net.Socket;
 	import flash.net.URLRequestMethod;
@@ -26,6 +27,8 @@ package com.pubnub.net {
 		protected var _response:URLResponse;
 		protected var answer:ByteArray = new ByteArray();
 		protected var temp:ByteArray = new ByteArray();
+		protected var _timeout:int = 310000;
+		protected var timeoutInterval:int;
 		
 		protected var _destroyed:Boolean;
 		
@@ -79,7 +82,9 @@ package com.pubnub.net {
 		
 		protected function onResponce(bytes:ByteArray):void {
 			try {
-				_response = new URLResponse(bytes, request);
+				if (request) {
+					_response = new URLResponse(bytes, request);
+				}
 				//trace('onResponce : ' + _response.body);
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.COMPLETE, _response));
 			}catch (err:Error){
@@ -116,18 +121,28 @@ package com.pubnub.net {
 		
 		public function close():void {
 			trace('CLOSE');
-			if (socket.connected) {
+			try {
 				socket.close();
+			}catch (err:IOError){
+				// something wrong
 			}
 			destroyResponce();
+			clearTimeout(timeoutInterval);
 			request = null;
 		}
 		
 		public function load(request:URLRequest):void {
+			clearTimeout(timeoutInterval);
+			timeoutInterval = setTimeout(onTimeout, _timeout);
 			this.request = request;
 			uri = new URI(request.url);
 			destroyResponce();
 			sendRequest(request);
+		}
+		
+		private function onTimeout():void {
+			dispatchEvent(new URLLoaderEvent(URLLoaderEvent.TIMEOUT, request));
+			request = null;
 		}
 		
 		private function destroyResponce():void {
@@ -189,6 +204,14 @@ package com.pubnub.net {
 		
 		public function get response():URLResponse {
 			return _response;
+		}
+		
+		public function get timeout():int {
+			return _timeout;
+		}
+		
+		public function set timeout(value:int):void {
+			_timeout = value;
 		}
 	}
 }

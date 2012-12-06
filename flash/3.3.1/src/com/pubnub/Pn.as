@@ -1,7 +1,6 @@
 package com.pubnub {
 	
-	import com.pubnub.connection.SyncConnection;
-	import com.pubnub.json.PnJSON;
+	import com.pubnub.connection.*;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
@@ -13,22 +12,16 @@ package com.pubnub {
 	[Event(name="initError", type="com.pubnub.PnEvent")]
 	[Event(name="init", type="com.pubnub.PnEvent")]
 	public class Pn extends EventDispatcher {
-		
-		
-		
 		static private var __instance:Pn;
 		static public const INIT_OPERATION:String = 'init';
 		static public const HISTORY_OPERATION:String = 'history';
 		static public const PUBLISH_OPERATION:String = 'publish';
 		static public const TIME_OPERATION:String = 'time';
 		
-		
-		
-		
 		private var _initialized:Boolean = false;         
 		private var operations:/*Operation*/Array;
         private var subscribes:/*Subscribe*/Array;
-        private var factory:Dictionary;
+        private var operationsFactory:Dictionary;
 		private var _origin:String;
 		private var _ssl:Boolean;
 		private var _publishKey:String = "demo";
@@ -40,18 +33,17 @@ package com.pubnub {
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
 		static pn_internal var syncConnection:SyncConnection;
 		
-			
 		public function Pn() {
 			if (__instance) throw new IllegalOperationError('Use [Pn.instance] getter');
 			setup();
 		}
 		
 		private function setup():void {
-			factory = new Dictionary();
-			factory[INIT_OPERATION] = 		createInitOperation; 
-			factory[PUBLISH_OPERATION] = 	createPublishOperation; 
-			factory[HISTORY_OPERATION] = 	createDetailedHistoryOperation; 
-			factory[TIME_OPERATION] = 		createTimeOperation; 
+			operationsFactory = new Dictionary();
+			operationsFactory[INIT_OPERATION] = 		createInitOperation; 
+			operationsFactory[PUBLISH_OPERATION] = 	createPublishOperation; 
+			operationsFactory[HISTORY_OPERATION] = 	createDetailedHistoryOperation; 
+			operationsFactory[TIME_OPERATION] = 		createTimeOperation; 
 			syncConnection = new SyncConnection();
 		}
 		
@@ -80,7 +72,6 @@ package com.pubnub {
 			
 			// Loads start time token
 			var operation:Operation = createOperation(INIT_OPERATION)
-			//Connection.sendSync(operation);
 			syncConnection.sendOperation(operation);
 		}
 		
@@ -139,7 +130,6 @@ package com.pubnub {
 		}
 			
 		private function onSubscribe(e:SubscribeEvent):void {
-			//trace('onSubscribe');
 			var subscribe:Subscribe = e.target as Subscribe;
 			var status:String;
 			switch (e.type) {
@@ -170,9 +160,6 @@ package com.pubnub {
 			var subscribe:Subscribe = getSubscribeFromArray(channel);
 			if (subscribe) {
 				subscribe.disconnect();
-				/*subscribe.destroy();
-				var ind:int = subscribes.indexOf(subscribe);
-				subscribes.splice(ind, 1);*/
 			}else {
 				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, [-1, 'Channel not found'], channel, OperationStatus.ERROR));
 			}
@@ -203,7 +190,6 @@ package com.pubnub {
 		
 		public function unsubscribeAll():void {
 			throwInit();
-			//trace('subscribes : ' + subscribes.length);
 			for each(var i:Subscribe  in subscribes) {
 				unsubscribe(i.channelName);
 			}
@@ -221,7 +207,6 @@ package com.pubnub {
 				dispatchEvent(new PnEvent(PnEvent.DETAILED_HISTORY, [ -1, 'Channel and subKey are missing'], channel, OperationStatus.ERROR));
 				return;
 			}
-			//trace('DH');
 			var operation:Operation = createOperation(HISTORY_OPERATION, args);
 			syncConnection.sendOperation(operation);
 		}
@@ -324,7 +309,7 @@ package com.pubnub {
 		}
 		
 		private function createOperation(type:String, args:Object = null):Operation {
-			var op:Operation = factory[type].call(null, args);
+			var op:Operation = operationsFactory[type].call(null, args);
 			operations.push(op);
 			return op;
 		}
@@ -352,9 +337,8 @@ package com.pubnub {
 		private function destroyOperation(op:Operation):void {
 			op.destroy();
 			var ind:int = operations.indexOf(op);
-			if (ind > -1) {
+			if (ind > -1) 
 				operations.splice(ind, 1);
-			}
 		}
 		
 		private function throwInit():void {

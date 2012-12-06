@@ -7,6 +7,7 @@ package com.pubnub.net {
 	 */
 	public class URLLoaderEvent extends Event {
 		public static const COMPLETE:String = 'URLLoaderEvent.complete';
+		public static const TIMEOUT:String = 'URLLoaderEvent.timeout';
 		public static const ERROR:String = 'URLLoaderEvent.error';
 		
 		private var _data:Object;
