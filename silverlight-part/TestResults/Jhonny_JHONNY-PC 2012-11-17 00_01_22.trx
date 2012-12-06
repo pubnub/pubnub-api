@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="363c5d2b-ceae-4dad-b854-b8e53f6c43e1" name="Jhonny@JHONNY-PC 2012-11-17 00:01:22" runUser="Jhonny-PC\Jhonny" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Default Test Settings" id="2494855e-a434-457f-a2d3-5089bcb43e5d">
+    <Deployment runDeploymentRoot="Jhonny_JHONNY-PC 2012-11-17 00_01_22">
+      <DeploymentItem filename="C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\Newtonsoft.Json.dll" />
+      <DeploymentItem filename="C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2012-11-17T00:01:22.7714432+02:00" queuing="2012-11-17T00:01:23.0414587+02:00" start="2012-11-17T00:01:23.0954618+02:00" finish="2012-11-17T00:01:24.1925245+02:00" />
+  <ResultSummary outcome="Completed">
+    <Counters total="24" executed="24" passed="24" error="0" failed="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="TestYayDecryptionBasic" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="bf1999e5-29e7-2482-6023-af7da1d41616">
+      <Execution id="630a939f-c17a-46f5-9a76-336d30cad67d" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestYayDecryptionBasic" />
+    </UnitTest>
+    <UnitTest name="TestNullEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="d7bc324a-2c73-832e-4ce0-816c9b2a7cf4">
+      <Execution id="efa15138-f414-4a7e-a46e-09c19bd0242a" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestNullEncryption" />
+    </UnitTest>
+    <UnitTest name="TestMyObjectDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="b7cbc14d-7118-d73a-a8f4-b20663f0e336">
+      <Execution id="900e2425-c7c9-4399-80c7-7e3ccdf38c03" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestMyObjectDecryption" />
+    </UnitTest>
+    <UnitTest name="TestGermanCharsEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="dbb109f3-a5d3-2f6a-922c-aa979c8d3c39">
+      <Execution id="b078bd3d-4929-4971-8426-8002aba4be4c" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestGermanCharsEncryption" />
+    </UnitTest>
+    <UnitTest name="TestYayEncryptionBasic" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="23a746fb-5e2b-1501-b54b-60090002ab79">
+      <Execution id="70751d4e-5927-4731-a2b8-3f3e3c6fa177" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestYayEncryptionBasic" />
+    </UnitTest>
+    <UnitTest name="TestNullDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="f9b60c23-2bb0-d52d-6295-06ba5321f943">
+      <Execution id="3dd1f27b-9ddf-4122-beae-31756b8caab6" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestNullDecryption" />
+    </UnitTest>
+    <UnitTest name="TestStuffCanEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="17aa8362-c7a2-1cd5-afaa-566fb069a9ff">
+      <Execution id="9bfe4646-127d-45d1-a67f-d5bf1ff73c36" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestStuffCanEncryption" />
+    </UnitTest>
+    <UnitTest name="TestHashEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="5384a1bf-6915-0efa-d27a-4058cf101875">
+      <Execution id="92a7e4b8-89c6-4c22-8e21-64f1c2a97a45" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestHashEncryption" />
+    </UnitTest>
+    <UnitTest name="TestGermanCharsDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="2dc1b451-d91e-c5e1-a231-14ef6d50e8a3">
+      <Execution id="08e1dfa7-e723-4678-be0e-a2450693d01a" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestGermanCharsDecryption" />
+    </UnitTest>
+    <UnitTest name="TestPubNubDecryption2" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="ba825831-1100-6e69-598b-10523e41ae69">
+      <Execution id="a60dba4c-52e6-4cc4-8e38-dd98f4386ecd" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestPubNubDecryption2" />
+    </UnitTest>
+    <UnitTest name="TestObjectEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="d4ff9639-b14f-2941-2b3f-630d9fde256c">
+      <Execution id="b974350f-fe0a-4d40-8427-2470273c2a85" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestObjectEncryption" />
+    </UnitTest>
+    <UnitTest name="TestUnicodeCharsEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="979cf18e-600d-cade-b6f4-1e1ad9757546">
+      <Execution id="4b2ab883-5e16-4668-b688-bc9300cd1855" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestUnicodeCharsEncryption" />
+    </UnitTest>
+    <UnitTest name="TestYayDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="2adaaede-6118-04d0-ea16-c01dfcd8aff4">
+      <Execution id="624b6708-1f8d-480b-9dbc-85a51c3bd04b" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestYayDecryption" />
+    </UnitTest>
+    <UnitTest name="TestStuffcanDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="f16ca2b9-a99b-04cb-78a2-1e576063988e">
+      <Execution id="0ce4aad5-5613-4f70-9924-f40e85187331" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestStuffcanDecryption" />
+    </UnitTest>
+    <UnitTest name="TestArrayEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="17f768eb-a220-b325-3821-845f64b2074a">
+      <Execution id="6789729e-bb27-4f1d-a23e-aad473cb1707" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestArrayEncryption" />
+    </UnitTest>
+    <UnitTest name="TestArrayDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="20f7f0d2-2cb9-8288-a125-a8e72b79c6e8">
+      <Execution id="3fc2de0f-a635-49da-a677-66b281de50c4" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestArrayDecryption" />
+    </UnitTest>
+    <UnitTest name="TestPubNubEncryption1" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="ad3b6bd2-a72c-df33-9227-5036839d1e56">
+      <Execution id="1097985e-8311-458e-ae3a-945f04d2942b" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestPubNubEncryption1" />
+    </UnitTest>
+    <UnitTest name="TestUnicodeCharsDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="69e5ba3b-293a-0396-05ac-d55406e72a69">
+      <Execution id="ca4db095-be1e-4ebc-ab75-d15062c2f5aa" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestUnicodeCharsDecryption" />
+    </UnitTest>
+    <UnitTest name="TestHashDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="49db67a1-c9f7-45c8-685b-77c7b6203c60">
+      <Execution id="3d8318ff-d2b1-4723-b5e7-8026470c4d2b" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestHashDecryption" />
+    </UnitTest>
+    <UnitTest name="TestObjectDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="2fe713c2-dda9-8e16-1703-95091b843c98">
+      <Execution id="f276fa49-a907-4670-ac42-1f0dc5ed4808" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestObjectDecryption" />
+    </UnitTest>
+    <UnitTest name="TestYayEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="c10b3103-4e2d-e9c8-47f1-6c40f2a3551b">
+      <Execution id="075dfee7-9d85-4523-8bac-56836c3504cc" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestYayEncryption" />
+    </UnitTest>
+    <UnitTest name="TestMyObjectEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="d18f35fa-6d14-ca5f-b3c7-0d2e52488359">
+      <Execution id="70f169f4-fa51-41ea-8e01-efdcc7b2707f" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestMyObjectEncryption" />
+    </UnitTest>
+    <UnitTest name="TestPubNubDecryption1" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="12026be6-c715-9831-8e3f-1ed5fd03bb17">
+      <Execution id="047a1883-feee-49e6-adf8-306c84d2c0b4" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestPubNubDecryption1" />
+    </UnitTest>
+    <UnitTest name="TestPubNubEncryption2" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="c12ba7e8-7d3f-c0b9-4113-1540536b8df5">
+      <Execution id="846fc975-0e69-4616-ac4a-f687bae94c40" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestPubNubEncryption2" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="d7bc324a-2c73-832e-4ce0-816c9b2a7cf4" executionId="efa15138-f414-4a7e-a46e-09c19bd0242a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9b60c23-2bb0-d52d-6295-06ba5321f943" executionId="3dd1f27b-9ddf-4122-beae-31756b8caab6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf1999e5-29e7-2482-6023-af7da1d41616" executionId="630a939f-c17a-46f5-9a76-336d30cad67d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23a746fb-5e2b-1501-b54b-60090002ab79" executionId="70751d4e-5927-4731-a2b8-3f3e3c6fa177" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2adaaede-6118-04d0-ea16-c01dfcd8aff4" executionId="624b6708-1f8d-480b-9dbc-85a51c3bd04b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c10b3103-4e2d-e9c8-47f1-6c40f2a3551b" executionId="075dfee7-9d85-4523-8bac-56836c3504cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="17f768eb-a220-b325-3821-845f64b2074a" executionId="6789729e-bb27-4f1d-a23e-aad473cb1707" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20f7f0d2-2cb9-8288-a125-a8e72b79c6e8" executionId="3fc2de0f-a635-49da-a677-66b281de50c4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d4ff9639-b14f-2941-2b3f-630d9fde256c" executionId="b974350f-fe0a-4d40-8427-2470273c2a85" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fe713c2-dda9-8e16-1703-95091b843c98" executionId="f276fa49-a907-4670-ac42-1f0dc5ed4808" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d18f35fa-6d14-ca5f-b3c7-0d2e52488359" executionId="70f169f4-fa51-41ea-8e01-efdcc7b2707f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b7cbc14d-7118-d73a-a8f4-b20663f0e336" executionId="900e2425-c7c9-4399-80c7-7e3ccdf38c03" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c12ba7e8-7d3f-c0b9-4113-1540536b8df5" executionId="846fc975-0e69-4616-ac4a-f687bae94c40" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba825831-1100-6e69-598b-10523e41ae69" executionId="a60dba4c-52e6-4cc4-8e38-dd98f4386ecd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ad3b6bd2-a72c-df33-9227-5036839d1e56" executionId="1097985e-8311-458e-ae3a-945f04d2942b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12026be6-c715-9831-8e3f-1ed5fd03bb17" executionId="047a1883-feee-49e6-adf8-306c84d2c0b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="17aa8362-c7a2-1cd5-afaa-566fb069a9ff" executionId="9bfe4646-127d-45d1-a67f-d5bf1ff73c36" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f16ca2b9-a99b-04cb-78a2-1e576063988e" executionId="0ce4aad5-5613-4f70-9924-f40e85187331" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5384a1bf-6915-0efa-d27a-4058cf101875" executionId="92a7e4b8-89c6-4c22-8e21-64f1c2a97a45" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49db67a1-c9f7-45c8-685b-77c7b6203c60" executionId="3d8318ff-d2b1-4723-b5e7-8026470c4d2b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="979cf18e-600d-cade-b6f4-1e1ad9757546" executionId="4b2ab883-5e16-4668-b688-bc9300cd1855" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="69e5ba3b-293a-0396-05ac-d55406e72a69" executionId="ca4db095-be1e-4ebc-ab75-d15062c2f5aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2dc1b451-d91e-c5e1-a231-14ef6d50e8a3" executionId="08e1dfa7-e723-4678-be0e-a2450693d01a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbb109f3-a5d3-2f6a-922c-aa979c8d3c39" executionId="b078bd3d-4929-4971-8426-8002aba4be4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="efa15138-f414-4a7e-a46e-09c19bd0242a" testId="d7bc324a-2c73-832e-4ce0-816c9b2a7cf4" testName="TestNullEncryption" computerName="JHONNY-PC" duration="00:00:00.0490783" startTime="2012-11-17T00:01:23.1204632+02:00" endTime="2012-11-17T00:01:23.6344926+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="efa15138-f414-4a7e-a46e-09c19bd0242a">
+    </UnitTestResult>
+    <UnitTestResult executionId="3dd1f27b-9ddf-4122-beae-31756b8caab6" testId="f9b60c23-2bb0-d52d-6295-06ba5321f943" testName="TestNullDecryption" computerName="JHONNY-PC" duration="00:00:00.0018048" startTime="2012-11-17T00:01:23.6384928+02:00" endTime="2012-11-17T00:01:23.6464933+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3dd1f27b-9ddf-4122-beae-31756b8caab6">
+    </UnitTestResult>
+    <UnitTestResult executionId="630a939f-c17a-46f5-9a76-336d30cad67d" testId="bf1999e5-29e7-2482-6023-af7da1d41616" testName="TestYayDecryptionBasic" computerName="JHONNY-PC" duration="00:00:00.0030359" startTime="2012-11-17T00:01:23.6504935+02:00" endTime="2012-11-17T00:01:23.6584940+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="630a939f-c17a-46f5-9a76-336d30cad67d">
+    </UnitTestResult>
+    <UnitTestResult executionId="70751d4e-5927-4731-a2b8-3f3e3c6fa177" testId="23a746fb-5e2b-1501-b54b-60090002ab79" testName="TestYayEncryptionBasic" computerName="JHONNY-PC" duration="00:00:00.0022438" startTime="2012-11-17T00:01:23.6614941+02:00" endTime="2012-11-17T00:01:23.6724948+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70751d4e-5927-4731-a2b8-3f3e3c6fa177">
+    </UnitTestResult>
+    <UnitTestResult executionId="624b6708-1f8d-480b-9dbc-85a51c3bd04b" testId="2adaaede-6118-04d0-ea16-c01dfcd8aff4" testName="TestYayDecryption" computerName="JHONNY-PC" duration="00:00:00.0253021" startTime="2012-11-17T00:01:23.6764950+02:00" endTime="2012-11-17T00:01:23.7214976+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="624b6708-1f8d-480b-9dbc-85a51c3bd04b">
+    </UnitTestResult>
+    <UnitTestResult executionId="075dfee7-9d85-4523-8bac-56836c3504cc" testId="c10b3103-4e2d-e9c8-47f1-6c40f2a3551b" testName="TestYayEncryption" computerName="JHONNY-PC" duration="00:00:00.2126414" startTime="2012-11-17T00:01:23.7264979+02:00" endTime="2012-11-17T00:01:23.9595112+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="075dfee7-9d85-4523-8bac-56836c3504cc">
+      <Output>
+        <StdOut>"yay!"</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6789729e-bb27-4f1d-a23e-aad473cb1707" testId="17f768eb-a220-b325-3821-845f64b2074a" testName="TestArrayEncryption" computerName="JHONNY-PC" duration="00:00:00.0010319" startTime="2012-11-17T00:01:23.9635114+02:00" endTime="2012-11-17T00:01:23.9705118+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6789729e-bb27-4f1d-a23e-aad473cb1707">
+    </UnitTestResult>
+    <UnitTestResult executionId="3fc2de0f-a635-49da-a677-66b281de50c4" testId="20f7f0d2-2cb9-8288-a125-a8e72b79c6e8" testName="TestArrayDecryption" computerName="JHONNY-PC" duration="00:00:00.0009731" startTime="2012-11-17T00:01:23.9745120+02:00" endTime="2012-11-17T00:01:23.9805124+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3fc2de0f-a635-49da-a677-66b281de50c4">
+    </UnitTestResult>
+    <UnitTestResult executionId="b974350f-fe0a-4d40-8427-2470273c2a85" testId="d4ff9639-b14f-2941-2b3f-630d9fde256c" testName="TestObjectEncryption" computerName="JHONNY-PC" duration="00:00:00.0015329" startTime="2012-11-17T00:01:23.9855127+02:00" endTime="2012-11-17T00:01:23.9955132+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b974350f-fe0a-4d40-8427-2470273c2a85">
+    </UnitTestResult>
+    <UnitTestResult executionId="f276fa49-a907-4670-ac42-1f0dc5ed4808" testId="2fe713c2-dda9-8e16-1703-95091b843c98" testName="TestObjectDecryption" computerName="JHONNY-PC" duration="00:00:00.0016448" startTime="2012-11-17T00:01:24.0015136+02:00" endTime="2012-11-17T00:01:24.0145143+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f276fa49-a907-4670-ac42-1f0dc5ed4808">
+    </UnitTestResult>
+    <UnitTestResult executionId="70f169f4-fa51-41ea-8e01-efdcc7b2707f" testId="d18f35fa-6d14-ca5f-b3c7-0d2e52488359" testName="TestMyObjectEncryption" computerName="JHONNY-PC" duration="00:00:00.0015697" startTime="2012-11-17T00:01:24.0205147+02:00" endTime="2012-11-17T00:01:24.0285151+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70f169f4-fa51-41ea-8e01-efdcc7b2707f">
+    </UnitTestResult>
+    <UnitTestResult executionId="900e2425-c7c9-4399-80c7-7e3ccdf38c03" testId="b7cbc14d-7118-d73a-a8f4-b20663f0e336" testName="TestMyObjectDecryption" computerName="JHONNY-PC" duration="00:00:00.0015777" startTime="2012-11-17T00:01:24.0375156+02:00" endTime="2012-11-17T00:01:24.0475162+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="900e2425-c7c9-4399-80c7-7e3ccdf38c03">
+    </UnitTestResult>
+    <UnitTestResult executionId="846fc975-0e69-4616-ac4a-f687bae94c40" testId="c12ba7e8-7d3f-c0b9-4113-1540536b8df5" testName="TestPubNubEncryption2" computerName="JHONNY-PC" duration="00:00:00.0009553" startTime="2012-11-17T00:01:24.0495163+02:00" endTime="2012-11-17T00:01:24.0585168+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="846fc975-0e69-4616-ac4a-f687bae94c40">
+    </UnitTestResult>
+    <UnitTestResult executionId="a60dba4c-52e6-4cc4-8e38-dd98f4386ecd" testId="ba825831-1100-6e69-598b-10523e41ae69" testName="TestPubNubDecryption2" computerName="JHONNY-PC" duration="00:00:00.0010207" startTime="2012-11-17T00:01:24.0625171+02:00" endTime="2012-11-17T00:01:24.0695175+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a60dba4c-52e6-4cc4-8e38-dd98f4386ecd">
+    </UnitTestResult>
+    <UnitTestResult executionId="1097985e-8311-458e-ae3a-945f04d2942b" testId="ad3b6bd2-a72c-df33-9227-5036839d1e56" testName="TestPubNubEncryption1" computerName="JHONNY-PC" duration="00:00:00.0009661" startTime="2012-11-17T00:01:24.0745178+02:00" endTime="2012-11-17T00:01:24.0825182+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1097985e-8311-458e-ae3a-945f04d2942b">
+    </UnitTestResult>
+    <UnitTestResult executionId="047a1883-feee-49e6-adf8-306c84d2c0b4" testId="12026be6-c715-9831-8e3f-1ed5fd03bb17" testName="TestPubNubDecryption1" computerName="JHONNY-PC" duration="00:00:00.0009633" startTime="2012-11-17T00:01:24.0855184+02:00" endTime="2012-11-17T00:01:24.0915187+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="047a1883-feee-49e6-adf8-306c84d2c0b4">
+    </UnitTestResult>
+    <UnitTestResult executionId="9bfe4646-127d-45d1-a67f-d5bf1ff73c36" testId="17aa8362-c7a2-1cd5-afaa-566fb069a9ff" testName="TestStuffCanEncryption" computerName="JHONNY-PC" duration="00:00:00.0008578" startTime="2012-11-17T00:01:24.0965190+02:00" endTime="2012-11-17T00:01:24.1025194+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9bfe4646-127d-45d1-a67f-d5bf1ff73c36">
+    </UnitTestResult>
+    <UnitTestResult executionId="0ce4aad5-5613-4f70-9924-f40e85187331" testId="f16ca2b9-a99b-04cb-78a2-1e576063988e" testName="TestStuffcanDecryption" computerName="JHONNY-PC" duration="00:00:00.0008681" startTime="2012-11-17T00:01:24.1055195+02:00" endTime="2012-11-17T00:01:24.1115199+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ce4aad5-5613-4f70-9924-f40e85187331">
+    </UnitTestResult>
+    <UnitTestResult executionId="92a7e4b8-89c6-4c22-8e21-64f1c2a97a45" testId="5384a1bf-6915-0efa-d27a-4058cf101875" testName="TestHashEncryption" computerName="JHONNY-PC" duration="00:00:00.0013206" startTime="2012-11-17T00:01:24.1135200+02:00" endTime="2012-11-17T00:01:24.1205204+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="92a7e4b8-89c6-4c22-8e21-64f1c2a97a45">
+    </UnitTestResult>
+    <UnitTestResult executionId="3d8318ff-d2b1-4723-b5e7-8026470c4d2b" testId="49db67a1-c9f7-45c8-685b-77c7b6203c60" testName="TestHashDecryption" computerName="JHONNY-PC" duration="00:00:00.0008658" startTime="2012-11-17T00:01:24.1225205+02:00" endTime="2012-11-17T00:01:24.1295209+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3d8318ff-d2b1-4723-b5e7-8026470c4d2b">
+    </UnitTestResult>
+    <UnitTestResult executionId="4b2ab883-5e16-4668-b688-bc9300cd1855" testId="979cf18e-600d-cade-b6f4-1e1ad9757546" testName="TestUnicodeCharsEncryption" computerName="JHONNY-PC" duration="00:00:00.0009707" startTime="2012-11-17T00:01:24.1315210+02:00" endTime="2012-11-17T00:01:24.1385214+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b2ab883-5e16-4668-b688-bc9300cd1855">
+      <Output>
+        <StdOut>"漢語"
++BY5/miAA8aeuhVl4d13Kg==</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ca4db095-be1e-4ebc-ab75-d15062c2f5aa" testId="69e5ba3b-293a-0396-05ac-d55406e72a69" testName="TestUnicodeCharsDecryption" computerName="JHONNY-PC" duration="00:00:00.0010710" startTime="2012-11-17T00:01:24.1405215+02:00" endTime="2012-11-17T00:01:24.1475219+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca4db095-be1e-4ebc-ab75-d15062c2f5aa">
+    </UnitTestResult>
+    <UnitTestResult executionId="08e1dfa7-e723-4678-be0e-a2450693d01a" testId="2dc1b451-d91e-c5e1-a231-14ef6d50e8a3" testName="TestGermanCharsDecryption" computerName="JHONNY-PC" duration="00:00:00.0010053" startTime="2012-11-17T00:01:24.1495221+02:00" endTime="2012-11-17T00:01:24.1575225+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08e1dfa7-e723-4678-be0e-a2450693d01a">
+    </UnitTestResult>
+    <UnitTestResult executionId="b078bd3d-4929-4971-8426-8002aba4be4c" testId="dbb109f3-a5d3-2f6a-922c-aa979c8d3c39" testName="TestGermanCharsEncryption" computerName="JHONNY-PC" duration="00:00:00.0009358" startTime="2012-11-17T00:01:24.1585226+02:00" endTime="2012-11-17T00:01:24.1655230+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b078bd3d-4929-4971-8426-8002aba4be4c">
+      <Output>
+        <StdOut>"ÜÖ"
+stpgsG1DZZxb44J7mFNSzg==</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+</TestRun>

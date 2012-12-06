@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="d9ee0068-5bfe-4093-83d1-a4b3598331d5" name="Jhonny@JHONNY-PC 2012-11-17 01:21:43" runUser="Jhonny-PC\Jhonny" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Default Test Settings" id="68b888bf-eee0-4336-99b2-f490105d200c">
+    <Deployment runDeploymentRoot="Jhonny_JHONNY-PC 2012-11-17 01_21_43">
+      <DeploymentItem filename="C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\Newtonsoft.Json.dll" />
+      <DeploymentItem filename="C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2012-11-17T01:21:43.9331979+02:00" queuing="2012-11-17T01:21:47.1583824+02:00" start="2012-11-17T01:21:47.5454045+02:00" finish="2012-11-17T01:22:14.9129699+02:00" />
+  <ResultSummary outcome="Error">
+    <Counters total="1" executed="1" error="0" failed="0" timeout="0" aborted="1" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" passed="0" completed="0" inProgress="0" pending="0" />
+    <RunInfos>
+      <RunInfo computerName="JHONNY-PC" outcome="Error" timestamp="2012-11-17T01:22:14.9099697+02:00">
+        <Text>Test host process exited unexpectedly.</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="ThenSubscribeShouldReturnReceivedMessage" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="2c0e4679-4702-fc4c-b17c-d5ac50275834">
+      <Execution id="ed6709bd-0b0b-4fee-8773-bd63ac0f4890" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenSubscribedToAChannel, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenSubscribeShouldReturnReceivedMessage" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="2c0e4679-4702-fc4c-b17c-d5ac50275834" executionId="ed6709bd-0b0b-4fee-8773-bd63ac0f4890" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="ed6709bd-0b0b-4fee-8773-bd63ac0f4890" testId="2c0e4679-4702-fc4c-b17c-d5ac50275834" testName="ThenSubscribeShouldReturnReceivedMessage" computerName="JHONNY-PC" duration="00:00:27.0455470" startTime="2012-11-17T01:21:47.8674229+02:00" endTime="2012-11-17T01:22:14.9129699+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Aborted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed6709bd-0b0b-4fee-8773-bd63ac0f4890">
+    </UnitTestResult>
+  </Results>
+</TestRun>

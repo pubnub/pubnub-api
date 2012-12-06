@@ -1,0 +1,1069 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="7ef98b25-9329-4fa0-b375-20ed94a2f14c" name="Jhonny@JHONNY-PC 2012-11-27 22:45:26" runUser="Jhonny-PC\Jhonny" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Default Test Settings" id="fc7f9b08-e4dc-4acf-aa2f-64055a1b66a6">
+    <Deployment runDeploymentRoot="Jhonny_JHONNY-PC 2012-11-27 22_45_26">
+      <DeploymentItem filename="C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\Newtonsoft.Json.dll" />
+      <DeploymentItem filename="C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2012-11-27T22:45:26.3473124+02:00" queuing="2012-11-27T22:45:26.4493182+02:00" start="2012-11-27T22:45:26.4633190+02:00" finish="2012-11-27T22:52:55.1199807+02:00" />
+  <ResultSummary outcome="Failed">
+    <Counters total="42" executed="27" error="0" failed="24" timeout="0" aborted="1" inconclusive="0" passedButRunAborted="2" notRunnable="0" notExecuted="15" disconnected="0" warning="0" passed="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="ThenPublishKeyShouldNotBeEmpty" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="7caba54d-3734-3ad0-2b74-3f6718ff5e54">
+      <Execution id="f9bcd042-c3b2-436b-966f-19d669bb23b8" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenPublishKeyShouldNotBeEmpty" />
+    </UnitTest>
+    <UnitTest name="TestNullDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="f9b60c23-2bb0-d52d-6295-06ba5321f943">
+      <Execution id="a2a9c52b-c400-4438-a982-d3b6d909ca12" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestNullDecryption" />
+    </UnitTest>
+    <UnitTest name="ThenPubnubShouldGenerateUniqueIdentifier" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="ec4d4d17-25f3-5430-7b3f-9b6915122a92">
+      <Execution id="a5ff4ae1-c8a7-4c9b-8862-320b2ed9d3a5" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenPubnubShouldGenerateUniqueIdentifier" />
+    </UnitTest>
+    <UnitTest name="TestArrayEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="17f768eb-a220-b325-3821-845f64b2074a">
+      <Execution id="317deeca-a950-4586-818e-0eac0a6dffef" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestArrayEncryption" />
+    </UnitTest>
+    <UnitTest name="TestHashEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="5384a1bf-6915-0efa-d27a-4058cf101875">
+      <Execution id="c62ead5b-6eb7-4d85-8d7c-f18e01913016" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestHashEncryption" />
+    </UnitTest>
+    <UnitTest name="ThenEncryptPublishShouldReturnSuccessCodeAndInfo" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="baf0cafb-2221-a243-3f29-39238008e2da">
+      <Execution id="581d68a3-23f7-42a8-a7c1-ab805ff9d2b3" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenEncryptPublishShouldReturnSuccessCodeAndInfo" />
+    </UnitTest>
+    <UnitTest name="TestYayEncryptionBasic" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="23a746fb-5e2b-1501-b54b-60090002ab79">
+      <Execution id="ba30acaf-bb77-4eb1-ac7f-be9c4f95866f" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestYayEncryptionBasic" />
+    </UnitTest>
+    <UnitTest name="TestUnicodeCharsEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="979cf18e-600d-cade-b6f4-1e1ad9757546">
+      <Execution id="395a976f-e389-4e89-9d14-c7ebc0250b86" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestUnicodeCharsEncryption" />
+    </UnitTest>
+    <UnitTest name="TestYayDecryptionBasic" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="bf1999e5-29e7-2482-6023-af7da1d41616">
+      <Execution id="391b1ed2-d1b4-47d1-b83f-fd20141bf202" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestYayDecryptionBasic" />
+    </UnitTest>
+    <UnitTest name="ThenUnencryptPublishShouldReturnSuccessCodeAndInfo" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="b318fee6-572b-d189-a739-f39201ade1aa">
+      <Execution id="ad7a448c-f3d0-4107-8dcc-5a0f72da74f6" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenUnencryptPublishShouldReturnSuccessCodeAndInfo" />
+    </UnitTest>
+    <UnitTest name="TestPubNubDecryption1" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="12026be6-c715-9831-8e3f-1ed5fd03bb17">
+      <Execution id="ccc65a76-9755-4e34-90ee-752a97c10e28" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestPubNubDecryption1" />
+    </UnitTest>
+    <UnitTest name="TestYayEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="c10b3103-4e2d-e9c8-47f1-6c40f2a3551b">
+      <Execution id="23ab24f3-e7e5-4d07-b3af-8820984f9d5a" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestYayEncryption" />
+    </UnitTest>
+    <UnitTest name="TestGermanCharsDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="2dc1b451-d91e-c5e1-a231-14ef6d50e8a3">
+      <Execution id="4b7daa0c-1687-4894-8405-a8ba013050e3" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestGermanCharsDecryption" />
+    </UnitTest>
+    <UnitTest name="DetailHistoryCount10ReturnsRecords" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="22e69e32-b3cf-16a8-75c3-6279aacf9cad">
+      <Execution id="7f6b4227-8d3c-489e-9382-e06abc02aae1" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenDetailedHistoryIsRequested, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="DetailHistoryCount10ReturnsRecords" />
+    </UnitTest>
+    <UnitTest name="TestPubNubDecryption2" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="ba825831-1100-6e69-598b-10523e41ae69">
+      <Execution id="d6138327-48e2-47ad-93c2-144565845c35" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestPubNubDecryption2" />
+    </UnitTest>
+    <UnitTest name="DetailHistoryCount10ReverseTrueReturnsRecords" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="72943ea2-d74e-ba3b-e263-539b952c88bb">
+      <Execution id="578bdf7a-8e8d-4b30-bd54-8168009c560f" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenDetailedHistoryIsRequested, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="DetailHistoryCount10ReverseTrueReturnsRecords" />
+    </UnitTest>
+    <UnitTest name="TestNullEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="d7bc324a-2c73-832e-4ce0-816c9b2a7cf4">
+      <Execution id="d08be066-f7a8-4156-8be7-d99a198440f3" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestNullEncryption" />
+    </UnitTest>
+    <UnitTest name="TranslateDateTimeToUnixTime" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="885f26a0-c1f9-3a3e-f327-15ba3ad42fd6">
+      <Execution id="2114588d-54ce-406e-87b7-7b6aaeb4e3c8" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenGetRequestServerTime, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TranslateDateTimeToUnixTime" />
+    </UnitTest>
+    <UnitTest name="ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="a94ba574-d07d-f445-c39e-521d8ba6c1ba">
+      <Execution id="453beb18-df40-4036-8d5d-6828bc0b848b" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo" />
+    </UnitTest>
+    <UnitTest name="DetailedHistoryStartWithReverseTrue" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="87319f1c-c1fe-275e-cc3b-9c8013c29b0f">
+      <Execution id="f9b38e90-c664-4de2-ab5f-495c45baa7b9" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenDetailedHistoryIsRequested, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="DetailedHistoryStartWithReverseTrue" />
+    </UnitTest>
+    <UnitTest name="IfSSLNotProvidedThenDefaultShouldBeFalse" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="a44284f2-17ef-78bd-fdc6-88e675b08b01">
+      <Execution id="abf26e12-9e6f-4d56-8fb9-34c94b8eb58c" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="IfSSLNotProvidedThenDefaultShouldBeFalse" />
+    </UnitTest>
+    <UnitTest name="TestArrayDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="20f7f0d2-2cb9-8288-a125-a8e72b79c6e8">
+      <Execution id="9b96d7c4-ded8-4aad-b35d-c9ab2ac52585" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestArrayDecryption" />
+    </UnitTest>
+    <UnitTest name="TranslateUnixTimeToDateTime" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="c0351e6c-2cc6-209f-2a35-754f65c310a1">
+      <Execution id="30fa6c8e-78c0-4d72-bb4d-a2aeb0ac51db" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenGetRequestServerTime, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TranslateUnixTimeToDateTime" />
+    </UnitTest>
+    <UnitTest name="TestPubNubEncryption1" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="ad3b6bd2-a72c-df33-9227-5036839d1e56">
+      <Execution id="66c09920-d7c4-4763-90d0-d40e08941306" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestPubNubEncryption1" />
+    </UnitTest>
+    <UnitTest name="TestUnicodeCharsDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="69e5ba3b-293a-0396-05ac-d55406e72a69">
+      <Execution id="940023fa-43b7-4008-8400-a52540f31217" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestUnicodeCharsDecryption" />
+    </UnitTest>
+    <UnitTest name="ThenItShouldReturnTimeStamp" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="5a785fb0-6dd1-f697-4e8b-79b61e0b2e7a">
+      <Execution id="759d5a0f-e093-4f55-a6a0-1dcfceecdfdc" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenGetRequestServerTime, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenItShouldReturnTimeStamp" />
+    </UnitTest>
+    <UnitTest name="ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="c974ed74-2317-e1a7-a3ca-a7f63cc2952e">
+      <Execution id="1da4f122-43f4-4bbd-a4bf-318411164f25" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo" />
+    </UnitTest>
+    <UnitTest name="ThenSubscribeShouldReturnReceivedMessage" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="2c0e4679-4702-fc4c-b17c-d5ac50275834">
+      <Execution id="8139823f-b6ed-45cb-957d-43d8778aeec8" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenSubscribedToAChannel, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenSubscribeShouldReturnReceivedMessage" />
+    </UnitTest>
+    <UnitTest name="ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="203cf256-b1dd-744b-6166-13212e371fb4">
+      <Execution id="8dbd1865-4f64-4a5e-9718-6f23cbb97280" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo" />
+    </UnitTest>
+    <UnitTest name="TestStuffCanEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="17aa8362-c7a2-1cd5-afaa-566fb069a9ff">
+      <Execution id="f55ae729-1b7f-421c-acb4-587fd4fbdcdc" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestStuffCanEncryption" />
+    </UnitTest>
+    <UnitTest name="ThenOptionalSecretKeyShouldBeProvidedInConstructor" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="09836e49-1631-a71c-29e0-105457b1aa7d">
+      <Execution id="18e71bf4-78f4-4b93-890a-e4bb88d77b1c" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAMessageIsPublished, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenOptionalSecretKeyShouldBeProvidedInConstructor" />
+    </UnitTest>
+    <UnitTest name="TestStuffcanDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="f16ca2b9-a99b-04cb-78a2-1e576063988e">
+      <Execution id="d4bd268f-b067-46d5-8926-6d15d0a48cf2" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestStuffcanDecryption" />
+    </UnitTest>
+    <UnitTest name="TestMyObjectEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="d18f35fa-6d14-ca5f-b3c7-0d2e52488359">
+      <Execution id="7ddf1e3b-ba59-44c3-a72a-0d3fdd230ea4" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestMyObjectEncryption" />
+    </UnitTest>
+    <UnitTest name="IfHereNowIsCalledThenItShouldReturnInfo" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="0df82419-b215-0bb5-2789-e45794860234">
+      <Execution id="92ec8710-57f2-4523-af4c-acb63304c02a" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAClientIsPresented, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="IfHereNowIsCalledThenItShouldReturnInfo" />
+    </UnitTest>
+    <UnitTest name="TestObjectEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="d4ff9639-b14f-2941-2b3f-630d9fde256c">
+      <Execution id="abb78b5f-29bf-4009-8658-73c28ef47086" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestObjectEncryption" />
+    </UnitTest>
+    <UnitTest name="TestPubNubEncryption2" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="c12ba7e8-7d3f-c0b9-4113-1540536b8df5">
+      <Execution id="e19f0159-1b26-4afa-a88f-3508d8b36481" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestPubNubEncryption2" />
+    </UnitTest>
+    <UnitTest name="TestObjectDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="2fe713c2-dda9-8e16-1703-95091b843c98">
+      <Execution id="a9ded5d7-aa86-4f6b-b3c7-342740836098" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestObjectDecryption" />
+    </UnitTest>
+    <UnitTest name="TestGermanCharsEncryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="dbb109f3-a5d3-2f6a-922c-aa979c8d3c39">
+      <Execution id="98698480-a8d8-47e6-bd5c-9ffcc3580411" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestGermanCharsEncryption" />
+    </UnitTest>
+    <UnitTest name="TestMyObjectDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="b7cbc14d-7118-d73a-a8f4-b20663f0e336">
+      <Execution id="885bd167-f752-47c5-9b1f-c826472ccd90" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestMyObjectDecryption" />
+    </UnitTest>
+    <UnitTest name="TestHashDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="49db67a1-c9f7-45c8-685b-77c7b6203c60">
+      <Execution id="d64d8be1-dc3f-4334-9956-9106b06cc295" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestHashDecryption" />
+    </UnitTest>
+    <UnitTest name="TestYayDecryption" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="2adaaede-6118-04d0-ea16-c01dfcd8aff4">
+      <Execution id="20dd9fa0-3264-455e-a664-4311bd55c40c" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.EncryptionTests, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestYayDecryption" />
+    </UnitTest>
+    <UnitTest name="ThenPresenceShouldReturnReceivedMessage" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="3f423bfb-57aa-ca8b-414b-5708c176c895">
+      <Execution id="78f39054-d723-4ea6-9e64-7d52b5406cc8" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAClientIsPresented, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenPresenceShouldReturnReceivedMessage" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="3f423bfb-57aa-ca8b-414b-5708c176c895" executionId="78f39054-d723-4ea6-9e64-7d52b5406cc8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0df82419-b215-0bb5-2789-e45794860234" executionId="92ec8710-57f2-4523-af4c-acb63304c02a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7bc324a-2c73-832e-4ce0-816c9b2a7cf4" executionId="d08be066-f7a8-4156-8be7-d99a198440f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9b60c23-2bb0-d52d-6295-06ba5321f943" executionId="a2a9c52b-c400-4438-a982-d3b6d909ca12" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf1999e5-29e7-2482-6023-af7da1d41616" executionId="391b1ed2-d1b4-47d1-b83f-fd20141bf202" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23a746fb-5e2b-1501-b54b-60090002ab79" executionId="ba30acaf-bb77-4eb1-ac7f-be9c4f95866f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2adaaede-6118-04d0-ea16-c01dfcd8aff4" executionId="20dd9fa0-3264-455e-a664-4311bd55c40c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c10b3103-4e2d-e9c8-47f1-6c40f2a3551b" executionId="23ab24f3-e7e5-4d07-b3af-8820984f9d5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="17f768eb-a220-b325-3821-845f64b2074a" executionId="317deeca-a950-4586-818e-0eac0a6dffef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20f7f0d2-2cb9-8288-a125-a8e72b79c6e8" executionId="9b96d7c4-ded8-4aad-b35d-c9ab2ac52585" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d4ff9639-b14f-2941-2b3f-630d9fde256c" executionId="abb78b5f-29bf-4009-8658-73c28ef47086" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fe713c2-dda9-8e16-1703-95091b843c98" executionId="a9ded5d7-aa86-4f6b-b3c7-342740836098" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d18f35fa-6d14-ca5f-b3c7-0d2e52488359" executionId="7ddf1e3b-ba59-44c3-a72a-0d3fdd230ea4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b7cbc14d-7118-d73a-a8f4-b20663f0e336" executionId="885bd167-f752-47c5-9b1f-c826472ccd90" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c12ba7e8-7d3f-c0b9-4113-1540536b8df5" executionId="e19f0159-1b26-4afa-a88f-3508d8b36481" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba825831-1100-6e69-598b-10523e41ae69" executionId="d6138327-48e2-47ad-93c2-144565845c35" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ad3b6bd2-a72c-df33-9227-5036839d1e56" executionId="66c09920-d7c4-4763-90d0-d40e08941306" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12026be6-c715-9831-8e3f-1ed5fd03bb17" executionId="ccc65a76-9755-4e34-90ee-752a97c10e28" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="17aa8362-c7a2-1cd5-afaa-566fb069a9ff" executionId="f55ae729-1b7f-421c-acb4-587fd4fbdcdc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f16ca2b9-a99b-04cb-78a2-1e576063988e" executionId="d4bd268f-b067-46d5-8926-6d15d0a48cf2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5384a1bf-6915-0efa-d27a-4058cf101875" executionId="c62ead5b-6eb7-4d85-8d7c-f18e01913016" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49db67a1-c9f7-45c8-685b-77c7b6203c60" executionId="d64d8be1-dc3f-4334-9956-9106b06cc295" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="979cf18e-600d-cade-b6f4-1e1ad9757546" executionId="395a976f-e389-4e89-9d14-c7ebc0250b86" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="69e5ba3b-293a-0396-05ac-d55406e72a69" executionId="940023fa-43b7-4008-8400-a52540f31217" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2dc1b451-d91e-c5e1-a231-14ef6d50e8a3" executionId="4b7daa0c-1687-4894-8405-a8ba013050e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbb109f3-a5d3-2f6a-922c-aa979c8d3c39" executionId="98698480-a8d8-47e6-bd5c-9ffcc3580411" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b318fee6-572b-d189-a739-f39201ade1aa" executionId="ad7a448c-f3d0-4107-8dcc-5a0f72da74f6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c974ed74-2317-e1a7-a3ca-a7f63cc2952e" executionId="1da4f122-43f4-4bbd-a4bf-318411164f25" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="203cf256-b1dd-744b-6166-13212e371fb4" executionId="8dbd1865-4f64-4a5e-9718-6f23cbb97280" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="baf0cafb-2221-a243-3f29-39238008e2da" executionId="581d68a3-23f7-42a8-a7c1-ab805ff9d2b3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a94ba574-d07d-f445-c39e-521d8ba6c1ba" executionId="453beb18-df40-4036-8d5d-6828bc0b848b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec4d4d17-25f3-5430-7b3f-9b6915122a92" executionId="a5ff4ae1-c8a7-4c9b-8862-320b2ed9d3a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7caba54d-3734-3ad0-2b74-3f6718ff5e54" executionId="f9bcd042-c3b2-436b-966f-19d669bb23b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09836e49-1631-a71c-29e0-105457b1aa7d" executionId="18e71bf4-78f4-4b93-890a-e4bb88d77b1c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a44284f2-17ef-78bd-fdc6-88e675b08b01" executionId="abf26e12-9e6f-4d56-8fb9-34c94b8eb58c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22e69e32-b3cf-16a8-75c3-6279aacf9cad" executionId="7f6b4227-8d3c-489e-9382-e06abc02aae1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72943ea2-d74e-ba3b-e263-539b952c88bb" executionId="578bdf7a-8e8d-4b30-bd54-8168009c560f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="87319f1c-c1fe-275e-cc3b-9c8013c29b0f" executionId="f9b38e90-c664-4de2-ab5f-495c45baa7b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a785fb0-6dd1-f697-4e8b-79b61e0b2e7a" executionId="759d5a0f-e093-4f55-a6a0-1dcfceecdfdc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="885f26a0-c1f9-3a3e-f327-15ba3ad42fd6" executionId="2114588d-54ce-406e-87b7-7b6aaeb4e3c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c0351e6c-2cc6-209f-2a35-754f65c310a1" executionId="30fa6c8e-78c0-4d72-bb4d-a2aeb0ac51db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c0e4679-4702-fc4c-b17c-d5ac50275834" executionId="8139823f-b6ed-45cb-957d-43d8778aeec8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="78f39054-d723-4ea6-9e64-7d52b5406cc8" testId="3f423bfb-57aa-ca8b-414b-5708c176c895" testName="ThenPresenceShouldReturnReceivedMessage" computerName="JHONNY-PC" duration="00:05:12.2904189" startTime="2012-11-27T22:45:26.4653191+02:00" endTime="2012-11-27T22:50:38.9791939+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78f39054-d723-4ea6-9e64-7d52b5406cc8">
+      <Output>
+        <DebugTrace>DateTime 11/27/2012 10:45:26 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/27/2012 10:45:26 PM, requested presence for channel=my/channel-pnpres
+DateTime 11/27/2012 10:45:26 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel-pnpres/0/0?uuid=241d0346-dd41-428a-ad23-12f02360501b
+DateTime: 11/27/2012 10:45:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:45:26 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:45:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:26 PM, requested subscribe for channel=my/channel
+DateTime 11/27/2012 10:45:26 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel/0/0?uuid=241d0346-dd41-428a-ad23-12f02360501b
+DateTime: 11/27/2012 10:45:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:26 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:45:27 PM, JSON for channel=my/channel-pnpres (Presence) =[[],"13540491276474677"]
+DateTime 11/27/2012 10:45:27 PM, JSON for channel=my/channel (Subscribe) =[[],"13540469729276226"]
+DateTime 11/27/2012 10:45:27 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel/0/13540469729276226?uuid=241d0346-dd41-428a-ad23-12f02360501b
+DateTime 11/27/2012 10:45:27 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel-pnpres/0/13540491276474677?uuid=241d0346-dd41-428a-ad23-12f02360501b
+DateTime: 11/27/2012 10:45:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:45:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:45:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:45:28 PM, requested unsubscribe for channel=my/channel
+DateTime 11/27/2012 10:45:28 PM, WebException: System.Net.WebException: The request was aborted: The request was canceled.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.&lt;&gt;c__DisplayClass21`1.&lt;_urlRequest&gt;b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/subscribe/demo/my%2Fchannel/0/13540469729276226?uuid=241d0346-dd41-428a-ad23-12f02360501b
+DateTime 11/27/2012 10:45:28 PM, Due to Unsubscribe, further re-subscription was stopped for channel my/channel
+DateTime 11/27/2012 10:45:28 PM, JSON unsubscribe response=[1, "Unsubscribed from my/channel"]
+DateTime 11/27/2012 10:45:28 PM, Request=http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/my%252Fchannel/leave?uuid=241d0346-dd41-428a-ad23-12f02360501b
+DateTime: 11/27/2012 10:45:28 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:45:28 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:45:31 PM, WebException: System.Net.WebException: The remote server returned an error: (504) Gateway Timeout.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.&lt;&gt;c__DisplayClass21`1.&lt;_urlRequest&gt;b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/my%252Fchannel/leave?uuid=241d0346-dd41-428a-ad23-12f02360501b
+DateTime: 11/27/2012 10:45:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:41 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:41 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:45:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:45:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:45:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:45:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:45:43 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:45:43 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:45:56 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:56 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:56 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:45:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:45:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:45:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:45:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:45:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:45:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:45:58 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:45:58 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:11 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:11 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:11 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:46:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:46:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:13 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:46:13 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:26 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:46:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:46:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:28 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:46:28 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:41 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:41 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:46:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:46:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:43 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:46:43 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:56 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:56 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:56 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:46:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:46:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:46:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:46:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:46:58 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:46:58 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:11 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:11 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:11 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:47:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:47:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:13 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:47:13 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:26 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:47:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:47:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:28 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:47:28 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:41 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:41 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:47:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:47:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:47:44 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:56 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:56 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:56 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:47:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:47:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:47:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:47:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:47:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:47:59 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:11 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:11 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:11 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:48:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:48:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:48:14 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:26 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:48:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:48:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:48:29 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:41 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:41 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:48:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:48:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:48:44 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:56 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:56 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:56 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:48:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:48:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:48:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:48:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:48:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:48:59 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:11 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:11 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:11 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:49:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:49:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:49:14 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:26 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:49:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:49:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:29 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:49:29 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:41 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:41 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:49:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:49:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:49:44 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:56 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:56 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:56 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:49:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:49:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:49:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:49:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:49:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:49:59 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:11 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:11 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:11 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:50:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:14 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:50:14 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:26 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:27 PM, JSON for channel=my/channel-pnpres (Presence) =[[],"13540494276508972"]
+DateTime 11/27/2012 10:50:27 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel-pnpres/0/13540494276508972?uuid=241d0346-dd41-428a-ad23-12f02360501b
+DateTime: 11/27/2012 10:50:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:50:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:27 PM checkInternetStatus LocalIP: 192.168.1.6
+</DebugTrace>
+        <ErrorInfo>
+          <Message>Assert.IsTrue failed. Presence message not received</Message>
+          <StackTrace>   at PubNub_Messaging.Tests.WhenAClientIsPresented.ThenPresenceShouldReturnReceivedMessage() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\WhenAClientIsPresented.cs:line 46
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="92ec8710-57f2-4523-af4c-acb63304c02a" testId="0df82419-b215-0bb5-2789-e45794860234" testName="IfHereNowIsCalledThenItShouldReturnInfo" computerName="JHONNY-PC" duration="00:00:02.4899708" startTime="2012-11-27T22:50:38.9801940+02:00" endTime="2012-11-27T22:50:41.4753367+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="92ec8710-57f2-4523-af4c-acb63304c02a">
+      <Output>
+        <DebugTrace>DateTime 11/27/2012 10:50:38 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/27/2012 10:50:38 PM, Request=http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/my%252Fchannel
+DateTime: 11/27/2012 10:50:38 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:50:38 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:41 PM, WebException: System.Net.WebException: The remote server returned an error: (504) Gateway Timeout.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.&lt;&gt;c__DisplayClass21`1.&lt;_urlRequest&gt;b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/my%252Fchannel
+DateTime 11/27/2012 10:50:41 PM, JSON here_now response=[0, "Network connnect error"]
+</DebugTrace>
+        <ErrorInfo>
+          <Message>Assert.IsTrue failed. here_now message not received</Message>
+          <StackTrace>   at PubNub_Messaging.Tests.WhenAClientIsPresented.IfHereNowIsCalledThenItShouldReturnInfo() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\WhenAClientIsPresented.cs:line 82
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d08be066-f7a8-4156-8be7-d99a198440f3" testId="d7bc324a-2c73-832e-4ce0-816c9b2a7cf4" testName="TestNullEncryption" computerName="JHONNY-PC" duration="00:00:00.0010958" startTime="2012-11-27T22:50:41.4773368+02:00" endTime="2012-11-27T22:50:41.4853372+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="PassedButRunAborted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d08be066-f7a8-4156-8be7-d99a198440f3">
+    </UnitTestResult>
+    <UnitTestResult executionId="a2a9c52b-c400-4438-a982-d3b6d909ca12" testId="f9b60c23-2bb0-d52d-6295-06ba5321f943" testName="TestNullDecryption" computerName="JHONNY-PC" duration="00:00:00.0009535" startTime="2012-11-27T22:50:41.4873374+02:00" endTime="2012-11-27T22:50:41.4943378+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="PassedButRunAborted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2a9c52b-c400-4438-a982-d3b6d909ca12">
+    </UnitTestResult>
+    <UnitTestResult executionId="391b1ed2-d1b4-47d1-b83f-fd20141bf202" testId="bf1999e5-29e7-2482-6023-af7da1d41616" testName="TestYayDecryptionBasic" computerName="JHONNY-PC" duration="00:00:00.1704014" startTime="2012-11-27T22:50:41.4943378+02:00" endTime="2012-11-27T22:50:41.6683477+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="391b1ed2-d1b4-47d1-b83f-fd20141bf202">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;yay!&gt;. Actual:&lt;**DECRYPT ERROR**&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestYayDecryptionBasic() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 80
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ba30acaf-bb77-4eb1-ac7f-be9c4f95866f" testId="23a746fb-5e2b-1501-b54b-60090002ab79" testName="TestYayEncryptionBasic" computerName="JHONNY-PC" duration="00:00:00.0042265" startTime="2012-11-27T22:50:41.6693478+02:00" endTime="2012-11-27T22:50:41.6773482+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba30acaf-bb77-4eb1-ac7f-be9c4f95866f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;q/xJqqN6qbiZMXYmiQC1Fw==&gt;. Actual:&lt;bKQL1zNm0YyS8V4GG0gbKA==&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestYayEncryptionBasic() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 96
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="20dd9fa0-3264-455e-a664-4311bd55c40c" testId="2adaaede-6118-04d0-ea16-c01dfcd8aff4" testName="TestYayDecryption" computerName="JHONNY-PC" duration="00:00:00.0713891" startTime="2012-11-27T22:50:41.6783483+02:00" endTime="2012-11-27T22:50:41.7553527+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="20dd9fa0-3264-455e-a664-4311bd55c40c">
+      <Output>
+        <ErrorInfo>
+          <Message>Test method PubNub_Messaging.Tests.EncryptionTests.TestYayDecryption threw exception: 
+System.ArgumentException: Invalid JSON primitive: .</Message>
+          <StackTrace>    at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializePrimitiveObject()
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializeInternal(Int32 depth)
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.BasicDeserialize(String input, Int32 depthLimit, JavaScriptSerializer serializer)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize(JavaScriptSerializer serializer, String input, Type type, Int32 depthLimit)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize[T](String input)
+   at PubNub_Messaging.Tests.EncryptionTests.TestYayDecryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 117
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="23ab24f3-e7e5-4d07-b3af-8820984f9d5a" testId="c10b3103-4e2d-e9c8-47f1-6c40f2a3551b" testName="TestYayEncryption" computerName="JHONNY-PC" duration="00:00:00.0958922" startTime="2012-11-27T22:50:41.7563528+02:00" endTime="2012-11-27T22:50:41.8553584+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="23ab24f3-e7e5-4d07-b3af-8820984f9d5a">
+      <Output>
+        <StdOut>"yay!"</StdOut>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;Wi24KS4pcTzvyuGOHubiXg==&gt;. Actual:&lt;AueNMJavJ+Pnuju9oU3UIg==&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestYayEncryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 137
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="317deeca-a950-4586-818e-0eac0a6dffef" testId="17f768eb-a220-b325-3821-845f64b2074a" testName="TestArrayEncryption" computerName="JHONNY-PC" duration="00:00:00.0023973" startTime="2012-11-27T22:50:41.8563585+02:00" endTime="2012-11-27T22:50:41.8623588+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="317deeca-a950-4586-818e-0eac0a6dffef">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;Ns4TB41JjT2NCXaGLWSPAQ==&gt;. Actual:&lt;Pz8tSDIPb8H6T6Hpa6qHmg==&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestArrayEncryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 157
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9b96d7c4-ded8-4aad-b35d-c9ab2ac52585" testId="20f7f0d2-2cb9-8288-a125-a8e72b79c6e8" testName="TestArrayDecryption" computerName="JHONNY-PC" duration="00:00:00.0052397" startTime="2012-11-27T22:50:41.8633589+02:00" endTime="2012-11-27T22:50:41.8703593+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b96d7c4-ded8-4aad-b35d-c9ab2ac52585">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;[]&gt;. Actual:&lt;**DECRYPT ERROR**&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestArrayDecryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 179
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="abb78b5f-29bf-4009-8658-73c28ef47086" testId="d4ff9639-b14f-2941-2b3f-630d9fde256c" testName="TestObjectEncryption" computerName="JHONNY-PC" duration="00:00:00.0025233" startTime="2012-11-27T22:50:41.8753596+02:00" endTime="2012-11-27T22:50:41.8813599+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="abb78b5f-29bf-4009-8658-73c28ef47086">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;IDjZE9BHSjcX67RddfCYYg==&gt;. Actual:&lt;tDCpg6sE1Jcx2QUTI7meLA==&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestObjectEncryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 199
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a9ded5d7-aa86-4f6b-b3c7-342740836098" testId="2fe713c2-dda9-8e16-1703-95091b843c98" testName="TestObjectDecryption" computerName="JHONNY-PC" duration="00:00:00.0042848" startTime="2012-11-27T22:50:41.8823600+02:00" endTime="2012-11-27T22:50:41.8893604+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a9ded5d7-aa86-4f6b-b3c7-342740836098">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;{}&gt;. Actual:&lt;**DECRYPT ERROR**&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestObjectDecryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 221
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7ddf1e3b-ba59-44c3-a72a-0d3fdd230ea4" testId="d18f35fa-6d14-ca5f-b3c7-0d2e52488359" testName="TestMyObjectEncryption" computerName="JHONNY-PC" duration="00:00:00.0036872" startTime="2012-11-27T22:50:41.8913605+02:00" endTime="2012-11-27T22:50:41.9023611+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ddf1e3b-ba59-44c3-a72a-0d3fdd230ea4">
+      <Output>
+        <DebugTrace>DateTime 11/27/2012 10:50:41 PM checkInternetStatus LocalIP: 192.168.1.6
+</DebugTrace>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;Zbr7pEF/GFGKj1rOstp0tWzA4nwJXEfj+ezLtAr8qqE=&gt;. Actual:&lt;rYCif8pGOPDSwI2eNPMJuAejFY+X7/ElH7qiq+BQoBY=&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestMyObjectEncryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 240
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="885bd167-f752-47c5-9b1f-c826472ccd90" testId="b7cbc14d-7118-d73a-a8f4-b20663f0e336" testName="TestMyObjectDecryption" computerName="JHONNY-PC" duration="00:00:00.0035766" startTime="2012-11-27T22:50:41.9033612+02:00" endTime="2012-11-27T22:50:41.9103616+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="885bd167-f752-47c5-9b1f-c826472ccd90">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;{"foo":"hi!","bar":[1,2,3,4,5]}&gt;. Actual:&lt;**DECRYPT ERROR**&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestMyObjectDecryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 261
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e19f0159-1b26-4afa-a88f-3508d8b36481" testId="c12ba7e8-7d3f-c0b9-4113-1540536b8df5" testName="TestPubNubEncryption2" computerName="JHONNY-PC" duration="00:00:00.0023726" startTime="2012-11-27T22:50:41.9113616+02:00" endTime="2012-11-27T22:50:41.9173620+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e19f0159-1b26-4afa-a88f-3508d8b36481">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;f42pIQcWZ9zbTbH8cyLwB/tdvRxjFLOYcBNMVKeHS54=&gt;. Actual:&lt;eeuuCcUU+977gSXOAOAJeNX25XQdVXEJ4+gPDsmdL/M=&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestPubNubEncryption2() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 281
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d6138327-48e2-47ad-93c2-144565845c35" testId="ba825831-1100-6e69-598b-10523e41ae69" testName="TestPubNubDecryption2" computerName="JHONNY-PC" duration="00:00:00.0025321" startTime="2012-11-27T22:50:41.9183620+02:00" endTime="2012-11-27T22:50:41.9243624+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d6138327-48e2-47ad-93c2-144565845c35">
+      <Output>
+        <ErrorInfo>
+          <Message>Test method PubNub_Messaging.Tests.EncryptionTests.TestPubNubDecryption2 threw exception: 
+System.ArgumentException: Invalid JSON primitive: .</Message>
+          <StackTrace>    at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializePrimitiveObject()
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializeInternal(Int32 depth)
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.BasicDeserialize(String input, Int32 depthLimit, JavaScriptSerializer serializer)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize(JavaScriptSerializer serializer, String input, Type type, Int32 depthLimit)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize[T](String input)
+   at PubNub_Messaging.Tests.EncryptionTests.TestPubNubDecryption2() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 299
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="66c09920-d7c4-4763-90d0-d40e08941306" testId="ad3b6bd2-a72c-df33-9227-5036839d1e56" testName="TestPubNubEncryption1" computerName="JHONNY-PC" duration="00:00:00.0023339" startTime="2012-11-27T22:50:41.9323628+02:00" endTime="2012-11-27T22:50:41.9373631+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="66c09920-d7c4-4763-90d0-d40e08941306">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;f42pIQcWZ9zbTbH8cyLwByD/GsviOE0vcREIEVPARR0=&gt;. Actual:&lt;c2aSl9ikJl6qGPGv4a+sLjQYLM7epdou1WUrC+NsEt8=&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestPubNubEncryption1() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 320
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ccc65a76-9755-4e34-90ee-752a97c10e28" testId="12026be6-c715-9831-8e3f-1ed5fd03bb17" testName="TestPubNubDecryption1" computerName="JHONNY-PC" duration="00:00:00.0025111" startTime="2012-11-27T22:50:41.9443635+02:00" endTime="2012-11-27T22:50:41.9493638+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ccc65a76-9755-4e34-90ee-752a97c10e28">
+      <Output>
+        <ErrorInfo>
+          <Message>Test method PubNub_Messaging.Tests.EncryptionTests.TestPubNubDecryption1 threw exception: 
+System.ArgumentException: Invalid JSON primitive: .</Message>
+          <StackTrace>    at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializePrimitiveObject()
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializeInternal(Int32 depth)
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.BasicDeserialize(String input, Int32 depthLimit, JavaScriptSerializer serializer)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize(JavaScriptSerializer serializer, String input, Type type, Int32 depthLimit)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize[T](String input)
+   at PubNub_Messaging.Tests.EncryptionTests.TestPubNubDecryption1() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 338
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f55ae729-1b7f-421c-acb4-587fd4fbdcdc" testId="17aa8362-c7a2-1cd5-afaa-566fb069a9ff" testName="TestStuffCanEncryption" computerName="JHONNY-PC" duration="00:00:00.0026315" startTime="2012-11-27T22:50:41.9513639+02:00" endTime="2012-11-27T22:50:41.9573642+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f55ae729-1b7f-421c-acb4-587fd4fbdcdc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;zMqH/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF&gt;. Actual:&lt;rp+7TE4HmROO6FqYsrt+j33cc1L6zHSJ5bUvgCyo7xZxx1ZeVMxPm3xXQmKSQtHQ&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestStuffCanEncryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 356
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d4bd268f-b067-46d5-8926-6d15d0a48cf2" testId="f16ca2b9-a99b-04cb-78a2-1e576063988e" testName="TestStuffcanDecryption" computerName="JHONNY-PC" duration="00:00:00.0040492" startTime="2012-11-27T22:50:41.9583643+02:00" endTime="2012-11-27T22:50:41.9653647+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4bd268f-b067-46d5-8926-6d15d0a48cf2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;{"this stuff":{"can get":"complicated!"}}&gt;. Actual:&lt;**DECRYPT ERROR**&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestStuffcanDecryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 372
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c62ead5b-6eb7-4d85-8d7c-f18e01913016" testId="5384a1bf-6915-0efa-d27a-4058cf101875" testName="TestHashEncryption" computerName="JHONNY-PC" duration="00:00:00.0022662" startTime="2012-11-27T22:50:41.9673648+02:00" endTime="2012-11-27T22:50:41.9723651+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c62ead5b-6eb7-4d85-8d7c-f18e01913016">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;GsvkCYZoYylL5a7/DKhysDjNbwn+BtBtHj2CvzC4Y4g=&gt;. Actual:&lt;x7A8v1k7BickCI/xRjT08YCrVmAkp1STBau4iMTRRrE=&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestHashEncryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 389
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d64d8be1-dc3f-4334-9956-9106b06cc295" testId="49db67a1-c9f7-45c8-685b-77c7b6203c60" testName="TestHashDecryption" computerName="JHONNY-PC" duration="00:00:00.0024262" startTime="2012-11-27T22:50:41.9743652+02:00" endTime="2012-11-27T22:50:41.9803656+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d64d8be1-dc3f-4334-9956-9106b06cc295">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;{"foo":{"bar":"foobar"}}&gt;. Actual:&lt;**DECRYPT ERROR**&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestHashDecryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 405
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="395a976f-e389-4e89-9d14-c7ebc0250b86" testId="979cf18e-600d-cade-b6f4-1e1ad9757546" testName="TestUnicodeCharsEncryption" computerName="JHONNY-PC" duration="00:00:00.0023493" startTime="2012-11-27T22:50:41.9813656+02:00" endTime="2012-11-27T22:50:41.9863659+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="395a976f-e389-4e89-9d14-c7ebc0250b86">
+      <Output>
+        <StdOut>"漢語"
+6wD2b8Dezn3SA7Ycqt3wMg==</StdOut>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;+BY5/miAA8aeuhVl4d13Kg==&gt;. Actual:&lt;6wD2b8Dezn3SA7Ycqt3wMg==&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestUnicodeCharsEncryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 423
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="940023fa-43b7-4008-8400-a52540f31217" testId="69e5ba3b-293a-0396-05ac-d55406e72a69" testName="TestUnicodeCharsDecryption" computerName="JHONNY-PC" duration="00:00:00.0024682" startTime="2012-11-27T22:50:41.9883660+02:00" endTime="2012-11-27T22:50:41.9933663+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="940023fa-43b7-4008-8400-a52540f31217">
+      <Output>
+        <ErrorInfo>
+          <Message>Test method PubNub_Messaging.Tests.EncryptionTests.TestUnicodeCharsDecryption threw exception: 
+System.ArgumentException: Invalid JSON primitive: .</Message>
+          <StackTrace>    at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializePrimitiveObject()
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializeInternal(Int32 depth)
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.BasicDeserialize(String input, Int32 depthLimit, JavaScriptSerializer serializer)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize(JavaScriptSerializer serializer, String input, Type type, Int32 depthLimit)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize[T](String input)
+   at PubNub_Messaging.Tests.EncryptionTests.TestUnicodeCharsDecryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 440
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4b7daa0c-1687-4894-8405-a8ba013050e3" testId="2dc1b451-d91e-c5e1-a231-14ef6d50e8a3" testName="TestGermanCharsDecryption" computerName="JHONNY-PC" duration="00:00:00.0024598" startTime="2012-11-27T22:50:41.9943664+02:00" endTime="2012-11-27T22:50:42.0003667+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b7daa0c-1687-4894-8405-a8ba013050e3">
+      <Output>
+        <ErrorInfo>
+          <Message>Test method PubNub_Messaging.Tests.EncryptionTests.TestGermanCharsDecryption threw exception: 
+System.ArgumentException: Invalid JSON primitive: .</Message>
+          <StackTrace>    at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializePrimitiveObject()
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.DeserializeInternal(Int32 depth)
+   at System.Web.Script.Serialization.JavaScriptObjectDeserializer.BasicDeserialize(String input, Int32 depthLimit, JavaScriptSerializer serializer)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize(JavaScriptSerializer serializer, String input, Type type, Int32 depthLimit)
+   at System.Web.Script.Serialization.JavaScriptSerializer.Deserialize[T](String input)
+   at PubNub_Messaging.Tests.EncryptionTests.TestGermanCharsDecryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 459
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="98698480-a8d8-47e6-bd5c-9ffcc3580411" testId="dbb109f3-a5d3-2f6a-922c-aa979c8d3c39" testName="TestGermanCharsEncryption" computerName="JHONNY-PC" duration="00:00:00.0024034" startTime="2012-11-27T22:50:42.0013668+02:00" endTime="2012-11-27T22:50:42.0073671+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="98698480-a8d8-47e6-bd5c-9ffcc3580411">
+      <Output>
+        <StdOut>"ÜÖ"
+MpwMP3UqR58s4iDDkv8UiQ==</StdOut>
+        <ErrorInfo>
+          <Message>Assert.AreEqual failed. Expected:&lt;stpgsG1DZZxb44J7mFNSzg==&gt;. Actual:&lt;MpwMP3UqR58s4iDDkv8UiQ==&gt;. </Message>
+          <StackTrace>   at PubNub_Messaging.Tests.EncryptionTests.TestGermanCharsEncryption() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\EncryptionTests.cs:line 478
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ad7a448c-f3d0-4107-8dcc-5a0f72da74f6" testId="b318fee6-572b-d189-a739-f39201ade1aa" testName="ThenUnencryptPublishShouldReturnSuccessCodeAndInfo" computerName="JHONNY-PC" duration="00:02:07.7753084" startTime="2012-11-27T22:50:42.0093672+02:00" endTime="2012-11-27T22:52:49.7846756+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Aborted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad7a448c-f3d0-4107-8dcc-5a0f72da74f6">
+      <Output>
+        <DebugTrace>DateTime 11/27/2012 10:50:42 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/27/2012 10:50:42 PM, Request=http://pizza.pubnub.com/publish/demo/demo/0/my%2Fchannel/0/%22Pubnub%20Messaging%20API%201%22
+DateTime: 11/27/2012 10:50:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:50:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:42 PM, JSON for channel=my/channel (Publish) =[1,"Sent","13540494426807652"]
+DateTime 11/27/2012 10:50:42 PM, Request=http://pizza.pubnub.com/v2/history/sub-key/demo/channel/my%252Fchannel?count=100&amp;end=13540494426807652
+DateTime: 11/27/2012 10:50:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:50:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:50:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:50:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:50:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:53 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:50:53 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:56 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:56 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:56 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:50:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:50:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:50:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:50:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:50:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:50:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:50:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:50:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:09 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:09 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:11 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:11 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:11 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:51:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:15 PM, WebException: System.Net.WebException: The remote server returned an error: (504) Gateway Timeout.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.&lt;&gt;c__DisplayClass21`1.&lt;_urlRequest&gt;b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/v2/history/sub-key/demo/channel/my%252Fchannel?count=100&amp;end=13540494426807652
+DateTime 11/27/2012 10:51:15 PM, JSON detailedHistoryExceptionHandler response=[0, "Network connnect error"]
+DateTime: 11/27/2012 10:51:24 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:24 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:26 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:51:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:51:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:39 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:39 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:41 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:41 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:51:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:51:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:54 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:54 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:56 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:56 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:51:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:51:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:51:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:51:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:51:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:51:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:51:57 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:09 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:52:09 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:11 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:11 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:11 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:52:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:52:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:12 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:24 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:52:24 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:26 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:26 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:52:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:52:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:27 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:39 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:52:39 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:41 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:41 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:52:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:52:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:52:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:52:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:52:42 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:52:42 PM checkInternetStatus LocalIP: 192.168.1.6
+</DebugTrace>
+        <ErrorInfo>
+          <Message>User aborted test run.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1da4f122-43f4-4bbd-a4bf-318411164f25" testId="c974ed74-2317-e1a7-a3ca-a7f63cc2952e" testName="ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1da4f122-43f4-4bbd-a4bf-318411164f25">
+    </UnitTestResult>
+    <UnitTestResult executionId="8dbd1865-4f64-4a5e-9718-6f23cbb97280" testId="203cf256-b1dd-744b-6166-13212e371fb4" testName="ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8dbd1865-4f64-4a5e-9718-6f23cbb97280">
+    </UnitTestResult>
+    <UnitTestResult executionId="581d68a3-23f7-42a8-a7c1-ab805ff9d2b3" testId="baf0cafb-2221-a243-3f29-39238008e2da" testName="ThenEncryptPublishShouldReturnSuccessCodeAndInfo" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="581d68a3-23f7-42a8-a7c1-ab805ff9d2b3">
+    </UnitTestResult>
+    <UnitTestResult executionId="453beb18-df40-4036-8d5d-6828bc0b848b" testId="a94ba574-d07d-f445-c39e-521d8ba6c1ba" testName="ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="453beb18-df40-4036-8d5d-6828bc0b848b">
+    </UnitTestResult>
+    <UnitTestResult executionId="a5ff4ae1-c8a7-4c9b-8862-320b2ed9d3a5" testId="ec4d4d17-25f3-5430-7b3f-9b6915122a92" testName="ThenPubnubShouldGenerateUniqueIdentifier" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5ff4ae1-c8a7-4c9b-8862-320b2ed9d3a5">
+    </UnitTestResult>
+    <UnitTestResult executionId="f9bcd042-c3b2-436b-966f-19d669bb23b8" testId="7caba54d-3734-3ad0-2b74-3f6718ff5e54" testName="ThenPublishKeyShouldNotBeEmpty" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9bcd042-c3b2-436b-966f-19d669bb23b8">
+    </UnitTestResult>
+    <UnitTestResult executionId="18e71bf4-78f4-4b93-890a-e4bb88d77b1c" testId="09836e49-1631-a71c-29e0-105457b1aa7d" testName="ThenOptionalSecretKeyShouldBeProvidedInConstructor" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18e71bf4-78f4-4b93-890a-e4bb88d77b1c">
+    </UnitTestResult>
+    <UnitTestResult executionId="abf26e12-9e6f-4d56-8fb9-34c94b8eb58c" testId="a44284f2-17ef-78bd-fdc6-88e675b08b01" testName="IfSSLNotProvidedThenDefaultShouldBeFalse" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="abf26e12-9e6f-4d56-8fb9-34c94b8eb58c">
+    </UnitTestResult>
+    <UnitTestResult executionId="7f6b4227-8d3c-489e-9382-e06abc02aae1" testId="22e69e32-b3cf-16a8-75c3-6279aacf9cad" testName="DetailHistoryCount10ReturnsRecords" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f6b4227-8d3c-489e-9382-e06abc02aae1">
+    </UnitTestResult>
+    <UnitTestResult executionId="578bdf7a-8e8d-4b30-bd54-8168009c560f" testId="72943ea2-d74e-ba3b-e263-539b952c88bb" testName="DetailHistoryCount10ReverseTrueReturnsRecords" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="578bdf7a-8e8d-4b30-bd54-8168009c560f">
+    </UnitTestResult>
+    <UnitTestResult executionId="f9b38e90-c664-4de2-ab5f-495c45baa7b9" testId="87319f1c-c1fe-275e-cc3b-9c8013c29b0f" testName="DetailedHistoryStartWithReverseTrue" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9b38e90-c664-4de2-ab5f-495c45baa7b9">
+    </UnitTestResult>
+    <UnitTestResult executionId="759d5a0f-e093-4f55-a6a0-1dcfceecdfdc" testId="5a785fb0-6dd1-f697-4e8b-79b61e0b2e7a" testName="ThenItShouldReturnTimeStamp" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="759d5a0f-e093-4f55-a6a0-1dcfceecdfdc">
+    </UnitTestResult>
+    <UnitTestResult executionId="2114588d-54ce-406e-87b7-7b6aaeb4e3c8" testId="885f26a0-c1f9-3a3e-f327-15ba3ad42fd6" testName="TranslateDateTimeToUnixTime" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2114588d-54ce-406e-87b7-7b6aaeb4e3c8">
+    </UnitTestResult>
+    <UnitTestResult executionId="30fa6c8e-78c0-4d72-bb4d-a2aeb0ac51db" testId="c0351e6c-2cc6-209f-2a35-754f65c310a1" testName="TranslateUnixTimeToDateTime" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30fa6c8e-78c0-4d72-bb4d-a2aeb0ac51db">
+    </UnitTestResult>
+    <UnitTestResult executionId="8139823f-b6ed-45cb-957d-43d8778aeec8" testId="2c0e4679-4702-fc4c-b17c-d5ac50275834" testName="ThenSubscribeShouldReturnReceivedMessage" computerName="JHONNY-PC" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8139823f-b6ed-45cb-957d-43d8778aeec8">
+    </UnitTestResult>
+  </Results>
+</TestRun>

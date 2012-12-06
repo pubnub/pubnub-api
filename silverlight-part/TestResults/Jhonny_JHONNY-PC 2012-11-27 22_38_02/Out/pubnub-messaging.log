@@ -1,0 +1,180 @@
+V, 1928, 14, 2012/11/27, 22:38:03.033, JHONNY-PC\QTAgent32.exe, Tracing starting up. Stopwatch frequency is 2143603
+DateTime 11/27/2012 10:38:03 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/27/2012 10:38:03 PM, requested presence for channel=my/channel-pnpres
+DateTime 11/27/2012 10:38:03 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel-pnpres/0/0?uuid=2c98c794-2ec8-46bc-b2e5-71bd4a073cf5
+DateTime: 11/27/2012 10:38:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:38:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:03 PM, requested subscribe for channel=my/channel
+DateTime 11/27/2012 10:38:03 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel/0/0?uuid=2c98c794-2ec8-46bc-b2e5-71bd4a073cf5
+DateTime: 11/27/2012 10:38:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:38:03 PM, JSON for channel=my/channel (Subscribe) =[[],"13540469729276226"]
+DateTime 11/27/2012 10:38:03 PM, JSON for channel=my/channel-pnpres (Presence) =[[],"13540486840205123"]
+DateTime 11/27/2012 10:38:03 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel-pnpres/0/13540486840205123?uuid=2c98c794-2ec8-46bc-b2e5-71bd4a073cf5
+DateTime: 11/27/2012 10:38:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:03 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel/0/13540469729276226?uuid=2c98c794-2ec8-46bc-b2e5-71bd4a073cf5
+DateTime: 11/27/2012 10:38:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:38:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:38:05 PM, requested unsubscribe for channel=my/channel
+DateTime 11/27/2012 10:38:05 PM, WebException: System.Net.WebException: The request was aborted: The request was canceled.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.<>c__DisplayClass21`1.<_urlRequest>b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/subscribe/demo/my%2Fchannel/0/13540469729276226?uuid=2c98c794-2ec8-46bc-b2e5-71bd4a073cf5
+DateTime 11/27/2012 10:38:05 PM, Due to Unsubscribe, further re-subscription was stopped for channel my/channel
+DateTime 11/27/2012 10:38:05 PM, JSON unsubscribe response=[1, "Unsubscribed from my/channel"]
+DateTime 11/27/2012 10:38:05 PM, Request=http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/my%252Fchannel/leave?uuid=2c98c794-2ec8-46bc-b2e5-71bd4a073cf5
+DateTime: 11/27/2012 10:38:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:38:05 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:38:07 PM, WebException: System.Net.WebException: The remote server returned an error: (504) Gateway Timeout.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.<>c__DisplayClass21`1.<_urlRequest>b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/my%252Fchannel/leave?uuid=2c98c794-2ec8-46bc-b2e5-71bd4a073cf5
+DateTime: 11/27/2012 10:38:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:18 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:18 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:38:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:18 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:38:18 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:38:20 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:33 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:33 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:33 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:38:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:33 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:38:33 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:33 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:38:33 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:38:33 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:35 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:38:35 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:48 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:48 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:48 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:48 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:38:48 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:38:48 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:38:48 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:38:48 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:38:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:38:50 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:39:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:39:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:39:05 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:18 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:18 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:39:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:18 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:39:18 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:39:20 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:33 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:33 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:33 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:33 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:33 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:39:33 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:33 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:33 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:39:33 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:35 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:39:35 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:48 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:48 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:48 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:48 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:48 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:39:48 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:39:48 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:39:48 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:39:48 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:39:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:39:50 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:40:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:40:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:40:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:40:03 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:40:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:40:03 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:40:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:40:05 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:40:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:40:20 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:40:35 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:40:35 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:40:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:40:50 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:41:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:41:05 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:41:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:41:20 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:41:35 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:41:35 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:41:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:41:50 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:42:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:42:05 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:42:20 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:42:20 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:42:35 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:42:35 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:42:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:42:50 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:42:50 PM, JSON for channel=my/channel-pnpres (Presence) =[[],"13540489710879780"]
+DateTime 11/27/2012 10:42:50 PM, Request=http://pizza.pubnub.com/subscribe/demo/my%2Fchannel-pnpres/0/13540489710879780?uuid=2c98c794-2ec8-46bc-b2e5-71bd4a073cf5
+DateTime: 11/27/2012 10:42:50 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:42:50 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/27/2012 10:42:50 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime: 11/27/2012 10:43:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/27/2012 10:43:05 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/27/2012 10:43:05 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:43:05 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:43:05 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:43:15 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/27/2012 10:43:15 PM, Request=http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/my%252Fchannel
+DateTime: 11/27/2012 10:43:15 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/27/2012 10:43:15 PM checkInternetStatus LocalIP: 192.168.1.6
+DateTime 11/27/2012 10:43:17 PM, WebException: System.Net.WebException: The remote server returned an error: (504) Gateway Timeout.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.<>c__DisplayClass21`1.<_urlRequest>b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/my%252Fchannel
+DateTime 11/27/2012 10:43:17 PM, JSON here_now response=[0, "Network connnect error"]

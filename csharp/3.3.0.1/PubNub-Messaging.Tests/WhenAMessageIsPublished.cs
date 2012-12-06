@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.ComponentModel;
 using System.Threading;
-using System.Web.Script.Serialization;
 using System.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace PubNub_Messaging.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class WhenAMessageIsPublished
     {
         ManualResetEvent manualEvent1 = new ManualResetEvent(false);
@@ -55,7 +54,7 @@ namespace PubNub_Messaging.Tests
         string messageObjectForUnencryptPublish = "";
         string messageObjectForEncryptPublish = "";
 
-        [TestMethod]
+        [Test]
         public void ThenUnencryptPublishShouldReturnSuccessCodeAndInfo()
         {
             isUnencryptPublished = false;
@@ -78,7 +77,7 @@ namespace PubNub_Messaging.Tests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo()
         {
             isUnencryptObjectPublished = false;
@@ -102,7 +101,7 @@ namespace PubNub_Messaging.Tests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo()
         {
             isEncryptObjectPublished = false;
@@ -126,7 +125,7 @@ namespace PubNub_Messaging.Tests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ThenEncryptPublishShouldReturnSuccessCodeAndInfo()
         {
             isEncryptPublished = false;
@@ -149,7 +148,7 @@ namespace PubNub_Messaging.Tests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo()
         {
             isSecretEncryptPublished = false;
@@ -174,7 +173,7 @@ namespace PubNub_Messaging.Tests
 
         private void ReturnSuccessUnencryptPublishCodeCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
@@ -193,7 +192,7 @@ namespace PubNub_Messaging.Tests
 
         private void ReturnSuccessUnencryptObjectPublishCodeCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
@@ -212,7 +211,7 @@ namespace PubNub_Messaging.Tests
 
         private void ReturnSuccessEncryptObjectPublishCodeCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
@@ -231,7 +230,7 @@ namespace PubNub_Messaging.Tests
 
         private void ReturnSuccessEncryptPublishCodeCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
@@ -250,7 +249,7 @@ namespace PubNub_Messaging.Tests
 
         private void ReturnSuccessSecretEncryptPublishCodeCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
@@ -269,13 +268,13 @@ namespace PubNub_Messaging.Tests
 
         private void CaptureUnencryptDetailedHistoryCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    JArray jObj = JArray.Parse(receivedObj[0].ToString());
-                    if (jObj[0].ToString() == messageForUnencryptPublish)
+                    JArray jArr = receivedObj[0] as JArray;
+                    if (jArr != null && jArr[0].ToString() == messageForUnencryptPublish)
                     {
                         isUnencryptDH = true;
                     }
@@ -287,13 +286,13 @@ namespace PubNub_Messaging.Tests
 
         private void CaptureUnencryptObjectDetailedHistoryCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
-                    if (jArr[0].ToString(Formatting.None) == messageObjectForUnencryptPublish)
+                    JArray jArr = receivedObj[0] as JArray;
+                    if (jArr != null && jArr[0].ToString(Formatting.None) == messageObjectForUnencryptPublish)
                     {
                         isUnencryptObjectDH = true;
                     }
@@ -305,13 +304,13 @@ namespace PubNub_Messaging.Tests
 
         private void CaptureEncryptObjectDetailedHistoryCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
-                    if (jArr[0].ToString(Formatting.None) == messageObjectForEncryptPublish)
+                    JArray jArr = receivedObj[0] as JArray;
+                    if (jArr != null && jArr[0].ToString(Formatting.None) == messageObjectForEncryptPublish)
                     {
                         isEncryptObjectDH = true;
                     }
@@ -323,13 +322,13 @@ namespace PubNub_Messaging.Tests
 
         private void CaptureEncryptDetailedHistoryCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
-                    if (jArr[0].ToString() == messageForEncryptPublish)
+                    JArray jArr = receivedObj[0] as JArray;
+                    if (jArr != null && jArr[0].ToString() == messageForEncryptPublish)
                     {
                         isEncryptDH = true;
                     }
@@ -341,13 +340,13 @@ namespace PubNub_Messaging.Tests
 
         private void CaptureSecretEncryptDetailedHistoryCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    JArray jArr = JArray.Parse(receivedObj[0].ToString());
-                    if (jArr[0].ToString() == messageForSecretEncryptPublish)
+                    JArray jArr = receivedObj[0] as JArray;
+                    if (jArr != null && jArr[0].ToString() == messageForSecretEncryptPublish)
                     {
                         isSecretEncryptDH = true;
                     }
@@ -357,7 +356,7 @@ namespace PubNub_Messaging.Tests
             mreSecretEncryptDH.Set();
         }
 
-        [TestMethod]
+        [Test]
         public void ThenPubnubShouldGenerateUniqueIdentifier()
         {
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
@@ -365,7 +364,7 @@ namespace PubNub_Messaging.Tests
             Assert.IsNotNull(pubnub.generateGUID());
         }
 
-        [TestMethod]
+        [Test]
         [ExpectedException(typeof(MissingFieldException))]
         public void ThenPublishKeyShouldNotBeEmpty()
         {
@@ -378,7 +377,7 @@ namespace PubNub_Messaging.Tests
         }
 
 
-        [TestMethod]
+        [Test]
         public void ThenOptionalSecretKeyShouldBeProvidedInConstructor()
         {
             isPublished2 = false;
@@ -394,7 +393,7 @@ namespace PubNub_Messaging.Tests
 
         private void ReturnSecretKeyPublishCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
@@ -410,7 +409,7 @@ namespace PubNub_Messaging.Tests
             manualEvent2.Set();
         }
 
-        [TestMethod]
+        [Test]
         public void IfSSLNotProvidedThenDefaultShouldBeFalse()
         {
             isPublished3 = false;
@@ -425,7 +424,7 @@ namespace PubNub_Messaging.Tests
 
         private void ReturnNoSSLDefaultFalseCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
                 object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])

@@ -1,0 +1,44 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+.settings
+*~
+*.swp
+*.pyc
+*.class
+*.iml
+/flash/*/out
+/android/*/*/gen
+/android/*/*/bin
+/android/*/*/out
+.DS_Store
+node_modules
+.idea*
+/csharp/*/PubNub-Messaging*/bin/*
+/csharp/*/PubNub-Messaging*/obj/*
+/j2me/3.3/nbproject
+/flash/3.3.1beta/obj/*.old
+/flash/3.3.1beta/obj/PubNubTestConfig.xml
+=======
+>>>>>>> origin/CL-243
+.settings
+*~
+*.swp
+*.pyc
+*.class
+*.iml
+/flash/*/out
+/android/*/*/gen
+/android/*/*/bin
+/android/*/*/out
+.DS_Store
+node_modules
+.idea*
+/csharp/*/PubNub-Messaging*/bin/*
+/csharp/*/PubNub-Messaging*/bin/*
+/csharp/*/PubNub-Messaging*/obj/*
+/j2me/3.3/nbproject
+<<<<<<< HEAD
+=======
+>>>>>>> origin/CL-200
+>>>>>>> origin/CL-243
