@@ -83,7 +83,7 @@
     }
 
     var p            = PUBNUB
-    ,   many_con_tst = 'opera' in window ? -1 : 10
+    ,   many_con_tst = 20
     ,   channel      = 'pn-javascript-unit-test'
     ,   out          = p.$('unit-test-out')
     ,   test_tpl     = p.$('test_template').innerHTML
@@ -107,7 +107,7 @@
     ====================================================================== */
     p.bind( 'mousedown,touchstart', start_button, start_test );
     function start_test() {
-        test.plan = 19 + many_con_tst*3; // # of tests
+        test.plan = 18 + many_con_tst*3; // # of tests
         test.done = 0;  // 0 tests done so far
         test.pass = 0;  // 0 passes so far
         test.fail = 0;  // 0 failes so far
@@ -161,7 +161,7 @@
         p.subscribe({
             channel  : channel,
             connect  : publish_test,
-            callback : function( message, envelope, chan ) {
+            callback : function( message, envelope, channel ) {
                 p.unsubscribe({ channel : channel });
                 test( message, 'Subscribe Message' );
                 test( message.test === "test", 'Subscribe Message Data' );
@@ -178,15 +178,16 @@
 
             p.subscribe({
                 channel  : chan,
-                connect  : function() {
-                    test( chan, 'Many Connections: ' + conn + ' Connected!' );
+                connect  : function(chan) {
+                    test( chan, 'Many Connections: ' + chan + ' Connected!' );
                     p.publish({ channel : chan, message : chan });
                 },
-                callback : function( message, envelope, chan ) {
-                    p.unsubscribe({ channel : chan });
+                callback : function( message, envelope, channel ) {
+                    p.unsubscribe({ channel : channel });
                     test(
-                        chan === message,
-                        'Many Connections: ' + conn + ' Received'
+                        channel === message,
+                        'Many Connections: ' + channel +
+                        ' Received - '       + message
                     );
                 }
             });

@@ -58,7 +58,7 @@ var NOW             = 1
  * CONSOLE COMPATIBILITY
  */
 window.console||(window.console=window.console||{});
-console.log||(console.log=((window.opera||{}).postError||function(){}));
+console.error||(console.error=((window.opera||{}).postError||function(){}));
 
 /**
  * UTILITIES
@@ -137,11 +137,11 @@ function updater( fun, rate ) {
 function $(id) { return document.getElementById(id) }
 
 /**
- * LOG
- * ===
- * log('message');
+ * ERROR
+ * =====
+ * error('message');
  */
-function log(message) { console['log'](message) }
+function error(message) { console['error'](message) }
 
 /**
  * SEARCH
@@ -161,7 +161,7 @@ function search( elements, start ) {
 /**
  * EACH
  * ====
- * each( [1,2,3], function(item) { console.log(item) } )
+ * each( [1,2,3], function(item) { } )
  */
 function each( o, f ) {
     if ( !o || !f ) return;
@@ -213,7 +213,7 @@ function supplant( str, values ) {
  * BIND
  * ====
  * bind( 'keydown', search('a')[0], function(element) {
- *     console.log( element, '1st anchor' )
+ *     ...
  * } );
  */
 function bind( type, el, fun ) {
@@ -498,7 +498,7 @@ function generate_channel_list(channels) {
 
 var PDIV          = $('pubnub') || {}
 ,   READY         = 0
-,   READY_BUFFER  = {}
+,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
     var CHANNELS      = {}
     ,   SUB_CALLBACK  = 0
@@ -519,13 +519,14 @@ var PDIV          = $('pubnub') || {}
             PUBNUB.history({
                 channel  : 'my_chat_channel',
                 limit    : 100,
-                callback : function(messages) { console.log(messages) }
+                callback : function(messages) { }
             });
         */
         'history' : function( args, callback ) {
             var callback = args['callback'] || callback 
             ,   count    = args['count']    || args['limit'] || 100
             ,   reverse  = args['reverse']  || "false"
+            ,   err      = args['error']    || function(){}
             ,   channel  = args['channel']
             ,   start    = args['start']
             ,   end      = args['end']
@@ -534,9 +535,9 @@ var PDIV          = $('pubnub') || {}
             ,   jsonp    = jsonp_cb();
 
             // Make sure we have a Channel
-            if (!channel)       return log('Missing Channel');
-            if (!callback)      return log('Missing Callback');
-            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
+            if (!channel)       return error('Missing Channel');
+            if (!callback)      return error('Missing Callback');
+            if (!SUBSCRIBE_KEY) return error('Missing Subscribe Key');
 
             params["count"]   = count;
             params["reverse"] = reverse;
@@ -549,7 +550,7 @@ var PDIV          = $('pubnub') || {}
                 callback : jsonp,
                 data     : params,
                 success  : function(response) { callback(response) },
-                fail     : function(response) { log(response) },
+                fail     : err,
                 url      : [
                     origin, 'v2', 'history', 'sub-key',
                     SUBSCRIBE_KEY, 'channel', encode(channel)
@@ -558,7 +559,7 @@ var PDIV          = $('pubnub') || {}
         },
 
         /*
-            PUBNUB.time(function(time){ console.log(time) });
+            PUBNUB.time(function(time){ });
         */
         'time' : function(callback) {
             var jsonp  = jsonp_cb()
@@ -573,7 +574,7 @@ var PDIV          = $('pubnub') || {}
         },
 
         /*
-            PUBNUB.uuid(function(uuid) { console.log(uuid) });
+            PUBNUB.uuid(function(uuid) { });
         */
         'uuid' : function(callback) {
             var u = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
@@ -599,10 +600,10 @@ var PDIV          = $('pubnub') || {}
             ,   origin   = nextorigin(ORIGIN)
             ,   url;
 
-            if (!message)       return log('Missing Message');
-            if (!channel)       return log('Missing Channel');
-            if (!PUBLISH_KEY)   return log('Missing Publish Key');
-            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
+            if (!message)       return error('Missing Message');
+            if (!channel)       return error('Missing Channel');
+            if (!PUBLISH_KEY)   return error('Missing Publish Key');
+            if (!SUBSCRIBE_KEY) return error('Missing Subscribe Key');
 
             // If trying to send Object
             message = JSON['stringify'](message);
@@ -651,14 +652,14 @@ var PDIV          = $('pubnub') || {}
         /*
             PUBNUB.subscribe({
                 channel  : 'my_chat'
-                callback : function(message) { console.log(message) }
+                callback : function(message) { }
             });
         */
         'subscribe' : function( args, callback ) {
             var channel       = args['channel']
             ,   callback      = callback              || args['callback']
             ,   callback      = callback              || args['message']
-            ,   error         = args['error']         || function(){}
+            ,   err           = args['error']         || function(){}
             ,   connect       = args['connect']       || function(){}
             ,   reconnect     = args['reconnect']     || function(){}
             ,   disconnect    = args['disconnect']    || function(){}
@@ -670,9 +671,9 @@ var PDIV          = $('pubnub') || {}
             if (restore) SUB_RESTORE = 1;
 
             // Make sure we have a Channel
-            if (!channel)       return log('Missing Channel');
-            if (!callback)      return log('Missing Callback');
-            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
+            if (!channel)       return error('Missing Channel');
+            if (!callback)      return error('Missing Callback');
+            if (!SUBSCRIBE_KEY) return error('Missing Subscribe Key');
 
             // Setup Channel(s)
             each( (channel.join ? channel.join(',') : ''+channel).split(','),
@@ -681,12 +682,13 @@ var PDIV          = $('pubnub') || {}
 
                 // Store Channel State
                 CHANNELS[SUB_CHANNEL = channel] = {
+                    name         : channel,
                     connected    : settings.connected,
                     disconnected : settings.disconnected,
                     subscribed   : 1,
                     callback     : SUB_CALLBACK = callback,
                     connect      : connect,
-                    error        : error,
+                    error        : err,
                     disconnect   : disconnect,
                     reconnect    : reconnect
                 };
@@ -741,7 +743,7 @@ var PDIV          = $('pubnub') || {}
                         each_channel(function(channel){
                             if (channel.disconnected) return;
                             channel.disconnected = 1;
-                            channel.disconnect();
+                            channel.disconnect(channel.name);
                         });
 
                         // New Origin on Failed Connection
@@ -753,9 +755,9 @@ var PDIV          = $('pubnub') || {}
                             each_channel(function(channel){
                                 if (success && channel.disconnected){
                                     channel.disconnected = 0;
-                                    channel.reconnect();
+                                    channel.reconnect(channel.name);
                                 }
-                                else channel.error();
+                                else channel.err();
                             });
                         });
                     },
@@ -763,15 +765,14 @@ var PDIV          = $('pubnub') || {}
                         // Connect
                         each_channel(function(channel){
                             if (channel.connected) return;
-                            console.log('connected!', !channel.connected,generate_channel_list(CHANNELS));
                             channel.connected = 1;
-                            channel.connect();
+                            channel.connect(channel.name);
                         });
 
                         // Restore Previous Connection Point if Needed
                         if (!TIMETOKEN && SUB_RESTORE)
-                             TIMETOKEN = db.get(SUBSCRIBE_KEY);
-                        else TIMETOKEN = messages[1]
+                             TIMETOKEN = db.get(SUBSCRIBE_KEY) || messages[1];
+                        else TIMETOKEN = messages[1];
 
                         // Update Saved Timetoken
                         db.set( SUBSCRIBE_KEY, messages[1] );
@@ -802,32 +803,6 @@ var PDIV          = $('pubnub') || {}
                 });
             }
 
-            // Announce Leave Event
-            LEAVE = function(channel) {
-                var data   = { uuid : UUID }
-                ,   origin = nextorigin(ORIGIN)
-                ,   jsonp  = jsonp_cb();
-
-                // Prevent Double Leave
-                if (channel in CHANNELS&&!CHANNELS[channel].subscribed)return;
-
-                // Prevent Leaving a Presence Channel
-                if (channel.indexOf(PRESENCE_SUFFIX) > 0) return;
-
-                if (jsonp != '0') data['callback'] = jsonp;
-
-                xdr({
-                    blocking : 1,
-                    timeout  : 2000,
-                    callback : jsonp,
-                    data     : data,
-                    url      : [
-                        origin, 'v2', 'presence', 'sub_key',
-                        SUBSCRIBE_KEY, 'channel', encode(channel), 'leave'
-                    ]
-                });
-            };
-
             CONNECT = function() {
                 // Close Previous Subscribe Connection
                 SUB_RECEIVER && SUB_RECEIVER();
@@ -838,7 +813,7 @@ var PDIV          = $('pubnub') || {}
             };
 
             // Reduce Status Flicker
-            if (!READY) return READY_BUFFER[SUBSCRIBE_KEY] = CONNECT;
+            if (!READY) return READY_BUFFER.push(CONNECT);
 
             // Connect Now
             CONNECT();
@@ -846,15 +821,16 @@ var PDIV          = $('pubnub') || {}
 
         'here_now' : function( args, callback ) {
             var callback = args['callback'] || callback 
+            ,   err      = args['error']    || function(){}
             ,   channel  = args['channel']
             ,   jsonp    = jsonp_cb()
             ,   data     = {}
             ,   origin   = nextorigin(ORIGIN);
 
             // Make sure we have a Channel
-            if (!channel)       return log('Missing Channel');
-            if (!callback)      return log('Missing Callback');
-            if (!SUBSCRIBE_KEY) return log('Missing Subscribe Key');
+            if (!channel)       return error('Missing Channel');
+            if (!callback)      return error('Missing Callback');
+            if (!SUBSCRIBE_KEY) return error('Missing Subscribe Key');
             
             if (jsonp != '0') data['callback'] = jsonp;
 
@@ -862,7 +838,7 @@ var PDIV          = $('pubnub') || {}
                 callback : jsonp,
                 data     : data,
                 success  : function(response) { callback(response) },
-                fail     : function(response) { log(response) },
+                fail     : err,
                 url      : [
                     origin, 'v2', 'presence',
                     'sub_key', SUBSCRIBE_KEY, 
@@ -907,6 +883,32 @@ var PDIV          = $('pubnub') || {}
         each( CHANNELS, LEAVE );
         return true;
     } );
+
+    // Announce Leave Event
+    function LEAVE(channel) {
+        var data   = { uuid : UUID }
+        ,   origin = nextorigin(ORIGIN)
+        ,   jsonp  = jsonp_cb();
+
+        // Prevent Double Leave
+        if (channel in CHANNELS&&!CHANNELS[channel].subscribed)return;
+
+        // Prevent Leaving a Presence Channel
+        if (channel.indexOf(PRESENCE_SUFFIX) > 0) return;
+
+        if (jsonp != '0') data['callback'] = jsonp;
+
+        xdr({
+            blocking : 1,
+            timeout  : 2000,
+            callback : jsonp,
+            data     : data,
+            url      : [
+                origin, 'v2', 'presence', 'sub_key',
+                SUBSCRIBE_KEY, 'channel', encode(channel), 'leave'
+            ]
+        });
+    };
     
     return SELF;
 };
@@ -936,7 +938,7 @@ function ready() { PUBNUB['time'](rnow);
 PUBNUB['time'](function(t){ timeout( function() {
     if (READY) return;
     READY = 1;
-    each( READY_BUFFER, function( _, connect ) { connect() } );
+    each( READY_BUFFER, function(connect) { connect() } );
 }, SECOND ); }); }
 
 // Bind for PUBNUB Readiness to Subscribe
