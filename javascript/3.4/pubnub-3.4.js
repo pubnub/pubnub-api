@@ -620,7 +620,7 @@ var PDIV          = $('pubnub') || {}
                 success  : function(response) { callback(response) },
                 fail     : function() { callback([ 0, 'Disconnected' ]) },
                 url      : url,
-                data     : { uuid: UUID }
+                data     : { 'uuid' : UUID }
             });
         },
 
@@ -709,10 +709,10 @@ var PDIV          = $('pubnub') || {}
                     callback : function(here) {
                         each( 'uuids' in here ? here['uuids'] : [],
                         function(uuid) { presence( {
-                            action    : 'join',
-                            uuid      : uuid,
-                            timestamp : rnow(),
-                            occupancy : here['occupancy'] || 1
+                            'action'    : 'join',
+                            'uuid'      : uuid,
+                            'timestamp' : rnow(),
+                            'occupancy' : here['occupancy'] || 1
                         }, here, channel ); } );
                     }
                 });
@@ -730,7 +730,7 @@ var PDIV          = $('pubnub') || {}
                 SUB_RECEIVER = xdr({
                     timeout  : SUB_TIMEOUT,
                     callback : jsonp,
-                    data     : { uuid: UUID },
+                    data     : { 'uuid' : UUID },
                     url      : [
                         origin, 'subscribe',
                         SUBSCRIBE_KEY, encode(channels),
@@ -876,12 +876,12 @@ var PDIV          = $('pubnub') || {}
         } );
     }
 
-    if (!UUID) UUID = SELF.uuid();
+    if (!UUID) UUID = SELF['uuid']();
     db.set( SUBSCRIBE_KEY + 'uuid', UUID );
 
     // Announce Leave Event
     LEAVE = function( channel, blocking ) {
-        var data   = { uuid : UUID }
+        var data   = { 'uuid' : UUID }
         ,   origin = nextorigin(ORIGIN)
         ,   jsonp  = jsonp_cb();
 
