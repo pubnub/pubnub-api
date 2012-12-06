@@ -140,7 +140,7 @@
                 callback : function(response) {
                     test( response[0], 'Successful Publish' );
                     test( response[1], 'Success With Demo' );
-                    history_test();
+                    setTimeout( history_test, 2500 );
                 }
             });
         }

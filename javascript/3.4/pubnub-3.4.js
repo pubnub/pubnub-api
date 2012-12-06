@@ -519,7 +519,7 @@ var PDIV          = $('pubnub') || {}
             PUBNUB.history({
                 channel  : 'my_chat_channel',
                 limit    : 100,
-                callback : function(messages) { }
+                callback : function(history) { }
             });
         */
         'history' : function( args, callback ) {
@@ -531,7 +531,6 @@ var PDIV          = $('pubnub') || {}
             ,   start    = args['start']
             ,   end      = args['end']
             ,   params   = {}
-            ,   origin   = nextorigin(ORIGIN)
             ,   jsonp    = jsonp_cb();
 
             // Make sure we have a Channel
@@ -552,7 +551,7 @@ var PDIV          = $('pubnub') || {}
                 success  : function(response) { callback(response) },
                 fail     : err,
                 url      : [
-                    origin, 'v2', 'history', 'sub-key',
+                    ORIGIN, 'v2', 'history', 'sub-key',
                     SUBSCRIBE_KEY, 'channel', encode(channel)
                 ]
             });
@@ -761,6 +760,8 @@ var PDIV          = $('pubnub') || {}
                         });
                     },
                     success : function(messages) {
+                        if (!messages) return timeout( _connect, 10 );
+
                         // Connect
                         each_channel(function(channel){
                             if (channel.connected) return;
@@ -794,6 +795,7 @@ var PDIV          = $('pubnub') || {}
 
                         each( messages[0], function(msg) {
                             var next = next_callback();
+                            if (!CHANNELS[next[1]].subscribed) return;
                             next[0]( msg, messages, next[1] );
                         } );
 
@@ -889,7 +891,7 @@ var PDIV          = $('pubnub') || {}
         if (jsonp != '0') data['callback'] = jsonp;
 
         xdr({
-            blocking : blocking,
+            blocking : blocking || SSL,
             timeout  : 2000,
             callback : jsonp,
             data     : data,
