@@ -812,8 +812,8 @@ var PDIV          = $('pubnub') || {}
                 ,   origin = nextorigin(ORIGIN)
                 ,   jsonp  = jsonp_cb();
 
-                // Don't Double Leave
-                if (!CHANNELS[channel].subscribed) return;
+                // Prevent Double Leave
+                if (channel in CHANNELS&&!CHANNELS[channel].subscribed)return;
 
                 // Prevent Leaving a Presence Channel
                 if (channel.indexOf(PRESENCE_SUFFIX) > 0) return;
