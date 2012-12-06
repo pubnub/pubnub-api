@@ -597,7 +597,6 @@ var PDIV          = $('pubnub') || {}
             ,   message  = args['message']
             ,   channel  = args['channel']
             ,   jsonp    = jsonp_cb()
-            ,   origin   = nextorigin(ORIGIN)
             ,   url;
 
             if (!message)       return error('Missing Message');
@@ -610,7 +609,7 @@ var PDIV          = $('pubnub') || {}
 
             // Create URL
             url = [
-                origin, 'publish',
+                ORIGIN, 'publish',
                 PUBLISH_KEY, SUBSCRIBE_KEY,
                 0, encode(channel),
                 jsonp, encode(message)
