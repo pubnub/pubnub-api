@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PNImports.h"
 
 
-@interface PNAppDelegate : UIResponder <UIApplicationDelegate>
+@interface PNAppDelegate : UIResponder <UIApplicationDelegate, PNDelegate>
 
 
 #pragma mark Properties

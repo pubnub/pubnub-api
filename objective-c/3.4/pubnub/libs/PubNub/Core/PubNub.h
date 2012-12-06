@@ -13,6 +13,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PNDelegate.h"
 
 
 #pragma mark Class forward
@@ -25,13 +26,20 @@
 
 #pragma mark - Class methods
 
+
+#pragma mark - Client connection management methods
+
 /**
  * Launch configured PubNub client (this will cause initial
  * connection which will retrieve time token from backend 
  * and open two connections/sockets which will be used for 
- * communication with PubNub services)
+ * communication with PubNub services).
+ * 
  */
 + (void)connect;
+
+
+#pragma mark - Client configuration
 
 /**
  * Perform initial configuration or update existing one
@@ -43,6 +51,15 @@
  *                client)
  */
 + (void)setConfiguration:(PNConfiguration *)configuration;
++ (void)setupWithConfiguration:(PNConfiguration *)configuration andDelegate:(id<PNDelegate>)delegate;
+
+/**
+ * Specify PubNub client delegate for event callbacks
+ */
++ (void)setDelegate:(id<PNDelegate>)delegate;
+
+
+#pragma mark - Client identification
 
 /**
  * Update current PubNub client identifier (unique user identifier

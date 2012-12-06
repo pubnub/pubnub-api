@@ -8,7 +8,7 @@
 
 #import "PNAppDelegate.h"
 #import "PNViewController.h"
-#import "PNImports.h"
+#import "PNJSONSerialization.h"
 
 
 #pragma mark Private interface methods
@@ -34,8 +34,9 @@
 - (void)initializePubNubClient {
     
     // Performing intial PubNub client configuration
-    [PubNub setConfiguration:[PNConfiguration defaultConfiguration]];
+    [PubNub setupWithConfiguration:[PNConfiguration defaultConfiguration] andDelegate:self];
     [PubNub setClientIdentifier:nil];
+    [PubNub connect];
 }
 
 
@@ -49,7 +50,17 @@
     [self.window makeKeyAndVisible];
     
     
+    [self initializePubNubClient];
+    
+    
     return YES;
+}
+
+
+#pragma mark - PubNub client delegate methods
+
+- (void)pubnubClient:(PubNub *)client subscriptionDidFailWithError:(NSError *)error {
+    
 }
 
 #pragma mark -

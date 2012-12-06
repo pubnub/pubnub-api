@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7966DFC4166FD60A00E07B40 /* PNJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */; };
+		7966DFC5166FD60A00E07B40 /* PNJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */; };
+		7966DFC9166FD94D00E07B40 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC8166FD94D00E07B40 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		7966DFCA166FD94D00E07B40 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC8166FD94D00E07B40 /* JSONKit.m */; };
+		7966DFCD166FDC7C00E07B40 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFCC166FDC7C00E07B40 /* JSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		7966DFCE166FDC7C00E07B40 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFCC166FDC7C00E07B40 /* JSON.m */; };
+		7966DFD2166FF1F800E07B40 /* PNObservationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFD1166FF1F800E07B40 /* PNObservationCenter.m */; };
+		7966DFD3166FF1F800E07B40 /* PNObservationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFD1166FF1F800E07B40 /* PNObservationCenter.m */; };
+		7966DFD716707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFD616707F2000E07B40 /* NSMutableDictionary+PNAdditions.m */; };
+		7966DFD816707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFD616707F2000E07B40 /* NSMutableDictionary+PNAdditions.m */; };
+		79A8B5CB166FB69800C64BCF /* PNError.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A8B5CA166FB69800C64BCF /* PNError.m */; };
+		79A8B5CC166FB69800C64BCF /* PNError.m in Sources */ = {isa = PBXBuildFile; fileRef = 79A8B5CA166FB69800C64BCF /* PNError.m */; };
 		79C3222D166DF847006DB535 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79C3222C166DF847006DB535 /* UIKit.framework */; };
 		79C3222F166DF847006DB535 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79C3222E166DF847006DB535 /* Foundation.framework */; };
 		79C32231166DF847006DB535 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79C32230166DF847006DB535 /* CoreGraphics.framework */; };
@@ -47,6 +59,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		795334FE167080CD00573FB7 /* PNStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNStructures.h; sourceTree = "<group>"; };
+		7966DFC0166FB9B800E07B40 /* PNErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNErrorCodes.h; sourceTree = "<group>"; };
+		7966DFC2166FD60900E07B40 /* PNJSONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNJSONSerialization.h; sourceTree = "<group>"; };
+		7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNJSONSerialization.m; sourceTree = "<group>"; };
+		7966DFC7166FD94D00E07B40 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		7966DFC8166FD94D00E07B40 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
+		7966DFCB166FDC7C00E07B40 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
+		7966DFCC166FDC7C00E07B40 /* JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSON.m; sourceTree = "<group>"; };
+		7966DFCF166FF0C000E07B40 /* PNNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNNotifications.h; sourceTree = "<group>"; };
+		7966DFD0166FF1F800E07B40 /* PNObservationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNObservationCenter.h; sourceTree = "<group>"; };
+		7966DFD1166FF1F800E07B40 /* PNObservationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNObservationCenter.m; sourceTree = "<group>"; };
+		7966DFD516707F2000E07B40 /* NSMutableDictionary+PNAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+PNAdditions.h"; sourceTree = "<group>"; };
+		7966DFD616707F2000E07B40 /* NSMutableDictionary+PNAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+PNAdditions.m"; sourceTree = "<group>"; };
+		79A8B5C8166FB55F00C64BCF /* PNDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PNDelegate.h; sourceTree = "<group>"; };
+		79A8B5C9166FB69800C64BCF /* PNError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNError.h; sourceTree = "<group>"; };
+		79A8B5CA166FB69800C64BCF /* PNError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNError.m; sourceTree = "<group>"; };
 		79C32228166DF847006DB535 /* pubnub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pubnub.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79C3222C166DF847006DB535 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		79C3222E166DF847006DB535 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -104,6 +132,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7966DFC6166FD94D00E07B40 /* JSONKit */ = {
+			isa = PBXGroup;
+			children = (
+				7966DFC7166FD94D00E07B40 /* JSONKit.h */,
+				7966DFC8166FD94D00E07B40 /* JSONKit.m */,
+				7966DFCB166FDC7C00E07B40 /* JSON.h */,
+				7966DFCC166FDC7C00E07B40 /* JSON.m */,
+			);
+			path = JSONKit;
+			sourceTree = "<group>";
+		};
+		7966DFD416707EF700E07B40 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				7966DFD516707F2000E07B40 /* NSMutableDictionary+PNAdditions.h */,
+				7966DFD616707F2000E07B40 /* NSMutableDictionary+PNAdditions.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		79A8B5C6166FB52500C64BCF /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				79A8B5C8166FB55F00C64BCF /* PNDelegate.h */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 		79C3221D166DF846006DB535 = {
 			isa = PBXGroup;
 			children = (
@@ -220,6 +276,7 @@
 			isa = PBXGroup;
 			children = (
 				79C32282166DFA50006DB535 /* PubNub */,
+				7966DFC6166FD94D00E07B40 /* JSONKit */,
 			);
 			path = libs;
 			sourceTree = "<group>";
@@ -291,6 +348,8 @@
 		79C3229B166E0266006DB535 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				7966DFD0166FF1F800E07B40 /* PNObservationCenter.h */,
+				7966DFD1166FF1F800E07B40 /* PNObservationCenter.m */,
 				79F84B05166F74A80005E3B1 /* PubNub+Protected.h */,
 				79C3229E166E0291006DB535 /* PubNub.h */,
 				79C3229F166E0291006DB535 /* PubNub.m */,
@@ -301,8 +360,12 @@
 		79C3229C166E0266006DB535 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
-				79C322A2166E02F5006DB535 /* Protocols */,
+				7966DFD416707EF700E07B40 /* Categories */,
+				79A8B5C6166FB52500C64BCF /* Protocols */,
 				79C322AC166E063B006DB535 /* PNDefaultConfiguration.h */,
+				7966DFCF166FF0C000E07B40 /* PNNotifications.h */,
+				7966DFC0166FB9B800E07B40 /* PNErrorCodes.h */,
+				795334FE167080CD00573FB7 /* PNStructures.h */,
 				79C322BC166E1358006DB535 /* PNContants.h */,
 				79F84B03166F72000005E3B1 /* PNImports.h */,
 				79F84AFA166F60450005E3B1 /* PNMacro.h */,
@@ -317,18 +380,15 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
-		79C322A2166E02F5006DB535 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
 		79C322A7166E0538006DB535 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				7966DFC2166FD60900E07B40 /* PNJSONSerialization.h */,
+				7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */,
 				79C322A8166E0568006DB535 /* PNConfiguration.h */,
 				79C322A9166E0568006DB535 /* PNConfiguration.m */,
+				79A8B5C9166FB69800C64BCF /* PNError.h */,
+				79A8B5CA166FB69800C64BCF /* PNError.m */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -453,6 +513,12 @@
 				79C3227F166DFA42006DB535 /* PNViewController.m in Sources */,
 				79C322A0166E0291006DB535 /* PubNub.m in Sources */,
 				79C322AA166E0568006DB535 /* PNConfiguration.m in Sources */,
+				79A8B5CB166FB69800C64BCF /* PNError.m in Sources */,
+				7966DFC4166FD60A00E07B40 /* PNJSONSerialization.m in Sources */,
+				7966DFC9166FD94D00E07B40 /* JSONKit.m in Sources */,
+				7966DFCD166FDC7C00E07B40 /* JSON.m in Sources */,
+				7966DFD2166FF1F800E07B40 /* PNObservationCenter.m in Sources */,
+				7966DFD716707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +531,12 @@
 				79C32280166DFA42006DB535 /* PNViewController.m in Sources */,
 				79C322A1166E0291006DB535 /* PubNub.m in Sources */,
 				79C322AB166E0568006DB535 /* PNConfiguration.m in Sources */,
+				79A8B5CC166FB69800C64BCF /* PNError.m in Sources */,
+				7966DFC5166FD60A00E07B40 /* PNJSONSerialization.m in Sources */,
+				7966DFCA166FD94D00E07B40 /* JSONKit.m in Sources */,
+				7966DFCE166FDC7C00E07B40 /* JSON.m in Sources */,
+				7966DFD3166FF1F800E07B40 /* PNObservationCenter.m in Sources */,
+				7966DFD816707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

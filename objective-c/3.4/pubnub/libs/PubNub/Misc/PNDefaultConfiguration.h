@@ -17,7 +17,7 @@ static NSString * const kPNOriginHost = @"pubsub.pubnub.com";
 // to establish connection and send packets to it
 static NSString * const kPNPublishKey = @"demo";
 static NSString * const kPNSubscriptionKey = @"demo";
-static NSString * const kPNSecretKey = nil;
+static NSString * const kPNSecretKey = @"my-secret";
 static NSString * const kPNCipherKey = nil;
 static BOOL const kPNSecureConnectionRequired = NO;
 
