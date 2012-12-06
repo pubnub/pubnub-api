@@ -1,4 +1,5 @@
-﻿#if (__MonoCS__)
+﻿//Build Date: Dec 06, 2012
+#if (__MonoCS__)
 #define TRACE
 #endif
 
