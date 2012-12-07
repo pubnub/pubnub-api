@@ -249,7 +249,7 @@ class Pubnub
                 $exit_now = false;
                 for ($i = 0; $i < sizeof($receivedMessages); $i++) {
 
-                    $cbReturn = $callback(array($returnArray[0][$i], $returnArray[1][$i], $returnArray[2]));
+                    $cbReturn = $callback(array("message" => $returnArray[0][$i], "channel" => $returnArray[1][$i], "timetoken" => $returnArray[2]));
 
                     if ($cbReturn == false) {
                         $exit_now = true;
