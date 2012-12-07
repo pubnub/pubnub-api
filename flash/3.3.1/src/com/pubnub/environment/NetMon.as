@@ -12,6 +12,7 @@ package com.pubnub.environment {
 		public var forceReconnect:Boolean = true;
 		
 		private var interval:int;
+		private var _destroyed:Boolean;
 		private var loader:URLLoader;
 		private var lastStatus:String
 		private var _origin:String;
@@ -107,10 +108,20 @@ package com.pubnub.environment {
 		}
 		
 		public function destroy():void {
+			if (_destroyed) return;
 			stop();
 			sysMon.stop();
 			sysMon.removeEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			sysMon = null;
+			
+			loader.removeEventListener(Event.COMPLETE, onComplete);
+			loader.removeEventListener(IOErrorEvent.IO_ERROR, onError);
+			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+			try {
+				loader.close();
+			}catch (err:Error) { }
+			loader = null;
+			_destroyed = true;
 		}
 		
 		public function get origin():String {
@@ -152,6 +163,10 @@ package com.pubnub.environment {
 		
 		public function set reconnectDelay(value:uint):void {
 			_reconnectDelay = value;
+		}
+		
+		public function get destroyed():Boolean {
+			return _destroyed;
 		}
 	}
 }

@@ -46,7 +46,7 @@
         public var publishMessageText:String = 'hey';
         //public var publishMessageText:String = '{"text":"hey"}';
 		
-        public var ssl:Boolean = false;
+        public var ssl:Boolean = true;
 
         private var consoleCounter:int = 1;
         private var perfomance:Perfomance;

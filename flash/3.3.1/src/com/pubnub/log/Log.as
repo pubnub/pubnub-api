@@ -14,6 +14,8 @@ package com.pubnub.log {
 		public static const RETRY:String = 'retry';
 		public static const URL:String = 'url';
 		public static const ALL:String = 'all';*/
+		public static const RECONNECT_HEARTBEAT_TIMEOUT:String = 'RECONNECT_HEARTBEAT_TIMEOUT';
+		public static const OPERATION_TIMEOUT:String = 'OPERATION_TIMEOUT';
 		
 		public static const NORMAL:String = 'normal';
 		public static const DEBUG:String = 'debug';
@@ -47,7 +49,8 @@ package com.pubnub.log {
 			var rec:LogRecord;
 			var levelResult:Boolean;
 			var typeResult:Boolean;
-			for (var i:int = 0; i < records.length; i++) {
+			var len:int = records.length;
+			for (var i:int = 0; i < len; i++) {
 				rec = records[i];
 				typeResult = false
 				levelResult = false
@@ -60,6 +63,10 @@ package com.pubnub.log {
 				}
 			}
 			return result;
+		}
+		
+		static public function clear():void {
+			instance.recodrs.length = 0;
 		}
 		
 		static public function get errors():Array {

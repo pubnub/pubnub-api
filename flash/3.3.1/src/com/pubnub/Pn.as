@@ -44,7 +44,7 @@ package com.pubnub {
 			operationsFactory[PUBLISH_OPERATION] = 	createPublishOperation; 
 			operationsFactory[HISTORY_OPERATION] = 	createDetailedHistoryOperation; 
 			operationsFactory[TIME_OPERATION] = 		createTimeOperation; 
-			syncConnection = new SyncConnection();
+			syncConnection = new SyncConnection(Settings.OPERATION_TIMEOUT);
 		}
 		
 		public static  function get instance():Pn {
@@ -317,21 +317,17 @@ package com.pubnub {
 		private function initKeys(config:Object):void {
 			_ssl = config.ssl;
 			origin = config.origin;
-			if(config.publish_key){
+			if(config.publish_key)
 				_publishKey = config.publish_key;
-			}
 			
-			if(config.sub_key){
+			if(config.sub_key)
 				_subscribeKey = config.sub_key;
-			}
 			
-			if(config.secret_key){
+			if(config.secret_key)
 				secretKey = config.secret_key;
-			}
 			
-			if(config.cipher_key){
+			if(config.cipher_key)
 				cipherKey = config.cipher_key;
-			}
 		}
 		
 		private function destroyOperation(op:Operation):void {
@@ -356,6 +352,9 @@ package com.pubnub {
 		
 		public function destroy():void {
 			dispose();	
+			for each(var s:Subscribe  in subscribes) {
+				s.destroy();
+			}
 			operations = null;
 			subscribes = null;
 			_initialized = false;
@@ -370,7 +369,7 @@ package com.pubnub {
 			}
 			
 			for each(var s:Subscribe  in subscribes) {
-				s.destroy();
+				s.disconnect();
 			}
 			subscribes.length = 0;
 			operations.length = 0;
@@ -400,8 +399,7 @@ package com.pubnub {
 			_origin = value;
 			if (value == null || value.length == 0) throw('Origin value must be defined');
 			if(_ssl){
-				//_origin = "https://" + value;
-				_origin = "http://" + value;
+				_origin = "https://" + value;
 			}
 			else {
 				_origin = "http://" + value;

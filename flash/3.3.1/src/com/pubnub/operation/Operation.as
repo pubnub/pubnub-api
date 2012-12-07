@@ -16,11 +16,13 @@ package com.pubnub.operation {
 	[Event(name="OperationEvent.result", type="com.pubnub.operation.OperationEvent")]
 	public class Operation extends RemovableEventDispatcher {
 		
+		
 		static public const WITH_TIMETOKEN:String = 'subscribe_with_timetoken';
 		static public const GET_TIMETOKEN:String = 'subscribe_get_timetoken';
-		//static public const PNPRES_GET_TIMETOKEN:String = 'pnpres_subscribe_get_timetoken';
 		static public const WITH_RETRY:String = 'subscribe_with_retry';
 		static public const LEAVE:String = 'leave';
+		static private const pattern:RegExp = new RegExp("(https):\/\/");
+		
 		
 		public var keepAlive:Boolean = true;
 		public var origin:String;
@@ -35,6 +37,7 @@ package com.pubnub.operation {
 		
 		protected var _url:String;
 		protected var _destroyed:Boolean;
+		protected var _completed:Boolean;
 		
 		public function Operation() {
 			super(null);
@@ -69,15 +72,14 @@ package com.pubnub.operation {
 					url = args.url + "&" + args.params;
 			}
 			
-			
 			_url = url;
 			createRequest();
 		}
 		
 		protected function createRequest():void {
+			_completed = false;
 			_request = new URLRequest(url);
 			_request.method = URLRequestMethod.GET;
-			//_request.header = new URLRequestHeader([ { name: "Connection", value: "Keep-Alive" } ]);
 			_request.header = new URLRequestHeader();
 		}
 		
@@ -97,16 +99,21 @@ package com.pubnub.operation {
 			return _request;
 		}
 		
+		public function get ssl():Boolean { 
+			return pattern.test(_url); 
+		}
 		
+		public function get completed():Boolean {
+			return _completed;
+		}
 		
 		public function onData(data:Object = null):void {
-			//trace(this, data);
 			var result:Object = data;
+			_completed = true;
 			if (parseToJSON) {
 				try {
 					result = PnJSON.parse(String(data));
 				}catch (err:Error) {
-					//trace('dasdasdasdasd');
 					dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:'Error JSON parse', id:'-1' } ));
 					return;
 				}
@@ -115,7 +122,8 @@ package com.pubnub.operation {
 		}
 		
 		public function onError(data:Object = null):void {
-			
+			_completed = true;
+			dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:(data ? data.message : data)} ));
 		}
 		
 	}

@@ -31,7 +31,6 @@ package com.pubnub.subscribe {
 		private function init():void {
 			subscribe = new SubscribeChannel();
 			subscribe.addEventListener(SubscribeEvent.CONNECT, 		dispatchEvent);
-			//subscribe.addEventListener(SubscribeEvent.CONNECT, 		test);
 			subscribe.addEventListener(SubscribeEvent.DATA, 		dispatchEvent);
 			subscribe.addEventListener(SubscribeEvent.DISCONNECT, 	dispatchEvent);
 			subscribe.addEventListener(SubscribeEvent.ERROR, 		dispatchEvent);
@@ -39,11 +38,6 @@ package com.pubnub.subscribe {
 			presence = new PresenceChannel();
 			presence.addEventListener(SubscribeEvent.DATA, 		dispatchEventPresence);
 		}
-		
-		/*private function test(e:SubscribeEvent):void {
-			//trace('dddddddddddddddddddddddd');
-			dispatchEvent(e);
-		}*/
 		
 		private function dispatchEventPresence(e:SubscribeEvent):void {
 			var str:String = PnJSON.stringify(e.data.result);
@@ -70,7 +64,6 @@ package com.pubnub.subscribe {
 		}
 		
 		override public function destroy():void {
-			//trace(this, 'destroy');
 			if (_isDestroyed) return;
 			
 			subscribe.destroy();
@@ -78,14 +71,13 @@ package com.pubnub.subscribe {
 			subscribe.removeEventListener(SubscribeEvent.DATA, 			dispatchEvent);
 			subscribe.removeEventListener(SubscribeEvent.DISCONNECT, 	dispatchEvent);
 			subscribe.removeEventListener(SubscribeEvent.ERROR, 		dispatchEvent);
-			
+			subscribe = null;
 			
 			presence.destroy();
-			presence.removeEventListener(SubscribeEvent.DATA, 		dispatchEventPresence);
+			presence.removeEventListener(SubscribeEvent.DATA, 			dispatchEventPresence);
+			presence = null;
 			
 			super.destroy();
-			presence = null;
-			subscribe = null;
 		}
 		
 		public function get origin():String {
@@ -94,6 +86,8 @@ package com.pubnub.subscribe {
 		
 		public function set origin(value:String):void {
 			_origin = value;
+			if(subscribe) subscribe.origin = value;
+			if(presence) presence.origin = value;
 		}
 		
 		public function get channelName():String {

@@ -66,7 +66,8 @@ package utils {
 			latencyAvg = 0;
 			sent = 0;
 			update();
-			Pn.instance.unsubscribe(channel);
+			Pn.instance.dispose();
+			//Pn.instance.unsubscribe(channel);
 			Pn.instance.removeEventListener(PnEvent.INIT, onPnInit);
 			Pn.instance.removeEventListener(PnEvent.SUBSCRIBE, onPnSubscribe);
 		}
@@ -81,7 +82,7 @@ package utils {
 		}
 		
 		private function onPnSubscribe(e:PnEvent):void {
-			trace('-------------SUBSCRIBE---------------- ' + e.status);
+			//trace('-------------SUBSCRIBE---------------- ' + e.status);
 			 switch (e.status) {
                 case OperationStatus.DATA:
 					//trace(e.data.result[1].text , message);
@@ -126,7 +127,7 @@ package utils {
 		}
 		
 		private function publish():void {
-			trace('--------------PUBLISH------------------');
+			//trace('--------------PUBLISH------------------');
 			startPublishTime = getTimer();
 			//channel = 'demo';
 			Pn.publish( { 

@@ -3,6 +3,7 @@ package com.pubnub.subscribe {
 	import com.pubnub.connection.*;
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
+	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
@@ -44,9 +45,9 @@ package com.pubnub.subscribe {
 		
 		protected function init():void {
 			factory = new Dictionary();
-			factory[Operation.GET_TIMETOKEN] = getOperationGetTimetoken;
+			factory[Operation.GET_TIMETOKEN] = 	getOperationGetTimetoken;
 			factory[Operation.WITH_TIMETOKEN] = getOperationWithTimetoken;
-			factory[Operation.LEAVE] = getOperationLeave;
+			factory[Operation.LEAVE] = 			getOperationLeave;
 			
 			operations = [];
 			connection = new AsyncConnection();
@@ -55,9 +56,9 @@ package com.pubnub.subscribe {
 			netMonitor.reconnectDelay = Settings.CONNECTION_HEARTBEAT_INTERVAL;
 			netMonitor.forceReconnectDelay = Settings.RECONNECT_HEARTBEAT_TIMEOUT;
 			netMonitor.maxForceReconnectRetries = Settings.MAX_RECONNECT_RETRIES;
-			netMonitor.addEventListener(NetMonEvent.HTTP_ENABLE, onNetMonitorHTTPEnable);
-			netMonitor.addEventListener(NetMonEvent.HTTP_DISABLE, onNetMonitorHTTPDisable);
-			netMonitor.addEventListener(NetMonEvent.MAX_RETRIES, onNetMonitorMaxRetries);
+			netMonitor.addEventListener(NetMonEvent.HTTP_ENABLE, 	onNetMonitorHTTPEnable);
+			netMonitor.addEventListener(NetMonEvent.HTTP_DISABLE, 	onNetMonitorHTTPDisable);
+			netMonitor.addEventListener(NetMonEvent.MAX_RETRIES, 	onNetMonitorMaxRetries);
 		}
 		
 		public function connect(channel:String):void {
@@ -216,10 +217,14 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onNetMonitorMaxRetries(e:NetMonEvent):void {
+			var args:Array = [Errors.RECONNECT_HEARTBEAT_TIMEOUT, lastToken];
+			var op:Operation = connection ? connection.getLastOperation() : null;
+			if (op) {
+				args.push(op.url);
+			}
+			Log.log(args.join(','), Log.ERROR, Errors.RECONNECT_HEARTBEAT_TIMEOUT);
 			disconnect();
 		}
-		
-		
 		
 		protected function onNetMonitorHTTPDisable(e:NetMonEvent):void {
 			if (_connected) {
@@ -290,6 +295,7 @@ package com.pubnub.subscribe {
 			if (_destroyed) return;
 			_destroyed = true;
 			dispose();
+			netMonitor.destroy();
 			netMonitor.removeEventListener(NetMonEvent.HTTP_ENABLE, onNetMonitorHTTPEnable);
 			netMonitor.removeEventListener(NetMonEvent.HTTP_DISABLE, onNetMonitorHTTPDisable);
 			netMonitor = null;

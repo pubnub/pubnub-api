@@ -1,5 +1,6 @@
 package com.pubnub.net {
 	import com.adobe.net.*;
+	import com.hurlant.crypto.tls.TLSSocket;
 	import flash.errors.IOError;
 	import flash.events.*;
 	import flash.net.Socket;
@@ -14,21 +15,23 @@ package com.pubnub.net {
 	[Event(name="URLLoaderEvent.error", type="com.pubnub.net.URLLoaderEvent")]
 	public class URLLoader extends EventDispatcher {
 		
-		public static const DEFAULT_HTTP_PORT:uint = 80;   
-		public static const DEFAULT_HTTPS_PORT:uint = 443; 
+		public static const HTTP_PORT:uint = 80;   
+		public static const HTTPS_PORT:uint = 443; 
 		public static const HTTP_VERSION:String = "1.1";
 		
 		public static const END_SYMBOL_CHUNKED:String = '0\r\n';
 		public static const END_SYMBOL:String = '\r\n';
+		static private const pattern:RegExp = new RegExp("(https):\/\/");
 		
-		protected var socket:Socket;
+		protected var socket:*;
+		protected var secureSocket:TLSSocket;
+		protected var normalSocket:Socket;
 		protected var uri:URI;
 		protected var request:URLRequest;
 		protected var _response:URLResponse;
 		protected var answer:ByteArray = new ByteArray();
 		protected var temp:ByteArray = new ByteArray();
-		protected var _timeout:int = 310000;
-		protected var timeoutInterval:int;
+		
 		
 		protected var _destroyed:Boolean;
 		
@@ -37,20 +40,72 @@ package com.pubnub.net {
 			init();
 		}
 		
+		public function load(request:URLRequest):void {
+			this.request = request;
+			uri = new URI(request.url);
+			socket = getSocket(request.url);
+			destroyResponce();
+			sendRequest(request);
+			//trace(socket, request.url);
+		}
+		
+		private function getSocket(url:String):*{
+			return pattern.test(url) ? secureSocket : normalSocket;
+		}
+		
+		private function getPort(url:String):*{
+			return pattern.test(url) ? HTTPS_PORT : HTTP_PORT;
+		}
+		
+		public function connect(request:URLRequest):void {
+			var url:String = request.url;
+			var uri:URI = new URI(url);
+			var host:String = uri.authority;
+			var port:int = getPort(url);
+			socket = getSocket(url);
+			//trace('connect : ' + host, port, socket);
+			socket.connect(host, port);
+		}
+		
+		public function close():void {
+			trace('*CLOSE*');
+			try {
+				normalSocket.close();
+			}catch (err:IOError){
+				// something wrong
+			}
+			
+			try {
+				secureSocket.close();
+			}catch (err:IOError){
+				// something wrong
+			}
+			destroyResponce();
+			request = null;
+		}
+		
 		protected function init():void {
-			socket = new Socket();
-			socket.addEventListener(Event.CONNECT, onConnect);       
-			socket.addEventListener(Event.CLOSE, onClose);
-			socket.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
-			socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
-			socket.addEventListener(ProgressEvent.SOCKET_DATA, onSocketData);  
+			normalSocket = new Socket();
+			normalSocket.addEventListener(Event.CONNECT, 						onConnect);       
+			normalSocket.addEventListener(Event.CLOSE, 							onClose);
+			normalSocket.addEventListener(IOErrorEvent.IO_ERROR, 				onIOError);
+			normalSocket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 	onSecurityError);
+			normalSocket.addEventListener(ProgressEvent.SOCKET_DATA, 			onSocketData); 
+			
+			secureSocket = new TLSSocket();
+			secureSocket.addEventListener(Event.CONNECT, 						onConnect);       
+			secureSocket.addEventListener(Event.CLOSE, 							onClose);
+			secureSocket.addEventListener(IOErrorEvent.IO_ERROR, 				onIOError);
+			secureSocket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 	onSecurityError);
+			secureSocket.addEventListener(ProgressEvent.SOCKET_DATA, 			onSocketData);
+			
+			socket = normalSocket;
 		}
 		
 		protected function onSocketData(e:ProgressEvent):void {
 			//trace('------onSocketData------' + socket.bytesAvailable);
 			temp.clear();
 			while (socketHasData()) {        
-				//_timer.reset();
 				try {           
 					// Load data from socket
 					socket.readBytes(temp);
@@ -107,43 +162,18 @@ package com.pubnub.net {
 		}
 		
 		protected function onClose(e:Event):void {
-			// abstract
-			//trace('onClose');
+			trace(socket, ' onClose');
+			dispatchEvent(e);
 		}
 		
 		protected function onConnect(e:Event):void {
+			//trace(this, ' onConnect', socket);
 			dispatchEvent(e);
 		}
 		
 		public function get ready():Boolean { return socket && socket.connected ; }
 		
 		public function get connected():Boolean { return socket && socket.connected ; }
-		
-		public function close():void {
-			trace('CLOSE');
-			try {
-				socket.close();
-			}catch (err:IOError){
-				// something wrong
-			}
-			destroyResponce();
-			clearTimeout(timeoutInterval);
-			request = null;
-		}
-		
-		public function load(request:URLRequest):void {
-			clearTimeout(timeoutInterval);
-			timeoutInterval = setTimeout(onTimeout, _timeout);
-			this.request = request;
-			uri = new URI(request.url);
-			destroyResponce();
-			sendRequest(request);
-		}
-		
-		private function onTimeout():void {
-			dispatchEvent(new URLLoaderEvent(URLLoaderEvent.TIMEOUT, request));
-			request = null;
-		}
 		
 		private function destroyResponce():void {
 			if (_response) {
@@ -156,18 +186,23 @@ package com.pubnub.net {
 			if (_destroyed) return;
 			_destroyed = true;
 			close()
-			socket.removeEventListener(Event.CONNECT, onConnect);       
-			socket.removeEventListener(Event.CLOSE, onClose);
-			socket.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
-			socket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
-			socket.removeEventListener(ProgressEvent.SOCKET_DATA, onSocketData);  
+			normalSocket.removeEventListener(Event.CONNECT, 						onConnect);       
+			normalSocket.removeEventListener(Event.CLOSE, 							onClose);
+			normalSocket.removeEventListener(IOErrorEvent.IO_ERROR, 				onIOError);
+			normalSocket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, 	onSecurityError);
+			normalSocket.removeEventListener(ProgressEvent.SOCKET_DATA, 			onSocketData); 
+			
+			
+			secureSocket.removeEventListener(Event.CONNECT, 						onConnect);       
+			secureSocket.removeEventListener(Event.CLOSE, 							onClose);
+			secureSocket.removeEventListener(IOErrorEvent.IO_ERROR, 				onIOError);
+			secureSocket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, 	onSecurityError);
+			secureSocket.removeEventListener(ProgressEvent.SOCKET_DATA, 			onSocketData);
 			socket = null;
 			temp.clear();
 			answer.clear();
 			temp = answer = null;
 			request = null;
-			_response.destroy();
-			_response = null;
 		}
 		
 		/**
@@ -193,10 +228,6 @@ package com.pubnub.net {
 			socket.flush();
 		}
 		
-		public function connect(request:URLRequest):void {
-			var uri:URI = new URI(request.url);
-			socket.connect(uri.authority, DEFAULT_HTTP_PORT);
-		}
 		
 		public function get destroyed():Boolean {
 			return _destroyed;
@@ -204,14 +235,6 @@ package com.pubnub.net {
 		
 		public function get response():URLResponse {
 			return _response;
-		}
-		
-		public function get timeout():int {
-			return _timeout;
-		}
-		
-		public function set timeout(value:int):void {
-			_timeout = value;
 		}
 	}
 }

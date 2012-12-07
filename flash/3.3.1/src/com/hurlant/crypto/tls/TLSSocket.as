@@ -62,7 +62,7 @@ package com.hurlant.crypto.tls {
 			return _iStream.bytesAvailable;
 		}
 		public function get connected():Boolean {
-			return _socket.connected;
+			return _socket && _socket.connected;
 		}
 		public function get endian():String {
 			return _endian;

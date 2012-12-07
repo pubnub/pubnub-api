@@ -8,6 +8,7 @@ package com.pubnub.connection {
 	public class AsyncConnection extends Connection {
 		
 		override public function sendOperation(operation:Operation):void {
+			super.sendOperation(operation);
 			if (ready) {
 				doSendOperation(operation);
 			}else {
@@ -17,6 +18,7 @@ package com.pubnub.connection {
 		}
 		
 		override protected function onConnect(e:Event):void {
+			trace(this, 'onConnect');
 			if (queue.length > 0) {
 				for (var i:int = 0; i < queue.length; i++) {
 					sendOperation(queue[i]);
