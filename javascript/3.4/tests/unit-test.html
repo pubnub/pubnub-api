@@ -162,6 +162,9 @@
         p.subscribe({
             channel  : channel,
             connect  : publish_test,
+            presence : function( message, envelope, channel ) {
+                
+            },
             callback : function( message, envelope, channel ) {
                 p.unsubscribe({ channel : channel });
                 test( message, 'Subscribe Message' );

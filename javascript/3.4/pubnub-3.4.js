@@ -464,7 +464,7 @@ function ajax( setup ) {
             url += params.join(PARAMSBIT);
         }
 
-        xhr.open( 'GET', url, typeof setup.blocking == 'undefined' );
+        xhr.open( 'GET', url, (typeof(setup.blocking === 'undefined')) );
         xhr.send();
     }
     catch(eee) {
@@ -755,7 +755,7 @@ var PDIV          = $('pubnub') || {}
                                     channel.disconnected = 0;
                                     channel.reconnect(channel.name);
                                 }
-                                else channel.err();
+                                else channel.error();
                             });
                         });
                     },
