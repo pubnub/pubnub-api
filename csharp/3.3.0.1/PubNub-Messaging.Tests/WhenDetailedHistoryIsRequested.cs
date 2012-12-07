@@ -2,16 +2,17 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.ComponentModel;
 using System.Threading;
-using System.Web.Script.Serialization;
 using System.Collections;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 
 namespace PubNub_Messaging.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class WhenDetailedHistoryIsRequested
     {
         ManualResetEvent mreMsgCount10 = new ManualResetEvent(false);
@@ -27,7 +28,7 @@ namespace PubNub_Messaging.Tests
         int expectedCountAtStartTimeWithReverseTrue=0;
         long startTimeWithReverseTrue = 0;
 
-        [TestMethod]
+        [Test]
         public void DetailHistoryCount10ReturnsRecords()
         {
             msg10Received = false;
@@ -42,16 +43,15 @@ namespace PubNub_Messaging.Tests
 
         void DetailedHistoryCount10Callback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                IList receivedObj = (IList)js.DeserializeObject(result);
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    if (receivedObj[0] is object[])
+                    JArray jArr = receivedObj[0] as JArray;
+                    if (jArr != null)
                     {
-                        object[] historyObj = (object[])receivedObj[0];
-                        if (historyObj.Length >= 0)
+                        if (jArr.Count >= 0)
                         {
                             msg10Received = true;
                         }
@@ -62,7 +62,7 @@ namespace PubNub_Messaging.Tests
             mreMsgCount10.Set();
         }
 
-        [TestMethod]
+        [Test]
         public void DetailHistoryCount10ReverseTrueReturnsRecords()
         {
             msg10ReverseTrueReceived = false;
@@ -77,16 +77,15 @@ namespace PubNub_Messaging.Tests
 
         void DetailedHistoryCount10ReverseTrueCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                IList receivedObj = (IList)js.DeserializeObject(result);
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    if (receivedObj[0] is object[])
+                    JArray jArr = receivedObj[0] as JArray;
+                    if (jArr != null)
                     {
-                        object[] historyObj = (object[])receivedObj[0];
-                        if (historyObj.Length >= 0)
+                        if (jArr.Count >= 0)
                         {
                             msg10ReverseTrueReceived = true;
                         }
@@ -97,7 +96,7 @@ namespace PubNub_Messaging.Tests
             mreMsgCount10ReverseTrue.Set();
         }
 
-        [TestMethod]
+        [Test]
         public void DetailedHistoryStartWithReverseTrue()
         {
             expectedCountAtStartTimeWithReverseTrue = 0;
@@ -123,18 +122,18 @@ namespace PubNub_Messaging.Tests
         private void DetailedHistoryStartWithReverseTrueCallback(string result)
         {
             int actualCountAtStartTimeWithReverseFalse = 0;
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                IList receivedObj = (IList)js.DeserializeObject(result);
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    if (receivedObj[0] is object[])
+                    JArray jArr = receivedObj[0] as JArray;
+                    if (jArr != null)
                     {
-                        object[] historyObj = (object[])receivedObj[0];
-                        if (historyObj.Length >= expectedCountAtStartTimeWithReverseTrue)
+                        //object[] historyObj = (object[])receivedObj[0];
+                        if (jArr.Count >= expectedCountAtStartTimeWithReverseTrue)
                         {
-                            foreach (object item in historyObj)
+                            foreach (object item in jArr)
                             {
                                 if (item.ToString().Contains(string.Format("DetailedHistoryStartTimeWithReverseTrue {0}", startTimeWithReverseTrue)))
                                 {
@@ -154,13 +153,12 @@ namespace PubNub_Messaging.Tests
 
         private void DetailedHistorySamplePublishCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                IList receivedObj = (IList)js.DeserializeObject(result);
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
-                    int statusCode = (int)receivedObj[0];
+                    int statusCode = Int32.Parse(receivedObj[0].ToString());
                     string statusMsg = (string)receivedObj[1];
                     if (statusCode == 1 && statusMsg.ToLower() == "sent")
                     {

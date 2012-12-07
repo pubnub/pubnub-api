@@ -2,10 +2,9 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.ComponentModel;
 using System.Threading;
-using System.Web.Script.Serialization;
 using System.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace PubNub_Messaging.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class WhenAClientIsPresented
     {
         ManualResetEvent manualEvent1 = new ManualResetEvent(false);
@@ -25,7 +24,7 @@ namespace PubNub_Messaging.Tests
         static bool receivedFlag1 = false;
         static bool receivedFlag2 = false;
 
-        [TestMethod]
+        [Test]
         public void ThenPresenceShouldReturnReceivedMessage()
         {
             receivedFlag1 = false;
@@ -50,7 +49,7 @@ namespace PubNub_Messaging.Tests
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(receivedMessage))
+                if (!string.IsNullOrEmpty(receivedMessage) && !string.IsNullOrEmpty(receivedMessage.Trim()))
                 {
                     object[] receivedObj = JsonConvert.DeserializeObject<object[]>(receivedMessage);
                     JContainer dic = receivedObj[0] as JContainer;
@@ -70,7 +69,7 @@ namespace PubNub_Messaging.Tests
 
 
 
-        [TestMethod]
+        [Test]
         public void IfHereNowIsCalledThenItShouldReturnInfo()
         {
             receivedFlag2 = false;
@@ -86,11 +85,10 @@ namespace PubNub_Messaging.Tests
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(receivedMessage))
+                if (!string.IsNullOrEmpty(receivedMessage) && !string.IsNullOrEmpty(receivedMessage.Trim()))
                 {
-                    JavaScriptSerializer js = new JavaScriptSerializer();
-                    IList receivedObj = (IList)js.DeserializeObject(receivedMessage);
-                    var dic = ((IDictionary<string, object>)receivedObj[0])["uuids"];
+                    object[] receivedObj = JsonConvert.DeserializeObject<object[]>(receivedMessage);
+                    var dic = ((JContainer)receivedObj[0])["uuids"];
                     if (dic != null)
                     {
                         receivedFlag2 = true;

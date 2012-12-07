@@ -1,0 +1,8 @@
+V, 9108, 14, 2012/11/17, 22:37:16.787, JHONNY-PC\QTAgent32.exe, Tracing starting up. Stopwatch frequency is 2143613
+W, 9108, 23, 2012/11/17, 22:37:34.172, JHONNY-PC\QTAgent32.exe, Performance warning: m_test should be null when TestResult is serialized. Please find the offending code and correct it.
+E, 9108, 21, 2012/11/17, 22:37:39.390, JHONNY-PC\QTAgent32.exe, Unit Test Adapter threw exception: System.Threading.ThreadAbortException: Thread was being aborted.
+   at Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestExecuter.RunTestMethod()
+   at Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestExecuter.ExecuteTest()
+   at Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestExecuter.Execute(UnitTestResult result)
+   at Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestRunner.ExecuteSingleTest(UnitTestExecuter executer, UnitTestElement test, ITestContext testContext, UnitTestAdapterContext userContext, Boolean isLoadTest)
+   at Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestRunner.Run(UnitTestElement test, ITestContext testContext, Boolean isLoadTest, Boolean useMultipleCpus)

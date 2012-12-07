@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.ComponentModel;
 using System.Threading;
-using System.Web.Script.Serialization;
 using System.Collections;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace PubNub_Messaging.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class WhenSubscribedToAChannel
     {
         ManualResetEvent manualEvent1 = new ManualResetEvent(false);
@@ -18,7 +20,7 @@ namespace PubNub_Messaging.Tests
 
         bool receivedMessage = false;
 
-        [TestMethod]
+        [Test]
         public void ThenSubscribeShouldReturnReceivedMessage()
         {
             receivedMessage = false;
@@ -38,10 +40,9 @@ namespace PubNub_Messaging.Tests
 
         private void ReceivedMessageCallback(string result)
         {
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                IList receivedObj = (IList)js.DeserializeObject(result);
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
                 if (receivedObj is object[])
                 {
                     object subscribedObj = (object)receivedObj[0];
