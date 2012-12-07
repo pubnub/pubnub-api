@@ -241,12 +241,20 @@ class Pubnub
 
                 # Call once for each message for each channel
 
-                $cbReturn = $callback($returnArray);
+                $exit_now = false;
+                for ($i = 0; $i < sizeof($receivedMessages); $i++) {
 
-                if ($cbReturn == false) {
-                return;
+                    $cbReturn = $callback(array($returnArray[0][$i], $returnArray[1][$i], $returnArray[2]));
+
+                    if ($cbReturn == false) {
+                        $exit_now = true;
+                    }
+
                 }
 
+                if ($exit_now) {
+                    return;
+                }
 
 
             } catch (Exception $error) {
