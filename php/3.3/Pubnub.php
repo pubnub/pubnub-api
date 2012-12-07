@@ -19,6 +19,7 @@ class Pubnub
     // Old style response does not
 
     private $NEW_STYLE_RESPONSE = true;
+    private $PEM_PATH = __DIR__;
 
     /**
      * Pubnub
@@ -39,7 +40,8 @@ class Pubnub
         $secret_key = false,
         $cipher_key = false,
         $ssl = false,
-        $origin = false
+        $origin = false,
+        $pem_path = false
     )
     {
 
@@ -54,6 +56,9 @@ class Pubnub
         }
 
         $this->SSL = $ssl;
+
+        if ($pem_path != false)
+            $this->PEM_PATH = $pem_path;
 
         if ($origin)
             $this->ORIGIN = $origin;
@@ -498,8 +503,18 @@ class Pubnub
         if ($this->SSL) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_CAINFO, getcwd() . "/pubnub.com.pem");
+
+
+            $pemPathAndFilename = $this->PEM_PATH . "/pubnub.com.pem";
+            if (file_exists($pemPathAndFilename))
+                curl_setopt($ch, CURLOPT_CAINFO, $pemPathAndFilename);
+            else {
+                trigger_error("Can't find PEM file. Please set pem_path in initializer.");
+                exit;
+            }
+
         }
+
 
         $output = curl_exec($ch);
         $curlError = curl_errno($ch);

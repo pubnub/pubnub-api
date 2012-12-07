@@ -26,7 +26,7 @@ $pubnub = new Pubnub( $publish_key, $subscribe_key, $secret_key, $cipher_key, $s
 ## ---------------------------------------------------------------------------
 ## Define Messaging Channel
 ## ---------------------------------------------------------------------------
-$sub_channels = "hello_world"; //"hello_world,hello_world_a,hello_world_b,hello_world_c";
+$sub_channels = "hello_world,hello_world_a,hello_world_b,hello_world_c";
 $pub_channel = "hello_world";
 
 ## ---------------------------------------------------------------------------
