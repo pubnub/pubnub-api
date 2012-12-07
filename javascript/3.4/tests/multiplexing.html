@@ -24,20 +24,62 @@
 <script src=../pubnub-3.4.js></script>
 <script>(function(){
 
-function log(data) {
-    console.log(data);
-    PUBNUB.$('out').innerHTML += "<div>"+data+"</div>";
-}
-
+// --------------------------------
+// Testing Examples
+// --------------------------------
 var pubnub = window.pubnub = PUBNUB.init({
     subscribe_key : 'demo',
     publish_key   : 'demo',
     origin        : 'pubsub.pubnub.com'
 });
 
+// --------------------------------
+// Subscribe Usage Style Examples
+// --------------------------------
+subscribe(['chan1','chan2','chan3']); // ARRAY
+subscribe('chan4,chan6,chan7');       // LIST
+subscribe('chan8');                   // ONE AT A TIME
+subscribe('chan9');                   // ONE AT A TIME
+
+// --------------------------------
+// UnSubscribe Usage Style Examples
+// --------------------------------
+unsubscribe(['chan1','chan2','chan3']); // ARRAY
+unsubscribe('chan4,chan6,chan7');       // LIST
+unsubscribe('chan8');                   // ONE AT A TIME
+unsubscribe('chan9');                   // ONE AT A TIME
+
+// --------------------------------
+// Change Subscribe Anytime Later
+// --------------------------------
+setTimeout( function(){   subscribe('m') }, 4000 );
+setTimeout( function(){ unsubscribe('a') }, 6000 );
+setTimeout( function(){ unsubscribe('b') }, 8000 );
+
+// --------------------------------
+// Testing Examples
+// --------------------------------
+subscribe(['h','j','i','k']); // Will Subscribe in ORDER
+subscribe('g,e,d,f');         // Will Subscribe in ORDER
+subscribe('a,g,e,d,f');       // Will Subscribe in ORDER
+subscribe('a');
+subscribe('c');
+subscribe('b');
+subscribe('d');   // Okay Duplicate Subscribe
+subscribe('d');   // Okay Duplicate Subscribe 
+unsubscribe('d');
+subscribe('d');   // Okay Duplicate Subscribe
+subscribe('d');   // Okay Duplicate Subscribe
+unsubscribe('f');
+subscribe('x');
+
+// --------------------------------
+// Full Sub/UnSub Functions
+// --------------------------------
 function unsubscribe(channel) { pubnub.unsubscribe({
     channel : channel
 }) }
+
 function subscribe(channel) { pubnub.subscribe({
     channel    : channel,
     restore    : true,
@@ -52,28 +94,10 @@ function subscribe(channel) { pubnub.subscribe({
     }
 }) }
 
-subscribe(['h','j','i','k']); // Will Subscribe in ORDER
-subscribe('g,e,d,f');         // Will Subscribe in ORDER
-subscribe('a,g,e,d,f');       // Will Subscribe in ORDER
-subscribe('a');
-subscribe('c');
-subscribe('b');
-subscribe('d');   // Prevent Duplicate Subscribe
-subscribe('d');   // Prevent Duplicate Subscribe 
-unsubscribe('d');
-subscribe('d');   // Prevent Duplicate Subscribe
-subscribe('d');   // Prevent Duplicate Subscribe
-unsubscribe('f');
-subscribe('x');
-setTimeout( function(){unsubscribe('a')}, 4000 );
-setTimeout( function(){unsubscribe('b')}, 6000 );
-
-/*
-pre-split all channel names.
-right channel name
-all connect callbacks fire.
-*/
-
+function log(data) {
+    console.log(data);
+    PUBNUB.$('out').innerHTML += "<div>"+data+"</div>";
+}
 
 })();</script>
 </div></body>
