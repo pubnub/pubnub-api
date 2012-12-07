@@ -7,7 +7,7 @@ require_once('PubnubAES.php');
  */
 class Pubnub
 {
-    private $ORIGIN = 'pubsub.pubnub.com';
+    private $ORIGIN = 'PHP.pubnub.com';
     private $PUBLISH_KEY = 'demo';
     private $SUBSCRIBE_KEY = 'demo';
     private $SECRET_KEY = false;
@@ -63,8 +63,8 @@ class Pubnub
         if ($origin)
             $this->ORIGIN = $origin;
 
-        if ($this->ORIGIN == "pubsub.pubnub.com") {
-            trigger_error("Before running in production, please contact support@pubnub.com for your custom origin.", E_USER_NOTICE);
+        if ($this->ORIGIN == "PHP.pubnub.com") {
+            trigger_error("Before running in production, please contact support@pubnub.com for your custom origin. Please set the origin to IUNDERSTAND.pubnub.com to continue.", E_USER_NOTICE);
         }
 
 
