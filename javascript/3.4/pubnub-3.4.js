@@ -825,8 +825,7 @@ var PDIV          = $('pubnub') || {}
             ,   err      = args['error']    || function(){}
             ,   channel  = args['channel']
             ,   jsonp    = jsonp_cb()
-            ,   data     = {}
-            ,   origin   = nextorigin(ORIGIN);
+            ,   data     = {};
 
             // Make sure we have a Channel
             if (!channel)       return error('Missing Channel');
@@ -841,7 +840,7 @@ var PDIV          = $('pubnub') || {}
                 success  : function(response) { callback(response) },
                 fail     : err,
                 url      : [
-                    origin, 'v2', 'presence',
+                    ORIGIN, 'v2', 'presence',
                     'sub_key', SUBSCRIBE_KEY, 
                     'channel', encode(channel)
                 ]
