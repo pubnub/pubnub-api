@@ -2,7 +2,7 @@
 require_once('PubnubAES.php');
 
 /**
- * PubNub 3.3.1 Real-time Push Cloud API
+ * PubNub 3.4 Real-time Push Cloud API
  * @package Pubnub
  */
 class Pubnub
@@ -214,15 +214,19 @@ class Pubnub
                     continue;
                 }
 
-
-
                 $messages = $response[0];
                 $timetoken = $response[1];
 
-                if (count($response) == 3) {
-                    $derivedChannel = $response[2];
-                }   else {
-                    $derivedChannel = $channel;
+                // determine the channel
+
+                if ((count($response) == 3)) {
+                    $derivedChannel = explode(",", $response[2]);
+                } else {
+                    $channel_array = array();
+                    for ($a = 0; $a < sizeof($messages); $a++) {
+                        array_push($channel_array, $channel);
+                    }
+                    $derivedChannel = $channel_array;
                 }
 
 
@@ -233,7 +237,7 @@ class Pubnub
                 $receivedMessages = $this->decodeAndDecrypt($messages, $mode);
 
 
-                $returnArray =  $this->NEW_STYLE_RESPONSE ?  array($receivedMessages, $timetoken, $derivedChannel) : array($receivedMessages, $timetoken);
+                $returnArray =  $this->NEW_STYLE_RESPONSE ?  array($receivedMessages, $derivedChannel, $timetoken) : array($receivedMessages, $timetoken);
 
                 # Call once for each message for each channel
 
@@ -274,8 +278,8 @@ class Pubnub
 
         } elseif ($mode == "detailedHistory") {
 
-            $messageArray = $messages[0];
-            $receivedMessages = array($this->decodeDecryptLoop($messageArray), $messages[1], $messages[2]);
+            $decodedMessages = $this->decodeDecryptLoop($messages);
+            $receivedMessages = array($decodedMessages[0], $messages[1], $messages[2] );
         }
 
         return $receivedMessages;
@@ -475,7 +479,7 @@ class Pubnub
 
         $ch = curl_init();
 
-        $pubnubHeaders = array("V: 3.3", "Accept: */*");
+        $pubnubHeaders = array("V: 3.4", "Accept: */*");
         curl_setopt($ch, CURLOPT_HTTPHEADER, $pubnubHeaders);
         curl_setopt($ch, CURLOPT_USERAGENT, "PHP");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
