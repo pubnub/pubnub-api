@@ -18,3 +18,12 @@ C:\Pandu\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\bin\Debug\New
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.csprojResolveAssemblyReference.cache
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.dll
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.pdb
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.dll.config
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.dll
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.Tests.pdb
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\bin\Debug\Newtonsoft.Json.dll
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.exe
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\bin\Debug\PubNub-Messaging.pdb
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.csprojResolveAssemblyReference.cache
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.dll
+E:\pubnub-api\silverlight-part\PubNub-Messaging.Tests\obj\Debug\PubNub-Messaging.Tests.pdb
