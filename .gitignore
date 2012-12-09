@@ -20,5 +20,5 @@ node_modules
 /silverlight-part/*/obj/*
 /csharp-windows-phone/*/packages/*
 /csharp-windows-phone/*/packages.config
-/csharp-windows-phone/*/*/bin/*
-/csharp-windows-phone/*/*/obj/*
+/csharp-windows-phone/*/bin/*
+/csharp-windows-phone/*/obj/*
