@@ -102,8 +102,20 @@ namespace PubNub_Messaging
          */
 		private void init(string publish_key, string subscribe_key, string secret_key, string cipher_key, bool ssl_on)
 		{
+#if(MONOTOUCH || SILVERLIGHT || WINDOWS_PHONE)
 			LoggingMethod.LogLevel = logLevel;
-
+#else
+			string strLogLevel = ConfigurationManager.AppSettings["LogLevel"];
+			int iLogLevel;
+			if (!Int32.TryParse (strLogLevel, out iLogLevel)) 
+			{
+				LoggingMethod.LogLevel = logLevel;
+			}
+			else
+			{
+				LoggingMethod.LogLevel = (LoggingMethod.Level)iLogLevel;
+			}
+#endif
 			this.PUBLISH_KEY = publish_key;
 			this.SUBSCRIBE_KEY = subscribe_key;
 			this.SECRET_KEY = secret_key;
