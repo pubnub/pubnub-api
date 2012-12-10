@@ -31,7 +31,7 @@
 #pragma mark - Instance methods
 
 /**
- * Add/remove observers which would like to know when PubNub client 
+ * Add/remove observer which would like to know when PubNub client 
  * is connected/disconnected to/from PubNub services at specified
  * origin.
  */

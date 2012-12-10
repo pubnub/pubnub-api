@@ -14,6 +14,7 @@
 
 #import "PNConfiguration.h"
 #import "PNDelegate.h"
+#import "PubNub.h"
 
 
 @interface PubNub (Protected)

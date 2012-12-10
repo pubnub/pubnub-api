@@ -22,11 +22,13 @@ static PNObservationCenter *_sharedInstance = nil;
 
 struct PNObservationEventsStruct {
     
+    __unsafe_unretained NSString *clientConnectionFailure;
     __unsafe_unretained NSString *clientConnectionStateChange;
 };
 
 static struct PNObservationEventsStruct PNObservationEvents = {
     
+    .clientConnectionFailure = @"clientConnectionFailure",
     .clientConnectionStateChange = @"clientConnectionStateChange"
 };
 

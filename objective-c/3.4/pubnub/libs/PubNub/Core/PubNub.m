@@ -49,11 +49,6 @@ static PubNub *_sharedInstance = nil;
 @property (nonatomic, weak) id<PNDelegate> delegate;
 
 
-#pragma mark - Class methods
-
-+ (PubNub *)sharedInstance;
-
-
 @end
 
 

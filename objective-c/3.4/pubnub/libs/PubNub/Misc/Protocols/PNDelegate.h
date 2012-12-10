@@ -9,8 +9,6 @@
 //
 //
 
-#import <Foundation/Foundation.h>
-
 
 #pragma mark Class forward
 
@@ -19,11 +17,21 @@
 
 @protocol PNDelegate <NSObject>
 
+@optional
+
 /**
  * Called on delegate when client successfully connected to the
  * origin and perfomed initial calls (calls which update presence on server)
  */
-- (void)pubnubClient:(PubNub *)client didConnectedToOrigin:(NSString *)origin;
+- (void)pubnubClient:(PubNub *)client connectedToOrigin:(NSString *)origin;
+
+/**
+ * Called on delegate when some kind of error occurred during
+ * connection session or failed to connect to PubNub services
+ * error - returned error will contain information about origin
+ *         host name and error code which caused this error
+ */
+- (void)pubnubClient:(PubNub *)client connectionDidFailWithError:(PNError *)error;
 
 /**
  * Called on delegate when some kind of error occurred during 

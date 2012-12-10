@@ -24,7 +24,12 @@
 @interface PubNub : NSObject
 
 
-#pragma mark - Class methods
+#pragma mark Class methods
+
+/**
+ * Retrieve reference on shared PubNub client instance
+ */
++ (PubNub *)sharedInstance;
 
 
 #pragma mark - Client connection management methods

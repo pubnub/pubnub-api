@@ -46,6 +46,11 @@
 		79C322A1166E0291006DB535 /* PubNub.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C3229F166E0291006DB535 /* PubNub.m */; };
 		79C322AA166E0568006DB535 /* PNConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C322A9166E0568006DB535 /* PNConfiguration.m */; };
 		79C322AB166E0568006DB535 /* PNConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C322A9166E0568006DB535 /* PNConfiguration.m */; };
+		79ECCF1B167217D2005E83B3 /* PNReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 79ECCF1A167217D2005E83B3 /* PNReachability.m */; };
+		79ECCF1C167217D2005E83B3 /* PNReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 79ECCF1A167217D2005E83B3 /* PNReachability.m */; };
+		79ECCF321675DEB3005E83B3 /* PNConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 79ECCF311675DEB2005E83B3 /* PNConnection.m */; };
+		79ECCF331675DEB3005E83B3 /* PNConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 79ECCF311675DEB2005E83B3 /* PNConnection.m */; };
+		79ECCF361675DFB5005E83B3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ECCF351675DFB5005E83B3 /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +108,13 @@
 		79C322A9166E0568006DB535 /* PNConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNConfiguration.m; sourceTree = "<group>"; };
 		79C322AC166E063B006DB535 /* PNDefaultConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNDefaultConfiguration.h; sourceTree = "<group>"; };
 		79C322BC166E1358006DB535 /* PNContants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNContants.h; sourceTree = "<group>"; };
+		79ECCF19167217D2005E83B3 /* PNReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNReachability.h; sourceTree = "<group>"; };
+		79ECCF1A167217D2005E83B3 /* PNReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNReachability.m; sourceTree = "<group>"; };
+		79ECCF301675DEB2005E83B3 /* PNConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNConnection.h; sourceTree = "<group>"; };
+		79ECCF311675DEB2005E83B3 /* PNConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNConnection.m; sourceTree = "<group>"; };
+		79ECCF351675DFB5005E83B3 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		79ECCF4A1675FF81005E83B3 /* PNConnection+Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PNConnection+Protected.h"; sourceTree = "<group>"; };
+		79ECCF5016761F05005E83B3 /* PNConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNConnectionDelegate.h; sourceTree = "<group>"; };
 		79F84AFA166F60450005E3B1 /* PNMacro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNMacro.h; sourceTree = "<group>"; };
 		79F84B03166F72000005E3B1 /* PNImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNImports.h; sourceTree = "<group>"; };
 		79F84B05166F74A80005E3B1 /* PubNub+Protected.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PubNub+Protected.h"; sourceTree = "<group>"; };
@@ -113,9 +125,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79C3222D166DF847006DB535 /* UIKit.framework in Frameworks */,
-				79C3222F166DF847006DB535 /* Foundation.framework in Frameworks */,
+				79ECCF361675DFB5005E83B3 /* SystemConfiguration.framework in Frameworks */,
 				79C32231166DF847006DB535 /* CoreGraphics.framework in Frameworks */,
+				79C3222F166DF847006DB535 /* Foundation.framework in Frameworks */,
+				79C3222D166DF847006DB535 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +168,7 @@
 		79A8B5C6166FB52500C64BCF /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				79ECCF5016761F05005E83B3 /* PNConnectionDelegate.h */,
 				79A8B5C8166FB55F00C64BCF /* PNDelegate.h */,
 			);
 			path = Protocols;
@@ -182,10 +196,11 @@
 		79C3222B166DF847006DB535 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				79C3222C166DF847006DB535 /* UIKit.framework */,
-				79C3222E166DF847006DB535 /* Foundation.framework */,
-				79C32230166DF847006DB535 /* CoreGraphics.framework */,
+				79ECCF351675DFB5005E83B3 /* SystemConfiguration.framework */,
 				79C32250166DF848006DB535 /* SenTestingKit.framework */,
+				79C32230166DF847006DB535 /* CoreGraphics.framework */,
+				79C3222E166DF847006DB535 /* Foundation.framework */,
+				79C3222C166DF847006DB535 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -286,7 +301,7 @@
 			children = (
 				79C3229B166E0266006DB535 /* Core */,
 				79C322A7166E0538006DB535 /* Data */,
-				79C3229D166E0266006DB535 /* Network */,
+				79ECCF18167217B4005E83B3 /* Network */,
 				79C3229C166E0266006DB535 /* Misc */,
 			);
 			path = PubNub;
@@ -373,13 +388,6 @@
 			path = Misc;
 			sourceTree = "<group>";
 		};
-		79C3229D166E0266006DB535 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Network;
-			sourceTree = "<group>";
-		};
 		79C322A7166E0538006DB535 /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -391,6 +399,18 @@
 				79A8B5CA166FB69800C64BCF /* PNError.m */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		79ECCF18167217B4005E83B3 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				79ECCF19167217D2005E83B3 /* PNReachability.h */,
+				79ECCF1A167217D2005E83B3 /* PNReachability.m */,
+				79ECCF4A1675FF81005E83B3 /* PNConnection+Protected.h */,
+				79ECCF301675DEB2005E83B3 /* PNConnection.h */,
+				79ECCF311675DEB2005E83B3 /* PNConnection.m */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -519,6 +539,8 @@
 				7966DFCD166FDC7C00E07B40 /* JSON.m in Sources */,
 				7966DFD2166FF1F800E07B40 /* PNObservationCenter.m in Sources */,
 				7966DFD716707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */,
+				79ECCF1B167217D2005E83B3 /* PNReachability.m in Sources */,
+				79ECCF321675DEB3005E83B3 /* PNConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,6 +559,8 @@
 				7966DFCE166FDC7C00E07B40 /* JSON.m in Sources */,
 				7966DFD3166FF1F800E07B40 /* PNObservationCenter.m in Sources */,
 				7966DFD816707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */,
+				79ECCF1C167217D2005E83B3 /* PNReachability.m in Sources */,
+				79ECCF331675DEB3005E83B3 /* PNConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
