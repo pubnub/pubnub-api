@@ -17,7 +17,8 @@ using System.IO;
 using System.Threading;
 using Microsoft.Silverlight.Testing;
 using PubnubSilverlight.Example.Dialogs;
-using PubNub_Messaging;
+using PubnubSilverlight.Core;
+//using PubNub_Messaging;
 
 namespace PubnubSilverlight.Example.Views
 {

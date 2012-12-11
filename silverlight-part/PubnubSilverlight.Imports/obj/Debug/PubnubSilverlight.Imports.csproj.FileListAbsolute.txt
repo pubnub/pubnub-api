@@ -16,3 +16,8 @@ C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.dll
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.pdb
 C:\Pandu\GitHub\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.dll
+E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.dll
+E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.pdb
+E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.dll
+E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.pdb
+E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.csprojResolveAssemblyReference.cache

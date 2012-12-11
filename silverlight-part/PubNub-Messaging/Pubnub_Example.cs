@@ -23,10 +23,10 @@ namespace PubNub_Messaging
             Console.WriteLine("      IF NO NETWORK BEFORE MAX RE-TRY CONNECT,");
             Console.WriteLine("      NETWORK ERROR MESSAGE WILL BE SENT");
             Console.WriteLine();
-
+            
             Console.WriteLine("ENTER Channel Name");
             channel = Console.ReadLine();
-
+            
             Console.WriteLine(string.Format("Channel = {0}",channel));
             Console.WriteLine();
 

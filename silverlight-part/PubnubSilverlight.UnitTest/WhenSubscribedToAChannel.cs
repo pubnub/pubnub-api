@@ -40,7 +40,7 @@ namespace PubnubSilverlight.UnitTest
 
         [Asynchronous]
         private void ReceivedMessageCallback(string result)
-        {       
+        {
             if (!string.IsNullOrWhiteSpace(result))
             {
                 JavaScriptSerializer js = new JavaScriptSerializer();
