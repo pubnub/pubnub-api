@@ -62,12 +62,8 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\PubNub-Messaging\Pubnub.cs">
-      <Link>Pubnub.cs</Link>
-    </Compile>
     <Compile Include="ConcurrentDictionaryExtentions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PubnubV2.cs" />
     <Compile Include="PubnubV4.cs" />
   </ItemGroup>
   <ItemGroup>

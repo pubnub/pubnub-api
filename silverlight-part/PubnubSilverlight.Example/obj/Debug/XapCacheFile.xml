@@ -1,13 +1,13 @@
-﻿<xapCache source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Example.xap" wasSigned="False" certificateThumbprint="" TimeStampUrl="" lastWriteTime="12/8/2012 9:41:25 PM">
-  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\PubnubSilverlight.Example.dll" archivePath="PubnubSilverlight.Example.dll" lastWriteTime="12/8/2012 9:41:25 PM" />
+﻿<xapCache source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Example.xap" wasSigned="False" certificateThumbprint="" TimeStampUrl="" lastWriteTime="12/11/2012 1:55:32 PM">
+  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Example\obj\Debug\PubnubSilverlight.Example.dll" archivePath="PubnubSilverlight.Example.dll" lastWriteTime="12/11/2012 1:55:31 PM" />
   <file source="E:\pubnub-api\silverlight-part\Libraries\Microsoft.Silverlight.Testing.dll" archivePath="Microsoft.Silverlight.Testing.dll" lastWriteTime="12/8/2012 1:00:32 AM" />
   <file source="E:\pubnub-api\silverlight-part\Libraries\Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll" archivePath="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll" lastWriteTime="12/8/2012 1:00:32 AM" />
-  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\PubnubSilverlight.Core.dll" archivePath="PubnubSilverlight.Core.dll" lastWriteTime="12/8/2012 9:41:24 PM" />
-  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.UnitTest.dll" archivePath="PubnubSilverlight.UnitTest.dll" lastWriteTime="12/8/2012 9:41:24 PM" />
+  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\PubnubSilverlight.Core.dll" archivePath="PubnubSilverlight.Core.dll" lastWriteTime="12/11/2012 1:55:29 PM" />
+  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.UnitTest.dll" archivePath="PubnubSilverlight.UnitTest.dll" lastWriteTime="12/11/2012 1:55:29 PM" />
   <file source="C:\Program Files (x86)\Microsoft SDKs\Silverlight\v5.0\Libraries\Client\System.Windows.Controls.dll" archivePath="System.Windows.Controls.dll" lastWriteTime="11/18/2011 5:40:20 PM" />
   <file source="C:\Program Files (x86)\Microsoft SDKs\Silverlight\v5.0\Libraries\Client\System.Windows.Controls.Navigation.dll" archivePath="System.Windows.Controls.Navigation.dll" lastWriteTime="11/18/2011 5:40:20 PM" />
   <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\ConcurrentHashtable_Silverlight.dll" archivePath="ConcurrentHashtable_Silverlight.dll" lastWriteTime="12/8/2012 1:00:32 AM" />
   <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Core\Bin\Debug\Newtonsoft.Json.dll" archivePath="Newtonsoft.Json.dll" lastWriteTime="12/8/2012 1:00:32 AM" />
-  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.Imports.dll" archivePath="PubnubSilverlight.Imports.dll" lastWriteTime="12/8/2012 9:07:49 PM" />
-  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\AppManifest.xaml" archivePath="AppManifest.xaml" lastWriteTime="12/8/2012 9:07:54 PM" />
+  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.UnitTest\Bin\Debug\PubnubSilverlight.Imports.dll" archivePath="PubnubSilverlight.Imports.dll" lastWriteTime="12/11/2012 1:55:28 PM" />
+  <file source="E:\pubnub-api\silverlight-part\PubnubSilverlight.Example\Bin\Debug\AppManifest.xaml" archivePath="AppManifest.xaml" lastWriteTime="12/11/2012 1:55:31 PM" />
 </xapCache>

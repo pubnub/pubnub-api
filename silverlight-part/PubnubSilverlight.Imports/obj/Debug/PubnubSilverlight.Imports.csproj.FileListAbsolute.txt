@@ -20,3 +20,4 @@ E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverl
 E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\Bin\Debug\PubnubSilverlight.Imports.pdb
 E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.dll
 E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.pdb
+E:\pubnub-api\silverlight-part\PubnubSilverlight.Imports\obj\Debug\PubnubSilverlight.Imports.csprojResolveAssemblyReference.cache

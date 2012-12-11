@@ -20,3 +20,4 @@ E:\pubnub-api\silverlight-part\PubnubSilverlight.Example.Web\bin\PubnubSilverlig
 E:\pubnub-api\silverlight-part\PubnubSilverlight.Example.Web\bin\PubnubSilverlight.Web.pdb
 E:\pubnub-api\silverlight-part\PubnubSilverlight.Example.Web\obj\Debug\PubnubSilverlight.Web.dll
 E:\pubnub-api\silverlight-part\PubnubSilverlight.Example.Web\obj\Debug\PubnubSilverlight.Web.pdb
+E:\pubnub-api\silverlight-part\PubnubSilverlight.Example.Web\obj\Debug\PubnubSilverlight.Web.csprojResolveAssemblyReference.cache
