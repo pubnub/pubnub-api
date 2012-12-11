@@ -15,11 +15,11 @@ API Usage summary follows. But checkout the real working examples in examples 3.
 Ti.include('pubnub.js');
 
 var pubnub = PUBNUB.init({
-    publish_key   : 'demo',
-    subscribe_key : 'demo',
-    ssl           : false,
+    publish_key       : 'demo',
+    subscribe_key     : 'demo',
+    ssl               : false,
     native_tcp_socket : false,
-    origin        : 'pubsub.pubnub.com'
+    origin            : 'pubsub.pubnub.com'
 });
 ```
 
