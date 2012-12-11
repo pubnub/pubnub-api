@@ -16,8 +16,10 @@
 #pragma mark - Logging
 #ifdef DEBUG
     #define PNLog(...) NSLog(@"%s(%p) %@", __PRETTY_FUNCTION__, self, [NSString stringWithFormat:__VA_ARGS__])
+    #define PNCLog(...) NSLog(@"%s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__])
 #else
     #define PNLog(...) ((void)0)
+    #define PNCLog(...) ((void)0)
 #endif
 
 

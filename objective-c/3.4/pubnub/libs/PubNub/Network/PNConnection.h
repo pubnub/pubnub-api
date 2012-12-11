@@ -33,6 +33,8 @@
  */
 + (PNConnection *)connectionWithIdentifier:(NSString *)identifier;
 
++ (void)closeAllConnections;
+
 #pragma mark -
 
 

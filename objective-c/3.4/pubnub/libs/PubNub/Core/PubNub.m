@@ -76,7 +76,7 @@ static PubNub *_sharedInstance = nil;
 
 + (void)connect {
     
-    NSAssert([self sharedInstance].configuration!=nil, @"ERROR: PubNub configuration is required before connection.");
+    NSAssert([self sharedInstance].configuration!=nil, @"{ERROR} PubNub client configuration is required before connection.");
 }
 
 
@@ -89,7 +89,7 @@ static PubNub *_sharedInstance = nil;
 
 + (void)setupWithConfiguration:(PNConfiguration *)configuration andDelegate:(id<PNDelegate>)delegate {
     
-    NSAssert1([configuration isValid], @"ERROR: Wrong or incompleted configuration has been passed to PubNumb client: %@",
+    NSAssert1([configuration isValid], @"{ERROR} Wrong or incompleted configuration has been passed to PubNumb client: %@",
               configuration);
     
     [self setDelegate:delegate];

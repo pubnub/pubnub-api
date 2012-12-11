@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		792C1F3C16776E590054E18E /* PNConnectionChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 792C1F3B16776E590054E18E /* PNConnectionChannel.m */; };
+		792C1F3D16776E590054E18E /* PNConnectionChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 792C1F3B16776E590054E18E /* PNConnectionChannel.m */; };
+		792C1F4016777BD50054E18E /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 792C1F3F16777BD40054E18E /* CFNetwork.framework */; };
 		7966DFC4166FD60A00E07B40 /* PNJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */; };
 		7966DFC5166FD60A00E07B40 /* PNJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */; };
 		7966DFC9166FD94D00E07B40 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC8166FD94D00E07B40 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -64,6 +67,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		792C1F3A16776E590054E18E /* PNConnectionChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNConnectionChannel.h; sourceTree = "<group>"; };
+		792C1F3B16776E590054E18E /* PNConnectionChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNConnectionChannel.m; sourceTree = "<group>"; };
+		792C1F3E16776EF10054E18E /* PNConnectionChannel+Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PNConnectionChannel+Protected.h"; sourceTree = "<group>"; };
+		792C1F3F16777BD40054E18E /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		795334FE167080CD00573FB7 /* PNStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNStructures.h; sourceTree = "<group>"; };
 		7966DFC0166FB9B800E07B40 /* PNErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNErrorCodes.h; sourceTree = "<group>"; };
 		7966DFC2166FD60900E07B40 /* PNJSONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNJSONSerialization.h; sourceTree = "<group>"; };
@@ -128,6 +135,7 @@
 				79ECCF361675DFB5005E83B3 /* SystemConfiguration.framework in Frameworks */,
 				79C32231166DF847006DB535 /* CoreGraphics.framework in Frameworks */,
 				79C3222F166DF847006DB535 /* Foundation.framework in Frameworks */,
+				792C1F4016777BD50054E18E /* CFNetwork.framework in Frameworks */,
 				79C3222D166DF847006DB535 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -200,6 +208,7 @@
 				79C32250166DF848006DB535 /* SenTestingKit.framework */,
 				79C32230166DF847006DB535 /* CoreGraphics.framework */,
 				79C3222E166DF847006DB535 /* Foundation.framework */,
+				792C1F3F16777BD40054E18E /* CFNetwork.framework */,
 				79C3222C166DF847006DB535 /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -409,6 +418,9 @@
 				79ECCF4A1675FF81005E83B3 /* PNConnection+Protected.h */,
 				79ECCF301675DEB2005E83B3 /* PNConnection.h */,
 				79ECCF311675DEB2005E83B3 /* PNConnection.m */,
+				792C1F3E16776EF10054E18E /* PNConnectionChannel+Protected.h */,
+				792C1F3A16776E590054E18E /* PNConnectionChannel.h */,
+				792C1F3B16776E590054E18E /* PNConnectionChannel.m */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -541,6 +553,7 @@
 				7966DFD716707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */,
 				79ECCF1B167217D2005E83B3 /* PNReachability.m in Sources */,
 				79ECCF321675DEB3005E83B3 /* PNConnection.m in Sources */,
+				792C1F3C16776E590054E18E /* PNConnectionChannel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,6 +574,7 @@
 				7966DFD816707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */,
 				79ECCF1C167217D2005E83B3 /* PNReachability.m in Sources */,
 				79ECCF331675DEB3005E83B3 /* PNConnection.m in Sources */,
+				792C1F3D16776E590054E18E /* PNConnectionChannel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

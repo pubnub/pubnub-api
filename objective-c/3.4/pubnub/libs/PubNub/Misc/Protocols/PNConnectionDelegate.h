@@ -13,6 +13,9 @@
 
 @protocol PNConnectionDelegate <NSObject>
 
+
+@optional
+
 /**
  * Sent to the delegate when both streams (read/write) 
  * connected to the opened socket

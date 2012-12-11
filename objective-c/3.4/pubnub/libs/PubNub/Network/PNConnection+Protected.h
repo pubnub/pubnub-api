@@ -6,11 +6,6 @@
 //
 //
 
-#import "PNConnection.h"
-
-
-@interface PNConnection (Protected)
-
 
 #pragma mark Structures
 
@@ -27,11 +22,22 @@ struct PNConnectionIdentifiersStruct {
     __unsafe_unretained NSString *serviceConnection;
 };
 
+static struct PNConnectionIdentifiersStruct PNConnectionIdentifiers = {
+    
+    .messagingConnection = @"PNMessaginConnectionIdentifier",
+    .serviceConnection = @"PNServiceConnectionIdentifier"
+};
+
 // Structure describes error notification body
 struct PNConnectionErrorNotificationBodyStruct {
     
     // Used to store error message
     __unsafe_unretained NSString *error;
+};
+
+static struct PNConnectionErrorNotificationBodyStruct PNConnectionErrorNotificationBody = {
+    
+    .error = @"errorObject"
 };
 
 
@@ -45,6 +51,3 @@ extern NSString * const kPNConnectionDidDisconnectWithErrorNotication;
 extern NSString * const kPNConnectionErrorNotification;
 
 #pragma mark -
-
-
-@end

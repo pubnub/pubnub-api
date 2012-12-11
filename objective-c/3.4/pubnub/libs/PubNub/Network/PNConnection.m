@@ -11,6 +11,7 @@
 //
 //
 
+#import "PNConnection.h"
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "PNConnection+Protected.h"
 #import "PubNub+Protected.h"
@@ -18,20 +19,6 @@
 #import "PNStructures.h"
 #import "PNError.h"
 #import "PNMacro.h"
-
-
-#pragma mark Structures
-
-static struct PNConnectionIdentifiersStruct PNConnectionIdentifiers = {
-    
-    .messagingConnection = @"PNMessaginConnectionIdentifier",
-    .serviceConnection = @"PNServiceConnectionIdentifier"
-};
-
-static struct PNConnectionErrorNotificationBodyStruct PNConnectionErrorNotificationBody = {
-    
-    .error = @"errorObject"
-};
 
 
 #pragma mark - Externs
@@ -45,7 +32,7 @@ NSString * const kPNConnectionErrorNotification = @"PNConnectionErrorNotificatio
 
 #pragma mark - Static
 
-static NSDictionary *_connectionsPool = nil;
+static NSMutableDictionary *_connectionsPool = nil;
 
 // Default origin host connection port
 static UInt32 const kPNOriginConnectionPort = 80;
@@ -70,6 +57,8 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 // Stores connection name (identifier)
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, strong) PNConfiguration *configuration;
+
+// Stores list of connection delegates
 
 // Array used as FIFO queue for packets which should
 // be sent to the PubNub services over socket
@@ -230,6 +219,16 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
     return connection;
 }
 
++ (void)closeAllConnections {
+    
+    // Check whether has some connection in pool or not
+    if ([_connectionsPool count] > 0) {
+        
+        // Clean up connections pool
+        [_connectionsPool removeAllObjects];
+    }
+}
+
 + (NSDictionary *)connectionsPool {
     
     static dispatch_once_t onceToken;
@@ -260,6 +259,16 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
     return self;
 }
 
+- (void)setDelegate:(id<PNConnectionDelegate>)delegate {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+    
+    
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+    
+    _delegate = delegate;
+#endif
+}
+
 
 #pragma mark - Streams management methods
 
@@ -272,24 +281,26 @@ void readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void *cl
     switch (type) {
         case kCFStreamEventOpenCompleted:
             
-            PNLog(@"{INFO}[CONNECTION::%@::READ] STREAM OPENED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::READ] STREAM OPENED", connection.name);
+            
             connection.readStreamState = PNSocketStreamConnected;
             [connection handleStreamConnection];
             break;
         case kCFStreamEventHasBytesAvailable:
             
-            PNLog(@"{INFO}[CONNECTION::%@::READ] HAS DATA FOR READ OUT", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::READ] HAS DATA FOR READ OUT", connection.name);
+            
             [connection handleReadStreamHasData];
             break;
         case kCFStreamEventErrorOccurred:
             
-            PNLog(@"{INFO}[CONNECTION::%@::READ] ERROR OCCURRED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::READ] ERROR OCCURRED", connection.name);
             
             [connection handleStreamError:CFReadStreamGetError(stream) shouldCloseConnection:YES];
             break;
         case kCFStreamEventEndEncountered:
             
-            PNLog(@"{INFO}[CONNECTION::%@::READ] NOTHING TO READ (MAYBE STREAM IS CLOSED)", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::READ] NOTHING TO READ (MAYBE STREAM IS CLOSED)", connection.name);
             break;
             
         default:
@@ -306,23 +317,24 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     switch (type) {
         case kCFStreamEventOpenCompleted:
             
-            PNLog(@"{INFO}[CONNECTION::%@::WRITE] STREAM OPENED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] STREAM OPENED", connection.name);
+            
             connection.writeStreamState = PNSocketStreamConnected;
             [connection handleStreamConnection];
             break;
         case kCFStreamEventCanAcceptBytes:
             
-            PNLog(@"{INFO}[CONNECTION::%@::WRITE] CAN ACCEPT DATA", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] CAN ACCEPT DATA", connection.name);
             break;
         case kCFStreamEventErrorOccurred:
             
-            PNLog(@"{INFO}[CONNECTION::%@::WRITE] ERROR OCCURRED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] ERROR OCCURRED", connection.name);
             
             [connection handleStreamError:CFWriteStreamGetError(stream) shouldCloseConnection:YES];
             break;
         case kCFStreamEventEndEncountered:
             
-            PNLog(@"{INFO}[CONNECTION::%@::WRITE] MAYBE STREAM IS CLOSED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] MAYBE STREAM IS CLOSED", connection.name);
             break;
             
         default:
@@ -397,6 +409,10 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     BOOL shouldCloseStream = self.readStreamState == PNSocketStreamConnected;
     self.readStreamState = PNSocketStreamNotConfigured;
+    
+    
+    // Destroying input buffer
+    _retrievedData = nil;
     
     
     // Unschedule read stream from runloop

@@ -49,7 +49,6 @@
     self.window.rootViewController = [PNViewController  new];
     [self.window makeKeyAndVisible];
     
-    
     [self initializePubNubClient];
     
     
