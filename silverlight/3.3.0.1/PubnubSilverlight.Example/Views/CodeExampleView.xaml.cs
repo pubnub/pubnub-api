@@ -30,7 +30,13 @@ namespace PubnubSilverlight.Example.Views
         static public Pubnub pubnub;
 
         static public bool deliveryStatus = false;
-        static public string channel = "";
+        public string channel
+        {
+            get
+            {
+                return string.IsNullOrEmpty(ChannelInput.Text) ? string.Empty : ChannelInput.Text;
+            }
+        }
 
         static public bool enableSSL = false;
         static public string cipheryKey = string.Empty;
@@ -40,7 +46,7 @@ namespace PubnubSilverlight.Example.Views
         public CodeExampleView()
         {
             InitializeComponent();
-
+            
             Console.Container = ConsoleContainer;
 
             MessageBoxResult result = MessageBox.Show("Enable SSL?", "Settings", MessageBoxButton.OKCancel);
@@ -220,12 +226,6 @@ namespace PubnubSilverlight.Example.Views
                 Console.WriteLine(result.ToString());
             }
 
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox chanelTextBox = sender as TextBox;
-            channel = chanelTextBox.Text;
         }
     }
 
