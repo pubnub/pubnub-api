@@ -25,13 +25,7 @@
  * a bug in Debian's version of Arduino pertaining the DNS code. Try using
  * an IP address as origin and/or upgrading your Arduino package.
  *
- * (v) We assume that server replies always use Transfer-encoding: chunked;
- * adding auto-detection would be straightforward if that ever changes.
- * Adding support for multiple chunks is going to be possible, not so
- * trivial though if we are to shield the user application from chunked
- * encoding. Note that /history still uses non-chunked encoding.
- *
- * (vi) The optional timeout parameter allows you to specify a timeout
+ * (v) The optional timeout parameter allows you to specify a timeout
  * period after which the subscribe call shall be retried. Note
  * that this timeout is applied only for reading response, not for
  * connecting or sending data; use retransmission parameters of
@@ -165,7 +159,7 @@ public:
 	EthernetClient *history(char *channel, int limit = 10, int timeout = 305);
 
 private:
-	enum PubNub_BH _request_bh(EthernetClient &client, unsigned long t_start, int timeout, bool chunked = true);
+	enum PubNub_BH _request_bh(EthernetClient &client, unsigned long t_start, int timeout);
 
 	char *publish_key, *subscribe_key;
 	char *origin;
