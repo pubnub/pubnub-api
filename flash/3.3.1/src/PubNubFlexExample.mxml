@@ -24,7 +24,8 @@
 			import utils.*;
 			
         [Bindable]
-        public var channel:String = 'my_channel';
+        public var channel:String = 'test_channel';
+        //public var channel:String = 'my_channel,a,b,c';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
@@ -105,7 +106,7 @@
 			//if (perfomance.isRun) return;
             switch (e.status) {
                 case OperationStatus.DATA:
-                    callExternalInterface("console.log", ("Subscribe [DATA], channel : " + e.channel + ', result : ' + e.data.result));
+                    callExternalInterface("console.log", ("Subscribe [DATA]: " + PnJSON.stringify(e.data)));
                     break;
 
                 case OperationStatus.CONNECT:

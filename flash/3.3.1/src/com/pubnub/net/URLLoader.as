@@ -46,7 +46,7 @@ package com.pubnub.net {
 			socket = getSocket(request.url);
 			destroyResponce();
 			sendRequest(request);
-			//trace(socket, request.url);
+			trace(this, request.url);
 		}
 		
 		private function getSocket(url:String):*{
@@ -119,7 +119,7 @@ package com.pubnub.net {
 			temp.position = 0;
 			var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
 			var endSymbol:String = getEndSymbol(tempStr);
-			
+			//trace('tempStr: ' + tempStr);
 			if (tempStr.indexOf(endSymbol) != -1) {
 				onResponce(answer)
 				answer.clear();	

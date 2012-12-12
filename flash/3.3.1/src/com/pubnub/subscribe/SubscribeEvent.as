@@ -11,6 +11,7 @@ package com.pubnub.subscribe {
 		public static const CONNECT:String = 'ChannelEvent.connect';
 		public static const DISCONNECT:String = 'ChannelEvent.disconnect';
 		public static const ERROR:String = 'ChannelEvent.error';
+		public static const PRESENCE:String = 'ChannelEvent.presence';
 		
 		private var _data:Object;
 		

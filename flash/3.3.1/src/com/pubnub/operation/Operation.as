@@ -1,110 +1,46 @@
 package com.pubnub.operation {
-	import com.pubnub.*;
-	import com.pubnub.json.*;
-	import com.pubnub.loader.*;
-	import com.pubnub.net.*;
-	import flash.events.*;
+	import com.pubnub.json.PnJSON;
+	import com.pubnub.net.URLRequest;
+	import com.pubnub.net.URLRequestHeader;
+	import flash.events.IEventDispatcher;
 	import flash.net.URLRequestMethod;
 	import org.casalib.events.RemovableEventDispatcher;
-	import org.httpclient.events.*;
 	
 	/**
 	 * ...
-	 * @author firsoff maxim, support@pubnub.com
+	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
-	[Event(name="OperationEvent.fault", type="com.pubnub.operation.OperationEvent")]
-	[Event(name="OperationEvent.result", type="com.pubnub.operation.OperationEvent")]
 	public class Operation extends RemovableEventDispatcher {
 		
+		static public const HTTPS_PATTERN:RegExp = new RegExp("(https):\/\/");
 		
-		static public const WITH_TIMETOKEN:String = 'subscribe_with_timetoken';
-		static public const GET_TIMETOKEN:String = 'subscribe_get_timetoken';
-		static public const WITH_RETRY:String = 'subscribe_with_retry';
-		static public const LEAVE:String = 'leave';
-		static private const pattern:RegExp = new RegExp("(https):\/\/");
-		
-		
-		public var keepAlive:Boolean = true;
-		public var origin:String;
-		public var uid:String;
-		public var channel:String;
-		public var sessionUUID:String;
 		public var parseToJSON:Boolean = true;
-		public var timetoken:*;
-		public var operation:String;
-		public var subscribeKey:String = ""; 
-		protected var _request:URLRequest;
 		
+		protected var _origin:String;
 		protected var _url:String;
 		protected var _destroyed:Boolean;
 		protected var _completed:Boolean;
+		protected var _request:URLRequest;
 		
 		public function Operation() {
-			super(null);
 			init();
 		}
 		
 		protected function init():void {
-			// abstract
+			// absrtract
 		}
 		
-		public function createURL(args:Object = null):void {
-			//trace(this, 'send');
-			var url:String = args.url;
-			uid = args.uid;
-			sessionUUID = args.sessionUUID;
-			channel = args.channel;
-			timetoken = args.timetoken;
-			operation = args.operation;
-			//trace(operation, timetoken);
-            if (timetoken != null ){
-                url += "/" + timetoken;
-				if (operation == WITH_TIMETOKEN || 
-					operation == GET_TIMETOKEN) {
-					url += "?uuid=" + sessionUUID;
-				}
-            }
-
-			if (args.params != null) { 
-				if (args.operation != WITH_TIMETOKEN )
-					url = args.url + "?" + args.params;
-				else
-					url = args.url + "&" + args.params;
-			}
-			
+		public function setURL(url:String = null, args:Object = null):URLRequest {
 			_url = url;
-			createRequest();
+			return createRequest();
 		}
 		
-		protected function createRequest():void {
+		protected function createRequest():URLRequest {
 			_completed = false;
 			_request = new URLRequest(url);
 			_request.method = URLRequestMethod.GET;
 			_request.header = new URLRequestHeader();
-		}
-		
-		override public function destroy():void {
-			super.destroy();
-			if (_destroyed) return;
-			_destroyed = true;
-			_request.destroy();
-			_request = null;
-		}
-		
-		public function get url():String {
-			return _url;
-		}
-		
-		public function get request():URLRequest {
-			return _request;
-		}
-		
-		public function get ssl():Boolean { 
-			return pattern.test(_url); 
-		}
-		
-		public function get completed():Boolean {
-			return _completed;
+			return request;
 		}
 		
 		public function onData(data:Object = null):void {
@@ -126,5 +62,28 @@ package com.pubnub.operation {
 			dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:(data ? data.message : data)} ));
 		}
 		
+		public function get origin():String {
+			return _origin;
+		}
+		
+		public function set origin(value:String):void {
+			_origin = value;
+		}
+		
+		public function get url():String {
+			return _url;
+		}
+		
+		public function get completed():Boolean {
+			return _completed;
+		}
+		
+		public function get request():URLRequest {
+			return _request;
+		}
+		
+		public function get ssl():Boolean { 
+			return HTTPS_PATTERN.test(_url); 
+		}
 	}
 }

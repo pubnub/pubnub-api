@@ -4,6 +4,7 @@ package com.pubnub.operation {
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
+	import com.pubnub.net.URLRequest;
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	import org.httpclient.HttpHeader;
@@ -12,7 +13,9 @@ package com.pubnub.operation {
 	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class PublishOperation extends Operation {
-		 
+		private var channel:String;
+		private var subscribeKey:String;
+		private var uid:String;
 		public var secretKey:String; 
 		public var cipherKey:String = ""; 
 		public var publishKey:String = ""; 
@@ -23,16 +26,13 @@ package com.pubnub.operation {
 			parseToJSON = false;
 		}
 		
-		
-		//private var expLoader:ExperimentURLLoader;
-		
-		override public function createURL(args:Object = null):void {
+		override public function setURL(url:String = null, args:Object = null):URLRequest {
 			//var temp:Number = getTimer();
 			channel = args.channel;
 			var message:String = args.message;
 			if (channel == null || message == null) {
 				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [ -1, "Channel Not Given and/or Message"]));
-				return;
+				return null;
 			}
 			var signature:String = "0";
 			var packageMessage:Object = packageToJSON(message);
@@ -51,8 +51,9 @@ package com.pubnub.operation {
 			
 			uid = PnUtils.getUID();
 			_url = origin + "/" + "publish" + "/" + publishKey + "/" + subscribeKey + "/" + signature + "/" + PnUtils.encode(channel) + "/" + 0 + "/" +PnUtils.encode(serializedMessage as String);
-			createRequest();
+			return createRequest();
 		}
+		
 		
 		private function packageToJSON(message:String):Object{
 			return { text:message };

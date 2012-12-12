@@ -2,13 +2,14 @@ package com.pubnub.operation {
 	import com.pubnub.*;
 	import com.pubnub.json.*;
 	import com.pubnub.loader.*;
+	import com.pubnub.net.URLRequest;
 	import flash.events.Event;
 	/**
 	 * ...
 	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class HistoryOperation extends Operation {
-		
+		private var channel:String;
 		public var sub_key:String;
 		public var cipherKey:String;
 		
@@ -16,14 +17,14 @@ package com.pubnub.operation {
 			super();
 		}
 		
-		override public function createURL(args:Object = null):void {
+		override public function setURL(url:String = null, args:Object = null):URLRequest {
 			channel = args.channel;
 			sub_key = args['sub-key'];
 			_url = origin + "/v2/history/sub-key/" + sub_key + "/channel/" + PnUtils.encode(args.channel); 
 			if (args.start || args.end || args.reverse || args.count) {
 				_url += extractOptionalParams(args);
             }
-			createRequest();
+			return createRequest();
 		}
 		
 		private function extractOptionalParams(args:Object):String {

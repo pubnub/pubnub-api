@@ -23,9 +23,9 @@ package com.pubnub.subscribe {
 		override protected function connectInit():void {
 			// use here connectionUID from a subcribe
 			clearTimeout(pingTimeout);
-			url = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_channelName) + "/" + 0;
+			url = _origin + "/" + "subscribe" + "/" + subscribeKey + "/" + PnUtils.encode(_lastChannel) + "/" + 0;
 			
-			var operation:Operation = getOperation(Operation.GET_TIMETOKEN);
+			var operation:Operation = getOperation(SubscribeChannel.GET_TIMETOKEN);
 			connection.sendOperation(operation);
 		}
 		
@@ -41,7 +41,7 @@ package com.pubnub.subscribe {
                 for (var i:int = 0; i < messages.length; i++) {
                     var msg:* = cipherKey.length > 0 ? PnJSON.parse(PnCrypto.decrypt(cipherKey, messages[i])) : messages[i];
                     _data = {
-                        channel:_channelName,
+                        channel:_lastChannel,
                         result:[i + 1, msg],
                         timeout:1
                     }

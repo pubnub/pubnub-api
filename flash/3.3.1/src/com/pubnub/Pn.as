@@ -19,16 +19,19 @@ package com.pubnub {
 		static public const TIME_OPERATION:String = 'time';
 		
 		private var _initialized:Boolean = false;         
+		
 		private var operations:/*Operation*/Array;
-        private var subscribes:/*Subscribe*/Array;
         private var operationsFactory:Dictionary;
+		
+        private var subscribeConnection:Subscribe;
+		
 		private var _origin:String;
 		private var _ssl:Boolean;
 		private var _publishKey:String = "demo";
 		private var _subscribeKey:String = "demo";
 		private var secretKey:String = "";
 		private var cipherKey:String = "";
-		private var startTimeToken:Number = 0;
+		
         private var _sessionUUID:String = "";
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
 		static pn_internal var syncConnection:SyncConnection;
@@ -63,34 +66,41 @@ package com.pubnub {
 				dispose();
 			}
 			_initialized = false;
-			subscribes = [];
 			operations = [];
 			ori = Math.floor(Math.random() * 9) + 1;
-			
 			initKeys(config);
             _sessionUUID = PnUtils.getUID();
 			
 			// Loads start time token
 			var operation:Operation = createOperation(INIT_OPERATION)
 			syncConnection.sendOperation(operation);
+			
+			subscribeConnection ||= new Subscribe();
+			subscribeConnection.addEventListener(SubscribeEvent.CONNECT, 	onSubscribe);
+			subscribeConnection.addEventListener(SubscribeEvent.DATA, 		onSubscribe);
+			subscribeConnection.addEventListener(SubscribeEvent.DISCONNECT, onSubscribe);
+			subscribeConnection.addEventListener(SubscribeEvent.ERROR, 		onSubscribe);
+			subscribeConnection.addEventListener(SubscribeEvent.PRESENCE, 	onSubscribe);
+			subscribeConnection.origin = _origin;
+			subscribeConnection.subscribeKey = _subscribeKey;
+			subscribeConnection.sessionUUID = _sessionUUID;
+			subscribeConnection.cipherKey = cipherKey;
 		}
 		
 		
 		private function createInitOperation(args:Object = null):Operation{
-			var init:InitOperation = new InitOperation();/*initOperation.uid = INIT_OPERATION;*/
-			init.sessionUUID = _sessionUUID;
+			var init:TimeOperation = new TimeOperation();
 			init.origin = _origin;
 			init.addEventListener(OperationEvent.RESULT, onInitComplete);
 			init.addEventListener(OperationEvent.FAULT, onInitError);
-			init.createURL(null);
+			init.setURL();
 			return init;
 		}
 		
 		private function onInitComplete(event:OperationEvent):void {
 			var result:Object = event.data;
-			startTimeToken = result[0];
 			_initialized = true;
-			dispatchEvent(new PnEvent(PnEvent.INIT, startTimeToken));
+			dispatchEvent(new PnEvent(PnEvent.INIT,  result[0]));
 			destroyOperation(event.target as Operation);
 		}
 		
@@ -105,9 +115,13 @@ package com.pubnub {
 			instance.subscribe(channel);
 		}
 		
+		/**
+		 * 
+		 * @param	channel for MX subcribe use "ch1,ch2,ch3,ch4"
+		 */
 		public function subscribe(channel:String):void {
 			throwInit();
-			var subscribe:Subscribe = getSubscribe(channel);
+			/*var subscribe:Subscribe = getSubscribe(channel);
 			if (subscribe.connected) {
 				dispatchEvent(new PnEvent(	PnEvent.SUBSCRIBE, { 
 											result: [ -1, Errors.ALREADY_CONNECTED] },
@@ -126,7 +140,8 @@ package com.pubnub {
 			subscribe.addEventListener(SubscribeEvent.DISCONNECT, 	onSubscribe);
 			subscribe.addEventListener(SubscribeEvent.ERROR, 		onSubscribe);
 			subscribe.addEventListener(PnEvent.PRESENCE, 			dispatchEvent);
-			subscribe.connect(channel);
+			subscribe.connect(channel);*/
+			subscribeConnection.subcribe(channel);
 		}
 			
 		private function onSubscribe(e:SubscribeEvent):void {
@@ -144,10 +159,16 @@ package com.pubnub {
 				case SubscribeEvent.DISCONNECT:
 					status = OperationStatus.DISCONNECT;
 				break;
+				
+				case SubscribeEvent.PRESENCE:
+					status = OperationStatus.DISCONNECT;
+					dispatchEvent(new PnEvent(PnEvent.PRESENCE, e.data, e.data.channel));
+					return;
+				break;
 			
 				default: status = OperationStatus.ERROR;		
 			}
-			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, subscribe.channelName, status));
+			dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, e.data, e.data.channel, status));
 		}
 		
 		/*---------------UNSUBSCRIBE---------------*/
@@ -157,32 +178,26 @@ package com.pubnub {
 
 		public function unsubscribe(channel:String):void {
 			throwInit(); 
-			var subscribe:Subscribe = getSubscribeFromArray(channel);
+			subscribeConnection.unsubscribe(channel);
+			/*var subscribe:Subscribe = getSubscribeFromArray(channel);
 			if (subscribe) {
 				subscribe.disconnect();
 			}else {
 				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, [-1, 'Channel not found'], channel, OperationStatus.ERROR));
 			}
-			removeSubscribeEvents(subscribe);
+			removeSubscribeEvents(subscribe);*/
 		}
 		
-		private function removeSubscribeEvents(subscribe:Subscribe):void {
+		/*private function removeSubscribeEvents(subscribe:Subscribe):void {
 			if (!subscribe) return;
 			subscribe.removeEventListener(SubscribeEvent.CONNECT, onSubscribe);
 			subscribe.removeEventListener(SubscribeEvent.DATA, onSubscribe);
 			subscribe.removeEventListener(PnEvent.PRESENCE, dispatchEvent);
 			subscribe.removeEventListener(SubscribeEvent.DISCONNECT, onSubscribe);
 			subscribe.removeEventListener(SubscribeEvent.ERROR, onSubscribe);
-		}
+		}*/
 		
-		private function getSubscribeFromArray(name:String):Subscribe {
-			for each(var s:Subscribe in subscribes) {
-				if (s.channelName == name) {
-					return s;
-				}
-			}
-			return null;
-		}
+		
 		
 		public static function unsubscribeAll():void {
 			instance.unsubscribeAll();
@@ -190,9 +205,7 @@ package com.pubnub {
 		
 		public function unsubscribeAll():void {
 			throwInit();
-			for each(var i:Subscribe  in subscribes) {
-				unsubscribe(i.channelName);
-			}
+			subscribeConnection.unsubscribeAll();
 		}
 		
 		/*---------------DETAILED HISTORY---------------*/
@@ -227,11 +240,11 @@ package com.pubnub {
 		
 		private function createDetailedHistoryOperation(args:Object = null):Operation{
 			var history:HistoryOperation = new HistoryOperation();
-			history.cipherKey = cipherKey;
+			/*history.cipherKey = cipherKey;
 			history.origin = _origin;	
 			history.createURL(args);
 			history.addEventListener(OperationEvent.RESULT, onHistoryResult);
-			history.addEventListener(OperationEvent.FAULT, onHistoryFault);
+			history.addEventListener(OperationEvent.FAULT, onHistoryFault);*/
 			return history;
 		}
 		
@@ -263,14 +276,14 @@ package com.pubnub {
 		
 		private function createPublishOperation(args:Object = null):Operation{
 			var publish:PublishOperation = new PublishOperation();
-			publish.cipherKey = cipherKey;
+			/*publish.cipherKey = cipherKey;
 			publish.secretKey = secretKey;
 			publish.publishKey = _publishKey;
 			publish.subscribeKey = _subscribeKey;
 			publish.origin = _origin;	
 			publish.createURL(args);
 			publish.addEventListener(OperationEvent.RESULT, onPublishResult);
-			publish.addEventListener(OperationEvent.FAULT, onPublishFault);
+			publish.addEventListener(OperationEvent.FAULT, onPublishFault);*/
 			return publish;
 		}
 		
@@ -301,10 +314,10 @@ package com.pubnub {
 		}
 		
 		private function createTimeOperation(args:Object = null):Operation{
-			var time:Operation = new Operation();
+			var time:TimeOperation = new TimeOperation();
 			time.addEventListener(OperationEvent.RESULT, onTimeResult);
 			time.addEventListener(OperationEvent.FAULT, onTimeFault);
-			time.createURL({url: _origin + "/time/0"});
+			time.setURL();
 			return time;
 		}
 		
@@ -341,37 +354,23 @@ package com.pubnub {
 			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet"); 
 		}
 		
-		pn_internal function getSubscribe(name:String):Subscribe {
-			var result:Subscribe = getSubscribeFromArray(name);
-			if (!result) {
-				result = new Subscribe();
-				subscribes.push(result);
-			}
-			return result;
-		}
 		
 		public function destroy():void {
 			dispose();	
-			for each(var s:Subscribe  in subscribes) {
-				s.destroy();
-			}
+			subscribeConnection.destroy();
+			subscribeConnection = null;
 			operations = null;
-			subscribes = null;
+			subscribeConnection = null;
 			_initialized = false;
 			__instance = null;
 		}
 		
 		public function dispose():void {
 			unsubscribeAll();
-			
 			for each(var o:Operation in operations) {
 				o.destroy();
 			}
-			
-			for each(var s:Subscribe  in subscribes) {
-				s.disconnect();
-			}
-			subscribes.length = 0;
+			subscribeConnection.unsubscribeAll();
 			operations.length = 0;
 		}
 		
@@ -408,6 +407,7 @@ package com.pubnub {
 			for each(var op:Operation  in operations) {
 				op.origin = _origin;
 			}
+			if(subscribeConnection) subscribeConnection.origin = _origin;
 		}
 		
 		public function get ssl():Boolean {
