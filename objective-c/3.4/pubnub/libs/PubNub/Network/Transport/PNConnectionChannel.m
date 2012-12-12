@@ -59,12 +59,40 @@
             connectionIdentifier = PNConnectionIdentifiers.serviceConnection;
         }
         
+        
+        // Initialize connection to the PubNub services
         self.connection = [PNConnection connectionWithIdentifier:connectionIdentifier];
-        self.connection.delegate = self;
+        [self.connection assignDelegate:self];
+        [self.connection connect];
     }
     
     
     return self;
+}
+
+- (void)scheduleRequest:(PNBaseRequest *)request {
+    
+    [self.connection enqueueRequest:request];
+}
+
+- (void)unscheduleRequest:(PNBaseRequest *)request {
+    
+    [self.connection dequeueRequest:request];
+}
+
+- (void)clearScheduledRequestsQueue {
+    
+    [self.connection clearRequestsQueue];
+}
+
+
+#pragma mark - Memory management
+
+- (void)dealloc {
+    
+    [self.connection resignDelegate:self];
+    [PNConnection destroyConnection:self.connection];
+    self.connection = nil;
 }
 
 #pragma mark -

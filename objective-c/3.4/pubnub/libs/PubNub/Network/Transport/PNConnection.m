@@ -58,6 +58,16 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, strong) PNConfiguration *configuration;
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+// Stores list of connection delegates which would like to recieve
+// connection events
+@property (nonatomic, strong) NSMutableArray *delegates;
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+// Stores reference on connection delegate which also will
+// be packet provider for connection
+@property (nonatomic, weak) id<PNConnectionDelegate> delegate;
+#endif
+
 // Stores list of connection delegates
 
 // Array used as FIFO queue for packets which should
@@ -83,7 +93,7 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
  * Returns reference on dictionary of connections
  * (it will be created on runtime)
  */
-+ (NSDictionary *)connectionsPool;
++ (NSMutableDictionary *)connectionsPool;
 
 
 #pragma mark - Instance methods
@@ -219,6 +229,25 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
     return connection;
 }
 
++ (void)destroyConnection:(PNConnection *)connection {
+    
+    if (connection != nil) {
+        
+        // Iterate over the list of connection pool and remove
+        // connection from it
+        [[[[self class] connectionsPool] copy] enumerateKeysAndObjectsUsingBlock:^(id connectionIdentifier,
+                                                                                   id connectionFromPool,
+                                                                                   BOOL *connectionEnumeratorStop) {
+            
+            // Check whether found connection in connection pool or not
+            if ([connectionFromPool isEqual:connection]) {
+                
+                [[[self class] connectionsPool] removeObjectForKey:connectionIdentifier];
+            }
+        }];
+    }
+}
+
 + (void)closeAllConnections {
     
     // Check whether has some connection in pool or not
@@ -229,7 +258,7 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
     }
 }
 
-+ (NSDictionary *)connectionsPool {
++ (NSMutableDictionary *)connectionsPool {
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -259,14 +288,19 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
     return self;
 }
 
-- (void)setDelegate:(id<PNConnectionDelegate>)delegate {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
+
+#pragma mark - Requests queue management
+
+- (void)enqueueRequest:(PNBaseRequest *)request {
     
+}
+
+- (void)dequeueRequest:(PNBaseRequest *)request {
     
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+}
+
+- (void)clearRequestsQueue {
     
-    _delegate = delegate;
-#endif
 }
 
 
@@ -362,23 +396,41 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         // Configure default socket stream states
         self.writeStreamState = PNSocketStreamNotConfigured;
         self.readStreamState = PNSocketStreamNotConfigured;
-        [self configureReadStream:_socketReadStream];
-        [self configureWriteStream:_socketWriteStream];
-        if(self.readStreamState == PNSocketStreamReady && self.writeStreamState == PNSocketStreamReady) {
-            // TODO: CONNECT STREAMS
-        }
-        else {
+        [self configureReadStream:self.socketReadStream];
+        [self configureWriteStream:self.socketWriteStream];
+        if(self.readStreamState != PNSocketStreamReady || self.writeStreamState != PNSocketStreamReady) {
             
-            [self destroyReadStream:_socketReadStream];
-            [self destroyWriteStream:_socketWriteStream];
+            [self destroyReadStream:self.socketReadStream];
+            [self destroyWriteStream:self.socketWriteStream];
         }
     }
 }
 
 - (void)closeStreams {
     
-    [self destroyReadStream:_socketReadStream];
-    [self destroyWriteStream:_socketWriteStream];
+    [self destroyReadStream:self.socketReadStream];
+    [self destroyWriteStream:self.socketWriteStream];
+}
+
+- (BOOL)connect {
+    
+    BOOL isStreamOpened = NO;
+    
+    if(self.readStreamState == PNSocketStreamReady && self.writeStreamState == PNSocketStreamReady) {
+        
+        [self openReadStream:self.socketReadStream];
+        [self openWriteStream:self.socketWriteStream];
+        
+        isStreamOpened = YES;
+    }
+    
+    
+    return isStreamOpened;
+}
+
+- (void)closeConnection {
+    
+    [self closeStreams];
 }
 
 - (void)configureReadStream:(CFReadStreamRef)readStream {
@@ -535,12 +587,19 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         [[NSNotificationCenter defaultCenter] postNotificationName:kPNConnectionDidConnectNotication
                                                             object:self
                                                           userInfo:nil];
-        if ([self.delegate respondsToSelector:@selector(connection:connectedToHost:)]) {
+        
+        
+        [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
+                                                       NSUInteger delegateIdx,
+                                                       BOOL *delegateEnumeratorStop) {
             
-            [self.delegate performSelector:@selector(connection:connectedToHost:)
-                                withObject:self
-                                withObject:self.configuration.origin];
-        }
+            if ([delegate respondsToSelector:@selector(connection:connectedToHost:)]) {
+                
+                [delegate performSelector:@selector(connection:connectedToHost:)
+                               withObject:self
+                               withObject:self.configuration.origin];
+            }
+        }];
     }
 }
 
@@ -552,12 +611,18 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
                                                             object:self
                                                           userInfo:nil];
         
-        if ([self.delegate respondsToSelector:@selector(connection:disconnectedFromHost:)]) {
+        
+        [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
+                                                 NSUInteger delegateIdx,
+                                                 BOOL *delegateEnumeratorStop) {
             
-            [self.delegate performSelector:@selector(connection:disconnectedFromHost:)
-                                withObject:self
-                                withObject:self.configuration.origin];
-        }
+            if ([delegate respondsToSelector:@selector(connection:disconnectedFromHost:)]) {
+                
+                [delegate performSelector:@selector(connection:disconnectedFromHost:)
+                               withObject:self
+                               withObject:self.configuration.origin];
+            }
+        }];
     }
 }
 
@@ -598,23 +663,33 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         
         if(shouldCloseConnection) {
             
-            if ([self.delegate respondsToSelector:@selector(connection:closedWithError:)]) {
+            [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
+                                                           NSUInteger delegateIdx,
+                                                           BOOL *delegateEnumeratorStop) {
                 
-                [self.delegate performSelector:@selector(connection:closedWithError:)
-                                    withObject:self
-                                    withObject:errorObject];
-            }
+                if ([delegate respondsToSelector:@selector(connection:closedWithError:)]) {
+                    
+                    [delegate performSelector:@selector(connection:closedWithError:)
+                                   withObject:self
+                                   withObject:errorObject];
+                }
+            }];
             
             [self closeStreams];
         }
         else {
             
-            if ([self.delegate respondsToSelector:@selector(connection:didFailWithError:)]) {
+            [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
+                                                           NSUInteger delegateIdx,
+                                                           BOOL *delegateEnumeratorStop) {
                 
-                [self.delegate performSelector:@selector(connection:didFailWithError:)
-                                    withObject:self
-                                    withObject:errorObject];
-            }
+                if ([delegate respondsToSelector:@selector(connection:didFailWithError:)]) {
+                    
+                    [delegate performSelector:@selector(connection:didFailWithError:)
+                                   withObject:self
+                                   withObject:errorObject];
+                }
+            }];
         }
         
         
@@ -630,6 +705,26 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 
 #pragma mark - Misc methods
+
+- (void)assignDelegate:(id<PNConnectionDelegate>)delegate {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+    
+    [[self delegates] addObject:delegate];
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+    
+    _delegate = delegate;
+#endif
+}
+
+- (void)resignDelegate:(id<PNConnectionDelegate>)delegate {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+    
+    [[self delegates] removeObject:delegate];
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+    
+    _delegate = delegate;
+#endif
+}
 
 - (CFStreamClientContext)streamClientContext {
     
@@ -657,6 +752,29 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     
     return _streamSecuritySettings;
+}
+
+/**
+ * Reloading property to handle connection instance
+ * to have multiple delegates when running on iOS and
+ * only one delegate on Mac OS
+ */
+- (NSMutableArray *)delegates {
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _delegates = [NSMutableArray array];
+    });
+    
+    
+    return _delegates;
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+    return @[self.delegate];
+#endif
+    
+    
+    return nil;
 }
 
 - (void)retrieveSystemProxySettings {
@@ -697,7 +815,11 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     // Closing all streams and free up resources
     // which was allocated for their support
     [self closeStreams];
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+    _delegates = nil;
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED
     _delegate = nil;
+#endif
     CFRelease(_proxySettings), _proxySettings = NULL;
     CFRelease(_streamSecuritySettings), _streamSecuritySettings = NULL;
 }

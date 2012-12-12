@@ -37,4 +37,19 @@ typedef enum _PNSocketStreamState {
     PNSocketStreamError
 } PNSocketStreamState;
 
+
+// This enum represents list of possible
+// presence event types
+typedef enum _PNPresenceEventType {
+    
+    // New person joined to the channel
+    PNPresenceEventJoin,
+    
+    // Person leaved channel by its own
+    PNPresenceEventLeave,
+    
+    // Person leaved channel because of timeout
+    PNPresenceEventTimeout
+} PNPresenceEventType;
+
 #endif

@@ -12,7 +12,7 @@
 
 #import "PNConfiguration.h"
 #import "PNDefaultConfiguration.h"
-#import "PNContants.h"
+#import "PNConstants.h"
 #import "PNMacro.h"
 
 
@@ -92,14 +92,11 @@
         self.cipherKey = cipherKey?cipherKey:@"";
         self.useSecureConnection = shouldUseSecureConnection;
      
-        
-#ifndef DEBUG
         // Checking whether user changed origin host from default
         // or not
         if ([self.origin isEqualToString:kPNDefaultOriginHost]) {
-            PNLog(@"WARNING: Please change origin host for production purposes");
+            PNLog(@"\n{WARN} Before running in production, please contact support@pubnub.com for your custom origin.\nPlease set the origin from %@ to IUNDERSTAND.pubnub.com to remove this warning.", self.origin);
         }
-#endif
     }
     
     

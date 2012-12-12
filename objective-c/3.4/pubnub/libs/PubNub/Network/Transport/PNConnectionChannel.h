@@ -16,6 +16,11 @@
 #import "PNConnectionDelegate.h"
 
 
+#pragma mark Class forward
+
+@class PNBaseRequest;
+
+
 @interface PNConnectionChannel : NSObject <PNConnectionDelegate>
 
 
@@ -35,6 +40,13 @@
  * initiate socket connection with streams
  */
 - (id)initWithType:(PNConnectionChannelType)connectionChannelType;
+
+/**
+ * Managing requests queue
+ */
+- (void)scheduleRequest:(PNBaseRequest *)request;
+- (void)unscheduleRequest:(PNBaseRequest *)request;
+- (void)clearScheduledRequestsQueue;
 
 #pragma mark -
 
