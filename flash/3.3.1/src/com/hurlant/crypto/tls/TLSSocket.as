@@ -125,10 +125,10 @@ package com.hurlant.crypto.tls {
 		public function close():void {
 			_ready = false;
 			_engine.close();
-			_socket.flush();
+			//_socket.flush();
 			_socket.close();
 		}
-		
+	
 		public function connect(host:String, port:int, config:TLSConfig = null):void {
 			init(new Socket, config, host);
 			_socket.connect(host, port);

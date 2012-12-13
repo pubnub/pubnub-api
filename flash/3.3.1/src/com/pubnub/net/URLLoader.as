@@ -68,7 +68,7 @@ package com.pubnub.net {
 		}
 		
 		public function close():void {
-			trace('*CLOSE*');
+			//trace('*CLOSE* ' + socket);
 			try {
 				normalSocket.close();
 			}catch (err:IOError){
@@ -76,7 +76,9 @@ package com.pubnub.net {
 			}
 			
 			try {
-				secureSocket.close();
+				if (socket == secureSocket) {
+					secureSocket.close();
+				}
 			}catch (err:IOError){
 				// something wrong
 			}

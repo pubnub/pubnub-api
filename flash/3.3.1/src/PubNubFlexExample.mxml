@@ -24,8 +24,8 @@
 			import utils.*;
 			
         [Bindable]
-        public var channel:String = 'test_channel';
-        //public var channel:String = 'my_channel,a,b,c';
+        public var channel:String = 'test_channel_a,test_channel_b';
+        //public var channel:String = 'test_channel';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
@@ -47,7 +47,7 @@
         public var publishMessageText:String = 'hey';
         //public var publishMessageText:String = '{"text":"hey"}';
 		
-        public var ssl:Boolean = true;
+        public var ssl:Boolean = false;
 
         private var consoleCounter:int = 1;
         private var perfomance:Perfomance;
@@ -91,14 +91,6 @@
         }
 
         private function onSubscribeClick(e:MouseEvent):void {
-            /*** Non MX Support
-             var channels:Array = channel.split(',');
-            for each(var i:String  in channels) {
-                Pn.subscribe(i);
-            }
-            */
-
-            /*** MX Support */
              Pn.subscribe(channel);
         }
 
@@ -124,7 +116,7 @@
         }
 		
 		private function onPresence(e:PnEvent):void {
-			 callExternalInterface("console.log", ("Presence, channel : " + e.channel + ', result : ' + e.data));
+			 callExternalInterface("console.log", ("Presence : " + PnJSON.stringify(e.data)));
 		}
 
         protected function OnClearConsoleBtnClick(event:MouseEvent):void{
@@ -163,6 +155,11 @@
             // TODO Auto-generated method stub
             Pn.unsubscribeAll();
         }
+			
+		protected function unsubscribeChannel_clickHandler(event:MouseEvent):void{
+				// TODO Auto-generated method stub
+				Pn.unsubscribe(this.unsubChannelName.text);
+		}
 
         private function callExternalInterface(functionName:String, ...rest):void {
             if (ExternalInterface.available) {
@@ -245,8 +242,11 @@
         </s:NavigatorContent>
         <s:NavigatorContent width="100%" height="100%" label="Subscribe (2)">
             <s:Button id="subscribeBtn" x="10" y="5" label="Subscribe" click="onSubscribeClick(event)" />
-            <s:Button id="unsubscribeBtn" x="10" y="35" label="UnSubscribe"
+            <s:Button id="unsubscribeBtn" x="10" y="35" label="Unsubscribe all"
                       click="unsubscribeBtn_clickHandler(event)"/>
+			<s:Button id="unsubscribeChannelBtn" x="9" y="69" label="Unsubscribe channel"
+					  click="unsubscribeChannel_clickHandler(event)"/>
+			<s:TextInput id="unsubChannelName" x="156" y="69" width="214"/>
         </s:NavigatorContent>
         <s:NavigatorContent width="100%" height="100%" label="DetailedHistory (3)">
 

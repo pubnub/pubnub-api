@@ -21,10 +21,10 @@ package com.pubnub.connection {
 		protected function init():void {
 			queue = [];
 			loader = new URLLoader();
-			loader.addEventListener(URLLoaderEvent.COMPLETE, onComplete)
-			loader.addEventListener(URLLoaderEvent.ERROR, onError);
-			loader.addEventListener(Event.CONNECT, onConnect);
-			loader.addEventListener(Event.CLOSE, onClose);
+			loader.addEventListener(URLLoaderEvent.COMPLETE, 	onComplete)
+			loader.addEventListener(URLLoaderEvent.ERROR, 		onError);
+			loader.addEventListener(Event.CONNECT, 				onConnect);
+			loader.addEventListener(Event.CLOSE, 				onClose);
 		}
 		
 		protected function onClose(e:Event):void {
@@ -62,9 +62,9 @@ package com.pubnub.connection {
 		public function destroy():void {
 			if (_destroyed) return;
 			loader.removeEventListener(URLLoaderEvent.COMPLETE, onComplete)
-			loader.removeEventListener(URLLoaderEvent.ERROR, onError);
-			loader.removeEventListener(Event.CONNECT, onConnect);
-			loader.removeEventListener(Event.CLOSE, onClose);
+			loader.removeEventListener(URLLoaderEvent.ERROR, 	onError);
+			loader.removeEventListener(Event.CONNECT, 			onConnect);
+			loader.removeEventListener(Event.CLOSE, 			onClose);
 			close();
 			loader.destroy();
 			loader = null;
