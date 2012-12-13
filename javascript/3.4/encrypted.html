@@ -1,0 +1,81 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<h1>Secure Chat </h1>
+
+<style>
+    #chat_box {
+        width: 90%;
+        margin: 10px;
+        padding: 10px;
+        min-height: 300px;
+        background: rgb(232,232,232);
+    }
+    #chat_input {
+        margin: 10px;
+        width: 90%;
+    }
+</style>
+
+<div id='chat_box'></div>
+<form id="chat_form">
+    <input type="text" id='chat_input'/>
+    <input type="submit" val='send' id='send'/>
+</form>
+
+<script src="http://cdn.pubnub.com/pubnub-3.4.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="crypto/gibberish-aes.js"></script>
+<script src="crypto/encrypt-pubnub.js"></script>
+
+<script>(function(){
+// Encryption Key (Normally you will get from a Password Database)
+    var cipher_key = "enigma";
+
+// Create Secure Connection
+    var secure_pubnub = PUBNUB.secure({
+        publish_key   : "demo",
+        subscribe_key : "demo",
+        origin        : "pubsub.pubnub.com",
+        ssl           : true,
+        cipher_key    : cipher_key
+    });
+
+// Secure Connection
+    secure_pubnub.subscribe({
+        channel    : "secure_chat",
+        callback   : function(message) {
+            if (message.name) {
+                PUBNUB.events.fire(message.name, message.data);
+            }
+        }
+    });
+
+// Send Message on Submit
+    $('#chat_form').submit( function(e) {
+        secure_pubnub.publish({
+            channel  : "secure_chat",
+            message  : {
+                name : 'secure_chat_message' ,
+                data : { 'message' : $("#chat_input").val() }
+            },
+            callback : function(info) {
+                if (info && info[0]) {
+                    // Clear Successfully Sent Message
+                    $("#chat_input").val("");
+                }
+            }
+        });
+
+        e.preventDefault();
+        return false;
+    });
+
+// Update Display (DOM)
+    PUBNUB.events.bind('secure_chat_message', function(data) {
+        $('#chat_box').append("<p>" + data.message + "</p>");
+    });
+
+})();
+</script>
