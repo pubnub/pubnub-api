@@ -44,7 +44,7 @@
 
 // Secure Connection
     secure_pubnub.subscribe({
-        channel    : "secure_chat",
+        channel    : "hello_world",
         callback   : function(message) {
             if (message.name) {
                 PUBNUB.events.fire(message.name, message.data);
@@ -55,7 +55,7 @@
 // Send Message on Submit
     $('#chat_form').submit( function(e) {
         secure_pubnub.publish({
-            channel  : "secure_chat",
+            channel  : "hello_world",
             message  : {
                 name : 'secure_chat_message' ,
                 data : { 'message' : $("#chat_input").val() }

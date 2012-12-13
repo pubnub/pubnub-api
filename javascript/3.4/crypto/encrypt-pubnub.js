@@ -19,9 +19,11 @@ PUBNUB.secure = (function () {
 
     function decrypt(data) {
         try {
-            return JSON.parse(
-                sjcl.decrypt(cipher_key, data)
-            );
+            var binary_enc = GibberishAES.Base64.decode(data);
+            var json_plain = GibberishAES.rawDecrypt(binary_enc, cipher_key, iv, false);
+            var plaintext = JSON.parse(json_plain);
+
+            return plaintext;
         }
         catch (e) {
             return null;

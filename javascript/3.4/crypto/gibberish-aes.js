@@ -982,6 +982,7 @@ var GibberishAES = (function(){
         "Decrypt":Decrypt,
         "s2a":s2a,
         "rawEncrypt":rawEncrypt,
+        "rawDecrypt":rawDecrypt,
         "dec":dec,
         "openSSLKey":openSSLKey,
         "a2h":a2h,
