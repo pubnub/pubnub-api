@@ -5,24 +5,32 @@
 <h1>Secure Chat </h1>
 
 <style>
-    #chat_box {
-        width: 90%;
-        margin: 10px;
-        padding: 10px;
-        min-height: 300px;
-        background: rgb(232,232,232);
-    }
     #chat_input {
         margin: 10px;
         width: 90%;
     }
+
+    div.scroll {
+        margin: 10px;
+        padding: 10px;
+        height: 200px;
+        width: 800px;
+        overflow: auto;
+        border: 1px solid #666;
+        background: rgb(232,232,232);
+        padding: 8px;
+    }
+
 </style>
 
-<div id='chat_box'></div>
+<div class='scroll' id='chat_box'></div>
 <form id="chat_form">
     <input type="text" id='chat_input'/>
-    <input type="submit" val='send' id='send'/>
+    <input type="submit" value='Send Encrypted Message' id='send'/>
 </form>
+
+<button onclick='$("#chat_box").html("")'>Clear All</button>
+
 
 <script src="http://cdn.pubnub.com/pubnub-3.4.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -37,19 +45,13 @@
     var secure_pubnub = PUBNUB.secure({
         publish_key   : "demo",
         subscribe_key : "demo",
-        origin        : "pubsub.pubnub.com",
-        ssl           : true,
         cipher_key    : cipher_key
     });
 
 // Secure Connection
     secure_pubnub.subscribe({
         channel    : "hello_world",
-        callback   : function(message) {
-            if (message.name) {
-                PUBNUB.events.fire(message.name, message.data);
-            }
-        }
+        callback   : display_output
     });
 
 // Send Message on Submit
@@ -72,10 +74,18 @@
         return false;
     });
 
-// Update Display (DOM)
-    PUBNUB.events.bind('secure_chat_message', function(data) {
-        $('#chat_box').append("<p>" + data.message + "</p>");
-    });
+     function display_output(message){
+
+         time = new Date;
+         h = time.getHours();
+         m = time.getMinutes();
+         s = time.getSeconds();
+         ms = time.getMilliseconds();
+
+         formatted_time = h + ":" + m + ":" + s + ":" + ms;
+
+         $('#chat_box').append("<p>" + formatted_time + "<br/>" + message + "</p>");
+         $("#chat_box").scrollTop($("#chat_box")[0].scrollHeight);        }
 
 })();
 </script>
