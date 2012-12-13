@@ -29,6 +29,11 @@
 // Stores reference on current client identifier
 @property (nonatomic, strong) NSString *clientIdentifier;
 
+// Stores unique client intialization session identifier
+// (created each time when PubNub stack is configured
+// after application launch)
+@property (nonatomic, strong) NSString *launchSessionIdentifier;
+
 
 #pragma mark -
 

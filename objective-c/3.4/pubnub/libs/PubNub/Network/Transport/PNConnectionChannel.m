@@ -13,6 +13,7 @@
 
 #import "PNConnectionChannel.h"
 #import "PNConnection+Protected.h"
+#import "PNRequestsQueue.h"
 #import "PNConnection.h"
 
 
@@ -27,6 +28,11 @@
 // as transport layer to send messages to the
 // PubNub service
 @property (nonatomic, strong) PNConnection *connection;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED
+// Stores reference on array of scheduled requests
+@property (nonatomic, strong) PNRequestsQueue *requestsQueue;
+#endif
 
 
 @end
@@ -63,6 +69,12 @@
         // Initialize connection to the PubNub services
         self.connection = [PNConnection connectionWithIdentifier:connectionIdentifier];
         [self.connection assignDelegate:self];
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+        self.connection.dataSource = [PNRequestsQueue sharedInstance];
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+        self.requestsQueue = [PNRequestsQueue new];
+        self.connection.dataSource = self.requestsQueue;
+#endif  
         [self.connection connect];
     }
     
@@ -70,29 +82,54 @@
     return self;
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+
 - (void)scheduleRequest:(PNBaseRequest *)request {
     
-    [self.connection enqueueRequest:request];
+    [[PNRequestsQueue sharedInstance] enqueueRequest:request];
 }
 
 - (void)unscheduleRequest:(PNBaseRequest *)request {
     
-    [self.connection dequeueRequest:request];
+    [[PNRequestsQueue sharedInstance] removeRequest:request];
 }
 
 - (void)clearScheduledRequestsQueue {
     
-    [self.connection clearRequestsQueue];
+    [[PNRequestsQueue sharedInstance] removeAllRequests];
 }
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+- (void)scheduleRequest:(PNBaseRequest *)request {
+    
+    [self.requestsQueue enqueueRequest:request];
+}
+
+- (void)unscheduleRequest:(PNBaseRequest *)request {
+    
+    [self.requestsQueue removeRequest:request];
+}
+
+- (void)clearScheduledRequestsQueue {
+    
+    [self.requestsQueue removeAllRequests];
+}
+#endif
+
+
+#pragma mark - Connection delegate methods
 
 
 #pragma mark - Memory management
 
 - (void)dealloc {
     
+    self.connection.dataSource = nil;
     [self.connection resignDelegate:self];
     [PNConnection destroyConnection:self.connection];
     self.connection = nil;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED
+    self.requestsQueue = nil;
+#endif
 }
 
 #pragma mark -

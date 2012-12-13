@@ -16,12 +16,14 @@
 #import "PNConnectionDelegate.h"
 
 
-#pragma mark Class forward
-
-@class PNBaseRequest;
-
-
 @interface PNConnection : NSObject
+
+
+#pragma mark Properties
+
+// Reference on object which will provide
+// requests pool for connection
+@property (nonatomic, unsafe_unretained) id<PNConnectionDataSource> dataSource;
 
 
 #pragma mark - Class methods
@@ -53,24 +55,25 @@
 - (void)resignDelegate:(id<PNConnectionDelegate>)delegate;
 
 
-#pragma mark - Requests queue management
+#pragma mark - Requests queue execution management
 
 /**
- * Place provided request into FIFO queue
+ * Inform connection to schedule requests queue 
+ * processing.
  */
-- (void)enqueueRequest:(PNBaseRequest *)request;
+- (void)scheduleNextRequestExecution;
 
 /**
- * Remove specified request from FIF queue
+ * Inform connection to stop requests queue 
+ * processing (last active request will be sent)
  */
-- (void)dequeueRequest:(PNBaseRequest *)request;
-
-- (void)clearRequestsQueue;
+- (void)unscheduleRequestsExecution;
 
 
 #pragma mark - Connection management
 
 - (BOOL)connect;
+- (BOOL)isConnected;
 
 /**
  * Close socket and streams on particular 

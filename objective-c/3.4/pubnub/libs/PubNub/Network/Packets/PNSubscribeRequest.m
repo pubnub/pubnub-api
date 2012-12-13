@@ -90,7 +90,7 @@
             self.channelsList,
             PNServiceResponseCallbacks.subscriptionCallback,
             self.updateTimeToken,
-            [PubNub sharedInstance].clientIdentifier];
+            [PubNub clientIdentifier]];
 }
 
 @end

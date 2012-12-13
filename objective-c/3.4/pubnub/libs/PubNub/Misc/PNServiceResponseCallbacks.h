@@ -18,6 +18,11 @@
 struct PNServiceResponseCallbacksStruct {
     
     // Name of the function which is used to
+    // retrieve message which is used by
+    // network profiler for latency calculation
+    __unsafe_unretained NSString *latencyMeasureMessage;
+    
+    // Name of the function which is used to
     // retrieve current time token from
     // PubNub service
     __unsafe_unretained NSString *timeTokenCallback;
@@ -30,6 +35,7 @@ struct PNServiceResponseCallbacksStruct {
 
 static struct PNServiceResponseCallbacksStruct PNServiceResponseCallbacks = {
     
+    .latencyMeasureMessage = @"latencyMeasure",
     .timeTokenCallback = @"timeToken",
     .subscriptionCallback = @"subscription"
 };

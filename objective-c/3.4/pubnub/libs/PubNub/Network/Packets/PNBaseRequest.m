@@ -26,6 +26,18 @@
 
 #pragma mark - Instance methods
 
+- (id)init {
+    
+    // Check whetehr initialization is successful or not
+    if((self = [super init])) {
+        
+        self.identifier = newUniqueIdentifier();
+    }
+    
+    
+    return self;
+}
+
 - (NSString *)resourcePath {
     
     PNLog(@"{WARN} THIS METHOD SHOULD BE RELOADED IN SUBCLASS");
@@ -35,10 +47,11 @@
 
 - (id)serializedMessage {
     
-    return [NSString stringWithFormat:@"GET %@ HTTP/1.1\r\nHost: %@\r\nV: %@\r\nUser-Agent: Obj-C-iOS\r\nAccept: */*\r\n\r\n",
+    return [NSString stringWithFormat:@"GET %@ HTTP/1.1\r\nHost: %@\r\nV: %@\r\nUser-Agent: %@\r\nAccept: */*\r\n\r\n",
             [self resourcePath],
             [[PubNub sharedInstance] configuration].origin,
-            kPNClientVersion];
+            kPNClientVersion,
+            kPNClientName];
 }
 
 #pragma mark -

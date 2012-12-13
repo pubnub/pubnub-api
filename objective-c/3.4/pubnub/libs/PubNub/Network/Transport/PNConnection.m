@@ -68,11 +68,9 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 @property (nonatomic, weak) id<PNConnectionDelegate> delegate;
 #endif
 
-// Stores list of connection delegates
-
-// Array used as FIFO queue for packets which should
-// be sent to the PubNub services over socket
-@property (nonatomic, strong) NSMutableArray *writeRequestsQueue;
+// Stores flag of whether connection should process next
+// request from queue or not
+@property (nonatomic, assign, getter = shouldProcessNextRequest) BOOL processNextRequest;
 
 // Stores reference on binary data object which stores
 // server response from socket read stream
@@ -280,7 +278,6 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
         
         // Perform connection initialization
         self.configuration = configuration;
-        self.writeRequestsQueue = [NSMutableArray array];
         [self prepareStreams];
     }
     
@@ -289,18 +286,28 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 }
 
 
-#pragma mark - Requests queue management
+#pragma mark - Requests queue execution management
 
-- (void)enqueueRequest:(PNBaseRequest *)request {
+- (void)scheduleNextRequestExecution {
     
+    self.processNextRequest = YES;
+    
+    
+    if(self.dataSource) {
+        
+        // Check whether data source can provide some
+        // data right after connection is established
+        // or not
+        if ([self.dataSource hasDataForConnection:self]) {
+            
+            
+        }
+    }
 }
 
-- (void)dequeueRequest:(PNBaseRequest *)request {
+- (void)unscheduleRequestsExecution {
     
-}
-
-- (void)clearRequestsQueue {
-    
+    self.processNextRequest = NO;
 }
 
 
@@ -426,6 +433,11 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     
     return isStreamOpened;
+}
+
+- (BOOL)isConnected {
+    
+    return (self.readStreamState == PNSocketStreamConnected && self.writeStreamState == PNSocketStreamConnected);
 }
 
 - (void)closeConnection {
@@ -559,9 +571,6 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     BOOL shouldCloseStream = self.writeStreamState == PNSocketStreamConnected;
     self.writeStreamState = PNSocketStreamNotConfigured;
     
-    // Clean up write queue
-    self.writeRequestsQueue = [NSMutableArray array];
-    
     
     // Unschedule write stream from runloop
     CFWriteStreamUnscheduleFromRunLoop(writeStream, CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
@@ -600,6 +609,10 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
                                withObject:self.configuration.origin];
             }
         }];
+        
+        
+        // Try to schedule request queue processing
+        [self scheduleNextRequestExecution];
     }
 }
 

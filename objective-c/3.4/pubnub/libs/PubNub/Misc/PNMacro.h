@@ -23,8 +23,8 @@
 #endif
 
 
-static NSString* newUniqueClientIdentifier();
-static NSString* newUniqueClientIdentifier() {
+static NSString* newUniqueIdentifier();
+static NSString* newUniqueIdentifier() {
 
     // Generating new unique identifier
     CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);

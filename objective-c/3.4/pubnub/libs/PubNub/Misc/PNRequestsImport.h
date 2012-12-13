@@ -15,6 +15,7 @@
 #define PNRequestsImport_h
 
 #import "PNBaseRequest.h"
-#import "PNSubscriptionRequest.h"
+#import "PNSubscribeRequest.h"
+#import "PNLeaveRequest.h"
 
 #endif // PNRequestsImport_h

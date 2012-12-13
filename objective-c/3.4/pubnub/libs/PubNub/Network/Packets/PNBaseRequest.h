@@ -17,6 +17,15 @@
 @interface PNBaseRequest : NSObject
 
 
+#pragma mark Properties
+
+@property (nonatomic, strong) NSString *identifier;
+
+// Stores whether this request is currently
+// processed by connection or not
+@property (nonatomic, assign) BOOL processing;
+
+
 #pragma mark - Instance methods
 
 /**

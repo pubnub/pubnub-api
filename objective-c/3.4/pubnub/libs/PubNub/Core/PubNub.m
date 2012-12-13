@@ -14,6 +14,7 @@
 
 #import "PubNub.h"
 #import "PubNub+Protected.h"
+#import "PNMacro.h"
 
 
 #pragma mark Static
@@ -46,7 +47,7 @@ static PubNub *_sharedInstance = nil;
 @property (nonatomic, strong) NSString *clientIdentifier;
 
 // Stores reference on client delegate
-@property (nonatomic, weak) id<PNDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id<PNDelegate> delegate;
 
 
 @end
@@ -77,6 +78,16 @@ static PubNub *_sharedInstance = nil;
 + (void)connect {
     
     NSAssert([self sharedInstance].configuration!=nil, @"{ERROR} PubNub client configuration is required before connection.");
+    
+    
+    // Check whether user identifier was provided by
+    // user or not
+    if(![self sharedInstance].isUserProvidedClientIdentifier) {
+        
+        // Change user identifier before connect to the
+        // PubNub services
+        [self sharedInstance].clientIdentifier = newUniqueIdentifier();
+    }
 }
 
 
@@ -141,6 +152,21 @@ static PubNub *_sharedInstance = nil;
     
     
     return [self sharedInstance].clientIdentifier;
+}
+
+
+#pragma mark - Instance methods
+
+- (id)init {
+    
+    // Check whether intialization successful or not
+    if((self = [super init])) {
+        
+        self.launchSessionIdentifier = newUniqueIdentifier();
+    }
+    
+    
+    return self;
 }
 
 #pragma mark -

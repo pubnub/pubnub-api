@@ -47,7 +47,7 @@
 
 + (NSUInteger)numberOfEventsInResponse:(id)presenceResponse {
     
-    
+    return 0;
 }
 
 

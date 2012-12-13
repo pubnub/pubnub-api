@@ -87,6 +87,10 @@
 + (NSString *)clientIdentifier;
 
 
+#pragma mark - Channels management
+
+
+
 #pragma mark -
 
 

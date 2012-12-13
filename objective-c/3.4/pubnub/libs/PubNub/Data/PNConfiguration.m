@@ -88,7 +88,7 @@
         self.origin = ([originHostName length] > 0)?originHostName:kPNDefaultOriginHost;
         self.publishKey = publishKey?publishKey:@"";
         self.subscriptionKey = subscribeKey?subscribeKey:@"";
-        self.secretKey = secretKey?secretKey:@"";
+        self.secretKey = secretKey?secretKey:@"0";
         self.cipherKey = cipherKey?cipherKey:@"";
         self.useSecureConnection = shouldUseSecureConnection;
      

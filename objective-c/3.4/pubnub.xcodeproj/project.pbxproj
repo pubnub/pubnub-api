@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7902B9E01679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9DF1679E72000DE2BBB /* PNLatencyMeasureRequest.m */; };
+		7902B9E11679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9DF1679E72000DE2BBB /* PNLatencyMeasureRequest.m */; };
+		7902B9E51679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9E41679EEFC00DE2BBB /* PNRequestsQueue.m */; };
+		7902B9E61679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9E41679EEFC00DE2BBB /* PNRequestsQueue.m */; };
 		792C1F4016777BD50054E18E /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 792C1F3F16777BD40054E18E /* CFNetwork.framework */; };
 		792C1F5916788B370054E18E /* PNChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 792C1F5616788B370054E18E /* PNChannel.m */; };
 		792C1F5A16788B370054E18E /* PNChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 792C1F5616788B370054E18E /* PNChannel.m */; };
@@ -83,6 +87,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7902B9DE1679E72000DE2BBB /* PNLatencyMeasureRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNLatencyMeasureRequest.h; sourceTree = "<group>"; };
+		7902B9DF1679E72000DE2BBB /* PNLatencyMeasureRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNLatencyMeasureRequest.m; sourceTree = "<group>"; };
+		7902B9E31679EEFC00DE2BBB /* PNRequestsQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNRequestsQueue.h; sourceTree = "<group>"; };
+		7902B9E41679EEFC00DE2BBB /* PNRequestsQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNRequestsQueue.m; sourceTree = "<group>"; };
 		792C1F3F16777BD40054E18E /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		792C1F5516788B370054E18E /* PNChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNChannel.h; sourceTree = "<group>"; };
 		792C1F5616788B370054E18E /* PNChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNChannel.m; sourceTree = "<group>"; };
@@ -226,6 +234,8 @@
 			children = (
 				792C1F76167897210054E18E /* PNBaseRequest.h */,
 				792C1F77167897210054E18E /* PNBaseRequest.m */,
+				7902B9DE1679E72000DE2BBB /* PNLatencyMeasureRequest.h */,
+				7902B9DF1679E72000DE2BBB /* PNLatencyMeasureRequest.m */,
 				792C1FA91678D5C20054E18E /* PNTimeTokenRequest.h */,
 				792C1FAA1678D5C40054E18E /* PNTimeTokenRequest.m */,
 				792C1F7A1678B29F0054E18E /* PNSubscribeRequest.h */,
@@ -488,6 +498,8 @@
 				792C1F5416788B240054E18E /* Channels */,
 				7966DFC2166FD60900E07B40 /* PNJSONSerialization.h */,
 				7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */,
+				7902B9E31679EEFC00DE2BBB /* PNRequestsQueue.h */,
+				7902B9E41679EEFC00DE2BBB /* PNRequestsQueue.m */,
 				79C322A8166E0568006DB535 /* PNConfiguration.h */,
 				79C322A9166E0568006DB535 /* PNConfiguration.m */,
 				79A8B5C9166FB69800C64BCF /* PNError.h */,
@@ -646,6 +658,8 @@
 				792C1F7C1678B29F0054E18E /* PNSubscribeRequest.m in Sources */,
 				792C1F821678C0EF0054E18E /* PNLeaveRequest.m in Sources */,
 				792C1FAB1678D5C50054E18E /* PNTimeTokenRequest.m in Sources */,
+				7902B9E01679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */,
+				7902B9E51679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -675,6 +689,8 @@
 				792C1F7D1678B29F0054E18E /* PNSubscribeRequest.m in Sources */,
 				792C1F831678C0EF0054E18E /* PNLeaveRequest.m in Sources */,
 				792C1FAC1678D5C50054E18E /* PNTimeTokenRequest.m in Sources */,
+				7902B9E11679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */,
+				7902B9E61679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -756,6 +772,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "pubnub/pubnub-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/pubnub/Resources/General/pubnub-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -767,6 +784,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "pubnub/pubnub-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/pubnub/Resources/General/pubnub-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

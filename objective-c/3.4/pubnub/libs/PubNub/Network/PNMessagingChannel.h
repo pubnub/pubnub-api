@@ -26,20 +26,50 @@
 
 #pragma mark - Instance methods
 
-#pragma mark - Presence management
-
-/**
- * Send leave event to all channels to which
- * client subscribed at this moment
- */
-- (void)leave;
-
-
 #pragma mark - Channels management
 
+/**
+ * Will subscribe client for another one channel.
+ * This request will add provided channel to the
+ * list of channels on which client already subscribed.
+ * 
+ * Warning: if client connected to the PubNub service
+ *          the this method will force client to send
+ *          "leave" command to all channels on which
+ *          client subscribed and then re-subscribe
+ *          with new channels list (this is required
+ *          so presence event will trigger on specified
+ *          channel)
+ */
 - (void)subscribeForChannel:(PNChannel *)channel;
+
+/**
+ * Will unsubscribe client from specified channel.
+ * Specified channel will be removed from the list
+ * of subscribed channels.
+ */
 - (void)unsubscribeFromChannel:(PNChannel *)channel;
+
+/**
+ * Will subscribe client for set of channels.
+ * This request will add provided channels set to the
+ * list of channels on which client already subscribed.
+ *
+ * Warning: if client connected to the PubNub service 
+ *          the this method will force client to send
+ *          "leave" command to all channels on which 
+ *          client subscribed and then re-subscribe 
+ *          with new channels list (this is required 
+ *          so presence event will trigger on specified
+ *          channels)
+ */
 - (void)subscribeForChannels:(NSArray *)channels;
+
+/**
+ * Will unsubscribe client from set of channels.
+ * Specified set of channels will be removed from 
+ * the list of subscribed channels.
+ */
 - (void)unsubscribeFromChannels:(NSArray *)channels;
 
 

@@ -59,7 +59,7 @@
     // Check whether initialization successful or not
     if((self = [super init])) {
         
-        self.channelsList = [channels valueForKey:@"name"];
+        self.channelsList = [[channels valueForKey:@"name"] componentsJoinedByString:@","];
     }
     
     
@@ -72,7 +72,7 @@
             kPNRequestAPIVersionPrefix,
             [PubNub sharedInstance].configuration.subscriptionKey,
             self.channelsList,
-            [PubNub sharedInstance].clientIdentifier];
+            [PubNub clientIdentifier]];
 }
 
 #pragma mark -
