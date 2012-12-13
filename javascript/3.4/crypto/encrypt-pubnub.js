@@ -11,9 +11,10 @@ PUBNUB.secure = (function () {
 
     function encrypt(data) {
 
-        hex_message = GibberishAES.s2a(JSON.stringify(data));
-        return data && GibberishAES.rawEncrypt(hex_message, cipher_key, iv)
-            || data;
+        var hex_message = GibberishAES.s2a(JSON.stringify(data.data.message));
+        var encryptedHexArray = GibberishAES.rawEncrypt(hex_message, cipher_key, iv);
+        var base_64_encrypted = GibberishAES.Base64.encode(encryptedHexArray);
+        return base_64_encrypted || data.data.message;
     }
 
     function decrypt(data) {
@@ -30,7 +31,7 @@ PUBNUB.secure = (function () {
 
     return function (setup) {
 
-        cipher_key = SHA256(setup.cipher_key).slice(0,32);
+        cipher_key = GibberishAES.s2a(SHA256(setup.cipher_key).slice(0,32));
 
         var pubnub = PUBNUB.init(setup);
 
