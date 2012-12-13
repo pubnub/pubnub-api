@@ -1,19 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub-Console/Pubnub.cs">
-    <Files>
-      <File FileName="PubNubTest/EncryptionTests.cs" Line="103" Column="1" />
-      <File FileName="PubNub-Console/app.config" Line="8" Column="35" />
-      <File FileName="PubNubTest/app.config" Line="8" Column="56" />
-      <File FileName="PubNub-Console/Pubnub.cs" Line="116" Column="46" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="PubNub-Messaging" expanded="True">
-            <Node name="Pubnub.cs" selected="True" />
+          <Node name="PubNub-Messaging" expanded="True" />
+          <Node name="PubNub-Messaging.Tests" expanded="True">
+            <Node name="WhenSubscribedToAChannel.cs" selected="True" />
           </Node>
-          <Node name="PubNub-Messaging.Tests" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">
@@ -40,8 +34,8 @@
         <State expanded="True">
           <Node name="PubNub-Messaging.Tests" expanded="True">
             <Node name="PubNubTest" expanded="True">
-              <Node name="WhenAMessageIsPublished" expanded="True" />
               <Node name="WhenDetailedHistoryIsRequested" expanded="True" />
+              <Node name="WhenGetRequestServerTime" expanded="True" />
               <Node name="WhenSubscribedToAChannel" expanded="True">
                 <Node name="ThenItShouldReturnReceivedMessageCipher" selected="True" />
               </Node>

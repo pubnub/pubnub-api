@@ -1,7 +1,10 @@
 #!/bin/bash
 
-googleminify="$1"
-if [ googleminify='' ]; then googleminify="/opt/minify/compiler.jar"; fi
+echo $1
+
+googleminify=$1
+
+if [ -z "$googleminify" ]; then googleminify="/opt/minify/compiler.jar"; fi
 
 echo -e "  "
 echo -e "  USING: $googleminify TO MINIFY..."
