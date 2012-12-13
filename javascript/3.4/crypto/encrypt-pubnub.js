@@ -11,7 +11,7 @@ PUBNUB.secure = (function () {
 
     function encrypt(data) {
 
-        var hex_message = GibberishAES.s2a(JSON.stringify(data.data.message));
+        var hex_message = GibberishAES.s2a(JSON.stringify(data));
         var encryptedHexArray = GibberishAES.rawEncrypt(hex_message, cipher_key, iv);
         var base_64_encrypted = GibberishAES.Base64.encode(encryptedHexArray);
         return base_64_encrypted || data.data.message;

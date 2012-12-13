@@ -2,7 +2,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
-<h1>Secure Chat </h1>
+<h1>AES256 Encryption Demo for JavaScript</h1>
 
 <style>
     #chat_input {
@@ -38,35 +38,34 @@
 <script src="crypto/encrypt-pubnub.js"></script>
 
 <script>(function(){
-// Encryption Key (Normally you will get from a Password Database)
+
+    // Encryption Key
+    // For the optimal way to deliver encryption keys to your PubNub JavaScript app
+    // Checkout http://blog.pubnub.com/wp-content/uploads/2012/07/PubNubACLForPublishAndSubscribeRealTimeSystems-6.png
+
     var cipher_key = "enigma";
 
-// Create Secure Connection
+    // Create Secure Connection
     var secure_pubnub = PUBNUB.secure({
         publish_key   : "demo",
         subscribe_key : "demo",
         cipher_key    : cipher_key
     });
 
-// Secure Connection
+    // Secure Connection
     secure_pubnub.subscribe({
         channel    : "hello_world",
         callback   : display_output
     });
 
-// Send Message on Submit
-    $('#chat_form').submit( function(e) {
+    // Send Message on Submit
+    $('#chat_form').submit(function (e) {
         secure_pubnub.publish({
-            channel  : "hello_world",
-            message  : {
-                name : 'secure_chat_message' ,
-                data : { 'message' : $("#chat_input").val() }
-            },
-            callback : function(info) {
-                if (info && info[0]) {
-                    // Clear Successfully Sent Message
-                    $("#chat_input").val("");
-                }
+            channel: "hello_world",
+            message: $("#chat_input").val(),
+            callback: function (info) {
+                // Clear Successfully Sent Message
+                $("#chat_input").val("");
             }
         });
 
@@ -75,17 +74,17 @@
     });
 
      function display_output(message){
-
          time = new Date;
          h = time.getHours();
          m = time.getMinutes();
          s = time.getSeconds();
          ms = time.getMilliseconds();
 
-         formatted_time = h + ":" + m + ":" + s + ":" + ms;
+         formatted_time = "<span style='color:blue;'>" + h + ":" + m + ":" + s + ":" + ms + "</span>";
 
-         $('#chat_box').append("<p>" + formatted_time + "<br/>" + message + "</p>");
-         $("#chat_box").scrollTop($("#chat_box")[0].scrollHeight);        }
+         $('#chat_box').append("Received at " + formatted_time + "<br/>" + message + "</p>");
+         $("#chat_box").scrollTop($("#chat_box")[0].scrollHeight);
+     }
 
 })();
 </script>
