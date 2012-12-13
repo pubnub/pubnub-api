@@ -965,10 +965,7 @@ function FDomainRequest() {
 }
 FDomainRequest['id'] = SECOND;
 
-// jQuery Interface
-window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
-
 // For Testling.js - http://testling.com/
-typeof module !== 'undefined' && (module.exports = PUBNUB) && ready();
+typeof module !== 'undefined' && (module['exports'] = PUBNUB) && ready();
 
 })();
