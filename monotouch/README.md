@@ -1,7 +1,7 @@
 # PubNub 3.3.0.1 Web Data Push Cloud-Hosted API - C# Mono 2.10.9 
 ##PubNub C Sharp (MonoTouch Usage)
 
-For a quick video walkthrough, checkout https://vimeo.com/54805916 !
+For a quick video walkthrough, checkout https://vimeo.com/55630516 !
 
 Open 3.3.0.1/PubNub-Messaging/Pubnub-Messaging/PubNub-Messaging.csproj. Run the project in the simulator to see a working example. The main functionality lies in the pubnub.cs file.
 
