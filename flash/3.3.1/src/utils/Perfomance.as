@@ -66,8 +66,7 @@ package utils {
 			latencyAvg = 0;
 			sent = 0;
 			update();
-			Pn.instance.dispose();
-			//Pn.instance.unsubscribe(channel);
+			Pn.instance.unsubscribe(channel);
 			Pn.instance.removeEventListener(PnEvent.INIT, onPnInit);
 			Pn.instance.removeEventListener(PnEvent.SUBSCRIBE, onPnSubscribe);
 		}
@@ -86,15 +85,14 @@ package utils {
 			 switch (e.status) {
                 case OperationStatus.DATA:
 					//trace(e.data.result[1].text , message);
-					if (e.channel == channel && 
-						e.data.result[1].text == message) {
+					if (e.channel == channel) {
 						sent++;
 						var delta:Number  = getTimer() - startPublishTime;
 						var latency:Number = delta || median[1];
 						latencyAvg = Math.floor((latency + latencyAvg) / 2);
 						median.push(latency);
-						//update();
 						setTimeout(publish, 100);
+						//publish();
 					}
                     break;
 

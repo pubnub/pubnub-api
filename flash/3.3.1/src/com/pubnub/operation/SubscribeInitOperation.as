@@ -7,6 +7,10 @@ package com.pubnub.operation {
 	 */
 	public class SubscribeInitOperation extends Operation {
 		
+		public function SubscribeInitOperation(origin:String) {
+			super(origin);
+		}
+		
 		override public function setURL(url:String = null, args:Object = null):URLRequest {
 			//https://pubsub.pubnub.com/subscribe/demo/my_channel/0/0?uuid=6240373A-0FC0-5FF5-0D96-A349958DD417
 			var channel:String  = args.channel;

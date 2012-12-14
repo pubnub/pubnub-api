@@ -46,7 +46,7 @@ package com.pubnub.net {
 			socket = getSocket(request.url);
 			destroyResponce();
 			sendRequest(request);
-			trace(this, request.url);
+			//trace(this, request.url);
 		}
 		
 		private function getSocket(url:String):*{

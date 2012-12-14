@@ -9,16 +9,16 @@ package com.pubnub.operation {
 	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class HistoryOperation extends Operation {
-		private var channel:String;
+		private var _channel:String;
 		public var sub_key:String;
 		public var cipherKey:String;
 		
-		public function HistoryOperation():void {
-			super();
+		public function HistoryOperation(origin:String):void {
+			super(origin);
 		}
 		
 		override public function setURL(url:String = null, args:Object = null):URLRequest {
-			channel = args.channel;
+			_channel = args.channel;
 			sub_key = args['sub-key'];
 			_url = origin + "/v2/history/sub-key/" + sub_key + "/channel/" + PnUtils.encode(args.channel); 
 			if (args.start || args.end || args.reverse || args.count) {
@@ -82,6 +82,10 @@ package com.pubnub.operation {
 			catch (e:*){
 				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [-1, "[Pn.detailedHistory()] Bad Data Content Ignored"] ));
 			}
+		}
+		
+		public function get channel():String {
+			return _channel;
 		}
 	}
 }

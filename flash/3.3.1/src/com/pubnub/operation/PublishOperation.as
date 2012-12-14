@@ -13,24 +13,24 @@ package com.pubnub.operation {
 	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class PublishOperation extends Operation {
-		private var channel:String;
-		private var subscribeKey:String;
+		public var subscribeKey:String;
+		private var _channel:String;
 		private var uid:String;
 		public var secretKey:String; 
 		public var cipherKey:String = ""; 
 		public var publishKey:String = ""; 
 		
 		
-		public function PublishOperation():void {
-			super();
+		public function PublishOperation(origin:String):void {
+			super(origin);
 			parseToJSON = false;
 		}
 		
 		override public function setURL(url:String = null, args:Object = null):URLRequest {
 			//var temp:Number = getTimer();
-			channel = args.channel;
+			_channel = args.channel;
 			var message:String = args.message;
-			if (channel == null || message == null) {
+			if (_channel == null || message == null) {
 				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [ -1, "Channel Not Given and/or Message"]));
 				return null;
 			}
@@ -39,7 +39,7 @@ package com.pubnub.operation {
 			var serializedMessage:String = PnJSON.stringify(packageMessage);
 			if (secretKey){
 				// Create the signature for this message                
-				var concat:String = publishKey + "/" + subscribeKey + "/" + secretKey + "/" + channel + "/" + serializedMessage;
+				var concat:String = publishKey + "/" + subscribeKey + "/" + secretKey + "/" + _channel + "/" + serializedMessage;
 				
 				// Sign message using HmacSHA256
 				signature = HMAC.hash(secretKey, concat, SHA256);        
@@ -50,7 +50,7 @@ package com.pubnub.operation {
 			}
 			
 			uid = PnUtils.getUID();
-			_url = origin + "/" + "publish" + "/" + publishKey + "/" + subscribeKey + "/" + signature + "/" + PnUtils.encode(channel) + "/" + 0 + "/" +PnUtils.encode(serializedMessage as String);
+			_url = origin + "/" + "publish" + "/" + publishKey + "/" + subscribeKey + "/" + signature + "/" + PnUtils.encode(_channel) + "/" + 0 + "/" +PnUtils.encode(serializedMessage as String);
 			return createRequest();
 		}
 		
@@ -66,6 +66,10 @@ package com.pubnub.operation {
 			catch (e:*){
 				dispatchEvent(new OperationEvent(OperationEvent.FAULT, [-1, "[Pn.publish()] JSON.parse error"] ));
 			}
+		}
+		
+		public function get channel():String {
+			return _channel;
 		}
 	}
 }

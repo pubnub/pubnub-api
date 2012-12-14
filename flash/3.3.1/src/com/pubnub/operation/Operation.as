@@ -11,6 +11,7 @@ package com.pubnub.operation {
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class Operation extends RemovableEventDispatcher {
+		private var args:Object;
 		
 		static public const HTTPS_PATTERN:RegExp = new RegExp("(https):\/\/");
 		
@@ -22,7 +23,9 @@ package com.pubnub.operation {
 		protected var _completed:Boolean;
 		protected var _request:URLRequest;
 		
-		public function Operation() {
+		public function Operation(origin:String) {
+			super();
+			_origin = origin;
 			init();
 		}
 		
@@ -31,6 +34,7 @@ package com.pubnub.operation {
 		}
 		
 		public function setURL(url:String = null, args:Object = null):URLRequest {
+			this.args = args;
 			_url = url;
 			return createRequest();
 		}
@@ -61,13 +65,16 @@ package com.pubnub.operation {
 			_completed = true;
 			dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:(data ? data.message : data)} ));
 		}
-		
+		override public function destroy():void {
+			if (destroyed) return;
+			super.destroy();
+			args = null;
+			_request.destroy();
+			_request = null;
+			
+		}
 		public function get origin():String {
 			return _origin;
-		}
-		
-		public function set origin(value:String):void {
-			_origin = value;
 		}
 		
 		public function get url():String {

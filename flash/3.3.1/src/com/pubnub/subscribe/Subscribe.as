@@ -91,6 +91,7 @@ package com.pubnub.subscribe {
 		
 		public function unsubscribe(channel:String):Boolean {
 			if (isChannelCorrect(channel) == false) {
+				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ -1, Errors.NOT_CONNECTED, ch]));
 				return false;
 			}
 			// search of channels
@@ -118,7 +119,7 @@ package com.pubnub.subscribe {
 		private function process(addCh:Array = null, removeCh:Array = null):void {
 			var needAdd:Boolean = addCh && addCh.length > 0;
 			var needRemove:Boolean = removeCh && removeCh.length > 0;
-			trace('process : ' + needAdd, needRemove);
+			trace('process : ' + needAdd, needRemove, lastToken);
 			if (needAdd || needRemove) {
 				connection.close();
 				if (needRemove) {
@@ -138,6 +139,8 @@ package com.pubnub.subscribe {
 					}else {
 						subscribeInit();
 					}
+				}else {
+					lastToken = null;
 				}
 			}
 		}
@@ -259,8 +262,7 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function getSubscribeInitOperation(args:Object = null):Operation {
-			var operation:SubscribeInitOperation = new SubscribeInitOperation();
-			operation.origin = _origin;
+			var operation:SubscribeInitOperation = new SubscribeInitOperation(origin);
 			operation.setURL(null, {
 				channel:this.channelsString,
 				subscribeKey : subscribeKey,
@@ -271,8 +273,7 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function getSubscribeOperation():Operation {
-			var operation:SubscribeOperation = new SubscribeOperation();
-			operation.origin = _origin;
+			var operation:SubscribeOperation = new SubscribeOperation(origin);
 			operation.setURL(null, {
 				channel:this.channelsString,  
 				timetoken: lastToken,
@@ -285,8 +286,7 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function getLeaveOperation(channel:String):Operation {
-			var operation:LeaveOperation = new LeaveOperation();
-			operation.origin = _origin;
+			var operation:LeaveOperation = new LeaveOperation(origin);
 			operation.setURL(null, {
 				channel:channel,
 				uid: sessionUUID,

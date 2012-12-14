@@ -43,11 +43,17 @@ package com.pubnub {
 		
 		private function setup():void {
 			operationsFactory = new Dictionary();
-			operationsFactory[INIT_OPERATION] = 		createInitOperation; 
+			operationsFactory[INIT_OPERATION] = 	createInitOperation; 
 			operationsFactory[PUBLISH_OPERATION] = 	createPublishOperation; 
 			operationsFactory[HISTORY_OPERATION] = 	createDetailedHistoryOperation; 
-			operationsFactory[TIME_OPERATION] = 		createTimeOperation; 
+			operationsFactory[TIME_OPERATION] = 	createTimeOperation; 
 			syncConnection = new SyncConnection(Settings.OPERATION_TIMEOUT);
+		}
+		
+		private function createOperation(type:String, args:Object = null):Operation {
+			var op:Operation = operationsFactory[type].call(null, args);
+			operations.push(op);
+			return op;
 		}
 		
 		public static  function get instance():Pn {
@@ -88,9 +94,8 @@ package com.pubnub {
 		}
 		
 		
-		private function createInitOperation(args:Object = null):Operation{
-			var init:TimeOperation = new TimeOperation();
-			init.origin = _origin;
+		private function createInitOperation(args:Object = null):Operation {
+			var init:TimeOperation = new TimeOperation(_origin);
 			init.addEventListener(OperationEvent.RESULT, onInitComplete);
 			init.addEventListener(OperationEvent.FAULT, onInitError);
 			init.setURL();
@@ -121,26 +126,6 @@ package com.pubnub {
 		 */
 		public function subscribe(channel:String):void {
 			throwInit();
-			/*var subscribe:Subscribe = getSubscribe(channel);
-			if (subscribe.connected) {
-				dispatchEvent(new PnEvent(	PnEvent.SUBSCRIBE, { 
-											result: [ -1, Errors.ALREADY_CONNECTED] },
-											channel, 
-											OperationStatus.ERROR ));
-				return;
-			}
-			
-			
-			subscribe.origin = 			_origin;
-			subscribe.subscribeKey = 	subscribeKey;
-			subscribe.sessionUUID = 	sessionUUID;
-			subscribe.cipherKey = 		cipherKey;
-			subscribe.addEventListener(SubscribeEvent.CONNECT, 		onSubscribe);
-			subscribe.addEventListener(SubscribeEvent.DATA, 		onSubscribe);
-			subscribe.addEventListener(SubscribeEvent.DISCONNECT, 	onSubscribe);
-			subscribe.addEventListener(SubscribeEvent.ERROR, 		onSubscribe);
-			subscribe.addEventListener(PnEvent.PRESENCE, 			dispatchEvent);
-			subscribe.connect(channel);*/
 			subscribeConnection.subcribe(channel);
 		}
 			
@@ -179,25 +164,7 @@ package com.pubnub {
 		public function unsubscribe(channel:String):void {
 			throwInit(); 
 			subscribeConnection.unsubscribe(channel);
-			/*var subscribe:Subscribe = getSubscribeFromArray(channel);
-			if (subscribe) {
-				subscribe.disconnect();
-			}else {
-				dispatchEvent(new PnEvent(PnEvent.SUBSCRIBE, [-1, 'Channel not found'], channel, OperationStatus.ERROR));
-			}
-			removeSubscribeEvents(subscribe);*/
 		}
-		
-		/*private function removeSubscribeEvents(subscribe:Subscribe):void {
-			if (!subscribe) return;
-			subscribe.removeEventListener(SubscribeEvent.CONNECT, onSubscribe);
-			subscribe.removeEventListener(SubscribeEvent.DATA, onSubscribe);
-			subscribe.removeEventListener(PnEvent.PRESENCE, dispatchEvent);
-			subscribe.removeEventListener(SubscribeEvent.DISCONNECT, onSubscribe);
-			subscribe.removeEventListener(SubscribeEvent.ERROR, onSubscribe);
-		}*/
-		
-		
 		
 		public static function unsubscribeAll():void {
 			instance.unsubscribeAll();
@@ -239,12 +206,11 @@ package com.pubnub {
 		}
 		
 		private function createDetailedHistoryOperation(args:Object = null):Operation{
-			var history:HistoryOperation = new HistoryOperation();
-			/*history.cipherKey = cipherKey;
-			history.origin = _origin;	
-			history.createURL(args);
+			var history:HistoryOperation = new HistoryOperation(origin);
+			history.cipherKey = cipherKey;
+			history.setURL(null, args);
 			history.addEventListener(OperationEvent.RESULT, onHistoryResult);
-			history.addEventListener(OperationEvent.FAULT, onHistoryFault);*/
+			history.addEventListener(OperationEvent.FAULT, onHistoryFault);
 			return history;
 		}
 		
@@ -256,7 +222,6 @@ package com.pubnub {
 		public function publish(args:Object):void {
 			throwInit();
 			var operation:Operation = createOperation(PUBLISH_OPERATION, args)
-			//Connection.sendSync(operation);
 			syncConnection.sendOperation(operation);
 		}
 		
@@ -275,15 +240,14 @@ package com.pubnub {
 		}
 		
 		private function createPublishOperation(args:Object = null):Operation{
-			var publish:PublishOperation = new PublishOperation();
-			/*publish.cipherKey = cipherKey;
+			var publish:PublishOperation = new PublishOperation(origin);
+			publish.cipherKey = cipherKey;
 			publish.secretKey = secretKey;
 			publish.publishKey = _publishKey;
 			publish.subscribeKey = _subscribeKey;
-			publish.origin = _origin;	
-			publish.createURL(args);
+			publish.setURL(null, args);
 			publish.addEventListener(OperationEvent.RESULT, onPublishResult);
-			publish.addEventListener(OperationEvent.FAULT, onPublishFault);*/
+			publish.addEventListener(OperationEvent.FAULT, onPublishFault);
 			return publish;
 		}
 		
@@ -293,11 +257,10 @@ package com.pubnub {
 		}
 		
 		public function time():void {
-			throwInit();
+			//throwInit();
 			var operation:Operation = createOperation(TIME_OPERATION);
 			operation.addEventListener(OperationEvent.RESULT, onTimeResult);
 			operation.addEventListener(OperationEvent.FAULT, onTimeFault);
-			//Connection.sendSync(operation);
 			syncConnection.sendOperation(operation);
 		}
 		
@@ -314,18 +277,14 @@ package com.pubnub {
 		}
 		
 		private function createTimeOperation(args:Object = null):Operation{
-			var time:TimeOperation = new TimeOperation();
+			var time:TimeOperation = new TimeOperation(origin);
 			time.addEventListener(OperationEvent.RESULT, onTimeResult);
 			time.addEventListener(OperationEvent.FAULT, onTimeFault);
 			time.setURL();
 			return time;
 		}
 		
-		private function createOperation(type:String, args:Object = null):Operation {
-			var op:Operation = operationsFactory[type].call(null, args);
-			operations.push(op);
-			return op;
-		}
+		
 		
 		private function initKeys(config:Object):void {
 			_ssl = config.ssl;
@@ -402,10 +361,6 @@ package com.pubnub {
 			}
 			else {
 				_origin = "http://" + value;
-			}
-			
-			for each(var op:Operation  in operations) {
-				op.origin = _origin;
 			}
 			if(subscribeConnection) subscribeConnection.origin = _origin;
 		}

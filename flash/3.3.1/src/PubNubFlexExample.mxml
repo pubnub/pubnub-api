@@ -24,8 +24,8 @@
 			import utils.*;
 			
         [Bindable]
-        public var channel:String = 'test_channel_a,test_channel_b';
-        //public var channel:String = 'test_channel';
+        public var channel:String = 'test_channel';
+        //public var channel:String = 'test_channel_a,test_channel_b';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
