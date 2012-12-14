@@ -30,6 +30,8 @@
 
 #pragma mark - Instance methods
 
+#pragma mark - Client connection state observation
+
 /**
  * Add/remove observer which would like to know when PubNub client 
  * is connected/disconnected to/from PubNub services at specified
@@ -38,6 +40,18 @@
 - (void)addClientConnectionStateObserver:(id)observer
                        withCallbackBlock:(PNClientConnectionStateChangeBlock)callbackBlock;
 - (void)removeClientConnectionStateObserver:(id)observer;
+
+
+#pragma mark - Time token observation
+
+/**
+ * Add/remove observers which would like to know when PubNub service
+ * will return requested time token
+ */
+- (void)addTimeTokenObtentionObserver:(id)observer
+                    withCallbackBlock:(PNClientTimeTokenObtentionCompleteBlock)callbackBlock;
+- (void)removeTimeTokenObtentionObserver:(id)observer;
+
 
 
 #pragma mark -

@@ -161,11 +161,28 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
  */
 - (void)handleReadStreamHasData;
 
+/**
+ * Called each time when write stream is ready to accept
+ * data from PubNub client
+ */
+- (void)handleWriteStreamCanAcceptData;
+
+/**
+ * Converts stream status enum value into string representation
+ */
+- (NSString *)stringifyStreamStatus:(CFStreamStatus)status;
+
 - (void)handleStreamError:(CFStreamError)error;
 - (void)handleStreamError:(CFStreamError)error shouldCloseConnection:(BOOL)shouldCloseConnection;
 
 
 #pragma mark - Misc methods
+
+/**
+ * Connection state retrival
+ */
+- (BOOL)isConfigured;
+- (BOOL)isReady;
 
 - (CFStreamClientContext)streamClientContext;
 
@@ -290,10 +307,14 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 
 - (void)scheduleNextRequestExecution {
     
+    // TODO: CHECK WHETHER IS SENDING REQUEST AT THIS
+    //       MOMENT OR NOT
+    
     self.processNextRequest = YES;
     
     
-    if(self.dataSource) {
+    // Check whether connection ready and there is data source which will provide pacekts for execution
+    if([self isConnected]) {
         
         // Check whether data source can provide some
         // data right after connection is established
@@ -322,26 +343,34 @@ void readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void *cl
     switch (type) {
         case kCFStreamEventOpenCompleted:
             
-            PNCLog(@"{INFO}[CONNECTION::%@::READ] STREAM OPENED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::READ] STREAM OPENED (%@)",
+                   connection.name,
+                   [connection stringifyStreamStatus:CFReadStreamGetStatus(stream)]);
             
             connection.readStreamState = PNSocketStreamConnected;
             [connection handleStreamConnection];
             break;
         case kCFStreamEventHasBytesAvailable:
             
-            PNCLog(@"{INFO}[CONNECTION::%@::READ] HAS DATA FOR READ OUT", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::READ] HAS DATA FOR READ OUT (%@)",
+                   connection.name,
+                   [connection stringifyStreamStatus:CFReadStreamGetStatus(stream)]);
             
             [connection handleReadStreamHasData];
             break;
         case kCFStreamEventErrorOccurred:
             
-            PNCLog(@"{INFO}[CONNECTION::%@::READ] ERROR OCCURRED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::READ] ERROR OCCURRED (%@)",
+                   connection.name,
+                   [connection stringifyStreamStatus:CFReadStreamGetStatus(stream)]);
             
             [connection handleStreamError:CFReadStreamGetError(stream) shouldCloseConnection:YES];
             break;
         case kCFStreamEventEndEncountered:
             
-            PNCLog(@"{INFO}[CONNECTION::%@::READ] NOTHING TO READ (MAYBE STREAM IS CLOSED)", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::READ] NOTHING TO READ (%@)",
+                   connection.name,
+                   [connection stringifyStreamStatus:CFReadStreamGetStatus(stream)]);
             break;
             
         default:
@@ -358,24 +387,32 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     switch (type) {
         case kCFStreamEventOpenCompleted:
             
-            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] STREAM OPENED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] STREAM OPENED (%@)",
+                   connection.name,
+                   [connection stringifyStreamStatus:CFWriteStreamGetStatus(stream)]);
             
             connection.writeStreamState = PNSocketStreamConnected;
             [connection handleStreamConnection];
             break;
         case kCFStreamEventCanAcceptBytes:
             
-            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] CAN ACCEPT DATA", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] READY TO SEND (%@)",
+                   connection.name,
+                   [connection stringifyStreamStatus:CFWriteStreamGetStatus(stream)]);
             break;
         case kCFStreamEventErrorOccurred:
             
-            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] ERROR OCCURRED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] ERROR OCCURRED (%@)",
+                   connection.name,
+                   [connection stringifyStreamStatus:CFWriteStreamGetStatus(stream)]);
             
             [connection handleStreamError:CFWriteStreamGetError(stream) shouldCloseConnection:YES];
             break;
         case kCFStreamEventEndEncountered:
             
-            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] MAYBE STREAM IS CLOSED", connection.name);
+            PNCLog(@"{INFO}[CONNECTION::%@::WRITE] MAYBE STREAM IS CLOSED (%@)",
+                   connection.name,
+                   [connection stringifyStreamStatus:CFWriteStreamGetStatus(stream)]);
             break;
             
         default:
@@ -386,7 +423,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 - (void)prepareStreams {
     
     // Check whether stream was prepared and configured before
-    if(self.readStreamState != PNSocketStreamReady && self.writeStreamState != PNSocketStreamReady) {
+    if([self isConfigured] || [self isConnected] || [self isReady]) {
         
         PNLog(@"{INFO}[CONNECTION::%@] SOCKET AND STREAMS ALREADY CONFIGURATED", self.name);
     }
@@ -423,16 +460,33 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     BOOL isStreamOpened = NO;
     
-    if(self.readStreamState == PNSocketStreamReady && self.writeStreamState == PNSocketStreamReady) {
+    if(![self isConnected] && [self isReady]) {
         
         [self openReadStream:self.socketReadStream];
         [self openWriteStream:self.socketWriteStream];
         
         isStreamOpened = YES;
     }
+    // Looks like streams not ready yet (maybe stream closed
+    // during previous session)
+    else {
+        
+        [self prepareStreams];
+        [self connect];
+    }
     
     
     return isStreamOpened;
+}
+
+- (BOOL)isReady {
+    
+    return (self.readStreamState == PNSocketStreamReady && self.writeStreamState == PNSocketStreamReady);
+}
+
+- (BOOL)isConfigured {
+    
+    return (self.readStreamState != PNSocketStreamNotConfigured && self.writeStreamState != PNSocketStreamNotConfigured);
 }
 
 - (BOOL)isConnected {
@@ -446,6 +500,12 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 }
 
 - (void)configureReadStream:(CFReadStreamRef)readStream {
+    
+    if (self.readStreamState != PNSocketStreamNotConfigured) {
+        
+        [self destroyReadStream:readStream];
+    }
+    
     
     CFOptionFlags options = (kCFStreamEventOpenCompleted|kCFStreamEventHasBytesAvailable|
                              kCFStreamEventErrorOccurred|kCFStreamEventEndEncountered);
@@ -517,7 +577,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 - (void)configureWriteStream:(CFWriteStreamRef)writeStream {
     
-    if (self.writeStreamState == PNSocketStreamNotConfigured) {
+    if (self.writeStreamState != PNSocketStreamNotConfigured) {
         
         [self destroyWriteStream:writeStream];
     }
@@ -661,6 +721,54 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
             [self handleStreamError:CFReadStreamGetError(self.socketReadStream)];
         }
     }
+}
+
+- (void)handleWriteStreamCanAcceptData {
+    
+    
+}
+
+- (NSString *)stringifyStreamStatus:(CFStreamStatus)status {
+    
+    NSString *stringifiedStatus = @"NOTHING INTERESTING";
+    
+    switch (status) {
+        case kCFStreamStatusNotOpen:
+            
+            stringifiedStatus = @"STREAM NOT OPENED";
+            break;
+        case kCFStreamStatusOpening:
+            
+            stringifiedStatus = @"STREAM IS OPENING";
+            break;
+        case kCFStreamStatusOpen:
+            
+            stringifiedStatus = @"STREAM IS OPENED";
+            break;
+        case kCFStreamStatusReading:
+            
+            stringifiedStatus = @"READING FROM STREAM";
+            break;
+        case kCFStreamStatusWriting:
+            
+            stringifiedStatus = @"WRITING INTO STREAM";
+            break;
+        case kCFStreamStatusAtEnd:
+            
+            stringifiedStatus = @"STREAM CAN'T READ/WRITE DATA";
+            break;
+        case kCFStreamStatusClosed:
+            
+            stringifiedStatus = @"STREAM CLOSED";
+            break;
+        case kCFStreamStatusError:
+            
+            stringifiedStatus = @"STREAM ERROR OCCURRED";
+            break;
+    }
+    
+    
+    return stringifiedStatus;
 }
 
 - (void)handleStreamError:(CFStreamError)error {

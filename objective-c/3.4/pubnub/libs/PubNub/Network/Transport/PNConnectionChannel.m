@@ -86,7 +86,10 @@
 
 - (void)scheduleRequest:(PNBaseRequest *)request {
     
-    [[PNRequestsQueue sharedInstance] enqueueRequest:request];
+    if([[PNRequestsQueue sharedInstance] enqueueRequest:request]) {
+        
+        [self.connection scheduleNextRequestExecution];
+    }
 }
 
 - (void)unscheduleRequest:(PNBaseRequest *)request {
@@ -101,7 +104,10 @@
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED
 - (void)scheduleRequest:(PNBaseRequest *)request {
     
-    [self.requestsQueue enqueueRequest:request];
+    if([self.requestsQueue enqueueRequest:request]) {
+        
+        [self.connection scheduleNextRequestExecution];
+    }
 }
 
 - (void)unscheduleRequest:(PNBaseRequest *)request {

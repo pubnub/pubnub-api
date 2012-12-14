@@ -8,7 +8,7 @@
 
 #pragma mark Class forward
 
-@class PNConnection, PNError;
+@class PNConnection, PNError, PNWriteBuffer;
 
 
 #pragma mark - Connection observer delegate methods
@@ -64,10 +64,10 @@
 - (NSString *)nextRequestIdentifierForConnection:(PNConnection *)connection;
 
 /**
- * Delegate should provide serialized data which is ready
- * to be sent via sockey connection
+ * Delegate should provide write buffer which will be used
+ * to send serialized data over the network
  */
-- (NSData *)connection:(PNConnection *)connection requestDataForIdentifier:(NSString *)requestIdentifier;
+- (PNWriteBuffer *)connection:(PNConnection *)connection requestDataForIdentifier:(NSString *)requestIdentifier;
 
 /**
  * Sent when connection started request processing

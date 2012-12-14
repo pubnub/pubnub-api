@@ -14,6 +14,11 @@
 #import <Foundation/Foundation.h>
 
 
+#pragma mark Class forward
+
+@class PNWriteBuffer;
+
+
 @interface PNBaseRequest : NSObject
 
 
@@ -36,12 +41,12 @@
  */
 - (NSString *)resourcePath;
 
-
 /**
- * Retrieve serialized request message
- * which is ready to be sent
+ * Retrieve reference on write buffer
+ * which will be used to send serialized
+ * response via socket
  */
-- (id)serializedMessage;
+- (PNWriteBuffer *)buffer;
 
 #pragma mark -
 

@@ -14,6 +14,7 @@
 #import "PNBaseRequest.h"
 #import "PubNub+Protected.h"
 #import "PNConfiguration.h"
+#import "PNWriteBuffer.h"
 #import "PNConstants.h"
 #import "PNMacro.h"
 #import "PubNub.h"
@@ -45,7 +46,12 @@
     return @"/";
 }
 
-- (id)serializedMessage {
+- (PNWriteBuffer *)buffer {
+    
+    return [PNWriteBuffer writeBufferForRequest:self];
+}
+
+- (NSString *)HTTPPayload {
     
     return [NSString stringWithFormat:@"GET %@ HTTP/1.1\r\nHost: %@\r\nV: %@\r\nUser-Agent: %@\r\nAccept: */*\r\n\r\n",
             [self resourcePath],

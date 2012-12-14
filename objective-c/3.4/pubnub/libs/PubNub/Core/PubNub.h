@@ -43,6 +43,13 @@
  */
 + (void)connect;
 
+/**
+ * Will disconnect from all channels w/o sending leave
+ * event and terminate all socket connection which was
+ * established to PubNub services
+ */
++ (void)disconnect;
+
 
 #pragma mark - Client configuration
 
@@ -87,8 +94,16 @@
 + (NSString *)clientIdentifier;
 
 
-#pragma mark - Channels management
+#pragma mark - Instance methods
 
+/**
+ * Send asynchronous time token request to PubNub
+ * services.
+ * Response will retrieve all who subscribed for
+ * time token retrival via observer center or
+ * notifications
+ */
+- (void)requestServerTimeToken;
 
 
 #pragma mark -

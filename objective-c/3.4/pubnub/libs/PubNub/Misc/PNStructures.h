@@ -16,6 +16,7 @@
 #define PNStructures_h
 
 typedef void (^PNClientConnectionStateChangeBlock)(NSString *, BOOL, PNError *);
+typedef void (^PNClientTimeTokenObtentionCompleteBlock)(NSString *);
 
 
 // This enum represent possible stream

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7902452C167B5F6100E36546 /* PNWriteBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902452B167B5F6100E36546 /* PNWriteBuffer.m */; };
+		7902452D167B5F6100E36546 /* PNWriteBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902452B167B5F6100E36546 /* PNWriteBuffer.m */; };
 		7902B9E01679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9DF1679E72000DE2BBB /* PNLatencyMeasureRequest.m */; };
 		7902B9E11679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9DF1679E72000DE2BBB /* PNLatencyMeasureRequest.m */; };
 		7902B9E51679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9E41679EEFC00DE2BBB /* PNRequestsQueue.m */; };
@@ -87,6 +89,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7902452A167B5F6100E36546 /* PNWriteBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNWriteBuffer.h; sourceTree = "<group>"; };
+		7902452B167B5F6100E36546 /* PNWriteBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNWriteBuffer.m; sourceTree = "<group>"; };
+		7902452E167B69FF00E36546 /* PNBaseRequest+Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PNBaseRequest+Protected.h"; sourceTree = "<group>"; };
 		7902B9DE1679E72000DE2BBB /* PNLatencyMeasureRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNLatencyMeasureRequest.h; sourceTree = "<group>"; };
 		7902B9DF1679E72000DE2BBB /* PNLatencyMeasureRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNLatencyMeasureRequest.m; sourceTree = "<group>"; };
 		7902B9E31679EEFC00DE2BBB /* PNRequestsQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNRequestsQueue.h; sourceTree = "<group>"; };
@@ -195,6 +200,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		79024528167B5F3B00E36546 /* Buffers */ = {
+			isa = PBXGroup;
+			children = (
+				7902452A167B5F6100E36546 /* PNWriteBuffer.h */,
+				7902452B167B5F6100E36546 /* PNWriteBuffer.m */,
+			);
+			path = Buffers;
+			sourceTree = "<group>";
+		};
 		792C1F5416788B240054E18E /* Channels */ = {
 			isa = PBXGroup;
 			children = (
@@ -232,6 +246,7 @@
 		792C1F75167897090054E18E /* Packets */ = {
 			isa = PBXGroup;
 			children = (
+				7902452E167B69FF00E36546 /* PNBaseRequest+Protected.h */,
 				792C1F76167897210054E18E /* PNBaseRequest.h */,
 				792C1F77167897210054E18E /* PNBaseRequest.m */,
 				7902B9DE1679E72000DE2BBB /* PNLatencyMeasureRequest.h */,
@@ -496,6 +511,7 @@
 			isa = PBXGroup;
 			children = (
 				792C1F5416788B240054E18E /* Channels */,
+				79024528167B5F3B00E36546 /* Buffers */,
 				7966DFC2166FD60900E07B40 /* PNJSONSerialization.h */,
 				7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */,
 				7902B9E31679EEFC00DE2BBB /* PNRequestsQueue.h */,
@@ -660,6 +676,7 @@
 				792C1FAB1678D5C50054E18E /* PNTimeTokenRequest.m in Sources */,
 				7902B9E01679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */,
 				7902B9E51679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */,
+				7902452C167B5F6100E36546 /* PNWriteBuffer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -691,6 +708,7 @@
 				792C1FAC1678D5C50054E18E /* PNTimeTokenRequest.m in Sources */,
 				7902B9E11679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */,
 				7902B9E61679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */,
+				7902452D167B5F6100E36546 /* PNWriteBuffer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

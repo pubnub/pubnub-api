@@ -177,9 +177,9 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
     return [self nextRequestIdentifier];
 }
 
-- (NSData *)connection:(PNConnection *)connection requestDataForIdentifier:(NSString *)requestIdentifier {
+- (PNWriteBuffer *)connection:(PNConnection *)connection requestDataForIdentifier:(NSString *)requestIdentifier {
     
-    return [[self dequeueNextRequestWithIdentifier:requestIdentifier] serializedMessage];
+    return [[self dequeueNextRequestWithIdentifier:requestIdentifier] buffer];
 }
 
 - (void)connection:(PNConnection *)connection processingRequestWithIdentifier:(NSString *)requestIdentifier {

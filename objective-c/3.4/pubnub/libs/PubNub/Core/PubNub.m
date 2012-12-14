@@ -13,7 +13,11 @@
 //
 
 #import "PubNub.h"
+#import "PNMessagingChannel.h"
+#import "PNConnection+Protected.h"
 #import "PubNub+Protected.h"
+#import "PNRequestsImport.h"
+#import "PNConnection.h"
 #import "PNMacro.h"
 
 
@@ -39,6 +43,14 @@ static PubNub *_sharedInstance = nil;
 // retrival from PubNub services)
 @property (nonatomic, assign, getter = isInitialized) BOOL initialized;
 
+// Reference on channels which is used to communicate
+// with PubNub service
+@property (nonatomic, strong) PNMessagingChannel *messagingChannel;
+
+// Reference on channels which is used to send service
+// messages to PubNub service
+@property (nonatomic, strong) PNMessagingChannel *serviceChannel;
+
 // Stores reference on configuration which was used to
 // perform intial PubNub client initialization
 @property (nonatomic, strong) PNConfiguration *configuration;
@@ -46,8 +58,39 @@ static PubNub *_sharedInstance = nil;
 // Stores reference on current client identifier
 @property (nonatomic, strong) NSString *clientIdentifier;
 
+// Stores unique client intialization session identifier
+// (created each time when PubNub stack is configured
+// after application launch)
+@property (nonatomic, strong) NSString *launchSessionIdentifier;
+
 // Stores reference on client delegate
 @property (nonatomic, unsafe_unretained) id<PNDelegate> delegate;
+
+
+#pragma mark - Instance methods
+
+#pragma mark - Client connection management methods
+
+/**
+ * This method allow to schedule intial requests on
+ * connections to tell server that we are really
+ * interested in persistent connection
+ */
+- (void)warmUpConnection;
+
+
+#pragma mark - Requests management methods
+
+/**
+ * Sends message over corresponding communication
+ * channel
+ */
+- (void)sendRequest:(PNBaseRequest *)request;
+
+/**
+ * Send message over specified communication channel
+ */
+- (void)sendRequest:(PNBaseRequest *)request onChannel:(PNConnectionChannel *)channel;
 
 
 @end
@@ -88,6 +131,22 @@ static PubNub *_sharedInstance = nil;
         // PubNub services
         [self sharedInstance].clientIdentifier = newUniqueIdentifier();
     }
+    
+    
+    [self sharedInstance].messagingChannel = [PNMessagingChannel new];
+    [self sharedInstance].serviceChannel = [PNMessagingChannel new];
+    
+    
+    [[self sharedInstance] warmUpConnection];
+}
+
++ (void)disconnect {
+    
+    // Clean up
+    [self sharedInstance].messagingChannel = nil;
+    
+    
+    [PNConnection closeAllConnections];
 }
 
 
@@ -167,6 +226,39 @@ static PubNub *_sharedInstance = nil;
     
     
     return self;
+}
+
+#pragma mark - Client connection management methods
+
+- (void)warmUpConnection {
+    
+    [self sendRequest:[PNTimeTokenRequest new] onChannel:self.messagingChannel];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED
+    [self sendRequest:[PNTimeTokenRequest new] onChannel:self.serviceChannel];
+#endif
+}
+
+- (void)requestServerTimeToken {
+    
+    [self sendRequest:[PNTimeTokenRequest new]];
+}
+
+- (void)sendRequest:(PNBaseRequest *)request {
+    
+    BOOL shouldSendOnMessageChannel = YES;
+    
+    
+    
+    
+    if (shouldSendOnMessageChannel) {
+        
+        [self sendRequest:request onChannel:self.messagingChannel];
+    }
+}
+
+- (void)sendRequest:(PNBaseRequest *)request onChannel:(PNConnectionChannel *)channel {
+    
+    [channel scheduleRequest:request];
 }
 
 #pragma mark -
