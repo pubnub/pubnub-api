@@ -1,7 +1,7 @@
-package test;
+package com.pubnub.test;
 
-import pubnub.Pubnub;
-import pubnub.Callback;
+import com.pubnub.api.Pubnub;
+import com.pubnub.api.Callback;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.microedition.midlet.*;
@@ -10,7 +10,7 @@ import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 
-public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callback {
+public class PubnubTestMIDlet extends MIDlet implements CommandListener {
 
     private boolean midletPaused = false;
     private Command exitCommand;
@@ -78,14 +78,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
                 unsubscribe();
             } else if (command == subscribeCommand) {
                 subscribe();
-            } else if (command == hereNowCommand) {
-                hereNow();
-            } else if (command == presenceCommand) {
-                presence();
-            } else if (command == detailedHistoryCommand) {
-                detailedHistory();
             }
-
         }
     }
 
@@ -115,9 +108,6 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
             form.addCommand(getHistoryCommand());
             form.addCommand(getUnsubscribeCommand());
             form.addCommand(getSubscribeCommand());
-            form.addCommand(getHereNowCommand());
-            form.addCommand(getPresenceCommand());
-            form.addCommand(getDetailedHistoryCommand());
             form.setCommandListener(this);
         }
         return form;
@@ -135,29 +125,6 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
         return stringItem;
     }
 
-    /**
-     * Returns an initiliazed instance of detailedHistoryCommand component.
-     *
-     * @return the initialized component instance
-     */
-    public Command getDetailedHistoryCommand() {
-        if (detailedHistoryCommand == null) {
-            detailedHistoryCommand = new Command("DetailedHistory", Command.ITEM, 0);
-        }
-        return detailedHistoryCommand;
-    }
-
-    /**
-     * Returns an initiliazed instance of presenceCommand component.
-     *
-     * @return the initialized component instance
-     */
-    public Command getPresenceCommand() {
-        if (presenceCommand == null) {
-            presenceCommand = new Command("Presence", Command.ITEM, 0);
-        }
-        return presenceCommand;
-    }
 
     /**
      * Returns an initiliazed instance of publishCommand component.
@@ -219,17 +186,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
         return subscribeCommand;
     }
 
-    /**
-     * Returns an initiliazed instance of subscribeCommand component.
-     *
-     * @return the initialized component instance
-     */
-    private Command getHereNowCommand() {
-        if (hereNowCommand == null) {
-            hereNowCommand = new Command("HereNow", Command.ITEM, 1);
-        }
-        return hereNowCommand;
-    }
+
 
     /**
      * Returns a display instance.
@@ -287,7 +244,11 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
             Hashtable args = new Hashtable(2);
             args.put("channel", Channel); // Channel Name
             args.put("message", message); // JSON Message
-            _pubnub.publish(args);
+            _pubnub.publish(args, new Callback() {
+                public void successCallback(String channel, Object message) {
+                    
+                }
+             });
 
         } catch (JSONException ex) {
             ex.printStackTrace();
@@ -297,14 +258,56 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
     public void subscribe() {
         Hashtable args = new Hashtable(6);
         args.put("channel", Channel);
-        _pubnub.subscribe(args);
+
+        _pubnub.subscribe(args, new Callback() {
+            public void successCallback(String channel, Object message) {
+                System.out.println("Message recevie on channel:" + channel
+                        + " Message:" + message.toString());
+                try {
+                    if (message instanceof JSONObject) {
+                        JSONObject obj = (JSONObject) message;
+                        Alert a = new Alert("Received", obj.toString(), null, null);
+                        a.setTimeout(Alert.FOREVER);
+                        getDisplay().setCurrent(a, form);
+
+                        Enumeration keys = obj.keys();
+                        while (keys.hasMoreElements()) {
+                            System.out.println(obj.get(keys.nextElement().toString())
+                                    + " ");
+                        }
+
+                    } else if (message instanceof String) {
+                        String obj = (String) message;
+                        System.out.print(obj + " ");
+                        System.out.println();
+
+                        Alert a = new Alert("Received", obj.toString(), null, null);
+                        a.setTimeout(Alert.FOREVER);
+                        getDisplay().setCurrent(a, form);
+                    } else if (message instanceof JSONArray) {
+                        JSONArray obj = (JSONArray) message;
+                        System.out.print(obj.toString() + " ");
+                        System.out.println();
+
+                        Alert a = new Alert("Received", obj.toString(), null, null);
+                        a.setTimeout(Alert.FOREVER);
+                        getDisplay().setCurrent(a, form);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void unsubscribe() {
         Hashtable args = new Hashtable(1);
         String channel = Channel;
         args.put("channel", channel);
-        _pubnub.unsubscribe(args);
+        _pubnub.unsubscribe(args new Callback() {
+                public void successCallback(String channel, Object message) {
+                }
+             });
         System.out.println("UnSubscribed sucessfully");
     }
 
@@ -319,118 +322,10 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener, Callbac
         Hashtable args = new Hashtable(2);
         args.put("channel", Channel);
         args.put("limit", new Integer(2));
-        _pubnub.history(args);
-    }
-
-    private void hereNow() {
-        _pubnub.hereNow(Channel);
-    }
-
-    private void presence() {
-        _pubnub.presence(Channel);
-    }
-
-    private void detailedHistory() {
-         Hashtable args = new Hashtable();
-                args.put("channel", Channel);
-                args.put("count", 2+"");
-        _pubnub.detailedHistory(args);
-    }
-
-    public void publishCallback(String channel, Object message, Object responce) {
-        JSONArray meg = (JSONArray) responce;
-        System.out.println("Message sent responce:" + message.toString()
-                + " on channel:" + channel);
-        try {
-            int sucess = Integer.parseInt(meg.get(0).toString());
-            if (sucess == 1) {
-                stringItem.setLabel("Publish");
-                stringItem.setText("Message sent successfully on channel:"
-                        + channel + "\n" + message.toString());
-            } else {
-                stringItem.setLabel("Publish");
-                stringItem.setText("Message sent failure on channel:" + channel
-                        + "\n" + message.toString());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void subscribeCallback(String channel, Object message) {
-        System.out.println("Message recevie on channel:" + channel
-                + " Message:" + message.toString());
-        try {
-            if (message instanceof JSONObject) {
-                JSONObject obj = (JSONObject) message;
-                Alert a = new Alert("Received", obj.toString(), null, null);
-                a.setTimeout(Alert.FOREVER);
-                getDisplay().setCurrent(a, form);
-
-                Enumeration keys = obj.keys();
-                while (keys.hasMoreElements()) {
-                    System.out.println(obj.get(keys.nextElement().toString())
-                            + " ");
+        _pubnub.history(args new Callback() {
+                public void successCallback(String channel, Object message) {
                 }
-
-            } else if (message instanceof String) {
-                String obj = (String) message;
-                System.out.print(obj + " ");
-                System.out.println();
-
-                Alert a = new Alert("Received", obj.toString(), null, null);
-                a.setTimeout(Alert.FOREVER);
-                getDisplay().setCurrent(a, form);
-            } else if (message instanceof JSONArray) {
-                JSONArray obj = (JSONArray) message;
-                System.out.print(obj.toString() + " ");
-                System.out.println();
-
-                Alert a = new Alert("Received", obj.toString(), null, null);
-                a.setTimeout(Alert.FOREVER);
-                getDisplay().setCurrent(a, form);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+             });
     }
 
-    public void historyCallback(String channel, Object message) {
-        JSONArray meg = (JSONArray) message;
-        System.out.println("History recevie on channel:" + channel + " Message:" + meg.toString());
-        stringItem.setLabel("History");
-        stringItem.setText("History recevie on channel:" + channel + "\n" + meg.toString());
-    }
-
-    public void errorCallback(String channel, Object message) {
-        System.out.println("Error on channel:" + channel + " Message:" + message.toString());
-    }
-
-    public void connectCallback(String channel) {
-        System.out.println("Connect channel:" + channel);
-    }
-
-    public void reconnectCallback(String channel) {
-        System.out.println("Reconnect channel:" + channel);
-    }
-
-    public void disconnectCallback(String channel) {
-        System.out.println("Disconnect channel:" + channel);
-    }
-
-    public void hereNowCallback(String channel, Object message) {
-        stringItem.setLabel("HereNow");
-        stringItem.setText("HereNow on channel:" + channel + "\n" + message.toString());
-    }
-
-    public void presenceCallback(String channel, Object message) {
-        stringItem.setLabel("Presence");
-        stringItem.setText("channel:" + channel + "\n" + message.toString());
-    }
-
-    public void detailedHistoryCallback(String channel, Object message) {
-         stringItem.setLabel("DetailedHistory");
-        stringItem.setText("channel:" + channel + "\n" + message);
-    }
 }
