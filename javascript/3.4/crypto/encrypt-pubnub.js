@@ -50,7 +50,9 @@ PUBNUB.secure = (function () {
                 }
 
                 return pubnub.subscribe(args);
-            }
+            },
+            raw_encrypt: encrypt,
+            raw_decrypt: decrypt
         };
     };
 })();

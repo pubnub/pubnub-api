@@ -50,6 +50,8 @@
 <div id=pubnub pub-key=demo sub-key=demo origin=pubsub.pubnub.com></div>
 <script src=../json.js></script>
 <script src=../pubnub-3.4.js></script>
+<script src=../crypto/gibberish-aes.js></script>
+<script src=../crypto/encrypt-pubnub.js></script>
 <script>(function(){
 
     function test( t, msg ) {
@@ -121,6 +123,43 @@
 
         test( 1, 'Ready to Test' );
         test( PUBNUB, 'PubNub Lib Exists' );
+
+        // Encryption Unit Tests
+
+        test( PUBNUB.secure, "PubNub AES Lib Exists");
+
+        var aes = PUBNUB.secure({
+            publish_key   : "demo",
+            subscribe_key : "demo",
+            cipher_key    : "enigma"
+        });
+
+
+        test( aes, "AES PubNub Object Instantiated");
+
+        var test_plain_string_1 = "Pubnub Messaging API 1";
+        var test_plain_string_2 = "Pubnub Messaging API 2";
+        var test_plain_object_1 = {"foo":{"bar":"foobar"}};
+        var test_plain_object_2 = {"this stuff":{"can get":"complicated!"}};
+        var test_plain_unicode_1 = '漢語'
+
+        var test_cipher_string_1 = "f42pIQcWZ9zbTbH8cyLwByD/GsviOE0vcREIEVPARR0=";
+        var test_cipher_string_2 = "f42pIQcWZ9zbTbH8cyLwB/tdvRxjFLOYcBNMVKeHS54=";
+        var test_cipher_object_1 = "GsvkCYZoYylL5a7/DKhysDjNbwn+BtBtHj2CvzC4Y4g=";
+        var test_cipher_object_2 = "zMqH/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF";
+        var test_cipher_unicode_1 = "WvztVJ5SPNOcwrKsDrGlWQ==";
+
+        test( aes.raw_encrypt(test_plain_string_1) == test_cipher_string_1, "AES String Encryption Test 1" );
+        test( aes.raw_encrypt(test_plain_string_2) == test_cipher_string_2, "AES String Encryption Test 2" );
+        test( aes.raw_encrypt(test_plain_object_1) == test_cipher_object_1, "AES Object Encryption Test 1");
+        test( aes.raw_encrypt(test_plain_object_2) == test_cipher_object_2, "AES Object Encryption Test 2");
+        test( aes.raw_encrypt(test_plain_unicode_1) == test_cipher_unicode_1, "AES Unicode Encryption Test 1");
+
+        test( aes.raw_decrypt(test_cipher_string_1) == test_plain_string_1, "AES String Decryption Test 1" );
+        test( aes.raw_decrypt(test_cipher_string_2) == test_plain_string_2, "AES String Decryption Test 2" );
+        test( JSON.stringify(aes.raw_decrypt(test_cipher_object_1)) == JSON.stringify(test_plain_object_1), "AES Object Decryption Test 1");
+        test( JSON.stringify(aes.raw_decrypt(test_cipher_object_2)) == JSON.stringify(test_plain_object_2), "AES Object Decryption Test 2");
+        test( aes.raw_decrypt(test_cipher_unicode_1) == test_plain_unicode_1, "AES Unicode Decryption Test 1");
 
         p.time(function(time){
             test( time, 'TimeToken' );
