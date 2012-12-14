@@ -263,6 +263,7 @@
             var test_cipher_object_1 = "GsvkCYZoYylL5a7/DKhysDjNbwn+BtBtHj2CvzC4Y4g=";
             var test_cipher_object_2 = "zMqH/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF";
             var test_cipher_unicode_1 = "WvztVJ5SPNOcwrKsDrGlWQ==";
+
             test(aes.raw_encrypt(test_plain_string_1) == test_cipher_string_1, "AES String Encryption Test 1");
             test(aes.raw_encrypt(test_plain_string_2) == test_cipher_string_2, "AES String Encryption Test 2");
             test(aes.raw_encrypt(test_plain_object_1) == test_cipher_object_1, "AES Object Encryption Test 1");
@@ -273,6 +274,48 @@
             test(JSON.stringify(aes.raw_decrypt(test_cipher_object_1)) == JSON.stringify(test_plain_object_1), "AES Object Decryption Test 1");
             test(JSON.stringify(aes.raw_decrypt(test_cipher_object_2)) == JSON.stringify(test_plain_object_2), "AES Object Decryption Test 2");
             test(aes.raw_decrypt(test_cipher_unicode_1) == test_plain_unicode_1, "AES Unicode Decryption Test 1");
+
+            function publish_test(con) {
+                con || test( 1, 'Connection Established' );
+
+                p.publish({
+                    channel  : channel,
+                    message  : { test : "test" },
+                    callback : function(response) {
+                        test( response[0], 'Successful Publish' );
+                        test( response[1], 'Success With Demo' );
+                        setTimeout( history_test, 2500 );
+                    }
+                });
+            }
+
+            publish_test(1);
+
+            function history_test() {
+                p.history({
+                    limit    : 1,
+                    channel  : channel,
+                    callback : function(data) {
+                        test( data, 'History Response' );
+                        test( data[0][0].test === "test", 'History Content' );
+                    }
+                });
+            }
+
+            p.subscribe({
+                channel  : channel,
+                connect  : publish_test,
+                presence : function( message, envelope, channel ) {
+
+                },
+                callback : function( message, envelope, channel ) {
+                    p.unsubscribe({ channel : channel });
+                    test( message, 'Subscribe Message' );
+                    test( message.test === "test", 'Subscribe Message Data' );
+                    test( envelope[1], 'TimeToken Returned: ' + envelope[1] );
+                }
+            });
+
         }
 
     }
