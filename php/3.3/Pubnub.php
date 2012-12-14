@@ -1,18 +1,25 @@
 <?php
 require_once('PubnubAES.php');
+
 /**
- * PubNub 3.3 Real-time Push Cloud API
+ * PubNub 3.4 Real-time Push Cloud API
  * @package Pubnub
  */
 class Pubnub
 {
-    private $ORIGIN = 'pubsub.pubnub.com';
+    private $ORIGIN = 'PHP.pubnub.com';  // Change this to your custom origin, or IUNDERSTAND.pubnub.com
     private $PUBLISH_KEY = 'demo';
     private $SUBSCRIBE_KEY = 'demo';
     private $SECRET_KEY = false;
     private $CIPHER_KEY = '';
     private $SSL = false;
     private $SESSION_UUID = '';
+
+    // New style response contains channel after timetoken
+    // Old style response does not
+
+    private $NEW_STYLE_RESPONSE = true;
+    private $PEM_PATH = __DIR__;
 
     /**
      * Pubnub
@@ -33,7 +40,8 @@ class Pubnub
         $secret_key = false,
         $cipher_key = false,
         $ssl = false,
-        $origin = false
+        $origin = false,
+        $pem_path = false
     )
     {
 
@@ -49,8 +57,16 @@ class Pubnub
 
         $this->SSL = $ssl;
 
+        if ($pem_path != false)
+            $this->PEM_PATH = $pem_path;
+
         if ($origin)
             $this->ORIGIN = $origin;
+
+        if ($this->ORIGIN == "PHP.pubnub.com") {
+            trigger_error("Before running in production, please contact support@pubnub.com for your custom origin.\nPlease set the origin from PHP.pubnub.com to IUNDERSTAND.pubnub.com to remove this warning.\n", E_USER_NOTICE);
+        }
+
 
         if ($ssl)
             $this->ORIGIN = 'https://' . $this->ORIGIN;
@@ -206,20 +222,44 @@ class Pubnub
                 $messages = $response[0];
                 $timetoken = $response[1];
 
+                // determine the channel
+
+                if ((count($response) == 3)) {
+                    $derivedChannel = explode(",", $response[2]);
+                } else {
+                    $channel_array = array();
+                    for ($a = 0; $a < sizeof($messages); $a++) {
+                        array_push($channel_array, $channel);
+                    }
+                    $derivedChannel = $channel_array;
+                }
+
+
                 if (!count($messages)) {
                     continue;
                 }
 
                 $receivedMessages = $this->decodeAndDecrypt($messages, $mode);
 
-                $returnArray = array($receivedMessages, $timetoken);
 
-                $cbReturn = $callback($returnArray);
+                $returnArray =  $this->NEW_STYLE_RESPONSE ?  array($receivedMessages, $derivedChannel, $timetoken) : array($receivedMessages, $timetoken);
 
-                if ($cbReturn == false) {
-                return;
+                # Call once for each message for each channel
+
+                $exit_now = false;
+                for ($i = 0; $i < sizeof($receivedMessages); $i++) {
+
+                    $cbReturn = $callback(array("message" => $returnArray[0][$i], "channel" => $returnArray[1][$i], "timetoken" => $returnArray[2]));
+
+                    if ($cbReturn == false) {
+                        $exit_now = true;
+                    }
+
                 }
 
+                if ($exit_now) {
+                    return;
+                }
 
 
             } catch (Exception $error) {
@@ -251,8 +291,8 @@ class Pubnub
 
         } elseif ($mode == "detailedHistory") {
 
-            $messageArray = $messages[0];
-            $receivedMessages = $this->decodeDecryptLoop($messageArray);
+            $decodedMessages = $this->decodeDecryptLoop($messages);
+            $receivedMessages = array($decodedMessages[0], $messages[1], $messages[2] );
         }
 
         return $receivedMessages;
@@ -452,19 +492,29 @@ class Pubnub
 
         $ch = curl_init();
 
-        $pubnubHeaders = array("V: 3.3", "Accept: */*");
+        $pubnubHeaders = array("V: 3.4", "Accept: */*");
         curl_setopt($ch, CURLOPT_HTTPHEADER, $pubnubHeaders);
         curl_setopt($ch, CURLOPT_USERAGENT, "PHP");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 310);
 
         curl_setopt($ch, CURLOPT_URL, $urlString);
 
         if ($this->SSL) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_CAINFO, getcwd() . "/pubnub.com.pem");
+
+
+            $pemPathAndFilename = $this->PEM_PATH . "/pubnub.com.pem";
+            if (file_exists($pemPathAndFilename))
+                curl_setopt($ch, CURLOPT_CAINFO, $pemPathAndFilename);
+            else {
+                trigger_error("Can't find PEM file. Please set pem_path in initializer.");
+                exit;
+            }
+
         }
+
 
         $output = curl_exec($ch);
         $curlError = curl_errno($ch);
