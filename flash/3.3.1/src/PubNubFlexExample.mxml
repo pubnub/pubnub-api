@@ -3,29 +3,31 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark"
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:ns1="*"
-			   minWidth="400" minHeight="300" creationComplete="init(event)">
+			   width="100%" height="100%" minWidth="400" minHeight="300"
+			   creationComplete="init(event)">
     <fx:Declarations>
         <!-- Place non-visual elements (e.g., services, value objects) here -->
     </fx:Declarations>
     <fx:Script>
 		<![CDATA[
-		/*
-		 * Flex4 demo for Pubnub service
-		 * define public vars for custom connection.
-		 * */
 			import com.pubnub.*;
 			import com.pubnub.json.*;
+			import com.pubnub.log.Log;
 			import com.pubnub.operation.*;
+			
 			import flash.events.*;
 			import flash.external.*;
 			import flash.utils.*;
+			
 			import mx.binding.utils.*;
+			import mx.collections.ArrayCollection;
 			import mx.events.*;
+			
 			import utils.*;
 			
         [Bindable]
-        public var channel:String = 'test_channel';
-        //public var channel:String = 'test_channel_a,test_channel_b';
+        public var channel:String = 'test_channel_a,test_channel_b';
+        //public var channel:String = 'test_channel';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
@@ -47,7 +49,11 @@
         public var publishMessageText:String = 'hey';
         //public var publishMessageText:String = '{"text":"hey"}';
 		
+		[Bindable]
         public var ssl:Boolean = false;
+		
+		[Bindable]
+		private var channelsDataProvider:ArrayCollection;
 
         private var consoleCounter:int = 1;
         private var perfomance:Perfomance;
@@ -82,6 +88,7 @@
 		
         private function onInit(e:PnEvent):void {
 			//if (perfomance.isRun) return;
+			sslCheckBox.enabled = false;
             callExternalInterface("console.log", ("Pn init : " + Pn.instance.sessionUUID));
         }
 
@@ -113,10 +120,12 @@
                     callExternalInterface("console.log", ("Subscribe [ERROR] : " + e.channel + ', ' + e.data));
                     break;
             }
+			channelsDataProvider = new ArrayCollection(Pn.getSubscribeChannels());
         }
 		
 		private function onPresence(e:PnEvent):void {
 			 callExternalInterface("console.log", ("Presence : " + PnJSON.stringify(e.data)));
+			 channelsDataProvider = new ArrayCollection(Pn.getSubscribeChannels());
 		}
 
         protected function OnClearConsoleBtnClick(event:MouseEvent):void{
@@ -130,7 +139,8 @@
             args.end = endTimeTxt.enabled ? endTimeTxt.text : null;
             args.count = countTxt.enabled ? countTxt.text : null;
             args.reverse = reverseTxt.enabled ? (reverseTxt.text == 'true' ? true : false): null;
-            args.channel = this.channel;
+            //args.channel = this.channel;
+            args.channel = detChannelList.selectedItem.toString();
             args['sub-key'] = this.sub_key;
             Pn.instance.detailedHistory(args);
         }
@@ -158,6 +168,7 @@
 			
 		protected function unsubscribeChannel_clickHandler(event:MouseEvent):void{
 				// TODO Auto-generated method stub
+				//trace(this.unsubChannelName.text);
 				Pn.unsubscribe(this.unsubChannelName.text);
 		}
 
@@ -171,7 +182,8 @@
 		private var startPublishTime:Number;
         protected function publishBtn_clickHandler(event:MouseEvent):void {
 			startPublishTime = getTimer();
-            Pn.publish({channel : channel, message : publishMessageTxt.text});
+			var ch:String = publishChannelList.selectedItem.toString();
+            Pn.publish({channel : ch, message : publishMessageTxt.text});
         }
 
         private function onPublish(e:PnEvent):void {
@@ -221,6 +233,24 @@
 			perfomance.stop();
 		}
 			
+		protected function getLogBtn_clickHandler(event:MouseEvent):void{
+			// TODO Auto-generated method stub
+			var level:String = null;
+			if (fatal_rb.selected) {
+				level = Log.FATAL;
+			}else if (normal_rb.selected) {
+				level = Log.NORMAL;
+			}else if (debug_rb.selected) {
+				level = Log.DEBUG;
+			}else if (error_rb.selected) {
+				level = Log.ERROR;
+			}else if (warning_rb.selected) {
+				level = Log.WARNING;
+			}
+			var arr:Array = Log.out(null, level);
+			loggingTA.text = arr.join('\n\n');
+		}
+			
 		]]>
 	</fx:Script>
 
@@ -242,12 +272,15 @@
         </s:NavigatorContent>
         <s:NavigatorContent width="100%" height="100%" label="Subscribe (2)">
             <s:Button id="subscribeBtn" x="10" y="5" label="Subscribe" click="onSubscribeClick(event)" />
-            <s:Button id="unsubscribeBtn" x="10" y="35" label="Unsubscribe all"
+            <s:Button id="unsubscribeBtn" x="295" y="5" label="Unsubscribe all" 
                       click="unsubscribeBtn_clickHandler(event)"/>
-			<s:Button id="unsubscribeChannelBtn" x="9" y="69" label="Unsubscribe channel"
+			<s:Button id="unsubscribeChannelBtn" x="294" y="39" label="Unsubscribe channel"
 					  click="unsubscribeChannel_clickHandler(event)"/>
-			<s:TextInput id="unsubChannelName" x="156" y="69" width="214"/>
+			<s:TextInput id="unsubChannelName" x="441" y="39" width="214" text="{subsChannelList.selectedItems}"/>
+			<s:List id="subsChannelList" x="97" top="0" allowMultipleSelection="true" bottom="0" width="185"
+					dataProvider="{channelsDataProvider}"></s:List>
         </s:NavigatorContent>
+		
         <s:NavigatorContent width="100%" height="100%" label="DetailedHistory (3)">
 
             <s:Label x="2" y="30" width="175" color="#4D4C4C" fontStyle="italic" text="start (optional)"
@@ -268,21 +301,25 @@
             <s:TextInput id="reverseTxt" x="185" y="115" width="246" text="false"  enabled="{reverseCb.selected}"/>
 
 
-            <s:Button id="DetailedHistoryBtn" x="66" y="145" label="Detailed History"
+            <s:Button id="DetailedHistoryBtn" x="66" y="145" label="Detailed History" enabled="{this.detChannelList.selectedItem}"
                       click="onDetHistoryClick(event)"/>
 
             <s:CheckBox id="startCb" x="440" y="29" enabled="true" selected="false"/>
             <s:CheckBox id="endCb" x="440" y="59" enabled="true" selected="false"/>
             <s:CheckBox id="countCb" x="440" y="88" enabled="true" selected="true"/>
             <s:CheckBox id="reverseCb" x="440" y="116" enabled="true" selected="false"/>
+			<s:List id="detChannelList" x="507" top="0" bottom="0" width="185" 
+					dataProvider="{channelsDataProvider}"></s:List>
 
         </s:NavigatorContent>
         <s:NavigatorContent width="100%" height="100%" label="Publish (4)">
             <s:Button id="publishBtn" x="74" y="39" label="Publish"
-                      click="publishBtn_clickHandler(event)"/>
+                      click="publishBtn_clickHandler(event)" enabled="{publishChannelList.selectedItem}"/>
             <s:Label x="10" y="14" width="57" color="#4D4C4C" fontStyle="italic" text="message"
                      textAlign="right"/>
             <s:TextInput id="publishMessageTxt" x="75" y="9" width="246" text="@{publishMessageText}"  enabled="true"/>
+			<s:List id="publishChannelList" x="507" top="0" bottom="0" width="185" 
+					dataProvider="{channelsDataProvider}"></s:List>
         </s:NavigatorContent>
 		
 		<s:NavigatorContent width="100%" height="100%" label="Time (5)">
@@ -305,6 +342,20 @@
 				</s:VGroup>
 			</s:Scroller>
         </s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="Logging">
+			<s:TextArea id="loggingTA" left="10" right="263" top="5" bottom="5" fontSize="10"/>
+			<s:VGroup y="6" right="175">
+				<s:Label width="62" fontStyle="italic" text="level:"/>
+				<s:RadioButton id="all_rb" label="ALL" selected="true"/>
+				<s:RadioButton id="fatal_rb" label="FATAL"/>
+				<s:RadioButton id="normal_rb" label="NORMAL"/>
+				<s:RadioButton id="debug_rb" label="DEBUG"/>
+				<s:RadioButton id="error_rb" label="ERROR"/>
+				<s:RadioButton id="warning_rb" label="WARNING"/>
+			</s:VGroup>
+			<s:Button id="getLogBtn" y="7" right="95" label="GET LOG"
+					  click="getLogBtn_clickHandler(event)"/>
+		</s:NavigatorContent>
     </mx:TabNavigator>
     <s:TextArea id="consoleArea" left="10" right="100" bottom="10" height="120"/>
     <s:Button id="clearConsoleBtn" right="10" bottom="110" width="80" height="21" label="Clear"
@@ -313,4 +364,5 @@
     <s:TextInput id="subKeyTxt" x="398" y="62" width="246" text="@{sub_key}"/>
     <s:Label x="324" y="38" color="#4D4C4C" fontStyle="italic" text="publish_key" textAlign="right"/>
     <s:TextInput id="publishKeyTxt" x="397" y="34" width="246" text="@{pub_key}"/>
+	<s:CheckBox id="sslCheckBox" x="656" y="35" label="SSL" selected="@{ssl}"/>
 </s:Application>

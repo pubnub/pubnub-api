@@ -106,7 +106,8 @@ class LogRecord {
 	}
 	
 	public function toString():String{
-		return (index+1) + '.' +  date.toString() + ' [' + level+  '] '+': ' + message;
+		//return (index+1) + '.' +  date.toString() + ' [' + level+  '] '+': ' + message;
+		return (index+1) + '.' + ' [' + level.toUpperCase()+  '] '+' : ' +  '[' + date.toString() + '] : ' + message;
 	}
 	
 }

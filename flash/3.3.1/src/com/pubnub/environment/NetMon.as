@@ -1,4 +1,5 @@
 package com.pubnub.environment {
+	import com.pubnub.log.Log;
 	import flash.events.*;
 	import flash.net.*;
 	import flash.utils.*;
@@ -49,12 +50,23 @@ package com.pubnub.environment {
 		private function onError(e:Event):void {
 			// no network
 			//trace('onError : ' + lastStatus);
+			
+			
+			//
+			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
+				Log.log('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network unavailable', Log.WARNING);
+			}
+			
 			if (lastStatus == NetMonEvent.HTTP_DISABLE) {
 				_currentRetries++;
+				
 				if (_currentRetries >= _maxForceReconnectRetries) {
 					stop();
 					lastStatus = NetMonEvent.MAX_RETRIES;
+					Log.log('_LOGGING:RECONNECT_HEARTBEAT: maximum retries  of'  + _maxForceReconnectRetries + ' reached', Log.WARNING);
 					dispatchEvent(new NetMonEvent(NetMonEvent.MAX_RETRIES));
+				}else {
+					Log.log('_LOGGING:RECONNECT_HEARTBEAT: Retrying '+  _currentRetries + ' of maximum ' + _maxForceReconnectRetries + ' attempts', Log.WARNING);
 				}
 				return;
 			}
@@ -75,6 +87,7 @@ package com.pubnub.environment {
 				clearInterval(interval);
 				interval = setInterval(ping, _reconnectDelay);
 			}
+			Log.log('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 		}
 		

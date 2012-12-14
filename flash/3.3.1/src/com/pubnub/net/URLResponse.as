@@ -1,4 +1,5 @@
 package com.pubnub.net {
+	import com.pubnub.log.Log;
 	import flash.utils.ByteArray;
 	/**
 	 * ...
@@ -54,6 +55,7 @@ package com.pubnub.net {
 				_code = matches[2];
 				_message = matches[3];
 			}else {
+				Log.log("Invalid header: " + firstLine + ", matches: " + matches, Log.ERROR);
 				trace("Invalid header: " + firstLine + ", matches: " + matches);
 			}
 		}
@@ -116,6 +118,7 @@ package com.pubnub.net {
 					result.push( { name: name, value: value } );
 				} else {
 					trace("Invalid header: " + line);
+					Log.log("Invalid header: " + line, Log.ERROR);
 				}
 			}
 			return result;

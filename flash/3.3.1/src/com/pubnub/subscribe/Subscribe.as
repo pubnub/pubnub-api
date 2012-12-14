@@ -3,6 +3,7 @@ package com.pubnub.subscribe {
 	import com.pubnub.connection.*;
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
+	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
@@ -36,7 +37,7 @@ package com.pubnub.subscribe {
 		protected var waitNetwork:Boolean;
 		protected var factory:Dictionary;
 		protected var _destroyed:Boolean;
-		protected var channels:Array;
+		protected var _channels:Array;
 		
 		protected var connection:AsyncConnection;
 		
@@ -46,7 +47,7 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function init():void {
-			channels = [];
+			_channels = [];
 			factory = new Dictionary();
 			factory[INIT_SUBSCRIBE] = 	getSubscribeInitOperation;
 			factory[SUBSCRIBE] = 	getSubscribeOperation;
@@ -111,29 +112,32 @@ package com.pubnub.subscribe {
 		}
 		
 		public function unsubscribeAll():void {
-			var allChannels:String = channels.join(',');
-			unsubscribe(allChannels);
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, { channel:allChannels } ));
+			var allChannels:String = _channels.join(',');
+			unsubscribe(allChannels);	
 		}
+		
+		
 		
 		private function process(addCh:Array = null, removeCh:Array = null):void {
 			var needAdd:Boolean = addCh && addCh.length > 0;
 			var needRemove:Boolean = removeCh && removeCh.length > 0;
-			trace('process : ' + needAdd, needRemove, lastToken);
+			//trace('process : ' + needAdd, needRemove, lastToken);
 			if (needAdd || needRemove) {
 				connection.close();
 				if (needRemove) {
-					leave(removeCh.join(','));
-					ArrayUtil.removeItems(channels, removeCh);
+					var removeChStr:String = removeCh.join(',');
+					leave(removeCh.join(removeChStr));
+					ArrayUtil.removeItems(_channels, removeCh);
+					dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, {channel:removeChStr}));
 					
 				}
 				
 				if (needAdd) {
-					channels = channels.concat(addCh);
+					_channels = _channels.concat(addCh);
 					//trace('after ADD channels:' + channels);
 				}
 				
-				if (channels.length > 0) {
+				if (_channels.length > 0) {
 					if (lastToken) {
 						doSubscribe();
 					}else {
@@ -169,7 +173,7 @@ package com.pubnub.subscribe {
 			//trace(this, ' onConnectInit : ' + lastToken);
 			_connected = true;
 			netMonitor.start();
-			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:channels.join(',') } ));
+			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channels.join(',') } ));
 			destroyOperation(e.target as Operation);
 			doSubscribe();
 		}
@@ -220,8 +224,7 @@ package com.pubnub.subscribe {
 					//trace(channel, message);
 					
 					if (multiplexResponce == false) {
-						
-						channel ||= channels[0];
+						channel ||= _channels[0];
 					}
 					if (hasChannel(channel)) {
 						dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : message}));
@@ -296,13 +299,7 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onNetMonitorMaxRetries(e:NetMonEvent):void {
-			/*var args:Array = [Errors.RECONNECT_HEARTBEAT_TIMEOUT, lastToken];
-			var op:Operation = connection ? connection.getLastOperation() : null;
-			if (op) {
-				args.push(op.url);
-			}
-			Log.log(args.join(','), Log.ERROR, Errors.RECONNECT_HEARTBEAT_TIMEOUT);
-			dispose();*/
+			Log.log('onNetMonitorMaxRetries', Log.FATAL);
 		}
 		
 		protected function onNetMonitorHTTPDisable(e:NetMonEvent):void {
@@ -315,9 +312,12 @@ package com.pubnub.subscribe {
 			if (waitNetwork) {
 				waitNetwork = false;
 				if (Settings.RESUME_ON_RECONNECT) { 
-					//restoreWithLastToken();
+					Log.log('RETRY_LOGGING:RECONNECT_HEARTBEAT: re-established network connectivity. Resubscribing with timetoken:' +lastToken, Log.WARNING);
+					doSubscribe();
 				}else {
 					//restoreWithZeroToken();
+					lastToken = null;
+					subscribeInit();
 				}
 			}
 		}
@@ -361,10 +361,10 @@ package com.pubnub.subscribe {
 		
 		protected function dispose():void {
 			connection.close();
-			if (channels.length > 0) {
-				leave(channels.join(','));
+			if (_channels.length > 0) {
+				leave(_channels.join(','));
 			}
-			channels.length = 0;
+			_channels.length = 0;
 			waitNetwork = false;
 			netMonitor.stop();
 			_connected = false;
@@ -372,21 +372,25 @@ package com.pubnub.subscribe {
 		
 		protected function get channelsString():String {
 			var result:String = '';
-			var len:int = channels.length;
+			var len:int = _channels.length;
 			var comma:String = ',';
 			for (var i:int = 0; i < len; i++) {
-				result += (channels[i] + comma);
+				result += (_channels[i] + comma);
 				if (i == (len - 1)) {
-					result += channels[i] + PNPRES_PREFIX
+					result += _channels[i] + PNPRES_PREFIX
 				}else {
-					result += channels[i] + PNPRES_PREFIX + comma;
+					result += _channels[i] + PNPRES_PREFIX + comma;
 				}
 			}
 			return result; 
 		}
 		
+		public function get channels():Array {
+			return _channels;
+		}
+		
 		private function hasChannel(ch:String):Boolean{
-			return (ch != null && channels.indexOf(ch) > -1);
+			return (ch != null && _channels.indexOf(ch) > -1);
 		}
 	}
 }

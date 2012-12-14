@@ -1,6 +1,7 @@
 package com.pubnub {
 	
 	import com.pubnub.connection.*;
+	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
@@ -284,6 +285,14 @@ package com.pubnub {
 			return time;
 		}
 		
+		
+		public static function getSubscribeChannels():Array{
+			if (instance.subscribeConnection) {
+				return instance.subscribeConnection.channels;
+			}else {
+				return null;
+			}
+		}
 		
 		
 		private function initKeys(config:Object):void {

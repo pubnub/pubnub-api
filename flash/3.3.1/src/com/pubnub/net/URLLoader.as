@@ -1,6 +1,7 @@
 package com.pubnub.net {
 	import com.adobe.net.*;
 	import com.hurlant.crypto.tls.TLSSocket;
+	import com.pubnub.log.Log;
 	import flash.errors.IOError;
 	import flash.events.*;
 	import flash.net.Socket;
@@ -47,6 +48,7 @@ package com.pubnub.net {
 			destroyResponce();
 			sendRequest(request);
 			//trace(this, request.url);
+			Log.log(unescape(request.url), Log.DEBUG);
 		}
 		
 		private function getSocket(url:String):*{
