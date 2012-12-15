@@ -695,9 +695,9 @@ var PDIV          = $('pubnub') || {}
                 if (!presence) return;
 
                 // Subscribe Presence Channel
-                SELF.subscribe({
-                    channel  : channel + PRESENCE_SUFFIX,
-                    callback : presence
+                SELF['subscribe']({
+                    'channel'  : channel + PRESENCE_SUFFIX,
+                    'callback' : presence
                 });
 
                 // Presence Subscribed?
@@ -705,8 +705,8 @@ var PDIV          = $('pubnub') || {}
 
                 // See Who's Here Now
                 SELF['here_now']({
-                    channel  : channel,
-                    callback : function(here) {
+                    'channel'  : channel,
+                    'callback' : function(here) {
                         each( 'uuids' in here ? here['uuids'] : [],
                         function(uuid) { presence( {
                             'action'    : 'join',
@@ -965,7 +965,10 @@ function FDomainRequest() {
 }
 FDomainRequest['id'] = SECOND;
 
-// For Testling.js - http://testling.com/
-typeof module !== 'undefined' && (module['exports'] = PUBNUB) && ready();
+// jQuery Interface
+window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
+
+// For Modern JS + Testling.js - http://testling.com/
+typeof(module) !== 'undefined' && (module['exports'] = PUBNUB) && ready();
 
 })();
