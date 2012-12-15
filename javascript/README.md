@@ -30,7 +30,7 @@ business collaborative solutions, and more.
     // LISTEN
     PUBNUB.subscribe({
         channel  : "hello_world",
-        callback : alert
+        callback : function(m){ alert(m) }
     })
 
     // SEND
@@ -127,7 +127,6 @@ business collaborative solutions, and more.
 ```
 
 ## Using the PUBNUB init() Function
-
 Sometimes you want to use create a PubNub Instance directly in JavaScript
 and pass the PubNub API Keys without using a DOM element.
 To do this, simply follow this `init` example:
@@ -144,7 +143,8 @@ To do this, simply follow this `init` example:
     });
 
     // LISTEN
-    pubnub.subscribe({ channel  : "hello_world", callback : alert })
+    pubnub.subscribe({ channel  : "hello_world", message : function(m){ alert(m) } })
+ 
 
     // SEND
     pubnub.publish({ channel : "hello_world", message : "Hi." })
