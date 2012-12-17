@@ -1,12 +1,12 @@
-package test;
+package com.pubnub.test;
 
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.StringItem;
-import pubnub.Pubnub;
+import com.pubnub.api.Pubnub;
 import org.json.me.JSONArray;
 import org.json.me.JSONObject;
-import pubnub.Callback;
+import com.pubnub.api.Callback;
 
 public class UnitTestForDetailedHistory implements Callback {
 

@@ -1,0 +1,50 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>PubNub Test </title>
+    
+</head>
+<body>
+
+
+<div pub-key="demo" sub-key="demo" ssl="off" origin="pubsub.pubnub.com" id="pubnub"></div>
+<script src="../../pubnub-3.3.js"></script>
+
+<script>(function(){
+    console.log('Subscribing'); 
+    // LISTEN FOR MESSAGES
+    PUBNUB.subscribe({
+        channel    : "hello_world_temp",      // CONNECT TO THIS CHANNEL.
+ 
+        restore    : true,              // STAY CONNECTED, EVEN WHEN BROWSER IS CLOSED
+                                         // OR WHEN PAGE CHANGES.
+ 
+        callback   : function(message) { // RECEIVED A MESSAGE.
+           messageEvent(message);
+        },
+        reconnect    : function() {        // CONNECTION ESTABLISHED.
+            console.log('RECONNECT');
+            alert('RECONNECT');
+        },
+        disconnect    : function() {        // CONNECTION ESTABLISHED.
+            console.log('DISCONNECT');
+            alert('DISCONNECT');
+        },
+        connect    : function() {        // CONNECTION ESTABLISHED.
+            alert('CONNECT');
+        },
+        presence   : function(message) {
+            presenceEvent(message, true);
+        }
+    })
+})();</script>
+<script>
+function presenceEvent(message, announce) {
+    console.log(message);
+}
+function messageEvent(message) {
+  console.log(message);
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 MIDlet-1: HelloMIDlet, ,test.PubnubMIDlet
-MIDlet-Jar-Size: 137416
+MIDlet-Jar-Size: 137133
 MIDlet-Jar-URL: PubnubUnitTest.jar
 MIDlet-Name: PubnubUnitTest
 MIDlet-Vendor: Vendor

@@ -1,6 +1,6 @@
 package com.pubnub.api;
 
-import com.tinyline.util.GZIPInputStream;
+
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -18,8 +18,8 @@ import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 import com.pubnub.crypto.PubnubCrypto;
-import pubnub.util.AsyncHttpManager;
-import pubnub.util.HttpCallback;
+import com.pubnub.util.AsyncHttpManager;
+import com.pubnub.util.HttpCallback;
 
 public class Pubnub {
 
@@ -32,13 +32,15 @@ public class Pubnub {
     private Callback _callback = null;
     private String current_timetoken = "0";
     private String UUID = null;
+    
+    private Hashtable subscriptions;
 
     private class ChannelStatus {
 
         String channel;
         boolean connected, first;
     }
-    private Vector subscriptions;
+    //private Vector subscriptions;
     private Vector _connection;
 
     /**
@@ -237,7 +239,9 @@ public class Pubnub {
         url.addElement(channel);
         url.addElement("0");
         url.addElement(message.toString());
-        _request(url, channel,message);
+       
+        
+        _request(getURL(url), channel,message);
     }
 
     /**
@@ -616,31 +620,18 @@ public class Pubnub {
      * @param List <String> request of url directories.
      * @return JSONArray from JSON response.
      */
-    private void _request(Vector url_components, final String channel1,Object message) {
-        String request_for = (String) url_components.elementAt(0);
-        if (request_for.equals("subscribe")) {
-            current_timetoken = (String) url_components.elementAt(4);
-        }
-        if (request_for.endsWith("v2")) {
-            request_for = (String) url_components.elementAt(1);
-            if (request_for.endsWith("history")) {
-                request_for = "detailedHistory";
-            }
-        }
-        String url = getURL(url_components);
-        if (request_for.equals("subscribe")) {
-            url = url + "/?uuid=" + UUID;
-        }
+    private void _request(String url, final String channel1,Object message) {
+
         Hashtable _headers = new Hashtable();
         _headers.put("V", "3.3");
         _headers.put("User-Agent", "J2ME");
         _headers.put("Accept-Encoding", "gzip");
         _headers.put("Connection", "close");
 
-        HttpCallback callback = new HttpCallback(url.toString(), _headers, request_for) {
+        HttpCallback callback = new HttpCallback(url, _headers) {
             public void processResponse(HttpConnection conn, Object cookie) throws IOException {
             }
-            public void OnComplet(HttpConnection hc, String response, String req_for, String channel) throws IOException {
+            public void OnComplete(HttpConnection hc, String response, String req_for, String channel) throws IOException {
                 try {
                     JSONArray out = null;
                     if (response != null) {
@@ -697,214 +688,8 @@ public class Pubnub {
                 }
             }
 
-            void detailedHistoryComplet(JSONArray responce, String channel) {
-                if (CIPHER_KEY.length() > 0) {
-                    try {
-                        JSONArray messageArray = responce.getJSONArray(0);
-                        PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
-                        messageArray = pc.decryptJSONArray(messageArray);
-                        responce.put(0, messageArray);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (_callback != null) {
-                        _callback.detailedHistoryCallback(channel, responce);
-                    }
-                } else {
-                    if (_callback != null) {
-                        _callback.detailedHistoryCallback(channel, responce);
-                    }
-                }
-            }
 
-            void subscribeComplet(JSONArray out, String channel) {
-                try {
-                    boolean isPresence = false;
-                    if (channel.endsWith("-pnpres")) {
-                        isPresence = true;
-                    }
-                    String timetoken = "0";
-                    if (!isPresence) {
-                        ChannelStatus it;
-                        boolean is_disconnect = false;
-                        // Stop Connection?
-                        for (int i = 0; i < subscriptions.size(); i++) {
-                            it = (ChannelStatus) subscriptions.elementAt(i);
-                            if (it.channel.equals(channel)) {
-                                if (!it.connected && it.first) {
-                                    subscriptions.removeElement(it);
-                                    if (_callback != null) {
-                                        _callback.disconnectCallback(channel);
-                                          it.connected = false;
-                                    }
-                                    is_disconnect = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (is_disconnect) {
-                            return;
-                        }
-                        // Problem?
-                        if (out == null || out.optInt(1) == 0) {
-                            for (int i = 0; i < subscriptions.size(); i++) {
-                                it = (ChannelStatus) subscriptions.elementAt(i);
-                                if (it.channel.equals(channel)) {
-                                    if (_callback != null) {
-                                        _callback.disconnectCallback(channel);
-                                         is_disconnect = true;
-                                         it.connected = false;
-                                    }
-                                }
-                            }
-                            if (is_disconnect) {
-                               // return;
-                            }
-                            // Ensure Connected (Call Time Function)
-                            boolean is_reconnected = false;
-                            while (true) {
-                                long time_token = time();
-                                if (time_token == 0) {
-                                    // Reconnect Callback
-//                                            if (_callback != null) {
-//                                                _callback.reconnectCallback(channel);
-//                                            }
-                                    Thread.sleep(5000);
-                                } else {
-                                    if (_callback != null) {
-                                        _callback.reconnectCallback(channel);
-                                        for (int i = 0; i < subscriptions.size(); i++) {
-                                            it = (ChannelStatus) subscriptions.elementAt(i);
-                                            if (it.channel.equals(channel)) {
-                                                //if (_callback != null) {
-                                                    //_callback.disconnectCallback(channel);
-                                                    //is_disconnect = true;
-                                                    it.connected = true;
-                                                //}
-                                            }
-                                        }
-                                    }
-                                    Hashtable args = new Hashtable();
-                                    args.put("channel", channel);
-                                    if (current_timetoken.equals("0")) {
-                                        args.put("timetoken", time_token + "");
-                                    } else {
-                                        args.put("timetoken", current_timetoken + "");
-                                    }
-                                    _subscribe_base(args);
-                                    is_reconnected = true;
-                                    break;
-                                }
-                            }
-                            if(is_reconnected){
-                                return;
-                            }
-                        } else {
-                            for (int i = 0; i < subscriptions.size(); i++) {
-                                it = (ChannelStatus) subscriptions.elementAt(i);
-                                if (it.channel.equals(channel)) {
-                                    // Connect Callback
-                                    if (!it.first) {
-                                        it.first = true;
-                                        if (_callback != null) {
-                                            _callback.connectCallback(channel);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    JSONArray messages = out.optJSONArray(0);
-                    // Update TimeToken
-                    if (out.optString(1).length() > 0) {
-                        timetoken = out.optString(1);
-                    }
-                    if (!isPresence) {
-                        for (int i = 0; messages.length() > i; i++) {
-                            JSONObject message = messages.optJSONObject(i);
-                            if (message != null) {
-                                if (CIPHER_KEY.length() > 0) {
-                                    // Decrypt Message
-                                    PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
-                                    message = pc.decrypt(message);
-                                }
-                                if (_callback != null) {
-                                    _callback.subscribeCallback(channel, message);
-                                }
-                            } else {
-                                JSONArray arr = messages.optJSONArray(i);
-                                if (arr != null) {
-                                    if (CIPHER_KEY.length() > 0) {
-                                        PubnubCrypto pc = new PubnubCrypto(
-                                                CIPHER_KEY);
-                                        arr = pc.decryptJSONArray(arr);
-                                    }
-                                    if (_callback != null) {
-                                        _callback.subscribeCallback(channel, arr);
-                                    }
-                                } else {
-                                    String msgs = messages.getString(0);
-                                    if (CIPHER_KEY.length() > 0) {
-                                        PubnubCrypto pc = new PubnubCrypto(
-                                                CIPHER_KEY);
-                                        msgs = pc.decrypt(msgs);
-                                    }
-                                    if (_callback != null) {
-                                        _callback.subscribeCallback(channel, msgs);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        if (_callback != null) {
-                            for (int i = 0; messages.length() > i; i++) {
-                                JSONObject message = messages.optJSONObject(i);
-                                if (message != null) {
-                                    _callback.presenceCallback(channel, message);
-                                }
-                            }
-                        }
-                    }
-                    Hashtable args = new Hashtable();
-                    args.put("channel", channel);
-                    args.put("timetoken", timetoken + "");
-                    _subscribe_base(args);
-                } catch (ShortBufferException ex) {
-                    ex.printStackTrace();
-                } catch (IllegalBlockSizeException ex) {
-                    ex.printStackTrace();
-                } catch (BadPaddingException ex) {
-                    ex.printStackTrace();
-                } catch (DataLengthException ex) {
-                    ex.printStackTrace();
-                } catch (IllegalStateException ex) {
-                    ex.printStackTrace();
-                } catch (InvalidCipherTextException ex) {
-                    ex.printStackTrace();
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                } catch (JSONException ex) {
-                    ex.printStackTrace();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
 
-            private void hereNowComplet(String response, String channel) {
-                if (_callback != null) {
-                    if (response != null) {
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            _callback.hereNowCallback(channel, obj);
-                        } catch (JSONException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }
         };
         if (channel1 != null) {
             callback.setChannel(channel1);

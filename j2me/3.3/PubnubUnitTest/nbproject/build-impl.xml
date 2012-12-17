@@ -180,46 +180,6 @@
             </and>
         </condition>
     </target>
-    <!--ricoh-init-->
-    <target name="ricoh-pre-init" if="cdc-platform.trigger">
-        <condition property="ricoh-platform.trigger">
-            <equals arg1="ricoh" arg2="${platform.type}" casesensitive="false"/>
-        </condition>
-    </target>
-    <target name="ricoh-init" depends="ricoh-pre-init" if="ricoh-platform.trigger">
-        <available property="jcifs" classname="jcifs.smb.SmbFile" classpath="${libs.RicohAntTools.classpath}"/>
-        <condition property="no.vendor.name" value="true">
-            <equals arg1="${application.vendor}" arg2="" trim="true"/>
-        </condition>
-        <condition property="ricoh.dalp.install.mode" value="auto" else="manual">
-            <istrue value="${ricoh.dalp.install.mode.auto}"/>
-        </condition>
-        <condition property="ricoh.dalp.display-mode.type" value="COLOR" else="MONO">
-            <istrue value="${ricoh.dalp.display-mode.color}"/>
-        </condition>
-        <property name="xml.dir" value="${build.dir}/dalp"/>
-        <property name="xlet.dalp" value="${application.name}.dalp"/>
-        <property name="xlet.dalp.name-only" value="${application.name}.dalp"/>
-        <property name="deploy.dir" value="${dist.dir}/deploy"/>
-        <property name="rideploy.zip" value="${dist.dir}/${application.name}.zip"/>
-        <property name="ricoh.dalp.is-managed" value="true"/>
-        <property name="ricoh.dalp.information.is-icon-used" value="true"/>
-        <property name="ricoh.platform.target.version" value="2.0"/>
-        <property name="ricoh.dalp.version" value="${deployment.number}"/>
-        <property name="ricoh.dalp.application-desc.visible" value="true"/>
-        <property name="ricoh.dalp.install.destination" value="hdd"/>
-        <property name="ricoh.dalp.install.work-dir" value="hdd"/>
-        <property name="ricoh.dalp.information.abbreviation" value="RICOH"/>
-        <taskdef name="taskIf" classname="ricoh.ant.ConditionalTask" classpath="${libs.ricoh-ant-utils.classpath}"/>
-        <taskdef name="dalp" classname="org.netbeans.modules.j2me.cdc.project.ricoh.DalpBuilder" classpath="${libs.ricoh-ant-utils.classpath}"/>
-        <property name="dalp.dist" value="${build.dir}/dalp/${application.name}.dalp"/>
-        <property name="deployment.dir" location="${dist.dir}"/>
-        <patternset id="deployment.patternset">
-            <include name="${dist.jar}"/>
-            <include name="${application.name}.dalp"/>
-            <include name="lib/*"/>
-        </patternset>
-    </target>
     <!--semc-init-->
     <target name="semc-pre-init" if="cdc-platform.trigger">
         <condition property="semc-platform.trigger">
@@ -334,22 +294,10 @@
             <include name="${dist.jar}"/>
         </patternset>
     </target>
-    <!--nsicom-init-->
-    <target name="nsicom-pre-init" if="cdc-platform.trigger">
-        <condition property="nsicom-platform.trigger">
-            <equals arg1="nsicom" arg2="${platform.type}" casesensitive="false"/>
-        </condition>
-    </target>
-    <target name="nsicom-init" depends="nsicom-pre-init" if="nsicom-platform.trigger">
-        <property name="deployment.dir" location="${dist.dir}"/>
-        <patternset id="deployment.patternset">
-            <include name="${dist.jar}"/>
-        </patternset>
-    </target>
     <!--init-->
     <target name="pre-init"/>
     <target name="post-init"/>
-    <target name="init" depends="pre-init,load-properties,basic-init,cldc-init,cdc-init,ricoh-init,semc-init,savaje-init,sjmc-init,ojec-init,cdc-hi-init,nokiaS80-init,nsicom-init,post-init"/>
+    <target name="init" depends="pre-init,load-properties,basic-init,cldc-init,cdc-init,semc-init,savaje-init,sjmc-init,ojec-init,cdc-hi-init,nokiaS80-init,post-init"/>
     <!--conditional clean-->
     <target name="conditional-clean-init">
         <uptodate property="no.clean.before.build" targetfile="${build.dir}/.timestamp">
@@ -663,14 +611,6 @@
             <fileset dir="${buildsystem.baton}"/>
         </jar>
     </target>
-    <!--nsicom-create-manifest-->
-    <target name="nsicom-create-manifest" if="nsicom-platform.trigger">
-        <jar jarfile="${dist.dir}/${dist.jar}" compress="${jar.compress}" update="true">
-            <manifest>
-                <attribute name="Main-Class" value="${main.class}"/>
-            </manifest>
-        </jar>
-    </target>
     <!--do-jar-no-manifest-->
     <target name="do-jar-no-manifest" unless="manifest.available">
         <dirname file="${dist.dir}/${dist.jar}" property="dist.jar.dir"/>
@@ -685,79 +625,6 @@
     </target>
     <target name="sign-jar" if="sign.jar.trigger">
         <signjar jar="${dist.dir}/${dist.jar}" alias="${sign.alias}" keystore="${sign.keystore}" storepass="${sign.keystore.password}" keypass="${sign.alias.password}"/>
-    </target>
-    <!--ricoh-init-dalp-->
-    <target name="ricoh-init-dalp" if="ricoh-platform.trigger">
-        <property name="ricoh.application.telephone" value=""/>
-        <property name="ricoh.application.fax" value=""/>
-        <property name="ricoh.application.email" value=""/>
-        <condition property="no.unmanaged.dalp">
-            <and>
-                <isfalse value="${ricoh.dalp.is-managed}"/>
-                <not>
-                    <available file="./${application.name}.dalp"/>
-                </not>
-            </and>
-        </condition>
-        <fail if="no.unmanaged.dalp" message="Dalp file ${application.name}.dalp is required in project directory when DALP management is set to off."/>
-        <condition property="no.vendor.name" value="true">
-            <equals arg1="${application.vendor}" arg2="" trim="true"/>
-        </condition>
-        <condition property="ricoh.icon.invalid" value="true">
-            <or>
-                <contains string="${ricoh.application.icon}" substring="$${"/>
-                <equals arg1="${ricoh.application.icon}" arg2="" trim="true"/>
-            </or>
-        </condition>
-        <mkdir dir="${dist.dir}/lib"/>
-    </target>
-    <!--ricoh-add-app-icon-->
-    <target name="ricoh-add-app-icon" depends="ricoh-init-dalp" if="ricoh-platform.trigger" unless="ricoh.icon.invalid">
-        <pathconvert property="icon.name" pathsep=" ">
-            <path path="${ricoh.application.icon}"/>
-            <chainedmapper>
-                <flattenmapper/>
-                <globmapper from="*" to="*"/>
-            </chainedmapper>
-        </pathconvert>
-        <jar jarfile="${dist.jar}" compress="${jar.compress}" update="true">
-            <fileset file="${ricoh.application.icon}"/>
-        </jar>
-    </target>
-    <!--ricoh-build-dalp-with-icon-->
-    <target name="ricoh-build-dalp-with-icon" depends="ricoh-add-app-icon" if="ricoh-platform.trigger" unless="ricoh.icon.invalid">
-        <mkdir dir="${build.dir}/dalp/"/>
-        <taskIf if="ricoh.dalp.is-managed" value="true">
-            <dalp file="${dalp.dist}" iconname="${icon.name}">
-                <fileset dir="${dist.dir}/lib"/>
-            </dalp>
-            <echo message="Managed dalp file ${dalp.dist} created w/ icon"/>
-        </taskIf>
-        <taskIf if="ricoh.dalp.is-managed" value="false">
-            <copy tofile="${dalp.dist}">
-                <fileset file="./${application.name}.dalp"/>
-            </copy>
-            <echo message="Non-managed dalp file ${dalp.dist} w/ icon imported"/>
-        </taskIf>
-    </target>
-    <!--ricoh-build-dalp-without-icon-->
-    <target name="ricoh-build-dalp-without-icon" if="ricoh.icon.invalid">
-        <mkdir dir="${build.dir}/dalp/"/>
-        <taskIf if="ricoh.dalp.is-managed" value="true">
-            <dalp file="${dalp.dist}">
-                <fileset dir="${dist.dir}/lib"/>
-            </dalp>
-            <echo message="Managed dalp file ${dalp.dist} created w/o icon"/>
-        </taskIf>
-        <taskIf if="ricoh.dalp.is-managed" value="false">
-            <copy tofile="${dalp.dist}">
-                <fileset file="./${application.name}.dalp"/>
-            </copy>
-            <echo message="Non-managed dalp file ${dalp.dist} w/o icon imported"/>
-        </taskIf>
-    </target>
-    <target name="ricoh-build-dalp" depends="ricoh-build-dalp-with-icon,ricoh-build-dalp-without-icon" if="ricoh-platform.trigger">
-        <copy todir="${dist.dir}" file="${dalp.dist}" overwrite="true"/>
     </target>
     <!--savaje-build-jnlp-->
     <target name="savaje-prepare-icon" if="savaje-platform.trigger" unless="savaje.icon.invalid">
@@ -792,7 +659,7 @@
     <!--jar-->
     <target name="pre-jar"/>
     <target name="post-jar"/>
-    <target name="jar" depends="preverify,pre-jar,set-password,create-jad,do-extra-libs,nokiaS80-create-manifest,jad-jsr211-properties,semc-build-j9,do-jar,nsicom-create-manifest,do-jar-no-manifest,update-jad,sign-jar,ricoh-build-dalp,savaje-build-jnlp,post-jar" description="Build jar and application descriptor."/>
+    <target name="jar" depends="preverify,pre-jar,set-password,create-jad,do-extra-libs,nokiaS80-create-manifest,jad-jsr211-properties,semc-build-j9,do-jar,do-jar-no-manifest,update-jad,sign-jar,savaje-build-jnlp,post-jar" description="Build jar and application descriptor."/>
     <!--override-jad-->
     <target name="override-jad" if="override.jarurl.trigger">
         <property name="deployment.jarurl" value="${dist.jar}"/>
@@ -914,19 +781,6 @@
     <target name="cldc-run" if="cldc-platform.trigger">
         <nb-run jadfile="${dist.dir}/${dist.jad}" jarfile="${dist.dir}/${dist.jar}" jadurl="${dist.jad.url}" device="${platform.device}" platformhome="${platform.home}" platformtype="${platform.type}" execmethod="${run.method}" securitydomain="${evaluated.run.security.domain}" commandline="${platform.runcommandline}" classpath="${platform.bootclasspath}:${dist.dir}/${dist.jar}" cmdoptions="${run.cmd.options}"/>
     </target>
-    <!--ricoh-run-->
-    <target name="ricoh-run" if="ricoh-platform.trigger">
-        <copy todir="${platform.home}/mnt/sd3/sdk/dsdk/dist/${ricoh.application.uid}" overwrite="true">
-            <fileset dir="${dist.dir}">
-                <patternset refid="deployment.patternset"/>
-            </fileset>
-            <flattenmapper/>
-        </copy>
-        <ant antfile="${platform.home}/startemulator.xml" target="start_emulator" dir="${platform.home}">
-            <property name="emulator.skin" value="WVGA.xml"/>
-            <property name="emulator.autolaunchid" value="${ricoh.application.uid}"/>
-        </ant>
-    </target>
     <!--semc-run-and-debug-prepare-targets-->
     <target name="semc-icon-assembly" if="semc-platform.trigger" unless="semc.icon.invalid">
         <copy file="${semc.application.icon}" tofile="${platform.home}/epoc32/release/winscw/udeb/z/Resource/Apps/${semc.application.uid}.mbm" failonerror="false"/>
@@ -997,14 +851,6 @@
             </fileset>
         </nokiaexec>
     </target>
-    <!--nsicom-run-->
-    <target name="nsicom-run" if="nsicom-platform.trigger">
-        <nsicomExecDeploy home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.jvmargs}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}" verbose="${nsicom.application.runverbose}" hostip="${nsicom.application.monitorhost}" runondevice="${nsicom.application.runremote}" remotevmlocation="${nsicom.remotevm.location}" remoteDataLocation="${nsicom.remoteapp.location}">
-            <fileset dir="${dist.dir}">
-                <exclude name="javadoc/**"/>
-            </fileset>
-        </nsicomExecDeploy>
-    </target>
     <!--cdc-hi-run-->
     <target name="-pre-cdc-hi-run" if="cdc-hi-platform.trigger"/>
     <target name="-cdc-hi-run" if="cdc-hi-platform.trigger">
@@ -1041,8 +887,8 @@
     </target>
     <!--run-->
     <target name="pre-run"/>
-    <target name="run" depends="jar,pre-run,open-netmon,cldc-run,ricoh-run,semc-run,savaje-run,sjmc-run,ojec-run,nokiaS80-run,nsicom-run,cdc-hi-run,open-profiler" description="Run MIDlet suite."/>
-    <target name="run-no-build" depends="init,pre-run,open-netmon,cldc-run,ricoh-run,semc-run,savaje-run,sjmc-run,ojec-run,nokiaS80-run,nsicom-run,cdc-hi-run,open-profiler" description="Quick Run already built MIDlet suite."/>
+    <target name="run" depends="jar,pre-run,open-netmon,cldc-run,semc-run,savaje-run,sjmc-run,ojec-run,nokiaS80-run,cdc-hi-run,open-profiler" description="Run MIDlet suite."/>
+    <target name="run-no-build" depends="init,pre-run,open-netmon,cldc-run,semc-run,savaje-run,sjmc-run,ojec-run,nokiaS80-run,cdc-hi-run,open-profiler" description="Quick Run already built MIDlet suite."/>
     <!--cldc-debug-->
     <target name="cldc-debug" if="cldc-platform.trigger">
         <parallel>
@@ -1050,27 +896,6 @@
             <sequential>
                 <sleep seconds="5"/>
                 <antcall target="nbdebug"/>
-            </sequential>
-        </parallel>
-    </target>
-    <!--ricoh-debug-->
-    <target name="ricoh-debug" if="ricoh-platform.trigger">
-        <copy todir="${platform.home}/mnt/sd3/sdk/dsdk/dist/${ricoh.application.uid}" overwrite="true">
-            <fileset dir="${dist.dir}">
-                <patternset refid="deployment.patternset"/>
-            </fileset>
-            <flattenmapper/>
-        </copy>
-        <parallel>
-            <ant antfile="${platform.home}/startemulator_debug.xml" target="debug_emulator" dir="${platform.home}">
-                <property name="emulator.skin" value="WVGA.xml"/>
-                <property name="emulator.autolaunchid" value="${ricoh.application.uid}"/>
-            </ant>
-            <sequential>
-                <sleep seconds="5"/>
-                <property name="jpda.port" value="8000"/>
-                <property name="debug.period" value="3000"/>
-                <antcall target="nbdebug" inheritall="true" inheritrefs="true"/>
             </sequential>
         </parallel>
     </target>
@@ -1179,16 +1004,12 @@
             </sequential>
         </parallel>
     </target>
-    <!--nsicom-debug-->
-    <target name="nsicom-debug" if="nsicom-platform.trigger">
-        <fail message="Debugging is not supported in this NSIcom VM version. Use monitoring facility instead!"/>
-    </target>
     <!--debug-->
     <target name="remove-timestamp">
         <delete file="$/.timestamp"/>
     </target>
     <target name="pre-debug"/>
-    <target name="debug" description="Debug project." depends="clean,jar,remove-timestamp,pre-debug,cldc-debug,ricoh-debug,semc-debug,savaje-debug,sjmc-debug,ojec-debug,cdc-hi-debug,nokiaS80-debug,nsicom-debug"/>
+    <target name="debug" description="Debug project." depends="clean,jar,remove-timestamp,pre-debug,cldc-debug,semc-debug,savaje-debug,sjmc-debug,ojec-debug,cdc-hi-debug,nokiaS80-debug"/>
     <target name="nbdebug" description="Start NetBeans debugger" if="netbeans.home">
         <property name="debug.delay" value="5000"/>
         <nb-mobility-debug address="${jpda.port}" name="${app.codename}" delay="${debug.delay}" timeout="${debug.timeout}" period="2000"/>
@@ -1277,12 +1098,6 @@
     <target name="clean-j9" if="j9.dist">
         <delete file="${j9.dist}"/>
     </target>
-    <target name="clean-ricoh" if="ricoh-platform.trigger">
-        <delete dir="${platform.home}/mnt/sd3/sdk/dsdk/dist/${ricoh.application.uid}"/>
-        <delete dir="${build.dir}/dalp"/>
-        <delete file="${dist.dir}/${application.name}.dalp"/>
-        <delete dir="${dist.dir}/lib"/>
-    </target>
     <target name="clean-semc" if="semc-platform.trigger">
         <delete dir="${dist.dir}" includes="*.sis,*.SIS"/>
         <delete dir="${platform.home}/epoc32/tools/ppro-custom-launcher/output/win32/PProLauncher${semc.application.uid}"/>
@@ -1361,7 +1176,7 @@
         <delete dir="build" quiet="true"/>
         <delete dir="dist" quiet="true"/>
     </target>
-    <target name="do-clean" depends="pre-clean,clean-timestamp,clean-preprocessed,clean-classes,clean-obfuscated,clean-preverified,clean-manifest,clean-jar,clean-jad,clean-javadoc,clean-j9,clean-ricoh,clean-semc,clean-savaje,clean-sjmc,clean-ojec,-clean-default-configuration-root,-clean-configuration-root,-clean-completely,post-clean"/>
+    <target name="do-clean" depends="pre-clean,clean-timestamp,clean-preprocessed,clean-classes,clean-obfuscated,clean-preverified,clean-manifest,clean-jar,clean-jad,clean-javadoc,clean-j9,clean-semc,clean-savaje,clean-sjmc,clean-ojec,-clean-default-configuration-root,-clean-configuration-root,-clean-completely,post-clean"/>
     <target name="clean" depends="conditional-clean" if="no.clean.before.build" description="Clean build products.">
         <antcall target="do-clean" inheritall="true" inheritrefs="true"/>
     </target>

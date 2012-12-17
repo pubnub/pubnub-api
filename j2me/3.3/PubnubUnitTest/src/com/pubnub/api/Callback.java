@@ -1,5 +1,5 @@
 
-package pubnub;
+package com.pubnub.api;
 public interface Callback {
     public abstract void publishCallback(String channel,Object message,Object responce);
     public abstract void subscribeCallback(String channel,Object message);

@@ -22,3 +22,6 @@ node_modules
 /csharp-windows-phone/*/packages.config
 /csharp-windows-phone/*/*/bin/*
 /csharp-windows-phone/*/*/obj/*
+/j2me/3.3/j2me/src/async-http/build/
+/j2me/3.3/j2me/src/async-http/dist/
+/j2me/3.3/j2me/src/async-http/nbproject/private/
