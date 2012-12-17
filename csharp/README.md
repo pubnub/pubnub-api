@@ -1,4 +1,4 @@
-# PubNub 3.3.0.1 Web Data Push Cloud-Hosted API - C#
+# PubNub 3.3.0.1 Web Data Push Cloud-Hosted API - C Sharp
 ## OS: Windows 7, Windows 8
 ## .net: 3.5, 4.0, 4.5
 ### Now with NuGet Support!
