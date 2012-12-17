@@ -278,7 +278,6 @@ package com.pubnub.subscribe {
 		protected function getSubscribeOperation():Operation {
 			var operation:SubscribeOperation = new SubscribeOperation(origin);
 			operation.setURL(null, {
-				channel:this.channelsString,  
 				timetoken: lastToken,
 				subscribeKey : subscribeKey,
 				channel:this.channelsString, 
