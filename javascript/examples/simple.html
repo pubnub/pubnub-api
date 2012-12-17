@@ -1,0 +1,22 @@
+<div id=pubnub></div>
+<script src="http://pubnub.s3.amazonaws.com/pubnub-3.4.min.js"></script>
+<script>(function(){
+ 
+    // INIT PubNub
+    var pubnub = PUBNUB.init({
+        publish_key   : 'demo',
+        subscribe_key : 'demo'
+    });
+ 
+    // LISTEN
+    pubnub.subscribe({
+        channel : "my_channel",
+        message : function(m){ alert(m) },
+        connect : function(channel) {
+            // SEND
+            pubnub.publish({ channel : "my_channel", message : "Hi." })
+        }
+    })
+ 
+ 
+})();</script>

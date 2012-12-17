@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head> 
+    <title>PubNub Socket.IO Unit Test</title>
+    <link
+        rel=stylesheet
+        href=http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css
+    >
+    <style type=text/css>
+        #stop-test,
+        #finished-fail,
+        #finished-success,
+        {display:none}
+    </style>
+</head>
+<body><div class=container>
+
+<!-- NOTICE / TITLE -->
+<div class="alert-message warning">
+    <a class="close" href="#">&#215;</a>
+    <p>
+        <strong>PubNub Unit Tests</strong>
+        for Socket.IO on Mobile and Desktop Web Browser
+    </p>
+</div>
+
+<!-- BUTTON PANNEL -->
+<div class=well>
+    <button id=start-test class='btn info'>Start Test</button>
+    <button id=stop-test class='btn danger'>STOP</button>
+    <span id=finished-success class='label success'>100% Successful</span>
+    <span id=finished-fail class='label important'>Finished With Errors</span>
+    <span
+        id=test-status
+        class=label
+        template='Result: {pass}/{fail} (pass/fail) - Total: {total}'
+    >...</span>
+</div>
+
+<!-- OUTPUT -->
+<table id=unit-test-out class="zebra-striped">
+    <tr><th><span class=label>Pass/Fail</span><th>Test Ready
+</table>
+
+<!-- TEMPLATES -->
+<script type=text/template id=test_template>
+    <td><span class="label {result}">{display}</span></td>
+    <td>{message}</td>
+</script>
+
+<div id=pubnub></div>
+<!--
+<script src=http://pubnub.s3.amazonaws.com/pubnub-3.1.js></script>
+<script src=../crypto.js></script>
+<script src=../socket.io.js></script>
+-->
+<script src=../socket.io.min.js></script>
+<script src=public-private-communication.js></script>
+</div></body>
+</html>
