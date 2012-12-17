@@ -1,7 +1,7 @@
-# PubNub 3.3.0.1 Web Data Push Cloud-Hosted API - C# .net 4
-## ARE YOU COMPILING WITH .NET OLDER THAN 3.5?
-YOU MUST USE System.Web.Extensions.dll included in the 3.1 directory.
-##PubNub C Sharp Usage
+# PubNub 3.3.0.1 Web Data Push Cloud-Hosted API - C#
+## OS: Windows 7, Windows 8
+## .net: 3.5, 4.0, 4.5
+### Now with NuGet Support!
 
 Open 3.3.0.1/PubNub-Messaging/PubNub-Messaging.sln, and the example Pubnub_Example.cs should demonstrate all functionality, asyncronously using delegates.
 
