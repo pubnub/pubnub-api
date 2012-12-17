@@ -18,6 +18,8 @@ PUBNUB.secure = (function () {
     }
 
     function decrypt(data, options) {
+        options = options ? options : {};
+
         try {
             var binary_enc = GibberishAES.Base64.decode(data);
             var json_plain = GibberishAES.rawDecrypt(binary_enc, cipher_key, iv, false);
