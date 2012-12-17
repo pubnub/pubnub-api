@@ -17,7 +17,7 @@ PUBNUB.secure = (function () {
         return base_64_encrypted || data.data.message;
     }
 
-    function decrypt(data) {
+    function decrypt(data, options) {
         try {
             var binary_enc = GibberishAES.Base64.decode(data);
             var json_plain = GibberishAES.rawDecrypt(binary_enc, cipher_key, iv, false);
@@ -26,7 +26,7 @@ PUBNUB.secure = (function () {
             return plaintext;
         }
         catch (e) {
-            return null;
+            return options.parse_error || null;
         }
     }
 
@@ -51,6 +51,31 @@ PUBNUB.secure = (function () {
 
                 return pubnub.subscribe(args);
             },
+            history: function (args) {
+
+                var encrypted_messages = "";
+                var old_callback = args.callback;
+
+                function new_callback(response) {
+                    encrypted_messages = response[0];
+
+                    var decrypted_messages = [];
+
+                    for (a = 0; a < encrypted_messages.length; a++) {
+                        var new_message = decrypt(encrypted_messages[a], {"parse_error":"DECRYPT_ERROR"});
+                        decrypted_messages.push((new_message));
+                    }
+
+                    old_callback([decrypted_messages, response[1], response[2]]);
+                }
+
+                args.callback = new_callback;
+
+                pubnub.history(args);
+
+                return true;
+            },
+
             raw_encrypt: encrypt,
             raw_decrypt: decrypt
         };
