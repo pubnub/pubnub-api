@@ -52,12 +52,17 @@
         self.length = sizeof([request HTTPPayload]);
         
         // Allocate buffer for HTTP payload
-        buffer = alloca(self.length);
+        buffer = malloc(self.length);
         strcmp((char *)buffer, [[request HTTPPayload] UTF8String]);
     }
     
     
     return self;
+}
+
+- (BOOL)hasData {
+    
+    return self.offset < self.length;
 }
 
 - (UInt8 *)buffer {

@@ -56,10 +56,10 @@
  * connection to the PubNub services will
  * be established.
  */
-- (id)init {
+- (id)initWithDelegate:(id<PNConnectionChannelDelegate>)delegate {
     
     // Check whether intialization was successful or not
-    if((self = [super initWithType:PNConnectionChannelMessagin])) {
+    if((self = [super initWithType:PNConnectionChannelMessagin andDelegate:delegate])) {
         
         self.subscribedChannels = [NSMutableArray array];
     }

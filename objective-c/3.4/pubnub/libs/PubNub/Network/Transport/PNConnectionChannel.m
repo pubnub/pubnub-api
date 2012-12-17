@@ -45,19 +45,22 @@
 
 #pragma mark - Class methods
 
-+ (PNConnectionChannel *)connectionChannelWithType:(PNConnectionChannelType)connectionChannelType {
++ (PNConnectionChannel *)connectionChannelWithType:(PNConnectionChannelType)connectionChannelType
+                                       andDelegate:(id<PNConnectionChannelDelegate>)delegate {
     
-    return [[[self class] alloc] initWithType:connectionChannelType];
+    return [[[self class] alloc] initWithType:connectionChannelType andDelegate:delegate];
 }
 
 
 #pragma mark - Instance methods
 
-- (id)initWithType:(PNConnectionChannelType)connectionChannelType {
+- (id)initWithType:(PNConnectionChannelType)connectionChannelType
+       andDelegate:(id<PNConnectionChannelDelegate>)delegate {
     
     // Check whether intialization was successful or not
     if((self = [super init])) {
         
+        self.delegate = delegate;
         self.state = PNConnectionChannelStateCreated;
         
         

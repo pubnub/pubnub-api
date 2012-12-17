@@ -113,6 +113,10 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
                 
                 errorDescription = @"PubNub client connection failed";
                 break;
+            case kPNConnectionErrorOnSetup:
+                
+                errorDescription = @"PubNub client connection can't be opened";
+                break;
             default:
                 break;
         }
@@ -140,7 +144,10 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
             
             failureReason = @"Looks like client lost connection while trying to connect to remote PubNub service";
             break;
+        case kPNConnectionErrorOnSetup:
             
+            failureReason = @"Connection can't be opened becuase of errors in configuration";
+            break;
         default:
             break;
     }
@@ -167,7 +174,10 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
             
             fixSuggestion = @"Ensure that all network configuration (including proxy if there is) is correct and try again";
             break;
+        case kPNConnectionErrorOnSetup:
             
+            fixSuggestion = @"Check whether client was configured to use secure connection and whether remote origin has valid certificate.\nIf remote origin doesn't provide correct SSL certificate, you can set kPNShouldReduceSecurityLevelOnError to YES in PNDefaultConfiguration.h or provide YES when initializing PNConfiguration instance.";
+            break;
         default:
             break;
     }

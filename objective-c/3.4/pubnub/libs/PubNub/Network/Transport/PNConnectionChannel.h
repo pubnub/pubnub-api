@@ -40,7 +40,8 @@
  * Returns reference on fully configured channel which is 
  * ready to be connected and usage
  */
-+ (PNConnectionChannel *)connectionChannelWithType:(PNConnectionChannelType)connectionChannelType;
++ (PNConnectionChannel *)connectionChannelWithType:(PNConnectionChannelType)connectionChannelType
+                                       andDelegate:(id<PNConnectionChannelDelegate>)delegate;
 
 
 #pragma mark - Instance methods
@@ -49,7 +50,8 @@
  * Initialize connection channel which on it's own will
  * initiate socket connection with streams
  */
-- (id)initWithType:(PNConnectionChannelType)connectionChannelType;
+- (id)initWithType:(PNConnectionChannelType)connectionChannelType
+       andDelegate:(id<PNConnectionChannelDelegate>)delegate;
 
 - (void)connect;
 

@@ -19,8 +19,23 @@ static NSString * const kPNPublishKey = @"demo";
 static NSString * const kPNSubscriptionKey = @"demo";
 static NSString * const kPNSecretKey = @"my-secret";
 static NSString * const kPNCipherKey = nil;
-static BOOL const kPNSecureConnectionRequired = NO;
+static BOOL const kPNSecureConnectionRequired = YES;
 static BOOL const kPNShouldAutoReconnectClient = YES;
+
+// This flag tells whether client should reduce SSL rules
+// when connecting to remote origin because of connection
+// error (which probably caused by SSL certificate validation
+// error)
+// If set to YES, client will try to preserve SSL security
+// but will use not so strict rules as for remote origin
+// SSL certificate
+static BOOL const kPNShouldReduceSecurityLevelOnError = NO;
+
+// This flag tells whether client can discard security
+// option and connect using plain HTTP connection or not
+// This option will be used only if client will fail to
+// connect with specified security rules
+static BOOL const kPNCanIgnoreSecureConnectionRequirement = NO;
 
 
 #endif // PNDefaultConfiguration_h

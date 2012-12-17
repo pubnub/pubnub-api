@@ -26,6 +26,9 @@
 
 #pragma mark - Instance methods
 
+- (id)initWithDelegate:(id<PNConnectionChannelDelegate>)delegate;
+
+
 #pragma mark - Channels management
 
 /**

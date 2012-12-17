@@ -36,6 +36,15 @@
 // if it failed in previuos sesion or not
 @property (nonatomic, assign, getter = shouldAutoReconnectClient) BOOL autoReconnectClient;
 
+// Stores whether SSL security rules should be
+// lowered when connection error occures or not
+@property (nonatomic, assign, getter = shouldReduceSecurityLevelOnError) BOOL reduceSecurityLevelOnError;
+
+// Stores whether client can ignore security
+// requirements and connection using plain HTTP
+// connection in case of SSL error
+@property (nonatomic, assign, getter = canIgnoreSecureConnectionRequirement) BOOL ignoreSecureConnectionRequirement;
+
 
 #pragma mark - Class methods
 
@@ -68,7 +77,9 @@
                                   secretKey:(NSString *)secretKey
                                   cipherKey:(NSString *)cipherKey
                         useSecureConnection:(BOOL)shouldUseSecureConnection
-                        shouldAutoReconnect:(BOOL)shouldAutoReconnect;
+                        shouldAutoReconnect:(BOOL)shouldAutoReconnect
+           shouldReduceSecurityLevelOnError:(BOOL)shouldReduceSecurityLevelOnError
+       canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement;
 
 
 #pragma mark - Instance methods
@@ -83,7 +94,9 @@
            secretKey:(NSString *)secretKey
            cipherKey:(NSString *)cipherKey
  useSecureConnection:(BOOL)shouldUseSecureConnection
- shouldAutoReconnect:(BOOL)shouldAutoReconnect;
+ shouldAutoReconnect:(BOOL)shouldAutoReconnect
+shouldReduceSecurityLevelOnError:(BOOL)shouldReduceSecurityLevelOnError
+canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement;
 
 /**
  * Check whether configuration is valid or not

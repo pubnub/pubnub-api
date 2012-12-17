@@ -55,6 +55,12 @@ static NSUInteger const kPNWriteBufferSize = 4096;
 - (id)initWithRequest:(PNBaseRequest *)request;
 
 /**
+ * Return whether buffer has any data which can be 
+ * sent (calculations based on offset and total length
+ */
+- (BOOL)hasData;
+
+/**
  * Retrieve reference on buffer which take into
  * account number of sent bytes
  */

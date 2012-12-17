@@ -39,6 +39,9 @@ static NSString * const kPNDefaultOriginHost = @"macos.pubnub.com";
 #endif
 static BOOL const kPNSecureConnectionByDefault = YES;
 static BOOL const kPNShouldAutoReconnectClientByDefault = YES;
+static BOOL const kPNShouldReduceSecurityLevelOnErrorByDefault = YES;
+static BOOL const kPNCanIgnoreSecureConnectionRequirementByDefault = NO;
+
 
 // This is the channel which is used by latency
 // meter to measure network latency (prefix from unique

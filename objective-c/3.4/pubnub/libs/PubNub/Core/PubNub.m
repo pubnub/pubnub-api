@@ -208,10 +208,8 @@ static PubNub *_sharedInstance = nil;
                         
                         [self sharedInstance].state = PNPubNubClientStateConnecting;
                         
-                        [self sharedInstance].messagingChannel = [PNMessagingChannel new];
-                        [self sharedInstance].serviceChannel = [PNServiceChannel new];
-                        [self sharedInstance].messagingChannel.delegate = [self sharedInstance];
-                        [self sharedInstance].serviceChannel.delegate = [self sharedInstance];
+                        [self sharedInstance].messagingChannel = [[PNMessagingChannel alloc] initWithDelegate:[self sharedInstance]];
+                        [self sharedInstance].serviceChannel = [[PNServiceChannel alloc] initWithDelegate:[self sharedInstance]];
                     }
                     else {
                         

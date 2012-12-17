@@ -17,8 +17,18 @@
 //
 
 #import "PNConnectionChannel.h"
+#import "PNConnectionChannelDelegate.h"
 
 
 @interface PNServiceChannel : PNConnectionChannel
+
+
+#pragma mark - Instance methods
+
+- (id)initWithDelegate:(id<PNConnectionChannelDelegate>)delegate;
+
+
+#pragma mark -
+
 
 @end

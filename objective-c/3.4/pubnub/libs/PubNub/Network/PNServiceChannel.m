@@ -32,11 +32,10 @@
  * connection to the PubNub services will
  * be established.
  */
-- (id)init {
+- (id)initWithDelegate:(id<PNConnectionChannelDelegate>)delegate {
     
     // Check whether intialization was successful or not
-    if((self = [super initWithType:PNConnectionChannelService])) {
-        
+    if((self = [super initWithType:PNConnectionChannelService andDelegate:delegate])) {
     }
     
     

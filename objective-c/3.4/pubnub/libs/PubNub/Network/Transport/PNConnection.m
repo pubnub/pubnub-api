@@ -17,6 +17,7 @@
 #import "PNConnection+Protected.h"
 #import "PubNub+Protected.h"
 #import "PNConfiguration.h"
+#import "PNWriteBuffer.h"
 #import "PNStructures.h"
 #import "PNError.h"
 #import "PNMacro.h"
@@ -31,12 +32,37 @@ NSString * const kPNConnectionDidDisconnectWithErrorNotication = @"PNConnectionD
 NSString * const kPNConnectionErrorNotification = @"PNConnectionErrorNotification";
 
 
+#pragma mark - Structures
+
+typedef enum _PNConnectionSSLConfigurationLevel {
+    
+    // This option will check all information on
+    // remote origin SSL certificate to ensure in
+    // authority
+    PNConnectionSSLConfigurationStrict,
+    
+    // This option will skip most of validations
+    // and as fact will allow to work with server
+    // which uses invalid SSL certificate or certificate
+    // from another server
+    PNConnectionSSLConfigurationBarelySecure,
+    
+    // This option will tell that connection shold
+    // be opened w/o SSL (if user wan't to discard
+    // security options)
+    PNConnectionSSLConfigurationInSecure,
+} PNConnectionSSLConfigurationLevel;
+
+
 #pragma mark - Static
 
 static NSMutableDictionary *_connectionsPool = nil;
 
 // Default origin host connection port
 static UInt32 const kPNOriginConnectionPort = 80;
+
+// Default origin host SSL connection port
+static UInt32 const kPNOriginSSLConnectionPort = 443;
 
 // Default data buffer size (Default: 32kb)
 static int const kPNStreamBufferSize = 32768;
@@ -57,6 +83,8 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 
 // Stores connection name (identifier)
 @property (nonatomic, copy) NSString *name;
+
+// Connection configuration information
 @property (nonatomic, strong) PNConfiguration *configuration;
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
@@ -77,6 +105,10 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 // server response from socket read stream
 @property (nonatomic, strong) NSMutableData *retrievedData;
 
+// Stores reference on buffer which should be sent to
+// the PubNub service via socket
+@property (nonatomic, strong) PNWriteBuffer *writeBuffer;
+
 // Stores reference on error which is occurred before streams
 // life-cycle was started (initialization period)
 @property (nonatomic, strong) PNError *intializationError;
@@ -88,6 +120,7 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 @property (nonatomic, assign) PNSocketStreamState writeStreamState;
 @property (nonatomic, strong) NSDictionary *proxySettings;
 @property (nonatomic, assign) CFMutableDictionaryRef streamSecuritySettings;
+@property (nonatomic, assign) PNConnectionSSLConfigurationLevel sslConfiguratinoLevel;
 
 
 #pragma mark - Class methods
@@ -114,7 +147,7 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 /**
  * Will create read/write pair streams to specific host at
  */
-- (void)prepareStreams;
+- (BOOL)prepareStreams;
 
 /**
  * Will terminate any stream activity
@@ -144,6 +177,11 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 - (void)configureWriteStream:(CFWriteStreamRef)writeStream;
 - (void)openWriteStream:(CFWriteStreamRef)writeStream;
 - (void)destroyWriteStream:(CFWriteStreamRef)writeStream;
+
+/**
+ * Writes buffer portion into socket
+ */
+- (void)writeBufferContent;
 
 
 #pragma mark - Handler methods
@@ -185,6 +223,9 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 
 - (void)handleStreamError:(CFStreamError)error;
 - (void)handleStreamError:(CFStreamError)error shouldCloseConnection:(BOOL)shouldCloseConnection;
+
+- (void)handleStreamSetupError;
+- (void)handleRequestProcessingError:(CFStreamError)error;
 
 
 #pragma mark - Misc methods
@@ -331,21 +372,27 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 
 - (void)scheduleNextRequestExecution {
     
-    // TODO: CHECK WHETHER IS SENDING REQUEST AT THIS
-    //       MOMENT OR NOT
-    
-    self.processNextRequest = YES;
-    
-    
-    // Check whether connection ready and there is data source which will provide pacekts for execution
-    if([self isConnected]) {
+    if (self.writeBuffer == nil) {
         
-        // Check whether data source can provide some
-        // data right after connection is established
-        // or not
-        if ([self.dataSource hasDataForConnection:self]) {
+        self.processNextRequest = YES;
+        
+        
+        // Check whether connection ready and there is data source which will provide pacekts for execution
+        if([self isConnected]) {
             
-            
+            // Check whether data source can provide some
+            // data right after connection is established
+            // or not
+            if ([self.dataSource hasDataForConnection:self]) {
+                
+                NSString *requestIdentifier = [self.dataSource nextRequestIdentifierForConnection:self];
+                self.writeBuffer = [self.dataSource connection:self requestDataForIdentifier:requestIdentifier];
+                
+                
+                if(self.writeBuffer != nil) {
+                    
+                }
+            }
         }
     }
 }
@@ -448,7 +495,10 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     }
 }
 
-- (void)prepareStreams {
+- (BOOL)prepareStreams {
+    
+    BOOL streamsPrepared = YES;
+    
     
     // Check whether stream was prepared and configured before
     if([self isConfigured] || [self isConnected] || [self isReady]) {
@@ -456,12 +506,19 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         PNLog(@"{INFO}[CONNECTION::%@] SOCKET AND STREAMS ALREADY CONFIGURATED", self.name);
     }
     else {
+        
+        UInt32 targetPort = kPNOriginConnectionPort;
+        if (self.configuration.shouldUseSecureConnection) {
+            
+            targetPort = kPNOriginSSLConnectionPort;
+        }
+        
     
         // Create stream pair on socket which is connected to
         // specified remote host
         CFStreamCreatePairWithSocketToHost(CFAllocatorGetDefault(),
                                            (__bridge CFStringRef)(self.configuration.origin),
-                                           kPNOriginConnectionPort,
+                                           targetPort,
                                            &_socketReadStream,
                                            &_socketWriteStream);
         
@@ -472,9 +529,14 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         [self configureWriteStream:self.socketWriteStream];
         if(self.readStreamState != PNSocketStreamReady || self.writeStreamState != PNSocketStreamReady) {
             
+            streamsPrepared = NO;
+            
             [self closeStreams];
         }
     }
+    
+    
+    return streamsPrepared;
 }
 
 - (void)closeStreams {
@@ -511,8 +573,14 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         
         if (![self isConnecting]) {
         
-            [self prepareStreams];
-            [self connect];
+            if ([self prepareStreams]) {
+                
+                [self connect];
+            }
+            else {
+                
+                [self handleStreamSetupError];
+            }
         }
     }
     
@@ -563,6 +631,10 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     CFStreamClientContext client = [self streamClientContext];
     
     BOOL isStreamReady = CFReadStreamSetClient(readStream, options, readStreamCallback, &client);
+    if (isStreamReady) {
+        
+        isStreamReady = CFReadStreamSetProperty(readStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
+    }
     
     // Configure proxy settings only for insecure connection
     if (self.streamSecuritySettings == NULL && self.proxySettings != nil) {
@@ -574,8 +646,18 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     if (self.streamSecuritySettings != NULL && isStreamReady) {
         
-        // Specify connection security options
-        isStreamReady = CFReadStreamSetProperty(readStream, kCFStreamPropertySSLSettings, self.streamSecuritySettings);
+        // Configuring stream to establish SSL connection
+        isStreamReady = CFReadStreamSetProperty(readStream,
+                                                (CFStringRef)NSStreamSocketSecurityLevelKey,
+                                                (CFStringRef)NSStreamSocketSecurityLevelSSLv3);
+        
+        if(isStreamReady) {
+            
+            // Specify connection security options
+            isStreamReady = CFReadStreamSetProperty(readStream,
+                                                    kCFStreamPropertySSLSettings,
+                                                    self.streamSecuritySettings);
+        }
     }
     
     
@@ -594,12 +676,11 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     BOOL shouldCloseStream = self.readStreamState == PNSocketStreamConnected;
     self.readStreamState = PNSocketStreamNotConfigured;
     
+    // Destroying input buffer
+    _retrievedData = nil;
+    
     
     if (readStream != NULL) {
-        
-        
-        // Destroying input buffer
-        _retrievedData = nil;
         
         
         // Unschedule read stream from runloop
@@ -652,22 +733,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     CFOptionFlags options = (kCFStreamEventOpenCompleted|kCFStreamEventCanAcceptBytes|
                              kCFStreamEventErrorOccurred|kCFStreamEventEndEncountered);
     CFStreamClientContext client = [self streamClientContext];
-    
     BOOL isStreamReady = CFWriteStreamSetClient(writeStream, options, writeStreamCallback, &client);
-    
-    // Configure proxy settings only for insecure connection
-    if (self.streamSecuritySettings == NULL && self.proxySettings != nil) {
-        
-        isStreamReady = CFWriteStreamSetProperty(writeStream,
-                                                 kCFStreamPropertyHTTPProxy,
-                                                 (__bridge CFDictionaryRef)(self.proxySettings));
-    }
-    
-    if (self.streamSecuritySettings != NULL && isStreamReady) {
-        
-        // Specify connection security options
-        isStreamReady = CFWriteStreamSetProperty(writeStream, kCFStreamPropertySSLSettings, self.streamSecuritySettings);
-    }
     
     
     if (isStreamReady) {
@@ -707,6 +773,9 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     if (writeStream != NULL) {
         
+        // Clean up resource
+        _writeBuffer = nil;
+        
         
         // Unschedule write stream from runloop
         CFWriteStreamUnscheduleFromRunLoop(writeStream, CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
@@ -724,6 +793,26 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         if (shouldCloseStream) {
             
             [self handleStreamClose];
+        }
+    }
+}
+
+- (void)writeBufferContent {
+    
+    if (self.writeBuffer != nil && [self.writeBuffer hasData]) {
+        
+        CFIndex bytesWritten = CFWriteStreamWrite(self.socketWriteStream,
+                                                  [self.writeBuffer buffer],
+                                                  kPNWriteBufferSize);
+        
+        // Check whether error occurred while tried to
+        // process request
+        if (bytesWritten < 0) {
+            
+            // Retrieve error which occurred while tried to
+            // write buffer into socket
+            CFStreamError writeError = CFWriteStreamGetError(self.socketWriteStream);
+            [self handleRequestProcessingError:writeError];
         }
     }
 }
@@ -855,27 +944,88 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     if (error.error != 0) {
         
         PNError *errorObject = [self processStreamError:error];
+        BOOL shouldNotifyDelegate = YES;
         
-        if(shouldCloseConnection) {
+        
+        // Check whether error is caused by SSL issues or not
+        if (errorObject.code <= -9800 && errorObject.code >= -9818) {
             
-            [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
-                                                           NSUInteger delegateIdx,
-                                                           BOOL *delegateEnumeratorStop) {
+            // Checking whether user allowed to decrease security options
+            // and we can do it
+            if(self.configuration.shouldReduceSecurityLevelOnError &&
+               self.sslConfiguratinoLevel == PNConnectionSSLConfigurationStrict) {
                 
-                [delegate connection:self willDisconnectFromHost:self.configuration.origin withError:errorObject];
-            }];
-            
-            [self closeStreams];
-        }
-        else {
-            
-            [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
-                                                           NSUInteger delegateIdx,
-                                                           BOOL *delegateEnumeratorStop) {
+                shouldNotifyDelegate = NO;
                 
-                [delegate connection:self connectionDidFailToHost:self.configuration.origin withError:errorObject];
-            }];
+                self.sslConfiguratinoLevel = PNConnectionSSLConfigurationBarelySecure;
+                [self closeStreams];
+                
+                
+                // Try to reconnect with lower security requirements
+                [self connect];
+            }
+            // Check whether connection can fallback and use plain HTTP connection
+            // w/o SSL 
+            else if(self.sslConfiguratinoLevel == PNConnectionSSLConfigurationBarelySecure &&
+                    self.configuration.canIgnoreSecureConnectionRequirement) {
+                
+                shouldNotifyDelegate = NO;
+                
+                self.sslConfiguratinoLevel = PNConnectionSSLConfigurationInSecure;
+                [self closeStreams];
+                
+                
+                // Try to reconnect w/o SSL support
+                [self connect];
+            }
         }
+        
+        
+        if (shouldNotifyDelegate) {
+            
+            if(shouldCloseConnection) {
+                
+                [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
+                                                               NSUInteger delegateIdx,
+                                                               BOOL *delegateEnumeratorStop) {
+                    
+                    [delegate connection:self willDisconnectFromHost:self.configuration.origin withError:errorObject];
+                }];
+                
+                [self closeStreams];
+            }
+            else {
+                
+                [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
+                                                               NSUInteger delegateIdx,
+                                                               BOOL *delegateEnumeratorStop) {
+                    
+                    [delegate connection:self connectionDidFailToHost:self.configuration.origin withError:errorObject];
+                }];
+            }
+        }
+    }
+}
+
+- (void)handleStreamSetupError {
+    
+    // Prepare error message which will be
+    // sent to connection channel delegate
+    PNError *setupError = [PNError errorWithCode:kPNConnectionErrorOnSetup];
+    
+    [[self delegates] enumerateObjectsUsingBlock:^(id<PNConnectionDelegate> delegate,
+                                                   NSUInteger delegateIdx,
+                                                   BOOL *delegateEnumeratorStop) {
+        
+        [delegate connection:self connectionDidFailToHost:self.configuration.origin withError:setupError];
+    }];
+}
+
+- (void)handleRequestProcessingError:(CFStreamError)error {
+    
+    if (error.error != 0) {
+        
+        PNError *errorObject = [self processStreamError:error];
     }
 }
 
@@ -909,21 +1059,38 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 - (CFMutableDictionaryRef)streamSecuritySettings {
     
-    if (self.configuration.shouldUseSecureConnection && _streamSecuritySettings == NULL) {
+    if (self.configuration.shouldUseSecureConnection && _streamSecuritySettings == NULL &&
+        self.sslConfiguratinoLevel != PNConnectionSSLConfigurationInSecure) {
         
         // Configure security settings
         _streamSecuritySettings = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 6, NULL, NULL);
-        CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelNegotiatedSSL);
-        CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsExpiredCertificates, kCFBooleanFalse);
-        CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLValidatesCertificateChain, kCFBooleanTrue);
-        CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsExpiredRoots, kCFBooleanFalse);
-        CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsAnyRoot, kCFBooleanTrue);
-        CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLPeerName, kCFNull);
+        if (self.sslConfiguratinoLevel == PNConnectionSSLConfigurationStrict) {
+            
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelSSLv3);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsExpiredCertificates, kCFBooleanFalse);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLValidatesCertificateChain, kCFBooleanTrue);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsExpiredRoots, kCFBooleanFalse);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsAnyRoot, kCFBooleanFalse);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLPeerName, kCFNull);
+        }
+        else {
+            
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelSSLv3);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsExpiredCertificates, kCFBooleanTrue);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsExpiredRoots, kCFBooleanTrue);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLAllowsAnyRoot, kCFBooleanTrue);
+            CFDictionarySetValue(_streamSecuritySettings, kCFStreamSSLPeerName, kCFNull);
+        }
     }
-    else if(!self.configuration.shouldUseSecureConnection && _streamSecuritySettings != NULL) {
+    else if(!self.configuration.shouldUseSecureConnection ||
+            self.sslConfiguratinoLevel == PNConnectionSSLConfigurationInSecure) {
         
-        CFRelease(_streamSecuritySettings);
-        _streamSecuritySettings = NULL;
+        if(_streamSecuritySettings != NULL) {
+            
+            CFRelease(_streamSecuritySettings);
+            _streamSecuritySettings = NULL;
+        }
     }
     
     

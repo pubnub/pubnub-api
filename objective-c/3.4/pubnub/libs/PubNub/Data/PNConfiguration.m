@@ -31,7 +31,9 @@
                               secretKey:kPNSecretKey
                               cipherKey:kPNCipherKey
                     useSecureConnection:kPNSecureConnectionRequired
-                    shouldAutoReconnect:kPNShouldAutoReconnectClient];
+                    shouldAutoReconnect:kPNShouldAutoReconnectClient
+       shouldReduceSecurityLevelOnError:kPNShouldReduceSecurityLevelOnError
+   canIgnoreSecureConnectionRequirement:kPNCanIgnoreSecureConnectionRequirement];
 }
 
 + (PNConfiguration *)configurationWithPublishKey:(NSString *)publishKey
@@ -55,7 +57,9 @@
                               secretKey:secretKey
                               cipherKey:nil
                     useSecureConnection:kPNSecureConnectionByDefault
-                    shouldAutoReconnect:kPNShouldAutoReconnectClientByDefault];
+                    shouldAutoReconnect:kPNShouldAutoReconnectClientByDefault
+       shouldReduceSecurityLevelOnError:kPNShouldReduceSecurityLevelOnErrorByDefault
+   canIgnoreSecureConnectionRequirement:kPNCanIgnoreSecureConnectionRequirementByDefault];
 }
 
 + (PNConfiguration *)configurationForOrigin:(NSString *)originHostName
@@ -64,7 +68,9 @@
                                   secretKey:(NSString *)secretKey
                                   cipherKey:(NSString *)cipherKey
                         useSecureConnection:(BOOL)shouldUseSecureConnection
-                        shouldAutoReconnect:(BOOL)shouldAutoReconnectClient {
+                        shouldAutoReconnect:(BOOL)shouldAutoReconnectClient
+           shouldReduceSecurityLevelOnError:(BOOL)shouldReduceSecurityLevelOnError
+       canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement {
     
     return [[[self class] alloc] initWithOrigin:originHostName
                                      publishKey:publishKey
@@ -72,7 +78,9 @@
                                       secretKey:secretKey
                                       cipherKey:cipherKey
                             useSecureConnection:shouldUseSecureConnection
-                            shouldAutoReconnect:shouldAutoReconnectClient];
+                            shouldAutoReconnect:shouldAutoReconnectClient
+               shouldReduceSecurityLevelOnError:shouldReduceSecurityLevelOnError
+           canIgnoreSecureConnectionRequirement:canIgnoreSecureConnectionRequirement];
 }
 
 
@@ -85,7 +93,9 @@
            secretKey:(NSString *)secretKey
            cipherKey:(NSString *)cipherKey
  useSecureConnection:(BOOL)shouldUseSecureConnection
- shouldAutoReconnect:(BOOL)shouldAutoReconnectClient {
+ shouldAutoReconnect:(BOOL)shouldAutoReconnectClient
+shouldReduceSecurityLevelOnError:(BOOL)shouldReduceSecurityLevelOnError
+canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement {
     
     // Checking whether initialization was successful or not
     if((self = [super init])) {
@@ -97,6 +107,8 @@
         self.cipherKey = cipherKey?cipherKey:@"";
         self.useSecureConnection = shouldUseSecureConnection;
         self.autoReconnectClient = shouldAutoReconnectClient;
+        self.reduceSecurityLevelOnError = shouldReduceSecurityLevelOnError;
+        self.ignoreSecureConnectionRequirement = canIgnoreSecureConnectionRequirement;
      
         // Checking whether user changed origin host from default
         // or not
