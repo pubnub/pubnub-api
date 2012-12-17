@@ -14,6 +14,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PNConnectionDelegate.h"
+#import "PNMacro.h"
 
 
 @interface PNConnection : NSObject
@@ -23,7 +24,7 @@
 
 // Reference on object which will provide
 // requests pool for connection
-@property (nonatomic, unsafe_unretained) id<PNConnectionDataSource> dataSource;
+@property (nonatomic, pn_desired_weak) id<PNConnectionDataSource> dataSource;
 
 
 #pragma mark - Class methods
@@ -74,6 +75,7 @@
 
 - (BOOL)connect;
 - (BOOL)isConnected;
+- (BOOL)isDisconnected;
 
 /**
  * Close socket and streams on particular 

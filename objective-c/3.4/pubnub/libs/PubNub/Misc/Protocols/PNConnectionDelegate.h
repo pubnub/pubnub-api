@@ -2,6 +2,12 @@
 //  PNConnectionDelegate.h
 //  pubnub
 //
+//  Describes interface which is used to
+//  organize communication between connection
+//  (transport layer) and connection channel
+//  management code
+//
+//
 //  Created by Sergey Mamontov on 12/10/12.
 //
 //
@@ -15,31 +21,31 @@
 
 @protocol PNConnectionDelegate <NSObject>
 
-@optional
+@required
 
 /**
  * Sent to the delegate when both streams (read/write) 
  * connected to the opened socket
  */
-- (void)connection:(PNConnection *)connection connectedToHost:(NSString *)hostName;
+- (void)connection:(PNConnection *)connection didConnectToHost:(NSString *)hostName;
 
 /**
  * Sent to the delegate when both streams (read/write)
  * disconnected from remote host
  */
-- (void)connection:(PNConnection *)connection disconnectedFromHost:(NSString *)hostName;
+- (void)connection:(PNConnection *)connection didDisconnectFromHost:(NSString *)hostName;
 
 /**
  * Sent to the delegate when one of the stream (read/write)
  * was unable to open connection with socket
  */
-- (void)connection:(PNConnection *)connection failedWithError:(PNError *)error;
+- (void)connection:(PNConnection *)connection connectionDidFailToHost:(NSString *)hostName withError:(PNError *)error;
 
 /**
  * Sent to the delegate when one of the streams recieved
  * error and connection is forced to close because of it
  */
-- (void)connection:(PNConnection *)connection closedWithError:(PNError *)error;
+- (void)connection:(PNConnection *)connection willDisconnectFromHost:(NSString *)host withError:(PNError *)error;
 
 #pragma mark -
 
@@ -81,6 +87,6 @@
  */
 - (void)connection:(PNConnection *)connection didSendRequestWithIdentifier:(NSString *)requestIdentifier;
 
-- (void)connection:(PNConnection *)connection failedToProcessRequestWithIdentifier:(NSString *)requestIdentifier;
+- (void)connection:(PNConnection *)connection didFailToProcessRequestWithIdentifier:(NSString *)requestIdentifier;
 
 @end

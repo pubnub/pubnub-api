@@ -22,16 +22,26 @@
     #define PNCLog(...) ((void)0)
 #endif
 
+#ifndef pn_desired_weak
+    #if __has_feature(objc_arc_weak)
+        #define pn_desired_weak weak
+        #define __pn_desired_weak __weak
+    #else
+        #define pn_desired_weak unsafe_unretained
+        #define __pn_desired_weak __unsafe_unretained
+    #endif
+#endif
 
-static NSString* newUniqueIdentifier();
-static NSString* newUniqueIdentifier() {
+
+static NSString* PNNewUniqueIdentifier();
+static NSString* PNNewUniqueIdentifier() {
 
     // Generating new unique identifier
     CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
     
     // Transfering controll over CoreFundation instance to the ARC
     // (it will manage memory for us)
-    NSString *uuidString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    NSString *uuidString = [(__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid) lowercaseString];
     
     // release the UUID
     CFRelease(uuid);

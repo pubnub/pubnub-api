@@ -32,7 +32,7 @@
     // Check whetehr initialization is successful or not
     if((self = [super init])) {
         
-        self.identifier = newUniqueIdentifier();
+        self.identifier = PNNewUniqueIdentifier();
     }
     
     

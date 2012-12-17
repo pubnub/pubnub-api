@@ -68,11 +68,12 @@
 
 - (NSString *)resourcePath {
     
-    return [NSString stringWithFormat:@"%@/presence/sub_key/%@/channel/%@/leave?uuid=%@",
+    return [NSString stringWithFormat:@"%@/presence/sub_key/%@/channel/%@/leave?uuid=%@&callback=%@",
             kPNRequestAPIVersionPrefix,
             [PubNub sharedInstance].configuration.subscriptionKey,
             self.channelsList,
-            [PubNub clientIdentifier]];
+            [PubNub clientIdentifier],
+            PNServiceResponseCallbacks.leaveChannelCallback];
 }
 
 #pragma mark -

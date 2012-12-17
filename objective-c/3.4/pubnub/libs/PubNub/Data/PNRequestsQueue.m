@@ -201,7 +201,7 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
  * Maybe this error occurred because of network error, so we
  * should resend request right after connection is up again
  */
-- (void)connection:(PNConnection *)connection failedToProcessRequestWithIdentifier:(NSString *)requestIdentifier {
+- (void)connection:(PNConnection *)connection didFailToProcessRequestWithIdentifier:(NSString *)requestIdentifier; {
     
     // Mark request as not in processing state
     PNBaseRequest *currentRequest = [self dequeueNextRequestWithIdentifier:requestIdentifier];

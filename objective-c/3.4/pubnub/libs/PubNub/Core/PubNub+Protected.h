@@ -17,6 +17,46 @@
 #import "PubNub.h"
 
 
+#pragma mark Static
+
+typedef enum _PNPubNubClientState {
+    
+    // Client instance was just created
+    PNPubNubClientStateCreated,
+    
+    // Client instance is in error state
+    PNPubNubClientStateError,
+    
+    // Client is trying to establish connection
+    // to remote PubNub services
+    PNPubNubClientStateConnecting,
+    
+    // Client successfully connected to
+    // remote PubNub services
+    PNPubNubClientStateConnected,
+    
+    // Client is disconnecting from remote
+    // services
+    PNPubNubClientStateDisconnecting,
+    
+    // Client closing connection because configuration
+    // has been changed while client was connected
+    PNPubNubClientStateDisconnectingOnConfigurationChange,
+    
+    // Client is disconnecting from remote
+    // services because of network failure
+    PNPubNubClientStateDisconnectingOnNetworkError,
+    
+    // Client disconnected from remote PubNub
+    // services (by user request)
+    PNPubNubClientStateDisconnected,
+    
+    // Cliend disconnected from remote PubNub
+    // service because of network failure
+    PNPubNubClientStateDisconnectedOnNetworkError
+} PNPubNubClientState;
+
+
 @interface PubNub (Protected)
 
 

@@ -5,7 +5,7 @@
 //  This channel instance is required for
 //  messages exchange between client and
 //  PubNub service:
-//      - channels messages
+//      - channels messages (subscribe, publish)
 //      - channels presence events
 //
 //
@@ -78,7 +78,7 @@
 - (void)addPresenceObservationForChannel:(PNChannel *)channel;
 - (void)removePresenceObservationForChannel:(PNChannel *)channel;
 - (void)addPresenceObservationForChannels:(NSArray *)channels;
-- (void)removePresenceObservationForChannelw:(NSArray *)channels;
+- (void)removePresenceObservationForChannels:(NSArray *)channels;
 
 #pragma mark -
 

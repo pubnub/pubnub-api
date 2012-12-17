@@ -31,13 +31,18 @@ struct PNServiceResponseCallbacksStruct {
     // retrieve messages and presence events
     // for set/single channel(s)
     __unsafe_unretained NSString *subscriptionCallback;
+    
+    // Name of the function which is used to
+    // leave specified channel(s)
+    __unsafe_unretained NSString *leaveChannelCallback;
 };
 
 static struct PNServiceResponseCallbacksStruct PNServiceResponseCallbacks = {
     
     .latencyMeasureMessage = @"latencyMeasure",
     .timeTokenCallback = @"timeToken",
-    .subscriptionCallback = @"subscription"
+    .subscriptionCallback = @"subscription",
+    .leaveChannelCallback = @"leave"
 };
 
 

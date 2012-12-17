@@ -32,6 +32,10 @@
 // with SSL support or not
 @property (nonatomic, assign, getter = shouldUseSecureConnection) BOOL useSecureConnection;
 
+// Stores whether connection should be restored
+// if it failed in previuos sesion or not
+@property (nonatomic, assign, getter = shouldAutoReconnectClient) BOOL autoReconnectClient;
+
 
 #pragma mark - Class methods
 
@@ -63,7 +67,8 @@
                                subscribeKey:(NSString *)subscribeKey
                                   secretKey:(NSString *)secretKey
                                   cipherKey:(NSString *)cipherKey
-                        useSecureConnection:(BOOL)shouldUseSecureConnection;
+                        useSecureConnection:(BOOL)shouldUseSecureConnection
+                        shouldAutoReconnect:(BOOL)shouldAutoReconnect;
 
 
 #pragma mark - Instance methods
@@ -77,7 +82,8 @@
         subscribeKey:(NSString *)subscribeKey
            secretKey:(NSString *)secretKey
            cipherKey:(NSString *)cipherKey
- useSecureConnection:(BOOL)shouldUseSecureConnection;
+ useSecureConnection:(BOOL)shouldUseSecureConnection
+ shouldAutoReconnect:(BOOL)shouldAutoReconnect;
 
 /**
  * Check whether configuration is valid or not

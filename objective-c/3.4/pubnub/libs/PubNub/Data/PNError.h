@@ -11,6 +11,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PNErrorCodes.h"
 
 
 #pragma mark Static

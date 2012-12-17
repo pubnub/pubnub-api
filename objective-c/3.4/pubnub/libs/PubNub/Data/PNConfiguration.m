@@ -30,7 +30,8 @@
                            subscribeKey:kPNSubscriptionKey
                               secretKey:kPNSecretKey
                               cipherKey:kPNCipherKey
-                    useSecureConnection:kPNSecureConnectionRequired];
+                    useSecureConnection:kPNSecureConnectionRequired
+                    shouldAutoReconnect:kPNShouldAutoReconnectClient];
 }
 
 + (PNConfiguration *)configurationWithPublishKey:(NSString *)publishKey
@@ -53,7 +54,8 @@
                            subscribeKey:subscribeKey
                               secretKey:secretKey
                               cipherKey:nil
-                    useSecureConnection:kPNSecureConnectionByDefault];
+                    useSecureConnection:kPNSecureConnectionByDefault
+                    shouldAutoReconnect:kPNShouldAutoReconnectClientByDefault];
 }
 
 + (PNConfiguration *)configurationForOrigin:(NSString *)originHostName
@@ -61,14 +63,16 @@
                                subscribeKey:(NSString *)subscribeKey
                                   secretKey:(NSString *)secretKey
                                   cipherKey:(NSString *)cipherKey
-                        useSecureConnection:(BOOL)shouldUseSecureConnection {
+                        useSecureConnection:(BOOL)shouldUseSecureConnection
+                        shouldAutoReconnect:(BOOL)shouldAutoReconnectClient {
     
     return [[[self class] alloc] initWithOrigin:originHostName
                                      publishKey:publishKey
                                    subscribeKey:subscribeKey
                                       secretKey:secretKey
                                       cipherKey:cipherKey
-                            useSecureConnection:shouldUseSecureConnection];
+                            useSecureConnection:shouldUseSecureConnection
+                            shouldAutoReconnect:shouldAutoReconnectClient];
 }
 
 
@@ -80,7 +84,8 @@
         subscribeKey:(NSString *)subscribeKey
            secretKey:(NSString *)secretKey
            cipherKey:(NSString *)cipherKey
- useSecureConnection:(BOOL)shouldUseSecureConnection {
+ useSecureConnection:(BOOL)shouldUseSecureConnection
+ shouldAutoReconnect:(BOOL)shouldAutoReconnectClient {
     
     // Checking whether initialization was successful or not
     if((self = [super init])) {
@@ -91,6 +96,7 @@
         self.secretKey = secretKey?secretKey:@"0";
         self.cipherKey = cipherKey?cipherKey:@"";
         self.useSecureConnection = shouldUseSecureConnection;
+        self.autoReconnectClient = shouldAutoReconnectClient;
      
         // Checking whether user changed origin host from default
         // or not

@@ -23,6 +23,15 @@
 
 #pragma mark - Instance methods
 
+/**
+ * Asking view controller whether interface will be rotated to portrait
+ * orientation or not
+ */
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+    
+    return UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
+}
+
 
 #pragma mark -
 

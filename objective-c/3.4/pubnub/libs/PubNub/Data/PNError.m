@@ -94,18 +94,86 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
 
 - (NSString *)localizedDescription {
     
+    NSString *errorDescription = self.errorMessage;
+    
     // Check whether error message was specified or not
-    if (self.errorMessage == nil) {
+    if (errorDescription == nil) {
         
         switch (self.code) {
                 
+            case kPNClientConfigurationError:
+                
+                errorDescription = @"Incomplete PubNub client configuration";
+                break;
+            case kPNClientConnectWhileConnected:
+                
+                errorDescription = @"PubNub client already connected to origin";
+                break;
+            case kPNClientConnectionFailedOnInternetFailure:
+                
+                errorDescription = @"PubNub client connection failed";
+                break;
             default:
                 break;
         }
     }
     
     
-    return self.errorMessage;
+    return errorDescription;
+}
+
+- (NSString *)localizedFailureReason {
+    
+    NSString *failureReason = nil;
+    
+    switch (self.code) {
+            
+        case kPNClientConfigurationError:
+            
+            failureReason = @"One of required configuration field is empty:\n- publish key\n- subscribe key\n- secret key";
+            break;
+        case kPNClientConnectWhileConnected:
+            
+            failureReason = @"Looks like client tried to connecte to remote PubNub service while already has connection";
+            break;
+        case kPNClientConnectionFailedOnInternetFailure:
+            
+            failureReason = @"Looks like client lost connection while trying to connect to remote PubNub service";
+            break;
+            
+        default:
+            break;
+    }
+    
+    
+    return failureReason;
+}
+
+- (NSString *)localizedRecoverySuggestion {
+    
+    NSString *fixSuggestion = nil;
+    
+    switch (self.code) {
+            
+        case kPNClientConfigurationError:
+            
+            fixSuggestion = @"Ensure that you specified all required keys while creating PNConfiguration instance or all values specified in PNDefaultConfiguration.h. You can always visit https://admin.pubnub.comto get all required keys for PubNub client";
+            break;
+        case kPNClientConnectWhileConnected:
+            
+            fixSuggestion = @"If it is required to reconnect PubNub client, close connection first and then try connect again";
+            break;
+        case kPNClientConnectionFailedOnInternetFailure:
+            
+            fixSuggestion = @"Ensure that all network configuration (including proxy if there is) is correct and try again";
+            break;
+            
+        default:
+            break;
+    }
+    
+    
+    return fixSuggestion;
 }
 
 - (NSString *)domainForError:(NSInteger)errorCode {

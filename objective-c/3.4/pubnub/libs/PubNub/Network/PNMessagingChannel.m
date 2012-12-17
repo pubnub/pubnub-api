@@ -121,7 +121,7 @@
     
 }
 
-- (void)removePresenceObservationForChannelw:(NSArray *)channels {
+- (void)removePresenceObservationForChannels:(NSArray *)channels {
     
 }
 

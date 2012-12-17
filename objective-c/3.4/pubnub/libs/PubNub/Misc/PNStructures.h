@@ -29,6 +29,9 @@ typedef enum _PNSocketStreamState {
     // Stream configured by connection manager
     PNSocketStreamReady,
     
+    // Stream is connecting at this moment
+    PNSocketStreamConnecting,
+    
     // Stream connected to the origin server
     // over socket (secure if configured)
     PNSocketStreamConnected,

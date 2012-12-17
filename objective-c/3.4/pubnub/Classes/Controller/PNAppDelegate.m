@@ -35,7 +35,13 @@
     
     // Performing intial PubNub client configuration
     [PubNub setupWithConfiguration:[PNConfiguration defaultConfiguration] andDelegate:self];
+    
+    // If identity is set to 'nil' then PubNub client
+    // will provide unique identifier instead
     [PubNub setClientIdentifier:nil];
+    
+    
+    // Initialize connection to PubNub service
     [PubNub connect];
 }
 
@@ -58,8 +64,44 @@
 
 #pragma mark - PubNub client delegate methods
 
+- (void)pubnubClient:(PubNub *)client error:(PNError *)error {
+    
+    PNLog(@"PubNub client report that error occurred: %@", error);
+}
+
+- (void)pubnubClient:(PubNub *)client willConnectToOrigin:(NSString *)origin {
+    
+    PNLog(@"PubNub client is about to connect to PubNub origin at: %@", origin);
+}
+
+- (void)pubnubClient:(PubNub *)client didConnectToOrigin:(NSString *)origin {
+    
+    PNLog(@"PubNub client successfully connected to PubNub origin at: %@", origin);
+}
+
+- (void)pubnubClient:(PubNub *)client connectionDidFailWithError:(PNError *)error {
+    
+    PNLog(@"PubNub client was unable to connect because of error: %@", error);
+}
+
+- (void)pubnubClient:(PubNub *)client willDisconnectWithError:(PNError *)error {
+    
+    PNLog(@"PubNub clinet will close connection because of error: %@", error);
+}
+
+- (void)pubnubClient:(PubNub *)client didDisconnectWithError:(PNError *)error {
+    
+    PNLog(@"PubNub client closed connection because of error: %@", error);
+}
+
+- (void)pubnubClient:(PubNub *)client didDisconnectFromOrigin:(NSString *)origin {
+    
+    PNLog(@"PubNub client disconnected from PubNub origin at: %@", origin);
+}
+
 - (void)pubnubClient:(PubNub *)client subscriptionDidFailWithError:(NSError *)error {
     
+    PNLog(@"PubNub client failed to subscribe because of error: %@", error);
 }
 
 #pragma mark -

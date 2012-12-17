@@ -20,6 +20,7 @@ static NSString * const kPNSubscriptionKey = @"demo";
 static NSString * const kPNSecretKey = @"my-secret";
 static NSString * const kPNCipherKey = nil;
 static BOOL const kPNSecureConnectionRequired = NO;
+static BOOL const kPNShouldAutoReconnectClient = YES;
 
 
 #endif // PNDefaultConfiguration_h

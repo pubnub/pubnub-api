@@ -13,6 +13,8 @@
 		7902B9E11679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9DF1679E72000DE2BBB /* PNLatencyMeasureRequest.m */; };
 		7902B9E51679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9E41679EEFC00DE2BBB /* PNRequestsQueue.m */; };
 		7902B9E61679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7902B9E41679EEFC00DE2BBB /* PNRequestsQueue.m */; };
+		79299476167C8D7A00F7F8CE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ECCF351675DFB5005E83B3 /* SystemConfiguration.framework */; };
+		79299478167C8D8D00F7F8CE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 792C1F3F16777BD40054E18E /* CFNetwork.framework */; };
 		792C1F4016777BD50054E18E /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 792C1F3F16777BD40054E18E /* CFNetwork.framework */; };
 		792C1F5916788B370054E18E /* PNChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 792C1F5616788B370054E18E /* PNChannel.m */; };
 		792C1F5A16788B370054E18E /* PNChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 792C1F5616788B370054E18E /* PNChannel.m */; };
@@ -37,9 +39,9 @@
 		7966DFC4166FD60A00E07B40 /* PNJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */; };
 		7966DFC5166FD60A00E07B40 /* PNJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC3166FD60900E07B40 /* PNJSONSerialization.m */; };
 		7966DFC9166FD94D00E07B40 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC8166FD94D00E07B40 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		7966DFCA166FD94D00E07B40 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC8166FD94D00E07B40 /* JSONKit.m */; };
+		7966DFCA166FD94D00E07B40 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFC8166FD94D00E07B40 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		7966DFCD166FDC7C00E07B40 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFCC166FDC7C00E07B40 /* JSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		7966DFCE166FDC7C00E07B40 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFCC166FDC7C00E07B40 /* JSON.m */; };
+		7966DFCE166FDC7C00E07B40 /* JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFCC166FDC7C00E07B40 /* JSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		7966DFD2166FF1F800E07B40 /* PNObservationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFD1166FF1F800E07B40 /* PNObservationCenter.m */; };
 		7966DFD3166FF1F800E07B40 /* PNObservationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFD1166FF1F800E07B40 /* PNObservationCenter.m */; };
 		7966DFD716707F2000E07B40 /* NSMutableDictionary+PNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7966DFD616707F2000E07B40 /* NSMutableDictionary+PNAdditions.m */; };
@@ -67,8 +69,6 @@
 		79C32296166DFA56006DB535 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 79C3228B166DFA56006DB535 /* Default.png */; };
 		79C32297166DFA56006DB535 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 79C3228C166DFA56006DB535 /* Default@2x.png */; };
 		79C32298166DFA56006DB535 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 79C3228C166DFA56006DB535 /* Default@2x.png */; };
-		79C32299166DFA56006DB535 /* PNViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 79C3228E166DFA56006DB535 /* PNViewController.xib */; };
-		79C3229A166DFA56006DB535 /* PNViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 79C3228E166DFA56006DB535 /* PNViewController.xib */; };
 		79C322A0166E0291006DB535 /* PubNub.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C3229F166E0291006DB535 /* PubNub.m */; };
 		79C322A1166E0291006DB535 /* PubNub.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C3229F166E0291006DB535 /* PubNub.m */; };
 		79C322AA166E0568006DB535 /* PNConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C322A9166E0568006DB535 /* PNConfiguration.m */; };
@@ -76,6 +76,12 @@
 		79ECCF1B167217D2005E83B3 /* PNReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 79ECCF1A167217D2005E83B3 /* PNReachability.m */; };
 		79ECCF1C167217D2005E83B3 /* PNReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 79ECCF1A167217D2005E83B3 /* PNReachability.m */; };
 		79ECCF361675DFB5005E83B3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ECCF351675DFB5005E83B3 /* SystemConfiguration.framework */; };
+		79FFF67C167C919E008093F2 /* PNServiceChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 79FFF67B167C919E008093F2 /* PNServiceChannel.m */; };
+		79FFF67D167C919E008093F2 /* PNServiceChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 79FFF67B167C919E008093F2 /* PNServiceChannel.m */; };
+		79FFF692167DD5D9008093F2 /* PNViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 79FFF691167DD5D9008093F2 /* PNViewController.xib */; };
+		79FFF693167DD5D9008093F2 /* PNViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 79FFF691167DD5D9008093F2 /* PNViewController.xib */; };
+		79FFF696167E5C66008093F2 /* NSMutableArray+PNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 79FFF695167E5C66008093F2 /* NSMutableArray+PNAdditions.m */; };
+		79FFF697167E5C66008093F2 /* NSMutableArray+PNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 79FFF695167E5C66008093F2 /* NSMutableArray+PNAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -158,7 +164,6 @@
 		79C3228A166DFA56006DB535 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		79C3228B166DFA56006DB535 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		79C3228C166DFA56006DB535 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		79C3228E166DFA56006DB535 /* PNViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PNViewController.xib; sourceTree = "<group>"; };
 		79C3229E166E0291006DB535 /* PubNub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PubNub.h; sourceTree = "<group>"; };
 		79C3229F166E0291006DB535 /* PubNub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PubNub.m; sourceTree = "<group>"; };
 		79C322A8166E0568006DB535 /* PNConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNConfiguration.h; sourceTree = "<group>"; };
@@ -172,6 +177,12 @@
 		79F84AFA166F60450005E3B1 /* PNMacro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNMacro.h; sourceTree = "<group>"; };
 		79F84B03166F72000005E3B1 /* PNImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNImports.h; sourceTree = "<group>"; };
 		79F84B05166F74A80005E3B1 /* PubNub+Protected.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PubNub+Protected.h"; sourceTree = "<group>"; };
+		79FFF67A167C919E008093F2 /* PNServiceChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNServiceChannel.h; sourceTree = "<group>"; };
+		79FFF67B167C919E008093F2 /* PNServiceChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNServiceChannel.m; sourceTree = "<group>"; };
+		79FFF690167DC0E7008093F2 /* PNConnectionChannelDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNConnectionChannelDelegate.h; sourceTree = "<group>"; };
+		79FFF691167DD5D9008093F2 /* PNViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PNViewController.xib; sourceTree = "<group>"; };
+		79FFF694167E5C66008093F2 /* NSMutableArray+PNAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+PNAdditions.h"; sourceTree = "<group>"; };
+		79FFF695167E5C66008093F2 /* NSMutableArray+PNAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+PNAdditions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +205,8 @@
 				79C32251166DF848006DB535 /* SenTestingKit.framework in Frameworks */,
 				79C32252166DF848006DB535 /* UIKit.framework in Frameworks */,
 				79C32253166DF848006DB535 /* Foundation.framework in Frameworks */,
+				79299476167C8D7A00F7F8CE /* SystemConfiguration.framework in Frameworks */,
+				79299478167C8D8D00F7F8CE /* CFNetwork.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,6 +290,8 @@
 			children = (
 				7966DFD516707F2000E07B40 /* NSMutableDictionary+PNAdditions.h */,
 				7966DFD616707F2000E07B40 /* NSMutableDictionary+PNAdditions.m */,
+				79FFF694167E5C66008093F2 /* NSMutableArray+PNAdditions.h */,
+				79FFF695167E5C66008093F2 /* NSMutableArray+PNAdditions.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -284,6 +299,7 @@
 		79A8B5C6166FB52500C64BCF /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				79FFF690167DC0E7008093F2 /* PNConnectionChannelDelegate.h */,
 				79ECCF5016761F05005E83B3 /* PNConnectionDelegate.h */,
 				79A8B5C8166FB55F00C64BCF /* PNDelegate.h */,
 			);
@@ -472,7 +488,7 @@
 		79C3228D166DFA56006DB535 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
-				79C3228E166DFA56006DB535 /* PNViewController.xib */,
+				79FFF691167DD5D9008093F2 /* PNViewController.xib */,
 			);
 			path = XIB;
 			sourceTree = "<group>";
@@ -531,6 +547,8 @@
 				792C1F75167897090054E18E /* Packets */,
 				792C1F661678915A0054E18E /* PNMessagingChannel.h */,
 				792C1F671678915A0054E18E /* PNMessagingChannel.m */,
+				79FFF67A167C919E008093F2 /* PNServiceChannel.h */,
+				79FFF67B167C919E008093F2 /* PNServiceChannel.m */,
 				79ECCF19167217D2005E83B3 /* PNReachability.h */,
 				79ECCF1A167217D2005E83B3 /* PNReachability.m */,
 			);
@@ -612,7 +630,7 @@
 				79C32293166DFA56006DB535 /* Default-568h@2x.png in Resources */,
 				79C32295166DFA56006DB535 /* Default.png in Resources */,
 				79C32297166DFA56006DB535 /* Default@2x.png in Resources */,
-				79C32299166DFA56006DB535 /* PNViewController.xib in Resources */,
+				79FFF692167DD5D9008093F2 /* PNViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -625,7 +643,7 @@
 				79C32294166DFA56006DB535 /* Default-568h@2x.png in Resources */,
 				79C32296166DFA56006DB535 /* Default.png in Resources */,
 				79C32298166DFA56006DB535 /* Default@2x.png in Resources */,
-				79C3229A166DFA56006DB535 /* PNViewController.xib in Resources */,
+				79FFF693167DD5D9008093F2 /* PNViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,6 +695,8 @@
 				7902B9E01679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */,
 				7902B9E51679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */,
 				7902452C167B5F6100E36546 /* PNWriteBuffer.m in Sources */,
+				79FFF67C167C919E008093F2 /* PNServiceChannel.m in Sources */,
+				79FFF696167E5C66008093F2 /* NSMutableArray+PNAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -709,6 +729,8 @@
 				7902B9E11679E72000DE2BBB /* PNLatencyMeasureRequest.m in Sources */,
 				7902B9E61679EEFC00DE2BBB /* PNRequestsQueue.m in Sources */,
 				7902452D167B5F6100E36546 /* PNWriteBuffer.m in Sources */,
+				79FFF67D167C919E008093F2 /* PNServiceChannel.m in Sources */,
+				79FFF697167E5C66008093F2 /* NSMutableArray+PNAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -759,6 +781,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -780,6 +804,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

@@ -39,14 +39,14 @@
  * connection which will retrieve time token from backend 
  * and open two connections/sockets which will be used for 
  * communication with PubNub services).
- * 
  */
 + (void)connect;
 
 /**
  * Will disconnect from all channels w/o sending leave
  * event and terminate all socket connection which was
- * established to PubNub services
+ * established to PubNub services.
+ * All scheduled messages will be discarded.
  */
 + (void)disconnect;
 
@@ -58,9 +58,10 @@
  * If PubNub was previously configured, it will perform
  * "hard reset".
  * "hard reset" - is action when all connection will be 
- *                dropped w/o notify to the server (try
- *                to avoid runtime re-configuration of the
- *                client)
+ *                dropped w/o notify to the server.
+ *                All scheduled messages will be discarded 
+ *                (try to avoid runtime re-configuration 
+ *                of the client)
  */
 + (void)setConfiguration:(PNConfiguration *)configuration;
 + (void)setupWithConfiguration:(PNConfiguration *)configuration andDelegate:(id<PNDelegate>)delegate;
@@ -95,6 +96,12 @@
 
 
 #pragma mark - Instance methods
+
+/**
+ * Check whether PubNub client connected to origin
+ * and ready to work or not
+ */
+- (BOOL)isConnected;
 
 /**
  * Send asynchronous time token request to PubNub
