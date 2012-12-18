@@ -151,4 +151,28 @@ To do this, simply follow this `init` example:
 
 })();</script>
 ```
+## Using with AES256 Encryption
+This client now supports AES256 encryption out of the box! And its super-easy to use! Check out the
+file encrypted_chat_demo.html for a working example of using encryption between this and other PubNub clients.
 
+Important highlights:
+
+1. Be sure to include the base pubnub.js, gibberish, and encryption adapter:
+```javascript
+<script src="http://cdn.pubnub.com/pubnub-3.4.min.js"></script>
+<script src="crypto/gibberish-aes.js"></script>
+<script src="crypto/encrypt-pubnub.js"></script>
+```
+
+2. When instantiating your PubNub instance object, use the .secure method instead of the .init method:
+```javascript
+var cipher_key = "enigma";
+var secure_pubnub = PUBNUB.secure({
+    publish_key   : "demo",
+    subscribe_key : "demo",
+    cipher_key    : cipher_key
+});
+```
+
+That's pretty much it. Use subscribe, publish, and history as you would normally, only the implementation is different,
+being that the message traffic is now encrypted.
