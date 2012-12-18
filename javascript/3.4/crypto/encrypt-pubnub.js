@@ -40,15 +40,17 @@ PUBNUB.secure = (function () {
         var pubnub = PUBNUB.init(setup);
 
         return {
+            time: PUBNUB.time,
+
             publish: function (args) {
                 args.message = encrypt(args.message);
                 return pubnub.publish(args);
             },
             subscribe: function (args) {
                 var callback = args.callback;
-                args.callback = function (message) {
+                args.callback = function (message, envelope, channel) {
                     var decrypted = decrypt(message);
-                    decrypted && callback(decrypted);
+                    decrypted && callback(decrypted, envelope, channel);
                 }
 
                 return pubnub.subscribe(args);
