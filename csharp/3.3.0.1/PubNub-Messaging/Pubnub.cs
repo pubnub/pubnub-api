@@ -41,7 +41,7 @@ namespace PubNub_Messaging
         const int PUBNUB_NETWORK_CHECK_RETRIES = 50;
         const int PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC = 10;
         const bool OVERRIDE_TCP_KEEP_ALIVE = true;
-        const TraceLevel CAPTURE_TRACE_LEVEL = TraceLevel.Info;
+        const LoggingMethod.Level LOG_LEVEL = LoggingMethod.Level.Error;
 
         // Common property changed event
         public event PropertyChangedEventHandler PropertyChanged;
@@ -101,6 +101,21 @@ namespace PubNub_Messaging
          */
         private void init(string publish_key, string subscribe_key, string secret_key, string cipher_key, bool ssl_on)
         {
+            #if(MONOTOUCH || SILVERLIGHT || WINDOWS_PHONE)			
+                LoggingMethod.LogLevel = LOG_LEVEL;
+            #else			
+                string strLogLevel = ConfigurationManager.AppSettings["LogLevel"];			
+                int iLogLevel;			
+                if (!Int32.TryParse (strLogLevel, out iLogLevel)) 			
+                {				
+                    LoggingMethod.LogLevel = LOG_LEVEL;			
+                }			
+                else			
+                {				
+                    LoggingMethod.LogLevel = (LoggingMethod.Level)iLogLevel;			
+                }
+            #endif
+
             this.PUBLISH_KEY = publish_key;
             this.SUBSCRIBE_KEY = subscribe_key;
             this.SECRET_KEY = secret_key;
@@ -143,7 +158,7 @@ namespace PubNub_Messaging
                         else
                         {
                             _channelInternetRetry.AddOrUpdate(netState.channel, 1, (key, oldValue) => oldValue + 1);
-                            WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Retry {3} of {4}", DateTime.Now.ToString(), netState.channel, netState.type, _channelInternetRetry[netState.channel], PUBNUB_NETWORK_CHECK_RETRIES), TraceLevel.Info);
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Retry {3} of {4}", DateTime.Now.ToString(), netState.channel, netState.type, _channelInternetRetry[netState.channel], PUBNUB_NETWORK_CHECK_RETRIES), LoggingMethod.LevelInfo);
                         }
                     }
 
@@ -155,7 +170,7 @@ namespace PubNub_Messaging
                             _channelReconnectTimer[netState.channel].Dispose();
                         }
 
-                        WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Internet Available : {3}", DateTime.Now.ToString(), netState.channel, netState.type, _channelInternetStatus[netState.channel]), TraceLevel.Info);
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Internet Available : {3}", DateTime.Now.ToString(), netState.channel, netState.type, _channelInternetStatus[netState.channel]), LoggingMethod.LevelInfo);
                         switch (netState.type)
                         {
                             case ResponseType.Subscribe:
@@ -190,33 +205,33 @@ namespace PubNub_Messaging
                 }
                 else
                 {
-                    WriteToLog(string.Format("DateTime {0}, Unknown request state in reconnectNetworkCallback", DateTime.Now.ToString()), TraceLevel.Error);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Unknown request state in reconnectNetworkCallback", DateTime.Now.ToString()), LoggingMethod.LevelError);
                 }
             }
             catch (Exception ex)
             {
-                WriteToLog(string.Format("DateTime {0} method:reconnectNetworkCallback \n Exception Details={1}", DateTime.Now.ToString(), ex.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0} method:reconnectNetworkCallback \n Exception Details={1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelError);
             }
         }
 
 
         private void initiatePowerModeCheck()
         {
-#if (!SILVERLIGHT && !WINDOWS_PHONE)
+#if (!SILVERLIGHT && !WINDOWS_PHONE && !MONOTOUCH)
             try
             {
                 SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
-                WriteToLog(string.Format("DateTime {0}, Initiated System Event - PowerModeChanged.", DateTime.Now.ToString()), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Initiated System Event - PowerModeChanged.", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
             }
             catch (Exception ex)
             {
-                WriteToLog(string.Format("DateTime {0} No support for System Event - PowerModeChanged.", DateTime.Now.ToString()), TraceLevel.Error);
-                WriteToLog(string.Format("DateTime {0} {1}", DateTime.Now.ToString(), ex.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0} No support for System Event - PowerModeChanged.", DateTime.Now.ToString()), LoggingMethod.LevelError);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0} {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelError);
             }
 #endif
         }
 
-#if (!SILVERLIGHT && !WINDOWS_PHONE)
+#if (!SILVERLIGHT && !WINDOWS_PHONE && !MONOTOUCH)
         void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
             if (e.Mode == PowerModes.Suspend)
@@ -228,11 +243,11 @@ namespace PubNub_Messaging
                     heartBeatTimer.Change(Timeout.Infinite, Timeout.Infinite);
                 }
 
-                WriteToLog(string.Format("DateTime {0}, System entered into Suspend Mode.", DateTime.Now.ToString()), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, System entered into Suspend Mode.", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
 
                 if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
-                    WriteToLog(string.Format("DateTime {0}, Disabled Timer for heartbeat ", DateTime.Now.ToString()), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Disabled Timer for heartbeat ", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
                 }
             }
             else if (e.Mode == PowerModes.Resume)
@@ -245,11 +260,11 @@ namespace PubNub_Messaging
                         (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000);
                 }
 
-                WriteToLog(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
 
                 if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
-                    WriteToLog(string.Format("DateTime {0}, Enabled Timer for heartbeat ", DateTime.Now.ToString()), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Enabled Timer for heartbeat ", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
                 }
             }
         }
@@ -263,13 +278,13 @@ namespace PubNub_Messaging
             if (state != null && state.request != null)
             {
                 state.request.Abort();
-                WriteToLog(string.Format("DateTime {0} TerminatePendingWebRequest {1}", DateTime.Now.ToString(), state.request.RequestUri.ToString()), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminatePendingWebRequest {1}", DateTime.Now.ToString(), state.request.RequestUri.ToString()), LoggingMethod.LevelInfo);
 
                 RequestState removedReq;
                 bool removeKey = _channelRequest.TryRemove(state.channel, out removedReq);
                 if (!removeKey)
                 {
-                    WriteToLog(string.Format("DateTime {0} Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(), state.channel), TraceLevel.Error);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(), state.channel), LoggingMethod.LevelError);
                 }
             }
             else
@@ -282,19 +297,19 @@ namespace PubNub_Messaging
                     if (currReq.request != null)
                     {
                         currReq.request.Abort();
-                        WriteToLog(string.Format("DateTime {0} TerminatePendingWebRequest {1}", DateTime.Now.ToString(), currReq.request.RequestUri.ToString()), TraceLevel.Info);
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminatePendingWebRequest {1}", DateTime.Now.ToString(), currReq.request.RequestUri.ToString()), LoggingMethod.LevelInfo);
 
                         bool removeKey = _channelRequest.TryRemove(key, out currReq);
                         if (!removeKey)
                         {
-                            WriteToLog(string.Format("DateTime {0} Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(), key), TraceLevel.Error);
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0} Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= {1}", DateTime.Now.ToString(), key), LoggingMethod.LevelError);
                         }
                     }
                 }
             }
         }
 
-#if (!SILVERLIGHT && !WINDOWS_PHONE)
+#if (!SILVERLIGHT && !WINDOWS_PHONE && !MONOTOUCH)
         ~Pubnub()
         {
             //detach
@@ -549,7 +564,7 @@ namespace PubNub_Messaging
                 throw new ArgumentException("Missing Callback");
             }
 
-            WriteToLog(string.Format("DateTime {0}, requested subscribe for channel={1}", DateTime.Now.ToString(), channel), TraceLevel.Info);
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, requested subscribe for channel={1}", DateTime.Now.ToString(), channel), LoggingMethod.LevelInfo);
 
             if (_channelSubscription.ContainsKey(channel))
             {
@@ -557,7 +572,7 @@ namespace PubNub_Messaging
                 string jsonString = "[0, \"Already subscribed\"]";
                 result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel);
-                WriteToLog(string.Format("DateTime {0}, JSON subscribe response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON subscribe response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 goToUserCallback<T>(result, usercallback);
             }
             else
@@ -600,13 +615,13 @@ namespace PubNub_Messaging
                     HttpWebRequest request = currentState.request;
                     if (request != null)
                     {
-                        WriteToLog(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached.Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel), TraceLevel.Info);
+                        LoggingMethod.WriteToLog(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached.Request aborted for channel = {1}", DateTime.Now.ToString(), currentState.channel), LoggingMethod.LevelInfo);
                         request.Abort();
                     }
                 }
                 else
                 {
-                    WriteToLog(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached. However state is unknown", DateTime.Now.ToString()), TraceLevel.Error);
+                    LoggingMethod.WriteToLog(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: client request timeout reached. However state is unknown", DateTime.Now.ToString()), LoggingMethod.LevelError);
                 }
 
                 if (OVERRIDE_TCP_KEEP_ALIVE)
@@ -615,14 +630,14 @@ namespace PubNub_Messaging
                     heartBeatTimer.Change(
                         (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000,
                         (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000);
-                    WriteToLog(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: resetting the heartbeat timeout", DateTime.Now.ToString()), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime: {0}, OnPubnubWebRequestTimeout: resetting the heartbeat timeout", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
                 }
             }
         }
 
         void OnPubnubHeartBeatTimeoutCallback(Object heartbeatState)
         {
-            WriteToLog(string.Format("DateTime: {0}, **OnPubnubHeartBeatTimeoutCallback**", DateTime.Now.ToString()), TraceLevel.Verbose);
+            LoggingMethod.WriteToLog(string.Format("DateTime: {0}, **OnPubnubHeartBeatTimeoutCallback**", DateTime.Now.ToString()), LoggingMethod.LevelVerbose);
 
             RequestState currentState = heartbeatState as RequestState;
             if (currentState != null)
@@ -635,7 +650,7 @@ namespace PubNub_Messaging
                 {
                     _channelInternetStatus[currentState.channel] = networkConnection;
 
-                    WriteToLog(string.Format("DateTime: {0}, OnPubnubHeartBeatTimeoutCallback - Internet connection = {1}", DateTime.Now.ToString(), networkConnection), TraceLevel.Verbose);
+                    LoggingMethod.WriteToLog(string.Format("DateTime: {0}, OnPubnubHeartBeatTimeoutCallback - Internet connection = {1}", DateTime.Now.ToString(), networkConnection), LoggingMethod.LevelVerbose);
                     if (!networkConnection)
                     {
                         TerminatePendingWebRequest(currentState);
@@ -665,13 +680,13 @@ namespace PubNub_Messaging
             }
             else
             {
-                WriteToLog(string.Format("DateTime {0}, Lost Channel Name for resubscribe", DateTime.Now.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Lost Channel Name for resubscribe", DateTime.Now.ToString()), LoggingMethod.LevelError);
                 return;
             }
 
             if (!_channelSubscription.ContainsKey(channelName))
             {
-                WriteToLog(string.Format("DateTime {0}, Due to Unsubscribe, further re-subscription was stopped for channel {1}", DateTime.Now.ToString(), channelName.ToString()), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Due to Unsubscribe, further re-subscription was stopped for channel {1}", DateTime.Now.ToString(), channelName.ToString()), LoggingMethod.LevelInfo);
                 return;
             }
 
@@ -692,7 +707,7 @@ namespace PubNub_Messaging
             }
             else
             {
-                WriteToLog(string.Format("DateTime {0}, Lost Channel Name for re-presence", DateTime.Now.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Lost Channel Name for re-presence", DateTime.Now.ToString()), LoggingMethod.LevelError);
                 return;
             }
 
@@ -727,7 +742,7 @@ namespace PubNub_Messaging
             }
 
             bool unsubStatus = false;
-            WriteToLog(string.Format("DateTime {0}, requested unsubscribe for channel={1}", DateTime.Now.ToString(), channel), TraceLevel.Info);
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, requested unsubscribe for channel={1}", DateTime.Now.ToString(), channel), LoggingMethod.LevelInfo);
 
             string jsonString = "";
             List<object> result = new List<object>();
@@ -756,7 +771,7 @@ namespace PubNub_Messaging
                 result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel);
 
-                WriteToLog(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 goToUserCallback<T>(result, usercallback);
 
                 //just fire leave() event to REST API for safeguard
@@ -770,7 +785,7 @@ namespace PubNub_Messaging
                 jsonString = "[0, \"Channel Not Subscribed\"]";
                 result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel);
-                WriteToLog(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON unsubscribe response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 goToUserCallback<T>(result, usercallback);
             }
         }
@@ -787,7 +802,7 @@ namespace PubNub_Messaging
             //Exit if the channel is unsubscribed
             if (!_channelSubscription.ContainsKey(channel))
             {
-                WriteToLog(string.Format("DateTime {0}, Due to Unsubscribe, further subscription was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Due to Unsubscribe, further subscription was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()), LoggingMethod.LevelInfo);
                 return;
             }
             _channelSubscription.AddOrUpdate(channel, Convert.ToInt64(timetoken.ToString()), (key, oldValue) => Convert.ToInt64(timetoken.ToString())); //Store the timetoken
@@ -796,14 +811,14 @@ namespace PubNub_Messaging
             {
                 if (_channelInternetRetry.ContainsKey(channel) && (_channelInternetRetry[channel] >= PUBNUB_NETWORK_CHECK_RETRIES))
                 {
-                    WriteToLog(string.Format("DateTime {0}, Subscribe channel={1} - No internet connection. MAXed retries for internet ", DateTime.Now.ToString(), channel), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe channel={1} - No internet connection. MAXed retries for internet ", DateTime.Now.ToString(), channel), LoggingMethod.LevelInfo);
                     subscribeExceptionHandler<T>(channel, usercallback, true);
                     return;
                 }
 
                 if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
-                    WriteToLog(string.Format("DateTime {0}, Subscribe - No internet connection for {1}", DateTime.Now.ToString(), channel), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe - No internet connection for {1}", DateTime.Now.ToString(), channel), LoggingMethod.LevelInfo);
 
                     ReconnectState<T> netState = new ReconnectState<T>();
                     netState.channel = channel;
@@ -828,7 +843,7 @@ namespace PubNub_Messaging
             }
             catch (Exception ex)
             {
-                WriteToLog(string.Format("DateTime {0} method:_subscribe \n channel={1} \n timetoken={2} \n Exception Details={3}", DateTime.Now.ToString(), channel, timetoken.ToString(), ex.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0} method:_subscribe \n channel={1} \n timetoken={2} \n Exception Details={3}", DateTime.Now.ToString(), channel, timetoken.ToString(), ex.ToString()), LoggingMethod.LevelError);
                 this._subscribe<T>(channel, timetoken, usercallback, false);
             }
         }
@@ -858,7 +873,7 @@ namespace PubNub_Messaging
             }
 
             channel = string.Format("{0}-pnpres", channel);
-            WriteToLog(string.Format("DateTime {0}, requested presence for channel={1}", DateTime.Now.ToString(), channel), TraceLevel.Info);
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, requested presence for channel={1}", DateTime.Now.ToString(), channel), LoggingMethod.LevelInfo);
 
             if (_channelPresence.ContainsKey(channel))
             {
@@ -866,7 +881,7 @@ namespace PubNub_Messaging
                 string jsonString = "[0, \"Presence Already subscribed\"]";
                 result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel.Replace("-pnpres", ""));
-                WriteToLog(string.Format("DateTime {0}, JSON presence response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON presence response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 goToUserCallback<T>(result, usercallback);
             }
             else
@@ -889,7 +904,7 @@ namespace PubNub_Messaging
             //Exit if the channel is unsubscribed
             if (!_channelPresence.ContainsKey(channel))
             {
-                WriteToLog(string.Format("DateTime {0}, Due to Presence-unsubscribe, further presence was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Due to Presence-unsubscribe, further presence was stopped for channel {1}", DateTime.Now.ToString(), channel.ToString()), LoggingMethod.LevelInfo);
                 return;
             }
             _channelPresence.AddOrUpdate(channel, Convert.ToInt64(timetoken.ToString()), (key, oldValue) => Convert.ToInt64(timetoken.ToString())); //Store the timetoken
@@ -898,14 +913,14 @@ namespace PubNub_Messaging
             {
                 if (_channelInternetRetry.ContainsKey(channel) && (_channelInternetRetry[channel] >= PUBNUB_NETWORK_CHECK_RETRIES))
                 {
-                    WriteToLog(string.Format("DateTime {0}, Presence channel={1} - No internet connection. MAXed retries for internet ", DateTime.Now.ToString(), channel), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Presence channel={1} - No internet connection. MAXed retries for internet ", DateTime.Now.ToString(), channel), LoggingMethod.LevelInfo);
                     presenceExceptionHandler<T>(channel, usercallback, true);
                     return;
                 }
 
                 if (OVERRIDE_TCP_KEEP_ALIVE)
                 {
-                    WriteToLog(string.Format("DateTime {0}, Presence - No internet connection for {1}", DateTime.Now.ToString(), channel), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Presence - No internet connection for {1}", DateTime.Now.ToString(), channel), LoggingMethod.LevelInfo);
 
                     ReconnectState<T> netState = new ReconnectState<T>();
                     netState.channel = channel;
@@ -929,7 +944,7 @@ namespace PubNub_Messaging
             }
             catch (Exception ex)
             {
-                WriteToLog(string.Format("method:_presence \n channel={0} \n timetoken={1} \n Exception Details={2}", channel, timetoken.ToString(), ex.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("method:_presence \n channel={0} \n timetoken={1} \n Exception Details={2}", channel, timetoken.ToString(), ex.ToString()), LoggingMethod.LevelError);
                 this._presence<T>(channel, timetoken, usercallback, false);
             }
         }
@@ -949,7 +964,7 @@ namespace PubNub_Messaging
             channel = string.Format("{0}-pnpres", channel);
 
             bool unsubStatus = false;
-            WriteToLog(string.Format("DateTime {0}, requested presence-unsubscribe for channel={1}", DateTime.Now.ToString(), channel), TraceLevel.Info);
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, requested presence-unsubscribe for channel={1}", DateTime.Now.ToString(), channel), LoggingMethod.LevelInfo);
 
             string jsonString = "";
             List<object> result = new List<object>();
@@ -977,7 +992,7 @@ namespace PubNub_Messaging
                 result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel.Replace("-pnpres", ""));
 
-                WriteToLog(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 goToUserCallback<T>(result, usercallback);
             }
             else
@@ -986,7 +1001,7 @@ namespace PubNub_Messaging
                 jsonString = "[0, \"Channel Not Subscribed\"]";
                 result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 result.Add(channel.Replace("-pnpres", ""));
-                WriteToLog(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON presence-unsubscribe response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 goToUserCallback<T>(result, usercallback);
             }
         }
@@ -1121,7 +1136,7 @@ namespace PubNub_Messaging
                 if ((!_channelSubscription.ContainsKey(channelName) && type == ResponseType.Subscribe)
                     || (!_channelPresence.ContainsKey(channelName) && type == ResponseType.Presence))
                 {
-                    WriteToLog(string.Format("DateTime {0}, Due to Unsubscribe, request aborted for channel={1}", DateTime.Now.ToString(), channelName), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Due to Unsubscribe, request aborted for channel={1}", DateTime.Now.ToString(), channelName), LoggingMethod.LevelInfo);
                     request.Abort();
                 }
 
@@ -1148,7 +1163,7 @@ namespace PubNub_Messaging
                     request.ServicePoint.SetTcpKeepAlive(true, PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000, 1000);
 #endif
                 }
-                WriteToLog(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
 
                 // Make request with the following inline Asynchronous callback
                 IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback((asynchronousResult) =>
@@ -1180,7 +1195,7 @@ namespace PubNub_Messaging
                                             (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000);
                                     }
 
-                                    WriteToLog(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channelName, type.ToString(), jsonString), TraceLevel.Info);
+                                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channelName, type.ToString(), jsonString), LoggingMethod.LevelInfo);
 
                                     result = WrapResultBasedOnResponseType(type, jsonString, channelName, reconnect);
                                 }
@@ -1189,7 +1204,7 @@ namespace PubNub_Messaging
                         }
                         else
                         {
-                            WriteToLog(string.Format("DateTime {0}, Request aborted for channel={1}", DateTime.Now.ToString(), channelName), TraceLevel.Info);
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0}, Request aborted for channel={1}", DateTime.Now.ToString(), channelName), LoggingMethod.LevelInfo);
                         }
 
                         if (result != null && result.Count >= 1 && usercallback != null)
@@ -1211,7 +1226,7 @@ namespace PubNub_Messaging
                     }
                     catch (WebException webEx)
                     {
-                        WriteToLog(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.ToString(), requestUri.ToString()), TraceLevel.Error);
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.ToString(), requestUri.ToString()), LoggingMethod.LevelError);
 
                         RequestState state = (RequestState)asynchronousResult.AsyncState;
                         if (state.response != null)
@@ -1228,7 +1243,7 @@ namespace PubNub_Messaging
                             ) && (!OVERRIDE_TCP_KEEP_ALIVE))
                         {
                             //internet connection problem.
-                            WriteToLog(string.Format("DateTime {0}, _urlRequest - Internet connection problem", DateTime.Now.ToString()), TraceLevel.Error);
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0}, _urlRequest - Internet connection problem", DateTime.Now.ToString()), LoggingMethod.LevelError);
 
                             if (_channelInternetStatus.ContainsKey(channelName)
                                 && (type == ResponseType.Subscribe || type == ResponseType.Presence))
@@ -1241,7 +1256,7 @@ namespace PubNub_Messaging
                                 else
                                 {
                                     _channelInternetRetry.AddOrUpdate(channelName, 1, (key, oldValue) => oldValue + 1);
-                                    WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), type, channelName, _channelInternetRetry[channelName], PUBNUB_NETWORK_CHECK_RETRIES), TraceLevel.Info);
+                                    LoggingMethod.WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), type, channelName, _channelInternetRetry[channelName], PUBNUB_NETWORK_CHECK_RETRIES), LoggingMethod.LevelInfo);
                                 }
                                 _channelInternetStatus[channelName] = false;
                                 Thread.Sleep(PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC * 1000);
@@ -1256,7 +1271,7 @@ namespace PubNub_Messaging
                         if (state.response != null)
                             state.response.Close();
 
-                        WriteToLog(string.Format("DateTime {0} Exception= {1} for URL: {2}", DateTime.Now.ToString(), ex.ToString(), requestUri.ToString()), TraceLevel.Error);
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} Exception= {1} for URL: {2}", DateTime.Now.ToString(), ex.ToString(), requestUri.ToString()), LoggingMethod.LevelError);
                         urlRequestCommonExceptionHandler<T>(type, channelName, usercallback);
                     }
 
@@ -1276,7 +1291,7 @@ namespace PubNub_Messaging
             }
             catch (System.Exception ex)
             {
-                WriteToLog(string.Format("DateTime {0} Exception={1}", DateTime.Now.ToString(), ex.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0} Exception={1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelError);
                 urlRequestCommonExceptionHandler<T>(type, channelName, usercallback);
                 return false;
             }
@@ -1454,7 +1469,7 @@ namespace PubNub_Messaging
             if (currentState != null && currentState.response == null && currentState.request != null)
             {
                 currentState.request.Abort();
-                WriteToLog(string.Format("DateTime: {0}, **WP7 OnPubnubWebRequestTimeout**", DateTime.Now.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("DateTime: {0}, **WP7 OnPubnubWebRequestTimeout**", DateTime.Now.ToString()), LoggingMethod.LevelError);
             }
         }
 
@@ -1597,7 +1612,7 @@ namespace PubNub_Messaging
                 bool remove = _channelRequest.TryRemove(channelName, out currentReq);
                 if (!remove)
                 {
-                    WriteToLog(string.Format("DateTime {0} Unable to remove request from dictionary for channel ={1}", DateTime.Now.ToString(), channelName), TraceLevel.Error);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} Unable to remove request from dictionary for channel ={1}", DateTime.Now.ToString(), channelName), LoggingMethod.LevelError);
                 }
             }
         }
@@ -1606,7 +1621,7 @@ namespace PubNub_Messaging
         {
             if (reconnectTried)
             {
-                WriteToLog(string.Format("DateTime {0}, MAX retries reached. Exiting the subscribe for channel = {1}", DateTime.Now.ToString(), channelName), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, MAX retries reached. Exiting the subscribe for channel = {1}", DateTime.Now.ToString(), channelName), LoggingMethod.LevelInfo);
 
                 unsubscribe(channelName, null);
 
@@ -1615,7 +1630,7 @@ namespace PubNub_Messaging
                 errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 errorResult.Add(channelName);
 
-                WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
 
                 if (usercallback != null)
                 {
@@ -1645,7 +1660,7 @@ namespace PubNub_Messaging
         {
             if (reconnectTry)
             {
-                WriteToLog(string.Format("DateTime {0}, MAX retries reached. Exiting the presence for channel = {1}", DateTime.Now.ToString(), channelName), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, MAX retries reached. Exiting the presence for channel = {1}", DateTime.Now.ToString(), channelName), LoggingMethod.LevelInfo);
 
                 presence_unsubscribe(channelName.Replace("-pnpres", ""), null);
 
@@ -1653,7 +1668,7 @@ namespace PubNub_Messaging
                 string jsonString = string.Format("[0, \"Presence-unsubscribed after {0} failed retries\"]", PUBNUB_NETWORK_CHECK_RETRIES);
                 errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                 errorResult.Add(channelName);
-                WriteToLog(string.Format("DateTime {0}, Presence JSON network error response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Presence JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 if (usercallback != null)
                 {
                     goToUserCallback<T>(errorResult, usercallback);
@@ -1684,7 +1699,7 @@ namespace PubNub_Messaging
             string jsonString = "[0, \"Network connnect error\"]";
             result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
             result.Add(channelName);
-            WriteToLog(string.Format("DateTime {0}, JSON publish response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON publish response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
             goToUserCallback<T>(result, usercallback);
         }
 
@@ -1694,7 +1709,7 @@ namespace PubNub_Messaging
             string jsonString = "[0, \"Network connnect error\"]";
             result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
             result.Add(channelName);
-            WriteToLog(string.Format("DateTime {0}, JSON here_now response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON here_now response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
             goToUserCallback<T>(result, usercallback);
         }
 
@@ -1704,7 +1719,7 @@ namespace PubNub_Messaging
             string jsonString = "[0, \"Network connnect error\"]";
             result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
             result.Add(channelName);
-            WriteToLog(string.Format("DateTime {0}, JSON detailedHistoryExceptionHandler response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON detailedHistoryExceptionHandler response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
             goToUserCallback<T>(result, usercallback);
         }
 
@@ -1713,7 +1728,7 @@ namespace PubNub_Messaging
             List<object> result = new List<object>();
             string jsonString = "[0, \"Network connnect error\"]";
             result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
-            WriteToLog(string.Format("DateTime {0}, JSON timeExceptionHandler response={1}", DateTime.Now.ToString(), jsonString), TraceLevel.Info);
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON timeExceptionHandler response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
             goToUserCallback<T>(result, usercallback);
         }
 
@@ -1930,122 +1945,6 @@ namespace PubNub_Messaging
             return hexaHash;
         }
 
-        private static void WriteToLog(string str, TraceLevel traceLevel)
-        {
-            if (CAPTURE_TRACE_LEVEL != TraceLevel.Off)
-            {
-                if (CAPTURE_TRACE_LEVEL == TraceLevel.Error && traceLevel == TraceLevel.Error)
-                {
-#if (SILVERLIGHT || WINDOWS_PHONE)
-                    Debug.WriteLine(str);
-                    //AlternateTraceWriteLine(str);
-#else
-                    Trace.WriteLine(str);
-#endif
-                }
-                else if (CAPTURE_TRACE_LEVEL == TraceLevel.Warning
-                    && (traceLevel == TraceLevel.Error || traceLevel == TraceLevel.Warning))
-                {
-#if (SILVERLIGHT || WINDOWS_PHONE)
-                    Debug.WriteLine(str);
-                    //AlternateTraceWriteLine(str);
-#else
-                    Trace.WriteLine(str);
-#endif
-                }
-                else if (CAPTURE_TRACE_LEVEL == TraceLevel.Info
-                    && (traceLevel == TraceLevel.Error || traceLevel == TraceLevel.Warning || traceLevel == TraceLevel.Info))
-                {
-#if (SILVERLIGHT || WINDOWS_PHONE)
-                    Debug.WriteLine(str);
-                    //AlternateTraceWriteLine(str);
-#else
-                    Trace.WriteLine(str);
-#endif
-                }
-                else
-                {
-#if (SILVERLIGHT || WINDOWS_PHONE)
-                    Debug.WriteLine(str);
-#else
-                    Trace.WriteLine(str);
-#endif
-                }
-            }
-        }
-
-        //private static void AlternateTraceWriteLine(string str)
-        //{
-        //    try
-        //    {
-        //        IsolatedStorageFile storageFile = IsolatedStorageFile.GetUserStoreForApplication();
-
-        //        if (!storageFile.DirectoryExists("pubnubmessaging"))
-        //        {
-        //            storageFile.CreateDirectory("pubnubmessaging");
-        //        }
-        //        string fileFullPath = @"pubnubmessaging\trace.log";
-        //        if (!storageFile.FileExists(fileFullPath))
-        //        {
-        //            //storageFile.DeleteFile(fileFullPath);
-        //            //return;
-        //            storageFile.CreateFile(fileFullPath);
-        //        }
-        //        else
-        //        {
-        //            //check the size of the file
-        //            //storageFile.AvailableFreeSpace
-        //        }
-        //        using (IsolatedStorageFileStream storageFileStream = storageFile.OpenFile(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
-        //        {
-        //            //long fileSize = storageFileStream.cu
-        //            using (StreamWriter writer = new StreamWriter(storageFileStream))
-        //            {
-        //                writer.WriteLine(str);
-        //                writer.Flush();
-        //                writer.Close();
-        //            }
-        //            storageFileStream.Close();
-        //        }
-        //    }
-        //    catch
-        //    {
-        //    }
-        //}
-        //public static string AlternateTraceReader()
-        //{
-        //    string ret = "";
-        //    try
-        //    {
-        //        IsolatedStorageFile storageFile = IsolatedStorageFile.GetUserStoreForApplication();
-
-        //        if (!storageFile.DirectoryExists("pubnubmessaging"))
-        //        {
-        //            throw new DirectoryNotFoundException("pubnubmessaging dir missing");
-        //        }
-        //        string fileFullPath = @"pubnubmessaging\trace.log";
-        //        if (!storageFile.FileExists(fileFullPath))
-        //        {
-        //            throw new FileNotFoundException("trace.log file missing");
-        //        }
-
-        //        using (IsolatedStorageFileStream storageFileStream = storageFile.OpenFile(fileFullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-        //        {
-        //            using (StreamReader reader = new StreamReader(storageFileStream))
-        //            {
-        //                ret = reader.ReadToEnd();
-        //                reader.Close();
-        //            }
-        //            storageFileStream.Close();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ret = ex.ToString();
-        //    }
-        //    return ret;
-        //}
-
         public static long translateDateTimeToPubnubUnixNanoSeconds(DateTime dotNetUTCDateTime)
         {
             TimeSpan ts = dotNetUTCDateTime - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -2061,16 +1960,6 @@ namespace PubNub_Messaging
         }
     }
 
-#if (SILVERLIGHT || WINDOWS_PHONE)
-    public enum TraceLevel
-    {
-        Off = 0,
-        Error = 1,
-        Warning = 2,
-        Info = 3,
-        Verbose = 4,
-    }
-#endif
     /// <summary>
     /// MD5 Service provider
     /// </summary>
@@ -2665,7 +2554,7 @@ namespace PubNub_Messaging
         private string GetEncryptionKey()
         {
             //Compute Hash using the SHA256 
-#if (SILVERLIGHT || WINDOWS_PHONE)
+#if (SILVERLIGHT || WINDOWS_PHONE || MONOTOUCH)
             string strKeySHA256HashRaw = ComputeHash(this.CIPHER_KEY, new System.Security.Cryptography.SHA256Managed());
 #else
             string strKeySHA256HashRaw = ComputeHash(this.CIPHER_KEY, new SHA256CryptoServiceProvider());
@@ -2857,10 +2746,8 @@ namespace PubNub_Messaging
 
     internal class ClientNetworkStatus
     {
-        const TraceLevel CAPTURE_TRACE_LEVEL = TraceLevel.Error;
         private static bool _status = true;
 
-        //private static TraceSwitch appSwitch = new TraceSwitch("PubnubTraceSwitch", "Pubnub Trace Switch in config file");
 #if (SILVERLIGHT  || WINDOWS_PHONE)
         private static ManualResetEvent mres = new ManualResetEvent(false);
         private static ManualResetEvent mreSocketAsync = new ManualResetEvent(false);
@@ -2884,7 +2771,7 @@ namespace PubNub_Messaging
                 }
                 catch (Exception ex)
                 {
-                    WriteToLog(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()), TraceLevel.Error);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelError);
                 }
             }
         }
@@ -2932,19 +2819,19 @@ namespace PubNub_Messaging
                     socket.Close();
                 }
 #else
-                using (UdpClient udp = new UdpClient("pizza.pubnub.com", 80))
+                using (UdpClient udp = new UdpClient("pubsub.pubnub.com", 80))
                 {
                     IPAddress localAddr = ((IPEndPoint)udp.Client.LocalEndPoint).Address;
                     udp.Close();
 
-                    WriteToLog(string.Format("DateTime {0} checkInternetStatus LocalIP: {1}", DateTime.Now.ToString(), localAddr.ToString()), TraceLevel.Verbose);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus LocalIP: {1}", DateTime.Now.ToString(), localAddr.ToString()), LoggingMethod.LevelVerbose);
                     callback(true);
                 }
 #endif
             }
             catch (Exception ex)
             {
-                WriteToLog(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()), TraceLevel.Error);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelError);
                 callback(false);
             }
             mres.Set();
@@ -2959,7 +2846,7 @@ namespace PubNub_Messaging
                 InternetState state = e.UserToken as InternetState;
                 if (state != null)
                 {
-                    WriteToLog(string.Format("DateTime {0} socketAsync_Completed.", DateTime.Now.ToString()), TraceLevel.Info);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} socketAsync_Completed.", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
                     state.callback(true);
                 }
                 mreSocketAsync.Set();
@@ -2967,46 +2854,75 @@ namespace PubNub_Messaging
         }
 #endif
 
-        private static void WriteToLog(string str, TraceLevel traceLevel)
+    }
+
+    internal class LoggingMethod
+    {
+        private static int iLogLevel = 0;
+        public static Level LogLevel
         {
-            if (CAPTURE_TRACE_LEVEL != TraceLevel.Off)
+            get
             {
-                if (CAPTURE_TRACE_LEVEL == TraceLevel.Error && traceLevel == TraceLevel.Error)
-                {
-#if (SILVERLIGHT || WINDOWS_PHONE)
-                    Debug.WriteLine(str);
+                return (Level)iLogLevel;
+            }
+            set
+            {
+                iLogLevel = (int)value;
+            }
+        }
+        public enum Level
+        {
+            Off,
+            Error,
+            Info,
+            Verbose,
+            Warning
+        }
+
+        public static bool LevelError
+        {
+            get
+            {
+                return (int)LogLevel >= 1;
+            }
+        }
+
+        public static bool LevelInfo
+        {
+            get
+            {
+                return (int)LogLevel >= 2;
+            }
+        }
+
+        public static bool LevelVerbose
+        {
+            get
+            {
+                return (int)LogLevel >= 3;
+            }
+        }
+
+        public static bool LevelWarning
+        {
+            get
+            {
+                return (int)LogLevel >= 4;
+            }
+        }
+
+        public static void WriteToLog(string str, bool bWrite)
+        {
+            if (bWrite)
+            {
+#if (SILVERLIGHT || WINDOWS_PHONE || MONOTOUCH)
+				Debug.WriteLine (str);
 #else
-                    Trace.WriteLine(str);
+                Trace.WriteLine(str);
 #endif
-                }
-                else if (CAPTURE_TRACE_LEVEL == TraceLevel.Warning
-                    && (traceLevel == TraceLevel.Error || traceLevel == TraceLevel.Warning))
-                {
-#if (SILVERLIGHT || WINDOWS_PHONE)
-                    Debug.WriteLine(str);
-#else
-                    Trace.WriteLine(str);
-#endif
-                }
-                else if (CAPTURE_TRACE_LEVEL == TraceLevel.Info
-                    && (traceLevel == TraceLevel.Error || traceLevel == TraceLevel.Warning || traceLevel == TraceLevel.Info))
-                {
-#if (SILVERLIGHT || WINDOWS_PHONE)
-                    Debug.WriteLine(str);
-#else
-                    Trace.WriteLine(str);
-#endif
-                }
-                else
-                {
-#if (SILVERLIGHT || WINDOWS_PHONE)
-                    Debug.WriteLine(str);
-#else
-                    Trace.WriteLine(str);
-#endif
-                }
             }
         }
     }
+
 
 }

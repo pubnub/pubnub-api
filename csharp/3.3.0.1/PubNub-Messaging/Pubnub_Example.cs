@@ -90,7 +90,40 @@ namespace PubNub_Messaging
                         Console.WriteLine("Running publish()");
                         Console.WriteLine("Enter the message for publish. To exit loop, enter QUIT");
                         string publishMsg = Console.ReadLine();
-                        pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
+                        double doubleData;
+                        int intData;
+                        if (int.TryParse(publishMsg, out intData))
+                        {
+                            pubnub.publish<string>(channel, intData, DisplayReturnMessage);
+                        }
+                        else if (double.TryParse(publishMsg, out doubleData))
+                        {
+                            pubnub.publish<string>(channel, doubleData, DisplayReturnMessage);
+                        }
+                        else
+                        {
+                            //check whether any numeric is sent in double quotes
+                            if (publishMsg.IndexOf("\"") == 0 && publishMsg.LastIndexOf("\"") == publishMsg.Length - 1)
+                            {
+                                string strMsg = publishMsg.Substring(1, publishMsg.Length - 2);
+                                if (int.TryParse(strMsg, out intData))
+                                {
+                                    pubnub.publish<string>(channel, strMsg, DisplayReturnMessage);
+                                }
+                                else if (double.TryParse(strMsg, out doubleData))
+                                {
+                                    pubnub.publish<string>(channel, strMsg, DisplayReturnMessage);
+                                }
+                                else
+                                {
+                                    pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
+                                }
+                            }
+                            else
+                            {
+                                pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
+                            }
+                        }
                         break;
                     case "3":
                         Console.WriteLine("Running presence()");

@@ -54,7 +54,7 @@
     <StartupObject>PubNub_Messaging.Pubnub_Example</StartupObject>
   </PropertyGroup>
   <Choose>
-    <When Condition=" '$(TargetFrameworkVersion.Replace(&quot;v&quot;,&quot;&quot;))' == '4.0' ">
+    <When Condition=" '$(TargetFrameworkVersion.Replace(&quot;v&quot;,&quot;&quot;))' == '4.0' Or '$(TargetFrameworkVersion.Replace(&quot;v&quot;,&quot;&quot;))' == '4.5' ">
       <PropertyGroup>
         <ConfigTemplate>
           <Configuration>
