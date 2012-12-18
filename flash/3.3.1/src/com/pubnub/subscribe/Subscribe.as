@@ -374,12 +374,14 @@ package com.pubnub.subscribe {
 			var len:int = _channels.length;
 			var comma:String = ',';
 			for (var i:int = 0; i < len; i++) {
-				result += (_channels[i] + comma);
-				if (i == (len - 1)) {
-					result += _channels[i] + PNPRES_PREFIX
+
+
+                if (i == (len - 1)) {
+					result += _channels[i]
 				}else {
-					result += _channels[i] + PNPRES_PREFIX + comma;
-				}
+					result += _channels[i] + comma;
+
+                }
 			}
 			return result; 
 		}

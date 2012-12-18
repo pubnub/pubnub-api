@@ -36,7 +36,8 @@ package com.pubnub.log {
 		}
 		
 		static public function log(message:String, level:String = NORMAL, type:String = ''):void{
-			instance.recodrs.push(new LogRecord(message, type, level, instance.recodrs.length));
+			trace(new Date() + " " + message);
+            instance.recodrs.push(new LogRecord(message, type, level, instance.recodrs.length));
 			// to do refactor to unshift/pop it is more faster ????
 			if (instance.recodrs.length > MAX_RECORDS) {
 				instance.recodrs.shift();

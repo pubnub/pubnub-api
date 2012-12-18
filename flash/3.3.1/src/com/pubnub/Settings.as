@@ -9,8 +9,8 @@ package com.pubnub {
         // Reconnection Settings
         //
 
-        // retry to connect a maximum of this many times before unsubscribing from channel.
-		public static const MAX_RECONNECT_RETRIES:uint = 100;
+        // retry to connect a maximum of this many times before un-subscribing from channel.
+		public static const MAX_RECONNECT_RETRIES:uint = 3; //100;
 
         // after disconnect is detected, and network ping for connection detection begins again,
         // millisecond timeout to determine if Pubnub ping ( time() ) connects
@@ -26,7 +26,7 @@ package com.pubnub {
 
 
 		// while connected in subscribe mode, check for network down every 15s.
-		public static const CONNECTION_HEARTBEAT_INTERVAL:uint = 15000;
+		public static const CONNECTION_HEARTBEAT_INTERVAL:uint = 3000; // 15000;
 		
 		// time in millseconds to wait for web server to return a response. DO NOT CHANGE unless requested by support
 		public static const OPERATION_TIMEOUT:uint = 310000;

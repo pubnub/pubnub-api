@@ -79,11 +79,17 @@ package com.pubnub.environment {
 		}
 		
 		private function onComplete(e:Event):void {
+
 			// network ready
-			//trace('onComplete : ' + lastStatus);
-			if (lastStatus == NetMonEvent.HTTP_ENABLE) return;
+
+			if (lastStatus == NetMonEvent.HTTP_ENABLE){
+                Log.log('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
+                return;
+            }
+
 			lastStatus = NetMonEvent.HTTP_ENABLE;
-			if (forceReconnect) {
+
+            if (forceReconnect) {
 				clearInterval(interval);
 				interval = setInterval(ping, _reconnectDelay);
 			}
@@ -93,9 +99,14 @@ package com.pubnub.environment {
 		
 		private function ping():void {
 			//trace('ping');
-			try { loader.close(); }
-			catch (err:Error) { };
-			loader.load(new URLRequest(url));
+			try {
+                loader.close();
+            }
+			catch (err:Error) {
+                Log.log("PING: " + err, Log.WARNING);
+            };
+
+            loader.load(new URLRequest(url));
 		}
 		
 		public function start():void {
@@ -132,7 +143,9 @@ package com.pubnub.environment {
 			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
 			try {
 				loader.close();
-			}catch (err:Error) { }
+			}catch (err:Error) {
+                Log.log("Destroy: " + err, Log.WARNING);
+            }
 			loader = null;
 			_destroyed = true;
 		}

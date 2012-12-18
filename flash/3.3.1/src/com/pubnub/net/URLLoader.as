@@ -74,7 +74,7 @@ package com.pubnub.net {
 			try {
 				normalSocket.close();
 			}catch (err:IOError){
-				// something wrong
+                Log.log("Close: " + err, Log.WARNING);
 			}
 			
 			try {
@@ -82,7 +82,7 @@ package com.pubnub.net {
 					secureSocket.close();
 				}
 			}catch (err:IOError){
-				// something wrong
+                Log.log("Close: " + err, Log.WARNING);
 			}
 			destroyResponce();
 			request = null;
@@ -115,7 +115,7 @@ package com.pubnub.net {
 					socket.readBytes(temp);
 					temp.readBytes(answer, answer.bytesAvailable);
 				} catch (e:Error) {
-					// dispatch error
+                    Log.log("onSocketData: " + e, Log.WARNING);
 					break;
 				}                           
 			}
