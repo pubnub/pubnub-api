@@ -118,6 +118,7 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 @property (nonatomic, assign) PNSocketStreamState readStreamState;
 @property (nonatomic, assign) CFWriteStreamRef socketWriteStream;
 @property (nonatomic, assign) PNSocketStreamState writeStreamState;
+@property (nonatomic, assign, getter = isWriteStreamCanHandleData) BOOL writeStreamCanHandleData;
 @property (nonatomic, strong) NSDictionary *proxySettings;
 @property (nonatomic, assign) CFMutableDictionaryRef streamSecuritySettings;
 @property (nonatomic, assign) PNConnectionSSLConfigurationLevel sslConfiguratinoLevel;
@@ -167,6 +168,12 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 - (void)destroyReadStream:(CFReadStreamRef)readStream;
 
 /**
+ * Process responce which was fetched from read stream
+ * so far
+ */
+- (void)processResponse;
+
+/**
  * Allow to configure write stream with set of parameters
  * like:
  *   - proxy
@@ -177,6 +184,12 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 - (void)configureWriteStream:(CFWriteStreamRef)writeStream;
 - (void)openWriteStream:(CFWriteStreamRef)writeStream;
 - (void)destroyWriteStream:(CFWriteStreamRef)writeStream;
+
+/**
+ * Read out content which is waiting in
+ * read stream
+ */
+- (void)readStreamContent;
 
 /**
  * Writes buffer portion into socket
@@ -221,11 +234,11 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
  */
 - (NSString *)stringifyStreamStatus:(CFStreamStatus)status;
 
-- (void)handleStreamError:(CFStreamError)error;
-- (void)handleStreamError:(CFStreamError)error shouldCloseConnection:(BOOL)shouldCloseConnection;
+- (void)handleStreamError:(CFErrorRef)error;
+- (void)handleStreamError:(CFErrorRef)error shouldCloseConnection:(BOOL)shouldCloseConnection;
 
 - (void)handleStreamSetupError;
-- (void)handleRequestProcessingError:(CFStreamError)error;
+- (void)handleRequestProcessingError:(CFErrorRef)error;
 
 
 #pragma mark - Misc methods
@@ -254,7 +267,7 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
 /**
  * Stream error processing methods
  */
-- (PNError *)processStreamError:(CFStreamError)error;
+- (PNError *)processStreamError:(CFErrorRef)error;
 
 
 @end
@@ -389,8 +402,9 @@ static NSString * const kPNSingleConnectionIdentifier = @"PNUniversalConnectionI
                 self.writeBuffer = [self.dataSource connection:self requestDataForIdentifier:requestIdentifier];
                 
                 
-                if(self.writeBuffer != nil) {
+                if(self.writeBuffer != nil && self.isWriteStreamCanHandleData) {
                     
+                    [self writeBufferContent];
                 }
             }
         }
@@ -435,7 +449,7 @@ void readStreamCallback(CFReadStreamRef stream, CFStreamEventType type, void *cl
                    connection.name,
                    [connection stringifyStreamStatus:CFReadStreamGetStatus(stream)]);
             
-            [connection handleStreamError:CFReadStreamGetError(stream) shouldCloseConnection:YES];
+            [connection handleStreamError:CFReadStreamCopyError(stream) shouldCloseConnection:YES];
             break;
         case kCFStreamEventEndEncountered:
             
@@ -472,6 +486,8 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
             PNCLog(@"{INFO}[CONNECTION::%@::WRITE] READY TO SEND (%@)",
                    connection.name,
                    [connection stringifyStreamStatus:CFWriteStreamGetStatus(stream)]);
+            
+            [connection handleWriteStreamCanAcceptData];
             break;
         case kCFStreamEventErrorOccurred:
             
@@ -479,7 +495,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
                    connection.name,
                    [connection stringifyStreamStatus:CFWriteStreamGetStatus(stream)]);
             
-            [connection handleStreamError:CFWriteStreamGetError(stream) shouldCloseConnection:YES];
+            [connection handleStreamError:CFWriteStreamCopyError(stream) shouldCloseConnection:YES];
             break;
         case kCFStreamEventEndEncountered:
             
@@ -710,8 +726,8 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     if (!CFReadStreamOpen(readStream)) {
         
-        CFStreamError error = CFReadStreamGetError(readStream);
-        if (error.error != 0) {
+        CFErrorRef error = CFReadStreamCopyError(readStream);
+        if (error && CFErrorGetCode(error) != 0) {
             
             self.readStreamState = PNSocketStreamError;
             [self handleStreamError:error];
@@ -721,6 +737,56 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
             CFRunLoopRun();
         }
     }
+}
+
+- (void)readStreamContent {
+    
+    if (CFReadStreamHasBytesAvailable(self.socketReadStream)) {
+        
+        UInt8 buffer[kPNStreamBufferSize];
+        CFIndex readedBytesCount = CFReadStreamRead(self.socketReadStream, buffer, kPNStreamBufferSize);
+        if (readedBytesCount > 0) {
+            
+            // Store fetched data
+            [self.retrievedData appendBytes:buffer length:readedBytesCount];
+            
+            [self processResponse];
+        }
+        else if(readedBytesCount == 0) {
+            
+            // TODO: PROCESS NO DATA
+        }
+        else {
+            
+            [self handleStreamError:CFReadStreamCopyError(self.socketReadStream)];
+        }
+    }
+}
+
+- (void)processResponse {
+    
+    NSString *response = [[NSString alloc] initWithData:self.retrievedData encoding:NSUTF8StringEncoding];
+    NSRange statusRange = [response rangeOfString:@"(?<=HTTP/1.1 )([0-9]+)"
+                                          options:NSRegularExpressionSearch];
+    // Ensure that response has status code at least
+    if (statusRange.location != NSNotFound) {
+        
+        int statusCode = [[response substringWithRange:statusRange] intValue];
+        
+        // Check whether server fully processed response and
+        // send 200 (OK) code
+        if (statusCode == 200) {
+            
+            NSRange contentLengthRange = [response rangeOfString:@"(?<=Content-Length: )([0-9]+)"
+                                                         options:NSRegularExpressionSearch];
+            NSLog(@"\nRESPONSE LENGTH: %i\nTIMMED RESPONSE LENGTH: %i\nSTATUS CODE: %@\nCONTENT LENGTH: %@\nRESPONSE: %@", [response length], [[response stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length], [response substringWithRange:statusRange], [response substringWithRange:contentLengthRange], response);
+        }
+    }
+    
+    //            NSLog(@"STREAM CONTENT: %@", [[NSString alloc] initWithData:self.retrievedData encoding:NSUTF8StringEncoding]);
+    //            NSLog(@"STREAM CONTENT: %@", [[NSString alloc] initWithBytes:[self.retrievedData bytes] length:13 encoding:NSUTF8StringEncoding]);
+    
+    // TODO: PROCESS DATA AND TRY TO EXTRACT COMPLETED RESPONSE FROM IT
 }
 
 - (void)configureWriteStream:(CFWriteStreamRef)writeStream {
@@ -752,8 +818,8 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     if (!CFWriteStreamOpen(writeStream)) {
         
-        CFStreamError error = CFWriteStreamGetError(writeStream);
-        if (error.error != 0) {
+        CFErrorRef error = CFWriteStreamCopyError(writeStream);
+        if (error && CFErrorGetCode(error) != 0) {
             
             self.writeStreamState = PNSocketStreamError;
             [self handleStreamError:error];
@@ -769,6 +835,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     
     BOOL shouldCloseStream = self.writeStreamState == PNSocketStreamConnected;
     self.writeStreamState = PNSocketStreamNotConfigured;
+    self.writeStreamCanHandleData = NO;
     
     
     if (writeStream != NULL) {
@@ -799,20 +866,56 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 - (void)writeBufferContent {
     
-    if (self.writeBuffer != nil && [self.writeBuffer hasData]) {
+    if (self.writeBuffer != nil) {
         
-        CFIndex bytesWritten = CFWriteStreamWrite(self.socketWriteStream,
-                                                  [self.writeBuffer buffer],
-                                                  kPNWriteBufferSize);
-        
-        // Check whether error occurred while tried to
-        // process request
-        if (bytesWritten < 0) {
+        // Check whether connection can pull some data
+        // from write buffer or not
+        BOOL isWriteBufferIsEmpty = ![self.writeBuffer hasData];
+        if(!isWriteBufferIsEmpty) {
             
-            // Retrieve error which occurred while tried to
-            // write buffer into socket
-            CFStreamError writeError = CFWriteStreamGetError(self.socketWriteStream);
-            [self handleRequestProcessingError:writeError];
+            if (self.isWriteStreamCanHandleData) {
+                
+                // Check whether we just started request processing or not
+                if (self.writeBuffer.length == 0) {
+                    
+                    // Notify data source that we started request processing
+                    [self.dataSource connection:self processingRequestWithIdentifier:self.writeBuffer.requestIdentifier];
+                }
+                
+                
+                CFIndex bytesWritten = CFWriteStreamWrite(self.socketWriteStream,
+                                                          [self.writeBuffer buffer],
+                                                          [self.writeBuffer bufferLength]);
+                
+                // Check whether error occurred while tried to
+                // process request
+                if (bytesWritten < 0) {
+                    
+                    // Retrieve error which occurred while tried to
+                    // write buffer into socket
+                    CFErrorRef writeError = CFWriteStreamCopyError(self.socketWriteStream);
+                    [self handleRequestProcessingError:writeError];
+                }
+                // Check whether socket was able to transfer whole
+                // write buffer at once or not
+                else if(bytesWritten == self.writeBuffer.length) {
+                    
+                    isWriteBufferIsEmpty = YES;
+                }
+                else {
+                    
+                    // Increase buffer readout offset
+                    self.writeBuffer.offset = (self.writeBuffer.offset+bytesWritten);
+                }
+            }
+        }
+        
+        
+        if(isWriteBufferIsEmpty) {
+            
+            NSString *identifier = self.writeBuffer.requestIdentifier;
+            self.writeBuffer = nil;
+            [self.dataSource connection:self didSendRequestWithIdentifier:identifier];
         }
     }
 }
@@ -859,31 +962,13 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 - (void)handleReadStreamHasData {
     
-    if (CFReadStreamHasBytesAvailable(self.socketReadStream)) {
-        
-        UInt8 buffer[kPNStreamBufferSize];
-        CFIndex readedBytesCount = CFReadStreamRead(self.socketReadStream, buffer, kPNStreamBufferSize);
-        if (readedBytesCount > 0) {
-            
-            // Store fetched data
-            [self.retrievedData appendBytes:buffer length:readedBytesCount];
-            
-            // TODO: PROCESS DATA AND TRY TO EXTRACT COMPLETED RESPONSE FROM IT
-        }
-        else if(readedBytesCount == 0) {
-            
-            // TODO: PROCESS NO DATA
-        }
-        else {
-            
-            [self handleStreamError:CFReadStreamGetError(self.socketReadStream)];
-        }
-    }
+    [self readStreamContent];
 }
 
 - (void)handleWriteStreamCanAcceptData {
     
-    
+    self.writeStreamCanHandleData = YES;
+    [self writeBufferContent];
 }
 
 - (void)handleStreamTimeout {
@@ -934,14 +1019,14 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     return stringifiedStatus;
 }
 
-- (void)handleStreamError:(CFStreamError)error {
+- (void)handleStreamError:(CFErrorRef)error {
     
     [self handleStreamError:error shouldCloseConnection:NO];
 }
 
-- (void)handleStreamError:(CFStreamError)error shouldCloseConnection:(BOOL)shouldCloseConnection {
+- (void)handleStreamError:(CFErrorRef)error shouldCloseConnection:(BOOL)shouldCloseConnection {
     
-    if (error.error != 0) {
+    if (error && CFErrorGetCode(error) != 0) {
         
         PNError *errorObject = [self processStreamError:error];
         BOOL shouldNotifyDelegate = YES;
@@ -978,6 +1063,14 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
                 // Try to reconnect w/o SSL support
                 [self connect];
             }
+        }
+        
+        
+        // Check whether error occurred during data sending or not
+        if(self.writeBuffer && [self.writeBuffer isPartialDataSent]) {
+            
+            shouldNotifyDelegate = NO;
+            [self handleRequestProcessingError:error];
         }
         
         
@@ -1021,11 +1114,14 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     }];
 }
 
-- (void)handleRequestProcessingError:(CFStreamError)error {
+- (void)handleRequestProcessingError:(CFErrorRef)error {
     
-    if (error.error != 0) {
+    if (error && CFErrorGetCode(error) != 0) {
         
-        PNError *errorObject = [self processStreamError:error];
+        if (self.writeBuffer && [self.writeBuffer isPartialDataSent]) {
+            
+            [self.dataSource connection:self didFailToProcessRequestWithIdentifier:self.writeBuffer.requestIdentifier];
+        }
     }
 }
 
@@ -1142,12 +1238,19 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     return _retrievedData;
 }
 
-- (PNError *)processStreamError:(CFStreamError)error {
+- (PNError *)processStreamError:(CFErrorRef)error {
     
-    NSString *domain = error.domain == kCFStreamErrorDomainMacOSStatus?NSOSStatusErrorDomain:NSPOSIXErrorDomain;
+    PNError *errorInstance = nil;
+    
+    if (error) {
+        
+        errorInstance = [PNError errorWithDomain:(id)CFErrorGetDomain(error)
+                                            code:CFErrorGetCode(error)
+                                        userInfo:nil];
+    }
     
     
-    return (PNError *)[NSError errorWithDomain:domain code:error.error userInfo:nil];
+    return errorInstance;
 }
 
 

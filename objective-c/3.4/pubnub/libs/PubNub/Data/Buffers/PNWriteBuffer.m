@@ -10,6 +10,14 @@
 #import "PNBaseRequest+Protected.h"
 
 
+#pragma mark Static
+
+// Stores reference on maximum write TCP
+// packet size which will be sent over the
+// socket (Default: 4kb)
+static NSUInteger const kPNWriteBufferSize = 4096;
+
+
 #pragma mark - Private interface methods
 
 @interface PNWriteBuffer () {
@@ -49,11 +57,11 @@
     if((self = [super init])) {
         
         self.requestIdentifier = request.identifier;
-        self.length = sizeof([request HTTPPayload]);
+        self.length = sizeof(char)*[[request HTTPPayload] length];
         
         // Allocate buffer for HTTP payload
         buffer = malloc(self.length);
-        strcmp((char *)buffer, [[request HTTPPayload] UTF8String]);
+        strncpy((char *)buffer, [[request HTTPPayload] UTF8String], self.length);
     }
     
     
@@ -65,9 +73,19 @@
     return self.offset < self.length;
 }
 
+- (BOOL)isPartialDataSent {
+    
+    return self.offset != 0 && self.offset != self.length;
+}
+
 - (UInt8 *)buffer {
     
     return (UInt8 *)(buffer+self.offset);
+}
+
+- (CFIndex)bufferLength {
+    
+    return MIN(kPNWriteBufferSize, self.length);
 }
 
 

@@ -218,9 +218,6 @@ static PubNub *_sharedInstance = nil;
                         [[self sharedInstance].messagingChannel connect];
                         [[self sharedInstance].serviceChannel connect];
                     }
-                    
-                    
-                    [[self sharedInstance] warmUpConnection];
                 }
                 else {
                     
@@ -433,6 +430,14 @@ static PubNub *_sharedInstance = nil;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED
     [self sendRequest:[PNTimeTokenRequest new] onChannel:self.serviceChannel];
 #endif
+    
+    
+    int64_t delayInSeconds = 5.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        
+        [self warmUpConnection];
+    });
 }
 
 - (void)requestServerTimeToken {
@@ -491,6 +496,9 @@ static PubNub *_sharedInstance = nil;
         [[NSNotificationCenter defaultCenter] postNotificationName:kPNClientDidConnectToOriginNotification
                                                             object:self
                                                           userInfo:(id)host];
+        
+        
+        [self warmUpConnection];
     }
 }
 

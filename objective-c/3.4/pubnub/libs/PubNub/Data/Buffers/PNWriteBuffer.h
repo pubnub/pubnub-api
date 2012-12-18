@@ -9,15 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-#pragma mark Static
-
-// Stores reference on maximum write TCP
-// packet size which will be sent over the
-// socket (Default: 4kb)
-static NSUInteger const kPNWriteBufferSize = 4096;
-
-
-#pragma mark - Class forward
+#pragma mark Class forward
 
 @class PNBaseRequest;
 
@@ -61,10 +53,22 @@ static NSUInteger const kPNWriteBufferSize = 4096;
 - (BOOL)hasData;
 
 /**
+ * Returns whether buffer already sent some portion
+ * of data for processing or not
+ */
+- (BOOL)isPartialDataSent;
+
+/**
  * Retrieve reference on buffer which take into
  * account number of sent bytes
  */
 - (UInt8 *)buffer;
+
+/**
+ * Retrieve size of the buffer which should be
+ * used when writting content into sokect stream
+ */
+- (CFIndex)bufferLength;
 
 #pragma mark -
 
