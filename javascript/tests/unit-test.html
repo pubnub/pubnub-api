@@ -1,7 +1,9 @@
 <!doctype html>
 <html>
 <head> 
+    <!-- Hey, let's be friends! twitter.com/pubnub -->
     <title>PubNub JavaScript Unit Test</title>
+    <meta http-equiv=content-type content=text/html;charset=utf-8>
     <link
         rel=stylesheet
         href=http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css
@@ -45,8 +47,9 @@
     <td>{message}</td>
 </script>
 
-<div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=../pubnub-3.1.min.js></script>
+<div id=pubnub pub-key=demo sub-key=demo origin=pubsub.pubnub.com></div>
+<script src=../json.js></script>
+<script src=../pubnub-3.4.js></script>
 <script>(function(){
 
     function test( t, msg ) {
@@ -81,7 +84,7 @@
     }
 
     var p            = PUBNUB
-    ,   many_con_tst = 'opera' in window ? -1 : 10
+    ,   many_con_tst = 20
     ,   channel      = 'pn-javascript-unit-test'
     ,   out          = p.$('unit-test-out')
     ,   test_tpl     = p.$('test_template').innerHTML
@@ -105,7 +108,7 @@
     ====================================================================== */
     p.bind( 'mousedown,touchstart', start_button, start_test );
     function start_test() {
-        test.plan = 19 + many_con_tst*3; // # of tests
+        test.plan = 18 + many_con_tst*3; // # of tests
         test.done = 0;  // 0 tests done so far
         test.pass = 0;  // 0 passes so far
         test.fail = 0;  // 0 failes so far
@@ -138,7 +141,7 @@
                 callback : function(response) {
                     test( response[0], 'Successful Publish' );
                     test( response[1], 'Success With Demo' );
-                    history_test();
+                    setTimeout( history_test, 2500 );
                 }
             });
         }
@@ -149,9 +152,9 @@
             p.history({
                 limit    : 1,
                 channel  : channel,
-                callback : function(messages) {
-                    test( messages, 'History Response' );
-                    test( messages[0].test === "test", 'History Content' );
+                callback : function(data) {
+                    test( data, 'History Response' );
+                    test( data[0][0].test === "test", 'History Content' );
                 }
             });
         }
@@ -159,11 +162,14 @@
         p.subscribe({
             channel  : channel,
             connect  : publish_test,
-            callback : function( message, stack ) {
+            presence : function( message, envelope, channel ) {
+                
+            },
+            callback : function( message, envelope, channel ) {
                 p.unsubscribe({ channel : channel });
                 test( message, 'Subscribe Message' );
                 test( message.test === "test", 'Subscribe Message Data' );
-                test( stack[1], 'TimeToken Returned: ' + stack[1] );
+                test( envelope[1], 'TimeToken Returned: ' + envelope[1] );
             }
         });
 
@@ -176,18 +182,16 @@
 
             p.subscribe({
                 channel  : chan,
-                connect  : function() {
-                    test( chan, 'Many Connections: ' + conn + ' Connected!' );
+                connect  : function(chan) {
+                    test( chan, 'Many Connections: ' + chan + ' Connected!' );
                     p.publish({ channel : chan, message : chan });
                 },
-                callback : function(message) {
+                callback : function( message, envelope, channel ) {
+                    p.unsubscribe({ channel : channel });
                     test(
-                        chan === message,
-                        'Many Connections: ' + conn + ' Received'
-                    );
-                    setTimeout(
-                        function() { p.unsubscribe({ channel : chan }) },
-                        5000
+                        channel === message,
+                        'Many Connections: ' + channel +
+                        ' Received - '       + message
                     );
                 }
             });
@@ -196,24 +200,30 @@
         /* ------------------------------------------------------------------
         --- TESTING NEW CONNECTION RESTORE FEATURE
         ------------------------------------------------------------------ */
-        var restore_channel = 'restore-channel'+Math.random();
-        p.subscribe({
+        //return;
+        var restore_channel = 'restore-channel'+Math.random()
+        ,   p2              = PUBNUB.init({
+            publish_key   : 'demo',
+            subscribe_key : 'demo'
+        });
+
+        p2.subscribe({
             restore  : true,
             channel  : restore_channel,
             callback : function(){},
             connect  : function() {
-                p.unsubscribe({ channel : restore_channel });
+                p2.unsubscribe({ channel : restore_channel });
 
                 // Send Message While Not Connected
-                p.publish({
+                p2.publish({
                     channel  : restore_channel,
                     message  : 'test',
                     callback : function() {
-                        p.subscribe({
+                        p2.subscribe({
                             restore  : true,
                             channel  : restore_channel,
                             callback : function( message, stack ) {
-                                p.unsubscribe({ channel : restore_channel });
+                                p2.unsubscribe({ channel : restore_channel });
                                 test(
                                     message === "test",
                                     'Subscribe Restore'
@@ -224,17 +234,6 @@
                 });
             }
         });
-
-        
-    /*
-    restore    : true,
-    disconnect : function() {
-    },
-    reconnect  : function() {
-    },
-    connect    : function() {
-    },
-    */
 
     }
     start_test();
