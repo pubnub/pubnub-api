@@ -1,5 +1,5 @@
-MIDlet-1: PubnubTestMIDlet,,test.PubnubTestMIDlet
-MIDlet-Jar-Size: 136299
+MIDlet-1: PubnubTestMIDlet,,com.pubnub.test.PubnubTestMIDlet
+MIDlet-Jar-Size: 126532
 MIDlet-Jar-URL: Pubnub-J2me.jar
 MIDlet-Name: Pubnub-J2me
 MIDlet-Permissions: javax.microedition.io.Connector.https, javax.microedition.io.Connector.http

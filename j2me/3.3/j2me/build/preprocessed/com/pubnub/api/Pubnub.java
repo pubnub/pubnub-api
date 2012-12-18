@@ -1,6 +1,5 @@
 package com.pubnub.api;
 
-
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -20,6 +19,8 @@ import org.json.me.JSONObject;
 import com.pubnub.crypto.PubnubCrypto;
 import com.pubnub.util.AsyncHttpManager;
 import com.pubnub.util.HttpCallback;
+import java.util.*;
+
 
 public class Pubnub {
 
@@ -29,19 +30,22 @@ public class Pubnub {
     private String SECRET_KEY = "";
     private String CIPHER_KEY = "";
     private boolean SSL = false;
-    private Callback _callback = null;
     private String current_timetoken = "0";
     private String UUID = null;
-    
-    private Hashtable subscriptions;
+    private Hashtable _headers;
+    private Hashtable channels;
 
-    private class ChannelStatus {
+    private class Channel {
 
-        String channel;
-        boolean connected, first;
+        String name;
+        boolean connected, disconnected;
+        int subscribed = 1;
+        Callback callback;
     }
-    //private Vector subscriptions;
-    private Vector _connection;
+
+    private String uuid() {
+        return "abcd-efgh-jikl-mnop";
+    }
 
     /**
      * PubNub 3.1 with Cipher Key
@@ -99,6 +103,7 @@ public class Pubnub {
         this.init(publish_key, subscribe_key, secret_key, "", false);
     }
 
+    
     /**
      * Init
      *
@@ -124,32 +129,18 @@ public class Pubnub {
         } else {
             this.ORIGIN = "http://" + this.ORIGIN;
         }
-        if (UUID == null) {
-            UUID = uuid();
-        }
-        _connection = new Vector();
-    }
+        
+        if (UUID == null) UUID = uuid();
+        
+        if (channels == null) channels = new Hashtable();
+            
+            
 
-    /**
-     * getCallback
-     *
-     * get the callback.
-     *
-     * @return Callback.
-     */
-    public Callback getCallback() {
-        return _callback;
-    }
-
-    /**
-     * setCallback
-     *
-     * set Callback Interface.
-     *
-     * @param Callback Callback object.
-     */
-    public void setCallback(Callback _callback) {
-        this._callback = _callback;
+        _headers = new Hashtable();
+        _headers.put("V", "3.3");
+        _headers.put("User-Agent", "J2ME");
+        _headers.put("Accept-Encoding", "gzip");
+        _headers.put("Connection", "close");
     }
 
     /**
@@ -161,10 +152,25 @@ public class Pubnub {
      * @param JSONObject message.
      * @return JSONArray.
      */
-    public void publish(String channel, JSONObject message) {
-        Hashtable args = new Hashtable(2);
+    public void publish(String channel, JSONObject message, Callback callback) {
+        Hashtable args = new Hashtable();
         args.put("channel", channel);
         args.put("message", message);
+        args.put("callback", callback);
+        publish(args);
+    }
+    
+    /**
+     * Publish
+     *
+     * Send a message to a channel.
+     *
+     * @param String channel name.
+     * @param JSONObject message.
+     * @return JSONArray.
+     */
+    public void publish(Hashtable args, Callback callback) {
+        args.put("callback", callback);
         publish(args);
     }
 
@@ -178,8 +184,9 @@ public class Pubnub {
      */
     public void publish(Hashtable args) {
 
-        String channel = (String) args.get("channel");
+        final String channel = (String) args.get("channel");
         Object message = args.get("message");
+        final Callback callback = (Callback) args.get("callback");
 
         if (message instanceof JSONObject) {
             JSONObject obj = (JSONObject) message;
@@ -228,20 +235,46 @@ public class Pubnub {
             // Sign Message
             signature = PubnubCrypto.getHMacSHA256(this.SECRET_KEY,
                     string_to_sign.toString());
+        }   
+
+
+        String[] urlComponents = {"publish", this.PUBLISH_KEY,
+            this.SUBSCRIBE_KEY, signature, channel,
+            "0", message.toString()};
+
+        Request req = new Request(urlComponents, channel, new ResponseHandler() {
+            public void handleResponse(String response) {
+                JSONArray jsarr;
+                try {
+                    jsarr = new JSONArray(response);
+                } catch (JSONException e) {
+                    handleError(response);
+                    return;
+                }
+                callback.successCallback(channel, jsarr);
+            }
+
+            public void handleError(String response) {
+                JSONArray jsarr = null;
+                jsarr.put("0").put("Error: Failed JSON HTTP Request");
+                callback.errorCallback(channel, jsarr);
+            }
+        });
+
+        _request(req);
+    }
+
+    private boolean inputsValid(Hashtable args) throws PubnubException {
+        Callback callback;
+        if ((callback = (Callback) args.get("callback")) == null) {
+            throw new PubnubException("Invalid Callback");
         }
 
-        // Build URL
-        Vector url = new Vector();
-        url.addElement("publish");
-        url.addElement(this.PUBLISH_KEY);
-        url.addElement(this.SUBSCRIBE_KEY);
-        url.addElement(signature);
-        url.addElement(channel);
-        url.addElement("0");
-        url.addElement(message.toString());
-       
-        
-        _request(getURL(url), channel,message);
+        if (args.get("channels") == null || args.get("channels").equals("")) {
+            callback.errorCallback(null, "Invalid Channel.");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -252,56 +285,69 @@ public class Pubnub {
      * @param HashMap <String, Object> containing channel name, function
      * callback.
      */
-    public void subscribe(final Hashtable args) {
+    public void subscribe(Hashtable args, Callback callback) throws PubnubException {
+
+
+        args.put("timetoken", "0");
+        args.put("callback", callback);
+        
+        if (!inputsValid(args)) {
+            return;
+        }
+
+        _subscribe(args);
+    }
+
+    
+    /**
+     * Subscribe
+     *
+     * Listen for a message on a channel.
+     *
+     * @param HashMap <String, Object> containing channel name, function
+     * callback.
+     */
+    public void subscribe(Hashtable args) throws PubnubException {
+
+        if (!inputsValid(args)) {
+            return;
+        }
+
         args.put("timetoken", "0");
         _subscribe(args);
     }
 
-    private void _subscribe_base(Hashtable args) {
-        String channel = (String) args.get("channel");
-        String timetoken = (String) args.get("timetoken");
-        try {
-            // Build URL
-            Vector url = new Vector();
-            url.addElement("subscribe");
-            url.addElement(this.SUBSCRIBE_KEY);
-            url.addElement(channel);
-            url.addElement("0");
-            url.addElement(timetoken);
+    /**
+     * Subscribe
+     *
+     * Listen for a message on a channel.
+     *
+     * @param HashMap <String, Object> containing channel name, function
+     * callback.
+     */
+    public void subscribe(String[] channelsArr, Callback callback) throws PubnubException {
 
-            boolean isPresent = false;
-            if (channel.endsWith("-pnpres")) {
-                isPresent = true;
-            }
-            if (!isPresent) {
-                // Stop Connection?
-                boolean is_disconnect = false;
-                ChannelStatus it;
-                for (int i = 0; i < subscriptions.size(); i++) {
-                    it = (ChannelStatus) subscriptions.elementAt(i);
-                    if (it.channel.equals(channel)) {
-                        if (!it.connected) {
-                            if (_callback != null) {
-                                _callback.disconnectCallback(channel);
-                            }
-                            is_disconnect = true;
-                            break;
-                        }
-                    }
-                }
-                if (is_disconnect) {
-                    return;
-                }
-            }
-            _request(url, channel,null);
-        } catch (Exception e) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ie) {
-            }
+        Hashtable args = new Hashtable();
+
+        args.put("channels", channelsArr);
+        args.put("callback", callback);
+        subscribe(args);
+    }
+
+    private void callErrorCallbacks(String[] channelList, String[] messages) {
+        for (int i = 0; i < channelList.length; i++) {
+            Callback cb = ((Channel) channels.get(channelList[i])).callback;
+            cb.errorCallback(channelList[i], messages[i]);
         }
     }
 
+    private void callErrorCallbacks(String[] channelList, String message) {
+        for (int i = 0; i < channelList.length; i++) {
+            Callback cb = ((Channel) channels.get(channelList[i])).callback;
+            cb.errorCallback(channelList[i], message);
+        }
+    }
+    
     /**
      * Subscribe - Private Interface
      *
@@ -312,307 +358,156 @@ public class Pubnub {
      */
     private void _subscribe(Hashtable args) {
 
-        String channel = (String) args.get("channel");
-        String timetoken = (String) args.get("timetoken");
-        // Ensure Single Connection
-        boolean isPresent = false;
-        if (channel.endsWith("-pnpres")) {
-            isPresent = true;
+        final String[] channelList = (String[]) args.get("channels");
+        final Callback callback = (Callback) args.get("callback");
+        final String timetoken = (String) args.get("timetoken");
+
+        /*
+         * Scan through the channels array.
+         * If a channel does not exist in hashtable
+         * create a new entry with default values.
+         * If already exists and connected, then return
+         * 
+         */
+        
+        for (int i = 0; i < channelList.length; i++) {
+            String channel = channelList[i];
+
+            Channel channelObj = (Channel) channels.get(channel);
+
+            if (channelObj == null) {
+                Channel ch = new Channel();
+                ch.name = channel;
+                ch.connected = false;
+                ch.callback = callback;
+                channels.put(ch.name, ch);
+            } else if (channelObj.connected) {
+
+                return;
+            }
         }
-        if (!isPresent) {
-            if (subscriptions != null && subscriptions.size() > 0) {
-                boolean channel_exist = false;
-                ChannelStatus it;
-                for (int i = 0; i < subscriptions.size(); i++) {
-                    it = (ChannelStatus) subscriptions.elementAt(i);
-                    if (it.channel.equals(channel)) {
-                        channel_exist = true;
-                        //it.connected=true;
-                        break;
-                    }
+
+        class Connect {
+
+            public void _connect(String timetoken) {
+                String channelString = PubnubUtil.joinString(channelList, ",");
+
+                if (channelString == null) {
+                    callErrorCallbacks(channelList,"Parsing Error");
                 }
-                if (!channel_exist) {
-                    ChannelStatus cs = new ChannelStatus();
-                    cs.channel = channel;
-                    cs.connected = true;
-                    subscriptions.addElement(cs);
-                } else {
-                    if (_callback != null) {
-                        JSONArray jsono = new JSONArray();
-                        try {
-                            jsono.put("Already Connected.");
-                        } catch (Exception jsone) {
+
+                String[] urlComponents = {
+                    Pubnub.this.ORIGIN,
+                    "subscribe", Pubnub.this.SUBSCRIBE_KEY,
+                    channelString, "0",
+                    timetoken
+                };
+
+                Hashtable params = new Hashtable();
+                params.put("uuid", uuid());
+
+
+
+                Request req = new Request(urlComponents, params, channelList, new ResponseHandler() {
+                    public void handleResponse(String response) {
+                        
+                        /*
+                         * Iterate over all the channels and call connect
+                         * callback for channels which were in disconnected
+                         * state. Nothing to do for channels already connected
+                         * 
+                         */ 
+                        Enumeration ch = Pubnub.this.channels.elements();
+                        while (ch.hasMoreElements()){
+                            Channel _channel = (Channel)ch.nextElement();
+                            if (_channel.connected == false) {
+                                _channel.connected = true;
+                                _channel.callback.connectCallback(_channel.name);
+                            }    
                         }
-                        _callback.errorCallback(channel, jsono);
+                        
+                        /*
+                         * Check if response has channel names. A JSON response with
+                         * more than 2 items means the response contains the channel
+                         * names as well. The channel names are in a comma delimted
+                         * string. Call success callback on all he channels passing
+                         * the corresponding response message.
+                         * 
+                         */
+                        
+                        JSONArray jsa;
+                        try {
+                            jsa = new JSONArray(response);
+                            JSONArray messages = new JSONArray(jsa.get(0).toString());
+                            
+                            if (jsa.length() > 2) {
+                                /*
+                                 * Response has multiple channels
+                                 */
+                                
+                                String[] _channels = PubnubUtil.splitString(jsa.getString(2), ",");
+                                
+                                
+                                for (int i = 0; i < _channels.length; i++) {
+                                    callback.successCallback(_channels[i], messages.get(i));
+                                }
+
+                                
+                            } else {
+                                /*
+                                 * Response for single channel
+                                 * Callback on single channel
+                                 */
+                                for (int i = 0; i < messages.length(); i++) {
+                                    callback.successCallback(channelList[0], messages.get(i));
+                                }
+                                
+                            }
+                           _connect((String)messages.get(1)); 
+                        } catch (JSONException e) {
+                        }
+                        
                     }
-                    return;
-                }
-            } else {
-                // New Channel
-                ChannelStatus cs = new ChannelStatus();
-                cs.channel = channel;
-                cs.connected = true;
-                subscriptions = new Vector();
-                subscriptions.addElement(cs);
+
+                    public void handleError(String response) {
+                        /*
+                         * Iterate over all the channels and call disconnect
+                         * callback for channels which were in connected
+                         * state. Nothing to do for channels already connected
+                         * 
+                         */ 
+                        Enumeration ch = Pubnub.this.channels.elements();
+                        while (ch.hasMoreElements()){
+                            Channel _channel = (Channel)ch.nextElement();
+                            if (_channel.connected == true) {
+                                _channel.connected = false;
+                                _channel.callback.disconnectCallback(_channel.name);
+                            }    
+                        }
+                        
+                        /*
+                         * Call error callback on all channels where we tried to connect
+                         */
+                        callErrorCallbacks(channelList,"Error Occurred");
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e) {
+                            //TODO Handle exception
+                        }
+                        _connect("0");
+                        
+                    }
+                });
+
+                _request(req);
             }
         }
-        _subscribe_base(args);
-    }
-
-    /**
-     * Time
-     *
-     * Timestamp from PubNub Cloud.
-     *
-     * @return long timestamp.
-     */
-    public long time() {
-        try {
-            Vector url = new Vector();
-
-            url.addElement("time");
-            url.addElement("0");
-
-            String res = getViaHttpsConnection(getURL(url));
-            JSONArray response = new JSONArray(res);
-            try {
-              
-                return Long.parseLong(response.get(0).toString());
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-        } catch (Exception ex) {
-            //ex.printStackTrace();
-        } 
-        return 0;
-    }
-
-    public void hereNow(String channel) {
-        if (channel == null || channel.equals("")) {
-            System.err.println("Missing channel");
-            return;
-        }
-
-        Vector url = new Vector();
-        url.addElement("v2");
-        url.addElement("presence");
-        url.addElement("sub_key");
-        url.addElement(this.SUBSCRIBE_KEY);
-        url.addElement("channel");
-        url.addElement(channel);
-
-        _request(url, channel,null);
-    }
-
-    public void presence(String channel) {
-        if (channel == null || channel.equals("")) {
-            System.err.println("Missing channel");
-            return;
-        }
-        Hashtable args = new Hashtable(6);
-        args.put("channel", channel + "-pnpres");
-        subscribe(args);
+        new Connect()._connect(timetoken);
     }
 
 
-    /**
-     * UUID
-     *
-     * 32 digit UUID generation at client side.
-     *
-     * @return String uuid.
-     */
-    public String uuid() {
-        String valueBeforeMD5;
-        String valueAfterMD5;
-        SecureRandom mySecureRand = new SecureRandom();
-        String s_id = System.getProperty("microedition.platform");
-        StringBuffer sbValueBeforeMD5 = new StringBuffer();
-        try {
-            long time = System.currentTimeMillis();
-            long rand = 0;
-            rand = mySecureRand.nextLong();
-            sbValueBeforeMD5.append(s_id);
-            sbValueBeforeMD5.append(":");
-            sbValueBeforeMD5.append(Long.toString(time));
-            sbValueBeforeMD5.append(":");
-            sbValueBeforeMD5.append(Long.toString(rand));
-            valueBeforeMD5 = sbValueBeforeMD5.toString();
-            byte[] array = PubnubCrypto.md5(valueBeforeMD5);
-            StringBuffer sb = new StringBuffer();
-            for (int j = 0; j < array.length; ++j) {
-                int b = array[j] & 0xFF;
-                if (b < 0x10) {
-                    sb.append('0');
-                }
-                sb.append(Integer.toHexString(b));
-            }
-            valueAfterMD5 = sb.toString();
-            String raw = valueAfterMD5.toUpperCase();
-            sb = new StringBuffer();
-            sb.append(raw.substring(0, 8));
-            sb.append("-");
-            sb.append(raw.substring(8, 12));
-            sb.append("-");
-            sb.append(raw.substring(12, 16));
-            sb.append("-");
-            sb.append(raw.substring(16, 20));
-            sb.append("-");
-            sb.append(raw.substring(20));
-            return sb.toString();
-        } catch (Exception e) {
-            System.out.println("Error:" + e);
-        }
-        return null;
-    }
 
-    /**
-     * History
-     *
-     * Load history from a channel.
-     *
-     * @param String channel name.
-     * @param int limit history count response.
-     * @return JSONArray of history.
-     */
-    public void history(String channel, int limit) {
-        Hashtable args = new Hashtable(2);
-        args.put("channel", channel);
-        args.put("limit", new Integer(limit));
-        history(args);
-    }
 
-    /**
-     * History
-     *
-     * Load history from a channel.
-     *
-     * @param HashMap <String, Object> containing channel name, limit history
-     * count response.
-     * @return JSONArray of history.
-     */
-    public void history(Hashtable args) {
-
-        String channel = (String) args.get("channel");
-        Integer limit = (Integer) args.get("limit");
-
-        Vector url = new Vector();
-        url.addElement("history");
-        url.addElement(this.SUBSCRIBE_KEY);
-        url.addElement(channel);
-        url.addElement("0");
-        url.addElement(limit.toString());
-        _request(url, channel,null);
-    }
-
-    /**
-     * Detailed History
-     *
-     * Load Detailed history from a channel.
-     *
-     * @param HashMap <String, Object> containing channel name, with optional:
-     * 'start', 'end', 'reverse', 'count'.
-     * @return JSONArray of history.
-     */
-    public void detailedHistory(Hashtable args) {
-        String channel = (String) args.get("channel");
-        if (channel == null || channel.equals("")) {
-            System.out.println("Missing Channel");
-            return;
-        }
-        StringBuffer parameter = new StringBuffer("?");
-        int count = 100;
-
-        if (args.get("count") != null) {
-            count = Integer.parseInt(args.get("count").toString());
-        }
-        parameter.append("count=").append(count);
-        if (args.get("reverse") != null) {
-            Boolean reverse = (Boolean) args.get("reverse");
-            if (reverse.booleanValue()) {
-                parameter.append("&reverse=true");
-            } else {
-                parameter.append("&reverse=false");
-            }
-        }
-        if (args.get("start") != null) {
-            parameter.append("&start=").append((String) args.get("start"));
-        }
-        if (args.get("end") != null) {
-            parameter.append("&end=").append((String) args.get("end"));
-        }
-
-        Vector url = new Vector();
-        url.addElement("v2");
-        url.addElement("history");
-        url.addElement("sub-key");
-        url.addElement(this.SUBSCRIBE_KEY);
-        url.addElement("channel");
-        url.addElement(channel);
-        url.addElement(parameter.toString());
-        _request(url, channel,null);
-    }
-
-    /**
-     * Unsubscribe
-     *
-     * Unsubscribe/Disconnect to channel.
-     *
-     * @param HashMap <String, Object> containing channel name.
-     */
-    public void unsubscribe(Hashtable args) {
-        String channel = (String) args.get("channel");
-        ChannelStatus it;
-        for (int i = 0; i < subscriptions.size(); i++) {
-            it = (ChannelStatus) subscriptions.elementAt(i);
-            if (it.channel.equals(channel) && it.connected) {
-                it.connected = false;
-                //   it.first = false;
-                break;
-            }
-        }
-        for (int i = 0; i < _connection.size(); i++) {
-            HttpCallback cb = (HttpCallback) _connection.elementAt(i);
-            if (cb.getChannel().equals(channel)) {
-                HttpConnection con = cb.getConnection();
-                if (con != null) {
-                    //con.close();
-                    cb.cancelRequest(cb);
-                    _connection.removeElement(cb);
-                }
-            }
-        }
-    }
-
-    private String getURL(Vector url_components) {
-        StringBuffer url = new StringBuffer();
-        Enumeration url_iterator = url_components.elements();
-        url.append(this.ORIGIN);
-
-        // Generate URL with UTF-8 Encoding
-        while (url_iterator.hasMoreElements()) {
-            try {
-                String url_bit = (String) url_iterator.nextElement();
-                // url.append("/").append(_encodeURIcomponent(url_bit));
-                if (url_bit.startsWith("?")) {
-                    url.append(url_bit);
-                } else {
-                    url.append("/").append(encode(url_bit, "UTF-8"));
-                }
-            } catch (Exception e) {
-                JSONArray jsono = new JSONArray();
-                try {
-                    jsono.put("Failed UTF-8 Encoding URL.");
-                } catch (Exception jsone) {
-                }
-                //  return jsono;
-                if (_callback != null) {
-                    _callback.errorCallback("No Channel Neme", jsono);
-                }
-            }
-        }
-        return url.toString();
-    }
 
     /**
      * Request URL
@@ -620,260 +515,21 @@ public class Pubnub {
      * @param List <String> request of url directories.
      * @return JSONArray from JSON response.
      */
-    private void _request(String url, final String channel1,Object message) {
+    private void _request(final Request req) {
 
-        Hashtable _headers = new Hashtable();
-        _headers.put("V", "3.3");
-        _headers.put("User-Agent", "J2ME");
-        _headers.put("Accept-Encoding", "gzip");
-        _headers.put("Connection", "close");
-
-        HttpCallback callback = new HttpCallback(url, _headers) {
-            public void processResponse(HttpConnection conn, Object cookie) throws IOException {
-            }
-            public void OnComplete(HttpConnection hc, String response, String req_for, String channel) throws IOException {
-                try {
-                    JSONArray out = null;
-                    if (response != null) {
-                        if (!req_for.equals("presence")) {
-                            out = new JSONArray(response);
-                        }
-                    } else {
-                        out = null;
-                    }
-                    if (_callback != null) {
-                        if (req_for != null) {
-                            if (req_for.equals("time")) {
-                            } else if (req_for.equals("presence")) {
-                                hereNowComplet(response, channel);
-                            } else if (req_for.equals("detailedHistory")) {
-                                detailedHistoryComplet(out, channel);
-                            } else if (req_for.equals("history")) {
-                                if (CIPHER_KEY.length() > 0) {
-                                    try {
-                                        // Decrpyt Messages
-                                        PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
-                                        out = pc.decryptJSONArray(out);
-                                    } catch (IOException ex) {
-                                        ex.printStackTrace();
-                                    }
-                                }
-                                if (_callback != null) {
-                                    _callback.historyCallback(channel, out);
-                                }
-                            } else if (req_for.equals("publish")) {
-                                if (out == null) {
-                                    JSONArray arr = new JSONArray();
-                                    arr.put("0");
-                                    arr.put("Error: Failed JSONP HTTP Request.");
-                                    out = arr;
-                                }
-                                _callback.publishCallback(channel,getMessage(),out);
-                            } else if (req_for.equals("subscribe")) {
-                                subscribeComplet(out, channel);
-                            }
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                if (_connection.contains(this)) {
-                    _connection.removeElement(this);
-                }
+        HttpCallback callback = new HttpCallback(req.getUrl(), _headers) {
+            public void OnComplete(HttpConnection hc, int statusCode, String response) throws IOException {
+                req.responseHandler.handleResponse(response);
             }
 
-            public void errorCall(HttpConnection conn, Object message) throws IOException {
-                if (_connection.contains(this)) {
-                    _connection.removeElement(this);
-                }
+            public void errorCall(HttpConnection conn, int statusCode, String response) throws IOException {
+
+                req.responseHandler.handleError(response);
+
             }
-
-
-
         };
-        if (channel1 != null) {
-            callback.setChannel(channel1);
-
-        }
-        if (request_for.equals("publish")) {
-            callback.setMessage(message);
-        }
-        _connection.addElement(callback);
         AsyncHttpManager.getInstance().queue(callback);
     }
 
-    private char toHex(int ch) {
-        return (char) (ch < 10 ? '0' + ch : 'A' + ch - 10);
-    }
-
-    public final String getViaHttpsConnection(String url)
-            throws IOException, ServiceProviderException {
-        HttpConnection c = null;
-        InputStream dis = null;
-        OutputStream os = null;
-        int rc;
-        String respBody = ""; // return empty string on bad things
-        try {
-            if (SSL) {
-                c = (HttpsConnection) Connector.open(url, Connector.READ_WRITE,
-                        false);
-            } else {
-                c = (HttpConnection) Connector.open(url, Connector.READ_WRITE,
-                        false);
-            }
-            c.setRequestMethod(HttpConnection.GET);
-            c.setRequestProperty("V", "3.3");
-            c.setRequestProperty("User-Agent", "Java");
-            c.setRequestProperty("Accept-Encoding", "gzip");
-            rc = c.getResponseCode();
-            int len = c.getHeaderFieldInt("Content-Length", 0);
-            dis = c.openInputStream();
-
-            if ("gzip".equals(c.getEncoding())) {
-                dis = new GZIPInputStream(dis);
-            }
-
-            byte[] data = null;
-            ByteArrayOutputStream tmp = new ByteArrayOutputStream();
-            int ch;
-            while ((ch = dis.read()) != -1) {
-                tmp.write(ch);
-            }
-            data = tmp.toByteArray();
-            respBody = new String(data, "UTF-8");
-
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Not an HTTP URL");
-        } finally {
-            if (dis != null) {
-                dis.close();
-            }
-            if (c != null) {
-                c.close();
-            }
-        }
-        if (rc != HttpConnection.HTTP_OK) {
-            throw new ServiceProviderException(
-                    "HTTP response code: " + rc, rc, respBody);
-        }
-        return respBody;
-    }
-
-    public String encode(String s, String enc)
-            throws UnsupportedEncodingException {
-
-        boolean needToChange = false;
-        boolean wroteUnencodedChar = false;
-        int maxBytesPerChar = 10; // rather arbitrary limit, but safe for now
-        StringBuffer out = new StringBuffer(s.length());
-        ByteArrayOutputStream buf = new ByteArrayOutputStream(maxBytesPerChar);
-        OutputStreamWriter writer = new OutputStreamWriter(buf, enc);
-        for (int i = 0; i < s.length(); i++) {
-            int c = (int) s.charAt(i);
-            if (dontNeedEncoding(c)) {
-                if (c == ' ') {
-                    out.append('%');
-                    out.append(toHex(c / 16));
-                    out.append(toHex(c % 16));
-
-                    needToChange = true;
-                } else {
-                    out.append((char) c);
-                    wroteUnencodedChar = true;
-                }
-            } else {
-                // convert to external encoding before hex conversion
-                try {
-                    if (wroteUnencodedChar) { // Fix for 4407610
-                        writer = new OutputStreamWriter(buf, enc);
-                        wroteUnencodedChar = false;
-                    }
-                    writer.write(c);
-                    /*
-                     * If this character represents the start of a Unicode
-                     * surrogate pair, then pass in two characters. It's not
-                     * clear what should be done if a bytes reserved in the
-                     * surrogate pairs range occurs outside of a legal surrogate
-                     * pair. For now, just treat it as if it were any other
-                     * character.
-                     */
-                    if (c >= 0xD800 && c <= 0xDBFF) {
-                        /*
-                         * System.out.println(Integer.toHexString(c) + " is high
-                         * surrogate");
-                         */
-                        if ((i + 1) < s.length()) {
-                            int d = (int) s.charAt(i + 1);
-                            /*
-                             * System.out.println("\tExamining " +
-                             * Integer.toHexString(d));
-                             */
-                            if (d >= 0xDC00 && d <= 0xDFFF) {
-                                /*
-                                 * System.out.println("\t" +
-                                 * Integer.toHexString(d) + " is low
-                                 * surrogate");
-                                 */
-                                writer.write(d);
-                                i++;
-                            }
-                        }
-                    }
-                    writer.flush();
-                } catch (IOException e) {
-                    buf.reset();
-                    continue;
-                }
-                byte[] ba = buf.toByteArray();
-                for (int j = 0; j < ba.length; j++) {
-                    out.append('%');
-                    char ch = CCharacter.forDigit((ba[j] >> 4) & 0xF, 16);
-                    // converting to use uppercase letter as part of
-                    // the hex value if ch is a letter.
-                    //            if (Character.isLetter(ch)) {
-                    //            ch -= caseDiff;
-                    //            }
-                    out.append(ch);
-                    ch = CCharacter.forDigit(ba[j] & 0xF, 16);
-                    //            if (Character.isLetter(ch)) {
-                    //            ch -= caseDiff;
-                    //            }
-                    out.append(ch);
-                }
-                buf.reset();
-                needToChange = true;
-            }
-        }
-
-        return (needToChange ? out.toString() : s);
-    }
-
-    static class CCharacter {
-        public static char forDigit(int digit, int radix) {
-            if ((digit >= radix) || (digit < 0)) {
-                return '\0';
-            }
-            if ((radix < Character.MIN_RADIX) || (radix > Character.MAX_RADIX)) {
-                return '\0';
-            }
-            if (digit < 10) {
-                return (char) ('0' + digit);
-            }
-            return (char) ('a' - 10 + digit);
-        }
-    }
-
-    public static boolean dontNeedEncoding(int ch) {
-        int len = _dontNeedEncoding.length();
-        boolean en = false;
-        for (int i = 0; i < len; i++) {
-            if (_dontNeedEncoding.charAt(i) == ch) {
-                en = true;
-                break;
-            }
-        }
-        return en;
-    }
-    //private static final int caseDiff = ('a' - 'A');
-    private static String _dontNeedEncoding = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ -_.*";
+   
 }

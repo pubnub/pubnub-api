@@ -1,56 +1,52 @@
 package com.pubnub.util;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
-import javax.microedition.io.StreamConnection;
 
 // Manages a series of asynchronous HTTP requests.
 // To make a request, call the queue method and pass an
-// object that implements AsyncHttpCallback and an optional
-// cookie. The request will be queued and executed on a
-// separate thread. At any point you can cancel all pending
+// object that implements AsyncHttpCallback. The request will be queued 
+// and executed on a separate thread. At any point you can cancel all pending
 // and executing requests by calling the cancelAll method.
+
 public class AsyncHttpManager {
 
     private AsyncHttpManager() {
     }
+    
 
     public void cancel(HttpCallback cb) {
         for (int i = 0; i < _workers.length; ++i) {
             if (_workers[i].asyncConnection != null) {
-                if (cb.getRequestFor().equals(_workers[i].asyncConnection._callback.getRequestFor()) && !_workers[i].getDie()) {
-                  if(!_workers[i].asyncConnection._callback.getChannel().endsWith("-pnpres"))
-                  {                   
-                    cancel(_workers[i].asyncConnection, null);
-                    _workers[i].asyncConnection=null;
-                  }
-                   // _workers[i].isUnsuscribe=true;
+                if (!_workers[i].getDie()) {
+
+                    cancel(_workers[i].asyncConnection);
+                    _workers[i].asyncConnection = null;
+
+                    // _workers[i].isUnsuscribe=true;
                 }
             }
         }
-       
+
     }
     // Cancels a single connection, invoking the
     // appropriate callback.
 
-    private void cancel(AsyncConnection conn, Throwable e) {
+    private void cancel(AsyncConnection conn) {
         AsyncHttpCallback cb = conn.getCallback();
 
         try {
-          
+
             close(conn);
-            cb.cancelingCall(conn.getHttpConnection(),conn.getCallback().getChannel(),
-                    conn.getCookie(),
-                    e);
+            cb.cancelingCall(conn.getHttpConnection());
         } catch (IOException ignore) {
         } finally {
             close(conn);
-          
+
         }
     }
 
@@ -80,7 +76,7 @@ public class AsyncHttpManager {
                 AsyncConnection conn = (AsyncConnection) _waiting.firstElement();
                 _waiting.removeElementAt(0);
 
-                cancel(conn, null);
+                cancel(conn);
             }
 
             // Clean up
@@ -106,7 +102,7 @@ public class AsyncHttpManager {
         if (hc != null) {
             try {
                 hc.close();
-              } catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -158,28 +154,16 @@ public class AsyncHttpManager {
                 || rc == HttpConnection.HTTP_TEMP_REDIRECT);
     }
 
-    // Queues a request for processing. A unique cookie
-    // will be generated for each request.
+    // Queues a request for processing. 
+    
     public void queue(AsyncHttpCallback request) {
-        queue(request, null, null);
-    }
-
-    // Queues a request for processing. The given
-    // cookie will be passed back to the callback
-    // methods unchanged. If the cookie is null,
-    // a unique cookie will be generated.
-    public void queue(AsyncHttpCallback request,
-            Object cookie) {
-        queue(request, cookie, null);
+        queue(request, null);
     }
 
     // Queues a request for processing with an initial
-    // HttpConnection already defined. The given cookie
-    // will be passed back to the callback methods. If
-    // the cookie is null, a unique cookie will be
-    // generated.
+    // HttpConnection already defined.
+    
     public void queue(AsyncHttpCallback cb,
-            Object cookie,
             HttpConnection hc) {
 
         // Synchronize on the queue of waiting
@@ -193,8 +177,7 @@ public class AsyncHttpManager {
                 init(_maxWorkers);
             }
 
-            AsyncConnection conn =
-                    new AsyncConnection(cb, cookie, hc);
+            AsyncConnection conn = new AsyncConnection(cb, hc);
 
             _waiting.addElement(conn);
             _waiting.notifyAll(); // wake the workers
@@ -210,6 +193,8 @@ public class AsyncHttpManager {
     private static AsyncHttpManager _singleton;
     private Vector _waiting = new Vector();
     private Worker _workers[];
+    
+    
 
     // AsyncConnection Class --------------------------------
     //
@@ -218,34 +203,23 @@ public class AsyncHttpManager {
     private static class AsyncConnection {
 
         // Initialize a connection with the given
-        // callback and cookie. If cookie is null,
-        // creates a new one.
-        AsyncConnection(AsyncHttpCallback cb,
-                Object cookie) {
-            this(cb, cookie, null);
+        // callback 
+        
+        AsyncConnection(AsyncHttpCallback cb) {
+            this(cb, null);
         }
 
         // Initialize a connection with the given
-        // callback, connection and cookie. If cookie
-        // is null, creates a new one.
+        // callback, connection
+        
         AsyncConnection(AsyncHttpCallback cb,
-                Object cookie,
                 HttpConnection hc) {
             _callback = cb;
-            _cookie = cookie;
             _httpconn = hc;
-
-            if (_cookie == null) {
-                _cookie = new Object();
-            }
         }
 
         AsyncHttpCallback getCallback() {
             return _callback;
-        }
-
-        Object getCookie() {
-            return _cookie;
         }
 
         HttpConnection getHttpConnection() {
@@ -256,7 +230,6 @@ public class AsyncHttpManager {
             _httpconn = hc;
         }
         private AsyncHttpCallback _callback;
-        private Object _cookie;
         private HttpConnection _httpconn;
     }
 
@@ -271,30 +244,31 @@ public class AsyncHttpManager {
         public void die() {
             _die = true;
         }
-    public boolean getDie() {
+
+        public boolean getDie() {
             return _die;
         }
         // Processes a connection request. Implicitly
         // handles HTTP redirections unless checkResponse
         // indicates otherwise.
+
         private void process(AsyncConnection conn) {
 
             AsyncHttpCallback cb = conn.getCallback();
             String url = null;
             try {
                 HttpConnection hc = conn.getHttpConnection();
-                Object cookie = conn.getCookie();
 
                 boolean process = true;
 
                 // Get the starting URL
 
                 if (hc == null) {
-                    url = cb.startingCall(cookie);
+                    url = cb.startingCall();
 
                     if (url == null) {
 
-                        cancel(conn, null);
+                        cancel(conn);
                         return;
                     }
                 }
@@ -311,8 +285,8 @@ public class AsyncHttpManager {
                     if (hc == null) {
 
                         try {
-
-                            hc = (HttpConnection) Connector.open(url,Connector.READ_WRITE,true);
+                            System.out.println(url);
+                            hc = (HttpConnection) Connector.open(url, Connector.READ_WRITE, true);
                             hc.setRequestMethod(HttpConnection.GET);
                             Hashtable headers = cb.getHeaderFields();
                             Enumeration en = headers.keys();
@@ -320,21 +294,21 @@ public class AsyncHttpManager {
                                 String key = (String) en.nextElement();
                                 String val = (String) headers.get(key);
                                 hc.setRequestProperty(key, val);
-                                
+
                             }
-                           
+
                             conn.setHttpConnection(hc);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
                     cb.setConnection(hc);
-                    if (!cb.prepareRequest(hc, cookie)) {
-                        cancel(conn, null);
+                    if (!cb.prepareRequest(hc)) {
+                        cancel(conn);
                         return;
                     }
                     int rc = hc.getResponseCode();
-                    if (!cb.checkResponse(hc, cookie)) {
+                    if (!cb.checkResponse(hc)) {
                         process = false;
                         break;
                     } else if (!isRedirect(rc)) {
@@ -373,17 +347,15 @@ public class AsyncHttpManager {
                 // Now we can process the data
 
                 if (process) {
-                    cb.processResponse(hc, cookie);
+                    cb.processResponse(hc);
                 }
 
-                cb.endingCall(hc, cookie, cb.getRequestFor(),cb.getChannel());
+                cb.endingCall(hc);
                 asyncConnection = null;
-                 _die = true;
+                _die = true;
                 close(conn);
             } catch (Throwable e) {
-            
-            }finally
-            {
+            } finally {
                 close(conn);
             }
 
@@ -424,7 +396,7 @@ public class AsyncHttpManager {
                 if (conn != null) {
                     asyncConnection = conn;
                     if (_die) {
-                        cancel(conn, null);
+                        cancel(conn);
                     } else {
                         process(conn);
                     }

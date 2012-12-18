@@ -1,6 +1,7 @@
 package com.pubnub.test;
 
 import com.pubnub.api.Pubnub;
+import com.pubnub.api.PubnubException;
 import com.pubnub.api.Callback;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -29,9 +30,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener {
     public PubnubTestMIDlet() {
     }
 
-    private void initialize() {
-        _pubnub.setCallback(this);
-    }
+
     Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "", false);
 
     /**
@@ -68,14 +67,8 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener {
         if (displayable == form) {
             if (command == exitCommand) {
                 exitMIDlet();
-            } else if (command == historyCommand) {
-                history();
             } else if (command == publishCommand) {
                 publish();
-            } else if (command == timeCommand) {
-                time();
-            } else if (command == unsubscribeCommand) {
-                unsubscribe();
             } else if (command == subscribeCommand) {
                 subscribe();
             }
@@ -104,9 +97,6 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener {
             form = new Form("Welcome", new Item[]{getStringItem()});
             form.addCommand(getExitCommand());
             form.addCommand(getPublishCommand());
-            form.addCommand(getTimeCommand());
-            form.addCommand(getHistoryCommand());
-            form.addCommand(getUnsubscribeCommand());
             form.addCommand(getSubscribeCommand());
             form.setCommandListener(this);
         }
@@ -138,41 +128,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener {
         return publishCommand;
     }
 
-    /**
-     * Returns an initiliazed instance of timeCommand component.
-     *
-     * @return the initialized component instance
-     */
-    public Command getTimeCommand() {
-        if (timeCommand == null) {
-            timeCommand = new Command("Time", Command.ITEM, 2);
-        }
-        return timeCommand;
-    }
-
-    /**
-     * Returns an initiliazed instance of historyCommand component.
-     *
-     * @return the initialized component instance
-     */
-    public Command getHistoryCommand() {
-        if (historyCommand == null) {
-            historyCommand = new Command("History", Command.ITEM, 1);
-        }
-        return historyCommand;
-    }
-
-    /**
-     * Returns an initiliazed instance of unsubscribeCommand component.
-     *
-     * @return the initialized component instance
-     */
-    public Command getUnsubscribeCommand() {
-        if (unsubscribeCommand == null) {
-            unsubscribeCommand = new Command("Unsubscribe", Command.ITEM, 0);
-        }
-        return unsubscribeCommand;
-    }
+   
 
     /**
      * Returns an initiliazed instance of subscribeCommand component.
@@ -214,7 +170,7 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener {
         if (midletPaused) {
             resumeMIDlet();
         } else {
-            initialize();
+
             startMIDlet();
         }
         midletPaused = false;
@@ -257,8 +213,9 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener {
 
     public void subscribe() {
         Hashtable args = new Hashtable(6);
-        args.put("channel", Channel);
+        args.put("channels", new String[]{Channel});
 
+        try {
         _pubnub.subscribe(args, new Callback() {
             public void successCallback(String channel, Object message) {
                 System.out.println("Message recevie on channel:" + channel
@@ -298,34 +255,12 @@ public class PubnubTestMIDlet extends MIDlet implements CommandListener {
                 }
             }
         });
+        
+    } catch (Exception e){
+        e.printStackTrace();
+    }
     }
 
-    public void unsubscribe() {
-        Hashtable args = new Hashtable(1);
-        String channel = Channel;
-        args.put("channel", channel);
-        _pubnub.unsubscribe(args new Callback() {
-                public void successCallback(String channel, Object message) {
-                }
-             });
-        System.out.println("UnSubscribed sucessfully");
-    }
-
-    public void time() {
-        System.out.println("Time::" + _pubnub.time());
-        double response = _pubnub.time();
-        stringItem.setLabel("Time::");
-        stringItem.setText(response + "");
-    }
-
-    public void history() {
-        Hashtable args = new Hashtable(2);
-        args.put("channel", Channel);
-        args.put("limit", new Integer(2));
-        _pubnub.history(args new Callback() {
-                public void successCallback(String channel, Object message) {
-                }
-             });
-    }
+ 
 
 }

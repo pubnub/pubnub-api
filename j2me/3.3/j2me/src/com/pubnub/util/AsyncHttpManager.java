@@ -285,7 +285,7 @@ public class AsyncHttpManager {
                     if (hc == null) {
 
                         try {
-
+                            System.out.println(url);
                             hc = (HttpConnection) Connector.open(url, Connector.READ_WRITE, true);
                             hc.setRequestMethod(HttpConnection.GET);
                             Hashtable headers = cb.getHeaderFields();

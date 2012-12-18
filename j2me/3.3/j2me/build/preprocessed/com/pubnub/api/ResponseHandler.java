@@ -12,5 +12,6 @@ package com.pubnub.api;
 
 
 interface ResponseHandler {
-    public abstract void handleResponse(String response, String channel);
+    public abstract void handleResponse(String response);
+    public abstract void handleError(String response);
 }

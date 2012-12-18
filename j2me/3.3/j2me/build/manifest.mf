@@ -1,4 +1,4 @@
-MIDlet-1: PubnubTestMIDlet,,test.PubnubTestMIDlet
+MIDlet-1: PubnubTestMIDlet,,com.pubnub.test.PubnubTestMIDlet
 MIDlet-Permissions: javax.microedition.io.Connector.https, javax.microedition.io.Connector.http
 MIDlet-Vendor: Vendor
 MIDlet-Name: Pubnub-J2me

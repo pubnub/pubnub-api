@@ -1,34 +1,19 @@
 package com.pubnub.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
 import javax.microedition.io.HttpConnection;
-import javax.microedition.lcdui.Alert;
 
 // Default implementation of AsyncHttpCallback
 public abstract class HttpCallback
         implements AsyncHttpCallback {
 
-    private String _url = "";
-    private Hashtable _headerFields = new Hashtable();
+    private String _url;
+    private Hashtable _headerFields;
     private HttpConnection _connection;
-    private String _channel = "";
-    private Object _message = null;
-
-    public Object getMessage() {
-        return _message;
-    }
-
-    public void setMessage(Object _message) {
-        this._message = _message;
-    }
-
-    private HttpCallback() {
-    }
 
     public void setConnection(HttpConnection _connection) {
         this._connection = _connection;
@@ -38,21 +23,13 @@ public abstract class HttpCallback
         return this._connection;
     }
 
-    public String getChannel() {
-        return _channel;
-    }
-
-    public void setChannel(String _channel) {
-        this._channel = _channel;
-    }
-
     public HttpCallback(String url, Hashtable headerFields) {
         _url = url;
         _headerFields = headerFields;
     }
 
     // The URL to open must be provided by subclass.
-    public String startingCall(Object cookie) {
+    public String startingCall() {
         return _url;
     }
 
@@ -61,40 +38,37 @@ public abstract class HttpCallback
     }
 
     // By default there's nothing to do.
-
-    public boolean prepareRequest(HttpConnection conn,
-            Object cookie)
+    public boolean prepareRequest(HttpConnection hconn)
             throws IOException {
         return true;
     }
 
     // Only continue if HTTP_OK or one of the redirection
     // codes is returned.
-    public boolean checkResponse(HttpConnection conn,
-            Object cookie)
+    public boolean checkResponse(HttpConnection hconn)
             throws IOException {
 
-        int rc = conn.getResponseCode();
+        int rc = hconn.getResponseCode();
 
         return (rc == HttpConnection.HTTP_OK
                 || AsyncHttpManager.isRedirect(rc));
     }
 
     // Process response.
-    public void processResponse(HttpConnection conn,
-            Object cookie)
-            throws IOException {}
+    public void processResponse(HttpConnection hconn)
+            throws IOException {
+    }
 
-    public abstract void OnComplete(HttpConnection hc, String responce, String req_for, String channel) throws IOException;
+    public abstract void OnComplete(HttpConnection hconn, int statusCode, String response) throws IOException;
 
-    public abstract void errorCall(HttpConnection conn, Object message) throws IOException;
+    public abstract void errorCall(HttpConnection hconn, int statusCode, String response) throws IOException;
+
     // Operation completed with no exceptions. The connection
     // is immediately closed after this call.
-
-    public void endingCall(HttpConnection hc,
-            Object cookie, String req_for, String channel)
+    public void endingCall(HttpConnection hconn)
             throws IOException {
-        int rc = hc.getResponseCode();
+        
+        int rc = hconn.getResponseCode();
 
         InputStream in = null;
         int lines = 0;
@@ -104,7 +78,7 @@ public abstract class HttpCallback
             StringBuffer b = new StringBuffer();
             int ch;
             b.append(prefix);
-            in = hc.openInputStream();
+            in = hconn.openInputStream();
 
             byte[] data = null;
             ByteArrayOutputStream tmp = new ByteArrayOutputStream();
@@ -117,14 +91,14 @@ public abstract class HttpCallback
             b.append(new String(data, "UTF-8"));
 
             if (b.length() > 0) {
-                OnComplete(hc, b.toString(), req_for, channel);
+                OnComplete(hconn, rc, b.toString());
             }
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                    hc.close();
-                    hc = null;
+                    hconn.close();
+                    hconn = null;
                 } catch (IOException e) {
                 }
             }
@@ -133,17 +107,11 @@ public abstract class HttpCallback
     }
 
     // Operation was cancelled or aborted.
-    public void cancelingCall(HttpConnection conn,
-            String channel,
-            Object cookie,
-            Throwable exception)
+    public void cancelingCall(HttpConnection hconn)
             throws IOException {
-        if (exception != null) {
-            errorCall(conn, exception.toString());
-            OnComplete(conn, null, getRequestFor(), channel);
-        } else {
-            OnComplete(conn, null, getRequestFor(), channel);
-        }
+
+            errorCall(hconn, hconn.getResponseCode(), "Cancelling");
+           
     }
 
     public void cancelRequest(HttpCallback cb) {
