@@ -108,7 +108,14 @@ func (pub *PUBNUB) Publish(channel string, message string, c chan []byte) {
 	url += "/" + signature
 	url += "/" + channel
 	url += "/0"
-	url += fmt.Sprintf("/{\"msg\":\"%s\"}", message)
+
+	//Now only for string, need add encrypt for other types
+	// use "/{\"msg\":\"%s\"}" for sending hash 
+	if pub.CIPHER_KEY != "" {
+		url += fmt.Sprintf("/\"%s\"", EncryptString(pub.CIPHER_KEY, fmt.Sprintf("\"%s\"", message)))
+	} else {
+		url += fmt.Sprintf("/\"%s\"", message)
+	}
 
 	value, err := pub.HttpRequest(url)
 	// send response to channel
@@ -157,16 +164,29 @@ func (pub *PUBNUB) Subscribe(channel string, c chan []byte) {
 			timeToken = fmt.Sprintf("%s", value[index+2:len(value)-2])
 			value = value[1:index]
 
-			var messages []Message
-			json_err := json.Unmarshal(value, &messages)
+			/*
+				//for parsing hash use
+				var messages []Message
+				json_err := json.Unmarshal(value, &messages)
+				if json_err != nil {
+					c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
+					close(c)
+					return
+				}
+			*/
+			var response []interface{}
+			json_err := json.Unmarshal(value, &response)
 			if json_err != nil {
 				c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
 				close(c)
 				return
 			}
-
-			for i := 0; i < len(messages); i++ {
-				c <- []byte(messages[i].Msg)
+			for i := 0; i < len(response); i++ {
+				if pub.CIPHER_KEY != "" {
+					c <- []byte(DecryptString(pub.CIPHER_KEY, fmt.Sprintf("%s", response[i])))
+				} else {
+					c <- []byte(fmt.Sprintf("%s", response[i]))
+				}
 			}
 		}
 	}
@@ -235,15 +255,19 @@ func (pub *PUBNUB) History(channel string, limit int, c chan []byte) {
 	if err != nil {
 		c <- value
 	} else {
-		var messages []Message
-		json_err := json.Unmarshal(value, &messages)
+		var response []interface{}
+		json_err := json.Unmarshal(value, &response)
 		if json_err != nil {
 			c <- []byte(fmt.Sprintf("Response parse error: %s", json_err))
 			close(c)
 			return
 		}
-		for i := 0; i < len(messages); i++ {
-			c <- []byte(messages[i].Msg)
+		for i := 0; i < len(response); i++ {
+			if pub.CIPHER_KEY != "" {
+				c <- []byte(DecryptString(pub.CIPHER_KEY, fmt.Sprintf("%s", response[i])))
+			} else {
+				c <- []byte(fmt.Sprintf("%s", response[i]))
+			}
 		}
 	}
 	close(c)

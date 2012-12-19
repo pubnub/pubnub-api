@@ -21,11 +21,15 @@ func publishPubnubFailHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func historyPubnubHandler(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "[{\"msg\":\"hi\"},{\"msg\":\"hello\"},{\"msg\":\"test\"}]")
+	io.WriteString(w, "[\"hi\",\"hello\",\"test\"]")
 }
 
 func noHistoryPubnubHandler(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "[]")
+}
+
+func historyChipherPubnubHandler(w http.ResponseWriter, req *http.Request) {
+	io.WriteString(w, "[\"yykEzOQyZkot3YShvlzQfw==\",\"BQ2Ywm6XtvTCGCFPTY6FJw==\",\"mQQQxYFQokcxi8yWwxT56Q==\"]")
 }
 
 func hereNowPubnubHandler(w http.ResponseWriter, req *http.Request) {
@@ -40,7 +44,15 @@ func subscribePubnubHandler(w http.ResponseWriter, req *http.Request) {
 	if timeToken == "0" {
 		io.WriteString(w, "[[], \"13533127815769808\"]")
 	} else {
-		io.WriteString(w, "[[{\"msg\":\"hi\"}], \"13533127815769808\"]")
+		io.WriteString(w, "[[\"hi\"], \"13533127815769808\"]")
+	}
+}
+
+func subscribeChipherPubnubHandler(w http.ResponseWriter, req *http.Request) {
+	if timeToken == "0" {
+		io.WriteString(w, "[[], \"13533127815769808\"]")
+	} else {
+		io.WriteString(w, "[[\"yykEzOQyZkot3YShvlzQfw==\"], \"13533127815769808\"]")
 	}
 }
 
@@ -185,7 +197,8 @@ func TestHistory(t *testing.T) {
 	testPUBNUB.ORIGIN = "http://" + addr.String()
 
 	history_channel_1 := make(chan []byte)
-	history_channel_2 := make(chan []byte)
+	no_history_channel := make(chan []byte)
+	history_chipher_channel := make(chan []byte)
 
 	var response []byte
 
@@ -202,9 +215,9 @@ func TestHistory(t *testing.T) {
 	}
 
 	response = []byte{}
-	go testPUBNUB.History("no-history-channel", 3, history_channel_2)
+	go testPUBNUB.History("no-history-channel", 3, no_history_channel)
 	for {
-		value, ok := <-history_channel_2
+		value, ok := <-no_history_channel
 		if !ok {
 			break
 		}
@@ -213,7 +226,20 @@ func TestHistory(t *testing.T) {
 	if fmt.Sprintf("%s", response) != "" {
 		t.Fatalf("Failed to get history without chipher key: %s", response)
 	}
-	//need add test for history request with chipher key
+
+	testPUBNUB.CIPHER_KEY = "enigma"
+	response = []byte{}
+	go testPUBNUB.History("chipher-history-channel", 3, history_chipher_channel)
+	for {
+		value, ok := <-history_chipher_channel
+		if !ok {
+			break
+		}
+		response = append(response, value...)
+	}
+	if fmt.Sprintf("%s", response) != "\"hi\"\"hello\"\"test\"" {
+		t.Fatalf("Failed to get history with chipher key: %s", response)
+	}
 }
 
 func TestHereNow(t *testing.T) {
@@ -224,6 +250,7 @@ func TestHereNow(t *testing.T) {
 
 	here_now_channel_1 := make(chan []byte)
 	here_now_channel_2 := make(chan []byte)
+	here_now_chipher_channel := make(chan []byte)
 
 	var response []byte
 
@@ -252,7 +279,21 @@ func TestHereNow(t *testing.T) {
 	if fmt.Sprintf("%s", response) != "0" {
 		t.Fatalf("Failed here now request without chipher key: %s", response)
 	}
-	//need add tests for here now request with chipher key
+
+	testPUBNUB.CIPHER_KEY = "enigma"
+	response = []byte{}
+	go testPUBNUB.HereNow("test-channel", here_now_chipher_channel)
+	for {
+		value, ok := <-here_now_chipher_channel
+		if !ok {
+			break
+		}
+		response = append(response, value...)
+	}
+
+	if fmt.Sprintf("%s", response) != "E33194F6-D6F1-4762-87D9-9D1DB5BC650Baa1686b0-cee8-012f-ba60-70def1fd2b7f2" {
+		t.Fatalf("Failed here now request with chipher key: %s", response)
+	}
 }
 
 func TestSubscribe(t *testing.T) {
@@ -264,6 +305,7 @@ func TestSubscribe(t *testing.T) {
 	timeToken = "0"
 
 	subscribe_channel := make(chan []byte)
+	subscribe_channel_with_chipher := make(chan []byte)
 
 	var response []byte
 
@@ -277,7 +319,19 @@ func TestSubscribe(t *testing.T) {
 	if fmt.Sprintf("%s", response) != "hi" {
 		t.Fatalf("Failed to subscribe without chipher key: %s", response)
 	}
-	//need add tests for subscribe with chipher key
+
+	testPUBNUB.CIPHER_KEY = "enigma"
+	response = []byte{}
+	go testPUBNUB.Subscribe("test-chipher-channel", subscribe_channel_with_chipher)
+	for {
+		value, _ := <-subscribe_channel_with_chipher
+		response = append(response, value...)
+		break
+	}
+
+	if fmt.Sprintf("%s", response) != "\"hi\"" {
+		t.Fatalf("Failed to subscribe with chipher key: %s", response)
+	}
 
 }
 
@@ -290,6 +344,7 @@ func TestPresence(t *testing.T) {
 	timeToken = "0"
 
 	presence_channel := make(chan []byte)
+	presence_chipher_channel := make(chan []byte)
 
 	var response []byte
 
@@ -305,5 +360,19 @@ func TestPresence(t *testing.T) {
 	if fmt.Sprintf("%s", response) != "join134572016519753" {
 		t.Fatalf("Failed to presence without chipher key: %s", response)
 	}
-	//need add tests for presence with chipher key
+
+	testPUBNUB.CIPHER_KEY = "enigma"
+	response = []byte{}
+	go testPUBNUB.Presence("test-channel", presence_chipher_channel)
+	for i := 0; i < 4; i++ {
+		value, ok := <-presence_chipher_channel
+		if !ok {
+			break
+		}
+		response = append(response, value...)
+	}
+
+	if fmt.Sprintf("%s", response) != "join134572016519753" {
+		t.Fatalf("Failed to presence with chipher key: %s", response)
+	}
 }

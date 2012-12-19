@@ -10,7 +10,7 @@ func main() {
 	channel := make(chan []byte)
 
 	//start new goroutine  
-	go pub.Presence("my-channel", channel)
+	go pub.Presence("hello_world", channel)
 
 	//receive from channel
 	for {

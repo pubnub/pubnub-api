@@ -4,7 +4,6 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hmac"
-	"crypto/md5"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
@@ -13,7 +12,7 @@ import (
 	"io"
 )
 
-var _IV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
+var _IV = "0123456789012345"
 
 func GetHmacSha256(secret_key string, input string) string {
 	hmac_sha256 := hmac.New(sha256.New, []byte(secret_key))
@@ -34,31 +33,57 @@ func GenUUID() (string, error) {
 	return hex.EncodeToString(uuid), nil
 }
 
+func Pkcs5pad(data []byte, blocksize int) []byte {
+	pad := blocksize - len(data)%blocksize
+	b := make([]byte, pad, pad)
+	for i := 0; i < pad; i++ {
+		b[i] = uint8(pad)
+	}
+	return append(data, b...)
+}
+
+func Pkcs5unpad(data []byte) []byte {
+	if len(data) == 0 {
+		return data
+	}
+	pad := int(data[len(data)-1])
+	// FIXME: check that the padding bytes are all what we expect
+	// Need add exception catching
+	return data[0 : len(data)-pad]
+}
+
 func EncryptString(chipher_key string, message string) string {
 	block, _ := aes_cipher(chipher_key)
 
 	value := []byte(message)
+	value = Pkcs5pad(value, aes.BlockSize)
 
-	stream := cipher.NewCTR(block, _IV)
-	stream.XORKeyStream(value, value)
+	blockmode := cipher.NewCBCEncrypter(block, []byte(_IV))
+	cipherBytes := make([]byte, len(value))
+	blockmode.CryptBlocks(cipherBytes, value)
 
-	return fmt.Sprintf("%s", encode(value))
+	return fmt.Sprintf("%s", encode(cipherBytes))
 }
 
 func DecryptString(chipher_key string, message string) string { //need add error catching
 	block, _ := aes_cipher(chipher_key)
 	value, _ := decode([]byte(message))
 
-	stream := cipher.NewCTR(block, _IV)
-	stream.XORKeyStream(value, value)
+	decrypter := cipher.NewCBCDecrypter(block, []byte(_IV))
+	decrypted := make([]byte, len(value))
+	decrypter.CryptBlocks(decrypted, value)
 
-	return fmt.Sprintf("%s", value)
+	return fmt.Sprintf("%s", Pkcs5unpad(decrypted))
 }
 
 func aes_cipher(chipher_key string) (cipher.Block, error) {
-	hash := md5.New()
-	io.WriteString(hash, chipher_key)
-	block, err := aes.NewCipher(hash.Sum(nil))
+	hash := sha256.New()
+	hash.Write([]byte(chipher_key))
+
+	sha256_string := hash.Sum(nil)[:16]
+	hex_arr := []byte(hex.EncodeToString(sha256_string))
+
+	block, err := aes.NewCipher(hex_arr)
 	if err != nil {
 		return nil, err
 	}

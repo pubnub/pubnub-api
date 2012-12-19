@@ -6,11 +6,11 @@ import (
 )
 
 func main() {
-	pub := pubnub.PubnubInit("demo", "demo", "", "", false)
+	pub := pubnub.PubnubInit("demo", "demo", "", "enigma", false)
 	channel := make(chan []byte)
 
 	//start new goroutine  
-	go pub.Subscribe("my-channel", channel)
+	go pub.Subscribe("hello_world", channel)
 
 	//receive from channel
 	for {

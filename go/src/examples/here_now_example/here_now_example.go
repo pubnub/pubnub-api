@@ -10,7 +10,7 @@ func main() {
 	channel := make(chan []byte)
 
 	//start new goroutine  
-	go pub.HereNow("my-channel", channel)
+	go pub.HereNow("hello_world", channel)
 
 	//receive from channel
 	for {
