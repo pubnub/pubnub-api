@@ -4,19 +4,18 @@ package com.pubnub.log {
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class Log {
-		public static const MAX_RECORDS:Number = 1000;
-		/*public static const TIMEOUT_LOGGING:Boolean = true;
-		public static const RETRY_LOGGING:Boolean = true;
-		public static const URL_LOGGING:Boolean = true;
+		public static const MAX_RECORDS:Number = 100000;
 		
+		public static const RETRY_LOGGING:Boolean = 	true;
+		public static const URL_LOGGING:Boolean = 		true;
+		public static const TIMEOUT_LOGGING:Boolean = 	true;
 		
+		// types of log
 		public static const TIMEOUT:String = 'timeout';
 		public static const RETRY:String = 'retry';
 		public static const URL:String = 'url';
-		public static const ALL:String = 'all';*/
-		public static const RECONNECT_HEARTBEAT_TIMEOUT:String = 'RECONNECT_HEARTBEAT_TIMEOUT';
-		public static const OPERATION_TIMEOUT:String = 'OPERATION_TIMEOUT';
 		
+		// LEVELS of log
 		public static const NORMAL:String = 'normal';
 		public static const DEBUG:String = 'debug';
 		public static const WARNING:String = 'warning';
@@ -36,33 +35,55 @@ package com.pubnub.log {
 		}
 		
 		static public function log(message:String, level:String = NORMAL, type:String = ''):void{
-			trace(new Date() + " " + message);
-            instance.recodrs.push(new LogRecord(message, type, level, instance.recodrs.length));
+			//trace(new Date() + " " + message);
+			var record:LogRecord = new LogRecord(message, type, level, instance.recodrs.length); 
 			// to do refactor to unshift/pop it is more faster ????
 			if (instance.recodrs.length > MAX_RECORDS) {
-				instance.recodrs.shift();
+				// flush log
+				instance.recodrs.length = 0;
+			}
+			instance.recodrs.push(record);
+		}
+		
+		static public function logRetry(message:String, level:String = NORMAL):void {
+			if (RETRY_LOGGING) {
+				log(message, level, RETRY);
 			}
 		}
 		
-		static public function out(type:String = null, level:String = null):Array {
+		static public function logURL(message:String, level:String = NORMAL):void {
+			if (TIMEOUT_LOGGING) {
+				log(message, level, TIMEOUT);
+			}
+		}
+		
+		static public function logTimeout(message:String, level:String = NORMAL):void {
+			if (URL_LOGGING) {
+				log(message, level, URL);
+			}
+		}
+		
+		static public function out(type:String = null, level:String = null, reverse:Boolean = true):Array {
 			var result:Array = [];
 			var records:/*LogRecord*/Array = instance.recodrs;
 			var rec:LogRecord;
 			var levelResult:Boolean;
 			var typeResult:Boolean;
 			var len:int = records.length;
+			var types:Array = type ? type.split(',') : null;
 			for (var i:int = 0; i < len; i++) {
 				rec = records[i];
 				typeResult = false
 				levelResult = false
 				
-				typeResult = (type == null) ||  (rec.type == type);
+				typeResult = (types == null) ||  (types.indexOf(rec.type) > -1);
 				levelResult = (level == null) ||  (rec.level == level);
 				
 				if (typeResult && levelResult) {
 					result.push(rec.toString());
 				}
 			}
+			if (reverse) result.reverse();
 			return result;
 		}
 		

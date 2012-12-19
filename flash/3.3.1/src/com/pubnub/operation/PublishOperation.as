@@ -1,13 +1,8 @@
 package com.pubnub.operation {
 	import com.adobe.crypto.*;
-	import com.adobe.net.URI;
 	import com.pubnub.*;
 	import com.pubnub.json.*;
-	import com.pubnub.loader.*;
-	import com.pubnub.net.URLRequest;
-	import flash.events.Event;
-	import flash.utils.getTimer;
-	import org.httpclient.HttpHeader;
+	import com.pubnub.net.*;
 	/**
 	 * ...
 	 * @author firsoff maxim, support@pubnub.com

@@ -5,7 +5,6 @@ package com.pubnub.net {
 	import flash.errors.IOError;
 	import flash.events.*;
 	import flash.net.Socket;
-	import flash.net.URLRequestMethod;
 	import flash.utils.*;
 	
 	/**
@@ -44,11 +43,11 @@ package com.pubnub.net {
 		public function load(request:URLRequest):void {
 			this.request = request;
 			uri = new URI(request.url);
+			trace(request.url);
 			socket = getSocket(request.url);
 			destroyResponce();
 			sendRequest(request);
-			//trace(this, request.url);
-			Log.log(unescape(request.url), Log.DEBUG);
+			Log.logURL(unescape(request.url), Log.DEBUG);
 		}
 		
 		private function getSocket(url:String):*{
@@ -60,6 +59,7 @@ package com.pubnub.net {
 		}
 		
 		public function connect(request:URLRequest):void {
+			if (!request) return;
 			var url:String = request.url;
 			var uri:URI = new URI(url);
 			var host:String = uri.authority;
@@ -72,13 +72,13 @@ package com.pubnub.net {
 		public function close():void {
 			//trace('*CLOSE* ' + socket);
 			try {
-				normalSocket.close();
+				if(normalSocket.connected) normalSocket.close();
 			}catch (err:IOError){
                 Log.log("Close: " + err, Log.WARNING);
 			}
 			
 			try {
-				if (socket == secureSocket) {
+				if (socket == secureSocket && secureSocket.connected) {
 					secureSocket.close();
 				}
 			}catch (err:IOError){

@@ -4,7 +4,7 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:ns1="*"
 			   width="100%" height="100%" minWidth="400" minHeight="300"
-			   creationComplete="init(event)">
+			   creationComplete="init(event)" creationPolicy="all">
     <fx:Declarations>
         <!-- Place non-visual elements (e.g., services, value objects) here -->
     </fx:Declarations>
@@ -113,7 +113,7 @@
                     break;
 
                 case OperationStatus.DISCONNECT:
-                    callExternalInterface("console.log", ("Subscribe [DISCONNECT] : " + e.channel));
+                    callExternalInterface("console.log", ("Subscribe [DISCONNECT] :" + PnJSON.stringify(e.data)));
                     break;
 
                 case OperationStatus.ERROR:
@@ -262,7 +262,7 @@
     <s:TextInput id="channelTxt" x="68" y="34" width="246" text="@{channel}"/>
     <s:Label x="28" y="67" color="#4D4C4C" fontStyle="italic" text="Origin"/>
     <s:TextInput id="originTxt" x="68" y="63" width="246" text="@{origin}"/>
-    <mx:TabNavigator left="10" right="10" top="108" bottom="140" selectedIndex="5">
+    <mx:TabNavigator left="10" right="10" top="108" bottom="140" selectedIndex="0">
         <s:NavigatorContent width="100%" height="100%" label="Init (1)">
             <s:Label x="16" y="30" color="#4D4C4C" fontStyle="italic" text="secret_key" textAlign="right"/>
             <s:TextInput id="secretKeyTxt" x="81" y="25" width="246" text="@{secret_key}"/>

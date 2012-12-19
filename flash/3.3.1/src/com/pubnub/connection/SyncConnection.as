@@ -1,11 +1,10 @@
 package com.pubnub.connection {
-	import com.pubnub.Errors;
-	import com.pubnub.log.Log;
-	import com.pubnub.net.URLLoaderEvent;
-	import com.pubnub.operation.Operation;
-	import flash.events.Event;
-	import flash.utils.clearTimeout;
-	import flash.utils.setTimeout;
+	import com.pubnub.*;
+	import com.pubnub.log.*;
+	import com.pubnub.net.*;
+	import com.pubnub.operation.*;
+	import flash.events.*;
+	import flash.utils.*;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
@@ -14,6 +13,7 @@ package com.pubnub.connection {
 		
 		protected var _timeout:int = 310000;
 		protected var timeoutInterval:int;
+		protected var pendingConnection:Boolean;
 		private var busy:Boolean;
 		
 		public function SyncConnection(timeout:int = 310000) {
@@ -21,14 +21,15 @@ package com.pubnub.connection {
 			_timeout = timeout;
 		}
 		
-		
 		override public function sendOperation(operation:Operation):void {
 			//trace('sendOperation : ' + operation.url);
 			super.sendOperation(operation);
 			if (ready) {
 				doSendOperation(operation);
 			}else {
+				
 				if (loader.connected == false) {
+					trace(this, 'NOT READY : ' + loader.connected, operation.request);
 					loader.connect(operation.request);
 				}
 				queue.push(operation);
@@ -51,7 +52,8 @@ package com.pubnub.connection {
 		private function onTimeout():void {
 			if (operation && !operation.destroyed) {
 				logTimeoutError(operation);
-				operation.onError({message:Errors.OPERATION_TIMEOUT, operation:operation});
+				operation.onError( { message:Errors.OPERATION_TIMEOUT, operation:operation } );
+				Log.logTimeout(Errors.OPERATION_TIMEOUT + ', ' + operation.request.url);
 			}
 			busy = false;
 			operation = null;
@@ -92,7 +94,7 @@ package com.pubnub.connection {
 		}
 		
 		override protected function onConnect(e:Event):void {
-			trace(this, 'onConnect');
+			trace(this, 'onConnect : ' + queue.length);
 			super.onConnect(e);
 			sendNextOperation();
 		}

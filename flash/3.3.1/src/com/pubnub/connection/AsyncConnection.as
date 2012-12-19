@@ -18,7 +18,6 @@ package com.pubnub.connection {
 		}
 		
 		override protected function onConnect(e:Event):void {
-			trace(this, 'onConnect');
 			if (queue.length > 0) {
 				for (var i:int = 0; i < queue.length; i++) {
 					sendOperation(queue[i]);

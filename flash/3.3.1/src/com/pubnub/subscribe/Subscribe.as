@@ -29,7 +29,6 @@ package com.pubnub.subscribe {
 		
 		protected var _origin:String = "";
 		protected var _connected:Boolean;
-		//protected var _lastChannel:String;
 		
 		protected var _connectionUID:String;
 		protected var lastToken:String;
@@ -50,7 +49,7 @@ package com.pubnub.subscribe {
 			_channels = [];
 			factory = new Dictionary();
 			factory[INIT_SUBSCRIBE] = 	getSubscribeInitOperation;
-			factory[SUBSCRIBE] = 	getSubscribeOperation;
+			factory[SUBSCRIBE] = 		getSubscribeOperation;
 			factory[LEAVE] = 			getLeaveOperation;
 			
 			connection = new AsyncConnection();
@@ -90,7 +89,7 @@ package com.pubnub.subscribe {
 			return addCh.length > 0;
 		}
 		
-		public function unsubscribe(channel:String):Boolean {
+		public function unsubscribe(channel:String, reason:Object = null):Boolean {
 			if (isChannelCorrect(channel) == false) {
 				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ -1, Errors.NOT_CONNECTED, ch]));
 				return false;
@@ -107,34 +106,29 @@ package com.pubnub.subscribe {
 					dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ -1, Errors.NOT_CONNECTED, ch]));
 				}
 			}
-			process(null, removeCh);
+			process(null, removeCh, reason);
 			return removeCh.length > 0;
 		}
 		
-		public function unsubscribeAll():void {
+		public function unsubscribeAll(reason:Object = null):void {
 			var allChannels:String = _channels.join(',');
-			unsubscribe(allChannels);	
+			unsubscribe(allChannels, reason);	
 		}
 		
-		
-		
-		private function process(addCh:Array = null, removeCh:Array = null):void {
+		private function process(addCh:Array = null, removeCh:Array = null, reason:Object = null):void {
 			var needAdd:Boolean = addCh && addCh.length > 0;
 			var needRemove:Boolean = removeCh && removeCh.length > 0;
-			//trace('process : ' + needAdd, needRemove, lastToken);
 			if (needAdd || needRemove) {
 				connection.close();
 				if (needRemove) {
 					var removeChStr:String = removeCh.join(',');
 					leave(removeCh.join(removeChStr));
 					ArrayUtil.removeItems(_channels, removeCh);
-					dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, {channel:removeChStr}));
-					
+					dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, {channel:removeChStr, reason : reason}));	
 				}
 				
 				if (needAdd) {
 					_channels = _channels.concat(addCh);
-					//trace('after ADD channels:' + channels);
 				}
 				
 				if (_channels.length > 0) {
@@ -191,24 +185,32 @@ package com.pubnub.subscribe {
 		
 		protected function onConnect(e:OperationEvent):void {
 			var responce:Object = e.data;
-			var messages:Array = responce[0];
+			
+			// something is wrong
+			if (responce == null) {
+				doSubscribe();
+				return;
+			}
+			
+			var messages:Array = responce[0] as Array;
+		
 			lastToken = responce[1];
 			var chStr:String = responce[2];
 			/*
-			 * MX
+			 * MX (array.length = 3)
 			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
 			 * 
 			 * ch1 - m1
 			 * ch2 - m2,m3
 			 * ch3 - m4
 			 * 
-			 * Single channel responce
+			 * Single channel responce (array.length = 2)
 			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken];
 			*/
 			
 			
 			var multiplexResponce:Boolean = chStr && chStr.length > 0 && chStr.indexOf(',') > -1;
-			var presenceResponce:Boolean = chStr.indexOf(PNPRES_PREFIX) > -1;
+			var presenceResponce:Boolean = chStr && chStr.indexOf(PNPRES_PREFIX) > -1;
 			var channel:String;
 			
 			if (presenceResponce) {
@@ -216,19 +218,22 @@ package com.pubnub.subscribe {
 			}else {
 				if (!messages) return;
 				decryptMessages(messages);
-				var chArray:Array = chStr.split(',');
-				for (var i:int = 0; i < messages.length; i++) {
-					channel = chArray[i];
-					var message:* = messages[i]
-					
-					//trace(channel, message);
-					
-					if (multiplexResponce == false) {
-						channel ||= _channels[0];
+				
+				if (multiplexResponce) {
+					var chArray:Array = chStr.split(',');
+					for (var i:int = 0; i < messages.length; i++) {
+						channel = chArray[i];
+						var message:* = messages[i]
+						if (hasChannel(channel)) {
+							//trace('messages : ' +  PnJSON.stringify({channel:channel, message : message}));
+							//trace('messages : ' + {channel:channel, message : message});
+							//trace('messages : ' + channel);
+							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : message}));
+						}
 					}
-					if (hasChannel(channel)) {
-						dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : message}));
-					}
+				}else {
+					channel = _channels[0];
+					dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : messages}));
 				}
 			}
 			doSubscribe();
@@ -299,6 +304,7 @@ package com.pubnub.subscribe {
 		
 		protected function onNetMonitorMaxRetries(e:NetMonEvent):void {
 			Log.log('onNetMonitorMaxRetries', Log.FATAL);
+			unsubscribeAll([0, Errors.NETWORK_RECONNECT_MAX_RETRIES_EXCEEDED]);
 		}
 		
 		protected function onNetMonitorHTTPDisable(e:NetMonEvent):void {
@@ -308,15 +314,14 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onNetMonitorHTTPEnable(e:NetMonEvent):void {
-			if (waitNetwork) {
-				waitNetwork = false;
+			if (_channels && _channels.length > 0) {
 				if (Settings.RESUME_ON_RECONNECT) { 
-					Log.log('RETRY_LOGGING:RECONNECT_HEARTBEAT: re-established network connectivity. Resubscribing with timetoken:' +lastToken, Log.WARNING);
-					doSubscribe();
-				}else {
-					//restoreWithZeroToken();
-					lastToken = null;
-					subscribeInit();
+					Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: re-established network connectivity. Resubscribing with timetoken:' +lastToken, Log.WARNING);
+					if (lastToken) {
+						doSubscribe();
+					}else {
+						subscribeInit();
+					}	
 				}
 			}
 		}

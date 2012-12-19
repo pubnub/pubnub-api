@@ -91,7 +91,7 @@ package utils {
 						var latency:Number = delta || median[1];
 						latencyAvg = Math.floor((latency + latencyAvg) / 2);
 						median.push(latency);
-						setTimeout(publish, 100);
+						setTimeout(publish, 500);
 						//publish();
 					}
                     break;

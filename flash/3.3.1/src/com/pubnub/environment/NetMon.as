@@ -33,9 +33,9 @@ package com.pubnub.environment {
 		
 		private function init():void {
 			loader = new URLLoader();
-			loader.addEventListener(Event.COMPLETE, onComplete);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, onError);
-			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+			loader.addEventListener(Event.COMPLETE, 					onComplete);
+			loader.addEventListener(IOErrorEvent.IO_ERROR, 				onError);
+			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 	onError);
 			
 			sysMon = new SysMon();
 			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
@@ -48,13 +48,9 @@ package com.pubnub.environment {
 		}
 		
 		private function onError(e:Event):void {
-			// no network
-			//trace('onError : ' + lastStatus);
-			
-			
-			//
+			// network is down
 			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
-				Log.log('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network unavailable', Log.WARNING);
+				Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network unavailable', Log.WARNING);
 			}
 			
 			if (lastStatus == NetMonEvent.HTTP_DISABLE) {
@@ -63,10 +59,10 @@ package com.pubnub.environment {
 				if (_currentRetries >= _maxForceReconnectRetries) {
 					stop();
 					lastStatus = NetMonEvent.MAX_RETRIES;
-					Log.log('_LOGGING:RECONNECT_HEARTBEAT: maximum retries  of'  + _maxForceReconnectRetries + ' reached', Log.WARNING);
+					Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: maximum retries  of ['  + _maxForceReconnectRetries + '] reached', Log.WARNING);
 					dispatchEvent(new NetMonEvent(NetMonEvent.MAX_RETRIES));
 				}else {
-					Log.log('_LOGGING:RECONNECT_HEARTBEAT: Retrying '+  _currentRetries + ' of maximum ' + _maxForceReconnectRetries + ' attempts', Log.WARNING);
+					Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: Retrying ['+  _currentRetries + '] of maximum [' + _maxForceReconnectRetries + '] attempts', Log.WARNING);
 				}
 				return;
 			}
@@ -79,31 +75,27 @@ package com.pubnub.environment {
 		}
 		
 		private function onComplete(e:Event):void {
-
-			// network ready
-
+			// network is up
 			if (lastStatus == NetMonEvent.HTTP_ENABLE){
-                Log.log('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
+                Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
                 return;
             }
 
 			lastStatus = NetMonEvent.HTTP_ENABLE;
-
             if (forceReconnect) {
 				clearInterval(interval);
 				interval = setInterval(ping, _reconnectDelay);
 			}
-			Log.log('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
+			Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 		}
 		
 		private function ping():void {
-			//trace('ping');
 			try {
                 loader.close();
             }
 			catch (err:Error) {
-                Log.log("PING: " + err, Log.WARNING);
+                Log.logRetry("PING: " + err, Log.WARNING);
             };
 
             loader.load(new URLRequest(url));
@@ -143,9 +135,7 @@ package com.pubnub.environment {
 			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
 			try {
 				loader.close();
-			}catch (err:Error) {
-                Log.log("Destroy: " + err, Log.WARNING);
-            }
+			}catch (err:Error) {}
 			loader = null;
 			_destroyed = true;
 		}

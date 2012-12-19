@@ -1,5 +1,4 @@
 package com.pubnub.connection {
-	import com.pubnub.loader.*;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
