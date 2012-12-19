@@ -57,8 +57,12 @@ var NOW             = 1
 /**
  * CONSOLE COMPATIBILITY
  */
-window.console||(window.console=window.console||{});
-console.error||(console.error=((window.opera||{}).postError||function(){}));
+window.console || (window.console=window.console||{});
+console.log    || (
+    console.log   = 
+    console.error =
+    ((window.opera||{}).postError||function(){})
+);
 
 /**
  * UTILITIES
