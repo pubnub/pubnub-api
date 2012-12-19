@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mtjMetadata jad="Pubnub-J2me.jad" version="1.2.1.201101310801">
+   <device group="Oracle Java(TM) Platform Micro Edition SDK 3.2" name="ClamshellJavaMEPhone1"/>
+   <signing projectSpecific="false" signProject="false">
+      <alias/>
+   </signing>
+   <configurations>
+      <configuration active="true" name="ClamshellJavaMEPhone1">
+         <device group="Oracle Java(TM) Platform Micro Edition SDK 3.2" name="ClamshellJavaMEPhone1"/>
+         <symbolSet name="ClamshellJavaMEPhone1">
+            <symbol name="MMAPI" value="1.2"/>
+            <symbol name="screen.isColor" value="true"/>
+            <symbol name="descriptor" value="Clamshell Java ME CLDC emulator"/>
+            <symbol name="screen.bitDepth" value="16"/>
+            <symbol name="JSR82" value="1.1"/>
+            <symbol name="apis.supported" value="J2ME-WS-1.0,JSR179-1.0,JSR184-1.1,JSR211-1.0,JSR226-1.0,JSR234-1.0,JSR239-1.0,JSR256-1.2,JSR257-1.0,JSR280-1.0,JSR75-1.0,JSR82-1.1,MMAPI-1.2,SATSA-1.0,WMA-2.0"/>
+            <symbol name="JSR280" value="1.0"/>
+            <symbol name="JSR226" value="1.0"/>
+            <symbol name="MIDP" value="2.1"/>
+            <symbol name="SATSA" value="1.0"/>
+            <symbol name="CLDC" value="1.1"/>
+            <symbol name="JSR179" value="1.0"/>
+            <symbol name="WMA" value="2.0"/>
+            <symbol name="J2ME-WS" value="1.0"/>
+            <symbol name="JSR257" value="1.0"/>
+            <symbol name="JSR256" value="1.2"/>
+            <symbol name="screen.width" value="240"/>
+            <symbol name="JSR239" value="1.0"/>
+            <symbol name="screen.isTouch" value="false"/>
+            <symbol name="JSR211" value="1.0"/>
+            <symbol name="JSR234" value="1.0"/>
+            <symbol name="JSR75" value="1.0"/>
+            <symbol name="JSR184" value="1.1"/>
+            <symbol name="version.configuration" value="CLDC-1.1"/>
+            <symbol name="version.profile" value="MIDP-2.1"/>
+            <symbol name="screen.height" value="320"/>
+         </symbolSet>
+      </configuration>
+   </configurations>
+</mtjMetadata>
