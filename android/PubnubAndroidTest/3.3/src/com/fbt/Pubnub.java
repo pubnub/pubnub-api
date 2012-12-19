@@ -770,7 +770,7 @@ public class Pubnub {
 
 		if (_callFor.equalsIgnoreCase("v2")) {
 			_callFor = url_components.get(1);
-			if(url_components.size()>=6 && url_components.get(6).equals("leave"))
+			if(url_components.size()>=7 && url_components.get(6).equals("leave"))
 			{
 				_callFor="leave";
 			}

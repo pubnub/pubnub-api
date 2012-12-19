@@ -3,6 +3,8 @@ package com.fbt;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import android.content.Context;
 /**
  * PubnubTestActivity
  * 
@@ -245,6 +248,31 @@ public class PubnubTestActivity extends Activity {
                 b.show();
             }
         });
+
+        Button netBtn = (Button) findViewById(R.id.netBtn);
+        netBtn.setOnClickListener(new OnClickListener() {
+
+            public void onClick(View v) {
+
+                // Android: (net)
+
+                Boolean net = isInternetOn();
+                System.out.println(" net: " + net);
+                final AlertDialog.Builder b = new AlertDialog.Builder(
+                        PubnubTestActivity.this);
+                b.setIcon(android.R.drawable.ic_dialog_alert);
+                b.setTitle("net: ");
+                b.setMessage(net.toString());
+                b.setNegativeButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                            }
+                        });
+                b.show();
+            }
+        });
+
     }
 
     public void allMessageClick(View v) {
@@ -307,13 +335,35 @@ public class PubnubTestActivity extends Activity {
         UnitTestForDetailedHistory unitTest= new UnitTestForDetailedHistory();
         unitTest.RunUnitTest();
     }
-    
+
+
+    public final boolean isInternetOn() {
+        ConnectivityManager connec = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // ARE WE CONNECTED TO THE NET
+        if (connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED ||
+                connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
+
+        // MESSAGE TO SCREEN FOR TESTING (IF REQ)
+            Log.e("Net State", "connected");
+            return true;
+        } else if (connec.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED || connec.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED) {
+
+        Log.e("Net State", "not connected");
+            return false;
+        }
+        return false;
+    }
+
     public void HereNowClick(View v) {
         HashMap<String, Object> args = new HashMap<String, Object>(1);
         args.put("channel", channel);
         myMessage = pubnub.here_now(args).toString();
         r.sendEmptyMessage(0);
         Log.e("Here Now", pubnub.here_now(args).toString());
+
     }
 
 
