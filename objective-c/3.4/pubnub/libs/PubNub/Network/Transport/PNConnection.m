@@ -15,6 +15,7 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "NSMutableArray+PNAdditions.h"
 #import "PNConnection+Protected.h"
+#import "PNResponseDeserialize.h"
 #import "PubNub+Protected.h"
 #import "PNConfiguration.h"
 #import "PNWriteBuffer.h"
@@ -765,6 +766,26 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 - (void)processResponse {
     
+//    PNResponseDeserialize *deserializer = [PNResponseDeserialize new];
+//    [deserializer parseResponseData:self.retrievedData];
+    
+    NSData *data = [@"HTTP/1.1 200 OK\nDate: Wed, 19 Dec 2012 10:41:56 GMT\nContent-Type: text/javascript; charset=\"UTF-8\"\nContent-Length: 36\nConnection: keep-alive\nCache-Control: no-cache\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET\n\ntimeToken([13559137168644711])HTTP/1.1 200 OK\nDate: Wed, 19 Dec 2012 10:41:56 GMT\nContent-Type: text/javascript; charset=\"UTF-8\"\nContent-Length: 32\nConnection: keep-alive\nCache-Control: no-cache\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET\n\ntimeToken([13559137168644711])" dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSRange HTTPRange = [data rangeOfData:[@"HTTP/1.1" dataUsingEncoding:NSUTF8StringEncoding]
+                                                options:0
+                                                  range:NSMakeRange(1, [data length]-1)];
+    if(HTTPRange.location != 0) {
+        HTTPRange.length = HTTPRange.location;
+        HTTPRange.location = 0;
+    }
+    NSRange contentSeparationRange = [data rangeOfData:[@"\n\n" dataUsingEncoding:NSUTF8StringEncoding] options:0 range:HTTPRange];
+    NSLog(@"BODY REST LENGTH: %i", HTTPRange.length-(contentSeparationRange.location+contentSeparationRange.length));
+    contentSeparationRange.location += contentSeparationRange.length;
+    contentSeparationRange.length = 30;
+    NSData *cuttedContent = [data subdataWithRange:contentSeparationRange];
+    NSLog(@"CUTTED DATA: --%@---", [[NSString alloc] initWithData:cuttedContent encoding:NSUTF8StringEncoding]);
+    NSData *cuttedData = [data subdataWithRange:HTTPRange];
+    NSLog(@"CUTTED DATA: --%@---", [[NSString alloc] initWithData:cuttedData encoding:NSUTF8StringEncoding]);
     NSString *response = [[NSString alloc] initWithData:self.retrievedData encoding:NSUTF8StringEncoding];
     NSRange statusRange = [response rangeOfString:@"(?<=HTTP/1.1 )([0-9]+)"
                                           options:NSRegularExpressionSearch];
@@ -782,9 +803,6 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
             NSLog(@"\nRESPONSE LENGTH: %i\nTIMMED RESPONSE LENGTH: %i\nSTATUS CODE: %@\nCONTENT LENGTH: %@\nRESPONSE: %@", [response length], [[response stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length], [response substringWithRange:statusRange], [response substringWithRange:contentLengthRange], response);
         }
     }
-    
-    //            NSLog(@"STREAM CONTENT: %@", [[NSString alloc] initWithData:self.retrievedData encoding:NSUTF8StringEncoding]);
-    //            NSLog(@"STREAM CONTENT: %@", [[NSString alloc] initWithBytes:[self.retrievedData bytes] length:13 encoding:NSUTF8StringEncoding]);
     
     // TODO: PROCESS DATA AND TRY TO EXTRACT COMPLETED RESPONSE FROM IT
 }
