@@ -3,6 +3,10 @@ package com.pubnub.api;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+/**
+ * @author Pubnub
+ *
+ */
 class Subscriptions {
 	private Hashtable channels;
 	public Subscriptions(){

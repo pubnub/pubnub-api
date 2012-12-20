@@ -7,7 +7,7 @@ package com.pubnub.api;
 
 /**
  *
- * @author work1
+ * @author Pubnub
  */
 
 
