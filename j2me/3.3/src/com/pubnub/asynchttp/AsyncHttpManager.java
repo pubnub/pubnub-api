@@ -1,5 +1,6 @@
 package com.pubnub.asynchttp;
 
+
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -7,25 +8,91 @@ import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
+
 public class AsyncHttpManager {
 
-    private Vector _waiting = new Vector();
-    private Worker _worker;
+    public void cancel(HttpCallback cb) {
+        for (int i = 0; i < _workers.length; ++i) {
+            if (_workers[i].asyncConnection != null) {
+                if (!_workers[i].getDie()) {
+
+                    cancel(_workers[i].asyncConnection);
+                    _workers[i].asyncConnection = null;
+
+                }
+            }
+        }
+
+    }
     
-    private void init() {
-    	_worker = new Worker();
-    	new Thread(_worker).start();
+    private void cancel(AsyncConnection conn) {
+        AsyncHttpCallback cb = conn.getCallback();
+
+        try {
+
+            close(conn);
+            cb.cancelingCall(conn.getHttpConnection());
+        } catch (IOException ignore) {
+        } finally {
+            close(conn);
+
+        }
+    }
+
+    public void cancelAll() {
+        synchronized (_waiting) {
+
+            for (int i = 0; i < _workers.length; ++i) {
+                _workers[i].die();
+            }
+
+            while (_waiting.size() != 0) {
+                AsyncConnection conn = (AsyncConnection) _waiting.firstElement();
+                _waiting.removeElementAt(0);
+
+                cancel(conn);
+            }
+            _workers = null;
+            _waiting.notifyAll();
+
+        }
+    }
+
+    private void close(AsyncConnection conn) {
+        if (conn != null) {
+            close(conn.getHttpConnection());
+            conn.setHttpConnection(null);
+        }
+    }
+
+    private void close(HttpConnection hc) {
+        if (hc != null) {
+            try {
+                hc.close();
+            } catch (IOException e) {
+
+            }
+        }
+    }
+
+    public static int getWorkerCount() {
+        return _maxWorkers;
+    }
+
+    private void init(int maxCalls) {
+        if (maxCalls < 1) {
+            maxCalls = 1;
+        }
+        _workers = new Worker[maxCalls];
+        for (int i = 0; i < maxCalls; ++i) {
+            Worker w = new Worker();
+            _workers[i] = w;
+            new Thread(w).start();
+        }
     }
     
     public AsyncHttpManager() {
-    	init();
-    }
-    
-    public void stop(){
-    	_worker.die();
-    	synchronized(_waiting) {
-    		_waiting.removeAllElements();
-    	}
+    	init(_maxWorkers);
     }
 
     public static boolean isRedirect(int rc) {
@@ -33,33 +100,62 @@ public class AsyncHttpManager {
                 || rc == HttpConnection.HTTP_MOVED_TEMP
                 || rc == HttpConnection.HTTP_SEE_OTHER
                 || rc == HttpConnection.HTTP_TEMP_REDIRECT);
+    } 
+    
+    public void queue(AsyncHttpCallback request) {
+        queue(request, null);
     }
     
-    public void queue(AsyncHttpCallback cb) {
+    public void queue(AsyncHttpCallback cb,
+            HttpConnection hc) { 	
+    	
     	cb.setConnManager(this);
     	
         synchronized (_waiting) {
-            AsyncConnection conn = new AsyncConnection(cb);
+            AsyncConnection conn = new AsyncConnection(cb, hc);
             _waiting.addElement(conn);
             _waiting.notifyAll();
         }
-        System.out.println("added to queue");
     }
 
+    public static void setWorkerCount(int count) {
+        _maxWorkers = count;
+    }
+    private static int _maxWorkers = 1;
+    private Vector _waiting = new Vector();
+    private Worker _workers[];
+    
     private static class AsyncConnection {
-    	private AsyncHttpCallback _callback;
-        AsyncConnection(AsyncHttpCallback cb) {
+
+        AsyncConnection(AsyncHttpCallback cb,
+                HttpConnection hc) {
             _callback = cb;
+            _httpconn = hc;
         }
+
         AsyncHttpCallback getCallback() {
             return _callback;
         }
+
+        HttpConnection getHttpConnection() {
+            return _httpconn;
+        }
+
+        void setHttpConnection(HttpConnection hc) {
+            _httpconn = hc;
+        }
+        private AsyncHttpCallback _callback;
+        private HttpConnection _httpconn;
     }
-    
+
     private class Worker implements Runnable {
 
         public void die() {
             _die = true;
+        }
+
+        public boolean getDie() {
+            return _die;
         }
 
         private void process(AsyncConnection conn) {
@@ -67,22 +163,25 @@ public class AsyncHttpManager {
             AsyncHttpCallback cb = conn.getCallback();
             String url = null;
             try {
-            	HttpConnection hc = conn.getConnection();
+                HttpConnection hc = conn.getHttpConnection();
+
                 boolean process = true;
-                
+
                 if (hc == null) {
                     url = cb.startingCall();
-
                     if (url == null) {
+                        cancel(conn);
                         return;
                     }
                 }
-                
+
                 int follow = 5;
 
                 while (follow-- > 0) {
-                	hc = conn.getHttpConnection();
+                    hc = conn.getHttpConnection();
+
                     if (hc == null) {
+
                         try {
                             System.out.println(url);
                             hc = (HttpConnection) Connector.open(url, Connector.READ_WRITE, true);
@@ -95,12 +194,15 @@ public class AsyncHttpManager {
                                 hc.setRequestProperty(key, val);
 
                             }
+
+                            conn.setHttpConnection(hc);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
                     cb.setConnection(hc);
                     if (!cb.prepareRequest(hc)) {
+                        cancel(conn);
                         return;
                     }
                     int rc = hc.getResponseCode();
@@ -127,6 +229,8 @@ public class AsyncHttpManager {
                     } else if (url.startsWith("ttp:")) {
                         url = "h" + url;
                     }
+
+                    conn.setHttpConnection(null);
                     close(hc);
                 }
 
@@ -139,20 +243,20 @@ public class AsyncHttpManager {
                 }
 
                 cb.endingCall(hc);
-
+                asyncConnection = null;
+                close(conn);
             } catch (Throwable e) {
             } finally {
-                
+                close(conn);
             }
 
 
         }
 
-        
         public void run() {
             do {
                 AsyncConnection conn = null;
-                System.out.println("waiting size : " + _waiting.size() );
+
                 synchronized (_waiting) {
 
                     while (!_die) {
@@ -171,8 +275,9 @@ public class AsyncHttpManager {
                 }
 
                 if (conn != null) {
+                    asyncConnection = conn;
                     if (_die) {
-                        closeConn();
+                        cancel(conn);
                     } else {
                         process(conn);
                     }
@@ -181,6 +286,6 @@ public class AsyncHttpManager {
             System.out.println("EXITING WORKER");
         }
         public volatile boolean _die;
-       
+        public AsyncConnection asyncConnection;
     }
 }
