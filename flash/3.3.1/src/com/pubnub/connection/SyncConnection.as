@@ -14,6 +14,7 @@ package com.pubnub.connection {
 		protected var _timeout:int = 310000;
 		protected var timeoutInterval:int;
 		protected var pendingConnection:Boolean;
+		protected var initialized:Boolean
 		private var busy:Boolean;
 		
 		public function SyncConnection(timeout:int = 310000) {
@@ -22,42 +23,48 @@ package com.pubnub.connection {
 		}
 		
 		override public function sendOperation(operation:Operation):void {
-			//trace('sendOperation : ' + operation.url);
-			super.sendOperation(operation);
+			if (!operation) return;
+			//trace('sendOperation : ' + ready, operation);
 			if (ready) {
 				doSendOperation(operation);
 			}else {
-				
 				if (loader.connected == false) {
-					trace(this, 'NOT READY : ' + loader.connected, operation.request);
 					loader.connect(operation.request);
 				}
+			}
+			
+			if (queue.indexOf(operation) == -1) {
 				queue.push(operation);
 			}
 		}
 		
 		private function doSendOperation(operation:Operation):void {
-			if (busy) return;
+			//trace('doSendOperation : ' + busy, operation.destroyed);
 			clearTimeout(timeoutInterval);
-			timeoutInterval = setTimeout(onTimeout, _timeout);
+			timeoutInterval = setTimeout(onTimeout, _timeout, operation);
 			busy = true;
-			if (operation.destroyed) {
-				sendNextOperation();
-			}else {
-				this.operation = operation;
-				loader.load(operation.request);
-			}
+			this.operation = operation;
+			loader.load(operation.request);
 		}
 		
-		private function onTimeout():void {
-			if (operation && !operation.destroyed) {
+		private function onTimeout(operation:Operation):void {
+			if (operation) {
 				logTimeoutError(operation);
-				operation.onError( { message:Errors.OPERATION_TIMEOUT, operation:operation } );
 				Log.logTimeout(Errors.OPERATION_TIMEOUT + ', ' + operation.request.url);
+				operation.onError( { message:Errors.OPERATION_TIMEOUT, operation:operation } );
+				removeOperation(operation);
 			}
+			this.operation = null;
 			busy = false;
 			operation = null;
 			sendNextOperation();
+		}
+		
+		private function removeOperation(operation:Operation):void {
+			var ind:int = queue.indexOf(operation);
+			if (ind > -1) {
+				queue.splice(ind, 1);
+			}
 		}
 		
 		private function logTimeoutError(operation:Operation):void {
@@ -75,28 +82,26 @@ package com.pubnub.connection {
 			}
 		}
 		
-		override protected function onClose(e:Event):void {
-			super.onClose(e);
-			var resendLastOperation:Boolean = (operation && operation.completed == false);
-			trace(this, ' onClose : ' + resendLastOperation, operation);
-			if (resendLastOperation) {
-				sendOperation(operation);
-			}else {
-				sendNextOperation();
-			}
-		}
-		
 		override public function close():void {
-			queue.length = 0;
+			for each(var o:Operation  in queue) {
+				o.destroy();
+			}
 			super.close();
 			busy = false;
+			initialized = false;
 			clearTimeout(timeoutInterval);
 		}
 		
+		public function reconnect():void {
+			//trace(this, 'reconnect');
+			busy = false;
+			sendOperation(queue[0]);
+		}
+		
 		override protected function onConnect(e:Event):void {
-			trace(this, 'onConnect : ' + queue.length);
+			//trace('onConnect : ' + queue[0]);
 			super.onConnect(e);
-			sendNextOperation();
+			doSendOperation(queue[0]);
 		}
 		
 		override protected function get ready():Boolean {
@@ -104,10 +109,12 @@ package com.pubnub.connection {
 		}
 		
 		override protected function onComplete(e:URLLoaderEvent):void {
-			//trace('onComplete : ' + operation.url)
+			//trace('onComplete : ' + operation);
 			clearTimeout(timeoutInterval);
+			removeOperation(operation);
 			super.onComplete(e);
 			busy = false;
+			operation = null;
 			sendNextOperation();
 		}
 	}

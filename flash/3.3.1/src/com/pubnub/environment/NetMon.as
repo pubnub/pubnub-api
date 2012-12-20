@@ -8,6 +8,9 @@ package com.pubnub.environment {
 	 * ...
 	 * @author firsoff maxim, support@pubnub.com
 	 */
+	[Event(name="enable", type="com.pubnub.environment.NetMonEvent")]
+	[Event(name="disable", type="com.pubnub.environment.NetMonEvent")]
+	[Event(name="max_retries", type="com.pubnub.environment.NetMonEvent")]
 	public class NetMon extends EventDispatcher {
 		
 		public var forceReconnect:Boolean = true;

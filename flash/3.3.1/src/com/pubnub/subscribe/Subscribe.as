@@ -3,7 +3,6 @@ package com.pubnub.subscribe {
 	import com.pubnub.connection.*;
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
-	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
@@ -17,8 +16,6 @@ package com.pubnub.subscribe {
 	 */
 	public class Subscribe extends EventDispatcher {
 		static public const PNPRES_PREFIX:String = '-pnpres';
-		
-		
 		static public const SUBSCRIBE:String = 'subscribe';
 		static public const INIT_SUBSCRIBE:String = 'init_subscribe';
 		static public const LEAVE:String = 'leave';
@@ -32,8 +29,6 @@ package com.pubnub.subscribe {
 		
 		protected var _connectionUID:String;
 		protected var lastToken:String;
-		protected var netMonitor:NetMon;
-		protected var waitNetwork:Boolean;
 		protected var factory:Dictionary;
 		protected var _destroyed:Boolean;
 		protected var _channels:Array;
@@ -53,14 +48,6 @@ package com.pubnub.subscribe {
 			factory[LEAVE] = 			getLeaveOperation;
 			
 			connection = new AsyncConnection();
-			
-			netMonitor = new NetMon();
-			netMonitor.reconnectDelay = 			Settings.CONNECTION_HEARTBEAT_INTERVAL;
-			netMonitor.forceReconnectDelay = 		Settings.RECONNECT_HEARTBEAT_TIMEOUT;
-			netMonitor.maxForceReconnectRetries = 	Settings.MAX_RECONNECT_RETRIES;
-			netMonitor.addEventListener(NetMonEvent.HTTP_ENABLE, 	onNetMonitorHTTPEnable);
-			netMonitor.addEventListener(NetMonEvent.HTTP_DISABLE, 	onNetMonitorHTTPDisable);
-			netMonitor.addEventListener(NetMonEvent.MAX_RETRIES, 	onNetMonitorMaxRetries);
 		}
 		
 		/**
@@ -72,7 +59,6 @@ package com.pubnub.subscribe {
 			if (isChannelCorrect(channel) == false) {
 				return false;
 			}
-			
 			// search of channels
 			var addCh:Array = [];
 			var temp:Array = channel.split(',');
@@ -112,7 +98,7 @@ package com.pubnub.subscribe {
 		
 		public function unsubscribeAll(reason:Object = null):void {
 			var allChannels:String = _channels.join(',');
-			unsubscribe(allChannels, reason);	
+			unsubscribe(allChannels, reason);
 		}
 		
 		private function process(addCh:Array = null, removeCh:Array = null, reason:Object = null):void {
@@ -124,7 +110,7 @@ package com.pubnub.subscribe {
 					var removeChStr:String = removeCh.join(',');
 					leave(removeCh.join(removeChStr));
 					ArrayUtil.removeItems(_channels, removeCh);
-					dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, {channel:removeChStr, reason : reason}));	
+					dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, { channel:removeChStr, reason : (reason ? reason : '') } ));	
 				}
 				
 				if (needAdd) {
@@ -166,7 +152,6 @@ package com.pubnub.subscribe {
 			lastToken =  e.data[1];
 			//trace(this, ' onConnectInit : ' + lastToken);
 			_connected = true;
-			netMonitor.start();
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channels.join(',') } ));
 			destroyOperation(e.target as Operation);
 			doSubscribe();
@@ -208,7 +193,6 @@ package com.pubnub.subscribe {
 			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken];
 			*/
 			
-			
 			var multiplexResponce:Boolean = chStr && chStr.length > 0 && chStr.indexOf(',') > -1;
 			var presenceResponce:Boolean = chStr && chStr.indexOf(PNPRES_PREFIX) > -1;
 			var channel:String;
@@ -225,14 +209,11 @@ package com.pubnub.subscribe {
 						channel = chArray[i];
 						var message:* = messages[i]
 						if (hasChannel(channel)) {
-							//trace('messages : ' +  PnJSON.stringify({channel:channel, message : message}));
-							//trace('messages : ' + {channel:channel, message : message});
-							//trace('messages : ' + channel);
 							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : message}));
 						}
 					}
 				}else {
-					channel = _channels[0];
+					channel = chStr;
 					dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : messages}));
 				}
 			}
@@ -301,30 +282,6 @@ package com.pubnub.subscribe {
 			});
 			return operation;
 		}
-		
-		protected function onNetMonitorMaxRetries(e:NetMonEvent):void {
-			Log.log('onNetMonitorMaxRetries', Log.FATAL);
-			unsubscribeAll([0, Errors.NETWORK_RECONNECT_MAX_RETRIES_EXCEEDED]);
-		}
-		
-		protected function onNetMonitorHTTPDisable(e:NetMonEvent):void {
-			if (_connected) {
-				waitNetwork = true;
-			}
-		}
-		
-		protected function onNetMonitorHTTPEnable(e:NetMonEvent):void {
-			if (_channels && _channels.length > 0) {
-				if (Settings.RESUME_ON_RECONNECT) { 
-					Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: re-established network connectivity. Resubscribing with timetoken:' +lastToken, Log.WARNING);
-					if (lastToken) {
-						doSubscribe();
-					}else {
-						subscribeInit();
-					}	
-				}
-			}
-		}
 			
 		public function get connected():Boolean {
 			return _connected;
@@ -336,7 +293,6 @@ package com.pubnub.subscribe {
 		
 		public function set origin(value:String):void {
 			_origin = value;
-			netMonitor.origin = value;
 		}
 		
 		public function get connectionUID():String {
@@ -354,24 +310,28 @@ package com.pubnub.subscribe {
 		public function destroy():void {
 			if (_destroyed) return;
 			_destroyed = true;
-			dispose();
-			netMonitor.destroy();
-			netMonitor.removeEventListener(NetMonEvent.HTTP_ENABLE, onNetMonitorHTTPEnable);
-			netMonitor.removeEventListener(NetMonEvent.HTTP_DISABLE, onNetMonitorHTTPDisable);
-			netMonitor = null;
+			close();
 			connection.destroy();
 			connection = null;
 		}
 		
-		protected function dispose():void {
+		public function reconnect():void {
+			if (lastToken) {
+				doSubscribe();
+			}else {
+				subscribeInit();
+			}	
+		}
+		
+		public function close(reason:String = null):void {
+			unsubscribeAll(reason);
 			connection.close();
 			if (_channels.length > 0) {
 				leave(_channels.join(','));
 			}
 			_channels.length = 0;
-			waitNetwork = false;
-			netMonitor.stop();
 			_connected = false;
+			lastToken = null;
 		}
 		
 		protected function get channelsString():String {
@@ -379,13 +339,10 @@ package com.pubnub.subscribe {
 			var len:int = _channels.length;
 			var comma:String = ',';
 			for (var i:int = 0; i < len; i++) {
-
-
                 if (i == (len - 1)) {
 					result += _channels[i]
 				}else {
 					result += _channels[i] + comma;
-
                 }
 			}
 			return result; 

@@ -1,6 +1,8 @@
 package com.pubnub {
 	
 	import com.pubnub.connection.*;
+	import com.pubnub.environment.Environment;
+	import com.pubnub.environment.EnvironmentEvent;
 	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
@@ -20,8 +22,6 @@ package com.pubnub {
 		static public const TIME_OPERATION:String = 'time';
 		
 		private var _initialized:Boolean = false;         
-		
-		private var operations:/*Operation*/Array;
         private var operationsFactory:Dictionary;
 		
         private var subscribeConnection:Subscribe;
@@ -35,6 +35,8 @@ package com.pubnub {
 		
         private var _sessionUUID:String = "";
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
+		private var environment:Environment;
+		
 		static pn_internal var syncConnection:SyncConnection;
 		
 		public function Pn() {
@@ -49,11 +51,29 @@ package com.pubnub {
 			operationsFactory[HISTORY_OPERATION] = 	createDetailedHistoryOperation; 
 			operationsFactory[TIME_OPERATION] = 	createTimeOperation; 
 			syncConnection = new SyncConnection(Settings.OPERATION_TIMEOUT);
+			
+			environment = new Environment(origin);
+			environment.addEventListener(EnvironmentEvent.SHUTDOWN, 	onEnvironmentShutdown);
+			environment.addEventListener(EnvironmentEvent.RECONNECT, 	onEnvironmentReconnect);
+		}
+		
+		private function onEnvironmentReconnect(e:EnvironmentEvent):void {
+			syncConnection.reconnect();
+			if (subscribeConnection) {
+				subscribeConnection.reconnect();
+			}
+		}
+		
+		private function onEnvironmentShutdown(e:EnvironmentEvent):void {
+			syncConnection.close();
+			if (subscribeConnection) subscribeConnection.close();
+			environment.stop();
+			_initialized = false;
+			Log.logRetry('Shutdown', Log.WARNING);
 		}
 		
 		private function createOperation(type:String, args:Object = null):Operation {
 			var op:Operation = operationsFactory[type].call(null, args);
-			operations.push(op);
 			return op;
 		}
 		
@@ -70,10 +90,10 @@ package com.pubnub {
 		public function init(config:Object):void {
 			//trace(this, 'init')
 			if (_initialized) {
-				dispose();
+				syncConnection.close();
+				unsubscribeAll();
 			}
 			_initialized = false;
-			operations = [];
 			ori = Math.floor(Math.random() * 9) + 1;
 			initKeys(config);
             _sessionUUID = PnUtils.getUID();
@@ -94,7 +114,6 @@ package com.pubnub {
 			subscribeConnection.cipherKey = cipherKey;
 		}
 		
-		
 		private function createInitOperation(args:Object = null):Operation {
 			var init:TimeOperation = new TimeOperation(_origin);
 			init.addEventListener(OperationEvent.RESULT, onInitComplete);
@@ -106,16 +125,13 @@ package com.pubnub {
 		private function onInitComplete(event:OperationEvent):void {
 			var result:Object = event.data;
 			_initialized = true;
+			environment.start();
 			dispatchEvent(new PnEvent(PnEvent.INIT,  result[0]));
-			destroyOperation(event.target as Operation);
 		}
 		
 		private function onInitError(event:OperationEvent):void {
 			dispatchEvent(new PnEvent(PnEvent.INIT_ERROR, Errors.INIT_OPERATION_ERROR));
-			destroyOperation(event.target as Operation);
 		}
-		
-		
 		/*---------------SUBSCRIBE---------------*/
 		public static function subscribe(channel:String):void{
 			instance.subscribe(channel);
@@ -173,7 +189,7 @@ package com.pubnub {
 		
 		public function unsubscribeAll():void {
 			throwInit();
-			subscribeConnection.unsubscribeAll();
+			if(subscribeConnection) subscribeConnection.unsubscribeAll();
 		}
 		
 		/*---------------DETAILED HISTORY---------------*/
@@ -196,14 +212,12 @@ package com.pubnub {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.DATA);
 			pnEvent.operation = e.target as Operation;
 			dispatchEvent(pnEvent);
-			destroyOperation(e.target as Operation)
 		}
 		
 		private function onHistoryFault(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.DETAILED_HISTORY, e.data, e.target.channel, OperationStatus.ERROR);
 			pnEvent.operation = e.target as Operation;
 			dispatchEvent(pnEvent);
-			destroyOperation(e.target as Operation);
 		}
 		
 		private function createDetailedHistoryOperation(args:Object = null):Operation{
@@ -227,17 +241,16 @@ package com.pubnub {
 		}
 		
 		private function onPublishFault(e:OperationEvent):void {
+			//trace('onPublishFault : ' + e.target.url);
 			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.ERROR);
 			pnEvent.operation = e.target as Operation;
 			dispatchEvent(pnEvent);
-			destroyOperation(e.target as Operation);
 		}
 		
 		private function onPublishResult(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.PUBLISH, e.data, e.target.channel, OperationStatus.DATA);
 			pnEvent.operation = e.target as Operation;
 			dispatchEvent(pnEvent);
-			destroyOperation(e.target as Operation);
 		}
 		
 		private function createPublishOperation(args:Object = null):Operation{
@@ -268,13 +281,11 @@ package com.pubnub {
 		private function onTimeFault(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.TIME, e.data, null, OperationStatus.ERROR);
 			dispatchEvent(pnEvent);
-			destroyOperation(e.target as Operation);
 		}
 		
 		private function onTimeResult(e:OperationEvent):void {
 			var pnEvent:PnEvent = new PnEvent(PnEvent.TIME, e.data, null, OperationStatus.DATA);
 			dispatchEvent(pnEvent);
-			destroyOperation(e.target as Operation);
 		}
 		
 		private function createTimeOperation(args:Object = null):Operation{
@@ -285,7 +296,6 @@ package com.pubnub {
 			return time;
 		}
 		
-		
 		public static function getSubscribeChannels():Array{
 			if (instance.subscribeConnection) {
 				return instance.subscribeConnection.channels;
@@ -293,7 +303,6 @@ package com.pubnub {
 				return null;
 			}
 		}
-		
 		
 		private function initKeys(config:Object):void {
 			_ssl = config.ssl;
@@ -311,35 +320,22 @@ package com.pubnub {
 				cipherKey = config.cipher_key;
 		}
 		
-		private function destroyOperation(op:Operation):void {
-			op.destroy();
-			var ind:int = operations.indexOf(op);
-			if (ind > -1) 
-				operations.splice(ind, 1);
-		}
-		
 		private function throwInit():void {
 			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet"); 
 		}
 		
-		
 		public function destroy():void {
-			dispose();	
+			syncConnection.destroy();
+			syncConnection = null;
+			
 			subscribeConnection.destroy();
 			subscribeConnection = null;
-			operations = null;
+			
+			environment.destroy();
+			environment = null;
 			subscribeConnection = null;
 			_initialized = false;
 			__instance = null;
-		}
-		
-		public function dispose():void {
-			unsubscribeAll();
-			for each(var o:Operation in operations) {
-				o.destroy();
-			}
-			subscribeConnection.unsubscribeAll();
-			operations.length = 0;
 		}
 		
 		public function get sessionUUID():String {
@@ -371,7 +367,10 @@ package com.pubnub {
 			else {
 				_origin = "http://" + value;
 			}
-			if(subscribeConnection) subscribeConnection.origin = _origin;
+			if (subscribeConnection) {
+				subscribeConnection.origin = _origin;
+			}
+			environment.origin = _origin;
 		}
 		
 		public function get ssl():Boolean {

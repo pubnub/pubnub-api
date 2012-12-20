@@ -9,16 +9,23 @@ package com.pubnub.environment {
 		
 		public static const RESTORE_FROM_SLEEP:String = 'restore_from_sleep';
 		
-		public function SysMonEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false) { 
-			super(type, bubbles, cancelable);
+		private var _timeout:int = 0;
+		
+		public function SysMonEvent(type:String, timeout:int = 0) { 
+			super(type);
+			_timeout = timeout;
 		} 
 		
 		public override function clone():Event { 
-			return new SysMonEvent(type, bubbles, cancelable);
+			return new SysMonEvent(type, timeout);
 		} 
 		
 		public override function toString():String { 
-			return formatToString("SysMonEvent", "type", "bubbles", "cancelable", "eventPhase"); 
+			return formatToString("SysMonEvent", "type", "timeout", "bubbles", "cancelable", "eventPhase"); 
+		}
+		
+		public function get timeout():int {
+			return _timeout;
 		}
 		
 	}

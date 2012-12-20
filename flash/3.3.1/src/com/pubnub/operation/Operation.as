@@ -50,20 +50,27 @@ package com.pubnub.operation {
 		public function onData(data:Object = null):void {
 			var result:Object = data;
 			_completed = true;
+			var error:Boolean;
 			if (parseToJSON) {
 				try {
 					result = PnJSON.parse(String(data));
 				}catch (err:Error) {
-					dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:'Error JSON parse', id:'-1' } ));
-					return;
+					error = true;
 				}
 			}
-			dispatchEvent(new OperationEvent(OperationEvent.RESULT, result));
+			
+			if (error) {
+				dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:'Error JSON parse', id:'-1' } ));
+			}else {
+				dispatchEvent(new OperationEvent(OperationEvent.RESULT, result));
+			}
+			destroy();
 		}
 		
 		public function onError(data:Object = null):void {
 			_completed = true;
-			dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:(data ? data.message : data)} ));
+			dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:(data ? data.message : data) } ));
+			destroy();
 		}
 		override public function destroy():void {
 			if (destroyed) return;

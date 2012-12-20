@@ -43,7 +43,7 @@ package com.pubnub.net {
 		public function load(request:URLRequest):void {
 			this.request = request;
 			uri = new URI(request.url);
-			trace(request.url);
+			//trace(request.url);
 			socket = getSocket(request.url);
 			destroyResponce();
 			sendRequest(request);
@@ -166,7 +166,7 @@ package com.pubnub.net {
 		}
 		
 		protected function onClose(e:Event):void {
-			trace(socket, ' onClose');
+			//trace(socket, ' onClose');
 			dispatchEvent(e);
 		}
 		

@@ -51,7 +51,7 @@ package com.pubnub.connection {
 		}
 		
 		public function sendOperation(operation:Operation):void {
-			
+			//this.operation = operation;
 		}
 		
 		public function getLastOperation():Operation{

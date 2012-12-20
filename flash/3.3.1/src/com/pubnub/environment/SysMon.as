@@ -35,10 +35,11 @@ package com.pubnub.environment {
 		
 		private function ping():void {
 			var time:Number = getTimer();
-			if ( (time - lastTime) > 2 * TIMEOUT) {
+			var timeout:int = time - lastTime;
+			if ( timeout > 2 * TIMEOUT) {
 				if (_restoreFromSleep == false) {
 					_restoreFromSleep = true;
-					dispatchEvent(new SysMonEvent(SysMonEvent.RESTORE_FROM_SLEEP));
+					dispatchEvent(new SysMonEvent(SysMonEvent.RESTORE_FROM_SLEEP, timeout));
 				}
 			}else {
 				_restoreFromSleep = false

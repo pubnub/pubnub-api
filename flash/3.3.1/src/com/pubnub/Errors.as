@@ -13,7 +13,8 @@ package com.pubnub {
 		static public const NOT_CONNECTED:String = "NOT_CONNECTED";
 		static public const SUBSCRIBE_INIT_ERROR:String = "SUBSCRIBE_INIT_ERROR";
 		static public const SUBSCRIBE_CHANNEL_ERROR:String = "SUBSCRIBE_CHANEL_ERROR";
-		static public const NETWORK_RECONNECT_MAX_RETRIES_EXCEEDED:String = "Network reconnect MAX_RETRIES exceeded";
+		static public const NETWORK_RECONNECT_MAX_RETRIES_EXCEEDED:String = "NETWORK_RECONNECT_MAX_RETRIES_EXCEEDED";
+		static public const NETWORK_RECONNECT_MAX_TIMEOUT_EXCEEDED:String = "NETWORK_RECONNECT_MAX_TIMEOUT_EXCEEDED";
 		
 	}
 
