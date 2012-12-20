@@ -47,8 +47,6 @@ func Pkcs5unpad(data []byte) []byte {
 		return data
 	}
 	pad := int(data[len(data)-1])
-	// FIXME: check that the padding bytes are all what we expect
-	// Need add exception catching
 	return data[0 : len(data)-pad]
 }
 
@@ -77,17 +75,19 @@ func DecryptString(chipher_key string, message string) string { //need add error
 }
 
 func aes_cipher(chipher_key string) (cipher.Block, error) {
-	hash := sha256.New()
-	hash.Write([]byte(chipher_key))
-
-	sha256_string := hash.Sum(nil)[:16]
-	hex_arr := []byte(hex.EncodeToString(sha256_string))
-
-	block, err := aes.NewCipher(hex_arr)
+	block, err := aes.NewCipher(encryptCipherKey(chipher_key))
 	if err != nil {
 		return nil, err
 	}
 	return block, nil
+}
+
+func encryptCipherKey(chipher_key string) []byte {
+	hash := sha256.New()
+	hash.Write([]byte(chipher_key))
+
+	sha256_string := hash.Sum(nil)[:16]
+	return []byte(hex.EncodeToString(sha256_string))
 }
 
 //Encodes a value using base64
