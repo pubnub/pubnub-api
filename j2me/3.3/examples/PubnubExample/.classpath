@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="srcPubnubApi"/>
+	<classpathentry exported="true" kind="con" path="org.elipse.mtj.JavaMEContainer/Oracle Java(TM) Platform Micro Edition SDK 3.2/ClamshellJavaMEPhone1"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/work/Documents/GitHub/pubnub-api/j2me/3.3/libs/bouncycastle.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/work/Documents/GitHub/pubnub-api/j2me/3.3/libs/jsonme.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
