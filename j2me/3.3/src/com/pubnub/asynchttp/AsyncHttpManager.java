@@ -12,7 +12,7 @@ public class AsyncHttpManager {
 	private static int _maxWorkers = 1;
 	private Vector _waiting = new Vector();
 	private Worker _workers[];
-	private Network network;
+	private static Network network;
 
 	private class Network {
 		private boolean available = true;
@@ -97,7 +97,7 @@ public class AsyncHttpManager {
 		return _maxWorkers;
 	}
 
-	private void init(int maxCalls) {
+	private void init(int maxCalls, String name) {
 		if (maxCalls < 1) {
 			maxCalls = 1;
 		}
@@ -105,14 +105,16 @@ public class AsyncHttpManager {
 		for (int i = 0; i < maxCalls; ++i) {
 			Worker w = new Worker();
 			_workers[i] = w;
-			new Thread(w).start();
+			new Thread(w, name).start();
 		}
-		network = new Network();
-		new Thread(new Heartbeat()).start();
+		if (network == null) {
+			network = new Network();
+			new Thread(new Heartbeat(), "heartbeat").start();
+		}
 	}
 
-	public AsyncHttpManager() {
-		init(_maxWorkers);
+	public AsyncHttpManager(String name) {
+		init(_maxWorkers, name);
 	}
 
 	public static boolean isRedirect(int rc) {
@@ -320,7 +322,7 @@ public class AsyncHttpManager {
 					while (!_die) {
 
 						if (!network.isAvailable()) {
-							System.out.println("Network not available. Lets wait");
+							System.out.println("Network not available. Lets wait " + Thread.currentThread().getName());
 							synchronized(network) {
 								try {
 									network.wait();

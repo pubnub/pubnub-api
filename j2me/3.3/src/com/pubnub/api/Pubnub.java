@@ -25,6 +25,7 @@ public class Pubnub {
 	private String UUID = null;
 	private Hashtable _headers;
 	private Subscriptions  subscriptions;
+	
 	private AsyncHttpManager longPollConnManager;
 	private AsyncHttpManager simpleConnManager;
 
@@ -137,10 +138,10 @@ public class Pubnub {
 			subscriptions = new Subscriptions();
 		
 		if (longPollConnManager == null)
-			longPollConnManager = new AsyncHttpManager();
+			longPollConnManager = new AsyncHttpManager("Subscribe/Presence");
 		
 		if (simpleConnManager == null)
-			simpleConnManager = new AsyncHttpManager();
+			simpleConnManager = new AsyncHttpManager("Simple");
 
 		_headers = new Hashtable();
 		_headers.put("V", "3.3");
