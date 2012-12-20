@@ -75,6 +75,8 @@
 		79C322AB166E0568006DB535 /* PNConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C322A9166E0568006DB535 /* PNConfiguration.m */; };
 		79EB391E1681E58300696025 /* PNResponseDeserialize.m in Sources */ = {isa = PBXBuildFile; fileRef = 79EB391D1681E58300696025 /* PNResponseDeserialize.m */; };
 		79EB391F1681E58300696025 /* PNResponseDeserialize.m in Sources */ = {isa = PBXBuildFile; fileRef = 79EB391D1681E58300696025 /* PNResponseDeserialize.m */; };
+		79EB392616835B7D00696025 /* PNResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 79EB392516835B7C00696025 /* PNResponse.m */; };
+		79EB392716835B7D00696025 /* PNResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 79EB392516835B7C00696025 /* PNResponse.m */; };
 		79ECCF1B167217D2005E83B3 /* PNReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 79ECCF1A167217D2005E83B3 /* PNReachability.m */; };
 		79ECCF1C167217D2005E83B3 /* PNReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 79ECCF1A167217D2005E83B3 /* PNReachability.m */; };
 		79ECCF361675DFB5005E83B3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ECCF351675DFB5005E83B3 /* SystemConfiguration.framework */; };
@@ -174,6 +176,8 @@
 		79C322BC166E1358006DB535 /* PNConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNConstants.h; sourceTree = "<group>"; };
 		79EB391C1681E58300696025 /* PNResponseDeserialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNResponseDeserialize.h; sourceTree = "<group>"; };
 		79EB391D1681E58300696025 /* PNResponseDeserialize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNResponseDeserialize.m; sourceTree = "<group>"; };
+		79EB392416835B7C00696025 /* PNResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNResponse.h; sourceTree = "<group>"; };
+		79EB392516835B7C00696025 /* PNResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNResponse.m; sourceTree = "<group>"; };
 		79ECCF19167217D2005E83B3 /* PNReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNReachability.h; sourceTree = "<group>"; };
 		79ECCF1A167217D2005E83B3 /* PNReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNReachability.m; sourceTree = "<group>"; };
 		79ECCF351675DFB5005E83B3 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -539,6 +543,8 @@
 				7902B9E41679EEFC00DE2BBB /* PNRequestsQueue.m */,
 				79C322A8166E0568006DB535 /* PNConfiguration.h */,
 				79C322A9166E0568006DB535 /* PNConfiguration.m */,
+				79EB392416835B7C00696025 /* PNResponse.h */,
+				79EB392516835B7C00696025 /* PNResponse.m */,
 				79A8B5C9166FB69800C64BCF /* PNError.h */,
 				79A8B5CA166FB69800C64BCF /* PNError.m */,
 			);
@@ -712,6 +718,7 @@
 				79FFF67C167C919E008093F2 /* PNServiceChannel.m in Sources */,
 				79FFF696167E5C66008093F2 /* NSMutableArray+PNAdditions.m in Sources */,
 				79EB391E1681E58300696025 /* PNResponseDeserialize.m in Sources */,
+				79EB392616835B7D00696025 /* PNResponse.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -747,6 +754,7 @@
 				79FFF67D167C919E008093F2 /* PNServiceChannel.m in Sources */,
 				79FFF697167E5C66008093F2 /* NSMutableArray+PNAdditions.m in Sources */,
 				79EB391F1681E58300696025 /* PNResponseDeserialize.m in Sources */,
+				79EB392716835B7D00696025 /* PNResponse.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

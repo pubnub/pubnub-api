@@ -766,10 +766,10 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 - (void)processResponse {
     
-//    PNResponseDeserialize *deserializer = [PNResponseDeserialize new];
-//    [deserializer parseResponseData:self.retrievedData];
+    NSData *data = [@"HTTP/1.1 200 OK\nDate: Wed, 19 Dec 2012 10:41:56 GMT\nContent-Type: text/javascript; charset=\"UTF-8\"\nContent-Length: 30\nConnection: keep-alive\nCache-Control: no-cache\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET\r\n\r\ntimeToken([13559137168644711])HTTP/1.1 200 OK\nDate: Wed, 19 Dec 2012 10:41:56 GMT\nContent-Type: text/javascript; charset=\"UTF-8\"\nContent-Length: 30\nConnection: keep-alive\nCache-Control: no-cache\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET\n\ntimeToken([13559137168644711])" dataUsingEncoding:NSUTF8StringEncoding];
     
-    NSData *data = [@"HTTP/1.1 200 OK\nDate: Wed, 19 Dec 2012 10:41:56 GMT\nContent-Type: text/javascript; charset=\"UTF-8\"\nContent-Length: 36\nConnection: keep-alive\nCache-Control: no-cache\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET\n\ntimeToken([13559137168644711])HTTP/1.1 200 OK\nDate: Wed, 19 Dec 2012 10:41:56 GMT\nContent-Type: text/javascript; charset=\"UTF-8\"\nContent-Length: 32\nConnection: keep-alive\nCache-Control: no-cache\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET\n\ntimeToken([13559137168644711])" dataUsingEncoding:NSUTF8StringEncoding];
+    PNResponseDeserialize *deserializer = [PNResponseDeserialize new];
+    [deserializer parseResponseData:data];
 
     NSRange HTTPRange = [data rangeOfData:[@"HTTP/1.1" dataUsingEncoding:NSUTF8StringEncoding]
                                                 options:0

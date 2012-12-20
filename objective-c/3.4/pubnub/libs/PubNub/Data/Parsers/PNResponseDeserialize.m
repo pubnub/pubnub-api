@@ -14,6 +14,7 @@
 //
 
 #import "PNResponseDeserialize.h"
+#import "PNResponse.h"
 
 
 #pragma mark Private interface methods
@@ -47,7 +48,7 @@
 
 #pragma mark - Instance methods
 
-- (id)responseInRange:(NSRange)responseRange ofData:(NSData *)data;
+- (PNResponse *)responseInRange:(NSRange)responseRange ofData:(NSData *)data;
 
 - (NSInteger)responseStatusCodeFromData:(NSData *)data inRange:(NSRange)responseRange;
 - (NSInteger)responseSizeFromData:(NSData *)data inRange:(NSRange)responseRange;
@@ -57,7 +58,7 @@
  * response starts (searching index of "HTTP/1.1"
  * string after current one)
  */
-- (NSUInteger)nextResponseStartIndexInData:(NSData *)data;
+- (NSUInteger)nextResponseStartIndexForData:(NSData *)data inRange:(NSRange)responseRange;
 
 - (NSRange)nextResponseStartSearchRangeForData:(NSData *)data;
 
@@ -87,7 +88,7 @@
         
         self.httpHeaderStartData = [@"HTTP/1.1 " dataUsingEncoding:NSUTF8StringEncoding];
         self.httpContentLengthData = [@"Content-Length: " dataUsingEncoding:NSUTF8StringEncoding];
-        self.httpContentSeparatorData = [@"\n\n" dataUsingEncoding:NSUTF8StringEncoding];
+        self.httpContentSeparatorData = [@"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.endLineCharacterData = [@"\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.spaceCharacterData = [@" " dataUsingEncoding:NSUTF8StringEncoding];
     }
@@ -98,22 +99,59 @@
 
 - (NSArray *)parseResponseData:(NSMutableData *)data {
     
-    NSRange responseRange = NSMakeRange(NSNotFound, 0);
+    NSMutableArray *parsedData = [NSMutableArray array];
+    NSRange responseRange = NSMakeRange(0, [data length]);
     
-    NSUInteger nextResponseIndex = [self nextResponseStartIndexInData:data];
-    if (nextResponseIndex == NSNotFound) {
-        responseRange.location = 0;
-        responseRange.length = [data length];
+    
+    @autoreleasepool {
         
-        [self responseInRange:responseRange ofData:data];
+        NSUInteger nextResponseIndex = [self nextResponseStartIndexForData:data inRange:responseRange];
+        if (nextResponseIndex == NSNotFound) {
+            
+            // Try contruct response instance
+            PNResponse *response = [self responseInRange:responseRange ofData:data];
+            if(response) {
+                
+                [parsedData addObject:response];
+            }
+        }
+        else {
+            
+            // Search for another responses while it is possible
+            while (nextResponseIndex != NSNotFound) {
+                
+                responseRange.length = nextResponseIndex - responseRange.location;
+                
+                
+                // Try contruct response instance
+                PNResponse *response = [self responseInRange:responseRange ofData:data];
+                if(response) {
+                    
+                    [parsedData addObject:response];
+                }
+                
+                nextResponseIndex = [self nextResponseStartIndexForData:data inRange:responseRange];
+            }
+        }
     }
-    else {
-        
-    }
+    
+    
+    // Update provided data to remove from it
+    // response content which successfully was
+    // parsed
+    NSUInteger lastResponseEndIndex = responseRange.location + responseRange.length;
+    [data setData:[data subdataWithRange:NSMakeRange(lastResponseEndIndex, [data length]-lastResponseEndIndex)]];
+    
+    
+    return parsedData;
 }
 
-- (id)responseInRange:(NSRange)responseRange ofData:(NSData *)data {
+- (PNResponse *)responseInRange:(NSRange)responseRange ofData:(NSData *)data {
     
+    PNResponse *response = nil;
+    NSUInteger responseSize = [[data subdataWithRange:responseRange] length];
+    
+    // Try to fetch HTTP status from body
     NSUInteger statusCode = [self responseStatusCodeFromData:data inRange:responseRange];
     
     if (statusCode == 200) {
@@ -126,16 +164,31 @@
             NSRange separatorRange = [data rangeOfData:self.httpContentSeparatorData options:0 range:responseRange];
             if(separatorRange.location != NSNotFound) {
                 
+                
+                // Check whether full response body loaded or not
+                // (taking into account content size which arrived
+                // in HTTP header)
                 NSUInteger contentSizeLeft = responseRange.length-(separatorRange.location+separatorRange.length);
                 if (contentSize == contentSizeLeft) {
                     
-                    // TODO: CREATE RESPONSE INSTANCE WITH RESPONSE
                     NSRange responseContenrRange = NSMakeRange((separatorRange.location+separatorRange.length), contentSize);
-                    NSData *response = [data subdataWithRange:responseContenrRange];
+                    NSData *responseData = [data subdataWithRange:responseContenrRange];
+                    
+                    response = [PNResponse responseWithContent:responseData size:responseSize code:statusCode];
                 }
             }
         }
     }
+    else {
+        
+        response = [PNResponse responseWithContent:nil size:responseSize code:statusCode];
+    }
+    
+    
+    NSLog(@"RESPONSE: %@", response);
+    
+    
+    return response;
 }
 
 - (NSInteger)responseStatusCodeFromData:(NSData *)data inRange:(NSRange)responseRange {
@@ -203,7 +256,7 @@
     return result;
 }
 
-- (NSUInteger)nextResponseStartIndexInData:(NSData *)data {
+- (NSUInteger)nextResponseStartIndexForData:(NSData *)data inRange:(NSRange)responseRange {
     
     NSRange range = [data rangeOfData:self.httpHeaderStartData
                               options:0
