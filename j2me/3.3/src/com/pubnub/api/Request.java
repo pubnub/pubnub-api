@@ -5,9 +5,7 @@
 package com.pubnub.api;
 
 import java.util.Enumeration;
-import java.util.Vector;
 import java.util.Hashtable;
-import org.json.me.JSONArray;
 
 /**
  *

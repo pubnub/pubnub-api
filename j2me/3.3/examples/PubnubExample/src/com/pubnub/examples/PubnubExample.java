@@ -220,10 +220,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	        	public void reconnectCallback(String channel) {
 	        		System.out.println("RECONNECT on channel:" + channel);
 	        	}
-	        	public void errorCallback(String channel) {
-	        		System.out.println("ERROR on channel:" + channel);
-	        	}
-	            public void successCallback(String channel, Object message) {
+	        	public void successCallback(String channel, Object message) {
 	                System.out.println("Message recevie on channel:" + channel
 	                        + " Message:" + message.toString());
 	                try {

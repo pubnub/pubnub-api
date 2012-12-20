@@ -1,25 +1,18 @@
 package com.pubnub.api;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.ShortBufferException;
-import javax.microedition.io.Connector;
+
 import javax.microedition.io.HttpConnection;
-import javax.microedition.io.HttpsConnection;
-import org.bouncycastle.crypto.DataLengthException;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.util.SecureRandom;
+
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
+
 import com.pubnub.crypto.PubnubCrypto;
 import com.pubnub.util.AsyncHttpManager;
 import com.pubnub.util.HttpCallback;
-import java.util.*;
 
 public class Pubnub {
 
@@ -29,7 +22,6 @@ public class Pubnub {
 	private String SECRET_KEY = "";
 	private String CIPHER_KEY = "";
 	private boolean SSL = false;
-	private String current_timetoken = "0";
 	private String UUID = null;
 	private Hashtable _headers;
 	private Hashtable channels;
@@ -39,8 +31,7 @@ public class Pubnub {
 	private class Channel {
 
 		String name;
-		boolean connected, disconnected;
-		int subscribed = 1;
+		boolean connected;
 		Callback callback;
 	}
 
@@ -286,7 +277,7 @@ public class Pubnub {
 					}
 
 					public void handleError(String response) {
-						JSONArray jsarr = null;
+						JSONArray jsarr = new JSONArray();
 						jsarr.put("0").put("Error: Failed JSON HTTP Request");
 						callback.errorCallback(channel, jsarr);
 					}
@@ -297,8 +288,7 @@ public class Pubnub {
 
 	private boolean inputsValid(Hashtable args) throws PubnubException {
 		boolean channelMissing;
-		Callback callback;
-		if ((callback = (Callback) args.get("callback")) == null) {
+		if (((Callback) args.get("callback")) == null) {
 			throw new PubnubException("Invalid Callback");
 		}
 		Object _channels = args.get("channels");
@@ -368,13 +358,6 @@ public class Pubnub {
 		args.put("channels", channelsArr);
 		args.put("callback", callback);
 		subscribe(args);
-	}
-
-	private void callErrorCallbacks(String[] channelList, String[] messages) {
-		for (int i = 0; i < channelList.length; i++) {
-			Callback cb = ((Channel) channels.get(channelList[i])).callback;
-			cb.errorCallback(channelList[i], messages[i]);
-		}
 	}
 
 	private void callErrorCallbacks(String[] channelList, String message) {

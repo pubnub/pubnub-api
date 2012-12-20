@@ -191,13 +191,6 @@ public class AsyncHttpManager {
     private static class AsyncConnection {
 
         // Initialize a connection with the given
-        // callback 
-        
-        AsyncConnection(AsyncHttpCallback cb) {
-            this(cb, null);
-        }
-
-        // Initialize a connection with the given
         // callback, connection
         
         AsyncConnection(AsyncHttpCallback cb,

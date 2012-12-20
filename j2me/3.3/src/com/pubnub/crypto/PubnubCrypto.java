@@ -5,21 +5,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Enumeration;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.bouncycastle.crypto.digests.MD5Digest;
-import org.bouncycastle.crypto.macs.HMac;
-import org.bouncycastle.crypto.digests.SHA256Digest;
 
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.digests.MD5Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.engines.AESEngine;
-
+import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -35,7 +32,6 @@ import org.json.me.JSONObject;
  */
 public class PubnubCrypto {
 
-    private final String CIPHER_KEY;
     PaddedBufferedBlockCipher encryptCipher = null;
     PaddedBufferedBlockCipher decryptCipher = null;
     byte[] buf = new byte[16];              //input buffer
@@ -45,7 +41,6 @@ public class PubnubCrypto {
     public static int blockSize = 16;
 
     public PubnubCrypto(String CIPHER_KEY) {
-        this.CIPHER_KEY = CIPHER_KEY;
         key = PubnubCrypto.md5(CIPHER_KEY);
         IV = "0123456789012345".getBytes();
         InitCiphers();

@@ -7,7 +7,6 @@ package com.pubnub.api;
  * @author Pubnub
  */
 public class PubnubException extends Exception {
-    private static final long serialVersionUID = 1L;
     private String errormsg = "Pubnub Exception Occurred";
     
     /**

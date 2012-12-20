@@ -76,7 +76,6 @@ public abstract class HttpCallback
         int rc = hconn.getResponseCode();
 
         InputStream in = null;
-        int lines = 0;
         String prefix = "";
 
         try {
