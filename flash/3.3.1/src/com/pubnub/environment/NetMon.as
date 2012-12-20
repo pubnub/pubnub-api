@@ -51,6 +51,7 @@ package com.pubnub.environment {
 		}
 		
 		private function onError(e:Event):void {
+			Log.logRetry('PING : onError', Log.NORMAL);
 			// network is down
 			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
 				Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network unavailable', Log.WARNING);
@@ -78,6 +79,8 @@ package com.pubnub.environment {
 		}
 		
 		private function onComplete(e:Event):void {
+			Log.logRetry('PING : onComplete', Log.NORMAL);
+			
 			// network is up
 			if (lastStatus == NetMonEvent.HTTP_ENABLE){
                 Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
