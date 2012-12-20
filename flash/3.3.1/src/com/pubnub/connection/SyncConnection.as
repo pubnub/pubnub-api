@@ -39,6 +39,7 @@ package com.pubnub.connection {
 		}
 		
 		private function doSendOperation(operation:Operation):void {
+			if (!operation) return;
 			//trace('doSendOperation : ' + busy, operation.destroyed);
 			clearTimeout(timeoutInterval);
 			timeoutInterval = setTimeout(onTimeout, _timeout, operation);

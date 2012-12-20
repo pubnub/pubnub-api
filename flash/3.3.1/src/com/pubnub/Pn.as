@@ -332,6 +332,8 @@ package com.pubnub {
 			subscribeConnection = null;
 			
 			environment.destroy();
+			environment.removeEventListener(EnvironmentEvent.SHUTDOWN, 	onEnvironmentShutdown);
+			environment.removeEventListener(EnvironmentEvent.RECONNECT, 	onEnvironmentReconnect);
 			environment = null;
 			subscribeConnection = null;
 			_initialized = false;
