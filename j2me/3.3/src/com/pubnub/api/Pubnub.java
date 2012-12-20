@@ -1,7 +1,6 @@
 package com.pubnub.api;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.microedition.io.HttpConnection;
@@ -10,9 +9,10 @@ import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 
-import com.pubnub.crypto.PubnubCrypto;
-import com.pubnub.util.AsyncHttpManager;
-import com.pubnub.util.HttpCallback;
+import com.pubnub.asynchttp.AsyncHttpManager;
+import com.pubnub.asynchttp.HttpCallback;
+import com.pubnub.crypto.me.PubnubCrypto;
+
 
 public class Pubnub {
 
@@ -24,16 +24,9 @@ public class Pubnub {
 	private boolean SSL = false;
 	private String UUID = null;
 	private Hashtable _headers;
-	private Hashtable channels;
+	private Subscriptions  subscriptions;
 	private AsyncHttpManager longPollConnManager;
 	private AsyncHttpManager simpleConnManager;
-
-	private class Channel {
-
-		String name;
-		boolean connected;
-		Callback callback;
-	}
 
 	private String uuid() {
 		return "abcd-efgh-jikl-mnop";
@@ -140,8 +133,8 @@ public class Pubnub {
 		if (UUID == null)
 			UUID = uuid();
 
-		if (channels == null)
-			channels = new Hashtable();
+		if (subscriptions == null)
+			subscriptions = new Subscriptions();
 		
 		if (longPollConnManager == null)
 			longPollConnManager = new AsyncHttpManager();
@@ -362,7 +355,7 @@ public class Pubnub {
 
 	private void callErrorCallbacks(String[] channelList, String message) {
 		for (int i = 0; i < channelList.length; i++) {
-			Callback cb = ((Channel) channels.get(channelList[i])).callback;
+			Callback cb = ((Channel) subscriptions.getChannel(channelList[i])).callback;
 			cb.errorCallback(channelList[i], message);
 		}
 	}
@@ -393,15 +386,15 @@ public class Pubnub {
 
 		for (int i = 0; i < channelList.length; i++) {
 			String channel = channelList[i];
-
-			Channel channelObj = (Channel) channels.get(channel);
+			System.out.println(channel);
+			Channel channelObj = (Channel) subscriptions.getChannel(channel);
 
 			if (channelObj == null) {
 				Channel ch = new Channel();
 				ch.name = channel;
 				ch.connected = false;
 				ch.callback = callback;
-				channels.put(ch.name, ch);
+				subscriptions.addChannel(ch);
 			} else if (channelObj.connected) {
 
 				return;
@@ -410,18 +403,11 @@ public class Pubnub {
 		_subscribe_base(timetoken);
 	}
 
-	private String[] getChannelsArray() {
-		return PubnubUtil.hashtableKeysToArray(channels);
-	}
 
-	private String getChannelsString() {
-		return PubnubUtil.hashTableKeysToDelimitedString(channels,",");
-	}
-
-	private void _subscribe_base(final String timetoken) {
+	private void _subscribe_base(String timetoken) {
 		System.out.println("In _subscribe_base");
-		String channelString = getChannelsString();
-		String[] channelsArray = getChannelsArray();
+		String channelString = subscriptions.getChannelString();
+		String[] channelsArray = subscriptions.getChannelNames();
 
 		if (channelString == null) {
 			callErrorCallbacks(channelsArray, "Parsing Error");
@@ -436,23 +422,10 @@ public class Pubnub {
 
 		Request req = new Request(urlComponents, params, channelsArray,
 				new ResponseHandler() {
+					String _timetoken = "0";
 					public void handleResponse(String response) {
 						
-						/*
-						 * Iterate over all the channels and call connect
-						 * callback for channels which were in disconnected
-						 * state. Nothing to do for channels already connected
-						 */
-
-						Enumeration ch = Pubnub.this.channels.elements();
-						while (ch.hasMoreElements()) {
-							Channel _channel = (Channel) ch.nextElement();
-							if (_channel.connected == false) {
-								_channel.connected = true;
-								_channel.callback
-										.connectCallback(_channel.name);
-							}
-						}
+						subscriptions.invokeConnectCallbackOnChannels();
 
 						/*
 						 * Check if response has channel names. A JSON response
@@ -466,7 +439,7 @@ public class Pubnub {
 						JSONArray jsa;
 						try {
 							jsa = new JSONArray(response);
-							String newTimetoken = jsa.get(1).toString();
+							String _timetoken = jsa.get(1).toString();
 							JSONArray messages = new JSONArray(jsa.get(0)
 									.toString());
 
@@ -480,11 +453,11 @@ public class Pubnub {
 								System.out.println(_channels.length);
 
 								for (int i = 0; i < _channels.length; i++) {
-									Channel _channel = (Channel) Pubnub.this.channels
-											.get(_channels[i]);
-
-									_channel.callback.successCallback(
-											_channels[i], messages.get(i));
+									Channel _channel = (Channel) subscriptions
+											.getChannel(_channels[i]);
+									if (_channel != null)
+										_channel.callback.successCallback(
+												_channels[i], messages.get(i));
 								}
 
 							} else {
@@ -492,36 +465,25 @@ public class Pubnub {
 								 * Response for single channel Callback on
 								 * single channel
 								 */
-								Channel _channel = (Channel) Pubnub.this.channels
-										.elements().nextElement();
+								Channel _channel = subscriptions.getFirstChannel();
+
+								if (_channel != null) {
 								for (int i = 0; i < messages.length(); i++) {
 									_channel.callback.successCallback(
 											_channel.name, messages.get(i));
 								}
+								}
 
 							}
-							_subscribe_base(newTimetoken);
+							_subscribe_base(_timetoken);
 						} catch (JSONException e) {
 						}
 
 					}
 
 					public void handleError(String response) {
-						/*
-						 * Iterate over all the channels and call disconnect
-						 * callback for channels which were in connected state.
-						 * Nothing to do for channels already connected
-						 */
-						Enumeration ch = Pubnub.this.channels.elements();
-						while (ch.hasMoreElements()) {
-							Channel _channel = (Channel) ch.nextElement();
-							if (_channel.connected == true) {
-								_channel.connected = false;
-								_channel.callback
-										.disconnectCallback(_channel.name);
-							}
-						}
-						_subscribe_base(timetoken);
+						subscriptions.invokeDisconnectCallbackOnChannels();
+						_subscribe_base(_timetoken);
 					}
 				});
 

@@ -1,4 +1,4 @@
-package com.pubnub.crypto;
+package com.pubnub.crypto.me;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

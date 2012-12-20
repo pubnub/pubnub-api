@@ -1,4 +1,4 @@
-package com.pubnub.util;
+package com.pubnub.asynchttp;
 
 import java.io.IOException;
 import java.util.Hashtable;

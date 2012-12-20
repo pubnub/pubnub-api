@@ -1,4 +1,4 @@
-package com.pubnub.util;
+package com.pubnub.asynchttp;
 
 import java.io.ByteArrayOutputStream;
 
@@ -19,7 +19,9 @@ public abstract class HttpCallback
     public void setConnManager(AsyncHttpManager _connManager) {
         this._connManager = _connManager;
     }
-
+    public AsyncHttpManager getConnManager() {
+        return this._connManager;
+    }
     public void setConnection(HttpConnection _connection) {
         this._connection = _connection;
     }
@@ -48,8 +50,7 @@ public abstract class HttpCallback
         return true;
     }
 
-    // Only continue if HTTP_OK or one of the redirection
-    // codes is returned.
+
     public boolean checkResponse(HttpConnection hconn)
             throws IOException {
 
@@ -59,7 +60,7 @@ public abstract class HttpCallback
                 || AsyncHttpManager.isRedirect(rc));
     }
 
-    // Process response.
+
     public void processResponse(HttpConnection hconn)
             throws IOException {
     }
@@ -68,8 +69,6 @@ public abstract class HttpCallback
 
     public abstract void errorCall(HttpConnection hconn, int statusCode, String response) throws IOException;
 
-    // Operation completed with no exceptions. The connection
-    // is immediately closed after this call.
     public void endingCall(HttpConnection hconn)
             throws IOException {
         
@@ -97,7 +96,7 @@ public abstract class HttpCallback
             if (b.length() > 0) {
                 OnComplete(hconn, rc, b.toString());
             }
-        } finally {
+        } catch (Exception e) {
             if (in != null) {
                 try {
                     in.close();
@@ -115,10 +114,5 @@ public abstract class HttpCallback
             throws IOException {
 
             errorCall(hconn, hconn.getResponseCode(), "Cancelling");
-           
-    }
-
-    public void cancelRequest(HttpCallback cb) {
-        _connManager.cancel(cb);
     }
 }

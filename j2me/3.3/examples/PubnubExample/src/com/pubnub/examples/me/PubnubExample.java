@@ -1,8 +1,10 @@
-package com.pubnub.examples;
+package com.pubnub.examples.me;
 
 import javax.microedition.midlet.MIDlet;
-import com.pubnub.api.Pubnub;
+
 import com.pubnub.api.Callback;
+import com.pubnub.api.Pubnub;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.microedition.lcdui.*;

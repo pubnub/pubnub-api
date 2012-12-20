@@ -15,7 +15,7 @@
  */
 package com.pubnub.api;
 
-public class ServiceProviderException extends Exception {
+class ServiceProviderException extends Exception {
 
     private int http_response_code;
     private String http_response_body;

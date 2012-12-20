@@ -12,7 +12,7 @@ import java.util.Vector;
  *
  * @author Pubnub
  */
-public class PubnubUtil {
+class PubnubUtil {
 
     public static String[] splitString(String source, String delimiter) {
 
@@ -93,7 +93,7 @@ public class PubnubUtil {
     }
     
 
-	public static String[] hashtableKeysToArray(Hashtable ht) {
+	public static synchronized String[] hashtableKeysToArray(Hashtable ht) {
 		Vector v = new Vector();
 		String[] sa = null;
 		int count = 0;
@@ -113,7 +113,7 @@ public class PubnubUtil {
 
 	}
 
-	public static String hashTableKeysToDelimitedString(Hashtable ht,
+	public static synchronized String hashTableKeysToDelimitedString(Hashtable ht,
 			String delimiter) {
 
 		StringBuffer sb = new StringBuffer();
