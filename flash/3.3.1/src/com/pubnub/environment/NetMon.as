@@ -1,5 +1,8 @@
 package com.pubnub.environment {
+	import com.pubnub.connection.SyncConnection;
 	import com.pubnub.log.Log;
+	import com.pubnub.Pn;
+	import com.pubnub.pn_internal;
 	import flash.events.*;
 	import flash.net.*;
 	import flash.utils.*;
@@ -27,6 +30,7 @@ package com.pubnub.environment {
 		private var _maxForceReconnectRetries:uint = 100;
 		private var _forceReconnectDelay:uint = 1000;
 		private var _reconnectDelay:uint = 15000;
+		private var syncConnection:SyncConnection
 		
 		public function NetMon (origin:String = null) {
 			super(null);
@@ -42,6 +46,9 @@ package com.pubnub.environment {
 			
 			sysMon = new SysMon();
 			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
+			
+			syncConnection = Pn.pn_internal::syncConnection;
+			//trace(syncConnection);
 		}
 		
 		private function onRestoreFromSleep(e:SysMonEvent):void {
@@ -50,7 +57,7 @@ package com.pubnub.environment {
 			reconnect();
 		}
 		
-		private function onError(e:Event):void {
+		private function onError(e:Event = null):void {
 			Log.logRetry('PING : onError', Log.NORMAL);
 			// network is down
 			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
@@ -78,7 +85,7 @@ package com.pubnub.environment {
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
 		}
 		
-		private function onComplete(e:Event):void {
+		private function onComplete(e:Event = null):void {
 			Log.logRetry('PING : onComplete', Log.NORMAL);
 			
 			// network is up
@@ -97,14 +104,21 @@ package com.pubnub.environment {
 		}
 		
 		private function ping():void {
-			try {
+			/*try {
                 loader.close();
             }
 			catch (err:Error) {
                 Log.logRetry("PING: " + err, Log.WARNING);
             };
 
-            loader.load(new URLRequest(url));
+            loader.load(new URLRequest(url));*/
+			
+			if (syncConnection.connected) {
+				onComplete(null);
+			}else {
+				onError(null);
+			}
+			
 		}
 		
 		public function start():void {

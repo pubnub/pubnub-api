@@ -48,6 +48,10 @@ package com.pubnub.connection {
 			loader.load(operation.request);
 		}
 		
+		public function get connected():Boolean{
+			return loader && loader.connected;
+		}
+		
 		private function onTimeout(operation:Operation):void {
 			if (operation) {
 				logTimeoutError(operation);
