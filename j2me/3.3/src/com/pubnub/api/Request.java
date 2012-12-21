@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.pubnub.api;
 
 import java.util.Enumeration;
@@ -40,8 +36,13 @@ class Request {
 
 
             Enumeration paramsKeys = this.params.keys();
-
+            boolean first = true;
             while (paramsKeys.hasMoreElements()) {
+            	if (!first) {
+            		sb.append("&");
+            	} else 
+            		first = false;
+            		
                 String key = (String) paramsKeys.nextElement();
                 sb.append(PubnubUtil.urlEncode((String)key)).append("=")
                   .append(PubnubUtil.urlEncode((String)this.params.get(key)));

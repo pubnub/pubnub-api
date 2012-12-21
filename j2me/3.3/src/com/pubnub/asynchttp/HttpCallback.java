@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import javax.microedition.io.HttpConnection;
 
-// Default implementation of AsyncHttpCallback
 public abstract class HttpCallback
         implements AsyncHttpCallback {
 
@@ -33,7 +32,6 @@ public abstract class HttpCallback
         _headerFields = headerFields;
     }
 
-    // The URL to open must be provided by subclass.
     public String startingCall() {
         return _url;
     }
@@ -42,14 +40,11 @@ public abstract class HttpCallback
         return _headerFields;
     }
 
-    // By default there's nothing to do.
     public boolean prepareRequest(HttpConnection hconn)
             throws IOException {
         return true;
     }
 
-    // Only continue if HTTP_OK or one of the redirection
-    // codes is returned.
     public boolean checkResponse(HttpConnection hconn)
             throws IOException {
 
@@ -59,7 +54,6 @@ public abstract class HttpCallback
                 || AsyncHttpManager.isRedirect(rc));
     }
 
-    // Process response.
     public void processResponse(HttpConnection hconn)
             throws IOException {
     }
@@ -68,8 +62,6 @@ public abstract class HttpCallback
 
     public abstract void errorCall(HttpConnection hconn, int statusCode, String response) throws IOException;
 
-    // Operation completed with no exceptions. The connection
-    // is immediately closed after this call.
     public void endingCall(HttpConnection hconn)
             throws IOException {
         
@@ -110,12 +102,9 @@ public abstract class HttpCallback
 
     }
 
-    // Operation was cancelled or aborted.
     public void cancelingCall(HttpConnection hconn)
             throws IOException {
-
             errorCall(hconn, hconn.getResponseCode(), "Cancelling");
-           
     }
 
     public void cancelRequest(HttpCallback cb) {

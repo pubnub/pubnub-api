@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.pubnub.api;
 
 import java.util.Enumeration;
@@ -14,6 +10,12 @@ import java.util.Vector;
  */
 class PubnubUtil {
 
+    /** Takes source and delimiter string as inputs and returns splitted string
+     *  in form of tokens in String array
+     * @param source, input String
+     * @param delimiter, delimiter to split on
+     * @return String[] , tokens in and array
+     */
     public static String[] splitString(String source, String delimiter) {
 
         int delimiterCount = 0;
@@ -33,7 +35,6 @@ class PubnubUtil {
         int counter = 0;
         tmpStr = source;
 
-
         do  {
             int nextIndex = tmpStr.indexOf(delimiter, index + 1);
 
@@ -50,6 +51,13 @@ class PubnubUtil {
         return splittedList;
     }
 
+    /**
+     *  Takes String[] of tokens, and String delimiter as input and returns
+     *  joined String
+     * @param sourceArray, input tokens in String array
+     * @param delimiter, delimiter to  join on
+     * @return String , string of tokens joined by delimiter
+     */
     public static String joinString(String[] sourceArray, String delimiter) {
         StringBuffer sb = new StringBuffer();
 
@@ -61,6 +69,10 @@ class PubnubUtil {
         return sb.toString();
     }
 
+    /** Returns encoded String
+     * @param sUrl, input string
+     * @return , encoded string
+     */
     public static String urlEncode(String sUrl) {
         StringBuffer urlOK = new StringBuffer();
         for (int i = 0; i < sUrl.length(); i++) {
@@ -93,6 +105,10 @@ class PubnubUtil {
     }
     
 
+	/** Returns string keys in a hashtable as array of string
+	 * @param ht, Hashtable
+	 * @return ,  string array with hash keys string
+	 */
 	public static synchronized String[] hashtableKeysToArray(Hashtable ht) {
 		Vector v = new Vector();
 		String[] sa = null;
@@ -106,20 +122,21 @@ class PubnubUtil {
 		}
 
 		sa = new String[count];
-
 		v.copyInto(sa);
-
 		return sa;
 
 	}
 
+	/** Returns string keys in a hashtable as delimited string
+	 * @param ht, Hashtable
+	 * @param delimiter, String 
+	 * @return ,  string array with hash keys string
+	 */
 	public static synchronized String hashTableKeysToDelimitedString(Hashtable ht,
 			String delimiter) {
 
 		StringBuffer sb = new StringBuffer();
-
 		boolean first = true;
-
 		Enumeration e = ht.keys();
 
 		while (e.hasMoreElements()) {
@@ -127,18 +144,12 @@ class PubnubUtil {
 			String s = (String) e.nextElement();
 
 			if (first) {
-
 				sb.append(s);
 				first = false;
-
 			} else {
-
 				sb.append(delimiter).append(s);
-
 			}
-
 		}
-
 		return sb.toString();
 
 	}

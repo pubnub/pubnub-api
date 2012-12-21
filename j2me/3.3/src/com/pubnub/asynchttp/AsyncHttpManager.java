@@ -135,11 +135,13 @@ public class AsyncHttpManager {
 
 	public void queue(AsyncHttpCallback cb, HttpConnection hc) {
 
-		if (!network.isAvailable())
+		if (!network.isAvailable()) {
 			try {
 				cb.errorCall(hc, 0, "[0,'Network Error']");
 			} catch (IOException e) {
 			}
+			return;
+		}
 		cb.setConnManager(this);
 		synchronized (_waiting) {
 			AsyncConnection conn = new AsyncConnection(cb, hc);
@@ -230,10 +232,6 @@ public class AsyncHttpManager {
 		public boolean getDie() {
 			return _die;
 		}
-		private void interrupt() {
-			System.out.println("Interrupting self : " + Thread.currentThread().getName());
-			Thread.currentThread().interrupt();
-		}
 
 		private void process(AsyncConnection conn) {
 
@@ -285,16 +283,6 @@ public class AsyncHttpManager {
 						return;
 					}
 					int rc = 0;
-					Timer timer = new Timer();
-					
-					timer.schedule(new TimerTask() {
-
-						public void run() {
-							Worker.this.interrupt();
-							
-						}
-						
-					}, 5000);
 					hc.getResponseCode();
 					if (!cb.checkResponse(hc)) {
 						process = false;

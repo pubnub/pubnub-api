@@ -14,7 +14,9 @@ import com.pubnub.asynchttp.HttpCallback;
 import com.pubnub.crypto.me.PubnubCrypto;
 
 /**
- * Pubnub object facilitates querying channels for messages and listening on channels for presence/message events
+ * Pubnub object facilitates querying channels for messages and listening on
+ * channels for presence/message events
+ * 
  * @author Pubnub
  * 
  */
@@ -29,8 +31,8 @@ public class Pubnub {
 	private boolean SSL = false;
 	private String UUID = null;
 	private Hashtable _headers;
-	private Subscriptions  subscriptions;
-	
+	private Subscriptions subscriptions;
+
 	private AsyncHttpManager longPollConnManager;
 	private AsyncHttpManager simpleConnManager;
 
@@ -39,70 +41,84 @@ public class Pubnub {
 	}
 
 	/**
-     * 
-     * Constructor for Pubnub Class
-     * 
-     * @param publish_key Publish Key
-     * @param subscribe_key Subscribe Key
-     * @param secret_key Secret Key
-     * @param cipher_key Cipher Key
-     * @param ssl_on SSL enabled ?
-     */
-	
+	 * 
+	 * Constructor for Pubnub Class
+	 * 
+	 * @param publish_key
+	 *            Publish Key
+	 * @param subscribe_key
+	 *            Subscribe Key
+	 * @param secret_key
+	 *            Secret Key
+	 * @param cipher_key
+	 *            Cipher Key
+	 * @param ssl_on
+	 *            SSL enabled ?
+	 */
+
 	public Pubnub(String publish_key, String subscribe_key, String secret_key,
 			String cipher_key, boolean ssl_on) {
 		this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
 	}
 
-    /**
-     * 
-     * Constructor for Pubnub Class
-     * 
-     * @param publish_key Publish Key
-     * @param subscribe_key Subscribe Key
-     * @param secret_key Secret Key
-     * @param ssl_on SSL enabled ?
-     */
-	
+	/**
+	 * 
+	 * Constructor for Pubnub Class
+	 * 
+	 * @param publish_key
+	 *            Publish Key
+	 * @param subscribe_key
+	 *            Subscribe Key
+	 * @param secret_key
+	 *            Secret Key
+	 * @param ssl_on
+	 *            SSL enabled ?
+	 */
+
 	public Pubnub(String publish_key, String subscribe_key, String secret_key,
 			boolean ssl_on) {
 		this.init(publish_key, subscribe_key, secret_key, "", ssl_on);
 	}
 
-    /**
-     * 
-     * Constructor for Pubnub Class
-     * 
-     * @param publish_key Publish Key
-     * @param subscribe_key Subscribe Key
-     */
-	
+	/**
+	 * 
+	 * Constructor for Pubnub Class
+	 * 
+	 * @param publish_key
+	 *            Publish Key
+	 * @param subscribe_key
+	 *            Subscribe Key
+	 */
+
 	public Pubnub(String publish_key, String subscribe_key) {
 		this.init(publish_key, subscribe_key, "", "", false);
 	}
 
-    /**
-     * 
-     * Constructor for Pubnub Class
-     * 
-     * @param publish_key Publish Key
-     * @param subscribe_key Subscribe Key
-     * @param secret_key Secret Key
-     */
+	/**
+	 * 
+	 * Constructor for Pubnub Class
+	 * 
+	 * @param publish_key
+	 *            Publish Key
+	 * @param subscribe_key
+	 *            Subscribe Key
+	 * @param secret_key
+	 *            Secret Key
+	 */
 	public Pubnub(String publish_key, String subscribe_key, String secret_key) {
 		this.init(publish_key, subscribe_key, secret_key, "", false);
 	}
 
-    /**
-
-     * Initialize PubNub Object State.
-     * 
-     * @param publish_key
-     * @param subscribe_key
-     * @param secret_key
-     * @param cipher_key
-     * @param ssl_on
-     */
+	/**
+	 * 
+	 * Initialize PubNub Object State.
+	 * 
+	 * @param publish_key
+	 * @param subscribe_key
+	 * @param secret_key
+	 * @param cipher_key
+	 * @param ssl_on
+	 */
 	private void init(String publish_key, String subscribe_key,
 			String secret_key, String cipher_key, boolean ssl_on) {
 		this.PUBLISH_KEY = publish_key;
@@ -123,10 +139,10 @@ public class Pubnub {
 
 		if (subscriptions == null)
 			subscriptions = new Subscriptions();
-		
+
 		if (longPollConnManager == null)
 			longPollConnManager = new AsyncHttpManager("Long Poll");
-		
+
 		if (simpleConnManager == null)
 			simpleConnManager = new AsyncHttpManager("Simple");
 
@@ -136,25 +152,29 @@ public class Pubnub {
 		_headers.put("Accept-Encoding", "gzip");
 		_headers.put("Connection", "close");
 	}
-	
+
 	/**
-	 * Start heartbeat thread to check connectivity to pubnub servers
-	 * Calls to pubnub api's will return network error, when heartbeat
-	 * is on and pubnub servers are not reachable
+	 * Start heartbeat thread to check connectivity to pubnub servers Calls to
+	 * pubnub api's will return network error, when heartbeat is on and pubnub
+	 * servers are not reachable
 	 * 
 	 * @param interval
 	 */
 	public static void startHeartbeat(int interval) {
-	   AsyncHttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0", interval);
+		AsyncHttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0",
+				interval);
 	}
 
-    /**
-     * Send a message to a channel.
-     * 
-     * @param channel Channel name
-     * @param message JSONObject to be published
-     * @param callback Callback 
-     */
+	/**
+	 * Send a message to a channel.
+	 * 
+	 * @param channel
+	 *            Channel name
+	 * @param message
+	 *            JSONObject to be published
+	 * @param callback
+	 *            Callback
+	 */
 	public void publish(String channel, JSONObject message, Callback callback) {
 		Hashtable args = new Hashtable();
 		args.put("channel", channel);
@@ -163,22 +183,25 @@ public class Pubnub {
 		publish(args);
 	}
 
-    /**
-     * Send a message to a channel.
-     * 
-     * @param args Hashtable containing channel name, message.
-     * @param callback Callback
-     */
+	/**
+	 * Send a message to a channel.
+	 * 
+	 * @param args
+	 *            Hashtable containing channel name, message.
+	 * @param callback
+	 *            Callback
+	 */
 	public void publish(Hashtable args, Callback callback) {
 		args.put("callback", callback);
 		publish(args);
 	}
 
-    /**
-     * Send a message to a channel.
-     * 
-     * @param args Hashtable containing channel name, message, callback
-     */
+	/**
+	 * Send a message to a channel.
+	 * 
+	 * @param args
+	 *            Hashtable containing channel name, message, callback
+	 */
 	public void publish(Hashtable args) {
 
 		final String channel = (String) args.get("channel");
@@ -187,9 +210,10 @@ public class Pubnub {
 		System.out.println("CIPHER KEY length : " + this.CIPHER_KEY.length());
 		if (message instanceof JSONObject) {
 			JSONObject obj = (JSONObject) message;
-			
+
 			if (this.CIPHER_KEY.length() > 0) {
-				System.out.println("CIPHER KEY length : " + this.CIPHER_KEY.length());
+				System.out.println("CIPHER KEY length : "
+						+ this.CIPHER_KEY.length());
 				// Encrypt Message
 				PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
 				message = pc.encrypt(obj);
@@ -230,9 +254,9 @@ public class Pubnub {
 		if (this.SECRET_KEY.length() > 0) {
 			StringBuffer string_to_sign = new StringBuffer();
 			string_to_sign.append(this.PUBLISH_KEY).append('/')
-					.append(this.SUBSCRIBE_KEY).append('/')
-					.append(this.SECRET_KEY).append('/').append(channel)
-					.append('/').append(message.toString());
+			.append(this.SUBSCRIBE_KEY).append('/')
+			.append(this.SECRET_KEY).append('/').append(channel)
+			.append('/').append(message.toString());
 
 			// Sign Message
 			signature = PubnubCrypto.getHMacSHA256(this.SECRET_KEY,
@@ -240,36 +264,274 @@ public class Pubnub {
 		}
 
 		String[] urlComponents = { this.ORIGIN, "publish", this.PUBLISH_KEY,
-				this.SUBSCRIBE_KEY, signature, channel, "0", PubnubUtil.urlEncode(message.toString())};
+				this.SUBSCRIBE_KEY, signature, channel, "0",
+				PubnubUtil.urlEncode(message.toString()) };
 
 		Request req = new Request(urlComponents, channel,
 				new ResponseHandler() {
-					public void handleResponse(String response) {
-						JSONArray jsarr;
-						try {
-							jsarr = new JSONArray(response);
-						} catch (JSONException e) {
-							handleError(response);
-							return;
-						}
-						callback.successCallback(channel, jsarr);
-					}
+			public void handleResponse(String response) {
+				JSONArray jsarr;
+				try {
+					jsarr = new JSONArray(response);
+				} catch (JSONException e) {
+					handleError(response);
+					return;
+				}
+				callback.successCallback(channel, jsarr);
+			}
 
-					public void handleError(String response)  {
-						JSONArray jsarr;
-						try {
-							jsarr = new JSONArray(response);
-						} catch (JSONException e) {
-							jsarr = new JSONArray();
-							jsarr.put("0").put("Error: Failed JSON HTTP Request");
-							callback.errorCallback(channel, jsarr);
-						}
+			public void handleError(String response) {
+				JSONArray jsarr;
+				try {
+					jsarr = new JSONArray(response);
+				} catch (JSONException e) {
+					jsarr = new JSONArray();
+					jsarr.put("0").put(
+							"Error: Failed JSON HTTP Request");
+					callback.errorCallback(channel, jsarr);
+				}
 
-					}
-				});
+			}
+		});
 
 		_request(req, simpleConnManager);
 	}
+	
+    /**
+     * 
+     * Listen for presence of subscribers on a channel
+     * 
+     * @param channel Name of the channel on which to listen for join/leave i.e. presence events
+     * @param callback Callback 
+     * @exception PubnubException Throws PubnubException if Callback is null
+     */
+    public void presence(String channel, Callback callback)
+    throws PubnubException {
+        Hashtable args = new Hashtable(2);
+        args.put("channel", channel + "-pnpres");
+        args.put("callback", callback);
+        subscribe(args);
+    }
+
+    /**
+     * 
+     * Read presence information from a channel
+     * 
+     * @param channel Channel name
+     * @param requestTimeout timeout in milliseconds for this request
+     */
+    public void hereNow(final String channel, final Callback callback) {
+    	
+        String[] urlargs = { this.ORIGIN, "v2", "presence", "sub_key", this.SUBSCRIBE_KEY,
+                "channel", channel };
+        
+        Request req = new Request(urlargs, (String)null,new ResponseHandler(){
+
+			public void handleResponse(String response) {
+				callback.successCallback(channel, response);
+				
+			}
+
+			public void handleError(String response) {
+				callback.errorCallback(channel, response);
+				
+			}
+        	
+        });
+        
+        _request(req,simpleConnManager);
+    }
+
+    /**
+     * 
+     * Read history from a channel.
+     * 
+     * @param channel Channel Name
+     * @param limit Upper limit on number of messages in response
+     * @param requestTimeout timeout in milliseconds for this request
+     * @return JSONArray of message history on a channel.
+     */
+    public void history(String channel, int limit, Callback callback) {
+    	Hashtable args = new Hashtable(2);
+        args.put("channel", channel);
+        args.put("limit", String.valueOf(limit));
+        args.put("callback", callback);
+        history(args);
+    }
+
+    /**
+     * 
+     * Read history from a channel.
+     * 
+     * @param args HashMap of <String, Object> containing channel name, limit history count
+     * @param requestTimeout timeout in milliseconds for this request
+     * @return JSONArray of history.
+     */
+    private void history(Hashtable args) {
+
+        final String channel = (String) args.get("channel");
+        String limit = (String) args.get("limit");
+        final Callback callback = (Callback) args.get("callback");
+
+        String[] urlargs = { this.ORIGIN, "history", this.SUBSCRIBE_KEY, channel, "0",
+                limit};
+
+        Request req = new Request(urlargs, channel, new ResponseHandler(){
+
+			public void handleResponse(String response) {
+				callback.successCallback(channel, response);
+				
+			}
+
+			public void handleError(String response) {
+				callback.errorCallback(channel, response);
+				
+			}
+        	
+        });
+        _request(req, simpleConnManager);
+    }
+
+	
+	/**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param end End time
+     * @param count Upper limit on number of messages to be returned
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
+    public void detailedHistory(final String channel, long start, long end,
+            int count, boolean reverse, final Callback callback) {
+    	Hashtable parameters = new Hashtable();
+        if (count == -1)
+            count = 100;
+
+        parameters.put("count", String.valueOf(count));
+        parameters.put("reverse", String.valueOf(reverse));
+        
+        if (start != -1)
+            parameters.put("start", Long.toString(start).toLowerCase());
+
+        if (end != -1)
+        	parameters.put("end", Long.toString(end).toLowerCase());
+
+        String[] urlargs = { this.ORIGIN, "v2", "history", "sub-key", this.SUBSCRIBE_KEY,
+                "channel", channel };
+        
+        Request req = new Request(urlargs, parameters, channel,new ResponseHandler(){
+
+			public void handleResponse(String response) {
+				callback.successCallback(channel, response);
+				
+			}
+
+			public void handleError(String response) {
+				callback.errorCallback(channel, response);
+				
+			}
+        	
+        });
+        _request(req, simpleConnManager);
+    }
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
+    public void detailedHistory(String channel, long start, boolean reverse, Callback callback) {
+        detailedHistory(channel, start, -1, -1, reverse, callback);
+    }
+    
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param end End time
+     * @return JSONArray of detailed history.
+     */
+    public void detailedHistory(String channel, long start, long end, Callback callback) {
+       detailedHistory(channel, start, end, -1, false, callback);
+    }
+    
+   
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param start Start time 
+     * @param end End time
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
+    public void detailedHistory(String channel, long start, long end,
+            boolean reverse, Callback callback) {
+        detailedHistory(channel, start, end, -1, reverse, callback);
+    }
+    
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param count Upper limit on number of messages to be returned
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
+    public void detailedHistory(String channel, int count, boolean reverse, Callback callback) {
+        detailedHistory(channel, -1, -1, count, reverse, callback);
+    }
+    
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
+    public void detailedHistory(String channel, boolean reverse, Callback callback) {
+       detailedHistory(channel, -1, -1, -1, reverse, callback);
+    }
+    
+    /**
+     * 
+     * Read DetailedHistory for a channel.
+     * @param channel Channel name for which detailed history is required
+     * @param reverse True if messages need to be in reverse order
+     * @return JSONArray of detailed history.
+     */
+    public void detailedHistory(String channel, int count, Callback callback) {
+       detailedHistory(channel, -1, -1, count, false, callback);
+    }
+
+    /**
+     * Read current time from PubNub Cloud.
+     * 
+     * @return current timestamp.
+     */
+    public void time(final Callback cb) {
+
+        String[] url = { this.ORIGIN, "time", "0" };
+        Request req = new Request(url, (String)null, new ResponseHandler() {
+
+			public void handleResponse(String response) {
+				cb.successCallback(null, response);
+			}
+
+			public void handleError(String response) {
+				cb.errorCallback(null, response);
+			}
+        	
+        });
+
+        _request(req,simpleConnManager);
+    }
+
 
 	private boolean inputsValid(Hashtable args) throws PubnubException {
 		boolean channelMissing;
@@ -278,28 +540,66 @@ public class Pubnub {
 		}
 		Object _channels = args.get("channels");
 		Object _channel = args.get("channel");
-		
-		channelMissing = ((_channel == null || _channel.equals("")) &&
-						  (_channels == null || _channels.equals("")))?true:false;
-		
+
+		channelMissing = ((_channel == null || _channel.equals("")) && (_channels == null || _channels
+				.equals(""))) ? true : false;
+
 		if (channelMissing) {
 			throw new PubnubException("Channel Missing");
 		}
 		return true;
 	}
 
-    /**
-     * 
-     * Listen for a message on a channel.
-     * 
-     * @param args Hashtable containing channel name
-     * @param callback Callback
-     * @exception PubnubException Throws PubnubException if Callback is null
-     */
+	/**
+	 * Unsubscribe/Disconnect from channel.
+	 * 
+	 * @param channels
+	 *            String[] array containing channel names as string.
+	 */
+	public void unsubscribe(String[] channels) {
+		for (int i = 0; i < channels.length; i++) {
+			subscriptions.removeChannel(channels[i]);	
+		}
+	}
+
+	/**
+	 * Unsubscribe/Disconnect from channel.
+	 * 
+	 * @param channel
+	 *            channel name as String.
+	 */
+	public void unsubscribe(String channel) {
+		unsubscribe(new String[] { channel });
+	}
+
+	/**
+	 * Unsubscribe/Disconnect from channel.
+	 * 
+	 * @param args
+	 *            Hashtable containing channel name.
+	 */
+	public void unsubscribe(Hashtable args) {
+		String[] channelList = (String[]) args.get("channels");
+		if (channelList == null) {
+			channelList = new String[] { (String) args.get("channel") };
+		}
+		unsubscribe(channelList);
+	}
+
+	/**
+	 * 
+	 * Listen for a message on a channel.
+	 * 
+	 * @param args
+	 *            Hashtable containing channel name
+	 * @param callback
+	 *            Callback
+	 * @exception PubnubException
+	 *                Throws PubnubException if Callback is null
+	 */
 	public void subscribe(Hashtable args, Callback callback)
 			throws PubnubException {
 
-		
 		args.put("callback", callback);
 
 		if (!inputsValid(args)) {
@@ -309,13 +609,15 @@ public class Pubnub {
 		_subscribe(args);
 	}
 
-    /**
-     * 
-     * Listen for a message on a channel.
-     * 
-     * @param args Hashtable containing channel name, callback
-     * @exception PubnubException Throws PubnubException if Callback is null
-     */
+	/**
+	 * 
+	 * Listen for a message on a channel.
+	 * 
+	 * @param args
+	 *            Hashtable containing channel name, callback
+	 * @exception PubnubException
+	 *                Throws PubnubException if Callback is null
+	 */
 	public void subscribe(Hashtable args) throws PubnubException {
 
 		if (!inputsValid(args)) {
@@ -326,14 +628,17 @@ public class Pubnub {
 		_subscribe(args);
 	}
 
-    /**
-     * 
-     * Listen for a message on a channel.
-     * 
-     * @param channelsArr Array of channel names (string) to listen on
-     * @param callback Callback
-     * @exception PubnubException Throws PubnubException if Callback is null
-     */
+	/**
+	 * 
+	 * Listen for a message on a channel.
+	 * 
+	 * @param channelsArr
+	 *            Array of channel names (string) to listen on
+	 * @param callback
+	 *            Callback
+	 * @exception PubnubException
+	 *                Throws PubnubException if Callback is null
+	 */
 	public void subscribe(String[] channelsArr, Callback callback)
 			throws PubnubException {
 
@@ -352,13 +657,14 @@ public class Pubnub {
 	}
 
 	/**
-	 * @param args Hashtable
+	 * @param args
+	 *            Hashtable
 	 */
 	private void _subscribe(Hashtable args) {
 
 		String[] channelList = (String[]) args.get("channels");
 		if (channelList == null) {
-			channelList = new String[]{(String) args.get("channel")};
+			channelList = new String[] { (String) args.get("channel") };
 		}
 		Callback callback = (Callback) args.get("callback");
 		String timetoken = (String) args.get("timetoken");
@@ -388,9 +694,9 @@ public class Pubnub {
 		_subscribe_base(timetoken);
 	}
 
-
 	/**
-	 * @param timetoken, Timetoken to be used
+	 * @param timetoken
+	 *            , Timetoken to be used
 	 */
 	private void _subscribe_base(String timetoken) {
 		System.out.println("In _subscribe_base");
@@ -410,71 +716,73 @@ public class Pubnub {
 
 		Request req = new Request(urlComponents, params, channelsArray,
 				new ResponseHandler() {
-					String _timetoken = "0";
-					public void handleResponse(String response) {
-						
-						subscriptions.invokeConnectCallbackOnChannels();
+			String _timetoken = "0";
 
+			public void handleResponse(String response) {
+
+				subscriptions.invokeConnectCallbackOnChannels();
+
+				/*
+				 * Check if response has channel names. A JSON response
+				 * with more than 2 items means the response contains
+				 * the channel names as well. The channel names are in a
+				 * comma delimted string. Call success callback on all
+				 * he channels passing the corresponding response
+				 * message.
+				 */
+
+				JSONArray jsa;
+				try {
+					jsa = new JSONArray(response);
+					String _timetoken = jsa.get(1).toString();
+					JSONArray messages = new JSONArray(jsa.get(0)
+							.toString());
+
+					if (jsa.length() > 2) {
 						/*
-						 * Check if response has channel names. A JSON response
-						 * with more than 2 items means the response contains
-						 * the channel names as well. The channel names are in a
-						 * comma delimted string. Call success callback on all
-						 * he channels passing the corresponding response
-						 * message.
+						 * Response has multiple channels
 						 */
 
-						JSONArray jsa;
-						try {
-							jsa = new JSONArray(response);
-							String _timetoken = jsa.get(1).toString();
-							JSONArray messages = new JSONArray(jsa.get(0)
-									.toString());
+						String[] _channels = PubnubUtil.splitString(
+								jsa.getString(2), ",");
+						System.out.println(_channels.length);
 
-							if (jsa.length() > 2) {
-								/*
-								 * Response has multiple channels
-								 */
+						for (int i = 0; i < _channels.length; i++) {
+							Channel _channel = (Channel) subscriptions
+									.getChannel(_channels[i]);
+							if (_channel != null)
+								_channel.callback.successCallback(
+										_channels[i], messages.get(i));
+						}
 
-								String[] _channels = PubnubUtil.splitString(
-										jsa.getString(2), ",");
-								System.out.println(_channels.length);
+					} else {
+						/*
+						 * Response for single channel Callback on
+						 * single channel
+						 */
+						Channel _channel = subscriptions
+								.getFirstChannel();
 
-								for (int i = 0; i < _channels.length; i++) {
-									Channel _channel = (Channel) subscriptions
-											.getChannel(_channels[i]);
-									if (_channel != null)
-										_channel.callback.successCallback(
-												_channels[i], messages.get(i));
-								}
-
-							} else {
-								/*
-								 * Response for single channel Callback on
-								 * single channel
-								 */
-								Channel _channel = subscriptions.getFirstChannel();
-
-								if (_channel != null) {
-								for (int i = 0; i < messages.length(); i++) {
-									_channel.callback.successCallback(
-											_channel.name, messages.get(i));
-								}
-								}
-
+						if (_channel != null) {
+							for (int i = 0; i < messages.length(); i++) {
+								_channel.callback.successCallback(
+										_channel.name, messages.get(i));
 							}
-							_subscribe_base(_timetoken);
-						} catch (JSONException e) {
-							_subscribe_base(_timetoken);
 						}
 
 					}
+					_subscribe_base(_timetoken);
+				} catch (JSONException e) {
+					_subscribe_base(_timetoken);
+				}
 
-					public void handleError(String response) {
-						subscriptions.invokeDisconnectCallbackOnChannels();
-						_subscribe_base(_timetoken);
-					}
-				});
+			}
+
+			public void handleError(String response) {
+				subscriptions.invokeDisconnectCallbackOnChannels();
+				_subscribe_base(_timetoken);
+			}
+		});
 
 		_request(req, longPollConnManager);
 	}
@@ -484,7 +792,7 @@ public class Pubnub {
 	 * @param connManager
 	 */
 	private void _request(final Request req, AsyncHttpManager connManager) {
-		
+
 		HttpCallback callback = new HttpCallback(req.getUrl(), _headers) {
 			public void OnComplete(HttpConnection hc, int statusCode,
 					String response) throws IOException {
