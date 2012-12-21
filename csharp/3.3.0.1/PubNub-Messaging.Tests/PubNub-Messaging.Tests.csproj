@@ -55,7 +55,7 @@
         <Reference Include="System.Core" />
       </ItemGroup>
     </When>
-    <When Condition=" '$(TargetFrameworkVersion.Replace(&quot;v&quot;,&quot;&quot;))' == '4.0' Or '$(TargetFrameworkVersion.Replace(&quot;v&quot;,&quot;&quot;))' == '4.5' ">
+    <When Condition=" '$(TargetFrameworkVersion.Replace(&quot;v&quot;,&quot;&quot;))' == '4.0' ">
       <PropertyGroup>
         <ConfigTemplate>
           <Configuration>
@@ -85,7 +85,6 @@
   <ItemGroup>
     <Compile Include="EncryptionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PubnubUnitTest.cs" />
     <Compile Include="WhenAClientIsPresented.cs" />
     <Compile Include="WhenAMessageIsPublished.cs" />
     <Compile Include="WhenDetailedHistoryIsRequested.cs" />

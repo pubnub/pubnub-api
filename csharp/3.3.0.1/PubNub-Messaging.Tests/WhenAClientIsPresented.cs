@@ -20,7 +20,6 @@ namespace PubNub_Messaging.Tests
         ManualResetEvent manualEvent3 = new ManualResetEvent(false);
 
         ManualResetEvent manualEvent4 = new ManualResetEvent(false);
-        ManualResetEvent preUnsubEvent = new ManualResetEvent(false);
 
         static bool receivedFlag1 = false;
         static bool receivedFlag2 = false;
@@ -31,12 +30,6 @@ namespace PubNub_Messaging.Tests
             receivedFlag1 = false;
 
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
-            
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenAClientIsPresented";
-            unitTest.TestCaseName = "ThenPresenceShouldReturnReceivedMessage";
-            pubnub.PubnubUnitTest = unitTest;
-            
             string channel = "my/channel";
 
             pubnub.presence<string>(channel, ThenPresenceShouldReturnMessage);
@@ -49,10 +42,6 @@ namespace PubNub_Messaging.Tests
             manualEvent3.WaitOne(2000);
 
             manualEvent2.WaitOne(310 * 1000);
-
-            pubnub.presence_unsubscribe<string>(channel, DummyMethodForPreUnSub);
-            preUnsubEvent.WaitOne();
-            
             Assert.IsTrue(receivedFlag1, "Presence message not received");
         }
 
@@ -86,10 +75,6 @@ namespace PubNub_Messaging.Tests
             receivedFlag2 = false;
 
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenAClientIsPresented";
-            unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
-            pubnub.PubnubUnitTest = unitTest;
             string channel = "my/channel";
             pubnub.here_now<string>(channel, ThenHereNowShouldReturnMessage);
             manualEvent4.WaitOne();
@@ -127,11 +112,6 @@ namespace PubNub_Messaging.Tests
         {
             manualEvent3.Set();
             //Dummary callback method for unsubscribe to test presence
-        }
-
-        void DummyMethodForPreUnSub(string receivedMessage)
-        {
-            preUnsubEvent.Set();
         }
     }
 }

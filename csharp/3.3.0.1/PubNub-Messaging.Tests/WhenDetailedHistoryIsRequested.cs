@@ -34,13 +34,6 @@ namespace PubNub_Messaging.Tests
             msg10Received = false;
 
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
-
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-            unitTest.TestCaseName = "DetailHistoryCount10ReturnsRecords";
-
-            pubnub.PubnubUnitTest = unitTest;
-
             string channel = "my/channel";
 
             pubnub.detailedHistory<string>(channel, 10, DetailedHistoryCount10Callback);
@@ -75,13 +68,6 @@ namespace PubNub_Messaging.Tests
             msg10ReverseTrueReceived = false;
 
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
-
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-            unitTest.TestCaseName = "DetailHistoryCount10ReverseTrueReturnsRecords";
-
-            pubnub.PubnubUnitTest = unitTest;
-
             string channel = "my/channel";
 
             pubnub.detailedHistory<string>(channel, -1, -1, 10, true, DetailedHistoryCount10ReverseTrueCallback);
@@ -116,25 +102,17 @@ namespace PubNub_Messaging.Tests
             expectedCountAtStartTimeWithReverseTrue = 0;
             msgStartReverseTrue = false;
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
-
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-            unitTest.TestCaseName = "DetailedHistoryStartWithReverseTrue";
-
-            pubnub.PubnubUnitTest = unitTest;
-
-
             string channel = "my/channel";
-            startTimeWithReverseTrue = Pubnub.translateDateTimeToPubnubUnixNanoSeconds(new DateTime(2012,12,1));
+            startTimeWithReverseTrue = Pubnub.translateDateTimeToPubnubUnixNanoSeconds(DateTime.UtcNow);
             for (int index = 0; index < 10; index++)
             {
                 pubnub.publish<string>(channel, 
-                    string.Format("DetailedHistoryStartTimeWithReverseTrue {0}", index), 
+                    string.Format("DetailedHistoryStartTimeWithReverseTrue {0} {1}", startTimeWithReverseTrue, index), 
                     DetailedHistorySamplePublishCallback);
-                mrePublishStartReverseTrue.WaitOne();
+                mrePublishStartReverseTrue.WaitOne(5000);
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(5000);
 
             pubnub.detailedHistory<string>(channel, startTimeWithReverseTrue, DetailedHistoryStartWithReverseTrueCallback, true);
             mreMsgStartReverseTrue.WaitOne(310 * 1000);
@@ -152,11 +130,12 @@ namespace PubNub_Messaging.Tests
                     JArray jArr = receivedObj[0] as JArray;
                     if (jArr != null)
                     {
+                        //object[] historyObj = (object[])receivedObj[0];
                         if (jArr.Count >= expectedCountAtStartTimeWithReverseTrue)
                         {
                             foreach (object item in jArr)
                             {
-                                if (item.ToString().Contains("DetailedHistoryStartTimeWithReverseTrue"))
+                                if (item.ToString().Contains(string.Format("DetailedHistoryStartTimeWithReverseTrue {0}", startTimeWithReverseTrue)))
                                 {
                                     actualCountAtStartTimeWithReverseFalse++;
                                 }

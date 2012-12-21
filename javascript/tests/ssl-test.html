@@ -4,13 +4,15 @@
 <div id="output"></div>
 
 <div id=pubnub ssl=on pub-key=demo sub-key=demo></div>
-<script src=../pubnub-3.4.js></script>
+<script src=http://pubnub.s3.amazonaws.com/pubnub-3.1.min.js></script>
+
+<!-- <script src="http://cdn.pubnub.com/pubnub-3.1.min.js"></script> -->
 <script>
     var p       = PUBNUB.init({ 'subscribe_key': 'demo', 'publish_key': 'demo', ssl : true })
     ,   out     = p.$('output')
     ,   now     = function(){return+new Date}
     ,   start   = now()
-    ,   channel = 'UTF8 (顶頴ģŃՃ) ~!@#$%^&*()_+`-=\\][{}\'";:./<>?';
+    ,   channel = 'UTF8 (顶頴ģŃՃ) ~!@#$%^&*()_+`-=\\][{}\'";:,./<>?';
 
     var log = function(data) {
         out.innerHTML += '<p>' + (now()-start) + 'ms - ' + data + '</p>';
