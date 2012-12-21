@@ -1,7 +1,7 @@
 ###YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 ###http://www.pubnub.com/account
 
-## PubNub 3.3 Real-time Cloud Push API - PHP
+## PubNub 3.4 Real-time Cloud Push API - PHP
 
 www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/blog/php-push-api-walkthrough

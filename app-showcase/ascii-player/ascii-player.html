@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+    <title>PubNub ASCII Movie Player</title>
+    <style>
+    #pubnub-terminal {
+        position: relative;
+        width: 978px;
+        height: 576px;
+        background:
+            transparent
+            url(http://pubnub.s3.amazonaws.com/2012/pubnub-terminal.png);
+    }
+    #pubnub-terminal-out {
+        cursor: default;
+        font-family: Monaco, mono;
+        font-size: 16px;
+        font-weight: 700;
+        white-space: pre;
+        overflow: hidden;
+        position: absolute;
+        top: 60px;
+        left: 60px;
+        width: 857px;
+        height: 410px;
+        color: #e8e7e1;
+    }
+    </style>
+</head>
+<body>
+
+<!-- PUBNUB TERMINAL -->
+<div id=pubnub-terminal>
+<div id=pubnub-terminal-out>
+pubnub ascii movie player loading...
+</div>
+</div>
+
+<!-- PUBNUB SOURCE -->
+<script src=https://pubnub.s3.amazonaws.com/pubnub-3.4.min.js></script>
+<script>(function(){
+
+/* GENERATE CHANNEL */
+var channel = PUBNUB.uuid()
+,   pub_key = 'pub-7d598eb7-1523-4c72-9786-d8650a856bf5'
+,   sub_key = 'sub-041c0011-6d41-11e1-8b07-35f1f17243aa'
+,   out     = PUBNUB.$('pubnub-terminal-out')
+,   p       = PUBNUB.init({ subscribe_key : sub_key });
+
+/* OPEN RECEIVE SOCKET */
+p.subscribe({
+    channel : channel,
+    message : function(data) { out.innerHTML = parse(data)||'' }
+});
+
+function parse(data) { try{return JSON.parse(data)} catch(e){} }
+
+/* START THE MOVIE STREAM */
+(function(){
+    var img = p.create('img');
+    img.src = p.supplant([
+        'http:','','23.23.187.160:9050',
+        'v1','replay','{pub_key}',
+        '{sub_key}','{src_channel}',
+        '{des_channel}'
+    ].join('/'), {
+        pub_key     : pub_key,
+        sub_key     : sub_key,
+        des_channel : channel,
+        src_channel : '0cefce37-606c-4eae-a9e9-aff35186b854'
+    } );
+    p.css( img, { display : 'none' } );
+    p.search('body')[0].appendChild(img);
+})();
+
+})();</script>
+</body>
+</html>

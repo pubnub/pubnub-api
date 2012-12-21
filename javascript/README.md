@@ -10,7 +10,7 @@ You need this to run './test.sh' unit test.
 This is completely optional, however we love Testling.
 
 
-## PubNub 3.3.1 Real-time Cloud Push API - JAVASCRIPT
+## PubNub 3.4 Real-time Cloud Push API - JAVASCRIPT
 http://www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/tutorial/javascript-push-api
 
@@ -24,13 +24,13 @@ business collaborative solutions, and more.
 ## SIMPLE EXAMPLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=http://cdn.pubnub.com/pubnub-3.3.1.min.js ></script>
+<script src=http://cdn.pubnub.com/pubnub-3.4.min.js ></script>
 <script>
 
     // LISTEN
     PUBNUB.subscribe({
         channel  : "hello_world",
-        callback : alert
+        callback : function(m){ alert(m) }
     })
 
     // SEND
@@ -45,7 +45,7 @@ business collaborative solutions, and more.
 ## ADVANCED STYLE
 ```html
 <div id=pubnub pub-key=demo sub-key=demo></div>
-<script src=http://pubnub.s3.amazonaws.com/pubnub-3.3.1.min.js ></script>
+<script src=http://pubnub.s3.amazonaws.com/pubnub-3.4.min.js ></script>
 <script>(function(){
     // LISTEN FOR MESSAGES
     PUBNUB.subscribe({
@@ -105,7 +105,7 @@ business collaborative solutions, and more.
 
 ```html
 <div id=pubnub ssl=on></div>
-<script src=https://pubnub.a.ssl.fastly.net/pubnub-3.3.1.min.js></script>
+<script src=https://pubnub.a.ssl.fastly.net/pubnub-3.4.min.js></script>
 <script>(function(){
 
     var pubnub = PUBNUB.init({
@@ -127,13 +127,12 @@ business collaborative solutions, and more.
 ```
 
 ## Using the PUBNUB init() Function
-
 Sometimes you want to use create a PubNub Instance directly in JavaScript
 and pass the PubNub API Keys without using a DOM element.
 To do this, simply follow this `init` example:
 
 ```html
-<script src=http://cdn.pubnub.com/pubnub-3.3.1.min.js ></script>
+<script src=http://cdn.pubnub.com/pubnub-3.4.min.js ></script>
 <script>(function(){
 
     // INIT PubNub
@@ -144,11 +143,36 @@ To do this, simply follow this `init` example:
     });
 
     // LISTEN
-    pubnub.subscribe({ channel  : "hello_world", callback : alert })
+    pubnub.subscribe({ channel  : "hello_world", message : function(m){ alert(m) } })
+ 
 
     // SEND
     pubnub.publish({ channel : "hello_world", message : "Hi." })
 
 })();</script>
 ```
+## Using with AES256 Encryption
+This client now supports AES256 encryption out of the box! And its super-easy to use! Check out the
+file encrypted_chat_demo.html for a working example of using encryption between this and other PubNub clients.
 
+Important highlights:
+
+1. Be sure to include the base pubnub.js, gibberish, and encryption adapter:
+```javascript
+<script src="http://cdn.pubnub.com/pubnub-3.4.min.js"></script>
+<script src="crypto/gibberish-aes.js"></script>
+<script src="crypto/encrypt-pubnub.js"></script>
+```
+
+2. When instantiating your PubNub instance object, use the .secure method instead of the .init method:
+```javascript
+var cipher_key = "enigma";
+var secure_pubnub = PUBNUB.secure({
+    publish_key   : "demo",
+    subscribe_key : "demo",
+    cipher_key    : cipher_key
+});
+```
+
+That's pretty much it. Use subscribe, publish, and history as you would normally, only the implementation is different,
+being that the message traffic is now encrypted.
