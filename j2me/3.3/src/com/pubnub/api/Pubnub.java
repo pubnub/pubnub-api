@@ -13,6 +13,11 @@ import com.pubnub.asynchttp.AsyncHttpManager;
 import com.pubnub.asynchttp.HttpCallback;
 import com.pubnub.crypto.me.PubnubCrypto;
 
+/**
+ * Pubnub object facilitates querying channels for messages and listening on channels for presence/message events
+ * @author Pubnub
+ * 
+ */
 
 public class Pubnub {
 
@@ -34,88 +39,70 @@ public class Pubnub {
 	}
 
 	/**
-	 * PubNub 3.1 with Cipher Key
-	 * 
-	 * Prepare PubNub State.
-	 * 
-	 * @param String
-	 *            Publish Key.
-	 * @param String
-	 *            Subscribe Key.
-	 * @param String
-	 *            Secret Key.
-	 * @param String
-	 *            Cipher Key.
-	 * @param boolean SSL Enabled.
-	 */
+     * 
+     * Constructor for Pubnub Class
+     * 
+     * @param publish_key Publish Key
+     * @param subscribe_key Subscribe Key
+     * @param secret_key Secret Key
+     * @param cipher_key Cipher Key
+     * @param ssl_on SSL enabled ?
+     */
+	
 	public Pubnub(String publish_key, String subscribe_key, String secret_key,
 			String cipher_key, boolean ssl_on) {
 		this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
 	}
 
-	/**
-	 * PubNub 3.0 with SSL
-	 * 
-	 * Prepare PubNub Class State.
-	 * 
-	 * @param String
-	 *            Publish Key.
-	 * @param String
-	 *            Subscribe Key.
-	 * @param String
-	 *            Secret Key.
-	 * @param boolean SSL Enabled.
-	 */
+    /**
+     * 
+     * Constructor for Pubnub Class
+     * 
+     * @param publish_key Publish Key
+     * @param subscribe_key Subscribe Key
+     * @param secret_key Secret Key
+     * @param ssl_on SSL enabled ?
+     */
+	
 	public Pubnub(String publish_key, String subscribe_key, String secret_key,
 			boolean ssl_on) {
 		this.init(publish_key, subscribe_key, secret_key, "", ssl_on);
 	}
 
-	/**
-	 * PubNub 2.0 without Secret Key and SSL
-	 * 
-	 * Prepare PubNub Class State.
-	 * 
-	 * @param String
-	 *            Publish Key.
-	 * @param String
-	 *            Subscribe Key.
-	 */
+    /**
+     * 
+     * Constructor for Pubnub Class
+     * 
+     * @param publish_key Publish Key
+     * @param subscribe_key Subscribe Key
+     */
+	
 	public Pubnub(String publish_key, String subscribe_key) {
 		this.init(publish_key, subscribe_key, "", "", false);
 	}
 
-	/**
-	 * PubNub 3.0 without SSL
-	 * 
-	 * Prepare PubNub Class State.
-	 * 
-	 * @param String
-	 *            Publish Key.
-	 * @param String
-	 *            Subscribe Key.
-	 * @param String
-	 *            Secret Key.
-	 */
+    /**
+     * 
+     * Constructor for Pubnub Class
+     * 
+     * @param publish_key Publish Key
+     * @param subscribe_key Subscribe Key
+     * @param secret_key Secret Key
+     */
 	public Pubnub(String publish_key, String subscribe_key, String secret_key) {
 		this.init(publish_key, subscribe_key, secret_key, "", false);
 	}
 
-	/**
-	 * Init
-	 * 
-	 * Prepare PubNub Class State.
-	 * 
-	 * @param String
-	 *            Publish Key.
-	 * @param String
-	 *            Subscribe Key.
-	 * @param String
-	 *            Secret Key.
-	 * @param String
-	 *            Cipher Key.
-	 * @param boolean SSL Enabled.
-	 */
+    /**
+
+     * Initialize PubNub Object State.
+     * 
+     * @param publish_key
+     * @param subscribe_key
+     * @param secret_key
+     * @param cipher_key
+     * @param ssl_on
+     */
 	private void init(String publish_key, String subscribe_key,
 			String secret_key, String cipher_key, boolean ssl_on) {
 		this.PUBLISH_KEY = publish_key;
@@ -138,7 +125,7 @@ public class Pubnub {
 			subscriptions = new Subscriptions();
 		
 		if (longPollConnManager == null)
-			longPollConnManager = new AsyncHttpManager("Subscribe/Presence");
+			longPollConnManager = new AsyncHttpManager("Long Poll");
 		
 		if (simpleConnManager == null)
 			simpleConnManager = new AsyncHttpManager("Simple");
@@ -149,18 +136,25 @@ public class Pubnub {
 		_headers.put("Accept-Encoding", "gzip");
 		_headers.put("Connection", "close");
 	}
-
+	
 	/**
-	 * Publish
+	 * Start heartbeat thread to check connectivity to pubnub servers
+	 * Calls to pubnub api's will return network error, when heartbeat
+	 * is on and pubnub servers are not reachable
 	 * 
-	 * Send a message to a channel.
-	 * 
-	 * @param String
-	 *            channel name.
-	 * @param JSONObject
-	 *            message.
-	 * @return JSONArray.
+	 * @param interval
 	 */
+	public static void startHeartbeat(int interval) {
+	   AsyncHttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0", interval);
+	}
+
+    /**
+     * Send a message to a channel.
+     * 
+     * @param channel Channel name
+     * @param message JSONObject to be published
+     * @param callback Callback 
+     */
 	public void publish(String channel, JSONObject message, Callback callback) {
 		Hashtable args = new Hashtable();
 		args.put("channel", channel);
@@ -169,31 +163,22 @@ public class Pubnub {
 		publish(args);
 	}
 
-	/**
-	 * Publish
-	 * 
-	 * Send a message to a channel.
-	 * 
-	 * @param String
-	 *            channel name.
-	 * @param JSONObject
-	 *            message.
-	 * @return JSONArray.
-	 */
+    /**
+     * Send a message to a channel.
+     * 
+     * @param args Hashtable containing channel name, message.
+     * @param callback Callback
+     */
 	public void publish(Hashtable args, Callback callback) {
 		args.put("callback", callback);
 		publish(args);
 	}
 
-	/**
-	 * Publish
-	 * 
-	 * Send a message to a channel.
-	 * 
-	 * @param HashMap
-	 *            <String, Object> containing channel name, message.
-	 * @return JSONArray.
-	 */
+    /**
+     * Send a message to a channel.
+     * 
+     * @param args Hashtable containing channel name, message, callback
+     */
 	public void publish(Hashtable args) {
 
 		final String channel = (String) args.get("channel");
@@ -270,10 +255,16 @@ public class Pubnub {
 						callback.successCallback(channel, jsarr);
 					}
 
-					public void handleError(String response) {
-						JSONArray jsarr = new JSONArray();
-						jsarr.put("0").put("Error: Failed JSON HTTP Request");
-						callback.errorCallback(channel, jsarr);
+					public void handleError(String response)  {
+						JSONArray jsarr;
+						try {
+							jsarr = new JSONArray(response);
+						} catch (JSONException e) {
+							jsarr = new JSONArray();
+							jsarr.put("0").put("Error: Failed JSON HTTP Request");
+							callback.errorCallback(channel, jsarr);
+						}
+
 					}
 				});
 
@@ -297,14 +288,14 @@ public class Pubnub {
 		return true;
 	}
 
-	/**
-	 * Subscribe
-	 * 
-	 * Listen for a message on a channel.
-	 * 
-	 * @param HashMap
-	 *            <String, Object> containing channel name, function callback.
-	 */
+    /**
+     * 
+     * Listen for a message on a channel.
+     * 
+     * @param args Hashtable containing channel name
+     * @param callback Callback
+     * @exception PubnubException Throws PubnubException if Callback is null
+     */
 	public void subscribe(Hashtable args, Callback callback)
 			throws PubnubException {
 
@@ -318,14 +309,13 @@ public class Pubnub {
 		_subscribe(args);
 	}
 
-	/**
-	 * Subscribe
-	 * 
-	 * Listen for a message on a channel.
-	 * 
-	 * @param HashMap
-	 *            <String, Object> containing channel name, function callback.
-	 */
+    /**
+     * 
+     * Listen for a message on a channel.
+     * 
+     * @param args Hashtable containing channel name, callback
+     * @exception PubnubException Throws PubnubException if Callback is null
+     */
 	public void subscribe(Hashtable args) throws PubnubException {
 
 		if (!inputsValid(args)) {
@@ -336,14 +326,14 @@ public class Pubnub {
 		_subscribe(args);
 	}
 
-	/**
-	 * Subscribe
-	 * 
-	 * Listen for a message on a channel.
-	 * 
-	 * @param HashMap
-	 *            <String, Object> containing channel name, function callback.
-	 */
+    /**
+     * 
+     * Listen for a message on a channel.
+     * 
+     * @param channelsArr Array of channel names (string) to listen on
+     * @param callback Callback
+     * @exception PubnubException Throws PubnubException if Callback is null
+     */
 	public void subscribe(String[] channelsArr, Callback callback)
 			throws PubnubException {
 
@@ -362,13 +352,7 @@ public class Pubnub {
 	}
 
 	/**
-	 * Subscribe - Private Interface
-	 * 
-	 * Patch provided by petereddy on GitHub
-	 * 
-	 * @param HashMap
-	 *            <String, Object> containing channel name, function callback,
-	 *            timetoken.
+	 * @param args Hashtable
 	 */
 	private void _subscribe(Hashtable args) {
 
@@ -405,6 +389,9 @@ public class Pubnub {
 	}
 
 
+	/**
+	 * @param timetoken, Timetoken to be used
+	 */
 	private void _subscribe_base(String timetoken) {
 		System.out.println("In _subscribe_base");
 		String channelString = subscriptions.getChannelString();
@@ -478,6 +465,7 @@ public class Pubnub {
 							}
 							_subscribe_base(_timetoken);
 						} catch (JSONException e) {
+							_subscribe_base(_timetoken);
 						}
 
 					}
@@ -492,11 +480,8 @@ public class Pubnub {
 	}
 
 	/**
-	 * Request URL
-	 * 
-	 * @param List
-	 *            <String> request of url directories.
-	 * @return JSONArray from JSON response.
+	 * @param req
+	 * @param connManager
 	 */
 	private void _request(final Request req, AsyncHttpManager connManager) {
 		

@@ -14,7 +14,7 @@ import org.json.me.JSONObject;
 
 public class PubnubExample extends MIDlet implements CommandListener {
 
-	  private boolean midletPaused = false;
+	  	private boolean midletPaused = false;
 	    private Command exitCommand;
 	    private Command publishCommand;
 	    private Command subscribeCommand;
@@ -34,7 +34,6 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	     */
 	    public void startMIDlet() {
 	        switchDisplayable(null, getForm());
-	        //subscribe();
 	    }
 
 	    /**
@@ -163,6 +162,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	     * already started and initialize/starts or resumes the MIDlet.
 	     */
 	    public void startApp() {
+	    	Pubnub.startHeartbeat(5000);
 	        if (midletPaused) {
 	            resumeMIDlet();
 	        } else {
@@ -199,6 +199,9 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	            _pubnub.publish(args, new Callback() {
 	                public void successCallback(String channel, Object message) {
 	                    System.out.println(message.toString());
+	                }
+	                public void errorCallback(String channel, Object message) {
+	                    System.out.println(channel + " : " + message.toString());
 	                }
 	             });
 

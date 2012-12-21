@@ -3,6 +3,8 @@ package com.pubnub.asynchttp;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
@@ -26,6 +28,10 @@ public class AsyncHttpManager {
 		public void unavailable() {
 			available = false;
 		}
+	}
+	
+	public static void startHeartbeat(String url, int interval) {
+		new Thread(new Heartbeat(url, interval), "heartbeat").start();
 	}
 
 	public void cancel(HttpCallback cb) {
@@ -83,7 +89,7 @@ public class AsyncHttpManager {
 		}
 	}
 
-	private void close(HttpConnection hc) {
+	private static void close(HttpConnection hc) {
 		if (hc != null) {
 			try {
 				hc.close();
@@ -103,13 +109,13 @@ public class AsyncHttpManager {
 		}
 		_workers = new Worker[maxCalls];
 		for (int i = 0; i < maxCalls; ++i) {
+			System.out.println("Max workers : " + maxCalls);
 			Worker w = new Worker();
 			_workers[i] = w;
 			new Thread(w, name).start();
 		}
 		if (network == null) {
 			network = new Network();
-			new Thread(new Heartbeat(), "heartbeat").start();
 		}
 	}
 
@@ -129,8 +135,12 @@ public class AsyncHttpManager {
 
 	public void queue(AsyncHttpCallback cb, HttpConnection hc) {
 
+		if (!network.isAvailable())
+			try {
+				cb.errorCall(hc, 0, "[0,'Network Error']");
+			} catch (IOException e) {
+			}
 		cb.setConnManager(this);
-
 		synchronized (_waiting) {
 			AsyncConnection conn = new AsyncConnection(cb, hc);
 			_waiting.addElement(conn);
@@ -165,22 +175,25 @@ public class AsyncHttpManager {
 		private HttpConnection _httpconn;
 	}
 
-	private class Heartbeat implements Runnable {
+	private static class Heartbeat implements Runnable {
 		private boolean runHeartbeat = true;
-
+		private String heartbeatUrl;
+		private int heartbeatInterval;
+		public Heartbeat(String url, int interval) {
+			this.heartbeatUrl = url;
+			this.heartbeatInterval = interval;
+		}
 		public void run() {
 			while(runHeartbeat) {
 				HttpConnection hc = null;
 				try {
 
 					hc = (HttpConnection) Connector.open(
-							"http://pubsub.pubnub.com/time/0",
+							heartbeatUrl,
 							Connector.READ_WRITE, true);
 					hc.setRequestMethod(HttpConnection.GET);
 
-					int rc;
-
-					rc = hc.getResponseCode();
+					int rc =  hc.getResponseCode();
 					System.out.println("HEARTBEAT : " + rc);
 					if (rc == HttpConnection.HTTP_OK) {
 						network.available();
@@ -199,7 +212,7 @@ public class AsyncHttpManager {
 						close(hc);
 				}
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(heartbeatInterval);
 				} catch (InterruptedException e) {
 
 				}
@@ -217,13 +230,18 @@ public class AsyncHttpManager {
 		public boolean getDie() {
 			return _die;
 		}
+		private void interrupt() {
+			System.out.println("Interrupting self : " + Thread.currentThread().getName());
+			Thread.currentThread().interrupt();
+		}
 
 		private void process(AsyncConnection conn) {
 
 			AsyncHttpCallback cb = conn.getCallback();
 			String url = null;
+			HttpConnection hc = null;
 			try {
-				HttpConnection hc = conn.getHttpConnection();
+				hc = conn.getHttpConnection();
 
 				boolean process = true;
 
@@ -266,7 +284,18 @@ public class AsyncHttpManager {
 						cancel(conn);
 						return;
 					}
-					int rc = hc.getResponseCode();
+					int rc = 0;
+					Timer timer = new Timer();
+					
+					timer.schedule(new TimerTask() {
+
+						public void run() {
+							Worker.this.interrupt();
+							
+						}
+						
+					}, 5000);
+					hc.getResponseCode();
 					if (!cb.checkResponse(hc)) {
 						process = false;
 						break;
@@ -306,7 +335,12 @@ public class AsyncHttpManager {
 				cb.endingCall(hc);
 				asyncConnection = null;
 				close(conn);
-			} catch (Throwable e) {
+			} catch (Exception e) {
+				System.out.println(e.toString());
+				try {
+					cb.errorCall(hc,0,e.toString());
+				} catch (IOException e1) {
+				}
 			} finally {
 				close(conn);
 			}

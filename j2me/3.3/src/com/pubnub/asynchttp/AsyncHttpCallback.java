@@ -21,5 +21,5 @@ public interface AsyncHttpCallback {
     public HttpConnection getConnection();
     public void setConnection(HttpConnection connection);
     public void setConnManager(AsyncHttpManager connManager);
-   
+    public void errorCall(HttpConnection hconn, int statusCode, String response) throws IOException;
 }
