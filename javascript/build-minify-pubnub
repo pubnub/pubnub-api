@@ -1,0 +1,23 @@
+#!/bin/bash
+
+echo $1
+
+googleminify=$1
+
+if [ -z "$googleminify" ]; then googleminify="/opt/minify/compiler.jar"; fi
+
+echo -e "  "
+echo -e "  USING: $googleminify TO MINIFY..."
+echo -e "  COMPILING PUBNUB JAVASCRIPT API..."
+
+cat ./json.js ./pubnub-3.4.js > ./pubnub.tmp
+echo "(function(){" > ./pubnub-3.4.min.js
+java -jar $googleminify --js=./pubnub.tmp --compilation_level=ADVANCED_OPTIMIZATIONS >> ./pubnub-3.4.min.js
+echo "})();" >> ./pubnub-3.4.min.js
+
+echo -e "  >>COMPRESSING<< PUBNUB JAVASCRIPT API..."
+cat ./pubnub-3.4.min.js | gzip -c9 > ./pubnub-3.4.min.js.gz
+
+rm ./pubnub.tmp
+echo -e "  "
+echo -e "  DONE!\n"

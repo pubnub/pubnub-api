@@ -15,12 +15,16 @@ API Usage summary follows. But checkout the real working examples in examples 3.
 Ti.include('pubnub.js');
 
 var pubnub = PUBNUB.init({
-    publish_key   : 'demo',
-    subscribe_key : 'demo',
-    ssl           : false,
-    origin        : 'pubsub.pubnub.com'
+    publish_key       : 'demo',
+    subscribe_key     : 'demo',
+    ssl               : false,
+    native_tcp_socket : false,
+    origin            : 'pubsub.pubnub.com'
 });
 ```
+
+If you run into firewall issues on some iPhone deployments, try to set native_tcp_socket to true.
+
 
 ### Subscribe and Presence
 For a given channel, subscribe to the channel (subscribe), or subscribe to the channel's join/leave events (presence)
