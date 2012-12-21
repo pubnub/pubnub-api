@@ -8,6 +8,7 @@ package com.pubnub.operation {
 		
 		public function TimeOperation (origin:String) {
 			super(origin);
+			_timeout = 10000;
 		}
 		
 		override public function setURL(url:String = null, args:Object = null):URLRequest {

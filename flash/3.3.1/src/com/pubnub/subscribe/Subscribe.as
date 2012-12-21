@@ -149,8 +149,12 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onSubscribeInit(e:OperationEvent):void {
-			lastToken =  e.data[1];
-			//trace(this, ' onConnectInit : ' + lastToken);
+			
+			trace(this, ' onConnectInit : ' + lastToken, e.data);
+			if (e.data == null) {
+				subscribeInit();
+				return;
+			}
 			_connected = true;
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channels.join(',') } ));
 			destroyOperation(e.target as Operation);
@@ -316,11 +320,13 @@ package com.pubnub.subscribe {
 		}
 		
 		public function reconnect():void {
-			if (lastToken) {
-				doSubscribe();
-			}else {
-				subscribeInit();
-			}	
+			if (_channels && _channels.length > 0) {
+				if (lastToken) {
+					doSubscribe();
+				}else {
+					subscribeInit();
+				}	
+			}
 		}
 		
 		public function close(reason:String = null):void {

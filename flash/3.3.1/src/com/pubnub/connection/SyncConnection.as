@@ -40,11 +40,13 @@ package com.pubnub.connection {
 		
 		private function doSendOperation(operation:Operation):void {
 			if (!operation) return;
-			//trace('doSendOperation : ' + busy, operation.destroyed);
 			clearTimeout(timeoutInterval);
-			timeoutInterval = setTimeout(onTimeout, _timeout, operation);
+			var timeout:int = operation.timeout || _timeout;
+			//trace('doSendOperation : ' + timeout, operation.url);
+			timeoutInterval = setTimeout(onTimeout, operation.timeout, operation);
 			busy = true;
 			this.operation = operation;
+			this.operation.startTime = getTimer();
 			loader.load(operation.request);
 		}
 		
@@ -53,6 +55,7 @@ package com.pubnub.connection {
 		}
 		
 		private function onTimeout(operation:Operation):void {
+			//trace(this, 'onTimeout');
 			if (operation) {
 				logTimeoutError(operation);
 				Log.logTimeout(Errors.OPERATION_TIMEOUT + ', ' + operation.request.url);
@@ -61,7 +64,6 @@ package com.pubnub.connection {
 			}
 			this.operation = null;
 			busy = false;
-			operation = null;
 			sendNextOperation();
 		}
 		

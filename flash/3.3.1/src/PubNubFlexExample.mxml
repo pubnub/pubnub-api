@@ -343,7 +343,8 @@
 			</s:Scroller>
         </s:NavigatorContent>
 		<s:NavigatorContent width="100%" height="100%" label="Logging">
-			<s:TextArea id="loggingTA" left="10" right="263" top="5" bottom="5" fontSize="10"/>
+			<s:TextArea id="loggingTA" left="10" right="263" top="5" bottom="5" fontSize="12"
+						fontWeight="bold"/>
 			<s:VGroup y="6" right="175">
 				<s:Label width="62" fontStyle="italic" text="level:"/>
 				<s:RadioButton id="all_rb" label="ALL" selected="true"/>

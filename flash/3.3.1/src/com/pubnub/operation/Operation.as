@@ -2,30 +2,38 @@ package com.pubnub.operation {
 	import com.pubnub.json.PnJSON;
 	import com.pubnub.net.URLRequest;
 	import com.pubnub.net.URLRequestHeader;
+	import com.pubnub.Settings;
 	import flash.events.IEventDispatcher;
 	import flash.net.URLRequestMethod;
+	import flash.utils.getTimer;
 	import org.casalib.events.RemovableEventDispatcher;
 	
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
+	[Event(name="OperationEvent.result", type="com.pubnub.operation.OperationEvent")]
+	[Event(name="OperationEvent.fault", type="com.pubnub.operation.OperationEvent")]
 	public class Operation extends RemovableEventDispatcher {
 		private var args:Object;
 		
 		static public const HTTPS_PATTERN:RegExp = new RegExp("(https):\/\/");
 		
 		public var parseToJSON:Boolean = true;
+		public var startTime:int;
+		public var endTime:int;
 		
 		protected var _origin:String;
 		protected var _url:String;
 		protected var _destroyed:Boolean;
 		protected var _completed:Boolean;
 		protected var _request:URLRequest;
+		protected var _timeout:int;
 		
 		public function Operation(origin:String) {
 			super();
 			_origin = origin;
+			_timeout = Settings.SYNC_CHANNEL_TIMEOUT;
 			init();
 		}
 		
@@ -50,6 +58,7 @@ package com.pubnub.operation {
 		public function onData(data:Object = null):void {
 			var result:Object = data;
 			_completed = true;
+			endTime = getTimer();
 			var error:Boolean;
 			if (parseToJSON) {
 				try {
@@ -69,6 +78,7 @@ package com.pubnub.operation {
 		
 		public function onError(data:Object = null):void {
 			_completed = true;
+			endTime = getTimer();
 			dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:(data ? data.message : data) } ));
 			destroy();
 		}
@@ -80,6 +90,11 @@ package com.pubnub.operation {
 			_request = null;
 			
 		}
+		
+		public function get time():int{
+			return endTime - startTime;
+		}
+		
 		public function get origin():String {
 			return _origin;
 		}
@@ -98,6 +113,14 @@ package com.pubnub.operation {
 		
 		public function get ssl():Boolean { 
 			return HTTPS_PATTERN.test(_url); 
+		}
+		
+		public function get timeout():int {
+			return _timeout;
+		}
+		
+		public function set timeout(value:int):void {
+			_timeout = value;
 		}
 	}
 }

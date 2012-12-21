@@ -10,7 +10,7 @@ package com.pubnub {
         //
 
         // retry to connect a maximum of this many times before un-subscribing from channel.
-		public static const MAX_RECONNECT_RETRIES:uint = 3; //100;
+		public static const MAX_RECONNECT_RETRIES:uint = 5; //100;
 
         // after disconnect is detected, and network ping for connection detection begins again,
         // millisecond timeout to determine if Pubnub ping ( time() ) connects

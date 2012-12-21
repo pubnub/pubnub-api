@@ -42,6 +42,7 @@ package com.pubnub.environment {
 			netMon.removeEventListener(NetMonEvent.MAX_RETRIES, onMaxRetries);
 			netMon = null;
 			
+			
 			sysMon.removeEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			sysMon = null;
 		}
@@ -60,6 +61,8 @@ package com.pubnub.environment {
 			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			
 			maxTimeout = Settings.MAX_RECONNECT_RETRIES * Settings.RECONNECT_HEARTBEAT_TIMEOUT;
+			
+			
 		}
 		
 		private function onMaxRetries(e:NetMonEvent):void {
