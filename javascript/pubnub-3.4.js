@@ -514,7 +514,7 @@ var PDIV          = $('pubnub') || {}
     ,   PUBLISH_KEY   = setup['publish_key']   || ''
     ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
     ,   SSL           = setup['ssl'] ? 's' : ''
-    ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
+    ,   UUID          = setup['uuid'] || db['get'](SUBSCRIBE_KEY+'uuid') || ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
     ,   LEAVE         = function(){}
     ,   CONNECT       = function(){}
@@ -644,7 +644,7 @@ var PDIV          = $('pubnub') || {}
             // Iterate over Channels
             each( channel.split(','), function(channel) {
                 if (READY) LEAVE( channel, 0 );
-                CHANNELS[channel] = {};
+                CHANNELS[channel] = 0;
             } );
 
             // ReOpen Connection if Any Channels Left
@@ -775,11 +775,11 @@ var PDIV          = $('pubnub') || {}
 
                         // Restore Previous Connection Point if Needed
                         if (!TIMETOKEN && SUB_RESTORE)
-                             TIMETOKEN = db.get(SUBSCRIBE_KEY) || messages[1];
+                             TIMETOKEN = db['get'](SUBSCRIBE_KEY) || messages[1];
                         else TIMETOKEN = messages[1];
 
                         // Update Saved Timetoken
-                        db.set( SUBSCRIBE_KEY, messages[1] );
+                        db['set']( SUBSCRIBE_KEY, messages[1] );
 
                         // Route Channel <---> Callback for Message
                         var next_callback = (function() {
@@ -875,12 +875,14 @@ var PDIV          = $('pubnub') || {}
 
     function each_channel(callback) {
         each( generate_channel_list(CHANNELS), function(channel) {
-            callback(CHANNELS[channel]||{});
+            var chan = CHANNELS[channel];
+            if (!chan) return;
+            callback(chan);
         } );
     }
 
     if (!UUID) UUID = SELF['uuid']();
-    db.set( SUBSCRIBE_KEY + 'uuid', UUID );
+    db['set']( SUBSCRIBE_KEY + 'uuid', UUID );
 
     // Announce Leave Event
     LEAVE = function( channel, blocking ) {
