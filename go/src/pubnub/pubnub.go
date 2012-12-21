@@ -237,7 +237,15 @@ func (pub *PUBNUB) Presence(channel string, c chan []byte) {
 	}
 }
 
-func (pub *PUBNUB) Unsubscribe(c chan []byte) {
+func (pub *PUBNUB) Unsubscribe(channel string, c chan []byte) {
+	url := ""
+	url += "/v2/presence"
+	url += "/sub-key/" + pub.SUBSCRIBE_KEY
+	url += "/channel/" + channel
+	url += "/leave?uuid=" + pub.UUID
+
+	pub.HttpRequest(url)
+
 	close(c)
 }
 

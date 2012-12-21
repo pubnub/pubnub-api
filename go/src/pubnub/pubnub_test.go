@@ -7,6 +7,12 @@ import (
 	"testing"
 )
 
+var publish_key = "demo"
+var subscribe_key = "demo"
+var secret_key = "itsmysecret"
+var chipher_key = "enigma"
+var plain_string = "\"Pubnub Messaging API 1\""
+
 //Moc server hendlers
 func timePubnubHandler(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "[13533127815769808]")
@@ -65,21 +71,21 @@ func presencePubnubHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func TestPubnubInit(t *testing.T) {
-	testPUBNUB := PubnubInit("demo_pub_key", "demo_sub_key", "demo_sec_key", "demo_cipher_key", false)
+	testPUBNUB := PubnubInit(publish_key, subscribe_key, secret_key, chipher_key, false)
 
 	if testPUBNUB.ORIGIN != "http://"+_ORIGIN {
 		t.Fatalf("Failed initialization origin url")
 	}
-	if testPUBNUB.PUBLISH_KEY != "demo_pub_key" {
+	if testPUBNUB.PUBLISH_KEY != publish_key {
 		t.Fatalf("Failed initialization publish key")
 	}
-	if testPUBNUB.SUBSCRIBE_KEY != "demo_sub_key" {
+	if testPUBNUB.SUBSCRIBE_KEY != subscribe_key {
 		t.Fatalf("Failed initialization subscribe key")
 	}
-	if testPUBNUB.SECRET_KEY != "demo_sec_key" {
+	if testPUBNUB.SECRET_KEY != secret_key {
 		t.Fatalf("Failed initialization secret key")
 	}
-	if testPUBNUB.CIPHER_KEY != "demo_cipher_key" {
+	if testPUBNUB.CIPHER_KEY != chipher_key {
 		t.Fatalf("Failed initialization cipher key")
 	}
 }
@@ -87,7 +93,7 @@ func TestPubnubInit(t *testing.T) {
 func TestGetTime(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
 
-	testPUBNUB := PubnubInit("demo", "demo", "", "", false)
+	testPUBNUB := PubnubInit(publish_key, subscribe_key, "", "", false)
 	testPUBNUB.ORIGIN = "http://" + addr.String()
 
 	testchannel := make(chan []byte)
@@ -102,7 +108,7 @@ func TestGetTime(t *testing.T) {
 func TestSuccessPublish(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
 
-	testPUBNUB := PubnubInit("demo", "demo", "", "", false)
+	testPUBNUB := PubnubInit(publish_key, subscribe_key, "", "", false)
 	testPUBNUB.ORIGIN = "http://" + addr.String()
 
 	publish_channel_1 := make(chan []byte)
@@ -111,7 +117,7 @@ func TestSuccessPublish(t *testing.T) {
 	publish_channel_4 := make(chan []byte)
 	var response []byte
 
-	go testPUBNUB.Publish("test-channel", "test", publish_channel_1)
+	go testPUBNUB.Publish("test-channel", plain_string, publish_channel_1)
 	for {
 		value, ok := <-publish_channel_1
 		if !ok {
@@ -123,9 +129,9 @@ func TestSuccessPublish(t *testing.T) {
 		t.Fatalf("Failed to publish message without chipher key: %s", response)
 	}
 
-	testPUBNUB.CIPHER_KEY = "enigma"
+	testPUBNUB.CIPHER_KEY = chipher_key
 	response = []byte{}
-	go testPUBNUB.Publish("test-channel", "test", publish_channel_2)
+	go testPUBNUB.Publish("test-channel", plain_string, publish_channel_2)
 	for {
 		value, ok := <-publish_channel_2
 		if !ok {
@@ -138,9 +144,9 @@ func TestSuccessPublish(t *testing.T) {
 	}
 
 	testPUBNUB.CIPHER_KEY = ""
-	testPUBNUB.SECRET_KEY = "itsmysecret"
+	testPUBNUB.SECRET_KEY = secret_key
 	response = []byte{}
-	go testPUBNUB.Publish("test-channel", "test", publish_channel_3)
+	go testPUBNUB.Publish("test-channel", plain_string, publish_channel_3)
 	for {
 		value, ok := <-publish_channel_3
 		if !ok {
@@ -152,10 +158,10 @@ func TestSuccessPublish(t *testing.T) {
 		t.Fatalf("Failed to publish message with secret key: %s", response)
 	}
 
-	testPUBNUB.CIPHER_KEY = "enigma"
-	testPUBNUB.SECRET_KEY = "itsmysecret"
+	testPUBNUB.CIPHER_KEY = chipher_key
+	testPUBNUB.SECRET_KEY = secret_key
 	response = []byte{}
-	go testPUBNUB.Publish("test-channel", "test", publish_channel_4)
+	go testPUBNUB.Publish("test-channel", plain_string, publish_channel_4)
 	for {
 		value, ok := <-publish_channel_4
 		if !ok {
@@ -171,13 +177,13 @@ func TestSuccessPublish(t *testing.T) {
 func TestFailPublish(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
 
-	testPUBNUB := PubnubInit("demo", "demo-fail", "", "", false)
+	testPUBNUB := PubnubInit(publish_key, "demo-fail", "", "", false)
 	testPUBNUB.ORIGIN = "http://" + addr.String()
 
 	publish_channel := make(chan []byte)
 	var response []byte
 
-	go testPUBNUB.Publish("test-channel", "test", publish_channel)
+	go testPUBNUB.Publish("test-channel", plain_string, publish_channel)
 	for {
 		value, ok := <-publish_channel
 		if !ok {
@@ -193,7 +199,7 @@ func TestFailPublish(t *testing.T) {
 func TestHistory(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
 
-	testPUBNUB := PubnubInit("demo", "demo", "", "", false)
+	testPUBNUB := PubnubInit(publish_key, subscribe_key, "", "", false)
 	testPUBNUB.ORIGIN = "http://" + addr.String()
 
 	history_channel_1 := make(chan []byte)
@@ -227,7 +233,7 @@ func TestHistory(t *testing.T) {
 		t.Fatalf("Failed to get history without chipher key: %s", response)
 	}
 
-	testPUBNUB.CIPHER_KEY = "enigma"
+	testPUBNUB.CIPHER_KEY = chipher_key
 	response = []byte{}
 	go testPUBNUB.History("chipher-history-channel", 3, history_chipher_channel)
 	for {
@@ -245,7 +251,7 @@ func TestHistory(t *testing.T) {
 func TestHereNow(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
 
-	testPUBNUB := PubnubInit("demo", "demo", "", "", false)
+	testPUBNUB := PubnubInit(publish_key, subscribe_key, "", "", false)
 	testPUBNUB.ORIGIN = "http://" + addr.String()
 
 	here_now_channel_1 := make(chan []byte)
@@ -280,7 +286,7 @@ func TestHereNow(t *testing.T) {
 		t.Fatalf("Failed here now request without chipher key: %s", response)
 	}
 
-	testPUBNUB.CIPHER_KEY = "enigma"
+	testPUBNUB.CIPHER_KEY = chipher_key
 	response = []byte{}
 	go testPUBNUB.HereNow("test-channel", here_now_chipher_channel)
 	for {
@@ -299,7 +305,7 @@ func TestHereNow(t *testing.T) {
 func TestSubscribe(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
 
-	testPUBNUB := PubnubInit("demo", "demo", "", "", false)
+	testPUBNUB := PubnubInit(publish_key, subscribe_key, "", "", false)
 	testPUBNUB.ORIGIN = "http://" + addr.String()
 	testPUBNUB.UUID = "aa1686b0-cee8-012f-ba60-70def1fd2b7f"
 	timeToken = "0"
@@ -320,7 +326,7 @@ func TestSubscribe(t *testing.T) {
 		t.Fatalf("Failed to subscribe without chipher key: %s", response)
 	}
 
-	testPUBNUB.CIPHER_KEY = "enigma"
+	testPUBNUB.CIPHER_KEY = chipher_key
 	response = []byte{}
 	go testPUBNUB.Subscribe("test-chipher-channel", subscribe_channel_with_chipher)
 	for {
@@ -338,7 +344,7 @@ func TestSubscribe(t *testing.T) {
 func TestPresence(t *testing.T) {
 	starter.Do(func() { setupMockServer(t) })
 
-	testPUBNUB := PubnubInit("demo", "demo", "", "", false)
+	testPUBNUB := PubnubInit(publish_key, subscribe_key, "", "", false)
 	testPUBNUB.ORIGIN = "http://" + addr.String()
 	testPUBNUB.UUID = "aa1686b0-cee8-012f-ba60-70def1fd2b7f"
 	timeToken = "0"
@@ -361,7 +367,7 @@ func TestPresence(t *testing.T) {
 		t.Fatalf("Failed to presence without chipher key: %s", response)
 	}
 
-	testPUBNUB.CIPHER_KEY = "enigma"
+	testPUBNUB.CIPHER_KEY = chipher_key
 	response = []byte{}
 	go testPUBNUB.Presence("test-channel", presence_chipher_channel)
 	for i := 0; i < 4; i++ {

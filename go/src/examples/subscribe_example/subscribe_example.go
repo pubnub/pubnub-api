@@ -19,5 +19,6 @@ func main() {
 			break
 		}
 		log.Printf("%s", value)
+		pub.Unsubscribe("hello_world", channel)
 	}
 }

@@ -72,6 +72,6 @@ func main() {
 	go pub.HereNow(channel, hereNowCallback)
 	Callback(hereNowCallback, "HereNow")
 
-	pub.Unsubscribe(subscribeCallback)
-	pub.Unsubscribe(presenceCallback)
+	pub.Unsubscribe(channel, subscribeCallback)
+	pub.Unsubscribe(channel, presenceCallback)
 }
