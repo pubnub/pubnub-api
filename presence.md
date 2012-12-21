@@ -1,4 +1,4 @@
-# Presence HTTP API Usage (BETA)
+# Presence HTTP API Usage
 
 To enable presence during the beta, please send an email to support@pubnub.com with the subscribe key(s) on which you would like to track presence. When the feature is out of beta, customers will be able to manage presence configuration from the account portal on a per-key basis.
 
