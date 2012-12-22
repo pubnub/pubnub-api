@@ -562,6 +562,56 @@ var PDIV          = $('pubnub') || {}
         },
 
         /*
+            PUBNUB.replay({
+                source      : 'my_channel',
+                destination : 'new_channel'
+            });
+        */
+        'replay' : function(args) {
+            var callback    = callback || args['callback'] || function(){}
+            ,   source      = args['source']
+            ,   destination = args['destination']
+            ,   stop        = args['stop']
+            ,   start       = args['start']
+            ,   end         = args['end']
+            ,   reverse     = args['reverse']
+            ,   limit       = args['limit']
+            ,   jsonp       = jsonp_cb()
+            ,   data        = {}
+            ,   url;
+
+            // Check User Input
+            if (!source)        return error('Missing Source Channel');
+            if (!destination)   return error('Missing Destination Channel');
+            if (!PUBLISH_KEY)   return error('Missing Publish Key');
+            if (!SUBSCRIBE_KEY) return error('Missing Subscribe Key');
+
+            // Setup URL Params
+            if (jsonp != '0') data['callback'] = jsonp;
+            if (stop)         data['stop']     = 'all';
+            if (reverse)      data['reverse']  = 'true';
+            if (start)        data['start']    = start;
+            if (end)          data['end']      = end;
+            if (limit)        data['count']    = limit;
+
+            // Compose URL Parts
+            url = [
+                ORIGIN, 'v1', 'replay',
+                PUBLISH_KEY, SUBSCRIBE_KEY,
+                source, destination
+            ];
+
+            // Start (or Stop) Replay!
+            xdr({
+                callback : jsonp,
+                success  : function(response) { callback(response) },
+                fail     : function() { callback([ 0, 'Disconnected' ]) },
+                url      : url,
+                data     : data
+            });
+        },
+
+        /*
             PUBNUB.time(function(time){ });
         */
         'time' : function(callback) {
