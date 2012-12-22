@@ -1,12 +1,10 @@
 package com.pubnub.connection {
-	import com.pubnub.Errors;
-	import com.pubnub.log.Log;
-	import com.pubnub.net.URLLoaderEvent;
-	import com.pubnub.operation.Operation;
-	import flash.events.Event;
-	import flash.utils.clearTimeout;
-	import flash.utils.getTimer;
-	import flash.utils.setTimeout;
+	import com.pubnub.*;
+	import com.pubnub.log.*;
+	import com.pubnub.net.*;
+	import com.pubnub.operation.*;
+	import flash.events.*;
+	import flash.utils.*;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
@@ -21,7 +19,7 @@ package com.pubnub.connection {
 		override public function sendOperation(operation:Operation):void {
 			super.sendOperation(operation);
 			var timeout:int = operation.timeout || 10000;
-			trace('doSendOperation : ' + timeout, operation.url);
+			//trace('doSendOperation : ' + timeout, operation.url);
 			clearTimeout(timeoutInterval);
 			timeoutInterval = setTimeout(onTimeout, operation.timeout, operation);
 			this.operation = operation;
@@ -34,7 +32,7 @@ package com.pubnub.connection {
 		}
 		
 		private function onTimeout(operation:Operation):void {
-			trace(this, 'onTimeout');
+			//trace(this, 'onTimeout');
 			if (operation) {
 				Log.logTimeout(Errors.OPERATION_TIMEOUT + ', ' + operation.request.url);
 				operation.onError( { message:Errors.OPERATION_TIMEOUT, operation:operation } );
@@ -49,13 +47,12 @@ package com.pubnub.connection {
 		}
 		
 		override protected function onComplete(e:URLLoaderEvent):void {
-			trace('onComplete : ' + operation);
 			super.onComplete(e);
 			operation = null;
 		}
 		
 		override protected function onConnect(e:Event):void {
-			trace('onConnect : ' + operation);
+			//trace('onConnect : ' + operation);
 			super.onConnect(e);
 			if (operation) {
 				sendOperation(operation);

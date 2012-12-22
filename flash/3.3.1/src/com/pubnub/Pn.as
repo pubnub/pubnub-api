@@ -1,9 +1,8 @@
 package com.pubnub {
 	
 	import com.pubnub.connection.*;
-	import com.pubnub.environment.Environment;
-	import com.pubnub.environment.EnvironmentEvent;
-	import com.pubnub.log.Log;
+	import com.pubnub.environment.*;
+	import com.pubnub.log.*;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import com.pubnub.subscribe.*;
@@ -55,16 +54,34 @@ package com.pubnub {
 			environment = new Environment(origin);
 			environment.addEventListener(EnvironmentEvent.SHUTDOWN, 	onEnvironmentShutdown);
 			environment.addEventListener(EnvironmentEvent.RECONNECT, 	onEnvironmentReconnect);
+			environment.addEventListener(NetMonEvent.HTTP_DISABLE, 	onEnvironmentHttpDisable);
+		}
+		
+		private function onEnvironmentHttpDisable(e:NetMonEvent):void {
+			syncConnection.networkEnabled = false;
+			if (subscribeConnection) {
+					subscribeConnection.networkEnabled = false;
+				}
 		}
 		
 		private function onEnvironmentReconnect(e:EnvironmentEvent):void {
-			syncConnection.reconnect();
-			if (subscribeConnection) {
-				subscribeConnection.reconnect();
+			if (Settings.RESUME_ON_RECONNECT) {
+				syncConnection.networkEnabled = true;
+				syncConnection.reconnect();
+				if (subscribeConnection) {
+					subscribeConnection.networkEnabled = true;
+					subscribeConnection.reconnect();
+				}
+			}else {
+				shutdown();
 			}
 		}
 		
 		private function onEnvironmentShutdown(e:EnvironmentEvent):void {
+			shutdown();
+		}
+		
+		private function shutdown():void {
 			syncConnection.close();
 			if (subscribeConnection) subscribeConnection.close();
 			environment.stop();
@@ -325,6 +342,8 @@ package com.pubnub {
 		}
 		
 		public function destroy():void {
+			shutdown();
+			
 			syncConnection.destroy();
 			syncConnection = null;
 			
@@ -332,9 +351,11 @@ package com.pubnub {
 			subscribeConnection = null;
 			
 			environment.destroy();
-			environment.removeEventListener(EnvironmentEvent.SHUTDOWN, 	onEnvironmentShutdown);
+			environment.removeEventListener(EnvironmentEvent.SHUTDOWN, 		onEnvironmentShutdown);
 			environment.removeEventListener(EnvironmentEvent.RECONNECT, 	onEnvironmentReconnect);
+			environment.removeEventListener(NetMonEvent.HTTP_DISABLE, 		onEnvironmentHttpDisable);
 			environment = null;
+			
 			subscribeConnection = null;
 			_initialized = false;
 			__instance = null;

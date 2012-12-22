@@ -149,13 +149,12 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onSubscribeInit(e:OperationEvent):void {
-			
-			trace(this, ' onConnectInit : ' + lastToken, e.data);
 			if (e.data == null) {
 				subscribeInit();
 				return;
 			}
 			_connected = true;
+			lastToken = e.data[1];
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channels.join(',') } ));
 			destroyOperation(e.target as Operation);
 			doSubscribe();
@@ -217,7 +216,7 @@ package com.pubnub.subscribe {
 						}
 					}
 				}else {
-					channel = chStr;
+					channel = chStr || _channels[0];
 					dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : messages}));
 				}
 			}
@@ -356,6 +355,10 @@ package com.pubnub.subscribe {
 		
 		public function get channels():Array {
 			return _channels;
+		}
+		
+		public function set networkEnabled(value:Boolean):void {
+			connection.networkEnabled = value;
 		}
 		
 		private function hasChannel(ch:String):Boolean{

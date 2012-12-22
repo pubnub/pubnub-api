@@ -1,14 +1,17 @@
 package com.pubnub.operation {
 	import com.pubnub.net.URLRequest;
+	import com.pubnub.Settings;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class TimeOperation extends Operation {
 		
-		public function TimeOperation (origin:String) {
+		public function TimeOperation (origin:String, timeout:int = 0) {
 			super(origin);
-			_timeout = 10000;
+			if (timeout > 0 && timeout < Settings.OPERATION_TIMEOUT) {
+				_timeout = timeout;
+			}
 		}
 		
 		override public function setURL(url:String = null, args:Object = null):URLRequest {
@@ -16,5 +19,4 @@ package com.pubnub.operation {
 			return super.setURL(url, args);
 		}
 	}
-
 }

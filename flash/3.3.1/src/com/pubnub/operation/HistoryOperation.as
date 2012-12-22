@@ -59,7 +59,7 @@ package com.pubnub.operation {
         }
 		
 		override public function onData(data:Object = null):void {
-			trace(this, 'onLoaderComplete');
+			//trace(this, 'onLoaderComplete');
 			//var data:* = e.target.data;
 			try {
 				var result:Object = PnJSON.parse(String(data));

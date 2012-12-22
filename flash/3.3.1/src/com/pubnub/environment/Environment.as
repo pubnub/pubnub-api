@@ -1,8 +1,7 @@
 package com.pubnub.environment {
-	import com.pubnub.Errors;
-	import com.pubnub.Settings;
-	import flash.events.EventDispatcher;
-	import flash.utils.getTimer;
+	import com.pubnub.*;
+	import flash.events.*;
+	import flash.utils.*;
 	
 	/**
 	 * ...
@@ -13,6 +12,7 @@ package com.pubnub.environment {
 		private var _origin:String;
 		private var netMon:NetMon;
 		private var sysMon:SysMon;
+		private var _netwotkEnabled:Boolean;
 		private var lastHTTPDisabledTime:int = 0;
 		private var maxTimeout:int;
 		
@@ -20,7 +20,6 @@ package com.pubnub.environment {
 			super();
 			_origin = origin;
 			init();
-			
 		}
 		
 		public function start():void {
@@ -36,12 +35,12 @@ package com.pubnub.environment {
 		
 		public function destroy():void {
 			stop();
-			netMon.destroy();
-			netMon.removeEventListener(NetMonEvent.HTTP_DISABLE, onHTTPDisable);
-			netMon.removeEventListener(NetMonEvent.HTTP_ENABLE, onHTTPEnable);
-			netMon.removeEventListener(NetMonEvent.MAX_RETRIES, onMaxRetries);
-			netMon = null;
 			
+			netMon.destroy();
+			netMon.removeEventListener(NetMonEvent.HTTP_DISABLE, 	onHTTPDisable);
+			netMon.removeEventListener(NetMonEvent.HTTP_ENABLE, 	onHTTPEnable);
+			netMon.removeEventListener(NetMonEvent.MAX_RETRIES, 	onMaxRetries);
+			netMon = null;
 			
 			sysMon.removeEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			sysMon = null;
@@ -49,10 +48,8 @@ package com.pubnub.environment {
 		
 		private function init():void {
 			netMon = new NetMon();
-			netMon.reconnectDelay = 			Settings.CONNECTION_HEARTBEAT_INTERVAL;
-			netMon.forceReconnectDelay = 		Settings.RECONNECT_HEARTBEAT_TIMEOUT;
-			netMon.maxForceReconnectRetries = 	Settings.MAX_RECONNECT_RETRIES;
-			
+			netMon.reconnectDelay = Settings.PING_OPERATION_INTERVAL;
+			netMon.maxRetries = 	Settings.MAX_RECONNECT_RETRIES;
 			netMon.addEventListener(NetMonEvent.HTTP_DISABLE, onHTTPDisable);
 			netMon.addEventListener(NetMonEvent.HTTP_ENABLE, onHTTPEnable);
 			netMon.addEventListener(NetMonEvent.MAX_RETRIES, onMaxRetries);
@@ -60,9 +57,7 @@ package com.pubnub.environment {
 			sysMon = new SysMon();
 			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			
-			maxTimeout = Settings.MAX_RECONNECT_RETRIES * Settings.RECONNECT_HEARTBEAT_TIMEOUT;
-			
-			
+			maxTimeout = Settings.MAX_RECONNECT_RETRIES * Settings.PING_OPERATION_INTERVAL;
 		}
 		
 		private function onMaxRetries(e:NetMonEvent):void {
@@ -81,8 +76,10 @@ package com.pubnub.environment {
 			if (lastHTTPDisabledTime) {
 				var time:int = getTimer();
 				if ( (time - lastHTTPDisabledTime) > maxTimeout) {
+					_netwotkEnabled = false;
 					dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN, Errors.NETWORK_RECONNECT_MAX_TIMEOUT_EXCEEDED));
 				}else {
+					_netwotkEnabled = true;
 					dispatchEvent(new EnvironmentEvent(EnvironmentEvent.RECONNECT));
 				}
 				lastHTTPDisabledTime = 0;
@@ -91,6 +88,8 @@ package com.pubnub.environment {
 		
 		private function onHTTPDisable(e:NetMonEvent):void {
 			lastHTTPDisabledTime = getTimer();
+			_netwotkEnabled = false;
+			dispatchEvent(e);
 		}
 		
 		public function get origin():String {
@@ -102,30 +101,8 @@ package com.pubnub.environment {
 			netMon.origin = value;
 		}
 		
-		
-		/*protected function onNetMonitorMaxRetries(e:NetMonEvent):void {
-			Log.log('onNetMonitorMaxRetries', Log.FATAL);
-			unsubscribeAll([0, Errors.NETWORK_RECONNECT_MAX_RETRIES_EXCEEDED]);
+		public function get netwotkEnabled():Boolean {
+			return _netwotkEnabled;
 		}
-		
-		protected function onNetMonitorHTTPDisable(e:NetMonEvent):void {
-			if (_connected) {
-				waitNetwork = true;
-			}
-		}
-		
-		protected function onNetMonitorHTTPEnable(e:NetMonEvent):void {
-			if (_channels && _channels.length > 0) {
-				if (Settings.RESUME_ON_RECONNECT) { 
-					Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: re-established network connectivity. Resubscribing with timetoken:' +lastToken, Log.WARNING);
-					if (lastToken) {
-						doSubscribe();
-					}else {
-						subscribeInit();
-					}	
-				}
-			}
-		}*/
 	}
-
 }

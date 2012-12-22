@@ -33,7 +33,7 @@ package com.pubnub.operation {
 		public function Operation(origin:String) {
 			super();
 			_origin = origin;
-			_timeout = Settings.SYNC_CHANNEL_TIMEOUT;
+			_timeout = Settings.OPERATION_TIMEOUT;
 			init();
 		}
 		

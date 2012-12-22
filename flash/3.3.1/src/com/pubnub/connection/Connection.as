@@ -12,6 +12,7 @@ package com.pubnub.connection {
 		protected var queue:/*Operation*/Array;
 		protected var operation:Operation;
 		protected var _closed:Boolean;
+		protected var _networkEnabled:Boolean;
 		
 		public function Connection() {
 			init();
@@ -82,6 +83,14 @@ package com.pubnub.connection {
 		
 		public function get destroyed():Boolean {
 			return _destroyed;
+		}
+		
+		public function get networkEnabled():Boolean {
+			return _networkEnabled;
+		}
+		
+		public function set networkEnabled(value:Boolean):void {
+			_networkEnabled = value;
 		}
 	}
 }

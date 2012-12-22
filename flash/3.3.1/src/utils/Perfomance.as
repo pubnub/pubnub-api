@@ -20,7 +20,10 @@ package utils {
         public var secret_key:String = '';
         public var cipher_key:String = '';
 		public var ssl:Boolean = false;
-
+		
+		private const MAX_LATENCY:int = 2000;
+		private const PUBLISH_INTERVAL:int= 300;
+		
 		private var channel:String;
 		private var _isRun:Boolean;
 		
@@ -33,7 +36,7 @@ package utils {
 		private var updateInterval:int;
 		private var publishTimeout:int;
 		private var view:DisplayObjectContainer;
-		private const MAX_LATENCY:Number = 2000;
+		
 		
 		public function Perfomance(view:DisplayObject) {
 			super();
@@ -81,24 +84,24 @@ package utils {
 		}
 		
 		private function onPnSubscribe(e:PnEvent):void {
-			//trace('-------------SUBSCRIBE---------------- ' + e.status);
+			trace('-------------SUBSCRIBE---------------- ' + e.status);
 			 switch (e.status) {
                 case OperationStatus.DATA:
-					//trace(e.data.result[1].text , message);
+					//trace(e.channel == channel, e.channel , channel);
 					if (e.channel == channel) {
 						sent++;
 						var delta:Number  = getTimer() - startPublishTime;
 						var latency:Number = delta || median[1];
 						latencyAvg = Math.floor((latency + latencyAvg) / 2);
 						median.push(latency);
-						setTimeout(publish, 500);
+						setTimeout(publish, PUBLISH_INTERVAL);
 						//publish();
 					}
                     break;
 
                 case OperationStatus.CONNECT:
 					clearInterval(updateInterval);
-					updateInterval = setInterval(update, 500);
+					updateInterval = setInterval(update, PUBLISH_INTERVAL);
 					publish();
                     break;
 					
@@ -134,7 +137,6 @@ package utils {
 		}
 		
 		private function update():void {
-			//trace('update');
 			updateMedians();
 			if (view) {
 				// animate arrow
@@ -198,12 +200,8 @@ package utils {
 					view['txt2_98'].text = view['txt_98'].text;
 					view['txt2_slowest'].text = view['txt_slowest'].text;
 					
-				}catch (err:Error){
-					
-				}
+				}catch (err:Error) { };
 			}
-		}
-		
-		
+		}		
 	}
 }

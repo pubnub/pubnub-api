@@ -1,6 +1,6 @@
 package com.pubnub.operation {
-	import com.pubnub.net.URLRequest;
-	import com.pubnub.PnUtils;
+	import com.pubnub.*;
+	import com.pubnub.net.*;
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730

@@ -1,11 +1,8 @@
 package com.pubnub.environment {
-	import com.pubnub.connection.HeartBeatConnection;
-	import com.pubnub.connection.SyncConnection;
-	import com.pubnub.log.Log;
-	import com.pubnub.operation.OperationEvent;
-	import com.pubnub.operation.TimeOperation;
-	import com.pubnub.Pn;
-	import com.pubnub.pn_internal;
+	import com.pubnub.*;
+	import com.pubnub.connection.*;
+	import com.pubnub.log.*;
+	import com.pubnub.operation.*;
 	import flash.events.*;
 	import flash.net.*;
 	import flash.utils.*;
@@ -31,8 +28,7 @@ package com.pubnub.environment {
 		private var _isRunning:Boolean;
 		private var sysMon:SysMon;
 		private var _currentRetries:uint
-		private var _maxForceReconnectRetries:uint = 100;
-		private var _forceReconnectDelay:uint = 1000;
+		private var _maxRetries:uint = 100;
 		private var _reconnectDelay:uint = 15000;
 		private var connection:HeartBeatConnection;
 		private var timeOperation:TimeOperation;
@@ -63,7 +59,7 @@ package com.pubnub.environment {
 		}
 		
 		private function onError(e:Event = null):void {
-			Log.logRetry('PING : ERROR', Log.NORMAL);
+			//Log.logRetry('PING : ERROR', Log.NORMAL);
 			lastTime = _reconnectDelay - timeOperation.time;
 			timeOperation.destroy();
 			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
@@ -73,44 +69,18 @@ package com.pubnub.environment {
 			
 			lastStatus = NetMonEvent.HTTP_DISABLE;
 			_currentRetries++;
-			if (_currentRetries >= _maxForceReconnectRetries) {
+			if (_currentRetries >= _maxRetries) {
 				stop();
-				Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: maximum retries  of ['  + _maxForceReconnectRetries + '] reached', Log.WARNING);
+				Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: maximum retries  of ['  + _maxRetries + '] reached', Log.WARNING);
 				dispatchEvent(new NetMonEvent(NetMonEvent.MAX_RETRIES));
 			}else {
-				Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: Retrying [' +  _currentRetries + '] of maximum [' + _maxForceReconnectRetries + '] attempts', Log.WARNING);
+				Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: Retrying [' +  _currentRetries + '] of maximum [' + _maxRetries + '] attempts', Log.WARNING);
 				ping();
 			}
-			
-			
-			/*// network is down
-			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
-				Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network unavailable', Log.WARNING);
-			}
-			
-			if (lastStatus == NetMonEvent.HTTP_DISABLE) {
-				_currentRetries++;
-				
-				if (_currentRetries >= _maxForceReconnectRetries) {
-					stop();
-					lastStatus = NetMonEvent.MAX_RETRIES;
-					Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: maximum retries  of ['  + _maxForceReconnectRetries + '] reached', Log.WARNING);
-					dispatchEvent(new NetMonEvent(NetMonEvent.MAX_RETRIES));
-				}else {
-					Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: Retrying ['+  _currentRetries + '] of maximum [' + _maxForceReconnectRetries + '] attempts', Log.WARNING);
-				}
-				return;
-			}
-			lastStatus = NetMonEvent.HTTP_DISABLE;
-			if (forceReconnect) {
-				clearInterval(interval);
-				interval = setInterval(ping, _forceReconnectDelay);
-			}
-			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));*/
 		}
 		
 		private function onComplete(e:Event = null):void {
-			Log.logRetry('PING : COMPLETE', Log.NORMAL);
+			//Log.logRetry('PING : COMPLETE', Log.NORMAL);
 			_currentRetries = 0;
 			if (lastStatus == NetMonEvent.HTTP_DISABLE) {
 				Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
@@ -120,39 +90,9 @@ package com.pubnub.environment {
 			lastTime = _reconnectDelay - timeOperation.time;
 			timeOperation.destroy();
 			ping();
-			
-			
-			/*// network is up
-			if (lastStatus == NetMonEvent.HTTP_ENABLE){
-                Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
-                return;
-            }
-
-			lastStatus = NetMonEvent.HTTP_ENABLE;
-            if (forceReconnect) {
-				clearInterval(interval);
-				interval = setInterval(ping, _reconnectDelay);
-			}
-			Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
-			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_ENABLE));*/
 		}
 		
 		private function ping():void {
-			/*try {
-                loader.close();
-            }
-			catch (err:Error) {
-                Log.logRetry("PING: " + err, Log.WARNING);
-            };
-
-            loader.load(new URLRequest(url));*/
-			
-			/*if (syncConnection.connected) {
-				onComplete(null);
-			}else {
-				onError(null);
-			}*/
-			
 			clearTimeout(pingTimout);
 			var delta:int = 0;
 			if (timeOperation) {
@@ -168,7 +108,7 @@ package com.pubnub.environment {
 		
 		private function doPing():void {
 			clearTimeout(pingTimout);
-			timeOperation = new TimeOperation(_origin);
+			timeOperation = new TimeOperation(_origin, Settings.PING_OPEARTION_TIMEOUT);
 			timeOperation.setURL();
 			timeOperation.addEventListener(OperationEvent.RESULT, onComplete);
 			timeOperation.addEventListener(OperationEvent.FAULT, onError);
@@ -236,20 +176,12 @@ package com.pubnub.environment {
 			return _currentRetries;
 		}
 		
-		public function get maxForceReconnectRetries():uint {
-			return _maxForceReconnectRetries;
+		public function get maxRetries():uint {
+			return _maxRetries;
 		}
 		
-		public function set maxForceReconnectRetries(value:uint):void {
-			_maxForceReconnectRetries = value;
-		}
-		
-		public function get forceReconnectDelay():uint {
-			return _forceReconnectDelay;
-		}
-		
-		public function set forceReconnectDelay(value:uint):void {
-			_forceReconnectDelay = value;
+		public function set maxRetries(value:uint):void {
+			_maxRetries = value;
 		}
 		
 		public function get reconnectDelay():uint {
