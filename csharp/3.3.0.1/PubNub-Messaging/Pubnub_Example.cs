@@ -58,14 +58,15 @@ namespace PubNub_Messaging
             pubnub = new Pubnub("demo", "demo", "", cipheryKey,
                 (enableSSL.Trim().ToLower() == "y") ? true : false);
 
-            Console.WriteLine("ENTER 1 FOR Subscribe");
-            Console.WriteLine("ENTER 2 FOR Publish");
-            Console.WriteLine("ENTER 3 FOR Presence");
-            Console.WriteLine("ENTER 4 FOR Detailed History");
-            Console.WriteLine("ENTER 5 FOR Here_Now");
-            Console.WriteLine("ENTER 6 FOR Unsubscribe");
-            Console.WriteLine("ENTER 7 FOR Presence-Unsubscribe");
-            Console.WriteLine("ENTER 8 FOR Time");
+            Console.WriteLine("ENTER 1 FOR Subscribe (not implementing connectCallback)");
+            Console.WriteLine("ENTER 2 FOR Subscribe (implementing connectCallback)");
+            Console.WriteLine("ENTER 3 FOR Publish");
+            Console.WriteLine("ENTER 4 FOR Presence");
+            Console.WriteLine("ENTER 5 FOR Detailed History");
+            Console.WriteLine("ENTER 6 FOR Here_Now");
+            Console.WriteLine("ENTER 7 FOR Unsubscribe");
+            Console.WriteLine("ENTER 8 FOR Presence-Unsubscribe");
+            Console.WriteLine("ENTER 9 FOR Time");
             Console.WriteLine("ENTER 0 FOR EXIT OR QUIT");
 
             bool exitFlag = false;
@@ -80,44 +81,84 @@ namespace PubNub_Messaging
                         exitFlag = true;
                         break;
                     case "1":
-                        Console.WriteLine("Running subscribe()");
+                        Console.WriteLine("Running subscribe() (not implementing connectCallback)");
                         pubnub.subscribe<string>(channel, DisplayReturnMessage);
                         //System.Threading.Tasks.Task subtask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.subscribe<string>(channel, DisplayReturnMessage));
                         //pubnub.subscribe<object>(channel, DisplayReturnMessage);
                         //pubnub.subscribe(channel, DisplayReturnMessage);
                         break;
                     case "2":
+                        Console.WriteLine("Running subscribe() (implementing connectCallback)");
+                        pubnub.subscribe<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage);
+                        //System.Threading.Tasks.Task subtask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.subscribe<string>(channel, DisplayReturnMessage));
+                        //pubnub.subscribe<object>(channel, DisplayReturnMessage);
+                        //pubnub.subscribe(channel, DisplayReturnMessage);
+                        break;
+                    case "3":
                         Console.WriteLine("Running publish()");
                         Console.WriteLine("Enter the message for publish. To exit loop, enter QUIT");
                         string publishMsg = Console.ReadLine();
-                        pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
+                        double doubleData;
+                        int intData;
+                        if (int.TryParse(publishMsg, out intData))
+                        {
+                            pubnub.publish<string>(channel, intData, DisplayReturnMessage);
+                        }
+                        else if (double.TryParse(publishMsg, out doubleData))
+                        {
+                            pubnub.publish<string>(channel, doubleData, DisplayReturnMessage);
+                        }
+                        else
+                        {
+                            //check whether any numeric is sent in double quotes
+                            if (publishMsg.IndexOf("\"") == 0 && publishMsg.LastIndexOf("\"") == publishMsg.Length - 1)
+                            {
+                                string strMsg = publishMsg.Substring(1, publishMsg.Length - 2);
+                                if (int.TryParse(strMsg, out intData))
+                                {
+                                    pubnub.publish<string>(channel, strMsg, DisplayReturnMessage);
+                                }
+                                else if (double.TryParse(strMsg, out doubleData))
+                                {
+                                    pubnub.publish<string>(channel, strMsg, DisplayReturnMessage);
+                                }
+                                else
+                                {
+                                    pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
+                                }
+                            }
+                            else
+                            {
+                                pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
+                            }
+                        }
                         break;
-                    case "3":
+                    case "4":
                         Console.WriteLine("Running presence()");
                         pubnub.presence<string>(channel, DisplayReturnMessage);
                         //System.Threading.Tasks.Task pretask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.presence<string>(channel, DisplayReturnMessage));
                         //pubnub.presence<object>(channel, DisplayReturnMessage);
                         break;
-                    case "4":
+                    case "5":
                         Console.WriteLine("Running detailed history()");
                         pubnub.detailedHistory<string>(channel, 100, DisplayReturnMessage);
                         //pubnub.detailedHistory<object>(channel, 100, DisplayReturnMessage);
                         break;
-                    case "5":
+                    case "6":
                         Console.WriteLine("Running Here_Now()");
                         pubnub.here_now<string>(channel, DisplayReturnMessage);
                         //pubnub.here_now<object>(channel, DisplayReturnMessage);
                         break;
-                    case "6":
+                    case "7":
                         Console.WriteLine("Running unsubscribe()");
                         pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
                         //pubnub.unsubscribe<object>(channel, DisplayReturnMessage);
                         break;
-                    case "7":
+                    case "8":
                         Console.WriteLine("Running presence-unsubscribe()");
                         pubnub.presence_unsubscribe<string>(channel, DisplayReturnMessage);
                         break;
-                    case "8":
+                    case "9":
                         Console.WriteLine("Running time()");
                         pubnub.time<string>(DisplayReturnMessage);
                         break;
@@ -133,6 +174,11 @@ namespace PubNub_Messaging
         }
 
         static void DisplayReturnMessage(string result)
+        {
+            Console.WriteLine(result);
+        }
+
+        static void DisplayConnectStatusMessage(string result)
         {
             Console.WriteLine(result);
         }
