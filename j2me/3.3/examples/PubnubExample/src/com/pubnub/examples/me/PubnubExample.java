@@ -61,7 +61,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	/**
 	 * Called by a system to indicated that a command has been invoked on a
 	 * particular displayable.
-	 * 
+	 *
 	 * @param command
 	 *            the Command that was invoked
 	 * @param displayable
@@ -93,7 +93,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of exitCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Command getExitCommand() {
@@ -105,7 +105,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of form component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Form getForm() {
@@ -127,7 +127,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of stringItem component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public StringItem getStringItem() {
@@ -139,7 +139,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of detailedHistoryCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Command getDetailedHistoryCommand() {
@@ -152,7 +152,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of presenceCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Command getPresenceCommand() {
@@ -164,7 +164,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of publishCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Command getPublishCommand() {
@@ -176,7 +176,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of timeCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Command getTimeCommand() {
@@ -188,7 +188,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of historyCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Command getHistoryCommand() {
@@ -200,7 +200,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of unsubscribeCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Command getUnsubscribeCommand() {
@@ -212,7 +212,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of subscribeCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	public Command getSubscribeCommand() {
@@ -224,7 +224,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns an initiliazed instance of subscribeCommand component.
-	 * 
+	 *
 	 * @return the initialized component instance
 	 */
 	private Command getHereNowCommand() {
@@ -236,7 +236,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Returns a display instance.
-	 * 
+	 *
 	 * @return the display instance.
 	 */
 	public Display getDisplay() {
@@ -276,7 +276,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	/**
 	 * Called to signal the MIDlet to terminate.
-	 * 
+	 *
 	 * @param unconditional
 	 *            if true, then the MIDlet has to be unconditionally terminated
 	 *            and all resources has to be released.
@@ -294,23 +294,15 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 				Enumeration keys = obj.keys();
 				while (keys.hasMoreElements()) {
-					System.out.println(obj.get(keys.nextElement().toString())
-							+ " ");
 				}
 
 			} else if (message instanceof String) {
 				String obj = (String) message;
-				System.out.print(obj + " ");
-				System.out.println();
-
 				Alert a = new Alert("Received", obj.toString(), null, null);
 				a.setTimeout(Alert.FOREVER);
 				getDisplay().setCurrent(a, form);
 			} else if (message instanceof JSONArray) {
 				JSONArray obj = (JSONArray) message;
-				System.out.print(obj.toString() + " ");
-				System.out.println();
-
 				Alert a = new Alert("Received", obj.toString(), null, null);
 				a.setTimeout(Alert.FOREVER);
 				getDisplay().setCurrent(a, form);

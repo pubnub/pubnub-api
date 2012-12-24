@@ -7,14 +7,13 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import javax.microedition.io.HttpConnection;
 
-public abstract class HttpCallback
-        implements AsyncHttpCallback {
+public abstract class HttpCallback implements AsyncHttpCallback {
 
     private String _url;
     private Hashtable _headerFields;
     private HttpConnection _connection;
     private AsyncHttpManager _connManager;
-    
+
     public void setConnManager(AsyncHttpManager _connManager) {
         this._connManager = _connManager;
     }
@@ -40,21 +39,21 @@ public abstract class HttpCallback
         return _headerFields;
     }
 
-    public boolean checkResponse(HttpConnection hconn)
-            throws IOException {
+    public boolean checkResponse(HttpConnection hconn) throws IOException {
 
         int rc = hconn.getResponseCode();
 
-        return (rc == HttpConnection.HTTP_OK
-                || AsyncHttpManager.isRedirect(rc));
+        return (rc == HttpConnection.HTTP_OK || AsyncHttpManager.isRedirect(rc));
     }
 
-    public abstract void OnComplete(HttpConnection hconn, int statusCode, String response);
+    public abstract void OnComplete(HttpConnection hconn, int statusCode,
+            String response);
 
-    public abstract void errorCall(HttpConnection hconn, int statusCode, String response);
+    public abstract void errorCall(HttpConnection hconn, int statusCode,
+            String response);
 
     public void endingCall(HttpConnection hconn) throws IOException {
-        
+
         int rc = hconn.getResponseCode();
 
         InputStream in = null;
@@ -92,9 +91,8 @@ public abstract class HttpCallback
 
     }
 
-    public void cancelingCall(HttpConnection hconn)
-            throws IOException {
-            errorCall(hconn, hconn.getResponseCode(), "Cancelling");
+    public void cancelingCall(HttpConnection hconn) throws IOException {
+        errorCall(hconn, hconn.getResponseCode(), "Cancelling");
     }
 
     public void cancelRequest(HttpCallback cb) {
