@@ -3,9 +3,8 @@ package com.pubnub.asynchttp;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 

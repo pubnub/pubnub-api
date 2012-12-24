@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import javax.microedition.io.HttpConnection;
 
+import org.bouncycastle.util.SecureRandom;
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
@@ -36,8 +37,54 @@ public class Pubnub {
 	private AsyncHttpManager longPollConnManager;
 	private AsyncHttpManager simpleConnManager;
 
-	private String uuid() {
-		return "abcd-efgh-jikl-mnop";
+	/**
+	 * UUID
+	 * 
+	 * 32 digit UUID generation at client side.
+	 * 
+	 * @return String uuid.
+	 */
+	public static String uuid() {
+		String valueBeforeMD5;
+		String valueAfterMD5;
+		SecureRandom mySecureRand = new SecureRandom();
+		String s_id = System.getProperty("microedition.platform");
+		StringBuffer sbValueBeforeMD5 = new StringBuffer();
+		try {
+			long time = System.currentTimeMillis();
+			long rand = 0;
+			rand = mySecureRand.nextLong();
+			sbValueBeforeMD5.append(s_id);
+			sbValueBeforeMD5.append(":");
+			sbValueBeforeMD5.append(Long.toString(time));
+			sbValueBeforeMD5.append(":");
+			sbValueBeforeMD5.append(Long.toString(rand));
+			valueBeforeMD5 = sbValueBeforeMD5.toString();
+			byte[] array = PubnubCrypto.md5(valueBeforeMD5);
+			StringBuffer sb = new StringBuffer();
+			for (int j = 0; j < array.length; ++j) {
+				int b = array[j] & 0xFF;
+				if (b < 0x10) {
+					sb.append('0');
+				}
+				sb.append(Integer.toHexString(b));
+			}
+			valueAfterMD5 = sb.toString();
+			String raw = valueAfterMD5.toUpperCase();
+			sb = new StringBuffer();
+			sb.append(raw.substring(0, 8));
+			sb.append("-");
+			sb.append(raw.substring(8, 12));
+			sb.append("-");
+			sb.append(raw.substring(12, 16));
+			sb.append("-");
+			sb.append(raw.substring(16, 20));
+			sb.append("-");
+			sb.append(raw.substring(20));
+			return sb.toString();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
@@ -186,6 +233,42 @@ public class Pubnub {
 	/**
 	 * Send a message to a channel.
 	 * 
+	 * @param channel
+	 *            Channel name
+	 * @param message
+	 *            JSONObject to be published
+	 * @param callback
+	 *            Callback
+	 */
+	public void publish(String channel, JSONArray message, Callback callback) {
+		Hashtable args = new Hashtable();
+		args.put("channel", channel);
+		args.put("message", message);
+		args.put("callback", callback);
+		publish(args);
+	}
+
+	/**
+	 * Send a message to a channel.
+	 * 
+	 * @param channel
+	 *            Channel name
+	 * @param message
+	 *            JSONObject to be published
+	 * @param callback
+	 *            Callback
+	 */
+	public void publish(String channel, String message, Callback callback) {
+		Hashtable args = new Hashtable();
+		args.put("channel", channel);
+		args.put("message", message);
+		args.put("callback", callback);
+		publish(args);
+	}
+
+	/**
+	 * Send a message to a channel.
+	 * 
 	 * @param args
 	 *            Hashtable containing channel name, message.
 	 * @param callback
@@ -216,7 +299,14 @@ public class Pubnub {
 						+ this.CIPHER_KEY.length());
 				// Encrypt Message
 				PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-				message = pc.encrypt(obj);
+				try {
+					message = pc.encrypt(obj);
+				} catch (Exception e) {
+					JSONArray jsarr;
+					jsarr = new JSONArray();
+					jsarr.put("0").put("Error: Encryption Failure");
+					callback.errorCallback(channel, jsarr);
+				}
 			} else {
 				message = obj;
 			}
@@ -228,7 +318,10 @@ public class Pubnub {
 				try {
 					message = pc.encrypt(obj);
 				} catch (Exception e) {
-					e.printStackTrace();
+					JSONArray jsarr;
+					jsarr = new JSONArray();
+					jsarr.put("0").put("Error: Encryption Failure");
+					callback.errorCallback(channel, jsarr);
 				}
 			} else {
 				message = obj;
@@ -241,7 +334,14 @@ public class Pubnub {
 			if (this.CIPHER_KEY.length() > 0) {
 				// Encrypt Message
 				PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
-				message = pc.encryptJSONArray(obj);
+				try {
+					message = pc.encryptJSONArray(obj);
+				} catch (Exception e) {
+					JSONArray jsarr;
+					jsarr = new JSONArray();
+					jsarr.put("0").put("Error: Encryption Failure");
+					callback.errorCallback(channel, jsarr);
+				}
 			} else {
 				message = obj;
 			}
@@ -254,9 +354,9 @@ public class Pubnub {
 		if (this.SECRET_KEY.length() > 0) {
 			StringBuffer string_to_sign = new StringBuffer();
 			string_to_sign.append(this.PUBLISH_KEY).append('/')
-			.append(this.SUBSCRIBE_KEY).append('/')
-			.append(this.SECRET_KEY).append('/').append(channel)
-			.append('/').append(message.toString());
+					.append(this.SUBSCRIBE_KEY).append('/')
+					.append(this.SECRET_KEY).append('/').append(channel)
+					.append('/').append(message.toString());
 
 			// Sign Message
 			signature = PubnubCrypto.getHMacSHA256(this.SECRET_KEY,
@@ -269,255 +369,301 @@ public class Pubnub {
 
 		Request req = new Request(urlComponents, channel,
 				new ResponseHandler() {
-			public void handleResponse(String response) {
-				JSONArray jsarr;
-				try {
-					jsarr = new JSONArray(response);
-				} catch (JSONException e) {
-					handleError(response);
-					return;
-				}
-				callback.successCallback(channel, jsarr);
-			}
+					public void handleResponse(String response) {
+						JSONArray jsarr;
+						try {
+							jsarr = new JSONArray(response);
+						} catch (JSONException e) {
+							handleError(response);
+							return;
+						}
+						callback.successCallback(channel, jsarr);
+					}
 
-			public void handleError(String response) {
-				JSONArray jsarr;
-				try {
-					jsarr = new JSONArray(response);
-				} catch (JSONException e) {
-					jsarr = new JSONArray();
-					jsarr.put("0").put(
-							"Error: Failed JSON HTTP Request");
-					callback.errorCallback(channel, jsarr);
-				}
+					public void handleError(String response) {
+						JSONArray jsarr;
+						try {
+							jsarr = new JSONArray(response);
+						} catch (JSONException e) {
+							jsarr = new JSONArray();
+							jsarr.put("0").put(
+									"Error: Failed JSON HTTP Request");
+							callback.errorCallback(channel, jsarr);
+						}
 
-			}
-		});
+					}
+				});
 
 		_request(req, simpleConnManager);
 	}
-	
-    /**
-     * 
-     * Listen for presence of subscribers on a channel
-     * 
-     * @param channel Name of the channel on which to listen for join/leave i.e. presence events
-     * @param callback Callback 
-     * @exception PubnubException Throws PubnubException if Callback is null
-     */
-    public void presence(String channel, Callback callback)
-    throws PubnubException {
-        Hashtable args = new Hashtable(2);
-        args.put("channel", channel + "-pnpres");
-        args.put("callback", callback);
-        subscribe(args);
-    }
 
-    /**
-     * 
-     * Read presence information from a channel
-     * 
-     * @param channel Channel name
-     * @param requestTimeout timeout in milliseconds for this request
-     */
-    public void hereNow(final String channel, final Callback callback) {
-    	
-        String[] urlargs = { this.ORIGIN, "v2", "presence", "sub_key", this.SUBSCRIBE_KEY,
-                "channel", channel };
-        
-        Request req = new Request(urlargs, (String)null,new ResponseHandler(){
-
-			public void handleResponse(String response) {
-				callback.successCallback(channel, response);
-				
-			}
-
-			public void handleError(String response) {
-				callback.errorCallback(channel, response);
-				
-			}
-        	
-        });
-        
-        _request(req,simpleConnManager);
-    }
-
-    /**
-     * 
-     * Read history from a channel.
-     * 
-     * @param channel Channel Name
-     * @param limit Upper limit on number of messages in response
-     * @param requestTimeout timeout in milliseconds for this request
-     * @return JSONArray of message history on a channel.
-     */
-    public void history(String channel, int limit, Callback callback) {
-    	Hashtable args = new Hashtable(2);
-        args.put("channel", channel);
-        args.put("limit", String.valueOf(limit));
-        args.put("callback", callback);
-        history(args);
-    }
-
-    /**
-     * 
-     * Read history from a channel.
-     * 
-     * @param args HashMap of <String, Object> containing channel name, limit history count
-     * @param requestTimeout timeout in milliseconds for this request
-     * @return JSONArray of history.
-     */
-    private void history(Hashtable args) {
-
-        final String channel = (String) args.get("channel");
-        String limit = (String) args.get("limit");
-        final Callback callback = (Callback) args.get("callback");
-
-        String[] urlargs = { this.ORIGIN, "history", this.SUBSCRIBE_KEY, channel, "0",
-                limit};
-
-        Request req = new Request(urlargs, channel, new ResponseHandler(){
-
-			public void handleResponse(String response) {
-				callback.successCallback(channel, response);
-				
-			}
-
-			public void handleError(String response) {
-				callback.errorCallback(channel, response);
-				
-			}
-        	
-        });
-        _request(req, simpleConnManager);
-    }
-
-	
 	/**
-     * 
-     * Read DetailedHistory for a channel.
-     * @param channel Channel name for which detailed history is required
-     * @param start Start time 
-     * @param end End time
-     * @param count Upper limit on number of messages to be returned
-     * @param reverse True if messages need to be in reverse order
-     * @return JSONArray of detailed history.
-     */
-    public void detailedHistory(final String channel, long start, long end,
-            int count, boolean reverse, final Callback callback) {
-    	Hashtable parameters = new Hashtable();
-        if (count == -1)
-            count = 100;
+	 * 
+	 * Listen for presence of subscribers on a channel
+	 * 
+	 * @param channel
+	 *            Name of the channel on which to listen for join/leave i.e.
+	 *            presence events
+	 * @param callback
+	 *            Callback
+	 * @exception PubnubException
+	 *                Throws PubnubException if Callback is null
+	 */
+	public void presence(String channel, Callback callback)
+			throws PubnubException {
+		Hashtable args = new Hashtable(2);
+		args.put("channel", channel + "-pnpres");
+		args.put("callback", callback);
+		subscribe(args);
+	}
 
-        parameters.put("count", String.valueOf(count));
-        parameters.put("reverse", String.valueOf(reverse));
-        
-        if (start != -1)
-            parameters.put("start", Long.toString(start).toLowerCase());
+	/**
+	 * 
+	 * Read presence information from a channel
+	 * 
+	 * @param channel
+	 *            Channel name
+	 * @param requestTimeout
+	 *            timeout in milliseconds for this request
+	 */
+	public void hereNow(final String channel, final Callback callback) {
 
-        if (end != -1)
-        	parameters.put("end", Long.toString(end).toLowerCase());
+		String[] urlargs = { this.ORIGIN, "v2", "presence", "sub_key",
+				this.SUBSCRIBE_KEY, "channel", channel };
 
-        String[] urlargs = { this.ORIGIN, "v2", "history", "sub-key", this.SUBSCRIBE_KEY,
-                "channel", channel };
-        
-        Request req = new Request(urlargs, parameters, channel,new ResponseHandler(){
+		Request req = new Request(urlargs, (String) null,
+				new ResponseHandler() {
+
+					public void handleResponse(String response) {
+						callback.successCallback(channel, response);
+
+					}
+
+					public void handleError(String response) {
+						callback.errorCallback(channel, response);
+
+					}
+
+				});
+
+		_request(req, simpleConnManager);
+	}
+
+	/**
+	 * 
+	 * Read history from a channel.
+	 * 
+	 * @param channel
+	 *            Channel Name
+	 * @param limit
+	 *            Upper limit on number of messages in response
+	 * @param requestTimeout
+	 *            timeout in milliseconds for this request
+	 * @return JSONArray of message history on a channel.
+	 */
+	public void history(String channel, int limit, Callback callback) {
+		Hashtable args = new Hashtable(2);
+		args.put("channel", channel);
+		args.put("limit", String.valueOf(limit));
+		args.put("callback", callback);
+		history(args);
+	}
+
+	/**
+	 * 
+	 * Read history from a channel.
+	 * 
+	 * @param args
+	 *            HashMap of <String, Object> containing channel name, limit
+	 *            history count
+	 * @param requestTimeout
+	 *            timeout in milliseconds for this request
+	 * @return JSONArray of history.
+	 */
+	private void history(Hashtable args) {
+
+		final String channel = (String) args.get("channel");
+		String limit = (String) args.get("limit");
+		final Callback callback = (Callback) args.get("callback");
+
+		String[] urlargs = { this.ORIGIN, "history", this.SUBSCRIBE_KEY,
+				channel, "0", limit };
+
+		Request req = new Request(urlargs, channel, new ResponseHandler() {
 
 			public void handleResponse(String response) {
 				callback.successCallback(channel, response);
-				
+
 			}
 
 			public void handleError(String response) {
 				callback.errorCallback(channel, response);
-				
+
 			}
-        	
-        });
-        _request(req, simpleConnManager);
-    }
-    /**
-     * 
-     * Read DetailedHistory for a channel.
-     * @param channel Channel name for which detailed history is required
-     * @param start Start time 
-     * @param reverse True if messages need to be in reverse order
-     * @return JSONArray of detailed history.
-     */
-    public void detailedHistory(String channel, long start, boolean reverse, Callback callback) {
-        detailedHistory(channel, start, -1, -1, reverse, callback);
-    }
-    
-    /**
-     * 
-     * Read DetailedHistory for a channel.
-     * @param channel Channel name for which detailed history is required
-     * @param start Start time 
-     * @param end End time
-     * @return JSONArray of detailed history.
-     */
-    public void detailedHistory(String channel, long start, long end, Callback callback) {
-       detailedHistory(channel, start, end, -1, false, callback);
-    }
-    
-   
-    /**
-     * 
-     * Read DetailedHistory for a channel.
-     * @param channel Channel name for which detailed history is required
-     * @param start Start time 
-     * @param end End time
-     * @param reverse True if messages need to be in reverse order
-     * @return JSONArray of detailed history.
-     */
-    public void detailedHistory(String channel, long start, long end,
-            boolean reverse, Callback callback) {
-        detailedHistory(channel, start, end, -1, reverse, callback);
-    }
-    
-    /**
-     * 
-     * Read DetailedHistory for a channel.
-     * @param channel Channel name for which detailed history is required
-     * @param count Upper limit on number of messages to be returned
-     * @param reverse True if messages need to be in reverse order
-     * @return JSONArray of detailed history.
-     */
-    public void detailedHistory(String channel, int count, boolean reverse, Callback callback) {
-        detailedHistory(channel, -1, -1, count, reverse, callback);
-    }
-    
-    /**
-     * 
-     * Read DetailedHistory for a channel.
-     * @param channel Channel name for which detailed history is required
-     * @param reverse True if messages need to be in reverse order
-     * @return JSONArray of detailed history.
-     */
-    public void detailedHistory(String channel, boolean reverse, Callback callback) {
-       detailedHistory(channel, -1, -1, -1, reverse, callback);
-    }
-    
-    /**
-     * 
-     * Read DetailedHistory for a channel.
-     * @param channel Channel name for which detailed history is required
-     * @param reverse True if messages need to be in reverse order
-     * @return JSONArray of detailed history.
-     */
-    public void detailedHistory(String channel, int count, Callback callback) {
-       detailedHistory(channel, -1, -1, count, false, callback);
-    }
 
-    /**
-     * Read current time from PubNub Cloud.
-     * 
-     * @return current timestamp.
-     */
-    public void time(final Callback cb) {
+		});
+		_request(req, simpleConnManager);
+	}
 
-        String[] url = { this.ORIGIN, "time", "0" };
-        Request req = new Request(url, (String)null, new ResponseHandler() {
+	/**
+	 * 
+	 * Read DetailedHistory for a channel.
+	 * 
+	 * @param channel
+	 *            Channel name for which detailed history is required
+	 * @param start
+	 *            Start time
+	 * @param end
+	 *            End time
+	 * @param count
+	 *            Upper limit on number of messages to be returned
+	 * @param reverse
+	 *            True if messages need to be in reverse order
+	 * @return JSONArray of detailed history.
+	 */
+	public void detailedHistory(final String channel, long start, long end,
+			int count, boolean reverse, final Callback callback) {
+		Hashtable parameters = new Hashtable();
+		if (count == -1)
+			count = 100;
+
+		parameters.put("count", String.valueOf(count));
+		parameters.put("reverse", String.valueOf(reverse));
+
+		if (start != -1)
+			parameters.put("start", Long.toString(start).toLowerCase());
+
+		if (end != -1)
+			parameters.put("end", Long.toString(end).toLowerCase());
+
+		String[] urlargs = { this.ORIGIN, "v2", "history", "sub-key",
+				this.SUBSCRIBE_KEY, "channel", channel };
+
+		Request req = new Request(urlargs, parameters, channel,
+				new ResponseHandler() {
+
+					public void handleResponse(String response) {
+						callback.successCallback(channel, response);
+
+					}
+
+					public void handleError(String response) {
+						callback.errorCallback(channel, response);
+
+					}
+
+				});
+		_request(req, simpleConnManager);
+	}
+
+	/**
+	 * 
+	 * Read DetailedHistory for a channel.
+	 * 
+	 * @param channel
+	 *            Channel name for which detailed history is required
+	 * @param start
+	 *            Start time
+	 * @param reverse
+	 *            True if messages need to be in reverse order
+	 * @return JSONArray of detailed history.
+	 */
+	public void detailedHistory(String channel, long start, boolean reverse,
+			Callback callback) {
+		detailedHistory(channel, start, -1, -1, reverse, callback);
+	}
+
+	/**
+	 * 
+	 * Read DetailedHistory for a channel.
+	 * 
+	 * @param channel
+	 *            Channel name for which detailed history is required
+	 * @param start
+	 *            Start time
+	 * @param end
+	 *            End time
+	 * @return JSONArray of detailed history.
+	 */
+	public void detailedHistory(String channel, long start, long end,
+			Callback callback) {
+		detailedHistory(channel, start, end, -1, false, callback);
+	}
+
+	/**
+	 * 
+	 * Read DetailedHistory for a channel.
+	 * 
+	 * @param channel
+	 *            Channel name for which detailed history is required
+	 * @param start
+	 *            Start time
+	 * @param end
+	 *            End time
+	 * @param reverse
+	 *            True if messages need to be in reverse order
+	 * @return JSONArray of detailed history.
+	 */
+	public void detailedHistory(String channel, long start, long end,
+			boolean reverse, Callback callback) {
+		detailedHistory(channel, start, end, -1, reverse, callback);
+	}
+
+	/**
+	 * 
+	 * Read DetailedHistory for a channel.
+	 * 
+	 * @param channel
+	 *            Channel name for which detailed history is required
+	 * @param count
+	 *            Upper limit on number of messages to be returned
+	 * @param reverse
+	 *            True if messages need to be in reverse order
+	 * @return JSONArray of detailed history.
+	 */
+	public void detailedHistory(String channel, int count, boolean reverse,
+			Callback callback) {
+		detailedHistory(channel, -1, -1, count, reverse, callback);
+	}
+
+	/**
+	 * 
+	 * Read DetailedHistory for a channel.
+	 * 
+	 * @param channel
+	 *            Channel name for which detailed history is required
+	 * @param reverse
+	 *            True if messages need to be in reverse order
+	 * @return JSONArray of detailed history.
+	 */
+	public void detailedHistory(String channel, boolean reverse,
+			Callback callback) {
+		detailedHistory(channel, -1, -1, -1, reverse, callback);
+	}
+
+	/**
+	 * 
+	 * Read DetailedHistory for a channel.
+	 * 
+	 * @param channel
+	 *            Channel name for which detailed history is required
+	 * @param reverse
+	 *            True if messages need to be in reverse order
+	 * @return JSONArray of detailed history.
+	 */
+	public void detailedHistory(String channel, int count, Callback callback) {
+		detailedHistory(channel, -1, -1, count, false, callback);
+	}
+
+	/**
+	 * Read current time from PubNub Cloud.
+	 * 
+	 * @return current timestamp.
+	 */
+	public void time(final Callback cb) {
+
+		String[] url = { this.ORIGIN, "time", "0" };
+		Request req = new Request(url, (String) null, new ResponseHandler() {
 
 			public void handleResponse(String response) {
 				cb.successCallback(null, response);
@@ -526,12 +672,11 @@ public class Pubnub {
 			public void handleError(String response) {
 				cb.errorCallback(null, response);
 			}
-        	
-        });
 
-        _request(req,simpleConnManager);
-    }
+		});
 
+		_request(req, simpleConnManager);
+	}
 
 	private boolean inputsValid(Hashtable args) throws PubnubException {
 		boolean channelMissing;
@@ -558,7 +703,7 @@ public class Pubnub {
 	 */
 	public void unsubscribe(String[] channels) {
 		for (int i = 0; i < channels.length; i++) {
-			subscriptions.removeChannel(channels[i]);	
+			subscriptions.removeChannel(channels[i]);
 		}
 	}
 
@@ -716,73 +861,73 @@ public class Pubnub {
 
 		Request req = new Request(urlComponents, params, channelsArray,
 				new ResponseHandler() {
-			String _timetoken = "0";
+					String _timetoken = "0";
 
-			public void handleResponse(String response) {
+					public void handleResponse(String response) {
 
-				subscriptions.invokeConnectCallbackOnChannels();
+						subscriptions.invokeConnectCallbackOnChannels();
 
-				/*
-				 * Check if response has channel names. A JSON response
-				 * with more than 2 items means the response contains
-				 * the channel names as well. The channel names are in a
-				 * comma delimted string. Call success callback on all
-				 * he channels passing the corresponding response
-				 * message.
-				 */
-
-				JSONArray jsa;
-				try {
-					jsa = new JSONArray(response);
-					String _timetoken = jsa.get(1).toString();
-					JSONArray messages = new JSONArray(jsa.get(0)
-							.toString());
-
-					if (jsa.length() > 2) {
 						/*
-						 * Response has multiple channels
+						 * Check if response has channel names. A JSON response
+						 * with more than 2 items means the response contains
+						 * the channel names as well. The channel names are in a
+						 * comma delimted string. Call success callback on all
+						 * he channels passing the corresponding response
+						 * message.
 						 */
 
-						String[] _channels = PubnubUtil.splitString(
-								jsa.getString(2), ",");
-						System.out.println(_channels.length);
+						JSONArray jsa;
+						try {
+							jsa = new JSONArray(response);
+							String _timetoken = jsa.get(1).toString();
+							JSONArray messages = new JSONArray(jsa.get(0)
+									.toString());
 
-						for (int i = 0; i < _channels.length; i++) {
-							Channel _channel = (Channel) subscriptions
-									.getChannel(_channels[i]);
-							if (_channel != null)
-								_channel.callback.successCallback(
-										_channels[i], messages.get(i));
-						}
+							if (jsa.length() > 2) {
+								/*
+								 * Response has multiple channels
+								 */
 
-					} else {
-						/*
-						 * Response for single channel Callback on
-						 * single channel
-						 */
-						Channel _channel = subscriptions
-								.getFirstChannel();
+								String[] _channels = PubnubUtil.splitString(
+										jsa.getString(2), ",");
+								System.out.println(_channels.length);
 
-						if (_channel != null) {
-							for (int i = 0; i < messages.length(); i++) {
-								_channel.callback.successCallback(
-										_channel.name, messages.get(i));
+								for (int i = 0; i < _channels.length; i++) {
+									Channel _channel = (Channel) subscriptions
+											.getChannel(_channels[i]);
+									if (_channel != null)
+										_channel.callback.successCallback(
+												_channels[i], messages.get(i));
+								}
+
+							} else {
+								/*
+								 * Response for single channel Callback on
+								 * single channel
+								 */
+								Channel _channel = subscriptions
+										.getFirstChannel();
+
+								if (_channel != null) {
+									for (int i = 0; i < messages.length(); i++) {
+										_channel.callback.successCallback(
+												_channel.name, messages.get(i));
+									}
+								}
+
 							}
+							_subscribe_base(_timetoken);
+						} catch (JSONException e) {
+							_subscribe_base(_timetoken);
 						}
 
 					}
-					_subscribe_base(_timetoken);
-				} catch (JSONException e) {
-					_subscribe_base(_timetoken);
-				}
 
-			}
-
-			public void handleError(String response) {
-				subscriptions.invokeDisconnectCallbackOnChannels();
-				_subscribe_base(_timetoken);
-			}
-		});
+					public void handleError(String response) {
+						subscriptions.invokeDisconnectCallbackOnChannels();
+						_subscribe_base(_timetoken);
+					}
+				});
 
 		_request(req, longPollConnManager);
 	}

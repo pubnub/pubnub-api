@@ -1,7 +1,6 @@
 package com.pubnub.api;
 
-/**
- *
+/** 
  * @author Pubnub
  */
 
