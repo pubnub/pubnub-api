@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="ba46caba-68a9-41f7-8118-2baa35509868" name="Jhonny@JHONNY-PC 2012-11-17 22:37:14" runUser="Jhonny-PC\Jhonny" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Default Test Settings" id="b7fe2b9b-a26a-4536-96dd-c2b7cc152c25">
+    <Deployment runDeploymentRoot="Jhonny_JHONNY-PC 2012-11-17 22_37_14">
+      <DeploymentItem filename="C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\Newtonsoft.Json.dll" />
+      <DeploymentItem filename="C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\bin\Debug\PubNub-Messaging.exe" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2012-11-17T22:37:14.7081357+02:00" queuing="2012-11-17T22:37:16.0242110+02:00" start="2012-11-17T22:37:16.2322229+02:00" finish="2012-11-17T22:37:39.7655689+02:00" />
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" error="0" failed="1" timeout="0" aborted="1" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" passed="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="IfHereNowIsCalledThenItShouldReturnInfo" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="0df82419-b215-0bb5-2789-e45794860234">
+      <Execution id="87556a27-fc04-4d8e-b5d3-50b2ad1873cc" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAClientIsPresented, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="IfHereNowIsCalledThenItShouldReturnInfo" />
+    </UnitTest>
+    <UnitTest name="ThenPresenceShouldReturnReceivedMessage" storage="c:\users\jhonny\documents\github\pubnub-api\silverlight-part\pubnub-messaging.tests\bin\debug\pubnub-messaging.tests.dll" id="3f423bfb-57aa-ca8b-414b-5708c176c895">
+      <Execution id="e863950b-6058-49a7-a7c7-68733f68e089" />
+      <TestMethod codeBase="C:/Users/Jhonny/Documents/GitHub/pubnub-api/silverlight-part/PubNub-Messaging.Tests/bin/Debug/PubNub-Messaging.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="PubNub_Messaging.Tests.WhenAClientIsPresented, PubNub-Messaging.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ThenPresenceShouldReturnReceivedMessage" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="3f423bfb-57aa-ca8b-414b-5708c176c895" executionId="e863950b-6058-49a7-a7c7-68733f68e089" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0df82419-b215-0bb5-2789-e45794860234" executionId="87556a27-fc04-4d8e-b5d3-50b2ad1873cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="e863950b-6058-49a7-a7c7-68733f68e089" testId="3f423bfb-57aa-ca8b-414b-5708c176c895" testName="ThenPresenceShouldReturnReceivedMessage" computerName="JHONNY-PC" duration="00:00:01.9164317" startTime="2012-11-17T22:37:16.2962266+02:00" endTime="2012-11-17T22:37:18.9763799+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e863950b-6058-49a7-a7c7-68733f68e089">
+      <Output>
+        <ErrorInfo>
+          <Message>Test method PubNub_Messaging.Tests.WhenAClientIsPresented.ThenPresenceShouldReturnReceivedMessage threw exception: 
+System.NullReferenceException: Object reference not set to an instance of an object.</Message>
+          <StackTrace>    at PubNub_Messaging.Pubnub.unsubscribe[T](String channel, Action`1 usercallback) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 850
+   at PubNub_Messaging.Tests.WhenAClientIsPresented.ThenPresenceShouldReturnReceivedMessage() in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging.Tests\WhenAClientIsPresented.cs:line 42
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="87556a27-fc04-4d8e-b5d3-50b2ad1873cc" testId="0df82419-b215-0bb5-2789-e45794860234" testName="IfHereNowIsCalledThenItShouldReturnInfo" computerName="JHONNY-PC" duration="00:00:15.1978693" startTime="2012-11-17T22:37:18.9793800+02:00" endTime="2012-11-17T22:37:34.1772493+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Aborted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87556a27-fc04-4d8e-b5d3-50b2ad1873cc">
+      <Output>
+        <ErrorInfo>
+          <Message>User aborted test run.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+</TestRun>

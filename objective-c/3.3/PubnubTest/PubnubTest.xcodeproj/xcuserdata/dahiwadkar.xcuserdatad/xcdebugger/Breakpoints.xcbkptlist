@@ -7,52 +7,26 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "PubnubTest/CL_215.m"
-         timestampString = "372078189.926125"
+         filePath = "PubnubTest/ViewController.m"
+         timestampString = "374051956.805014"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "53"
-         endingLineNumber = "53"
-         landmarkName = "-runCL_215UnitTest"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "PubnubTest/PubNub/CEPubnub.m"
-         timestampString = "372077923.340544"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "656"
-         endingLineNumber = "656"
-         landmarkName = "-connection:didCompleteWithResponse:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "PubnubTest/PubNub/CEPubnub.m"
-         timestampString = "372077923.340544"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "945"
-         endingLineNumber = "945"
-         landmarkName = "-didSucceedPublishingMessageToChannel:withResponse:message:"
+         startingLineNumber = "404"
+         endingLineNumber = "404"
+         landmarkName = "-pubnub:presence:onChannel:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "PubnubTest/CL_215.m"
-         timestampString = "372078189.926125"
+         filePath = "PubnubTest/ViewController.m"
+         timestampString = "374051956.805014"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "132"
-         endingLineNumber = "132"
-         landmarkName = "-pubnub:hereNow:onChannel:"
+         startingLineNumber = "402"
+         endingLineNumber = "402"
+         landmarkName = "-pubnub:presence:onChannel:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

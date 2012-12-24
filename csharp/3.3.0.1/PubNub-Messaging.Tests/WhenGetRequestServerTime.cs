@@ -2,33 +2,64 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.ComponentModel;
+using System.Threading;
+using System.Collections;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace PubNub_Messaging.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class WhenGetRequestServerTime
     {
-        [TestMethod]
+        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
+        bool timeReceived = false;
+
+        [Test]
         public void ThenItShouldReturnTimeStamp()
         {
-            Pubnub pubnub = new Pubnub(
-                "demo",
-                "demo",
-                "",
-                "",
-                false
-            );
-            
-            pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
-
-            //pubnub.time();
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            pubnub.time<string>(ReturnTimeStampCallback);
+            manualEvent1.WaitOne(310 * 1000);
+            Assert.IsTrue(timeReceived, "time() Failed");
         }
 
-        static void Pubnub_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ReturnTimeStampCallback(string result)
         {
-            //Assert.AreNotEqual("0", ((Pubnub)sender).Time[0].ToString());
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
+            {
+                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
+                if (receivedObj is object[])
+                {
+                    string time = receivedObj[0].ToString();
+                    if (time.Length > 0)
+                    {
+                        timeReceived = true;
+                    }
+                }
+            }
+            manualEvent1.Set();
+        }
+
+        [Test]
+        public void TranslateDateTimeToUnixTime()
+        {
+            //Test for 26th June 2012 GMT
+            DateTime dt = new DateTime(2012,6,26,0,0,0,DateTimeKind.Utc);
+            long nanosecTime = Pubnub.translateDateTimeToPubnubUnixNanoSeconds(dt);
+            Assert.AreEqual(13406688000000000, nanosecTime);
+        }
+
+        [Test]
+        public void TranslateUnixTimeToDateTime()
+        {
+            //Test for 26th June 2012 GMT
+            DateTime expectedDt = new DateTime(2012, 6, 26, 0, 0, 0, DateTimeKind.Utc);
+            DateTime actualDt = Pubnub.translatePubnubUnixNanoSecondsToDateTime(13406688000000000);
+            Assert.AreEqual(expectedDt, actualDt);
         }
     }
 }

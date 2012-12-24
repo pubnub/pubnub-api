@@ -11,3 +11,4 @@ $pubnub->presence(array(
         exit;
     }
 ));
+?>

@@ -16,3 +16,9 @@ node_modules
 /j2me/3.3/nbproject
 /flash/3.3.1beta/obj/*.old
 /flash/3.3.1beta/obj/PubNubTestConfig.xml
+/silverlight-part/*/Debug/*
+/silverlight-part/*/obj/*
+/csharp-windows-phone/*/packages/*
+/csharp-windows-phone/*/packages.config
+/csharp-windows-phone/*/*/bin/*
+/csharp-windows-phone/*/*/obj/*

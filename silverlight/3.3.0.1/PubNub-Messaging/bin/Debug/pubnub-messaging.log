@@ -1,0 +1,357 @@
+DateTime 11/16/2012 11:49:35 PM, WebException: System.Net.WebException: The remote server returned an error: (504) Gateway Timeout.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.<>c__DisplayClass21`1.<_urlRequest>b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1378 for URL: http://pizza.pubnub.com/v2/presence/sub_key/demo/channel/test
+DateTime 11/16/2012 11:49:35 PM, _urlRequest - Internet connection problem
+DateTime 11/22/2012 10:31:51 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/22/2012 10:31:52 PM, requested subscribe for channel=tt
+DateTime 11/22/2012 10:31:52 PM, Request=http://pizza.pubnub.com/subscribe/demo/tt/0/0?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime: 11/22/2012 10:31:52 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/22/2012 10:32:23 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime: 11/22/2012 10:32:23 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/22/2012 10:32:23 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:32:23 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/22/2012 10:32:23 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime 11/22/2012 10:32:23 PM, JSON for channel=tt (Subscribe) =[[],"13536163418793903"]
+DateTime 11/22/2012 10:32:24 PM, Request=http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime: 11/22/2012 10:32:24 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:32:24 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/22/2012 10:32:24 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime: 11/22/2012 10:32:38 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:32:38 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/22/2012 10:32:39 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:32:39 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:32:39 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:32:39 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:32:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:32:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:32:57 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime: 11/22/2012 10:32:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:32:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:32:57 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:32:57 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:32:57 PM, WebException: System.Net.WebException: The request was aborted: The request was canceled.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.<>c__DisplayClass21`1.<_urlRequest>b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:33:02 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:33:03 PM, Subscribe - No internet connection for tt
+DateTime 11/22/2012 10:33:03 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:33:06 PM, tt Subscribe reconnectNetworkCallback. Retry 1 of 50
+DateTime 11/22/2012 10:33:09 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:33:09 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime: 11/22/2012 10:33:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:33:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:33:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime: 11/22/2012 10:33:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:33:12 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:33:12 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:33:12 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:33:12 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:33:21 PM, tt Subscribe reconnectNetworkCallback. Retry 2 of 50
+DateTime: 11/22/2012 10:33:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:33:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:33:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime: 11/22/2012 10:33:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:33:27 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:33:27 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:33:27 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:33:27 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:33:36 PM, tt Subscribe reconnectNetworkCallback. Retry 3 of 50
+DateTime: 11/22/2012 10:33:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:33:42 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:33:42 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:33:42 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:33:42 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:33:51 PM, tt Subscribe reconnectNetworkCallback. Retry 4 of 50
+DateTime: 11/22/2012 10:33:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:33:57 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:33:57 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:33:57 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:33:57 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:34:06 PM, tt Subscribe reconnectNetworkCallback. Retry 5 of 50
+DateTime: 11/22/2012 10:34:12 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:34:12 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:34:12 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:34:12 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:34:12 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime 11/22/2012 10:34:21 PM, tt Subscribe reconnectNetworkCallback. Retry 6 of 50
+DateTime: 11/22/2012 10:34:27 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:34:27 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/22/2012 10:34:27 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime 11/22/2012 10:34:36 PM, tt Subscribe reconnectNetworkCallback. Internet Available : True
+DateTime 11/22/2012 10:34:36 PM, Request=http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime: 11/22/2012 10:34:36 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:34:36 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/22/2012 10:34:36 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime: 11/22/2012 10:34:42 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:34:53 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/22/2012 10:34:53 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/22/2012 10:34:53 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime 11/22/2012 10:34:53 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime: 11/22/2012 10:34:55 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/22/2012 10:34:57 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:34:59 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/22/2012 10:34:59 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime: 11/22/2012 10:35:08 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:35:18 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/22/2012 10:35:18 PM checkInternetStatus LocalIP: 192.168.1.7
+DateTime: 11/22/2012 10:35:18 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime: 11/22/2012 10:35:19 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = True
+DateTime 11/22/2012 10:35:19 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:35:23 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:36:41 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime: 11/22/2012 10:36:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:36:41 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:36:53 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:36:53 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:36:58 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:36:58 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:37:01 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:37:03 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:37:03 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:37:03 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:37:03 PM, WebException: System.Net.WebException: The request was aborted: The request was canceled.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.<>c__DisplayClass21`1.<_urlRequest>b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:37:03 PM, Subscribe - No internet connection for tt
+DateTime 11/22/2012 10:37:07 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:37:07 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:37:07 PM, tt Subscribe reconnectNetworkCallback. Retry 1 of 50
+DateTime: 11/22/2012 10:37:37 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:37:37 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:37:37 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:37:37 PM, tt Subscribe reconnectNetworkCallback. Retry 2 of 50
+DateTime: 11/22/2012 10:37:37 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:37:37 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:37:37 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime: 11/22/2012 10:37:37 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/22/2012 10:40:47 PM, tt Subscribe reconnectNetworkCallback. Retry 3 of 50
+DateTime 11/22/2012 10:40:47 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:40:47 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:40:50 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:40:50 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:40:50 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime: 11/22/2012 10:40:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:40:51 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:40:51 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:40:51 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime: 11/22/2012 10:40:51 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:40:51 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:40:51 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:40:51 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime: 11/22/2012 10:40:51 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:40:51 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:40:51 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:40:55 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:40:55 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:41:00 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:41:02 PM, tt Subscribe reconnectNetworkCallback. Retry 4 of 50
+DateTime 11/22/2012 10:41:02 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:41:02 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:41:02 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:41:02 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:41:02 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:41:02 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:41:03 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:41:04 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:41:04 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:41:17 PM, tt Subscribe reconnectNetworkCallback. Retry 5 of 50
+DateTime: 11/22/2012 10:41:17 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:41:17 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:41:17 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:41:17 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:41:19 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:41:32 PM, tt Subscribe reconnectNetworkCallback. Retry 6 of 50
+DateTime: 11/22/2012 10:41:32 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:41:32 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:41:32 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/tt/0/13536163418793903?uuid=d656b1de-adf2-42c2-8ec6-24c258d7e202
+DateTime 11/22/2012 10:41:32 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= tt
+DateTime 11/22/2012 10:42:43 PM, Initiated System Event - PowerModeChanged.
+DateTime 11/22/2012 10:42:44 PM, requested subscribe for channel=1
+DateTime 11/22/2012 10:42:44 PM, Request=http://pizza.pubnub.com/subscribe/demo/1/0/0?uuid=64a7c60a-36bc-49d1-a462-862c362fbabf
+DateTime: 11/22/2012 10:42:44 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime 11/22/2012 10:42:46 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:42:46 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:42:46 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/1/0/0?uuid=64a7c60a-36bc-49d1-a462-862c362fbabf
+DateTime 11/22/2012 10:42:47 PM, WebException: System.Net.WebException: The request was aborted: The request was canceled.
+   at System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   at PubNub_Messaging.Pubnub.<>c__DisplayClass21`1.<_urlRequest>b__1a(IAsyncResult asynchronousResult) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 1268 for URL: http://pizza.pubnub.com/subscribe/demo/1/0/0?uuid=64a7c60a-36bc-49d1-a462-862c362fbabf
+DateTime 11/22/2012 10:42:47 PM, Subscribe - No internet connection for 1
+DateTime 11/22/2012 10:42:47 PM, 1 Subscribe reconnectNetworkCallback. Retry 1 of 50
+DateTime: 11/22/2012 10:42:59 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:42:59 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:42:59 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/1/0/0?uuid=64a7c60a-36bc-49d1-a462-862c362fbabf
+DateTime 11/22/2012 10:42:59 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= 1
+DateTime 11/22/2012 10:43:34 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:43:34 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:43:34 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:43:34 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/1/0/0?uuid=64a7c60a-36bc-49d1-a462-862c362fbabf
+DateTime 11/22/2012 10:43:34 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= 1
+DateTime 11/22/2012 10:43:34 PM, 1 Subscribe reconnectNetworkCallback. Retry 2 of 50
+DateTime 11/22/2012 10:43:34 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime: 11/22/2012 10:43:49 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:43:49 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:43:49 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/1/0/0?uuid=64a7c60a-36bc-49d1-a462-862c362fbabf
+DateTime 11/22/2012 10:43:49 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= 1
+DateTime 11/22/2012 10:43:49 PM, 1 Subscribe reconnectNetworkCallback. Retry 3 of 50
+DateTime 11/22/2012 10:44:02 PM checkInternetStatus Error. System.Net.Sockets.SocketException (0x80004005): The requested name is valid, but no data of the requested type was found
+   at System.Net.Dns.GetAddrInfo(String name)
+   at System.Net.Dns.InternalGetHostByName(String hostName, Boolean includeIPv6)
+   at System.Net.Dns.GetHostAddresses(String hostNameOrAddress)
+   at System.Net.Sockets.UdpClient.Connect(String hostname, Int32 port)
+   at System.Net.Sockets.UdpClient..ctor(String hostname, Int32 port)
+   at PubNub_Messaging.ClientNetworkStatus.checkSocketConnect(Object internetState) in C:\Users\Jhonny\Documents\GitHub\pubnub-api\silverlight-part\PubNub-Messaging\Pubnub.cs:line 2788
+DateTime 11/22/2012 10:44:04 PM, 1 Subscribe reconnectNetworkCallback. Retry 4 of 50
+DateTime: 11/22/2012 10:44:04 PM, **OnPubnubHeartBeatTimeoutCallback**
+DateTime: 11/22/2012 10:44:04 PM, OnPubnubHeartBeatTimeoutCallback - Internet connection = False
+DateTime 11/22/2012 10:44:04 PM TerminatePendingWebRequest http://pizza.pubnub.com/subscribe/demo/1/0/0?uuid=64a7c60a-36bc-49d1-a462-862c362fbabf
+DateTime 11/22/2012 10:44:04 PM Unable to remove web request from dictionary in TerminatePendingWebRequest for channel= 1

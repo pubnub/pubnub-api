@@ -1,0 +1,39 @@
+<!DOCTYPE html public "✰">
+<html>
+<head>
+    <meta charset=utf-8>
+    <title>PubNub VOICE✰ </title>
+    <link rel=stylesheet href=buttons.css>
+</head>
+<body>
+
+    <div class=center>
+        <img src=https://pubnub.s3.amazonaws.com/2012/pubnub-large.png>
+    </div>
+
+    <div class="center div-container">
+    <button id=voice-button class="button orange">
+        <strong>HOLD</strong>-TO-TALK <strong>◼</strong>
+    </button>
+    </div>
+
+    <script src=http://pubnub.s3.amazonaws.com/pubnub-3.3.js></script>
+    <script src=sound.js></script><script src=recorder.js></script>
+    <script src=push-to-talk.js></script>
+    <script>(function(){
+
+        var voice_channel = push_to_talk({
+            channel  : 'voice-channel-1' // Data Channel Name
+        })({
+            button   : 'voice-button',   // Push-to-Talk Button ID
+            buffer   : 1500,             // Delay Buffer in Miliseconds
+            chunk    : 100,              // Audio Time Slices in Miliseconds
+            channels : 1,                // Mono=1 & Stereo=2
+            sample   : 40500,            // Audio Sample Rate (Hertz)
+            bits     : 16                // Bits Per Sample
+        });
+
+    })();</script>
+
+</body>
+</html>

@@ -12,10 +12,10 @@
         import flash.external.*;
 
         [Bindable]
-        public var channel:String = 'hello_world';
+        public var channel:String = 'a,b,c';
 
         [Bindable]
-        public var origin:String = 'pubsub.pubnub.com';
+        public var origin:String = 'multiplexing.pubnub.com';
 
         [Bindable]
         public var pub_key:String = 'demo';
@@ -59,10 +59,18 @@
         }
 
         private function onSubscribeClick(e:MouseEvent):void {
-            var channels:Array = channel.split(',');
+
+            /*** Non MX Support
+             var channels:Array = channel.split(',');
             for each(var i:String  in channels) {
                 Pn.subscribe(i);
             }
+            */
+
+            /*** MX Support */
+
+             Pn.subscribe(channel);
+
         }
 
         private function onSubscribe(e:PnEvent):void {
@@ -70,6 +78,7 @@
             switch (e.status) {
                 case OperationStatus.DATA:
                     callExternalInterface("console.log", ("Subscribe [DATA], channel : " + e.channel + ', result : ' + e.data.result));
+                    trace('result is: ' + e.data.result);
                     break;
 
                 case OperationStatus.CONNECT:

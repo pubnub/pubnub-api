@@ -2,15 +2,11 @@
 <html>
 <head>
     <title>PubNub - Mouse Speak</title>
-    <style>
-    </style>
+    <style>body, li, div, ol, p { font-family: "Helvetica Neue" }</style>
 </head>
 <body>
 
 <!--
-Safe To Type (will not send): 
-<input>
--->
 <br>
 Start Typing to Talk with other Mice<br/>
 <ol>
@@ -20,14 +16,15 @@ Start Typing to Talk with other Mice<br/>
     <li> Wait State to prevent network bashing.
     <li> Send what has changed (mouse, text).
 </ol>
+-->
+
+<!-- It's at the bottom! -->
+<!-- pub-key and sub-key works with localhost -->
+<!-- Paste this at the bottom of your HTML Page -->
+<div id=pubnub pub-key=demo sub-key=demo></div>
+<script src=http://cdn.pubnub.com/pubnub-3.3.1.min.js></script>
+<script src=mouse-speak.js></script>
 
 </body>
 </html>
 
-
-<!-- It's at the bottom! -->
-<!-- pub-key and sub-key works with localhost -->
-<!--Paste this at the bottom of your HTML Page-->
-<div id=pubnub></div>
-<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
-<script src=mouse-speak.js></script>

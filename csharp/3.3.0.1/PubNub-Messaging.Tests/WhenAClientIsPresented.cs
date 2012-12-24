@@ -2,59 +2,116 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.ComponentModel;
+using System.Threading;
+using System.Collections;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace PubNub_Messaging.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class WhenAClientIsPresented
     {
-        [TestMethod]
-        public void ThenItShouldReturnReceivedMessage()
+        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
+        ManualResetEvent manualEvent2 = new ManualResetEvent(false);
+        ManualResetEvent manualEvent3 = new ManualResetEvent(false);
+
+        ManualResetEvent manualEvent4 = new ManualResetEvent(false);
+
+        static bool receivedFlag1 = false;
+        static bool receivedFlag2 = false;
+
+        [Test]
+        public void ThenPresenceShouldReturnReceivedMessage()
         {
-            Pubnub pubnub = new Pubnub(
-                "demo",
-                "demo",
-                "",
-                "",
-                false
-            );
-            string channel = "hello_world";
+            receivedFlag1 = false;
 
-            pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            string channel = "my/channel";
 
-            //pubnub.presence(channel);
+            pubnub.presence<string>(channel, ThenPresenceShouldReturnMessage);
+
+            //since presence expects from stimulus from sub/unsub...
+            pubnub.subscribe<string>(channel, DummyMethodForSubscribe);
+            manualEvent1.WaitOne(2000);
+
+            pubnub.unsubscribe<string>(channel, DummyMethodForUnSubscribe);
+            manualEvent3.WaitOne(2000);
+
+            manualEvent2.WaitOne(310 * 1000);
+            Assert.IsTrue(receivedFlag1, "Presence message not received");
         }
 
-        static void Pubnub_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        void ThenPresenceShouldReturnMessage(string receivedMessage)
         {
-            //Dictionary<string, object> _message = (Dictionary<string, object>)(((Pubnub)sender).ReturnMessage);
-            //if (e.PropertyName != "Here_Now")
-            //{
-            //    Assert.IsNotNull(_message["text"]);
-            //}
-            //else
-            //{
-            //    Assert.AreEqual("", _message["uuid"]);
-            //}
+            try
+            {
+                if (!string.IsNullOrEmpty(receivedMessage) && !string.IsNullOrEmpty(receivedMessage.Trim()))
+                {
+                    object[] receivedObj = JsonConvert.DeserializeObject<object[]>(receivedMessage);
+                    JContainer dic = receivedObj[0] as JContainer;
+                    var uuid = dic["uuid"].ToString();
+                    if (uuid != null)
+                    {
+                        receivedFlag1 = true;
+                    }
+                }
+            }
+            catch { }
+            finally
+            {
+                manualEvent2.Set();
+            }
         }
 
-        [TestMethod]
+
+
+        [Test]
         public void IfHereNowIsCalledThenItShouldReturnInfo()
         {
-            Pubnub pubnub = new Pubnub(
-               "demo",
-               "demo",
-               "",
-               "",
-               false
-           );
-            string channel = "hello_world";
+            receivedFlag2 = false;
 
-            pubnub.PropertyChanged += new PropertyChangedEventHandler(Pubnub_PropertyChanged);
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            string channel = "my/channel";
+            pubnub.here_now<string>(channel, ThenHereNowShouldReturnMessage);
+            manualEvent4.WaitOne();
+            Assert.IsTrue(receivedFlag2, "here_now message not received");
+        }
 
-            //pubnub.here_now(channel);
+        void ThenHereNowShouldReturnMessage(string receivedMessage)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(receivedMessage) && !string.IsNullOrEmpty(receivedMessage.Trim()))
+                {
+                    object[] receivedObj = JsonConvert.DeserializeObject<object[]>(receivedMessage);
+                    var dic = ((JContainer)receivedObj[0])["uuids"];
+                    if (dic != null)
+                    {
+                        receivedFlag2 = true;
+                    }
+                }
+            }
+            catch { }
+            finally
+            {
+                manualEvent4.Set();
+            }
+        }
+
+        void DummyMethodForSubscribe(string receivedMessage)
+        {
+            manualEvent1.Set();
+            //Dummary callback method for subscribe and unsubscribe to test presence
+        }
+
+        void DummyMethodForUnSubscribe(string receivedMessage)
+        {
+            manualEvent3.Set();
+            //Dummary callback method for unsubscribe to test presence
         }
     }
 }

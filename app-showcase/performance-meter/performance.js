@@ -7,7 +7,7 @@ function now() {return+new Date}
 // ----------------------------------------------------------------------
 var net = PUBNUB.init({
     publish_key   : 'demo',
-    subscribe_key :'demo'
+    subscribe_key : 'demo'
 })
 ,   channel        = 'performance-meter-' + now() + Math.random()
 ,   start          = now()
@@ -133,7 +133,7 @@ var performance_sent_template = PUBNUB.$('messages-sent-template').innerHTML
 function update_messages_received() {
     performance_sent.innerHTML = PUBNUB.supplant(
         performance_sent_template, {
-            sent : median.length * 2
+            sent : median.length+1
         }
     );
 }
@@ -148,7 +148,8 @@ var set_rps = (function() {
     return function (val) {
         var meter = -90.0 + ((val || 0)*10);
         animate( arrow, [ { d : 0.5, r : meter > 90 ? 90 : meter } ] );
-        rps.innerHTML = ''+Math.ceil(val);
+        rps.innerHTML = ''+Math.floor(lat_avg);
+        //rps.innerHTML = ''+Math.floor(val);
         update_medians();
         draw_graph();
         update_messages_received();
@@ -161,18 +162,21 @@ var set_rps = (function() {
 var draw_graph = (function(){
     var graph    = PUBNUB.$('performance-graph').getContext("2d")
     ,   height   = 50
-    ,   barwidth = 20
-    ,   bargap   = 20
-    ,   modrend  = 3
-    ,   barscale = 8
+    ,   barwidth = 35
+    ,   bargap   = 5
+    ,   modrend  = 2
+    ,   barscale = 2
     ,   position = 0
-    ,   bgcolor  = "#dfd6b9"
+    ,   bgcolor  = "#80cae8"
     ,   fgcolor  = "#f2efe3";
 
     // Graph Gradient
-    var gradient = graph.createLinearGradient( 0, 0, 0, height * 1.5 );
+    var gradient = graph.createLinearGradient( 0, 0, 0, height * 1.2 );
     gradient.addColorStop( 0, fgcolor );
     gradient.addColorStop( 1, bgcolor );
+
+    graph.font        = "11px Helvetica";
+    graph.strokeStyle = '#444';
 
     return function(values) {
         // Rate Limit Canvas Painting
@@ -184,17 +188,24 @@ var draw_graph = (function(){
         graph.fillStyle = fgcolor;
         graph.fillRect( 0, 0, 640, height );
 
+        // Dynamic Bargraph Display
+        barscale = (+median_display['98']) / (+median_display['5']) * 0.5;
+
         // Lines
         graph.fillStyle = gradient;
         PUBNUB.each( median_display, function( key, latency ) {
-            latency = latency / barscale;
-            latency = latency > height ? height : latency;
+            var height_mod = latency / barscale;
+            height_mod = height_mod > height ? height : height_mod;
 
-            graph.fillRect(
-                position * (barwidth + bargap) + (bargap / 2),
-                height - latency,
-                barwidth,
-                height
+            var left = position * (barwidth + bargap) + (bargap / 2)
+            ,   top  = height - height_mod;
+
+            // Draw Bar
+            graph.fillRect( left, top, barwidth, height );
+            graph.strokeText(
+                Math.floor(latency),
+                left + (barwidth - (""+latency).length * 6) / 2,
+                (top < 15 ? 15 : top) - 4
             );
 
             position++;

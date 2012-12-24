@@ -48,12 +48,12 @@ body, div, img {
     text-shadow: 0px 1px 20px rgba(0,0,0,0.5);
     text-align: center;
     font-family: Exo;
-    font-size: 110px;
+    font-size: 100px;
     font-weight: 100;
 }
 #performance-meter-rps {
     position: absolute;
-    top: 460px;
+    top: 450px;
     left: 0px;
     width: 640px;
 
@@ -62,8 +62,21 @@ body, div, img {
     text-shadow: 0px 1px 2px #fff;
     text-align: center;
     font-family: Exo;
-    font-size: 45px;
+    font-size: 95px;
     font-weight: 800;
+}
+.performance-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    width: 640px;
+    color: #615c57;
+    text-shadow: 0px 1px 2px #fff;
+    text-align: center;
+    font-family: Exo;
+    font-size: 22px;
+    font-weight: 800;
+    border-radius: 3px;
 }
 #performance-medians {
     margin-top: 10px;
@@ -84,10 +97,10 @@ body, div, img {
     font-weight: 800;
 }
 .fastest {
-    color: #b8a665;
+    background: #cfc5a1;
 }
 .slowest {
-    color: #cfc5a1;
+    background: #cfc5a1;
 }
 #performance-sent {
     position: absolute;

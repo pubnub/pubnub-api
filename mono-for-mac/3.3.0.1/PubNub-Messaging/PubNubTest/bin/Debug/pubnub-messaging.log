@@ -1,0 +1,17 @@
+DateTime 11/27/2012 23:38:04, Initiated System Event - PowerModeChanged.
+DateTime 11/27/2012 23:38:04, Request=http://pubsub.pubnub.com/v2/presence/sub_key/demo/channel/hello_world
+DateTime 11/27/2012 23:38:08, JSON for channel=hello_world (Here_Now) ={"uuids": [], "occupancy": 0}
+DateTime 11/27/2012 23:38:09, Initiated System Event - PowerModeChanged.
+DateTime 11/27/2012 23:38:09, Request=http://pubsub.pubnub.com/v2/presence/sub_key/demo/channel/hello_world
+DateTime 11/27/2012 23:38:10, JSON for channel=hello_world (Here_Now) ={"uuids": [], "occupancy": 0}
+DateTime 11/27/2012 23:38:10, Initiated System Event - PowerModeChanged.
+DateTime 11/27/2012 23:38:10, requested presence for channel=hello_world-pnpres
+DateTime 11/27/2012 23:38:10, Request=http://pubsub.pubnub.com/subscribe/demo/hello_world-pnpres/0/0?uuid=59b9b4ed-bbec-43b6-8d82-e459216b1ac0
+DateTime 11/27/2012 23:38:10, requested subscribe for channel=hello_world
+DateTime 11/27/2012 23:38:10, Request=http://pubsub.pubnub.com/subscribe/demo/hello_world/0/0?uuid=59b9b4ed-bbec-43b6-8d82-e459216b1ac0
+DateTime 11/27/2012 23:38:10, JSON for channel=hello_world-pnpres (Presence) =[[],"13540394563480192"]
+DateTime 11/27/2012 23:38:10, Request=http://pubsub.pubnub.com/subscribe/demo/hello_world-pnpres/0/13540394563480192?uuid=59b9b4ed-bbec-43b6-8d82-e459216b1ac0
+DateTime 11/27/2012 23:38:11, JSON for channel=hello_world (Subscribe) =[[],"13540394320878320"]
+DateTime 11/27/2012 23:38:11, Request=http://pubsub.pubnub.com/subscribe/demo/hello_world/0/13540394320878320?uuid=59b9b4ed-bbec-43b6-8d82-e459216b1ac0
+DateTime 11/27/2012 23:38:12, JSON for channel=hello_world-pnpres (Presence) =[[{"action": "join", "timestamp": 1354068492, "uuid": "59b9b4ed-bbec-43b6-8d82-e459216b1ac0", "occupancy": 1}],"13540396921424868"]
+DateTime 11/27/2012 23:38:12, Request=http://pubsub.pubnub.com/subscribe/demo/hello_world-pnpres/0/13540396921424868?uuid=59b9b4ed-bbec-43b6-8d82-e459216b1ac0

@@ -1,6 +1,6 @@
 //
 //  NSObject+Cipher.m
-//  FBEncryptor
+//  
 //
 //  Created by itshastra on 14/04/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
