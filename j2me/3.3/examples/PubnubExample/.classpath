@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="src" path="srcPubnubApi"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/work/Documents/GitHub/pubnub-api/j2me/3.3/libs/bouncycastle.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/work/Documents/GitHub/pubnub-api/j2me/3.3/libs/jsonme.jar"/>
-	<classpathentry kind="lib" path="C:/Java_ME_platform_SDK_3.2/lib/cldc_1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Java_ME_platform_SDK_3.2/lib/midp_2.0.jar"/>
-	<classpathentry kind="lib" path="C:/Java_ME_platform_SDK_3.2/lib/jsr177_1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="../../libs/bouncycastle.jar"/>
+	<classpathentry exported="true" kind="lib" path="../../jsonme.jar"/>
+	<classpathentry kind="lib" path="../../libs/cldc_1.1.jar"/>
+	<classpathentry kind="lib" path="../../libs/midp_2.0.jar"/>
+	<classpathentry kind="lib" path="../../libs/jsr177_1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
