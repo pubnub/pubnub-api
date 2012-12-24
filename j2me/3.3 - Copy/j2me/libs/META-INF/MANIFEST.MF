@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.8.3
-Created-By: 1.6.0_17-b04 (Sun Microsystems Inc.)
-MIDlet-Vendor: Vendor
-MIDlet-Name: async-http
-MIDlet-Version: 1.0
-MicroEdition-Configuration: CLDC-1.1
-MicroEdition-Profile: MIDP-2.0
-

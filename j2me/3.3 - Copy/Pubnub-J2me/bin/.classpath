@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path=""/>
-	<classpathentry exported="true" kind="con" path="org.elipse.mtj.JavaMEContainer/Oracle Java(TM) Platform Micro Edition SDK 3.2/ClamshellJavaMEPhone1"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/work/Documents/GitHub/pubnub-api/j2me/3.3/j2me/libs/bouncycastle.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
