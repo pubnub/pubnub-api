@@ -1,6 +1,5 @@
 package com.pubnub.api;
 
-import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.microedition.io.HttpConnection;
@@ -940,19 +939,16 @@ public class Pubnub {
 
 		HttpCallback callback = new HttpCallback(req.getUrl(), _headers) {
 			public void OnComplete(HttpConnection hc, int statusCode,
-					String response) throws IOException {
-				System.out.println(response);
+					String response) {
 				req.responseHandler.handleResponse(response);
 			}
 
 			public void errorCall(HttpConnection conn, int statusCode,
-					String response) throws IOException {
-				System.out.println(response);
+					String response) {
 				req.responseHandler.handleError(response);
 
 			}
 		};
 		connManager.queue(callback);
 	}
-
 }

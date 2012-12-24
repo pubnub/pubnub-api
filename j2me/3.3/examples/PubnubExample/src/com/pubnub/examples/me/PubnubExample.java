@@ -28,8 +28,8 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	private Form form;
 	private StringItem stringItem;
 	String channel = "hello_world";
-	String[] channels = { "hello_world1", "hello_world2",
-			"hello_world3", "hello_world4" };
+	String[] channels = { "hello_world1", "hello_world2", "hello_world3",
+			"hello_world4" };
 
 	public PubnubExample() {
 	}
@@ -112,14 +112,14 @@ public class PubnubExample extends MIDlet implements CommandListener {
 		if (form == null) {
 			form = new Form("Welcome", new Item[] { getStringItem() });
 			form.addCommand(getExitCommand());
-            form.addCommand(getPublishCommand());
-            form.addCommand(getTimeCommand());
-            form.addCommand(getHistoryCommand());
-            form.addCommand(getUnsubscribeCommand());
-            form.addCommand(getSubscribeCommand());
-            form.addCommand(getHereNowCommand());
-            form.addCommand(getPresenceCommand());
-            form.addCommand(getDetailedHistoryCommand());
+			form.addCommand(getPublishCommand());
+			form.addCommand(getTimeCommand());
+			form.addCommand(getHistoryCommand());
+			form.addCommand(getUnsubscribeCommand());
+			form.addCommand(getSubscribeCommand());
+			form.addCommand(getHereNowCommand());
+			form.addCommand(getPresenceCommand());
+			form.addCommand(getDetailedHistoryCommand());
 			form.setCommandListener(this);
 		}
 		return form;
@@ -284,7 +284,6 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	public void destroyApp(boolean unconditional) {
 	}
 
-	
 	private void notifyUser(Object message) {
 		try {
 			if (message instanceof JSONObject) {
@@ -340,7 +339,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 			});
 
 		} catch (JSONException ex) {
-			
+
 		}
 	}
 
@@ -368,7 +367,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 			});
 
 		} catch (Exception e) {
-			
+
 		}
 	}
 
@@ -380,7 +379,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	}
 
 	public void time() {
-		_pubnub.time( new Callback() {
+		_pubnub.time(new Callback() {
 			public void successCallback(String channel, Object message) {
 				notifyUser(message.toString());
 			}
@@ -405,7 +404,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	}
 
 	private void hereNow() {
-		_pubnub.hereNow(channel,  new Callback() {
+		_pubnub.hereNow(channel, new Callback() {
 			public void successCallback(String channel, Object message) {
 				notifyUser(message.toString());
 			}
@@ -434,8 +433,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	private void detailedHistory() {
 
-
-		_pubnub.detailedHistory(channel, 2 ,  new Callback() {
+		_pubnub.detailedHistory(channel, 2, new Callback() {
 			public void successCallback(String channel, Object message) {
 				notifyUser(message.toString());
 			}

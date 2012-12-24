@@ -28,13 +28,10 @@ class Request {
 
         String url = PubnubUtil.joinString(urlComponents, "/");
 
-        
-
         if (this.params != null) {
             StringBuffer sb = new StringBuffer();
             sb.append(url).append("?");
-
-
+            
             Enumeration paramsKeys = this.params.keys();
             boolean first = true;
             while (paramsKeys.hasMoreElements()) {
@@ -42,7 +39,7 @@ class Request {
             		sb.append("&");
             	} else 
             		first = false;
-            		
+            	
                 String key = (String) paramsKeys.nextElement();
                 sb.append(PubnubUtil.urlEncode((String)key)).append("=")
                   .append(PubnubUtil.urlEncode((String)this.params.get(key)));
@@ -82,6 +79,5 @@ class Request {
         this.responseHandler = responseHandler;
         this.params = params;
         this.urlComponents = urlComponents;
-
     }
 }

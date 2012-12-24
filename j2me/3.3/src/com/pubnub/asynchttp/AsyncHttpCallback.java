@@ -8,12 +8,9 @@ import javax.microedition.io.HttpConnection;
 public interface AsyncHttpCallback {
 
     String startingCall();
-    
-    boolean prepareRequest(HttpConnection conn)throws IOException;
     boolean checkResponse(HttpConnection conn)throws IOException;
-    void processResponse(HttpConnection conn) throws IOException;
-   
-    void endingCall( HttpConnection conn)throws IOException;
+ 
+    void endingCall( HttpConnection conn) throws IOException;
     void cancelingCall(HttpConnection conn) throws IOException;
     
     Hashtable getHeaderFields();
@@ -21,5 +18,5 @@ public interface AsyncHttpCallback {
     public HttpConnection getConnection();
     public void setConnection(HttpConnection connection);
     public void setConnManager(AsyncHttpManager connManager);
-    public void errorCall(HttpConnection hconn, int statusCode, String response) throws IOException;
+    public void errorCall(HttpConnection hconn, int statusCode, String response);
 }

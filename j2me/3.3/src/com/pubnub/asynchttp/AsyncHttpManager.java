@@ -18,13 +18,13 @@ public class AsyncHttpManager {
 	private class Network {
 		private boolean available = true;
 
-		public boolean isAvailable() {
+		public synchronized boolean isAvailable() {
 			return available;
 		}
-		public void available() {
+		public synchronized void available() {
 			available = true;
 		}
-		public void unavailable() {
+		public synchronized void unavailable() {
 			available = false;
 		}
 	}
@@ -51,7 +51,6 @@ public class AsyncHttpManager {
 		AsyncHttpCallback cb = conn.getCallback();
 
 		try {
-
 			close(conn);
 			cb.cancelingCall(conn.getHttpConnection());
 		} catch (IOException ignore) {
@@ -135,10 +134,7 @@ public class AsyncHttpManager {
 	public void queue(AsyncHttpCallback cb, HttpConnection hc) {
 
 		if (!network.isAvailable()) {
-			try {
-				cb.errorCall(hc, 0, "[0,'Network Error']");
-			} catch (IOException e) {
-			}
+			cb.errorCall(hc, 0, "[0,'Network Error']");
 			return;
 		}
 		cb.setConnManager(this);
@@ -240,8 +236,6 @@ public class AsyncHttpManager {
 			try {
 				hc = conn.getHttpConnection();
 
-				boolean process = true;
-
 				if (hc == null) {
 					url = cb.startingCall();
 					if (url == null) {
@@ -258,7 +252,6 @@ public class AsyncHttpManager {
 					if (hc == null) {
 
 						try {
-							System.out.println(url);
 							hc = (HttpConnection) Connector.open(url,
 									Connector.READ_WRITE, true);
 							hc.setRequestMethod(HttpConnection.GET);
@@ -277,14 +270,10 @@ public class AsyncHttpManager {
 						}
 					}
 					cb.setConnection(hc);
-					if (!cb.prepareRequest(hc)) {
-						cancel(conn);
-						return;
-					}
+
 					int rc = 0;
 					hc.getResponseCode();
 					if (!cb.checkResponse(hc)) {
-						process = false;
 						break;
 					} else if (!isRedirect(rc)) {
 						break;
@@ -315,19 +304,11 @@ public class AsyncHttpManager {
 					throw new IOException("Too many redirects");
 				}
 
-				if (process) {
-					cb.processResponse(hc);
-				}
-
 				cb.endingCall(hc);
 				asyncConnection = null;
 				close(conn);
 			} catch (Exception e) {
-				System.out.println(e.toString());
-				try {
-					cb.errorCall(hc,0,e.toString());
-				} catch (IOException e1) {
-				}
+				cb.errorCall(hc,0,e.toString());
 			} finally {
 				close(conn);
 			}
@@ -343,7 +324,6 @@ public class AsyncHttpManager {
 					while (!_die) {
 
 						if (!network.isAvailable()) {
-							System.out.println("Network not available. Lets wait " + Thread.currentThread().getName());
 							synchronized(network) {
 								try {
 									network.wait();
@@ -359,7 +339,7 @@ public class AsyncHttpManager {
 						}
 
 						try {
-							_waiting.wait(1000);
+							_waiting.wait();
 						} catch (InterruptedException e) {
 						}
 					}

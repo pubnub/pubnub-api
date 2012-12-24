@@ -40,11 +40,6 @@ public abstract class HttpCallback
         return _headerFields;
     }
 
-    public boolean prepareRequest(HttpConnection hconn)
-            throws IOException {
-        return true;
-    }
-
     public boolean checkResponse(HttpConnection hconn)
             throws IOException {
 
@@ -54,16 +49,11 @@ public abstract class HttpCallback
                 || AsyncHttpManager.isRedirect(rc));
     }
 
-    public void processResponse(HttpConnection hconn)
-            throws IOException {
-    }
+    public abstract void OnComplete(HttpConnection hconn, int statusCode, String response);
 
-    public abstract void OnComplete(HttpConnection hconn, int statusCode, String response) throws IOException;
+    public abstract void errorCall(HttpConnection hconn, int statusCode, String response);
 
-    public abstract void errorCall(HttpConnection hconn, int statusCode, String response) throws IOException;
-
-    public void endingCall(HttpConnection hconn)
-            throws IOException {
+    public void endingCall(HttpConnection hconn) throws IOException {
         
         int rc = hconn.getResponseCode();
 
