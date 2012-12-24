@@ -1,0 +1,83 @@
+# 'There's more than one passage here,' he whispered with an effort: it seemed
+# hard to make his breath give any sound. `It's as orc-like a place as ever
+# there could be! '
+
+# (c) Petr Baudis <pasky@ucw.cz> 2012
+# This file is in public domain, or under the MIT licence in countries
+# where software cannot be put in public domain.
+
+
+### The build commands and verbosity
+
+# If we are verbose, we will show commands prefixed by $(Q) (which acts as
+# @ in the non-verbose mode), and we will show the "real" cmds instead of
+# their quiet versions (which are used in the non-verbose mode).
+# Inspired by the Linux kernel build system.
+ifdef V
+	Q =
+	quiet =
+	mquiet = masq_
+else
+	Q = @
+	quiet = quiet_
+	mquiet = quiet_
+endif
+
+# Show the command (quiet or non-quiet version based on the assignment
+# just above) and then execute it.
+ncmd = $(if $($(quiet)cmd_$(1)),echo $($(quiet)cmd_$(1)) &&) $(cmd_$(1))
+cmd = @$(if $($(quiet)cmd_$(1)),echo $($(quiet)cmd_$(1)) &&) $(cmd_$(1))
+mcmd = @$(if $($(mquiet)cmd_$(1)),echo $($(mquiet)cmd_$(1)) &&) $(cmd_$(1))
+
+quiet_cmd_compile = '[CC]   $<'
+ masq_cmd_compile = $(COMPILE) -c $<
+      cmd_compile = $(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+
+quiet_cmd_archive = '[AR]   $@'
+      cmd_archive = $(AR) r $@ $^
+
+   quiet_cmd_link = '[LINK] $@'
+         cmd_link = $(LINK) -o $@ $^ $(LIBS)
+
+# Recursive make
+quiet_cmd_recmake = "[MAKE $$target]   $$subdir"
+      cmd_recmake = $(MAKE) -C $$subdir $$target
+
+
+
+### Internal build rules
+
+unexport CFLAGS
+CFLAGS += $(CUSTOM_CFLAGS) $(XCFLAGS) $(INCLUDES) $(SYS_CFLAGS)
+COMPILE = $(CC) $(CFLAGS)
+LINK = $(CC) $(LDFLAGS) $(XLDFLAGS)
+
+DEP_FILES_1 = $(foreach src,$(OBJS),.deps/$(src))
+DEP_FILES = $(DEP_FILES_1:%.o=%.P)
+
+DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
+
+ifdef DEP_FILES
+-include $(DEP_FILES)
+endif
+
+%.o: %.c
+	$(call mcmd,compile)
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+		tr ' ' '\012' < .deps/$(*F).pp \
+			| sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+			>> .deps/$(*F).P; \
+		rm .deps/$(*F).pp
+
+%.a:
+	$(call cmd,archive)
+
+
+# Recursion:
+
+.PHONY: all-recursive clean-recursive clean-profiles-recursive
+all-recursive clean-recursive clean-profiled-recursive:
+	+@target=`echo $@ | sed s/-recursive//`; \
+	for subdir in $(SUBDIRS); do \
+		$(call ncmd,recmake) || exit 1; \
+	done
