@@ -162,7 +162,10 @@ package com.hurlant.crypto.tls {
 			_engine.addEventListener(TLSEvent.DATA, onTLSData);
 			_engine.addEventListener(TLSEvent.READY, onTLSReady);
 			_engine.addEventListener(Event.CLOSE, onTLSClose);
-			_engine.addEventListener(ProgressEvent.SOCKET_DATA, function(e:*):void { _socket.flush(); });
+			_engine.addEventListener(ProgressEvent.SOCKET_DATA, function(e:*):void { 
+				if(_socket.connected){
+				_socket.flush(); }
+			});
 			_socket.addEventListener(ProgressEvent.SOCKET_DATA, _engine.dataAvailable);
 
 			_ready = false;

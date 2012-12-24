@@ -24,15 +24,15 @@ package com.pubnub.connection {
 		
 		override public function sendOperation(operation:Operation):void {
 			if (!operation) return;
-			//trace('sendOperation : ' + ready, operation);
-			if (ready) {
+			if (_networkEnabled) {
+				if (ready) {
 				doSendOperation(operation);
-			}else {
-				if (loader.connected == false) {
-					loader.connect(operation.request);
-				}
+				}else {
+					if (loader.connected == false) {
+						loader.connect(operation.request);
+					}
+				}	
 			}
-			
 			if (queue.indexOf(operation) == -1) {
 				queue.push(operation);
 			}
@@ -48,10 +48,6 @@ package com.pubnub.connection {
 			this.operation = operation;
 			this.operation.startTime = getTimer();
 			loader.load(operation.request);
-		}
-		
-		public function get connected():Boolean{
-			return loader && loader.connected;
 		}
 		
 		private function onTimeout(operation:Operation):void {
@@ -71,6 +67,13 @@ package com.pubnub.connection {
 			var ind:int = queue.indexOf(operation);
 			if (ind > -1) {
 				queue.splice(ind, 1);
+			}
+		}
+		
+		override public function set networkEnabled(value:Boolean):void {
+			super.networkEnabled = value;
+			if (value) {
+				reconnect();
 			}
 		}
 		

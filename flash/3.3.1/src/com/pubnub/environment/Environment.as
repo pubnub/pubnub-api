@@ -73,21 +73,10 @@ package com.pubnub.environment {
 		}
 		
 		private function onHTTPEnable(e:NetMonEvent):void {
-			if (lastHTTPDisabledTime) {
-				var time:int = getTimer();
-				if ( (time - lastHTTPDisabledTime) > maxTimeout) {
-					_netwotkEnabled = false;
-					dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN, Errors.NETWORK_RECONNECT_MAX_TIMEOUT_EXCEEDED));
-				}else {
-					_netwotkEnabled = true;
-					dispatchEvent(new EnvironmentEvent(EnvironmentEvent.RECONNECT));
-				}
-				lastHTTPDisabledTime = 0;
-			}
+			dispatchEvent(e);
 		}
 		
 		private function onHTTPDisable(e:NetMonEvent):void {
-			lastHTTPDisabledTime = getTimer();
 			_netwotkEnabled = false;
 			dispatchEvent(e);
 		}

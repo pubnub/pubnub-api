@@ -34,6 +34,7 @@ package com.pubnub.subscribe {
 		protected var _channels:Array;
 		
 		protected var connection:AsyncConnection;
+		protected var _networkEnabled:Boolean
 		
 		public function Subscribe() {
 			super(null);
@@ -56,9 +57,10 @@ package com.pubnub.subscribe {
 		 * @return	Boolean  result of subcribe (true if is subscribe to one channel or more channels)
 		 */
 		public function subcribe(channel:String):Boolean {
-			if (isChannelCorrect(channel) == false) {
-				return false;
-			}
+			if (!checkChannelName(channel)) return false;
+			
+			if (!checkNetwork()) return false;
+			
 			// search of channels
 			var addCh:Array = [];
 			var temp:Array = channel.split(',');
@@ -75,11 +77,26 @@ package com.pubnub.subscribe {
 			return addCh.length > 0;
 		}
 		
-		public function unsubscribe(channel:String, reason:Object = null):Boolean {
-			if (isChannelCorrect(channel) == false) {
-				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ -1, Errors.NOT_CONNECTED, ch]));
+		private function checkChannelName(channel:String):Boolean {
+			var result:Boolean = isChannelCorrect(channel)
+			if (result == false) {
+				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ -1, Errors.SUBSCRIBE_CHANNEL_ERROR, channel]));
 				return false;
 			}
+			return result;
+		}
+		
+		private function checkNetwork():Boolean {
+			if (_networkEnabled == false) {
+				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ -1, Errors.NETWORK_UNVALIABLE]));
+				return false;
+			}
+			return _networkEnabled;
+		}
+		
+		public function unsubscribe(channel:String, reason:Object = null):Boolean {
+			if (!checkChannelName(channel)) return false;
+			
 			// search of channels
 			var removeCh:Array = [];
 			var temp:Array = channel.split(',');
@@ -108,7 +125,7 @@ package com.pubnub.subscribe {
 				connection.close();
 				if (needRemove) {
 					var removeChStr:String = removeCh.join(',');
-					leave(removeCh.join(removeChStr));
+					leave(removeChStr);
 					ArrayUtil.removeItems(_channels, removeCh);
 					dispatchEvent(new SubscribeEvent(SubscribeEvent.DISCONNECT, { channel:removeChStr, reason : (reason ? reason : '') } ));	
 				}
@@ -233,14 +250,13 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onConnectError(e:OperationEvent):void {
-			trace('onSubscribeError!');
+			//trace('onSubscribeError!');
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ -1, Errors.SUBSCRIBE_CHANNEL_ERROR] ));
 			destroyOperation(e.target as Operation);
 		}
 		
 		/*---------------------------LEAVE---------------------------------*/
 		protected function leave(channel:String):void {
-			//trace('LEAVE : ' + channel);
 			var operation:Operation = getOperation(LEAVE, channel);
 			Pn.pn_internal::syncConnection.sendOperation(operation);
 		}
@@ -358,7 +374,12 @@ package com.pubnub.subscribe {
 		}
 		
 		public function set networkEnabled(value:Boolean):void {
+			_networkEnabled = value;
 			connection.networkEnabled = value;
+		}
+		
+		public function get networkEnabled():Boolean {
+			return _networkEnabled;
 		}
 		
 		private function hasChannel(ch:String):Boolean{

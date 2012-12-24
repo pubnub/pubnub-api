@@ -41,15 +41,22 @@ package com.pubnub.environment {
 		}
 		
 		private function init():void {
-			loader = new URLLoader();
+			/*loader = new URLLoader();
 			loader.addEventListener(Event.COMPLETE, 					onComplete);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, 				onError);
-			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 	onError);
+			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 	onError);*/
 			
 			sysMon = new SysMon();
 			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			
+			lastStatus = NetMonEvent.HTTP_DISABLE;
+			
 			connection = new HeartBeatConnection();
+			connection.addEventListener(Event.CLOSE, onCloseConection);
+		}
+		
+		private function onCloseConection(e:Event):void {
+			trace('onCloseConection');
 		}
 		
 		private function onRestoreFromSleep(e:SysMonEvent):void {
@@ -80,9 +87,8 @@ package com.pubnub.environment {
 		}
 		
 		private function onComplete(e:Event = null):void {
-			//Log.logRetry('PING : COMPLETE', Log.NORMAL);
 			_currentRetries = 0;
-			if (lastStatus == NetMonEvent.HTTP_DISABLE) {
+			if (lastStatus != NetMonEvent.HTTP_ENABLE) {
 				Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network available', Log.NORMAL);
 				dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 			}
@@ -116,6 +122,7 @@ package com.pubnub.environment {
 		}
 		
 		public function start():void {
+			//trace(this, 'start : ' + _isRunning);
 			if (_isRunning) return;
 			clearTimeout(pingTimout);
 			_currentRetries = 0;
@@ -146,9 +153,9 @@ package com.pubnub.environment {
 			sysMon.removeEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			sysMon = null;
 			
-			loader.removeEventListener(Event.COMPLETE, onComplete);
+			/*loader.removeEventListener(Event.COMPLETE, onComplete);
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, onError);
-			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);*/
 			try {
 				loader.close();
 			}catch (err:Error) {}

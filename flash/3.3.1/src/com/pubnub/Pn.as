@@ -53,27 +53,31 @@ package com.pubnub {
 			
 			environment = new Environment(origin);
 			environment.addEventListener(EnvironmentEvent.SHUTDOWN, 	onEnvironmentShutdown);
-			environment.addEventListener(EnvironmentEvent.RECONNECT, 	onEnvironmentReconnect);
-			environment.addEventListener(NetMonEvent.HTTP_DISABLE, 	onEnvironmentHttpDisable);
+			environment.addEventListener(NetMonEvent.HTTP_ENABLE, 		onEnvironmentHttpEnable);
+			environment.addEventListener(NetMonEvent.HTTP_DISABLE, 		onEnvironmentHttpDisable);
 		}
 		
 		private function onEnvironmentHttpDisable(e:NetMonEvent):void {
-			syncConnection.networkEnabled = false;
-			if (subscribeConnection) {
-					subscribeConnection.networkEnabled = false;
-				}
-		}
-		
-		private function onEnvironmentReconnect(e:EnvironmentEvent):void {
 			if (Settings.RESUME_ON_RECONNECT) {
-				syncConnection.networkEnabled = true;
-				syncConnection.reconnect();
+				syncConnection.networkEnabled = false;
 				if (subscribeConnection) {
-					subscribeConnection.networkEnabled = true;
-					subscribeConnection.reconnect();
+					subscribeConnection.networkEnabled = false;
 				}
 			}else {
 				shutdown();
+			}
+		}
+		
+		private function onEnvironmentHttpEnable(e:NetMonEvent):void {
+			syncConnection.networkEnabled = true;
+			if (subscribeConnection) {
+					subscribeConnection.networkEnabled = true;
+			}
+			
+			if (_initialized == false) {
+				// Loads start time token
+				var operation:Operation = createOperation(INIT_OPERATION)
+				syncConnection.sendOperation(operation);
 			}
 		}
 		
@@ -115,9 +119,8 @@ package com.pubnub {
 			initKeys(config);
             _sessionUUID = PnUtils.getUID();
 			
-			// Loads start time token
-			var operation:Operation = createOperation(INIT_OPERATION)
-			syncConnection.sendOperation(operation);
+			//start Environment service (wait first HTTP_ENABLE event)
+			environment.start();
 			
 			subscribeConnection ||= new Subscribe();
 			subscribeConnection.addEventListener(SubscribeEvent.CONNECT, 	onSubscribe);
@@ -352,7 +355,7 @@ package com.pubnub {
 			
 			environment.destroy();
 			environment.removeEventListener(EnvironmentEvent.SHUTDOWN, 		onEnvironmentShutdown);
-			environment.removeEventListener(EnvironmentEvent.RECONNECT, 	onEnvironmentReconnect);
+			environment.removeEventListener(EnvironmentEvent.RECONNECT, 	onEnvironmentHttpEnable);
 			environment.removeEventListener(NetMonEvent.HTTP_DISABLE, 		onEnvironmentHttpDisable);
 			environment = null;
 			

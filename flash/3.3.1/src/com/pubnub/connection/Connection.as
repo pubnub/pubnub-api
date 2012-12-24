@@ -6,7 +6,7 @@ package com.pubnub.connection {
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
-	public class Connection {
+	public class Connection extends EventDispatcher {
 		protected var loader:URLLoader;
 		protected var _destroyed:Boolean;
 		protected var queue:/*Operation*/Array;
@@ -28,7 +28,7 @@ package com.pubnub.connection {
 		}
 		
 		protected function onClose(e:Event):void {
-			
+			dispatchEvent(e);
 		}
 		
 		protected function get ready():Boolean{
@@ -79,6 +79,10 @@ package com.pubnub.connection {
 			queue.length = 0;
 			operation = null;
 			loader.close();
+		}
+		
+		public function get connected():Boolean{
+			return loader && loader.connected;
 		}
 		
 		public function get destroyed():Boolean {

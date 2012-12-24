@@ -63,6 +63,7 @@ package com.pubnub.net {
 			var url:String = request.url;
 			var uri:URI = new URI(url);
 			var host:String = uri.authority;
+			trace(host);
 			var port:int = getPort(url);
 			socket = getSocket(url);
 			//trace('connect : ' + host, port, socket);

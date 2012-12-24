@@ -18,9 +18,9 @@ package com.pubnub {
 		public static const OPERATION_TIMEOUT:uint = 310000;
 		
 		// for wait a response of a ping operation in HeartBeatConnection, ms 
-		public static const PING_OPEARTION_TIMEOUT:uint = 10000;
+		public static const PING_OPEARTION_TIMEOUT:uint = 5000;
 		
 		// check for network down every [PING_OPERATION_INTERVAL],ms.
-		public static const PING_OPERATION_INTERVAL:uint = 2000; // 15000;
+		public static const PING_OPERATION_INTERVAL:uint = 1000; // 15000;
 	}
 }
