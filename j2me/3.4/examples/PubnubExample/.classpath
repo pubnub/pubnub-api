@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="srcPubnubApi"/>
+	<classpathentry exported="true" kind="lib" path="../../libs/bouncycastle.jar"/>
+	<classpathentry kind="lib" path="../../libs/cldc_1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="../../libs/jsonme.jar"/>
+	<classpathentry kind="lib" path="../../libs/jsr177_1.0.jar"/>
+	<classpathentry kind="lib" path="../../libs/midp_2.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
