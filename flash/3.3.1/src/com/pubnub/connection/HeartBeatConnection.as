@@ -18,7 +18,7 @@ package com.pubnub.connection {
 		
 		override public function sendOperation(operation:Operation):void {
 			super.sendOperation(operation);
-			var timeout:int = operation.timeout || 10000;
+			var timeout:int = operation.timeout;
 			//trace('doSendOperation : ' + timeout, operation.url);
 			clearTimeout(timeoutInterval);
 			timeoutInterval = setTimeout(onTimeout, operation.timeout, operation);

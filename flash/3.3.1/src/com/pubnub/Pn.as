@@ -58,27 +58,32 @@ package com.pubnub {
 		}
 		
 		private function onEnvironmentHttpDisable(e:NetMonEvent):void {
-			if (Settings.RESUME_ON_RECONNECT) {
-				syncConnection.networkEnabled = false;
-				if (subscribeConnection) {
-					subscribeConnection.networkEnabled = false;
-				}
-			}else {
-				shutdown();
+			if (subscribeConnection) {
+				subscribeConnection.networkEnabled = false;
 			}
+			dispatchEvent(e);
 		}
 		
 		private function onEnvironmentHttpEnable(e:NetMonEvent):void {
+			trace('onEnvironmentHttpEnable : ' +  Settings.RESUME_ON_RECONNECT)
 			syncConnection.networkEnabled = true;
 			if (subscribeConnection) {
-					subscribeConnection.networkEnabled = true;
+				subscribeConnection.networkEnabled = true;
+				if (Settings.RESUME_ON_RECONNECT == false) {
+					subscribeConnection.unsubscribeAll()
+				}
 			}
 			
 			if (_initialized == false) {
 				// Loads start time token
-				var operation:Operation = createOperation(INIT_OPERATION)
-				syncConnection.sendOperation(operation);
+				doInit();
 			}
+			dispatchEvent(e);
+		}
+		
+		private function doInit():void {
+			var operation:Operation = createOperation(INIT_OPERATION)
+			syncConnection.sendOperation(operation);
 		}
 		
 		private function onEnvironmentShutdown(e:EnvironmentEvent):void {
@@ -91,6 +96,8 @@ package com.pubnub {
 			environment.stop();
 			_initialized = false;
 			Log.logRetry('Shutdown', Log.WARNING);
+			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
+			dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN));
 		}
 		
 		private function createOperation(type:String, args:Object = null):Operation {
@@ -109,15 +116,16 @@ package com.pubnub {
 		
 		/*------------------- INIT --------------------------------*/
 		public function init(config:Object):void {
-			//trace(this, 'init')
 			if (_initialized) {
-				syncConnection.close();
-				unsubscribeAll();
+				shutdown();
 			}
 			_initialized = false;
 			ori = Math.floor(Math.random() * 9) + 1;
 			initKeys(config);
             _sessionUUID = PnUtils.getUID();
+			if (subscribeConnection) {
+				subscribeConnection.sessionUUID = _sessionUUID;
+			}
 			
 			//start Environment service (wait first HTTP_ENABLE event)
 			environment.start();
@@ -284,6 +292,7 @@ package com.pubnub {
 			publish.addEventListener(OperationEvent.FAULT, onPublishFault);
 			return publish;
 		}
+		
 		
 		/*---------------TIME---------------*/
 		public static function time():void {

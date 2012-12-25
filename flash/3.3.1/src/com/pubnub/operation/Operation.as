@@ -79,7 +79,7 @@ package com.pubnub.operation {
 		public function onError(data:Object = null):void {
 			_completed = true;
 			endTime = getTimer();
-			dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:(data ? data.message : data) } ));
+			dispatchEvent(new OperationEvent(OperationEvent.FAULT, data ));
 			destroy();
 		}
 		override public function destroy():void {

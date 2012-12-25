@@ -79,12 +79,12 @@ package utils {
 		}
 		
 		private function onPnInit(e:PnEvent):void {
-			trace('-------------INIT----------------');
+			//trace('-------------INIT----------------');
 			Pn.subscribe(channel);	
 		}
 		
 		private function onPnSubscribe(e:PnEvent):void {
-			trace('-------------SUBSCRIBE---------------- ' + e.status);
+			//trace('-------------SUBSCRIBE---------------- ' + e.status);
 			 switch (e.status) {
                 case OperationStatus.DATA:
 					//trace(e.channel == channel, e.channel , channel);

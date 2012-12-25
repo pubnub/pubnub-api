@@ -15,6 +15,7 @@ package com.pubnub.environment {
 		private var _netwotkEnabled:Boolean;
 		private var lastHTTPDisabledTime:int = 0;
 		private var maxTimeout:int;
+		private var _firstRun:Boolean;
 		
 		public function Environment(origin:String) {
 			super();
@@ -29,6 +30,7 @@ package com.pubnub.environment {
 		}
 		
 		public function stop():void {
+			_netwotkEnabled = false;
 			netMon.stop();
 			sysMon.stop();
 		}
@@ -73,6 +75,8 @@ package com.pubnub.environment {
 		}
 		
 		private function onHTTPEnable(e:NetMonEvent):void {
+			_firstRun = true;
+			_netwotkEnabled = false;
 			dispatchEvent(e);
 		}
 		
@@ -92,6 +96,11 @@ package com.pubnub.environment {
 		
 		public function get netwotkEnabled():Boolean {
 			return _netwotkEnabled;
+		}
+		
+		
+		public function get firstRun():Boolean {
+			return _firstRun;
 		}
 	}
 }

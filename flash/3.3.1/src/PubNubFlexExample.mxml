@@ -11,6 +11,8 @@
     <fx:Script>
 		<![CDATA[
 			import com.pubnub.*;
+			import com.pubnub.environment.EnvironmentEvent;
+			import com.pubnub.environment.NetMonEvent;
 			import com.pubnub.json.*;
 			import com.pubnub.log.Log;
 			import com.pubnub.operation.*;
@@ -81,10 +83,24 @@
             Pn.instance.addEventListener(PnEvent.DETAILED_HISTORY, onDetailedHistory);
             Pn.instance.addEventListener(PnEvent.PUBLISH, onPublish);
             Pn.instance.addEventListener(PnEvent.TIME, onPnTime);
+            Pn.instance.addEventListener(EnvironmentEvent.SHUTDOWN, onPnShutdown);
+            Pn.instance.addEventListener(NetMonEvent.HTTP_ENABLE, onPnConnected);
+            Pn.instance.addEventListener(NetMonEvent.HTTP_DISABLE, onPnDisconnected);
             Pn.init(config);
         }
 		
+		private function onPnDisconnected(e:NetMonEvent):void {
+			
+			this.connectionStatus.setStyle('backgroundColor', "#FC0000");
+		}
 		
+		private function onPnConnected(e:NetMonEvent):void {
+			this.connectionStatus.setStyle('backgroundColor', "#00FC00");
+		}
+		
+		private function onPnShutdown(e:EnvironmentEvent):void {
+			callExternalInterface("console.log", ("Pn SHUTDOWN " ));
+		}
 		
         private function onInit(e:PnEvent):void {
 			//if (perfomance.isRun) return;
@@ -117,7 +133,7 @@
                     break;
 
                 case OperationStatus.ERROR:
-                    callExternalInterface("console.log", ("Subscribe [ERROR] : " + e.channel + ', ' + e.data));
+                    callExternalInterface("console.log", ("Subscribe [ERROR]:" + (e.channel?e.channel : 'no channel') + ', ' + e.data));
                     break;
             }
 			channelsDataProvider = new ArrayCollection(Pn.getSubscribeChannels());
@@ -150,12 +166,10 @@
             switch (e.status) {
                 case OperationStatus.DATA:
                     var messages:Array = e.data as Array;
-                    callExternalInterface("console.log", ("DetailedHistory [DATA], url : " + e.operation.url));
                     callExternalInterface("console.log", ("DetailedHistory [DATA], channel : " + e.channel + ', result : \n' + messages.join('\n')));
                     break;
 
                 case OperationStatus.ERROR:
-                    callExternalInterface("console.log", ("DetailedHistory [ERROR], url : " + e.operation.url));
                     callExternalInterface("console.log", ("DetailedHistory [ERROR] : " + e.data));
                     break;
             }
@@ -189,17 +203,14 @@
         private function onPublish(e:PnEvent):void {
 			//trace('onPublish : ' + e.status)
 			//if (perfomance.isRun) return;
-			trace('publish time : ' + (getTimer() - startPublishTime));
             switch (e.status) {
                 case OperationStatus.DATA:
                     var messages:Array = e.data as Array;
-                    //callExternalInterface("console.log", ("Publish [DATA], url : " + e.operation.url));
-                    if(messages) callExternalInterface("console.log", ("Publish [DATA], channel : " + e.channel + ', result : [' + messages.join(',') + ']'));
+                    if(messages) callExternalInterface("console.log", ("Publish [DATA], channel : " + e.channel + ' : [' + messages.join(',') + ']'));
                     break;
 
                 case OperationStatus.ERROR:
-                    callExternalInterface("console.log", ("Publish [ERROR], url : " + e.operation.url));
-                    callExternalInterface("console.log", ("Publish [ERROR] : " + e.data));
+                    callExternalInterface("console.log", ("Publish [ERROR]:" + e.data));
                     break;
             }
         }
@@ -212,11 +223,11 @@
 			//if (perfomance.isRun) return;
 			switch (e.status) {
                 case OperationStatus.DATA:
-                    callExternalInterface("console.log", ("Time [DATA],  : result : " + e.data));
+                    callExternalInterface("console.log", ("Time [DATA]: " + PnJSON.stringify(e.data)));
                     break;
 
                 case OperationStatus.ERROR:
-                    callExternalInterface("console.log", ("Time [ERROR],  : result : " + e.data));
+                    callExternalInterface("console.log", ("Time [ERROR]: " + PnJSON.stringify(e.data)));
                     break;
             }
 		}
@@ -366,4 +377,8 @@
     <s:Label x="324" y="38" color="#4D4C4C" fontStyle="italic" text="publish_key" textAlign="right"/>
     <s:TextInput id="publishKeyTxt" x="397" y="34" width="246" text="@{pub_key}"/>
 	<s:CheckBox id="sslCheckBox" x="656" y="35" label="SSL" selected="@{ssl}"/>
+	<s:BorderContainer id="connectionStatus" x="114" y="90" width="53" height="13"
+					   backgroundColor="#FC0000">
+	</s:BorderContainer>
+	<s:Label x="9" y="92" color="#626262" fontStyle="italic" text="Connection status:"/>
 </s:Application>

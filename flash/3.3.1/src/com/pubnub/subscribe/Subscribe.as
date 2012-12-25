@@ -57,9 +57,9 @@ package com.pubnub.subscribe {
 		 * @return	Boolean  result of subcribe (true if is subscribe to one channel or more channels)
 		 */
 		public function subcribe(channel:String):Boolean {
-			if (!checkChannelName(channel)) return false;
-			
 			if (!checkNetwork()) return false;
+			
+			if (!checkChannelName(channel)) return false;
 			
 			// search of channels
 			var addCh:Array = [];
@@ -88,15 +88,21 @@ package com.pubnub.subscribe {
 		
 		private function checkNetwork():Boolean {
 			if (_networkEnabled == false) {
-				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ -1, Errors.NETWORK_UNVALIABLE]));
+				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ 0, Errors.NETWORK_UNVALIABLE]));
 				return false;
 			}
 			return _networkEnabled;
 		}
 		
 		public function unsubscribe(channel:String, reason:Object = null):Boolean {
+			if (!checkNetwork()) return false;
+			
 			if (!checkChannelName(channel)) return false;
 			
+			return doUnsubscribe(channel, reason);
+		}
+		
+		private function doUnsubscribe(channel:String, reason:Object = null):Boolean {
 			// search of channels
 			var removeCh:Array = [];
 			var temp:Array = channel.split(',');
@@ -114,6 +120,11 @@ package com.pubnub.subscribe {
 		}
 		
 		public function unsubscribeAll(reason:Object = null):void {
+			if (!checkNetwork()) return;
+			doUnsubscribeAll(reason);
+		}
+		
+		private function doUnsubscribeAll(reason:Object = null):void {
 			var allChannels:String = _channels.join(',');
 			unsubscribe(allChannels, reason);
 		}
@@ -335,17 +346,15 @@ package com.pubnub.subscribe {
 		}
 		
 		public function reconnect():void {
+			trace('reconnect : ' + _channels);
 			if (_channels && _channels.length > 0) {
-				if (lastToken) {
-					doSubscribe();
-				}else {
-					subscribeInit();
-				}	
+				lastToken = null;
+				subscribeInit();
 			}
 		}
 		
 		public function close(reason:String = null):void {
-			unsubscribeAll(reason);
+			doUnsubscribeAll(reason);
 			connection.close();
 			if (_channels.length > 0) {
 				leave(_channels.join(','));

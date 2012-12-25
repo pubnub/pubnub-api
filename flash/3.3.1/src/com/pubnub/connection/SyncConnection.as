@@ -24,15 +24,18 @@ package com.pubnub.connection {
 		
 		override public function sendOperation(operation:Operation):void {
 			if (!operation) return;
-			if (_networkEnabled) {
-				if (ready) {
-				doSendOperation(operation);
+			if (_networkEnabled == false) {
+				operation.onError([0, Errors.NETWORK_UNVALIABLE]);
+				return;
+			}
+			if (ready) {
+					doSendOperation(operation);
 				}else {
 					if (loader.connected == false) {
 						loader.connect(operation.request);
-					}
-				}	
-			}
+				}
+			}	
+			
 			if (queue.indexOf(operation) == -1) {
 				queue.push(operation);
 			}
