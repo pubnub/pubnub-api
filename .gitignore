@@ -26,3 +26,4 @@ node_modules
 /j2me/3.3/j2me/src/async-http/dist/
 /j2me/3.3/j2me/src/async-http/nbproject/private/
 /j2me/3.3/j2me/dist/
+.mtj.tmp

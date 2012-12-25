@@ -271,7 +271,7 @@ public class AsyncHttpManager {
                     cb.setConnection(hc);
 
                     int rc = 0;
-                    hc.getResponseCode();
+                    rc = hc.getResponseCode();
                     if (!cb.checkResponse(hc)) {
                         break;
                     } else if (!isRedirect(rc)) {
@@ -325,7 +325,7 @@ public class AsyncHttpManager {
                         if (!network.isAvailable()) {
                             synchronized (network) {
                                 try {
-                                    network.wait();
+                                    network.wait(5000);
                                 } catch (InterruptedException e1) {
 
                                 }
@@ -338,7 +338,7 @@ public class AsyncHttpManager {
                         }
 
                         try {
-                            _waiting.wait();
+                            _waiting.wait(5000);
                         } catch (InterruptedException e) {
                         }
                     }
