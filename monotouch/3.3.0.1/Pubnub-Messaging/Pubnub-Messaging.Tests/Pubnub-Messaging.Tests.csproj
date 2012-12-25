@@ -92,10 +92,10 @@
     <Compile Include="WhenSubscribedToAChannel.cs" />
     <Compile Include="WhenDetailedHistoryIsRequested.cs" />
     <Compile Include="Common.cs" />
-    <Compile Include="WhenGetRequestHistoryMessages.cs" />
     <Compile Include="WhenGetRequestServerTime.cs" />
     <Compile Include="WhenAClientIsPresented.cs" />
     <Compile Include="WhenAMessageIsPublished.cs" />
+    <Compile Include="PubnubUnitTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

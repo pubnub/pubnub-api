@@ -1,12 +1,22 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubNubTest/WhenDetailedHistoryIsRequested.cs">
+    <Files>
+      <File FileName="PubNubTest/WhenAMessageIsPublished.cs" Line="37" Column="9" />
+      <File FileName="PubNubTest/WhenSubscribedToAChannel.cs" Line="39" Column="26" />
+      <File FileName="PubNubTest/Common.cs" Line="110" Column="1" />
+      <File FileName="PubNubTest/PubnubUnitTest.cs" Line="1" Column="1" />
+      <File FileName="PubNubTest/WhenDetailedHistoryIsRequested.cs" Line="902" Column="1" />
+      <File FileName="PubNub-Console/Pubnub.cs" Line="448" Column="1" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="PubNub-Messaging" expanded="True" />
+          <Node name="PubNub-Messaging" expanded="True">
+            <Node name="Library" expanded="True" />
+          </Node>
           <Node name="PubNub-Messaging.Tests" expanded="True">
-            <Node name="WhenSubscribedToAChannel.cs" selected="True" />
+            <Node name="WhenDetailedHistoryIsRequested.cs" selected="True" />
           </Node>
         </State>
       </Pad>
@@ -34,10 +44,8 @@
         <State expanded="True">
           <Node name="PubNub-Messaging.Tests" expanded="True">
             <Node name="PubNubTest" expanded="True">
-              <Node name="WhenDetailedHistoryIsRequested" expanded="True" />
-              <Node name="WhenGetRequestServerTime" expanded="True" />
-              <Node name="WhenSubscribedToAChannel" expanded="True">
-                <Node name="ThenItShouldReturnReceivedMessageCipher" selected="True" />
+              <Node name="WhenDetailedHistoryIsRequested" expanded="True">
+                <Node name="TestUnencryptedSecretDetailedHistoryParams" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -68,6 +76,8 @@
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenSubscribedToAChannel.cs" line="78" />
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="1488" />
       <Breakpoint file="/home/rajat/Projects/pubnub/Mono-Linux/3.3.0.1/PubNub-Messaging/PubNubTest/EncryptionTests.cs" line="125" />
+      <Breakpoint file="/home/rajat/Projects/pubnub/Mono-Linux/3.3.0.1/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs" line="902" />
+      <Breakpoint file="/home/rajat/Projects/pubnub/Mono-Linux/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="1244" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

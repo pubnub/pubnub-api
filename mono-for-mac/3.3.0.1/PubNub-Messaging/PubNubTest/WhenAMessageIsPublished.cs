@@ -50,6 +50,12 @@ namespace PubNubTest
             string message = "Pubnub API Usage Example";
 
             Common cm = new Common();
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenAMessageIsPublished";
+            unitTest.TestCaseName = "ThenItShouldReturnSuccessCodeAndInfo";
+            
+            pubnub.PubnubUnitTest = unitTest;
+
             cm.deliveryStatus = false;
             cm.objResponse = null;
 

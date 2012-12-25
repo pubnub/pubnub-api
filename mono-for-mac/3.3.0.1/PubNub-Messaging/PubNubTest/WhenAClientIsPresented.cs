@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace PubNubTest
 {
     [TestFixture]
-    public class WhenAClientIsPresented
+    public class WhenAClientIsPresented 
     {
         [Test]
         public void ThenItShouldReturnReceivedMessage()
@@ -25,10 +25,15 @@ namespace PubNubTest
             cm.deliveryStatus = false;
             cm.objResponse = null;
 
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenAClientIsPresented";
+            unitTest.TestCaseName = "ThenPresenceShouldReturnReceivedMessage";
+            pubnub.PubnubUnitTest = unitTest;
+
             pubnub.presence(channel, cm.DisplayReturnMessage);
             //while (!cm.deliveryStatus) ;
-            cm.objResponse = null;
-            pubnub.subscribe(channel, cm.DisplayReturnMessage);
+            //cm.objResponse = null;
+            pubnub.subscribe(channel, cm.DisplayReturnMessageDummy);
             while (!cm.deliveryStatus) ;
 
             string strResponse = "";
@@ -41,7 +46,7 @@ namespace PubNubTest
                 foreach (object item in fields)
                 {
                     strResponse = item.ToString();
-                    Console.WriteLine(strResponse);
+                    Console.WriteLine("Resp:" + strResponse);
                     //Assert.IsNotEmpty(strResponse);
                 }
                 Assert.AreEqual("hello_world", fields[2]);
@@ -59,6 +64,11 @@ namespace PubNubTest
                false
            );
             string channel = "hello_world";
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenAClientIsPresented";
+            unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
+            pubnub.PubnubUnitTest = unitTest;
+
             Common cm = new Common();
             cm.deliveryStatus = false;
             cm.objResponse = null;
@@ -75,7 +85,7 @@ namespace PubNubTest
                 foreach(object lst in fields)
                 {
                     strResponse = lst.ToString();
-                    Console.WriteLine(strResponse);
+                    Console.WriteLine("Resp:" + strResponse);
                     Assert.IsNotEmpty(strResponse);
                 }
                 Dictionary<string, object> message = (Dictionary<string, object>)fields[0];
@@ -105,6 +115,11 @@ namespace PubNubTest
                false
            );
             string channel = "hello_world";
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenAClientIsPresented";
+            unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
+            pubnub.PubnubUnitTest = unitTest;
+
             Common cm = new Common();
             cm.deliveryStatus = false;
             cm.objResponse = null;
@@ -122,7 +137,7 @@ namespace PubNubTest
                 foreach(object lst in fields)
                 {
                     strResponse = lst.ToString();
-                    Console.WriteLine(strResponse);
+                    Console.WriteLine("resp:" + strResponse);
                     Assert.IsNotEmpty(strResponse);
                 }
                 Dictionary<string, object> message = (Dictionary<string, object>)fields[0];
