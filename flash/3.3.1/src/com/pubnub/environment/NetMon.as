@@ -56,7 +56,7 @@ package com.pubnub.environment {
 		}
 		
 		private function onCloseConection(e:Event):void {
-			trace('onCloseConection');
+			//trace('onCloseConection');
 		}
 		
 		private function onRestoreFromSleep(e:SysMonEvent):void {

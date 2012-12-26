@@ -3,8 +3,7 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark"
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:ns1="*"
-			   width="100%" height="100%" minWidth="400" minHeight="300"
-			   creationComplete="init(event)" creationPolicy="all">
+			   width="100%" height="100%" creationComplete="init(event)" creationPolicy="all">
     <fx:Declarations>
         <!-- Place non-visual elements (e.g., services, value objects) here -->
     </fx:Declarations>
@@ -99,7 +98,7 @@
 		}
 		
 		private function onPnShutdown(e:EnvironmentEvent):void {
-			callExternalInterface("console.log", ("Pn SHUTDOWN " ));
+			callExternalInterface("console.log", ("Pn SHUTDOWN:" + JSON.stringify(e.data) ));
 		}
 		
         private function onInit(e:PnEvent):void {
@@ -155,7 +154,6 @@
             args.end = endTimeTxt.enabled ? endTimeTxt.text : null;
             args.count = countTxt.enabled ? countTxt.text : null;
             args.reverse = reverseTxt.enabled ? (reverseTxt.text == 'true' ? true : false): null;
-            //args.channel = this.channel;
             args.channel = detChannelList.selectedItem.toString();
             args['sub-key'] = this.sub_key;
             Pn.instance.detailedHistory(args);
@@ -176,13 +174,10 @@
         }
 
         protected function unsubscribeBtn_clickHandler(event:MouseEvent):void{
-            // TODO Auto-generated method stub
             Pn.unsubscribeAll();
         }
 			
 		protected function unsubscribeChannel_clickHandler(event:MouseEvent):void{
-				// TODO Auto-generated method stub
-				//trace(this.unsubChannelName.text);
 				Pn.unsubscribe(this.unsubChannelName.text);
 		}
 
@@ -262,6 +257,16 @@
 			loggingTA.text = arr.join('\n\n');
 		}
 			
+			protected function onSubscribeWithTokenBtn(event:MouseEvent):void{
+				var token:String = tokenInputTxt.text;
+				if(token != null){
+					trace('token.length : ' + token.length );
+					if(token.length > 0){
+						Pn.subscribe(channel, token);
+					}
+				}
+			}
+			
 		]]>
 	</fx:Script>
 
@@ -283,13 +288,16 @@
         </s:NavigatorContent>
         <s:NavigatorContent width="100%" height="100%" label="Subscribe (2)">
             <s:Button id="subscribeBtn" x="10" y="5" label="Subscribe" click="onSubscribeClick(event)" />
-            <s:Button id="unsubscribeBtn" x="295" y="5" label="Unsubscribe all" 
+            <s:Button id="unsubscribeBtn" x="356" y="5" label="Unsubscribe all" 
                       click="unsubscribeBtn_clickHandler(event)"/>
-			<s:Button id="unsubscribeChannelBtn" x="294" y="39" label="Unsubscribe channel"
+			<s:Button id="unsubscribeChannelBtn" x="355" y="39" label="Unsubscribe channel"
 					  click="unsubscribeChannel_clickHandler(event)"/>
-			<s:TextInput id="unsubChannelName" x="441" y="39" width="214" text="{subsChannelList.selectedItems}"/>
-			<s:List id="subsChannelList" x="97" top="0" allowMultipleSelection="true" bottom="0" width="185"
+			<s:TextInput id="unsubChannelName" x="502" y="39" width="214" text="{subsChannelList.selectedItems}"/>
+			<s:List id="subsChannelList" x="158" top="0" allowMultipleSelection="true" bottom="0" width="185"
 					dataProvider="{channelsDataProvider}"></s:List>
+			<s:Button id="subscribeWithTokenBtn" x="10" y="36" label="Subscribe with token"
+					  click="onSubscribeWithTokenBtn(event)"/>
+			<s:TextInput id="tokenInputTxt" x="10" y="63" width="135" prompt="put here a token"/>
         </s:NavigatorContent>
 		
         <s:NavigatorContent width="100%" height="100%" label="DetailedHistory (3)">

@@ -31,6 +31,7 @@ package com.pubnub {
 		private var _subscribeKey:String = "demo";
 		private var secretKey:String = "";
 		private var cipherKey:String = "";
+		private var _checkReconnect:Boolean;
 		
         private var _sessionUUID:String = "";
 		private var ori:Number = Math.floor(Math.random() * 9) + 1;
@@ -58,6 +59,7 @@ package com.pubnub {
 		}
 		
 		private function onEnvironmentHttpDisable(e:NetMonEvent):void {
+			_checkReconnect = true;
 			if (subscribeConnection) {
 				subscribeConnection.networkEnabled = false;
 			}
@@ -65,12 +67,12 @@ package com.pubnub {
 		}
 		
 		private function onEnvironmentHttpEnable(e:NetMonEvent):void {
-			trace('onEnvironmentHttpEnable : ' +  Settings.RESUME_ON_RECONNECT)
+			//trace('onEnvironmentHttpEnable : ' +  Settings.RESUME_ON_RECONNECT)
 			syncConnection.networkEnabled = true;
 			if (subscribeConnection) {
 				subscribeConnection.networkEnabled = true;
-				if (Settings.RESUME_ON_RECONNECT == false) {
-					subscribeConnection.unsubscribeAll()
+				if (_checkReconnect && Settings.RESUME_ON_RECONNECT == false) {
+					trace('RECONNECT');subscribeConnection.reconnect();
 				}
 			}
 			
@@ -78,6 +80,7 @@ package com.pubnub {
 				// Loads start time token
 				doInit();
 			}
+			_checkReconnect = false;
 			dispatchEvent(e);
 		}
 		
@@ -91,13 +94,24 @@ package com.pubnub {
 		}
 		
 		private function shutdown():void {
+			// define last params
+			var channels:String = 'no channels';
+			var lastToken:String = null;
+			if (subscribeConnection) {
+				if (subscribeConnection.channels) {
+					channels = subscribeConnection.channels.join(',');
+				}
+				lastToken = subscribeConnection.lastToken;
+			}
+			
 			syncConnection.close();
 			if (subscribeConnection) subscribeConnection.close();
 			environment.stop();
 			_initialized = false;
 			Log.logRetry('Shutdown', Log.WARNING);
+			
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
-			dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN));
+			dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN, null, [0, Errors.NETWORK_LOST, channels, lastToken]));
 		}
 		
 		private function createOperation(type:String, args:Object = null):Operation {
@@ -161,17 +175,17 @@ package com.pubnub {
 			dispatchEvent(new PnEvent(PnEvent.INIT_ERROR, Errors.INIT_OPERATION_ERROR));
 		}
 		/*---------------SUBSCRIBE---------------*/
-		public static function subscribe(channel:String):void{
-			instance.subscribe(channel);
+		public static function subscribe(channel:String, token:String = null):void{
+			instance.subscribe(channel, token);
 		}
 		
 		/**
 		 * 
 		 * @param	channel for MX subcribe use "ch1,ch2,ch3,ch4"
 		 */
-		public function subscribe(channel:String):void {
+		public function subscribe(channel:String, token:String = null):void {
 			throwInit();
-			subscribeConnection.subcribe(channel);
+			subscribeConnection.subcribe(channel, token);
 		}
 			
 		private function onSubscribe(e:SubscribeEvent):void {

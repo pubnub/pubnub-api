@@ -3,6 +3,7 @@ package com.pubnub.subscribe {
 	import com.pubnub.connection.*;
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
+	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
@@ -28,7 +29,8 @@ package com.pubnub.subscribe {
 		protected var _connected:Boolean;
 		
 		protected var _connectionUID:String;
-		protected var lastToken:String;
+		protected var _lastToken:String;
+		protected var _reusedToken:String
 		protected var factory:Dictionary;
 		protected var _destroyed:Boolean;
 		protected var _channels:Array;
@@ -56,10 +58,14 @@ package com.pubnub.subscribe {
 		 * @param	channel
 		 * @return	Boolean  result of subcribe (true if is subscribe to one channel or more channels)
 		 */
-		public function subcribe(channel:String):Boolean {
+		public function subcribe(channel:String, token:String = null):Boolean {
 			if (!checkNetwork()) return false;
 			
 			if (!checkChannelName(channel)) return false;
+			
+			if (token) {
+				_reusedToken = token;
+			}
 			
 			// search of channels
 			var addCh:Array = [];
@@ -146,13 +152,13 @@ package com.pubnub.subscribe {
 				}
 				
 				if (_channels.length > 0) {
-					if (lastToken) {
+					if (_lastToken) {
 						doSubscribe();
 					}else {
 						subscribeInit();
 					}
 				}else {
-					lastToken = null;
+					_lastToken = null;
 				}
 			}
 		}
@@ -170,7 +176,7 @@ package com.pubnub.subscribe {
 		
 		/*---------------------------INIT---------------------------*/
 		protected function subscribeInit():void {
-			//trace('subscribeInit');
+			//trace('subscribeInit : ' + sessionUUID, _channels);
 			_connectionUID = PnUtils.getUID();
 			var operation:Operation = getOperation(INIT_SUBSCRIBE);
 			connection.sendOperation(operation);	
@@ -182,7 +188,13 @@ package com.pubnub.subscribe {
 				return;
 			}
 			_connected = true;
-			lastToken = e.data[1];
+			_lastToken = e.data[1];
+			if (_reusedToken) {
+				_lastToken = _reusedToken;
+				_reusedToken = null;
+			}
+			
+			
 			dispatchEvent(new SubscribeEvent(SubscribeEvent.CONNECT,  { channel:_channels.join(',') } ));
 			destroyOperation(e.target as Operation);
 			doSubscribe();
@@ -195,11 +207,13 @@ package com.pubnub.subscribe {
 		
 		/*---------------------------SUBSCRIBE---------------------------*/
 		private function doSubscribe():void {
+			//trace('doSubscribe : ' + sessionUUID, _lastToken, _channels);
 			var operation:Operation = getOperation(SUBSCRIBE);
 			connection.sendOperation(operation);
 		}
 		
 		protected function onConnect(e:OperationEvent):void {
+			
 			var responce:Object = e.data;
 			
 			// something is wrong
@@ -210,7 +224,7 @@ package com.pubnub.subscribe {
 			
 			var messages:Array = responce[0] as Array;
 		
-			lastToken = responce[1];
+			_lastToken = responce[1];
 			var chStr:String = responce[2];
 			/*
 			 * MX (array.length = 3)
@@ -294,7 +308,7 @@ package com.pubnub.subscribe {
 		protected function getSubscribeOperation():Operation {
 			var operation:SubscribeOperation = new SubscribeOperation(origin);
 			operation.setURL(null, {
-				timetoken: lastToken,
+				timetoken: _lastToken,
 				subscribeKey : subscribeKey,
 				channel:this.channelsString, 
 				uid:sessionUUID} );
@@ -346,11 +360,15 @@ package com.pubnub.subscribe {
 		}
 		
 		public function reconnect():void {
-			trace('reconnect : ' + _channels);
-			if (_channels && _channels.length > 0) {
-				lastToken = null;
-				subscribeInit();
-			}
+			// save current channels and lash token
+			var channels:String = _channels.join(',');
+			var last_token:String = _lastToken;
+			// disconnect and leave from all channels
+			unsubscribeAll('reconnect...');
+			
+			Log.log("Network Restored: Resubscribing on " + last_token); 
+			// restore connection with last token and channels
+			subcribe(channels);
 		}
 		
 		public function close(reason:String = null):void {
@@ -361,7 +379,7 @@ package com.pubnub.subscribe {
 			}
 			_channels.length = 0;
 			_connected = false;
-			lastToken = null;
+			_lastToken = null;
 		}
 		
 		protected function get channelsString():String {
@@ -389,6 +407,10 @@ package com.pubnub.subscribe {
 		
 		public function get networkEnabled():Boolean {
 			return _networkEnabled;
+		}
+		
+		public function get lastToken():String {
+			return _lastToken;
 		}
 		
 		private function hasChannel(ch:String):Boolean{

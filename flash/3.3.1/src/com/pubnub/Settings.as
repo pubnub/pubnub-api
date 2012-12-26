@@ -5,7 +5,7 @@ package com.pubnub {
 	 */
 	public class Settings {
         // retry to connect a maximum of this many times before un-subscribing from channel.
-		public static const MAX_RECONNECT_RETRIES:uint = 5; //100;
+		public static const MAX_RECONNECT_RETRIES:uint = 3; //100;
 
         // if true, after reconnecting (after detecting disconnect), 'catches up' on missed messages upon reconnect
         public static const RESUME_ON_RECONNECT:Boolean = true;
@@ -18,7 +18,7 @@ package com.pubnub {
 		public static const OPERATION_TIMEOUT:uint = 310000;
 		
 		// for wait a response of a ping operation in HeartBeatConnection, ms 
-		public static const PING_OPEARTION_TIMEOUT:uint = 6000;
+		public static const PING_OPEARTION_TIMEOUT:uint = 5000;
 		
 		// check for network down every [PING_OPERATION_INTERVAL],ms.
 		public static const PING_OPERATION_INTERVAL:uint = 1000; // 15000;
