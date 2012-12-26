@@ -6,6 +6,11 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
+			<name>org.eclipse.mtj.core.preprocessor</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
 			</arguments>
@@ -24,12 +29,13 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.mtj.core.nature</nature>
+		<nature>org.eclipse.mtj.core.preprocessingNature</nature>
 	</natures>
 	<linkedResources>
 		<link>
-			<name>srcPubnubApi</name>
+			<name>srcPubnub</name>
 			<type>2</type>
-			<location>C:/Users/work/Documents/GitHub/pubnub-api/j2me/3.3/src</location>
+			<location>C:/Users/work/Documents/GitHub/pubnub-api/j2me/3.4/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

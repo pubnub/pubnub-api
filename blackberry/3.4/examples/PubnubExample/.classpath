@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="srcPubnub"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/net.rim.ejde.BlackBerryVMInstallType/BlackBerry JRE 7.1.0"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/work/Desktop/bouncycastle.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
