@@ -48,7 +48,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                         //encrypt
                         string enc = pc.encrypt(strMessage);
                     }
-                    catch (ArgumentNullException ane)
+                    catch (ArgumentNullException)
                     {
                         isExpectedException = true;
                     }
@@ -81,7 +81,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                         //decrypt
                         dec = pc.decrypt(strMessage);
                     }
-                    catch (ArgumentNullException ane)
+                    catch (ArgumentNullException)
                     {
                         isExpectedException = true;
                     }

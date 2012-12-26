@@ -80,6 +80,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     string channel = "my/channel";
                     string message = messageForUnencryptPublish;
 
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAMessageIsPublished";
+                    unitTest.TestCaseName = "ThenUnencryptPublishShouldReturnSuccessCodeAndInfo";
+                    pubnub.PubnubUnitTest = unitTest;
+
                     pubnub.publish<string>(channel, message, ReturnSuccessUnencryptPublishCodeCallback);
                     manualEvent1.WaitOne(310 * 1000);
 
@@ -114,6 +119,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     string channel = "my/channel";
                     object message = new CustomClass();
                     messageObjectForUnencryptPublish = JsonConvert.SerializeObject(message);
+
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAMessageIsPublished";
+                    unitTest.TestCaseName = "ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo";
+                    pubnub.PubnubUnitTest = unitTest;
 
                     pubnub.publish<string>(channel, message, ReturnSuccessUnencryptObjectPublishCodeCallback);
                     mreUnencryptObjectPub.WaitOne(310 * 1000);
@@ -152,6 +162,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
                     messageObjectForEncryptPublish = JsonConvert.SerializeObject(message);
 
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAMessageIsPublished";
+                    unitTest.TestCaseName = "ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo";
+                    pubnub.PubnubUnitTest = unitTest;
+
                     pubnub.publish<string>(channel, message, ReturnSuccessEncryptObjectPublishCodeCallback);
                     mreEncryptObjectPub.WaitOne(310 * 1000);
 
@@ -187,6 +202,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     string channel = "my/channel";
                     string message = messageForEncryptPublish;
 
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAMessageIsPublished";
+                    unitTest.TestCaseName = "ThenEncryptPublishShouldReturnSuccessCodeAndInfo";
+                    pubnub.PubnubUnitTest = unitTest;
+
                     pubnub.publish<string>(channel, message, ReturnSuccessEncryptPublishCodeCallback);
                     mreEncryptPub.WaitOne(310 * 1000);
 
@@ -220,6 +240,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     Pubnub pubnub = new Pubnub("demo", "demo", "key", "enigma", false);
                     string channel = "my/channel";
                     string message = messageForSecretEncryptPublish;
+
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAMessageIsPublished";
+                    unitTest.TestCaseName = "ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo";
+                    pubnub.PubnubUnitTest = unitTest;
 
                     pubnub.publish<string>(channel, message, ReturnSuccessSecretEncryptPublishCodeCallback);
                     mreSecretEncryptPub.WaitOne(310 * 1000);
@@ -472,11 +497,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     {
                         pubnub.publish<string>(channel, message, null);
                     }
-                    catch (MissingFieldException mfe)
+                    catch (MissingFieldException)
                     {
                         isExpectedException = true;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         isExpectedException = false;
                     }
@@ -498,6 +523,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     Pubnub pubnub = new Pubnub("demo", "demo", "key");
                     string channel = "my/channel";
                     string message = "Pubnub API Usage Example";
+
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAMessageIsPublished";
+                    unitTest.TestCaseName = "ThenOptionalSecretKeyShouldBeProvidedInConstructor";
+                    pubnub.PubnubUnitTest = unitTest;
 
                     pubnub.publish<string>(channel, message, ReturnSecretKeyPublishCallback);
                     manualEvent2.WaitOne(310 * 1000);
@@ -537,6 +567,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     Pubnub pubnub = new Pubnub("demo", "demo", "");
                     string channel = "my/channel";
                     string message = "Pubnub API Usage Example";
+
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAMessageIsPublished";
+                    unitTest.TestCaseName = "IfSSLNotProvidedThenDefaultShouldBeFalse";
+                    pubnub.PubnubUnitTest = unitTest;
 
                     pubnub.publish<string>(channel, message, ReturnNoSSLDefaultFalseCallback);
                     manualEvent3.WaitOne(310 * 1000);

@@ -27,6 +27,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
         ManualResetEvent manualEvent3 = new ManualResetEvent(false);
 
         ManualResetEvent manualEvent4 = new ManualResetEvent(false);
+        ManualResetEvent preUnsubEvent = new ManualResetEvent(false);
 
         static bool receivedFlag1 = false;
         static bool receivedFlag2 = false;
@@ -40,6 +41,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
                     string channel = "my/channel";
 
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAClientIsPresented";
+                    unitTest.TestCaseName = "ThenPresenceShouldReturnReceivedMessage";
+                    pubnub.PubnubUnitTest = unitTest;
+
                     pubnub.presence<string>(channel, ThenPresenceShouldReturnMessage);
 
                     //since presence expects from stimulus from sub/unsub...
@@ -48,6 +54,9 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
                     pubnub.unsubscribe<string>(channel, DummyMethodForUnSubscribe);
                     manualEvent3.WaitOne(2000);
+
+                    pubnub.presence_unsubscribe<string>(channel, DummyMethodForPreUnSub);
+                    preUnsubEvent.WaitOne(2000);
 
                     manualEvent2.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
@@ -82,7 +91,6 @@ namespace PubnubWindowsPhone.Test.UnitTest
         }
 
 
-
         [TestMethod,Asynchronous]
         public void IfHereNowIsCalledThenItShouldReturnInfo()
         {
@@ -91,6 +99,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
                     string channel = "my/channel";
+
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAClientIsPresented";
+                    unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
+                    pubnub.PubnubUnitTest = unitTest;
+
                     pubnub.here_now<string>(channel, ThenHereNowShouldReturnMessage);
                     manualEvent4.WaitOne();
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
@@ -138,6 +152,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
         {
             manualEvent3.Set();
             //Dummary callback method for unsubscribe to test presence
+        }
+
+        [Asynchronous]
+        void DummyMethodForPreUnSub(string receivedMessage)
+        {
+            preUnsubEvent.Set();
         }
     }
 }

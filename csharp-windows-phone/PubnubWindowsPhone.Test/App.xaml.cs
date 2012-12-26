@@ -63,7 +63,7 @@ namespace PubnubWindowsPhone.Test
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
-            //IsolatedStorageExplorer.Explorer.Start("MASABATHULA1PC");
+            
         }
 
         // Code to execute when the application is activated (brought to foreground)

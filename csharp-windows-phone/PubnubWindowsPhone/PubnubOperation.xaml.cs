@@ -76,6 +76,20 @@ namespace PubnubWindowsPhone
                 );
         }
 
+        private void pubnubConnectCallbackResult(string result)
+        {
+            Deployment.Current.Dispatcher.BeginInvoke(
+                () =>
+                {
+                    TextBlock tb = new TextBlock();
+                    tb.TextWrapping = TextWrapping.Wrap;
+                    tb.Text = result;
+                    stackPanel1.Children.Add(tb);
+                    svResult.UpdateLayout();
+                    svResult.ScrollToVerticalOffset(svResult.ExtentHeight);
+                }
+                );
+        }
         private void btnPublish_Click(object sender, RoutedEventArgs e)
         {
             this.IsEnabled = false;
@@ -150,18 +164,6 @@ namespace PubnubWindowsPhone
             }
         }
 
-        private void btnLog_Click(object sender, RoutedEventArgs e)
-        {
-            string log = Pubnub.AlternateTraceReader();
-            TextBlock tb = new TextBlock();
-            tb.Text = log;
-            tb.TextWrapping = TextWrapping.Wrap;
-            stackPanel1.Children.Add(tb);
-            svResult.UpdateLayout();
-            svResult.ScrollToVerticalOffset(svResult.ExtentHeight);
-            
-        }
-
         private void btnUnsubscribe_Click(object sender, RoutedEventArgs e)
         {
             pubnub.unsubscribe<string>(channel, pubnubCallbackResult);
@@ -170,6 +172,11 @@ namespace PubnubWindowsPhone
         private void btnPresenceUnsub_Click(object sender, RoutedEventArgs e)
         {
             pubnub.presence_unsubscribe<string>(channel, pubnubCallbackResult);
+        }
+
+        private void btnSubscribeConnect_Click(object sender, RoutedEventArgs e)
+        {
+            pubnub.subscribe<string>(channel, pubnubCallbackResult, pubnubConnectCallbackResult);
         }
 
 

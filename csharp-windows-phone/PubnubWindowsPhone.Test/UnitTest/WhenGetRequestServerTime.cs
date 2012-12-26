@@ -33,6 +33,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenGetRequestServerTime";
+                    unitTest.TestCaseName = "ThenItShouldReturnTimeStamp";
+                    pubnub.PubnubUnitTest = unitTest;
+
                     pubnub.time<string>(ReturnTimeStampCallback);
                     manualEvent1.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>

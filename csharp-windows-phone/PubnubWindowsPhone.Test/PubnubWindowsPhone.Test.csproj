@@ -82,6 +82,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest\CustomClass.cs" />
     <Compile Include="UnitTest\EncryptionTests.cs" />
+    <Compile Include="UnitTest\PubnubUnitTest.cs" />
     <Compile Include="UnitTest\WhenAClientIsPresented.cs" />
     <Compile Include="UnitTest\WhenAMessageIsPublished.cs">
       <SubType>Code</SubType>

@@ -27,7 +27,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
     //[Seri
     public class SecretCustomClass
     {
-        public string foo = "hello";
+        public string foo = "hello!";
 
         public int[] bar = { 10, 20, 30, 40, 50 };
     }
