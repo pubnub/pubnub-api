@@ -1,7 +1,0 @@
-MIDlet-Version: 1.0.0
-MIDlet-Vendor: MIDlet Suite Vendor
-MIDlet-Jar-URL: PubnubExample.jar
-MicroEdition-Configuration: CLDC-1.1
-MIDlet-1: PubnubExample,,com.pubnub.examples.me.PubnubExample
-MicroEdition-Profile: MIDP-2.0
-MIDlet-Name: PubnubExample MIDlet Suite
