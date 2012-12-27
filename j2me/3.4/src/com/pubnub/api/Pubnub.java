@@ -2,16 +2,15 @@ package com.pubnub.api;
 
 import java.util.Hashtable;
 
-import javax.microedition.io.HttpConnection;
-
 import org.bouncycastle.util.SecureRandom;
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 
-import com.pubnub.asynchttp.AsyncHttpManager;
-import com.pubnub.asynchttp.HttpCallback;
 import com.pubnub.crypto.me.PubnubCrypto;
+import com.pubnub.http.HttpManager;
+import com.pubnub.http.HttpRequest;
+import com.pubnub.http.ResponseHandler;
 
 /**
  * Pubnub object facilitates querying channels for messages and listening on
@@ -33,8 +32,8 @@ public class Pubnub {
     private Hashtable _headers;
     private Subscriptions subscriptions;
 
-    private AsyncHttpManager longPollConnManager;
-    private AsyncHttpManager simpleConnManager;
+    private HttpManager longPollConnManager;
+    private HttpManager simpleConnManager;
 
     /**
      * UUID
@@ -187,10 +186,10 @@ public class Pubnub {
             subscriptions = new Subscriptions();
 
         if (longPollConnManager == null)
-            longPollConnManager = new AsyncHttpManager("Long Poll");
+            longPollConnManager = new HttpManager("Long Poll");
 
         if (simpleConnManager == null)
-            simpleConnManager = new AsyncHttpManager("Simple");
+            simpleConnManager = new HttpManager("Simple");
 
         _headers = new Hashtable();
         _headers.put("V", "3.3");
@@ -207,7 +206,7 @@ public class Pubnub {
      * @param interval
      */
     public static void startHeartbeat(int interval) {
-        AsyncHttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0",
+        HttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0",
                 interval);
     }
 
@@ -363,7 +362,7 @@ public class Pubnub {
                 this.SUBSCRIBE_KEY, signature, channel, "0",
                 PubnubUtil.urlEncode(message.toString()) };
 
-        Request req = new Request(urlComponents, channel,
+        PubnubRequest req = new PubnubRequest(urlComponents, channel,
                 new ResponseHandler() {
                     public void handleResponse(String response) {
                         JSONArray jsarr;
@@ -383,7 +382,7 @@ public class Pubnub {
                         } catch (JSONException e) {
                             jsarr = new JSONArray();
                             jsarr.put("0").put(
-                                    "Error: Failed JSON HTTP Request");
+                                    "Error: Failed JSON HTTP PubnubRequest");
                         }
                         callback.errorCallback(channel, jsarr);
 
@@ -427,7 +426,7 @@ public class Pubnub {
         String[] urlargs = { this.ORIGIN, "v2", "presence", "sub_key",
                 this.SUBSCRIBE_KEY, "channel", channel };
 
-        Request req = new Request(urlargs, (String) null,
+        PubnubRequest req = new PubnubRequest(urlargs, (String) null,
                 new ResponseHandler() {
 
                     public void handleResponse(String response) {
@@ -485,7 +484,7 @@ public class Pubnub {
         String[] urlargs = { this.ORIGIN, "history", this.SUBSCRIBE_KEY,
                 channel, "0", limit };
 
-        Request req = new Request(urlargs, channel, new ResponseHandler() {
+        PubnubRequest req = new PubnubRequest(urlargs, channel, new ResponseHandler() {
 
             public void handleResponse(String response) {
                 callback.successCallback(channel, response);
@@ -535,7 +534,7 @@ public class Pubnub {
         String[] urlargs = { this.ORIGIN, "v2", "history", "sub-key",
                 this.SUBSCRIBE_KEY, "channel", channel };
 
-        Request req = new Request(urlargs, parameters, channel,
+        PubnubRequest req = new PubnubRequest(urlargs, parameters, channel,
                 new ResponseHandler() {
 
                     public void handleResponse(String response) {
@@ -659,7 +658,7 @@ public class Pubnub {
     public void time(final Callback cb) {
 
         String[] url = { this.ORIGIN, "time", "0" };
-        Request req = new Request(url, (String) null, new ResponseHandler() {
+        PubnubRequest req = new PubnubRequest(url, (String) null, new ResponseHandler() {
 
             public void handleResponse(String response) {
                 cb.successCallback(null, response);
@@ -853,7 +852,7 @@ public class Pubnub {
         Hashtable params = new Hashtable();
         params.put("uuid", uuid());
 
-        Request req = new Request(urlComponents, params, channelsArray,
+        PubnubRequest req = new PubnubRequest(urlComponents, params, channelsArray,
                 new ResponseHandler() {
                     String _timetoken = "0";
 
@@ -929,20 +928,9 @@ public class Pubnub {
      * @param req
      * @param connManager
      */
-    private void _request(final Request req, AsyncHttpManager connManager) {
+    private void _request(final PubnubRequest req, HttpManager connManager) {
 
-        HttpCallback callback = new HttpCallback(req.getUrl(), _headers) {
-            public void OnComplete(HttpConnection hc, int statusCode,
-                    String response) {
-                req.responseHandler.handleResponse(response);
-            }
-
-            public void errorCall(HttpConnection conn, int statusCode,
-                    String response) {
-                req.responseHandler.handleError(response);
-
-            }
-        };
-        connManager.queue(callback);
+        HttpRequest hreq = new HttpRequest(req.getUrl(), _headers, req.responseHandler);
+        connManager.queue(hreq);
     }
 }

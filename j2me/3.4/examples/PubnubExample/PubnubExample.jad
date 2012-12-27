@@ -1,0 +1,8 @@
+MIDlet-1: PubnubExample,,com.pubnub.examples.me.PubnubExample
+MIDlet-Jar-Size: 133733
+MIDlet-Jar-URL: PubnubExample.jar
+MIDlet-Name: PubnubExample MIDlet Suite
+MIDlet-Vendor: MIDlet Suite Vendor
+MIDlet-Version: 1.0.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
