@@ -27,7 +27,7 @@ public class Pubnub {
     private String SUBSCRIBE_KEY = "";
     private String SECRET_KEY = "";
     private String CIPHER_KEY = "";
-    private boolean SSL = false;
+    private boolean SSL = true;
     private String UUID = null;
     private Hashtable _headers;
     private Subscriptions subscriptions;
@@ -206,7 +206,7 @@ public class Pubnub {
      * @param interval
      */
     public static void startHeartbeat(int interval) {
-        HttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0",
+        HttpManager.startHeartbeat("https://pubsub.pubnub.com/time/0",
                 interval);
     }
 

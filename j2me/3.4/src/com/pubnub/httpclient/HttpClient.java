@@ -3,7 +3,6 @@ package com.pubnub.httpclient;
 import java.io.IOException;
 import java.util.Hashtable;
 
-
 public abstract class HttpClient {
 	private int requestTimeout = 310000;
 	private int connTimeout = 5000;
@@ -11,12 +10,15 @@ public abstract class HttpClient {
 	public static HttpClient getClient() {
 		return new HttpClientCore();
 	}
+
 	public static HttpClient getClient(int requestTimeout, int connTimeout) {
 		return new HttpClientCore(requestTimeout, connTimeout);
 	}
+
 	public HttpClient() {
 
 	}
+
 	public HttpClient(int requestTimeout, int connTimeout) {
 		this.setRequestTimeout(requestTimeout);
 		this.setConnTimeout(connTimeout);
@@ -44,6 +46,6 @@ public abstract class HttpClient {
 
 	public abstract HttpResponse fetch(String url) throws IOException;
 
-	public abstract HttpResponse fetch(String url, Hashtable headers) throws IOException;
+	public abstract HttpResponse fetch(String url, Hashtable headers)
+			throws IOException;
 }
-

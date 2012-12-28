@@ -3,7 +3,6 @@ package com.pubnub.examples.blackberry;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.component.Dialog;
 
-import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 
 /**
@@ -18,20 +17,9 @@ public class PubnubExample extends UiApplication
      */
     public static void main(String[] args)
     {
-    	Pubnub pubnub = new Pubnub("demo", "demo", "demo", false);
 
-
-    	pubnub.publish("hello_world1","I am blackberry client" , new Callback() {
-    		public void successCallback(String channel, Object message) {
-    			System.out.println(message.toString());
-			}
-
-			public void errorCallback(String channel, Object message) {
-				System.out.println(message.toString());
-			}
-
-    	});
     	Pubnub.startHeartbeat(5000);
+
         // Create a new instance of the application and make the currently
         // running thread the application's event dispatch thread.
         PubnubExample theApp = new PubnubExample();

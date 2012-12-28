@@ -32,6 +32,10 @@ public final class PubnubExampleScreen extends MainScreen
         // Set the displayed title of the screen
         setTitle("PubnubExample");
         add(new LabelField("Please select an item from the menu"));
+        add(new LabelField("Subscribe will listen on following channels: "));
+        add(new LabelField("hello_world1, hello_world2, hello_world3, hello_world4"));
+        add(new LabelField("Publish, history, detailedHistory, hereNow, Presence use hello_world"));
+
 
         addMenuItem(new TimeMenuItem());
         addMenuItem(new PublishMenuItem());
@@ -58,7 +62,7 @@ public final class PubnubExampleScreen extends MainScreen
         			}
 
         			public void errorCallback(String channel, Object message) {
-        				PubnubExample.alertDialog(channel + " : " + message.toString());
+        				PubnubExample.alertDialog(message.toString());
         			}
         		});
                 }
@@ -76,11 +80,11 @@ public final class PubnubExampleScreen extends MainScreen
 
         			_pubnub.publish(channel, "Blackberry says hello world", new Callback() {
         				public void successCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
 
         				public void errorCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(channel + " : " + message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
         			});
 
@@ -98,11 +102,11 @@ public final class PubnubExampleScreen extends MainScreen
                 {
         			_pubnub.hereNow(channel, new Callback() {
         				public void successCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
 
         				public void errorCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(channel + " : " + message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
         			});
                 }
@@ -120,11 +124,11 @@ public final class PubnubExampleScreen extends MainScreen
                 {
         			_pubnub.history(channel, 1, new Callback() {
         				public void successCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
 
         				public void errorCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(channel + " : " + message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
         			});
                 }
@@ -142,11 +146,11 @@ public final class PubnubExampleScreen extends MainScreen
                 {
         			_pubnub.detailedHistory(channel, 1, new Callback() {
         				public void successCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
 
         				public void errorCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(channel + " : " + message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
         			});
                 }
@@ -179,7 +183,7 @@ public final class PubnubExampleScreen extends MainScreen
         				}
 
         				public void successCallback(String channel, Object message) {
-        					PubnubExample.alertDialog(channel + " " + message.toString());
+        					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
         				}
         			});
 
@@ -202,11 +206,11 @@ public final class PubnubExampleScreen extends MainScreen
                 	try {
             			_pubnub.presence(channel, new Callback() {
             				public void successCallback(String channel, Object message) {
-            					PubnubExample.alertDialog(message.toString());
+            					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
             				}
 
             				public void errorCallback(String channel, Object message) {
-            					PubnubExample.alertDialog(channel + " : " + message.toString());
+            					PubnubExample.alertDialog("Channel : " + channel + ", " + message.toString());
             				}
             			});
             		} catch (PubnubException e) {
