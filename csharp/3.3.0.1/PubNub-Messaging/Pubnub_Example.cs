@@ -79,20 +79,15 @@ namespace PubNub_Messaging
                 {
                     case "0":
                         exitFlag = true;
+                        pubnub.EndPendingRequests();
                         break;
                     case "1":
                         Console.WriteLine("Running subscribe() (not implementing connectCallback)");
                         pubnub.subscribe<string>(channel, DisplayReturnMessage);
-                        //System.Threading.Tasks.Task subtask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.subscribe<string>(channel, DisplayReturnMessage));
-                        //pubnub.subscribe<object>(channel, DisplayReturnMessage);
-                        //pubnub.subscribe(channel, DisplayReturnMessage);
                         break;
                     case "2":
                         Console.WriteLine("Running subscribe() (implementing connectCallback)");
                         pubnub.subscribe<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage);
-                        //System.Threading.Tasks.Task subtask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.subscribe<string>(channel, DisplayReturnMessage));
-                        //pubnub.subscribe<object>(channel, DisplayReturnMessage);
-                        //pubnub.subscribe(channel, DisplayReturnMessage);
                         break;
                     case "3":
                         Console.WriteLine("Running publish()");
@@ -100,11 +95,11 @@ namespace PubNub_Messaging
                         string publishMsg = Console.ReadLine();
                         double doubleData;
                         int intData;
-                        if (int.TryParse(publishMsg, out intData))
+                        if (int.TryParse(publishMsg, out intData)) //capture numeric data
                         {
                             pubnub.publish<string>(channel, intData, DisplayReturnMessage);
                         }
-                        else if (double.TryParse(publishMsg, out doubleData))
+                        else if (double.TryParse(publishMsg, out doubleData)) //capture numeric data
                         {
                             pubnub.publish<string>(channel, doubleData, DisplayReturnMessage);
                         }
@@ -136,23 +131,18 @@ namespace PubNub_Messaging
                     case "4":
                         Console.WriteLine("Running presence()");
                         pubnub.presence<string>(channel, DisplayReturnMessage);
-                        //System.Threading.Tasks.Task pretask = System.Threading.Tasks.Task.Factory.StartNew(() => pubnub.presence<string>(channel, DisplayReturnMessage));
-                        //pubnub.presence<object>(channel, DisplayReturnMessage);
                         break;
                     case "5":
                         Console.WriteLine("Running detailed history()");
                         pubnub.detailedHistory<string>(channel, 100, DisplayReturnMessage);
-                        //pubnub.detailedHistory<object>(channel, 100, DisplayReturnMessage);
                         break;
                     case "6":
                         Console.WriteLine("Running Here_Now()");
                         pubnub.here_now<string>(channel, DisplayReturnMessage);
-                        //pubnub.here_now<object>(channel, DisplayReturnMessage);
                         break;
                     case "7":
                         Console.WriteLine("Running unsubscribe()");
                         pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
-                        //pubnub.unsubscribe<object>(channel, DisplayReturnMessage);
                         break;
                     case "8":
                         Console.WriteLine("Running presence-unsubscribe()");
@@ -168,92 +158,27 @@ namespace PubNub_Messaging
                 }
             }
 
-            Console.WriteLine("\nPress any key to confirm exit.\n\n");
+            Console.WriteLine("\nPress any key to exit.\n\n");
             Console.ReadLine();
 
         }
 
+        /// <summary>
+        /// Callback method captures the response in JSON string format for all operations
+        /// </summary>
+        /// <param name="result"></param>
         static void DisplayReturnMessage(string result)
         {
             Console.WriteLine(result);
         }
 
+        /// <summary>
+        /// Callback method to provide the connect status of Subscribe call
+        /// </summary>
+        /// <param name="result"></param>
         static void DisplayConnectStatusMessage(string result)
         {
             Console.WriteLine(result);
         }
-
-        static void DisplayReturnMessage(object result)
-        {
-            IList<object> message = result as IList<object>;
-
-            if (message != null && message.Count >= 1)
-            {
-                for (int index = 0; index < message.Count; index++)
-                {
-                    ParseObject(message[index], 1);
-                }
-            }
-            else
-            {
-                Console.WriteLine("unable to parse data");
-            }
-        }
-
-        static void ParseObject(object result, int loop)
-        {
-            if (result is object[])
-            {
-                object[] arrResult = (object[])result;
-                foreach (object item in arrResult)
-                {
-                    if (item != null)
-                    {
-                        if (!item.GetType().IsGenericType)
-                        {
-                            if (!item.GetType().IsArray)
-                            {
-                                Console.WriteLine(item.ToString());
-                            }
-                            else
-                            {
-                                ParseObject(item, loop + 1);
-                            }
-                        }
-                        else
-                        {
-                            ParseObject(item, loop + 1);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine();
-                   }
-                }
-            }
-            else if (result.GetType().IsGenericType && (result.GetType().Name == typeof(Dictionary<,>).Name))
-            {
-                Dictionary<string, object> itemList = (Dictionary<string, object>)result;
-                foreach (KeyValuePair<string, object> pair in itemList)
-                {
-                    Console.WriteLine(string.Format("key = {0}", pair.Key));
-                    if (pair.Value is object[])
-                    {
-                        Console.WriteLine("value = ");
-                        ParseObject(pair.Value, loop);
-                    }
-                    else
-                    {
-                        Console.WriteLine(string.Format("value = {0}", pair.Value));
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine(result.ToString());
-            }
-
-        }
-
     }
 }
