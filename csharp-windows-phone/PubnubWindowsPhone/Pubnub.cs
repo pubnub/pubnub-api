@@ -1,4 +1,4 @@
-﻿//Build Date: Dec 06, 2012
+﻿//Build Date: Dec 28, 2012
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -19,9 +19,9 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Configuration;
 using Microsoft.Win32;
-#if (SILVERLIGHT)
-using TvdP.Collections;
-#endif
+//#if (SILVERLIGHT) //NOTE: For Windows Phone application, remove SILVERLIGHT compilation symbol located in Project Properties -> Build -> General section
+//using TvdP.Collections;
+//#endif
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -40,7 +40,7 @@ namespace PubNub_Messaging
         const int PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC = 15;
         const int PUBNUB_NETWORK_CHECK_RETRIES = 50;
         const int PUBNUB_WEBREQUEST_RETRY_INTERVAL_IN_SEC = 10;
-        const bool OVERRIDE_TCP_KEEP_ALIVE = true;
+        bool OVERRIDE_TCP_KEEP_ALIVE = true;
         const LoggingMethod.Level LOG_LEVEL = LoggingMethod.Level.Error;
 
         // Common property changed event
@@ -79,9 +79,6 @@ namespace PubNub_Messaging
 
         private static bool _pubnetSystemActive = true;
 
-        // Publish
-        private ConcurrentDictionary<string, object> _publishMsg = new ConcurrentDictionary<string, object>();
-
         // History of Messages
         private List<object> _History = new List<object>();
         public List<object> History { get { return _History; } set { _History = value; RaisePropertyChanged("History"); } }
@@ -115,20 +112,20 @@ namespace PubNub_Messaging
          */
         private void init(string publish_key, string subscribe_key, string secret_key, string cipher_key, bool ssl_on)
         {
-            #if(MONOTOUCH || SILVERLIGHT || WINDOWS_PHONE)			
+#if(MONOTOUCH || SILVERLIGHT || WINDOWS_PHONE)
+            LoggingMethod.LogLevel = LOG_LEVEL;
+#else
+            string strLogLevel = ConfigurationManager.AppSettings["PubnubMessaging.LogLevel"];
+            int iLogLevel;
+            if (!Int32.TryParse(strLogLevel, out iLogLevel))
+            {
                 LoggingMethod.LogLevel = LOG_LEVEL;
-            #else			
-                string strLogLevel = ConfigurationManager.AppSettings["LogLevel"];			
-                int iLogLevel;			
-                if (!Int32.TryParse (strLogLevel, out iLogLevel)) 			
-                {				
-                    LoggingMethod.LogLevel = LOG_LEVEL;			
-                }			
-                else			
-                {				
-                    LoggingMethod.LogLevel = (LoggingMethod.Level)iLogLevel;			
-                }
-            #endif
+            }
+            else
+            {
+                LoggingMethod.LogLevel = (LoggingMethod.Level)iLogLevel;
+            }
+#endif
 
             this.PUBLISH_KEY = publish_key;
             this.SUBSCRIBE_KEY = subscribe_key;
@@ -188,7 +185,7 @@ namespace PubNub_Messaging
                         switch (netState.type)
                         {
                             case ResponseType.Subscribe:
-                                _subscribe(netState.channel, netState.timetoken, netState.callback,netState.connectCallback, false); 
+                                _subscribe(netState.channel, netState.timetoken, netState.callback, netState.connectCallback, false);
                                 break;
                             case ResponseType.Presence:
                                 _presence(netState.channel, netState.timetoken, netState.callback, false);
@@ -291,6 +288,7 @@ namespace PubNub_Messaging
         {
             if (state != null && state.request != null)
             {
+                TerminateHeartbeatTimer(state.request.RequestUri);
                 state.request.Abort();
                 LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminatePendingWebRequest {1}", DateTime.Now.ToString(), state.request.RequestUri.ToString()), LoggingMethod.LevelInfo);
 
@@ -310,9 +308,20 @@ namespace PubNub_Messaging
                     RequestState currReq = _channelRequest[key];
                     if (currReq.request != null)
                     {
-                        currReq.request.Abort();
-                        LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminatePendingWebRequest {1}", DateTime.Now.ToString(), currReq.request.RequestUri.ToString()), LoggingMethod.LevelInfo);
-
+                        if (currReq.type == ResponseType.Subscribe)
+                        {
+                            unsubscribe<string>(currReq.channel, null);
+                        }
+                        else if (currReq.type == ResponseType.Presence)
+                        {
+                            presence_unsubscribe<string>(currReq.channel.Replace("-pnpres", ""), null);
+                        }
+                        else
+                        {
+                            TerminateHeartbeatTimer(currReq.request.RequestUri);
+                            currReq.request.Abort();
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminatePendingWebRequest {1}", DateTime.Now.ToString(), currReq.request.RequestUri.ToString()), LoggingMethod.LevelInfo);
+                        }
                         bool removeKey = _channelRequest.TryRemove(key, out currReq);
                         if (!removeKey)
                         {
@@ -569,7 +578,7 @@ namespace PubNub_Messaging
 
         public void subscribe(string channel, Action<object> userCallback, Action<object> connectCallback)
         {
-            subscribe<object>(channel, userCallback,connectCallback);
+            subscribe<object>(channel, userCallback, connectCallback);
         }
 
         public void subscribe<T>(string channel, Action<T> userCallback)
@@ -697,7 +706,6 @@ namespace PubNub_Messaging
         }
 
 
-
         /// <summary>
         /// Check the response of the REST API and call for re-subscribe
         /// </summary>
@@ -727,7 +735,7 @@ namespace PubNub_Messaging
 
             if (message != null && message.Count >= 3)
             {
-                _subscribe<T>(channelName, (object)message[1], usercallback, connectCallback, false); 
+                _subscribe<T>(channelName, (object)message[1], usercallback, connectCallback, false);
             }
         }
 
@@ -794,7 +802,7 @@ namespace PubNub_Messaging
                         TerminateHeartbeatTimer(storedRequest.RequestUri);
                         storedRequest.Abort();
                     }
-                    object subMsg =_subscribeMsg.TryRemove(channel, out subMsg); //Clear the dictionary received for last sub msg
+                    object subMsg = _subscribeMsg.TryRemove(channel, out subMsg); //Clear the dictionary received for last sub msg
 
                     jsonString = string.Format("[1, \"Unsubscribed from {0}\"]", channel);
                 }
@@ -834,7 +842,7 @@ namespace PubNub_Messaging
          * @param Procedure function callback
          * @param String timetoken.
          */
-        private void _subscribe<T>(string channel, object timetoken, Action<T> userCallback,Action<T> connectCallback, bool reconnect)
+        private void _subscribe<T>(string channel, object timetoken, Action<T> userCallback, Action<T> connectCallback, bool reconnect)
         {
             //Exit if the channel is unsubscribed
             if (!_channelSubscription.ContainsKey(channel))
@@ -882,7 +890,7 @@ namespace PubNub_Messaging
             catch (Exception ex)
             {
                 LoggingMethod.WriteToLog(string.Format("DateTime {0} method:_subscribe \n channel={1} \n timetoken={2} \n Exception Details={3}", DateTime.Now.ToString(), channel, timetoken.ToString(), ex.ToString()), LoggingMethod.LevelError);
-                this._subscribe<T>(channel, timetoken, userCallback, connectCallback, false); 
+                this._subscribe<T>(channel, timetoken, userCallback, connectCallback, false);
             }
         }
         /**
@@ -1020,6 +1028,7 @@ namespace PubNub_Messaging
                         TerminateHeartbeatTimer(storedRequest.RequestUri);
                         storedRequest.Abort();
                     }
+                    object presenceMsg = _presenceMsg.TryRemove(channel, out presenceMsg); //Clear the dictionary received for last presence msg
                     jsonString = string.Format("[1, \"Presence-Unsubscribed from {0}\"]", channel.Replace("-pnpres", ""));
                 }
                 else
@@ -1232,7 +1241,7 @@ namespace PubNub_Messaging
                                     if (OVERRIDE_TCP_KEEP_ALIVE)
                                     {
                                         TerminateHeartbeatTimer(requestUri);
-                                   }
+                                    }
 
                                     LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channelName, type.ToString(), jsonString), LoggingMethod.LevelInfo);
 
@@ -1343,20 +1352,86 @@ namespace PubNub_Messaging
             }
         }
 
+        private void TerminateHeartbeatTimer()
+        {
+            TerminateHeartbeatTimer(null);
+        }
+
         private void TerminateHeartbeatTimer(Uri requestUri)
         {
-            if (_channelHeartbeatTimer.ContainsKey(requestUri))
+            if (requestUri != null)
             {
-                Timer requestHeatbeatTimer = _channelHeartbeatTimer[requestUri];
-                requestHeatbeatTimer.Change(
-                    (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000,
-                    (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000);
-                requestHeatbeatTimer.Dispose();
-                Timer removedTimer = null;
-                bool removed = _channelHeartbeatTimer.TryRemove(requestUri, out removedTimer);
-                if (!removed)
+                if (_channelHeartbeatTimer.ContainsKey(requestUri))
                 {
-                    LoggingMethod.WriteToLog(string.Format("DateTime {0} Unable to remove heartbeat reference from collection for {1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
+                    Timer requestHeatbeatTimer = _channelHeartbeatTimer[requestUri];
+                    requestHeatbeatTimer.Change(
+                        (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000,
+                        (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000);
+                    requestHeatbeatTimer.Dispose();
+                    Timer removedTimer = null;
+                    bool removed = _channelHeartbeatTimer.TryRemove(requestUri, out removedTimer);
+                    if (!removed)
+                    {
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} Unable to remove heartbeat reference from collection for {1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
+                    }
+                }
+            }
+            else
+            {
+                ConcurrentDictionary<Uri, Timer> timerCollection = _channelHeartbeatTimer;
+                ICollection<Uri> keyCol = timerCollection.Keys;
+                foreach (Uri key in keyCol)
+                {
+                    Timer currTimer = _channelHeartbeatTimer[key];
+                    currTimer.Dispose();
+                    Timer removedTimer = null;
+                    bool removed = _channelHeartbeatTimer.TryRemove(key, out removedTimer);
+                    if (!removed)
+                    {
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminateHeartbeatTimer(null) - Unable to remove heartbeat reference from collection for {1}", DateTime.Now.ToString(), key.ToString()), LoggingMethod.LevelInfo);
+                    }
+                }
+            }
+        }
+
+        private void TerminateReconnectTimer()
+        {
+            TerminateReconnectTimer(null);
+        }
+
+        private void TerminateReconnectTimer(string channelName)
+        {
+            if (channelName != null)
+            {
+                if (_channelReconnectTimer.ContainsKey(channelName))
+                {
+                    Timer channelReconnectTimer = _channelReconnectTimer[channelName];
+                    channelReconnectTimer.Change(
+                        (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000,
+                        (-1 == PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC) ? -1 : PUBNUB_NETWORK_TCP_CHECK_INTERVAL_IN_SEC * 1000);
+                    channelReconnectTimer.Dispose();
+                    Timer removedTimer = null;
+                    bool removed = _channelReconnectTimer.TryRemove(channelName, out removedTimer);
+                    if (!removed)
+                    {
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminateReconnectTimer - Unable to remove reconnect timer reference from collection for {1}", DateTime.Now.ToString(), channelName), LoggingMethod.LevelInfo);
+                    }
+                }
+            }
+            else
+            {
+                ConcurrentDictionary<string, Timer> reconnectCollection = _channelReconnectTimer;
+                ICollection<string> keyCol = reconnectCollection.Keys;
+                foreach (string key in keyCol)
+                {
+                    Timer currTimer = _channelReconnectTimer[key];
+                    currTimer.Dispose();
+                    Timer removedTimer = null;
+                    bool removed = _channelReconnectTimer.TryRemove(key, out removedTimer);
+                    if (!removed)
+                    {
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminateReconnectTimer(null) - Unable to remove reconnect timer reference from collection for {1}", DateTime.Now.ToString(), key.ToString()), LoggingMethod.LevelInfo);
+                    }
                 }
             }
         }
@@ -1364,8 +1439,8 @@ namespace PubNub_Messaging
         private void responseToConnectCallback<T>(List<object> result, ResponseType type, string channelName, Action<T> connectCallback)
         {
             //Check callback exists and make sure previous timetoken = 0
-            if (connectCallback != null 
-                && _channelSubscription.ContainsKey(channelName) 
+            if (connectCallback != null
+                && _channelSubscription.ContainsKey(channelName)
                 && _channelSubscription[channelName].Equals(0))
             {
                 switch (type)
@@ -1593,7 +1668,7 @@ namespace PubNub_Messaging
             }
         }
 
-        private void responseToUserCallback<T>(List<object> result, ResponseType type, string channelName, Action<T> usercallback) //where T:  class//, new()
+        private void responseToUserCallback<T>(List<object> result, ResponseType type, string channelName, Action<T> usercallback)
         {
             switch (type)
             {
@@ -1844,7 +1919,6 @@ namespace PubNub_Messaging
             {
                 case ResponseType.Publish:
                     result.Add(channelName);
-                    _publishMsg.AddOrUpdate(channelName, result, (key, oldValue) => result);
                     break;
                 case ResponseType.History:
                     if (this.CIPHER_KEY.Length > 0)
@@ -1973,13 +2047,21 @@ namespace PubNub_Messaging
             return channelName;
         }
 
-        // Serialize the given object into JSON string
+        /// <summary>
+        /// Serialize the given object into JSON string
+        /// </summary>
+        /// <param name="objectToSerialize"></param>
+        /// <returns></returns>
         public static string SerializeToJsonString(object objectToSerialize)
         {
             return JsonConvert.SerializeObject(objectToSerialize);
         }
 
-        // Deserialize JSON string into List of Objects
+        /// <summary>
+        /// Deserialize JSON string into List of Objects
+        /// </summary>
+        /// <param name="jsonString"></param>
+        /// <returns></returns>
         public static List<object> DeserializeToListOfObject(string jsonString)
         {
             return JsonConvert.DeserializeObject<List<object>>(jsonString);
@@ -2018,6 +2100,7 @@ namespace PubNub_Messaging
             return " ~`!@#$%^&*()+=[]\\{}|;':\",./<>?".IndexOf(ch) >= 0;
         }
 
+
         public Guid generateGUID()
         {
             return Guid.NewGuid();
@@ -2033,6 +2116,11 @@ namespace PubNub_Messaging
             return hexaHash;
         }
 
+        /// <summary>
+        /// Convert the UTC/GMT DateTime to Unix Nano Seconds format
+        /// </summary>
+        /// <param name="dotNetUTCDateTime"></param>
+        /// <returns></returns>
         public static long translateDateTimeToPubnubUnixNanoSeconds(DateTime dotNetUTCDateTime)
         {
             TimeSpan ts = dotNetUTCDateTime - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -2040,11 +2128,23 @@ namespace PubNub_Messaging
             return timestamp;
         }
 
+        /// <summary>
+        /// Convert the Unix Nano Seconds format time to UTC/GMT DateTime
+        /// </summary>
+        /// <param name="unixNanoSecondTime"></param>
+        /// <returns></returns>
         public static DateTime translatePubnubUnixNanoSecondsToDateTime(long unixNanoSecondTime)
         {
             double timestamp = unixNanoSecondTime / 10000000;
             DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp);
             return dt;
+        }
+
+        public void EndPendingRequests()
+        {
+            TerminatePendingWebRequest();
+            TerminateHeartbeatTimer();
+            TerminateReconnectTimer();
         }
     }
 
@@ -2714,9 +2814,9 @@ namespace PubNub_Messaging
 
                     return strDecrypted;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    LoggingMethod.WriteToLog(string.Format("DateTime {0} Decrypt Error. {1}", DateTime.Now.ToString(),ex.ToString()), LoggingMethod.LevelVerbose);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} Decrypt Error. {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelVerbose);
                     return "**DECRYPT ERROR**";
                 }
             }
@@ -3008,7 +3108,7 @@ namespace PubNub_Messaging
             if (bWrite)
             {
 #if (SILVERLIGHT || WINDOWS_PHONE || MONOTOUCH)
-				Debug.WriteLine (str);
+                Debug.WriteLine(str);
 #else
                 Trace.WriteLine(str);
 #endif
@@ -3071,7 +3171,7 @@ namespace PubNub_Messaging
 
         HttpWebRequest request;
 
-        #if (!SILVERLIGHT && !WINDOWS_PHONE)
+#if (!SILVERLIGHT && !WINDOWS_PHONE)
         private int _timeout;
         public override int Timeout
         {
@@ -3116,7 +3216,7 @@ namespace PubNub_Messaging
             {
                 request.Abort();
             }
-        } 
+        }
 
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
         {

@@ -53,7 +53,9 @@ namespace PubnubWindowsPhone
                 this.IsEnabled = true;
                 e.Cancel = true;
             }
+            pubnub.EndPendingRequests();
             base.OnBackKeyPress(e);
+            
         }
 
         private void btnTime_Click(object sender, RoutedEventArgs e)
