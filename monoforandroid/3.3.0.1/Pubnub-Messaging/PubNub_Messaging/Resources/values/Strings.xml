@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="subscribe">Subscribe</string>
+	<string name="publish">Publish</string>
+	<string name="presence">Presence</string>
+	<string name="herenow">HereNow</string>
+	<string name="detailedHistory">Detailed History</string>
+	<string name="time">Time</string>
+	<string name="unsubscribe">Unsubscribe</string>
+	<string name="unsubscribePres">Unsubscribe-Presence</string>
+	<string name="channel">Enter Channel</string>
+	<string name="enablessl">Enable SSL</string>
+	<string name="sslOn">On</string>
+	<string name="sslOff">Off</string>
+	<string name="cipher">"Enter cipher key for encryption. Leave blank for unencrypted transfer.</string>
+	<string name="launch">Launch</string>
+	<string name="app_name">PubNub_Messaging</string>
+</resources>
