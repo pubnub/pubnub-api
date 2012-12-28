@@ -19,9 +19,6 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Configuration;
 using Microsoft.Win32;
-//#if (SILVERLIGHT) //NOTE: For Windows Phone application, remove SILVERLIGHT compilation symbol located in Project Properties -> Build -> General section
-//using TvdP.Collections;
-//#endif
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -3218,6 +3215,52 @@ namespace PubNub_Messaging
             }
         }
 
+        public override WebHeaderCollection Headers
+        {
+            get
+            {
+                return request.Headers;
+            }
+            set
+            {
+                request.Headers = value;
+            }
+        }
+
+        public override string Method
+        {
+            get
+            {
+                return request.Method;
+            }
+            set
+            {
+                request.Method = value;
+            }
+        }
+
+        public override string ContentType
+        {
+            get
+            {
+                return request.ContentType;
+            }
+            set
+            {
+                request.ContentType = value;
+            }
+        }
+
+        public override IAsyncResult BeginGetRequestStream(AsyncCallback callback, object state)
+        {
+            return request.BeginGetRequestStream(callback, state);
+        }
+
+        public override Stream EndGetRequestStream(IAsyncResult asyncResult)
+        {
+            return request.EndGetRequestStream(asyncResult);
+        }
+
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
         {
             if (pubnubUnitTest is IPubnubUnitTest && pubnubUnitTest.EnableStubTest)
@@ -3274,6 +3317,7 @@ namespace PubNub_Messaging
             else
                 return _responseStream;
         }
+
         public override void Close()
         {
             if (response != null)
@@ -3281,6 +3325,31 @@ namespace PubNub_Messaging
                 response.Close();
             }
         }
+
+        public override long ContentLength
+        {
+            get
+            {
+                return response.ContentLength;
+            }
+        }
+
+        public override string ContentType
+        {
+            get
+            {
+                return response.ContentType;
+            }
+        }
+
+        public override Uri ResponseUri
+        {
+            get
+            {
+                return response.ResponseUri;
+            }
+        }
+
     }
 
     internal class PubnubWebAsyncResult : IAsyncResult
