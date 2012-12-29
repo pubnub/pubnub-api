@@ -19,7 +19,6 @@ package com.pubnub.connection {
 		override public function sendOperation(operation:Operation):void {
 			super.sendOperation(operation);
 			var timeout:int = operation.timeout;
-			//trace('doSendOperation : ' + timeout, operation.url);
 			clearTimeout(timeoutInterval);
 			timeoutInterval = setTimeout(onTimeout, operation.timeout, operation);
 			this.operation = operation;
@@ -32,9 +31,8 @@ package com.pubnub.connection {
 		}
 		
 		private function onTimeout(operation:Operation):void {
-			//trace(this, 'onTimeout');
 			if (operation) {
-				Log.logTimeout(Errors.OPERATION_TIMEOUT + ', ' + operation.request.url);
+				Log.logTimeout(Errors.OPERATION_TIMEOUT + ', ' + operation.url);
 				operation.onError( { message:Errors.OPERATION_TIMEOUT, operation:operation } );
 			}
 		}
@@ -42,12 +40,14 @@ package com.pubnub.connection {
 		private function removeOperation(operation:Operation):void {
 			var ind:int = queue.indexOf(operation);
 			if (ind > -1) {
+				clearTimeout(timeoutInterval);
 				queue.splice(ind, 1);
 			}
 		}
 		
 		override protected function onComplete(e:URLLoaderEvent):void {
 			super.onComplete(e);
+			clearTimeout(timeoutInterval);
 			operation = null;
 		}
 		

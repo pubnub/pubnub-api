@@ -72,7 +72,8 @@ package com.pubnub {
 			if (subscribeConnection) {
 				subscribeConnection.networkEnabled = true;
 				if (_checkReconnect && Settings.RESUME_ON_RECONNECT == false) {
-					trace('RECONNECT');subscribeConnection.reconnect();
+					trace('RECONNECT');
+					subscribeConnection.reconnect();
 				}
 			}
 			
@@ -103,7 +104,7 @@ package com.pubnub {
 				}
 				lastToken = subscribeConnection.lastToken;
 			}
-			
+			_checkReconnect = false;
 			syncConnection.close();
 			if (subscribeConnection) subscribeConnection.close();
 			environment.stop();

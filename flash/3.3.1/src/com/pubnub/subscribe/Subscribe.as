@@ -362,11 +362,11 @@ package com.pubnub.subscribe {
 		public function reconnect():void {
 			// save current channels and lash token
 			var channels:String = _channels.join(',');
-			var last_token:String = _lastToken;
+			//var last_token:String = _lastToken;
 			// disconnect and leave from all channels
 			unsubscribeAll('reconnect...');
 			
-			Log.log("Network Restored: Resubscribing on " + last_token); 
+			Log.log("Network Restored: Resubscribing on " + 0); 
 			// restore connection with last token and channels
 			subcribe(channels);
 		}

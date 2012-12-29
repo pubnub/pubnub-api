@@ -18,10 +18,9 @@ package com.pubnub.environment {
 		
 		public var forceReconnect:Boolean = true;
 		
-		private var interval:int;
 		private var pingTimout:int;
 		private var _destroyed:Boolean;
-		private var loader:URLLoader;
+		
 		private var lastStatus:String
 		private var _origin:String;
 		private var url:String;
@@ -32,7 +31,13 @@ package com.pubnub.environment {
 		private var _reconnectDelay:uint = 15000;
 		private var connection:HeartBeatConnection;
 		private var timeOperation:TimeOperation;
-		private var lastTime:int = 0
+		private var lastTime:int = 0;
+		
+		private const SIDE_TRACK:String = 'http://google.com';
+		private var loader:URLLoader;
+		//private var loaderInterval:int;
+		//private const LOADER_RECONNECT_DELAY:int = 500;
+		
 		
 		public function NetMon (origin:String = null) {
 			super(null);
@@ -41,10 +46,9 @@ package com.pubnub.environment {
 		}
 		
 		private function init():void {
-			/*loader = new URLLoader();
-			loader.addEventListener(Event.COMPLETE, 					onComplete);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, 				onError);
-			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 	onError);*/
+			loader = new URLLoader();
+			loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, 	onLoaderHTTPStatus);
+			loader.addEventListener(IOErrorEvent.IO_ERROR, 	onLoaderError);
 			
 			sysMon = new SysMon();
 			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
@@ -53,6 +57,25 @@ package com.pubnub.environment {
 			
 			connection = new HeartBeatConnection();
 			connection.addEventListener(Event.CLOSE, onCloseConection);
+		}
+		
+		private function onLoaderError(e:IOErrorEvent):void {
+			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
+				onError(null);
+			}
+		}
+		
+		private function onLoaderHTTPStatus(e:HTTPStatusEvent):void {
+			//trace('onLoaderHTTPStatus : ' + e.status);
+			loadSideTrack();
+		}
+		
+		private function loadSideTrack():void {
+			if (_isRunning == false) return;
+			//trace('loadSideTrack');
+			try { loader.close(); }
+			catch (err:Error) { };
+			loader.load(new URLRequest(SIDE_TRACK));
 		}
 		
 		private function onCloseConection(e:Event):void {
@@ -130,6 +153,9 @@ package com.pubnub.environment {
 			reconnect();
 			sysMon.start();
 			_isRunning = true;
+			//clearInterval(loaderInterval);
+			loadSideTrack();
+			//loaderInterval = setInterval(loadSideTrack, LOADER_RECONNECT_DELAY);
 		}
 		
 		private function reconnect():void {
@@ -142,8 +168,8 @@ package com.pubnub.environment {
 			lastStatus = null;
 			sysMon.stop();
 			connection.close();
-			clearInterval(interval);
 			clearTimeout(pingTimout);
+			//clearTimeout(loaderInterval);
 		}
 		
 		public function destroy():void {
