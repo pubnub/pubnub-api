@@ -10,7 +10,7 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
+    SupportedOrientations="Portrait" Orientation="Portrait"
     shell:SystemTray.IsVisible="True" FlowDirection="LeftToRight" >
 
     <!--LayoutRoot is the root grid where all page content is placed-->
@@ -22,32 +22,14 @@
 
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock x:Name="ApplicationTitle" Text="PubNub C# Windows Phone" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageTitle" Text="Demo" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock x:Name="ApplicationTitle" Text="MY APPLICATION" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock x:Name="PageTitle" Text="page name" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <StackPanel Orientation="Horizontal" Margin="19,6,0,0" Name="spnlInput1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Name="lblChannel" VerticalAlignment="Center" Text="Channel"></TextBlock>
-                <TextBox Name="txtChannel" Text="my/channel" Width="200"></TextBox>
-                <TextBlock Name="lblNothing" Text="" Width="30"></TextBlock>
-                <CheckBox Content="SSL" Height="72" Name="chkSSL" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="20,84,19,0" Name="spnlInput2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Name="lblCipher" VerticalAlignment="Center" Text="Cipher Key"></TextBlock>
-                <TextBox Name="txtCipher" Text="" Width="236"></TextBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="20,164,19,0" Name="spnlInput3" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Name="lblSecret" VerticalAlignment="Center" Text="Secret Key"></TextBlock>
-                <TextBox Name="txtSecret" Text="" Width="236"></TextBox>
-            </StackPanel>
-            <Button Content="Continue" Height="72" HorizontalAlignment="Stretch" Margin="131,253,165,0" Name="btnContinue" VerticalAlignment="Top" Width="160" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" Click="btnContinue_Click" />
-            <Button Content="Cancel" Height="72" HorizontalAlignment="Stretch" Margin="131,331,165,0" Name="btnCancel" VerticalAlignment="Top" Width="160" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" />
-            
-        </Grid>
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0"></Grid>
     </Grid>
- 
+
     <!--Sample code showing usage of ApplicationBar-->
     <!--<phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">

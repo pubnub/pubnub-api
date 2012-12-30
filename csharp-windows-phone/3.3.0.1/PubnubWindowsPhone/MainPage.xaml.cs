@@ -21,16 +21,10 @@ namespace PubnubWindowsPhone
             InitializeComponent();
         }
 
-        private void btnContinue_Click(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
-            string channel = txtChannel.Text.Trim();
-            bool ssl = chkSSL.IsChecked.Value;
-            string secretKey = txtSecret.Text;
-            string cipherKey = txtCipher.Text;
-
-
-            Uri nextPage = new Uri(string.Format("/PubnubOperation.xaml?channel={0}&ssl={1}&cipherkey={2}&secretkey={3}",channel,ssl,cipherKey,secretKey), UriKind.Relative);
-            NavigationService.Navigate(nextPage);
+            base.OnNavigatedTo(e);
+            NavigationService.Navigate(new Uri("/DemoStart.xaml", UriKind.Relative));
         }
     }
 
