@@ -325,7 +325,7 @@ error:
 	}
 
 	/* Finally call the user callback. */
-	cb(p, result, channel, json_object_array_get_idx(response, 1), ctx_data, call_data);
+	cb(p, result, channel, json_object_array_get_idx(response, 0), ctx_data, call_data);
 	free(channel);
 }
 
