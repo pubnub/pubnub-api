@@ -27,7 +27,7 @@ struct pubnub_sync {
 	 * executed. Refcounted. */
 	struct json_object *response;
 	/* Channel information from the last subscribe. */
-	char channel[256];
+	char **channels;
 };
 
 
@@ -55,10 +55,10 @@ pubnub_sync_last_response(struct pubnub_sync *sync)
 	return sync->response ? json_object_get(sync->response) : NULL;
 }
 
-char *
-pubnub_sync_last_channel(struct pubnub_sync *sync)
+char **
+pubnub_sync_last_channels(struct pubnub_sync *sync)
 {
-	return *sync->channel ? strdup(sync->channel) : NULL;
+	return sync->channels;
 }
 
 
@@ -150,7 +150,12 @@ pubnub_sync_generic_cb(struct pubnub *p, enum pubnub_res result, struct json_obj
 		json_object_put(sync->response);
 		sync->response = NULL;
 	}
-	sync->channel[0] = 0; // empty string
+	if (sync->channels) {
+		for (int i = 0; sync->channels[i]; i++)
+			free(sync->channels[i]);
+		free(sync->channels);
+		sync->channels = NULL;
+	}
 
 	sync->result = result;
 	if (result == PNR_OK)
@@ -158,13 +163,12 @@ pubnub_sync_generic_cb(struct pubnub *p, enum pubnub_res result, struct json_obj
 }
 
 void
-pubnub_sync_subscribe_cb(struct pubnub *p, enum pubnub_res result, const char *channel, struct json_object *response, void *ctx_data, void *call_data)
+pubnub_sync_subscribe_cb(struct pubnub *p, enum pubnub_res result, char **channels, struct json_object *response, void *ctx_data, void *call_data)
 {
 	struct pubnub_sync *sync = ctx_data;
 	pubnub_sync_generic_cb(p, result, response, ctx_data, call_data);
 	if (result == PNR_OK) {
-		strncpy(sync->channel, channel, 255);
-		sync->channel[255] = 0; // not needed, just for sanity
+		sync->channels = channels;
 	}
 }
 

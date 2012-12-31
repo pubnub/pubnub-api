@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <json.h>
 
@@ -46,7 +47,28 @@ main(void)
 	json_object_put(msg);
 
 
-	/* TODO subscribe */
+	/* Subscribe */
+
+	do {
+		const char *channels[] = { "my_channel", "demo_channel" };
+		pubnub_subscribe_multi(p, channels, 2, 10, NULL, NULL);
+		if (pubnub_sync_last_result(sync) != PNR_OK) {
+			fprintf(stderr, "pubnub subscribe error: %d\n", pubnub_sync_last_result(sync));
+			return EXIT_FAILURE;
+		}
+		msg = pubnub_sync_last_response(sync);
+		if (json_object_array_length(msg) == 0) {
+			printf("pubnub subscribe ok, no news\n");
+		} else {
+			char **msg_channels = pubnub_sync_last_channels(sync);
+			for (int i = 0; i < json_object_array_length(msg); i++) {
+				json_object *msg1 = json_object_array_get_idx(msg, i);
+				printf("pubnub subscribe [%s]: %s\n", msg_channels[i], json_object_get_string(msg1));
+			}
+		}
+		json_object_put(msg);
+		sleep(1);
+	} while (1);
 
 
 	pubnub_done(p);

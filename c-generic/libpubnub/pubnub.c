@@ -276,7 +276,7 @@ pubnub_publish(struct pubnub *p, const char *channel, struct json_object *messag
 
 
 struct pubnub_subscribe_http_cb {
-	char *channel;
+	char *channelset;
 	pubnub_subscribe_cb cb;
 	void *call_data;
 };
@@ -285,23 +285,29 @@ static void
 pubnub_subscribe_http_cb(struct pubnub *p, enum pubnub_res result, struct json_object *response, void *ctx_data, void *call_data)
 {
 	struct pubnub_subscribe_http_cb *cb_http_data = call_data;
-	char *channel = cb_http_data->channel;
+	char *channelset = cb_http_data->channelset;
 	call_data = cb_http_data->call_data;
 	pubnub_subscribe_cb cb = cb_http_data->cb;
 	free(cb_http_data);
 
 	if (result != PNR_OK) {
 error:
-		cb(p, result, channel, response, ctx_data, call_data);
-		free(channel);
+		cb(p, result, NULL, response, ctx_data, call_data);
+		free(channelset);
 		return;
 	}
 
-	/* Response must be an array. */
+	/* Response must be an array, and its first element also an array. */
 	if (!json_object_is_type(response, json_type_array)) {
 		result = PNR_FORMAT_ERROR;
 		goto error;
 	}
+	json_object *msg = json_object_array_get_idx(response, 0);
+	if (!json_object_is_type(msg, json_type_array)) {
+		result = PNR_FORMAT_ERROR;
+		goto error;
+	}
+	int msg_n = json_object_array_length(msg);
 
 	/* Extract and save time token (mandatory). */
 	json_object *time_token = json_object_array_get_idx(response, 1);
@@ -314,19 +320,40 @@ error:
 
 	/* Extract and update channel name (not mandatory, present only
 	 * when multiplexing). */
-	json_object *channel_name = json_object_array_get_idx(response, 2);
-	if (channel_name) {
-		if (!json_object_is_type(channel_name, json_type_string)) {
+	json_object *channelset_json = json_object_array_get_idx(response, 2);
+	char **channels = malloc((msg_n + 1) * sizeof(channels[0]));
+	if (channelset_json) {
+		if (!json_object_is_type(channelset_json, json_type_string)) {
 			result = PNR_FORMAT_ERROR;
 			goto error;
 		}
-		free(channel);
-		channel = strdup(json_object_get_string(channel_name));
+		free(channelset);
+		channelset = strdup(json_object_get_string(channelset_json));
+
+		/* Comma-split the channelset to channels[] array. */
+		char *channelsetp = channelset, *channelsettok = NULL;
+		for (int i = 0; i < msg_n; channelsetp = NULL, i++) {
+			char *channelset1 = strtok_r(channelsetp, ",", &channelsettok);
+			if (!channelset1) {
+				for (; i < msg_n; i++) {
+					/* Fill the rest of the array with
+					 * empty strings. */
+					channels[i] = strdup("");
+				}
+				break;
+			}
+			channels[i] = strdup(channelset1);
+		}
+	} else {
+		for (int i = 0; i < msg_n; i++) {
+			channels[i] = strdup(channelset);
+		}
 	}
+	channels[msg_n] = NULL;
+	free(channelset);
 
 	/* Finally call the user callback. */
-	cb(p, result, channel, json_object_array_get_idx(response, 0), ctx_data, call_data);
-	free(channel);
+	cb(p, result, channels, json_object_array_get_idx(response, 0), ctx_data, call_data);
 }
 
 void
@@ -337,13 +364,13 @@ pubnub_subscribe(struct pubnub *p, const char *channel,
 
 	if (p->state == PNS_BUSY) {
 		if (cb)
-			cb(p, PNR_OCCUPIED, channel, NULL, p->cb_data, cb_data);
+			cb(p, PNR_OCCUPIED, NULL, NULL, p->cb_data, cb_data);
 		return;
 	}
 	p->state = PNS_BUSY;
 
 	struct pubnub_subscribe_http_cb *cb_http_data = malloc(sizeof(*cb_http_data));
-	cb_http_data->channel = strdup(channel);
+	cb_http_data->channelset = strdup(channel);
 	cb_http_data->cb = cb;
 	cb_http_data->call_data = cb_data;
 
@@ -355,16 +382,16 @@ void
 pubnub_subscribe_multi(struct pubnub *p, const char *channels[], int channels_n,
 		int timeout, pubnub_subscribe_cb cb, void *cb_data)
 {
-	struct printbuf *channel = printbuf_new();
+	struct printbuf *channelset = printbuf_new();
 	for (int i = 0; i < channels_n; i++) {
-		printbuf_memappend_fast(channel, channels[i], strlen(channels[i]));
+		printbuf_memappend_fast(channelset, channels[i], strlen(channels[i]));
 		if (i < channels_n - 1)
-			printbuf_memappend_fast(channel, ",", 1);
+			printbuf_memappend_fast(channelset, ",", 1);
 		else
-			printbuf_memappend_fast(channel, "" /* \0 */, 1);
+			printbuf_memappend_fast(channelset, "" /* \0 */, 1);
 	}
-	pubnub_subscribe(p, channel->buf, timeout, cb, cb_data);
-	printbuf_free(channel);
+	pubnub_subscribe(p, channelset->buf, timeout, cb, cb_data);
+	printbuf_free(channelset);
 }
 
 

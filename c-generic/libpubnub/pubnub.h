@@ -43,9 +43,13 @@ enum pubnub_res {
 /* Callback functions to user code upon completion of various methods. */
 /* Note that if the function wants to preserve the response, it should
  * bump its reference count, otherwise it will be auto-released after
- * callback is done. channel must be copied away too. */
+ * callback is done. channels[], on the other hand, are dynamically
+ * allocated and both the array and its individual items must be free()d
+ * by the callee; to ease iteration by user code, there is guaranteed to
+ * be as many elements as there are messages in the channels list, and
+ * an extra NULL pointer at the end of the array. */
 typedef void (*pubnub_publish_cb)(struct pubnub *p, enum pubnub_res result, struct json_object *response, void *ctx_data, void *call_data);
-typedef void (*pubnub_subscribe_cb)(struct pubnub *p, enum pubnub_res result, const char *channel, struct json_object *response, void *ctx_data, void *call_data);
+typedef void (*pubnub_subscribe_cb)(struct pubnub *p, enum pubnub_res result, char **channels, struct json_object *response, void *ctx_data, void *call_data);
 typedef void (*pubnub_history_cb)(struct pubnub *p, enum pubnub_res result, struct json_object *response, void *ctx_data, void *call_data);
 
 /* struct pubnub_callbacks describes the way PubNub calls coordinate
