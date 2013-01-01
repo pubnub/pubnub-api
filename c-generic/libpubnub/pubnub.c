@@ -21,7 +21,7 @@
  *        pubnub_http_request => [pubnub_callbacks]
  *                 ||                   |
  *                 ||                   v
- *                 ||          pubnub_timeout_cb => pubnub.finished_cb
+ *                 ||          pubnub_event_timeoutcb => pubnub.finished_cb
  *                 ||
  *             [libcurl] (we ask libcurl to issue the request)
  *                  |
@@ -208,8 +208,8 @@ pubnub_init(const char *publish_key, const char *subscribe_key, const char *orig
 	p->curlm = curl_multi_init();
 	curl_multi_setopt(p->curlm, CURLMOPT_SOCKETFUNCTION, pubnub_http_sockcb);
 	curl_multi_setopt(p->curlm, CURLMOPT_SOCKETDATA, p);
-	//curl_multi_setopt(p->curlm, CURLMOPT_TIMERFUNCTION, multi_timer_cb);
-	//curl_multi_setopt(p->curlm, CURLMOPT_TIMERDATA, &g);
+	//curl_multi_setopt(p->curlm, CURLMOPT_TIMERFUNCTION, pubnub_http_timercb);
+	//curl_multi_setopt(p->curlm, CURLMOPT_TIMERDATA, p);
 
 	return p;
 }
@@ -235,7 +235,7 @@ pubnub_done(struct pubnub *p)
 
 
 static size_t
-pubnub_http_input_cb(char *ptr, size_t size, size_t nmemb, void *userdata)
+pubnub_http_inputcb(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	struct pubnub *p = userdata;
 	DBGMSG("http input: %zd bytes\n", size * nmemb);
@@ -244,7 +244,7 @@ pubnub_http_input_cb(char *ptr, size_t size, size_t nmemb, void *userdata)
 }
 
 static void
-pubnub_timeout_cb(struct pubnub *p, void *cb_data)
+pubnub_event_timeoutcb(struct pubnub *p, void *cb_data)
 {
 	if (p->finished_cb)
 		p->finished_cb(p, PNR_TIMEOUT, NULL, p->cb_data, p->finished_cb_data);
@@ -270,7 +270,7 @@ pubnub_http_request(struct pubnub *p, const char *urlelems[],
 	printbuf_memappend_fast(url, "" /* \0 */, 1);
 
 	curl_easy_setopt(p->curl, CURLOPT_URL, url->buf);
-	curl_easy_setopt(p->curl, CURLOPT_WRITEFUNCTION, pubnub_http_input_cb);
+	curl_easy_setopt(p->curl, CURLOPT_WRITEFUNCTION, pubnub_http_inputcb);
 	curl_easy_setopt(p->curl, CURLOPT_WRITEDATA, p);
 	curl_easy_setopt(p->curl, CURLOPT_VERBOSE, VERBOSE_VAL);
 	curl_easy_setopt(p->curl, CURLOPT_ERRORBUFFER, p->curl_error);
@@ -289,7 +289,7 @@ pubnub_http_request(struct pubnub *p, const char *urlelems[],
 	if (!pubnub_connection_check(p, CURL_SOCKET_TIMEOUT, 0, false)) {
 		/* Connection did not fail early, let's call wait and return. */
 		DBGMSG("wait: pre\n");
-		p->cb->wait(p, p->cb_data, timeout, pubnub_timeout_cb, NULL);
+		p->cb->wait(p, p->cb_data, timeout, pubnub_event_timeoutcb, NULL);
 		DBGMSG("wait: post\n");
 	}
 
