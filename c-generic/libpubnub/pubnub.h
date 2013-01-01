@@ -2,6 +2,7 @@
 #define PUBNUB__PubNub_h
 
 #include <json.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,13 +73,19 @@ struct pubnub_callbacks {
 			void (*cb)(struct pubnub *p, int fd, int mode, void *cb_data), void *cb_data);
 	/* Stop watching given file descriptor. */
 	void (*rem_socket)(struct pubnub *p, void *ctx_data, int fd);
+	/* Register a timeout handler, calling given callback after
+	 * the specified time interval. Note that a subsequent call
+	 * should override the previous timeout; call with NULL
+	 * callback should just cancel the timeout (though currently
+	 * never issued), and so should a stop_wait call. */
+	void (*timeout)(struct pubnub *p, void *ctx_data, const struct timespec *ts,
+			void (*cb)(struct pubnub *p, void *cb_data), void *cb_data);
 	/* Declare that events should be awaited now.
 	 * This is usually called at the end of the main method
 	 * body and is expected to just register the timeout
 	 * callback. However, synchronous interface may actually
 	 * block until a stop_wait call here. */
-	void (*wait)(struct pubnub *p, void *ctx_data, int timeout,
-			void (*cb)(struct pubnub *p, void *cb_data), void *cb_data);
+	void (*wait)(struct pubnub *p, void *ctx_data);
 	/* Stop the registered timeout wait, declaring that all
 	 * relevant events have been received and handled by now.
 	 * This is usually called at the end of the final socket
@@ -107,13 +114,13 @@ void pubnub_done(struct pubnub *p);
 
 void pubnub_publish(struct pubnub *p, const char *channel,
 		struct json_object *message,
-		int timeout, pubnub_publish_cb cb, void *cb_data);
+		long timeout, pubnub_publish_cb cb, void *cb_data);
 void pubnub_subscribe(struct pubnub *p, const char *channel,
-		int timeout, pubnub_subscribe_cb cb, void *cb_data);
+		long timeout, pubnub_subscribe_cb cb, void *cb_data);
 void pubnub_subscribe_multi(struct pubnub *p, const char *channels[], int channels_n,
-		int timeout, pubnub_subscribe_cb cb, void *cb_data);
+		long timeout, pubnub_subscribe_cb cb, void *cb_data);
 void pubnub_history(struct pubnub *p, const char *channel, int limit,
-		int timeout, pubnub_history_cb cb, void *cb_data);
+		long timeout, pubnub_history_cb cb, void *cb_data);
 
 #ifdef __cplusplus
 }

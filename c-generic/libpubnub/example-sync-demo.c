@@ -55,7 +55,11 @@ main(void)
 
 	do {
 		const char *channels[] = { "my_channel", "demo_channel" };
-		pubnub_subscribe_multi(p, channels, 2, 10, NULL, NULL);
+		pubnub_subscribe_multi(p, channels, 2, 300, NULL, NULL);
+		if (pubnub_sync_last_result(sync) == PNR_TIMEOUT) {
+			fprintf(stderr, "Time out after 300s reached. Forcibly re-issuing.\n");
+			continue;
+		}
 		if (pubnub_sync_last_result(sync) != PNR_OK) {
 			msg = pubnub_sync_last_response(sync);
 			fprintf(stderr, "pubnub subscribe error: %d [%s]\n", pubnub_sync_last_result(sync), json_object_get_string(msg));

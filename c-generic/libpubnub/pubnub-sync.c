@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "pubnub.h"
 #include "pubnub-priv.h"
@@ -18,6 +19,10 @@ struct pubnub_sync {
 	int n;
 	struct pollfd *fdset;
 	struct pubnub_cb_info *cbset;
+
+	struct timespec timeout_at;
+	void (*timeout_cb)(struct pubnub *p, void *cb_data);
+	void *timeout_cb_data;
 
 	bool stop;
 
@@ -101,15 +106,68 @@ pubnub_sync_rem_socket(struct pubnub *p, void *ctx_data, int fd)
 	DBGMSG("! did not find socket %d\n", fd);
 }
 
-void pubnub_sync_wait(struct pubnub *p, void *ctx_data, int timeout,
+void
+pubnub_sync_timeout(struct pubnub *p, void *ctx_data, const struct timespec *ts,
 		void (*cb)(struct pubnub *p, void *cb_data), void *cb_data)
 {
 	struct pubnub_sync *sync = ctx_data;
+	sync->timeout_cb = cb;
+	sync->timeout_cb_data = cb_data;
+
+	if (sync->timeout_cb) {
+		struct timespec now;
+		clock_gettime(CLOCK_REALTIME, &now);
+		sync->timeout_at.tv_sec = now.tv_sec + ts->tv_sec;
+		sync->timeout_at.tv_nsec = now.tv_nsec + ts->tv_nsec;
+		if (sync->timeout_at.tv_nsec > 1000000000L) {
+			sync->timeout_at.tv_sec++;
+			sync->timeout_at.tv_nsec -= 1000000000L;
+		}
+		DBGMSG("timeout set to %ld . %ld\n", sync->timeout_at.tv_sec, sync->timeout_at.tv_nsec);
+	}
+}
+
+void
+pubnub_sync_wait(struct pubnub *p, void *ctx_data)
+{
+	struct pubnub_sync *sync = ctx_data;
 	while (!sync->stop) {
-		/* TODO timeout */
 		DBGMSG("=polling= for %d\n", sync->n);
-		/* TODO poll() error handling? */
-		poll(sync->fdset, sync->n, -1);
+
+		long timeout;
+		if (sync->timeout_cb) {
+			struct timespec now;
+			clock_gettime(CLOCK_REALTIME, &now);
+			timeout = (sync->timeout_at.tv_sec - now.tv_sec) * 1000;
+			timeout += (sync->timeout_at.tv_nsec - now.tv_nsec) / 1000000;
+			DBGMSG("timeout in %ld ms\n", timeout);
+			if (timeout < 0) {
+				/* If we missed the timeout moment, just
+				 * spin poll() quickly until we are clear
+				 * to call the timeout handler. */
+				timeout = 0;
+			}
+		} else {
+			timeout = -1;
+		}
+
+		int n = poll(sync->fdset, sync->n, timeout);
+
+		if (n < 0) {
+			/* poll() errors are ignored, it's not clear what
+			 * we should do. Most likely, we have just received
+			 * a signal and will spin around and restart poll(). */
+			continue;
+		}
+
+		if (n == 0) {
+			/* Time out, call the handler and reset
+			 * timeout. */
+			sync->timeout_cb(p, sync->timeout_cb_data);
+			sync->timeout_cb = NULL;
+			continue;
+		}
+
 		for (int i = 0; i < sync->n; i++) {
 			short revents = sync->fdset[i].revents;
 			if (!revents)
@@ -127,6 +185,7 @@ pubnub_sync_stop_wait(struct pubnub *p, void *ctx_data)
 {
 	struct pubnub_sync *sync = ctx_data;
 	sync->stop = true;
+	sync->timeout_cb = NULL;
 }
 
 void
@@ -178,6 +237,7 @@ pubnub_sync_subscribe_cb(struct pubnub *p, enum pubnub_res result, char **channe
 struct pubnub_callbacks pubnub_sync_callbacks = {
 	.add_socket = pubnub_sync_add_socket,
 	.rem_socket = pubnub_sync_rem_socket,
+	.timeout = pubnub_sync_timeout,
 	.wait = pubnub_sync_wait,
 	.stop_wait = pubnub_sync_stop_wait,
 	.done = pubnub_sync_done,

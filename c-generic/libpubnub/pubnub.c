@@ -69,9 +69,13 @@ pubnub_connection_finished(struct pubnub *p, CURLcode res)
 
 	/* Check against I/O errors */
 	if (res != CURLE_OK) {
-		json_object *msgstr = json_object_new_string(curl_easy_strerror(res));
-		p->finished_cb(p, PNR_IO_ERROR, msgstr, p->cb_data, p->finished_cb_data);
-		json_object_put(msgstr);
+		if (res == CURLE_OPERATION_TIMEDOUT) {
+			p->finished_cb(p, PNR_TIMEOUT, NULL, p->cb_data, p->finished_cb_data);
+		} else {
+			json_object *msgstr = json_object_new_string(curl_easy_strerror(res));
+			p->finished_cb(p, PNR_IO_ERROR, msgstr, p->cb_data, p->finished_cb_data);
+			json_object_put(msgstr);
+		}
 		return;
 	}
 
@@ -157,6 +161,12 @@ pubnub_event_sockcb(struct pubnub *p, int fd, int mode, void *cb_data)
 	pubnub_connection_check(p, fd, ev_bitmask, true);
 }
 
+static void
+pubnub_event_timeoutcb(struct pubnub *p, void *cb_data)
+{
+	pubnub_connection_check(p, CURL_SOCKET_TIMEOUT, 0, true);
+}
+
 /* Socket callback for libcurl setting up / tearing down watches. */
 static int
 pubnub_http_sockcb(CURL *easy, curl_socket_t s, int action, void *userp, void *socketp)
@@ -186,6 +196,31 @@ pubnub_http_sockcb(CURL *easy, curl_socket_t s, int action, void *userp, void *s
 	return 0;
 }
 
+/* Timer callback for libcurl setting up a timeout notification. */
+static int
+pubnub_http_timercb(CURLM *multi, long timeout_ms, void *userp)
+{
+	struct pubnub *p = userp;
+
+	DBGMSG("http_timercb: %ld ms\n", timeout_ms);
+
+	struct timespec timeout_ts;
+	if (timeout_ms > 0) {
+		timeout_ts.tv_sec = timeout_ms/1000;
+		timeout_ts.tv_nsec = (timeout_ms%1000)*1000000L;
+		p->cb->timeout(p, p->cb_data, &timeout_ts, pubnub_event_timeoutcb, p);
+	} else {
+		if (timeout_ms == 0) {
+			/* Timeout already reached. Call cb directly. */
+			pubnub_event_timeoutcb(p, p);
+		} /* else no timeout at all. */
+		timeout_ts.tv_sec = 0;
+		timeout_ts.tv_nsec = 0;
+		p->cb->timeout(p, p->cb_data, &timeout_ts, NULL, NULL);
+	}
+	return 0;
+}
+
 struct pubnub *
 pubnub_init(const char *publish_key, const char *subscribe_key, const char *origin,
 		const struct pubnub_callbacks *cb, void *cb_data)
@@ -208,8 +243,8 @@ pubnub_init(const char *publish_key, const char *subscribe_key, const char *orig
 	p->curlm = curl_multi_init();
 	curl_multi_setopt(p->curlm, CURLMOPT_SOCKETFUNCTION, pubnub_http_sockcb);
 	curl_multi_setopt(p->curlm, CURLMOPT_SOCKETDATA, p);
-	//curl_multi_setopt(p->curlm, CURLMOPT_TIMERFUNCTION, pubnub_http_timercb);
-	//curl_multi_setopt(p->curlm, CURLMOPT_TIMERDATA, p);
+	curl_multi_setopt(p->curlm, CURLMOPT_TIMERFUNCTION, pubnub_http_timercb);
+	curl_multi_setopt(p->curlm, CURLMOPT_TIMERDATA, p);
 
 	return p;
 }
@@ -244,17 +279,8 @@ pubnub_http_inputcb(char *ptr, size_t size, size_t nmemb, void *userdata)
 }
 
 static void
-pubnub_event_timeoutcb(struct pubnub *p, void *cb_data)
-{
-	if (p->finished_cb)
-		p->finished_cb(p, PNR_TIMEOUT, NULL, p->cb_data, p->finished_cb_data);
-	p->cb->stop_wait(p, p->cb_data);
-	p->state = PNS_IDLE;
-}
-
-static void
 pubnub_http_request(struct pubnub *p, const char *urlelems[],
-		int timeout, pubnub_http_cb cb, void *cb_data)
+		long timeout, pubnub_http_cb cb, void *cb_data)
 {
 	p->curl = curl_easy_init();
 
@@ -276,7 +302,8 @@ pubnub_http_request(struct pubnub *p, const char *urlelems[],
 	curl_easy_setopt(p->curl, CURLOPT_ERRORBUFFER, p->curl_error);
 	curl_easy_setopt(p->curl, CURLOPT_PRIVATE, p);
 	curl_easy_setopt(p->curl, CURLOPT_NOPROGRESS, 1L);
-	/* TODO timeout; also support in multi */
+	curl_easy_setopt(p->curl, CURLOPT_NOSIGNAL, 1L);
+	curl_easy_setopt(p->curl, CURLOPT_TIMEOUT, timeout);
 
 	printbuf_reset(p->body);
 	p->finished_cb = cb;
@@ -289,7 +316,7 @@ pubnub_http_request(struct pubnub *p, const char *urlelems[],
 	if (!pubnub_connection_check(p, CURL_SOCKET_TIMEOUT, 0, false)) {
 		/* Connection did not fail early, let's call wait and return. */
 		DBGMSG("wait: pre\n");
-		p->cb->wait(p, p->cb_data, timeout, pubnub_event_timeoutcb, NULL);
+		p->cb->wait(p, p->cb_data);
 		DBGMSG("wait: post\n");
 	}
 
@@ -299,7 +326,7 @@ pubnub_http_request(struct pubnub *p, const char *urlelems[],
 
 void
 pubnub_publish(struct pubnub *p, const char *channel, struct json_object *message,
-		int timeout, pubnub_publish_cb cb, void *cb_data)
+		long timeout, pubnub_publish_cb cb, void *cb_data)
 {
 	if (!cb) cb = p->cb->publish;
 
@@ -398,7 +425,7 @@ error:
 
 void
 pubnub_subscribe(struct pubnub *p, const char *channel,
-		int timeout, pubnub_subscribe_cb cb, void *cb_data)
+		long timeout, pubnub_subscribe_cb cb, void *cb_data)
 {
 	if (!cb) cb = p->cb->subscribe;
 
@@ -420,7 +447,7 @@ pubnub_subscribe(struct pubnub *p, const char *channel,
 
 void
 pubnub_subscribe_multi(struct pubnub *p, const char *channels[], int channels_n,
-		int timeout, pubnub_subscribe_cb cb, void *cb_data)
+		long timeout, pubnub_subscribe_cb cb, void *cb_data)
 {
 	struct printbuf *channelset = printbuf_new();
 	for (int i = 0; i < channels_n; i++) {
@@ -437,7 +464,7 @@ pubnub_subscribe_multi(struct pubnub *p, const char *channels[], int channels_n,
 
 void
 pubnub_history(struct pubnub *p, const char *channel, int limit,
-		int timeout, pubnub_history_cb cb, void *cb_data)
+		long timeout, pubnub_history_cb cb, void *cb_data)
 {
 	if (!cb) cb = p->cb->history;
 
