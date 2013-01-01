@@ -27,7 +27,9 @@ main(void)
 	json_object_put(msg);
 
 	if (pubnub_sync_last_result(sync) != PNR_OK) {
-		fprintf(stderr, "pubnub publish error: %d\n", pubnub_sync_last_result(sync));
+		msg = pubnub_sync_last_response(sync);
+		fprintf(stderr, "pubnub publish error: %d [%s]\n", pubnub_sync_last_result(sync), json_object_get_string(msg));
+		json_object_put(msg);
 		return EXIT_FAILURE;
 	}
 	msg = pubnub_sync_last_response(sync);
@@ -39,7 +41,9 @@ main(void)
 
 	pubnub_history(p, "my_channel", 10, 0, NULL, NULL);
 	if (pubnub_sync_last_result(sync) != PNR_OK) {
-		fprintf(stderr, "pubnub history error: %d\n", pubnub_sync_last_result(sync));
+		msg = pubnub_sync_last_response(sync);
+		fprintf(stderr, "pubnub history error: %d [%s]\n", pubnub_sync_last_result(sync), json_object_get_string(msg));
+		json_object_put(msg);
 		return EXIT_FAILURE;
 	}
 	msg = pubnub_sync_last_response(sync);
@@ -53,7 +57,9 @@ main(void)
 		const char *channels[] = { "my_channel", "demo_channel" };
 		pubnub_subscribe_multi(p, channels, 2, 10, NULL, NULL);
 		if (pubnub_sync_last_result(sync) != PNR_OK) {
-			fprintf(stderr, "pubnub subscribe error: %d\n", pubnub_sync_last_result(sync));
+			msg = pubnub_sync_last_response(sync);
+			fprintf(stderr, "pubnub subscribe error: %d [%s]\n", pubnub_sync_last_result(sync), json_object_get_string(msg));
+			json_object_put(msg);
 			return EXIT_FAILURE;
 		}
 		msg = pubnub_sync_last_response(sync);
@@ -72,4 +78,5 @@ main(void)
 
 
 	pubnub_done(p);
+	return EXIT_SUCCESS;
 }

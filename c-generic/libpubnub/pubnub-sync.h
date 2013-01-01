@@ -25,10 +25,12 @@ enum pubnub_res pubnub_sync_last_result(struct pubnub_sync *sync);
  * call issued. json_object_get() is automatically called on it,
  * therefore you must call json_object_put() when you are going to drop
  * the reference to the object. */
-/* The object is an array of messages; use standard json accessors
- * to access the individual messages. The array may also be empty
- * if no new messages arrived for some time (and in case of the first
- * call). */
+/* In case of PNR_OK after subscribe call, the object is an array of
+ * messages; use standard json accessors to access the individual
+ * messages. The array may also be empty if no new messages arrived
+ * for some time (and in case of the first call). */
+/* In case of !PNR_OK, the object may specify error code as described
+ * with regards to 'response' value in pubnub.h. */
 struct json_object *pubnub_sync_last_response(struct pubnub_sync *sync);
 
 /* Return names of the channels carrying the messages returned by the last

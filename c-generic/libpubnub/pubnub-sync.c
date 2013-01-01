@@ -158,7 +158,7 @@ pubnub_sync_generic_cb(struct pubnub *p, enum pubnub_res result, struct json_obj
 	}
 
 	sync->result = result;
-	if (result == PNR_OK)
+	if (response)
 		sync->response = json_object_get(response);
 }
 

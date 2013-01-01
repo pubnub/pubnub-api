@@ -29,9 +29,9 @@ enum pubnub_res {
 	PNR_OCCUPIED,
 	/* Time out before the request has completed. */
 	PNR_TIMEOUT,
-	/* Communication error. response is set int object with the errno. */
+	/* Communication error. response is string object with the error. */
 	PNR_IO_ERROR,
-	/* HTTP error. response contains string with the error description. */
+	/* HTTP error. response contains number object with the status code. */
 	PNR_HTTP_ERROR,
 	/* Unexpected input in received JSON. */
 	PNR_FORMAT_ERROR,
