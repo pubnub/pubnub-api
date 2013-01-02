@@ -8,13 +8,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Microsoft.Phone.Controls;
 
 namespace PubnubWindowsPhone
 {
     /// <summary>
     /// Partial class MainPage was created in order to avoid MainPage.xaml file copy conflicts for Nuget install
     /// </summary>
-    public partial class MainPage
+    public partial class MainPage : PhoneApplicationPage
     {
         // NOTE: IF you get error like "..already defines a member called 'OnNavigatedTo' with the same parameter types", 
         //       merge this method code to MainPage.xaml.cs file and remove MainPage.cs file.
