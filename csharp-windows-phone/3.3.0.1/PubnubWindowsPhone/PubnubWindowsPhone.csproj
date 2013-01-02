@@ -68,8 +68,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DemoStart.xaml.cs">
-      <DependentUpon>DemoStart.xaml</DependentUpon>
+    <Compile Include="MainPage.cs" />
+    <Compile Include="PubnubDemoStart.xaml.cs">
+      <DependentUpon>PubnubDemoStart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pubnub.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -88,7 +89,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="DemoStart.xaml">
+    <Page Include="PubnubDemoStart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

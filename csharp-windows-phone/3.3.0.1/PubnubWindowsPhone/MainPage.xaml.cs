@@ -21,11 +21,6 @@ namespace PubnubWindowsPhone
             InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            NavigationService.Navigate(new Uri("/DemoStart.xaml", UriKind.Relative));
-        }
     }
 
 
