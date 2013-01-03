@@ -1,7 +1,10 @@
 # PubNub 3.3.0.1 Web Data Push Cloud-Hosted API - C# Mono 2.10.9 
 ##PubNub C Sharp (MonoForAndroid Usage)
 
-Open 3.3.0.1/PubNub-Messaging/Pubnub_Messaging/PubNub_Messaging.csproj. Run the project in the emulator to see a working example. The main functionality lies in the pubnub.cs file.
+You can checkout the video overview here: https://vimeo.com/56720927
+
+Open 3.3.0.1/PubNub-Messaging/Pubnub_Messaging/PubNub_Messaging.csproj. 
+Run the project in the emulator to see a working example. The main functionality lies in the pubnub.cs file.
 
 3.3.0.1/PubNub-Messaging/Andr.Unit contains the Unit test cases. Run the project to see the unit test results,
 
