@@ -91,10 +91,10 @@ package com.pubnub {
 		}
 		
 		private function onEnvironmentShutdown(e:EnvironmentEvent):void {
-			shutdown();
+			shutdown(Errors.NETWORK_LOST);
 		}
 		
-		private function shutdown():void {
+		private function shutdown(reason:String = ''):void {
 			// define last params
 			var channels:String = 'no channels';
 			var lastToken:String = null;
@@ -112,7 +112,8 @@ package com.pubnub {
 			Log.logRetry('Shutdown', Log.WARNING);
 			
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
-			dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN, null, [0, Errors.NETWORK_LOST, channels, lastToken]));
+			//dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN, null, [0, Errors.NETWORK_LOST, channels, lastToken]));
+			dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN, null, [0, reason, channels, lastToken]));
 		}
 		
 		private function createOperation(type:String, args:Object = null):Operation {
@@ -132,7 +133,7 @@ package com.pubnub {
 		/*------------------- INIT --------------------------------*/
 		public function init(config:Object):void {
 			if (_initialized) {
-				shutdown();
+				shutdown('re-init');
 			}
 			_initialized = false;
 			ori = Math.floor(Math.random() * 9) + 1;

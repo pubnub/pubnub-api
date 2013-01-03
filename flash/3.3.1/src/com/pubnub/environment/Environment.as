@@ -50,7 +50,6 @@ package com.pubnub.environment {
 		
 		private function init():void {
 			netMon = new NetMon();
-			netMon.reconnectDelay = Settings.PING_OPERATION_INTERVAL;
 			netMon.maxRetries = 	Settings.MAX_RECONNECT_RETRIES;
 			netMon.addEventListener(NetMonEvent.HTTP_DISABLE, onHTTPDisable);
 			netMon.addEventListener(NetMonEvent.HTTP_ENABLE, onHTTPEnable);
@@ -91,7 +90,6 @@ package com.pubnub.environment {
 		
 		public function set origin(value:String):void {
 			_origin = value;
-			netMon.origin = value;
 		}
 		
 		public function get netwotkEnabled():Boolean {

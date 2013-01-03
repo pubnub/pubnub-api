@@ -18,68 +18,65 @@ package com.pubnub.environment {
 		
 		public var forceReconnect:Boolean = true;
 		
-		private var pingTimout:int;
+		private var pingDelayTimeout:int;
+		private var pingTimeout:int;
+		private var pingStartTime:int;
 		private var _destroyed:Boolean;
 		
 		private var lastStatus:String
-		private var _origin:String;
-		private var url:String;
 		private var _isRunning:Boolean;
 		private var sysMon:SysMon;
 		private var _currentRetries:uint
 		private var _maxRetries:uint = 100;
-		private var _reconnectDelay:uint = 15000;
-		private var connection:HeartBeatConnection;
-		private var timeOperation:TimeOperation;
-		private var lastTime:int = 0;
-		
-		private const SIDE_TRACK:String = 'http://google.com';
 		private var loader:URLLoader;
-		//private var loaderInterval:int;
-		//private const LOADER_RECONNECT_DELAY:int = 500;
 		
-		
-		public function NetMon (origin:String = null) {
+		public function NetMon () {
 			super(null);
-			this.origin = origin;
 			init();
 		}
 		
 		private function init():void {
 			loader = new URLLoader();
 			loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, 	onLoaderHTTPStatus);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, 	onLoaderError);
+			loader.addEventListener(IOErrorEvent.IO_ERROR, 			onLoaderError);
 			
 			sysMon = new SysMon();
 			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			
 			lastStatus = NetMonEvent.HTTP_DISABLE;
-			
-			connection = new HeartBeatConnection();
-			connection.addEventListener(Event.CLOSE, onCloseConection);
 		}
 		
 		private function onLoaderError(e:IOErrorEvent):void {
-			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
-				onError(null);
-			}
+			trace('onLoaderError');
 		}
 		
 		private function onLoaderHTTPStatus(e:HTTPStatusEvent):void {
-			//trace('onLoaderHTTPStatus : ' + e.status);
-			loadSideTrack();
-		}
-		
-		private function loadSideTrack():void {
 			if (_isRunning == false) return;
-			//trace('loadSideTrack');
-			try { loader.close(); }
-			catch (err:Error) { };
-			loader.load(new URLRequest(SIDE_TRACK));
+			trace('onLoaderHTTPStatus : '  + e.status);
+			var pingEndTime:int = getTimer() - pingStartTime;
+			clearTimeout(pingDelayTimeout);
+			clearTimeout(pingTimeout);
+			if (e.status == 0) {
+				onError(null);
+			}else {
+				onComplete(null);
+			}
+			
+			if (pingEndTime >= Settings.PING_OPERATION_INTERVAL) {
+				ping();
+			}else {
+				trace('### : ' + (Settings.PING_OPERATION_INTERVAL - pingEndTime));
+				pingDelayTimeout = setTimeout(ping,  Settings.PING_OPERATION_INTERVAL - pingEndTime);
+			}
 		}
 		
-		private function onCloseConection(e:Event):void {
-			//trace('onCloseConection');
+		private function ping():void {
+			if (_isRunning == false) return;
+			clearTimeout(pingTimeout);
+			pingStartTime = getTimer();
+			pingTimeout = setTimeout(onTimeout, Settings.PING_OPEARTION_TIMEOUT);
+			closeLoader();
+			loader.load(new URLRequest(Settings.PING_OPERATION_URL));
 		}
 		
 		private function onRestoreFromSleep(e:SysMonEvent):void {
@@ -88,10 +85,14 @@ package com.pubnub.environment {
 			reconnect();
 		}
 		
+		private function onTimeout():void {
+			trace('onTimeout');
+			onError(null);
+			ping();
+		}
+		
 		private function onError(e:Event = null):void {
 			//Log.logRetry('PING : ERROR', Log.NORMAL);
-			lastTime = _reconnectDelay - timeOperation.time;
-			timeOperation.destroy();
 			if (lastStatus == NetMonEvent.HTTP_ENABLE) {
 				Log.logRetry('RETRY_LOGGING:CONNECTION_HEARTBEAT: Network unavailable', Log.WARNING);
 				dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
@@ -105,7 +106,6 @@ package com.pubnub.environment {
 				dispatchEvent(new NetMonEvent(NetMonEvent.MAX_RETRIES));
 			}else {
 				Log.logRetry('RETRY_LOGGING:RECONNECT_HEARTBEAT: Retrying [' +  _currentRetries + '] of maximum [' + _maxRetries + '] attempts', Log.WARNING);
-				ping();
 			}
 		}
 		
@@ -116,50 +116,21 @@ package com.pubnub.environment {
 				dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 			}
 			lastStatus = NetMonEvent.HTTP_ENABLE;
-			lastTime = _reconnectDelay - timeOperation.time;
-			timeOperation.destroy();
-			ping();
-		}
-		
-		private function ping():void {
-			clearTimeout(pingTimout);
-			var delta:int = 0;
-			if (timeOperation) {
-				delta = _reconnectDelay - timeOperation.time;
-			}
-			
-			if ( delta > 0 ) {
-				pingTimout = setTimeout(doPing,  delta);
-			}else {
-				doPing();
-			}
-		}
-		
-		private function doPing():void {
-			clearTimeout(pingTimout);
-			timeOperation = new TimeOperation(_origin, Settings.PING_OPEARTION_TIMEOUT);
-			timeOperation.setURL();
-			timeOperation.addEventListener(OperationEvent.RESULT, onComplete);
-			timeOperation.addEventListener(OperationEvent.FAULT, onError);
-			connection.sendOperation(timeOperation);
 		}
 		
 		public function start():void {
 			//trace(this, 'start : ' + _isRunning);
 			if (_isRunning) return;
-			clearTimeout(pingTimout);
 			_currentRetries = 0;
 			lastStatus = null;
 			reconnect();
 			sysMon.start();
-			_isRunning = true;
-			//clearInterval(loaderInterval);
-			loadSideTrack();
-			//loaderInterval = setInterval(loadSideTrack, LOADER_RECONNECT_DELAY);
+			
 		}
 		
 		private function reconnect():void {
 			stop();
+			_isRunning = true;
 			ping();
 		}
 		
@@ -167,9 +138,8 @@ package com.pubnub.environment {
 			_isRunning = false;
 			lastStatus = null;
 			sysMon.stop();
-			connection.close();
-			clearTimeout(pingTimout);
-			//clearTimeout(loaderInterval);
+			clearTimeout(pingDelayTimeout);
+			clearTimeout(pingTimeout);
 		}
 		
 		public function destroy():void {
@@ -179,26 +149,17 @@ package com.pubnub.environment {
 			sysMon.removeEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			sysMon = null;
 			
-			/*loader.removeEventListener(Event.COMPLETE, onComplete);
-			loader.removeEventListener(IOErrorEvent.IO_ERROR, onError);
-			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);*/
-			try {
-				loader.close();
-			}catch (err:Error) {}
+			closeLoader();
+			loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, 	onLoaderHTTPStatus);
+			loader.removeEventListener(IOErrorEvent.IO_ERROR, 			onLoaderError);
 			loader = null;
 			_destroyed = true;
-			
-			
-			connection.close();
 		}
 		
-		public function get origin():String {
-			return _origin;
-		}
-		
-		public function set origin(value:String):void {
-			_origin = value;
-			url =  origin + "/" + "time" +  "/" + 0 ;
+		private function closeLoader():void {
+			try {
+				loader.close();
+			}catch (err:Error) { };
 		}
 		
 		public function get isRunning():Boolean {
@@ -215,14 +176,6 @@ package com.pubnub.environment {
 		
 		public function set maxRetries(value:uint):void {
 			_maxRetries = value;
-		}
-		
-		public function get reconnectDelay():uint {
-			return _reconnectDelay;
-		}
-		
-		public function set reconnectDelay(value:uint):void {
-			_reconnectDelay = value;
 		}
 		
 		public function get destroyed():Boolean {
