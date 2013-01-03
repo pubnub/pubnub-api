@@ -1,0 +1,226 @@
+## ---------------------------------------------------
+##
+## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+## http://www.pubnub.com/account
+##
+## ----------------------------------------------------
+
+## ----------------------------------------------------
+## PubNub 3.1 Real-time Cloud Push API - C#-SILVERLIGHT
+## ----------------------------------------------------
+##
+## PubNub is a Massively Scalable Real-time Service for Web and Mobile Games.
+## This is a cloud-based service for broadcasting Real-time messages
+## to thousands of web and mobile clients simultaneously.
+
+## This tutorial is based on Silverlight 3.0.
+===============================================================================
+## TUTORIAL: HOW TO USE
+===============================================================================
+## Create a new silverlight application
+
+## Add reference of 
+##    Newtonsoft.Json.Silverlight from applications root directory.
+##    System.Windows.Controls.Navigation
+
+## To use this API include Pubnub.cs,PubnubCrypto.cs and UIThread.cs files to your project
+## and use functions from them as follows.
+
+##  ------------------------------------------------------------------------------------
+##  C#-Silverlight : (Init)
+##  -----------------------
+
+        //Set the channel
+        string channel = "hello-world";
+
+        // Initialize pubnub state
+        pubnub objPubnub = new pubnub(
+            "demo",  // PUBLISH_KEY
+            "demo",  // SUBSCRIBE_KEY
+            "demo",  // SECRET_KEY
+            "",      // CIPHER_KEY (Cipher key is Optional)
+            false    // SSL_ON?
+            );
+            
+##  ------------------------------------------------------------------------------------
+##  C#-Silverlight : (Publish)
+##  --------------------------
+
+        //Callback to get the response back
+        pubnub.ResponseCallback respCallback = delegate(object response)
+        {
+            List<object> result = (List<object>)response;
+
+            UIThread.Invoke(() =>
+            {
+                if (result != null && result.Count() > 0)
+                {
+                    lblPublish.Text += "\n[" + result[0].ToString() + "," + result[1].ToString() + "," + result[2].ToString() + "]";
+                }
+            });
+        };
+        
+        // Publish string 
+        Dictionary<string, object> strArgs = new Dictionary<string, object>();
+        string message = "Hello Silverlight";
+        strArgs.Add("channel", channel);
+        strArgs.Add("message", message);
+        strArgs.Add("callback", respCallback);
+        objPubnub.Publish(strArgs);
+    
+        // Publish array 
+        Dictionary<string, object> arrArgs = new Dictionary<string, object>();
+        JArray jarr = new JArray();
+        jarr.Add("Sunday");
+        jarr.Add("Monday");
+        jarr.Add("Tuesday");
+        jarr.Add("Wednesday");
+        jarr.Add("Thursday");
+        jarr.Add("Friday");
+        jarr.Add("Saturday");
+
+        arrArgs.Add("channel", channel);
+        arrArgs.Add("message", jarr);
+        arrArgs.Add("callback", respCallback);
+        objPubnub.Publish(arrArgs);
+
+        // Publish object
+        Dictionary<string, object> objArgs = new Dictionary<string, object>();
+        JObject obj = new JObject();
+        obj.Add("Name", "Jhon");
+        obj.Add("age", "25");
+
+        objArgs.Add("channel", channel);
+        objArgs.Add("message", obj);
+        objArgs.Add("callback", respCallback);
+        objPubnub.Publish(objArgs);
+            
+##  ------------------------------------------------------------------------------------
+##  C#-Silverlight : (Subscribe)
+##  ----------------------------
+        //Subscribe messages of type string,json array and json object
+        Dictionary<string, object> args = new Dictionary<string, object>();
+        args.Add("channel", channel);
+        args.Add("callback", new Receiver());
+        objPubnub.Subscribe(args);
+
+##  ------------------------------------------------------------------------------------
+##  C#-Silverlight : (History)
+##  --------------------------
+        //Get the history of messages depending on limit. 
+        pubnub.ResponseCallback respCallback = delegate(object response)
+        {
+            List<object> result = (List<object>)response;
+            UIThread.Invoke(() =>
+            {
+                if (result != null && result.Count() > 0)
+                {
+                    for (int i = 0; i < result.Count(); i++)
+                    {
+                        if (!(lHistory.Items.Contains(result[i].ToString())))
+                        {
+                            lHistory.Items.Add(result[i].ToString());
+                        }
+                    }
+                }
+            });
+        };
+        Dictionary<string, object> args = new Dictionary<string, object>();
+        args.Add("channel", channel);
+        args.Add("limit", 3.ToString());
+        args.Add("callback", respCallback);
+        objPubnub.History(args); 
+        
+
+##  ------------------------------------------------------------------------------------
+##  C#-Silverlight : (Time)
+##  -----------------------
+        //Get the time
+        objPubnub.Time(
+            delegate(object response)
+            {
+                List<object> result = (List<object>)response;
+                UIThread.Invoke(() => lblTime.Text = " Time is : " + result[0].ToString());
+            }
+        );
+    
+##  ------------------------------------------------------------------------------------
+##  C#-Silverlight : (UUID)
+##  -----------------------
+        // Get UUID
+        lblUUID.Text = "Generated UUID - > " + objPubnub.UUID(); 
+        
+##  ------------------------------------------------------------------------------------
+##  C#-Silverlight : (Unsubscribe)
+##  ------------------------------
+        //Subscribe messages of type string,json array and json object        
+        Dictionary<string, object> args = new Dictionary<string, object>();
+        args.Add("channel", channel);
+        args.Add("callback", new Receiver());
+        objPubnub.Subscribe(args);
+        
+        // Publish string 
+        Dictionary<string, object> strArgs = new Dictionary<string, object>();
+        string message = "Hello Silverlight";
+        strArgs.Add("channel", channel);
+        strArgs.Add("message", message);
+        strArgs.Add("callback", respCallback);
+        objPubnub.Publish(strArgs);
+        
+        Dictionary<string, object> arg = new Dictionary<string, object>();
+        arg.Add("channel", channel);
+        //Unsubscribe messages
+        objPubnub.Unsubscribe(arg);
+ ##  ------------------------------------------------------------------------------------ 
+   
+	// Receiver for callback
+    public class Receiver : Callback
+	{
+        public bool responseCallback(string channel, object message)
+        {
+            object[] messages = (object[])message;
+            
+            if (messages != null && messages.Length > 0)
+            {
+                for (int i = 0; i < messages.Length; i++)
+                {
+                    Debug.WriteLine("[Subscribed data] " + messages[i]);                    
+                }
+            }	            
+            return true;
+        }
+
+        public void errorCallback(string channel, object message)
+        {
+            Debug.WriteLine("Channel:" + channel + "-" + message.ToString());
+        }
+
+        public void connectCallback(string channel)
+        {
+            Debug.WriteLine("Connected to channel :" + channel);
+        }
+
+        public void reconnectCallback(string channel)
+        {
+            Debug.WriteLine("Reconnecting to channel :" + channel);
+        }
+
+        public void disconnectCallback(string channel)
+        {
+            Debug.WriteLine("Disconnected to channel :" + channel);
+        }
+    }
+    
+    public interface Callback
+    {
+        bool responseCallback(string channel, object message);
+
+        void errorCallback(String channel, Object message);
+
+        void connectCallback(String channel);
+
+        void reconnectCallback(String channel);
+
+        void disconnectCallback(String channel);
+    }       
+=========================================================================================

@@ -18,7 +18,7 @@ node_modules
 /flash/3.3.1beta/obj/PubNubTestConfig.xml
 /silverlight-part/*/Debug/*
 /silverlight-part/*/obj/*
-/csharp-windows-phone/*/packages/*
-/csharp-windows-phone/*/packages.config
-/csharp-windows-phone/*/*/bin/*
-/csharp-windows-phone/*/*/obj/*
+/csharp-windows-phone/3.3.0.1/*/packages/*
+/csharp-windows-phone/3.3.0.1/*/packages.config
+/csharp-windows-phone/3.3.0.1/*/bin/*
+/csharp-windows-phone/3.3.0.1/*/obj/*

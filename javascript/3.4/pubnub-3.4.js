@@ -57,12 +57,8 @@ var NOW             = 1
 /**
  * CONSOLE COMPATIBILITY
  */
-window.console || (window.console=window.console||{});
-console.log    || (
-    console.log   = 
-    console.error =
-    ((window.opera||{}).postError||function(){})
-);
+window.console||(window.console=window.console||{});
+console.error||(console.error=((window.opera||{}).postError||function(){}));
 
 /**
  * UTILITIES
@@ -468,7 +464,7 @@ function ajax( setup ) {
             url += params.join(PARAMSBIT);
         }
 
-        xhr.open( 'GET', url, (typeof(setup.blocking === 'undefined')) );
+        xhr.open( 'GET', url, typeof setup.blocking == 'undefined' );
         xhr.send();
     }
     catch(eee) {
@@ -514,7 +510,7 @@ var PDIV          = $('pubnub') || {}
     ,   PUBLISH_KEY   = setup['publish_key']   || ''
     ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
     ,   SSL           = setup['ssl'] ? 's' : ''
-    ,   UUID          = setup['uuid'] || db['get'](SUBSCRIBE_KEY+'uuid') || ''
+    ,   UUID          = setup['uuid'] || db.get(SUBSCRIBE_KEY+'uuid') || ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
     ,   LEAVE         = function(){}
     ,   CONNECT       = function(){}
@@ -694,7 +690,7 @@ var PDIV          = $('pubnub') || {}
             // Iterate over Channels
             each( channel.split(','), function(channel) {
                 if (READY) LEAVE( channel, 0 );
-                CHANNELS[channel] = 0;
+                CHANNELS[channel] = {};
             } );
 
             // ReOpen Connection if Any Channels Left
@@ -749,9 +745,9 @@ var PDIV          = $('pubnub') || {}
                 if (!presence) return;
 
                 // Subscribe Presence Channel
-                SELF['subscribe']({
-                    'channel'  : channel + PRESENCE_SUFFIX,
-                    'callback' : presence
+                SELF.subscribe({
+                    channel  : channel + PRESENCE_SUFFIX,
+                    callback : presence
                 });
 
                 // Presence Subscribed?
@@ -759,8 +755,8 @@ var PDIV          = $('pubnub') || {}
 
                 // See Who's Here Now
                 SELF['here_now']({
-                    'channel'  : channel,
-                    'callback' : function(here) {
+                    channel  : channel,
+                    callback : function(here) {
                         each( 'uuids' in here ? here['uuids'] : [],
                         function(uuid) { presence( {
                             'action'    : 'join',
@@ -809,7 +805,7 @@ var PDIV          = $('pubnub') || {}
                                     channel.disconnected = 0;
                                     channel.reconnect(channel.name);
                                 }
-                                else channel.error();
+                                else channel.err();
                             });
                         });
                     },
@@ -825,11 +821,11 @@ var PDIV          = $('pubnub') || {}
 
                         // Restore Previous Connection Point if Needed
                         if (!TIMETOKEN && SUB_RESTORE)
-                             TIMETOKEN = db['get'](SUBSCRIBE_KEY) || messages[1];
+                             TIMETOKEN = db.get(SUBSCRIBE_KEY) || messages[1];
                         else TIMETOKEN = messages[1];
 
                         // Update Saved Timetoken
-                        db['set']( SUBSCRIBE_KEY, messages[1] );
+                        db.set( SUBSCRIBE_KEY, messages[1] );
 
                         // Route Channel <---> Callback for Message
                         var next_callback = (function() {
@@ -879,7 +875,8 @@ var PDIV          = $('pubnub') || {}
             ,   err      = args['error']    || function(){}
             ,   channel  = args['channel']
             ,   jsonp    = jsonp_cb()
-            ,   data     = {};
+            ,   data     = {}
+            ,   origin   = nextorigin(ORIGIN);
 
             // Make sure we have a Channel
             if (!channel)       return error('Missing Channel');
@@ -894,7 +891,7 @@ var PDIV          = $('pubnub') || {}
                 success  : function(response) { callback(response) },
                 fail     : err,
                 url      : [
-                    ORIGIN, 'v2', 'presence',
+                    origin, 'v2', 'presence',
                     'sub_key', SUBSCRIBE_KEY, 
                     'channel', encode(channel)
                 ]
@@ -925,14 +922,12 @@ var PDIV          = $('pubnub') || {}
 
     function each_channel(callback) {
         each( generate_channel_list(CHANNELS), function(channel) {
-            var chan = CHANNELS[channel];
-            if (!chan) return;
-            callback(chan);
+            callback(CHANNELS[channel]||{});
         } );
     }
 
     if (!UUID) UUID = SELF['uuid']();
-    db['set']( SUBSCRIBE_KEY + 'uuid', UUID );
+    db.set( SUBSCRIBE_KEY + 'uuid', UUID );
 
     // Announce Leave Event
     LEAVE = function( channel, blocking ) {
@@ -1024,7 +1019,7 @@ FDomainRequest['id'] = SECOND;
 // jQuery Interface
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
 
-// For Modern JS + Testling.js - http://testling.com/
-typeof(module) !== 'undefined' && (module['exports'] = PUBNUB) && ready();
+// For Testling.js - http://testling.com/
+typeof module !== 'undefined' && (module.exports = PUBNUB) && ready();
 
 })();

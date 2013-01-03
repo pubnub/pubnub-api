@@ -49,7 +49,7 @@
 
 <div id=pubnub pub-key=demo sub-key=demo origin=pubsub.pubnub.com></div>
 <script src=../json.js></script>
-<script src=../pubnub-3.4.min.js></script>
+<script src=../pubnub-3.4.js></script>
 <script>(function(){
 
     function test( t, msg ) {
@@ -162,9 +162,6 @@
         p.subscribe({
             channel  : channel,
             connect  : publish_test,
-            presence : function( message, envelope, channel ) {
-                console.log( message, envelope, channel );
-            },
             callback : function( message, envelope, channel ) {
                 p.unsubscribe({ channel : channel });
                 test( message, 'Subscribe Message' );
@@ -182,9 +179,6 @@
 
             p.subscribe({
                 channel  : chan,
-                presence : function( message, envelope, channel ) {
-                    console.log( message, envelope, channel );
-                },
                 connect  : function(chan) {
                     test( chan, 'Many Connections: ' + chan + ' Connected!' );
                     p.publish({ channel : chan, message : chan });
@@ -213,9 +207,6 @@
         p2.subscribe({
             restore  : true,
             channel  : restore_channel,
-            presence : function( message, envelope, channel ) {
-                console.log( message, envelope, channel );
-            },
             callback : function(){},
             connect  : function() {
                 p2.unsubscribe({ channel : restore_channel });

@@ -1,5 +1,5 @@
 var test    = require('testling');
-var PUBNUB  = require('../pubnub-3.4');
+var PUBNUB  = require('./pubnub-3.1');
 var channel = 'unit-test-pubnub-channel';
 
 test('PUBNUB JavaScript API', function (test) {
@@ -16,7 +16,6 @@ test('PUBNUB JavaScript API', function (test) {
     test.ok(pubnub.publish);
     test.ok(pubnub.subscribe);
     test.ok(pubnub.history);
-    test.ok(pubnub.detailedHistory);
     test.ok(pubnub.time);
 
     function publish_test() {
@@ -56,17 +55,6 @@ test('PUBNUB JavaScript API', function (test) {
         });
     }
 
-    function detailedHistory_test(history) {
-        pubnub.detailedHistory({
-            count    : 1,
-            channel  : channel,
-            callback : function(messages) {
-                test.ok(messages);
-                test.equal( messages[0][0].test, "test" );
-                test.end();
-            }
-        });
-    }
     pubnub.subscribe({
         channel  : channel,
         connect  : publish_test,
