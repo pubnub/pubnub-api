@@ -1,5 +1,5 @@
-CUSTOM_CFLAGS=-Wall -ggdb3 -O3 -std=gnu99 -I. `pkg-config --cflags json` `pkg-config --cflags libcurl` -DDEBUG
-LIBS=`pkg-config --libs json` `pkg-config --libs libcurl`
+CUSTOM_CFLAGS=-Wall -ggdb3 -O3 -std=gnu99 -I. `pkg-config --cflags json libcurl libcrypto` -DDEBUG
+LIBS=`pkg-config --libs json libcurl libcrypto`
 
 # TODO: Build a .so library
 # TODO: Symbol visibility

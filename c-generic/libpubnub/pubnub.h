@@ -108,6 +108,7 @@ struct pubnub_callbacks {
 /* origin is optional */
 /* curl_global_init() caveat */
 struct pubnub *pubnub_init(const char *publish_key, const char *subscribe_key,
+			const char *secret_key, const char *cipher_key,
 			const char *origin,
 			const struct pubnub_callbacks *cb, void *cb_data);
 void pubnub_done(struct pubnub *p);

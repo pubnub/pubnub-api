@@ -12,7 +12,7 @@ int
 main(void)
 {
 	struct pubnub_sync *sync = pubnub_sync_init();
-	struct pubnub *p = pubnub_init("demo", "demo", NULL, &pubnub_sync_callbacks, sync);
+	struct pubnub *p = pubnub_init("demo", "demo", NULL, NULL, NULL, &pubnub_sync_callbacks, sync);
 	json_object *msg;
 
 

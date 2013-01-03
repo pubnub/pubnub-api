@@ -7,6 +7,8 @@
 
 #include <curl/curl.h>
 
+#include <openssl/md5.h>
+
 #include "pubnub.h"
 #include "pubnub-priv.h"
 
@@ -222,7 +224,9 @@ pubnub_http_timercb(CURLM *multi, long timeout_ms, void *userp)
 }
 
 struct pubnub *
-pubnub_init(const char *publish_key, const char *subscribe_key, const char *origin,
+pubnub_init(const char *publish_key, const char *subscribe_key,
+		const char *secret_key, const char *cipher_key,
+		const char *origin,
 		const struct pubnub_callbacks *cb, void *cb_data)
 {
 	struct pubnub *p = calloc(1, sizeof(*p));
@@ -232,6 +236,8 @@ pubnub_init(const char *publish_key, const char *subscribe_key, const char *orig
 	p->subscribe_key = strdup(subscribe_key);
 	if (!origin) origin = "pubsub.pubnub.com";
 	p->origin = strdup(origin);
+	p->secret_key = secret_key ? strdup(secret_key) : NULL;
+	p->cipher_key = cipher_key ? strdup(cipher_key) : NULL;
 	strcpy(p->time_token, "0");
 
 	p->cb = cb;
@@ -268,6 +274,8 @@ pubnub_done(struct pubnub *p)
 	printbuf_free(p->body);
 	free(p->publish_key);
 	free(p->subscribe_key);
+	free(p->secret_key);
+	free(p->cipher_key);
 	free(p->origin);
 	free(p);
 }
@@ -342,8 +350,39 @@ pubnub_publish(struct pubnub *p, const char *channel, struct json_object *messag
 	}
 	p->state = PNS_BUSY;
 
-	const char *urlelems[] = { "publish", p->publish_key, p->subscribe_key, "0" /* TODO SSL support */, channel, "0", json_object_to_json_string(message), NULL };
+	const char *message_str = json_object_to_json_string(message);
+
+	char *signature;
+	if (p->secret_key) {
+		MD5_CTX md5;
+		MD5_Init(&md5);
+		MD5_Update(&md5, p->publish_key, strlen(p->publish_key));
+		MD5_Update(&md5, "/", 1);
+		MD5_Update(&md5, p->subscribe_key, strlen(p->subscribe_key));
+		MD5_Update(&md5, "/", 1);
+		MD5_Update(&md5, p->secret_key, strlen(p->secret_key));
+		MD5_Update(&md5, "/", 1);
+		MD5_Update(&md5, channel, strlen(channel));
+		MD5_Update(&md5, "/", 1);
+		MD5_Update(&md5, message_str, strlen(message_str));
+		MD5_Update(&md5, "" /* \0 */, 1);
+
+		unsigned char digest[16];
+		MD5_Final(digest, &md5);
+
+		signature = malloc(33);
+		for (int i = 0; i < 16; i++) {
+			snprintf(&signature[i * 2], 3, "%02x", digest[i]);
+		}
+		/* The snprintf() in the last iteration implicitly
+		 * NUL-terminates signature[]. */
+	} else {
+		signature = strdup("0");
+	}
+
+	const char *urlelems[] = { "publish", p->publish_key, p->subscribe_key, signature, channel, "0", message_str, NULL };
 	pubnub_http_request(p, urlelems, timeout, (pubnub_http_cb) cb, cb_data);
+	free(signature);
 }
 
 

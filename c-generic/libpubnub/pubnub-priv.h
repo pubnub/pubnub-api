@@ -8,6 +8,7 @@ typedef void (*pubnub_http_cb)(struct pubnub *p, enum pubnub_res result, struct 
 
 struct pubnub {
 	char *publish_key, *subscribe_key;
+	char *secret_key, *cipher_key;
 	char *origin;
 	char time_token[64];
 
