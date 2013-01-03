@@ -3,6 +3,7 @@ using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Threading;
 
 
 namespace PubNubTest
@@ -20,6 +21,12 @@ namespace PubNubTest
                 "",
                 false
             );
+
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenGetRequestServerTime";
+            unitTest.TestCaseName = "ThenItShouldReturnTimeStamp";
+
+            pubnub.PubnubUnitTest = unitTest;
             
             string strResponse = "";
             Common cm = new Common();
@@ -27,12 +34,12 @@ namespace PubNubTest
             cm.objResponse = null;
 
             pubnub.time(cm.DisplayReturnMessage);
-            cm.objResponse = null;
+            //cm.objResponse = null;
             while (!cm.deliveryStatus) ;
 
             IList<object> fields = cm.objResponse as IList<object>;
             strResponse = fields[0].ToString();
-            Console.WriteLine(strResponse);
+            Console.WriteLine("Resp:" + strResponse);
             Assert.AreNotEqual("0",strResponse);
         }
 
