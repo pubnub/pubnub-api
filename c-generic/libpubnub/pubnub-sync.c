@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <poll.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -132,7 +133,7 @@ pubnub_sync_wait(struct pubnub *p, void *ctx_data)
 {
 	struct pubnub_sync *sync = ctx_data;
 	while (!sync->stop) {
-		DBGMSG("=polling= for %d\n", sync->n);
+		DBGMSG("=polling= for %d (timeout %p)\n", sync->n, sync->timeout_cb);
 
 		long timeout;
 		if (sync->timeout_cb) {
@@ -157,14 +158,21 @@ pubnub_sync_wait(struct pubnub *p, void *ctx_data)
 			/* poll() errors are ignored, it's not clear what
 			 * we should do. Most likely, we have just received
 			 * a signal and will spin around and restart poll(). */
+			DBGMSG("poll(): %s\n", strerror(errno));
 			continue;
 		}
 
 		if (n == 0) {
 			/* Time out, call the handler and reset
 			 * timeout. */
-			sync->timeout_cb(p, sync->timeout_cb_data);
+			DBGMSG("Timeout, callback and reset\n");
+			/* First, we reset sync->timeout_cb, then we
+			 * call the timeout handler - likely, that will
+			 * cause it to set timeout_cb again, so resetting
+			 * timeout_cb only after the call is bad idea. */
+			void (*timeout_cb)(struct pubnub *p, void *cb_data) = sync->timeout_cb;
 			sync->timeout_cb = NULL;
+			timeout_cb(p, sync->timeout_cb_data);
 			continue;
 		}
 
