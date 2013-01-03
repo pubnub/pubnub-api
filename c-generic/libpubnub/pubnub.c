@@ -246,6 +246,9 @@ pubnub_init(const char *publish_key, const char *subscribe_key, const char *orig
 	curl_multi_setopt(p->curlm, CURLMOPT_TIMERFUNCTION, pubnub_http_timercb);
 	curl_multi_setopt(p->curlm, CURLMOPT_TIMERDATA, p);
 
+	p->curl_headers = curl_slist_append(p->curl_headers, "User-Agent: c-generic/0");
+	p->curl_headers = curl_slist_append(p->curl_headers, "V: 3.4");
+
 	return p;
 }
 
@@ -260,6 +263,7 @@ pubnub_done(struct pubnub *p)
 		curl_easy_cleanup(p->curl);
 	}
 	curl_multi_cleanup(p->curlm);
+	curl_slist_free_all(p->curl_headers);
 
 	printbuf_free(p->body);
 	free(p->publish_key);
@@ -296,6 +300,7 @@ pubnub_http_request(struct pubnub *p, const char *urlelems[],
 	printbuf_memappend_fast(url, "" /* \0 */, 1);
 
 	curl_easy_setopt(p->curl, CURLOPT_URL, url->buf);
+	curl_easy_setopt(p->curl, CURLOPT_HTTPHEADER, p->curl_headers);
 	curl_easy_setopt(p->curl, CURLOPT_WRITEFUNCTION, pubnub_http_inputcb);
 	curl_easy_setopt(p->curl, CURLOPT_WRITEDATA, p);
 	curl_easy_setopt(p->curl, CURLOPT_VERBOSE, VERBOSE_VAL);
