@@ -47,12 +47,12 @@ package com.pubnub.environment {
 		}
 		
 		private function onLoaderError(e:IOErrorEvent):void {
-			trace('onLoaderError');
+			//trace('onLoaderError');
 		}
 		
 		private function onLoaderHTTPStatus(e:HTTPStatusEvent):void {
 			if (_isRunning == false) return;
-			trace('onLoaderHTTPStatus : '  + e.status);
+			//trace('onLoaderHTTPStatus : '  + e.status);
 			var pingEndTime:int = getTimer() - pingStartTime;
 			clearTimeout(pingDelayTimeout);
 			clearTimeout(pingTimeout);
@@ -65,7 +65,7 @@ package com.pubnub.environment {
 			if (pingEndTime >= Settings.PING_OPERATION_INTERVAL) {
 				ping();
 			}else {
-				trace('### : ' + (Settings.PING_OPERATION_INTERVAL - pingEndTime));
+				//trace('### : ' + (Settings.PING_OPERATION_INTERVAL - pingEndTime));
 				pingDelayTimeout = setTimeout(ping,  Settings.PING_OPERATION_INTERVAL - pingEndTime);
 			}
 		}
@@ -86,7 +86,7 @@ package com.pubnub.environment {
 		}
 		
 		private function onTimeout():void {
-			trace('onTimeout');
+			//trace('onTimeout');
 			onError(null);
 			ping();
 		}
