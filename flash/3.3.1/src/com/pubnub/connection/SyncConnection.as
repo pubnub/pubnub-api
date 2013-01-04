@@ -25,7 +25,7 @@ package com.pubnub.connection {
 		override public function sendOperation(operation:Operation):void {
 			if (!operation) return;
 			if (_networkEnabled == false) {
-				operation.onError([0, Errors.NETWORK_UNVALIABLE]);
+				operation.onError([0, Errors.NETWORK_UNAVAILABLE]);
 				return;
 			}
 			if (ready) {

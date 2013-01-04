@@ -94,7 +94,7 @@ package com.pubnub.subscribe {
 		
 		private function checkNetwork():Boolean {
 			if (_networkEnabled == false) {
-				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ 0, Errors.NETWORK_UNVALIABLE]));
+				dispatchEvent(new SubscribeEvent(SubscribeEvent.ERROR, [ 0, Errors.NETWORK_UNAVAILABLE]));
 				return false;
 			}
 			return _networkEnabled;

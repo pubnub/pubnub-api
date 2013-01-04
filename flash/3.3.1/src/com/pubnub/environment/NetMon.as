@@ -71,10 +71,12 @@ package com.pubnub.environment {
 		}
 		
 		private function ping():void {
-			if (_isRunning == false) return;
+            trace('Ping!');
+
+            if (_isRunning == false) return;
 			clearTimeout(pingTimeout);
 			pingStartTime = getTimer();
-			pingTimeout = setTimeout(onTimeout, Settings.PING_OPEARTION_TIMEOUT);
+			pingTimeout = setTimeout(onTimeout, Settings.PING_OPERATION_TIMEOUT);
 			closeLoader();
 			loader.load(new URLRequest(Settings.PING_OPERATION_URL));
 		}

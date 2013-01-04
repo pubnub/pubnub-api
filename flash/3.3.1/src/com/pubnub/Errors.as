@@ -15,7 +15,7 @@ package com.pubnub {
 		static public const SUBSCRIBE_CHANNEL_ERROR:String = "SUBSCRIBE_CHANEL_ERROR";
 		static public const NETWORK_RECONNECT_MAX_RETRIES_EXCEEDED:String = "NETWORK_RECONNECT_MAX_RETRIES_EXCEEDED";
 		static public const NETWORK_RECONNECT_MAX_TIMEOUT_EXCEEDED:String = "NETWORK_RECONNECT_MAX_TIMEOUT_EXCEEDED";
-		static public const NETWORK_UNVALIABLE:String = "NETWORK_UNVALIABLE";
+		static public const NETWORK_UNAVAILABLE:String = "NETWORK_UNAVAILABLE";
 		static public const NETWORK_LOST:String = "NETWORK_LOST";
 		
 	}
