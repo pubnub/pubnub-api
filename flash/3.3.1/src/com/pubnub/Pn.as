@@ -71,10 +71,10 @@ package com.pubnub {
 			syncConnection.networkEnabled = true;
 			if (subscribeConnection) {
 				subscribeConnection.networkEnabled = true;
-				if (_checkReconnect && Settings.RESUME_ON_RECONNECT == false) {
+				/*if (_checkReconnect && Settings.RESUME_ON_RECONNECT == false) {
 					trace('RECONNECT');
 					subscribeConnection.reconnect();
-				}
+				}*/
 			}
 			
 			if (_initialized == false) {
@@ -352,6 +352,7 @@ package com.pubnub {
 		private function initKeys(config:Object):void {
 			_ssl = config.ssl;
 			origin = config.origin;
+			//trace('origin : ' + origin);
 			if(config.publish_key)
 				_publishKey = config.publish_key;
 			

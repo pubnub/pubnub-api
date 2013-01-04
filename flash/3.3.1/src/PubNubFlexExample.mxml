@@ -232,6 +232,7 @@
 		}
 		
 		private function onStartPerfomanceTest(e:MouseEvent):void {
+			perfomance.ssl = ssl;
 			perfomance.start();
 		}
 		

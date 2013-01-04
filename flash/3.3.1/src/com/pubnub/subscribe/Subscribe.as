@@ -34,6 +34,8 @@ package com.pubnub.subscribe {
 		protected var factory:Dictionary;
 		protected var _destroyed:Boolean;
 		protected var _channels:Array;
+		protected var savedChannels:Array;
+		protected var savedTimetoken:String
 		
 		protected var connection:AsyncConnection;
 		protected var _networkEnabled:Boolean
@@ -151,6 +153,7 @@ package com.pubnub.subscribe {
 					_channels = _channels.concat(addCh);
 				}
 				
+				//trace('_lastToken : ' + _lastToken);
 				if (_channels.length > 0) {
 					if (_lastToken) {
 						doSubscribe();
@@ -183,12 +186,15 @@ package com.pubnub.subscribe {
 		}
 		
 		protected function onSubscribeInit(e:OperationEvent):void {
+			if (_networkEnabled == false) return;
+			
 			if (e.data == null) {
 				subscribeInit();
 				return;
 			}
 			_connected = true;
 			_lastToken = e.data[1];
+			trace('onSubscribeInit : ' + _lastToken);
 			if (_reusedToken) {
 				_lastToken = _reusedToken;
 				_reusedToken = null;
@@ -207,12 +213,13 @@ package com.pubnub.subscribe {
 		
 		/*---------------------------SUBSCRIBE---------------------------*/
 		private function doSubscribe():void {
-			//trace('doSubscribe : ' + sessionUUID, _lastToken, _channels);
 			var operation:Operation = getOperation(SUBSCRIBE);
 			connection.sendOperation(operation);
 		}
 		
 		protected function onConnect(e:OperationEvent):void {
+			
+			if (_networkEnabled == false) return;
 			
 			var responce:Object = e.data;
 			
@@ -359,17 +366,17 @@ package com.pubnub.subscribe {
 			connection = null;
 		}
 		
-		public function reconnect():void {
-			// save current channels and lash token
+		/*public function reconnect():void {
+			// save current channels
 			var channels:String = _channels.join(',');
-			//var last_token:String = _lastToken;
 			// disconnect and leave from all channels
 			unsubscribeAll('reconnect...');
-			
 			Log.log("Network Restored: Resubscribing on " + 0); 
-			// restore connection with last token and channels
-			subcribe(channels);
-		}
+			// restore connection with last channels
+			if (channels.length > 0) {
+				subcribe(channels);
+			}
+		}*/
 		
 		public function close(reason:String = null):void {
 			doUnsubscribeAll(reason);
@@ -403,6 +410,23 @@ package com.pubnub.subscribe {
 		public function set networkEnabled(value:Boolean):void {
 			_networkEnabled = value;
 			connection.networkEnabled = value;
+			
+			//trace(this, value, Settings.RESUME_ON_RECONNECT);
+			if (value) {
+				
+				if (Settings.RESUME_ON_RECONNECT) {
+					var token:String = savedTimetoken;	
+				}
+				if (savedChannels && savedChannels.length > 0) {
+					subcribe(savedChannels.join(','), token);
+				}
+				savedTimetoken = null;
+				savedChannels = [];
+			}else {
+				savedTimetoken = _lastToken;
+				savedChannels = _channels.concat();
+				close('Close with network unavailable');
+			}
 		}
 		
 		public function get networkEnabled():Boolean {

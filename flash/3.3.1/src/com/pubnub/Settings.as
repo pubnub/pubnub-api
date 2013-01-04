@@ -8,7 +8,7 @@ package com.pubnub {
 		public static const MAX_RECONNECT_RETRIES:uint = 30; //100;
 
         // if true, after reconnecting (after detecting disconnect), 'catches up' on missed messages upon reconnect
-        public static const RESUME_ON_RECONNECT:Boolean = false;
+        public static const RESUME_ON_RECONNECT:Boolean = true;
 
         // Given the above defaults
         // the client would check for 5 minutes (300s) after network loss
@@ -18,7 +18,7 @@ package com.pubnub {
 		public static const OPERATION_TIMEOUT:uint = 310000;
 		
 		// for wait a response of a ping operation with [PING_OPERATION_URL], ms 
-		public static const PING_OPERATION_TIMEOUT:uint = 1000;
+		public static const PING_OPERATION_TIMEOUT:uint = 10000;
 		
 		// check for network down every [PING_OPERATION_INTERVAL],ms.
 		public static const PING_OPERATION_INTERVAL:uint = 5000;
