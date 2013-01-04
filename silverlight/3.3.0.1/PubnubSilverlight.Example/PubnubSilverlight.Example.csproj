@@ -9,7 +9,7 @@
     <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PubnubSilverlight.Example</RootNamespace>
+    <RootNamespace>PubNub_Messaging</RootNamespace>
     <AssemblyName>PubnubSilverlight.Example</AssemblyName>
     <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
@@ -20,7 +20,7 @@
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
     <XapFilename>PubnubSilverlight.Example.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
-    <SilverlightAppEntry>PubnubSilverlight.Example.App</SilverlightAppEntry>
+    <SilverlightAppEntry>PubNub_Messaging.App</SilverlightAppEntry>
     <TestPageFileName>TestPage.html</TestPageFileName>
     <CreateTestPage>true</CreateTestPage>
     <ValidateXaml>true</ValidateXaml>
@@ -73,11 +73,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ConcurrentHashtable_Silverlight">
+      <HintPath>..\Libraries\ConcurrentHashtable_Silverlight.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Silverlight.Testing">
       <HintPath>..\Libraries\Microsoft.Silverlight.Testing.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight">
       <HintPath>..\Libraries\Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Libraries\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.SL5">
+      <HintPath>..\packages\System.Threading.Tasks.3.0.2-beta2\lib\sl50\System.Threading.Tasks.SL5.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="mscorlib" />
@@ -93,6 +103,18 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Pubnub.cs" />
+    <Compile Include="Imports\ArrayList.cs" />
+    <Compile Include="Imports\AtlasWeb.cs" />
+    <Compile Include="Imports\HttpEncoder.cs" />
+    <Compile Include="Imports\JavaScriptConverter.cs" />
+    <Compile Include="Imports\JavaScriptObjectDeserializer.cs" />
+    <Compile Include="Imports\JavaScriptSerializer.cs" />
+    <Compile Include="Imports\JavaScriptString.cs" />
+    <Compile Include="Imports\JavaScriptTypeResolver.cs" />
+    <Compile Include="Imports\ObjectConverter.cs" />
+    <Compile Include="Imports\ScriptIgnoreAttribute.cs" />
+    <Compile Include="Imports\Trace.cs" />
     <Compile Include="MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
@@ -100,6 +122,11 @@
     <Compile Include="Dialogs\PublishMessageDialog.xaml.cs">
       <DependentUpon>PublishMessageDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UnitTest\EncryptionTests.cs" />
+    <Compile Include="UnitTest\Main.cs" />
+    <Compile Include="UnitTest\WhenAMessageIsPublished.cs" />
+    <Compile Include="UnitTest\WhenGetRequestServerTime.cs" />
+    <Compile Include="UnitTest\WhenSubscribedToAChannel.cs" />
     <Compile Include="Views\CodeExampleView.xaml.cs">
       <DependentUpon>CodeExampleView.xaml</DependentUpon>
     </Compile>
@@ -117,6 +144,7 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -150,16 +178,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <ProjectReference Include="..\PubnubSilverlight.Core\PubnubSilverlight.Core.csproj">
-      <Project>{07A7088C-ADF8-4F16-A787-F6D2B456F78A}</Project>
-      <Name>PubnubSilverlight.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PubnubSilverlight.UnitTest\PubnubSilverlight.UnitTest.csproj">
-      <Project>{0FEA41D7-2227-44D8-943D-E57152F6BDE8}</Project>
-      <Name>PubnubSilverlight.UnitTest</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <Import Condition="$(SilverlightVersion)=='v3.0'" Project="$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SilverlightToolkit\Tools\v3.0)Microsoft.Silverlight.Toolkit.Build.targets" />
   <Import Condition="$(SilverlightVersion)=='v4.0'" Project="$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SilverlightToolkit\Tools\v4.0)Microsoft.Silverlight.Toolkit.Build.targets" />

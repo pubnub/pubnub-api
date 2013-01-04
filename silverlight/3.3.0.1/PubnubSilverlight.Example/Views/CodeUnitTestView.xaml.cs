@@ -12,9 +12,9 @@ using System.Windows.Shapes;
 using System.Windows.Navigation;
 using Microsoft.Silverlight.Testing.Controls;
 using Microsoft.Silverlight.Testing.Client;
-using PubnubSilverlight.UnitTest;
+using PubNub_Messaging;
 
-namespace PubnubSilverlight.Example.Views
+namespace PubNub_Messaging
 {
     public partial class CodeUnitTestView : Page
     {

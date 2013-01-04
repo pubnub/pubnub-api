@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PubnubSilverlight.Example.Views
+namespace PubNub_Messaging
 {
     public partial class ErrorWindow : ChildWindow
     {

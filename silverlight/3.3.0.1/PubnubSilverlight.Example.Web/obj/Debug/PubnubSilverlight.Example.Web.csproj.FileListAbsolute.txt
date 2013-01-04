@@ -1,5 +1,0 @@
-c:\users\ultra\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Example.Web\bin\PubnubSilverlight.Example.Web.dll
-c:\users\ultra\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Example.Web\bin\PubnubSilverlight.Example.Web.pdb
-c:\users\ultra\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Example.Web\obj\Debug\ResolveAssemblyReference.cache
-c:\users\ultra\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Example.Web\obj\Debug\PubnubSilverlight.Example.Web.dll
-c:\users\ultra\documents\visual studio 2010\Projects\PubnubSilverlight.Example\PubnubSilverlight.Example.Web\obj\Debug\PubnubSilverlight.Example.Web.pdb

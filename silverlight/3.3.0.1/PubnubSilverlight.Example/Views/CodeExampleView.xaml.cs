@@ -16,11 +16,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using Microsoft.Silverlight.Testing;
-using PubnubSilverlight.Example.Dialogs;
-using PubnubSilverlight.Core;
 //using PubNub_Messaging;
 
-namespace PubnubSilverlight.Example.Views
+namespace PubNub_Messaging
 {
     public partial class CodeExampleView : Page
     {
