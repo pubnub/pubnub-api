@@ -37,35 +37,41 @@ namespace PubNub_Messaging
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f050007
-			public const int btnDetailedHis = 2131034119;
+			// aapt resource value: 0x7f050005
+			public const int btnCancel = 2131034117;
 			
-			// aapt resource value: 0x7f050008
-			public const int btnHereNow = 2131034120;
+			// aapt resource value: 0x7f050009
+			public const int btnDetailedHis = 2131034121;
+			
+			// aapt resource value: 0x7f05000a
+			public const int btnHereNow = 2131034122;
 			
 			// aapt resource value: 0x7f050003
 			public const int btnLaunch = 2131034115;
 			
-			// aapt resource value: 0x7f050006
-			public const int btnPresence = 2131034118;
+			// aapt resource value: 0x7f050008
+			public const int btnPresence = 2131034120;
 			
-			// aapt resource value: 0x7f050005
-			public const int btnPublish = 2131034117;
+			// aapt resource value: 0x7f050007
+			public const int btnPublish = 2131034119;
+			
+			// aapt resource value: 0x7f050006
+			public const int btnSubscribe = 2131034118;
 			
 			// aapt resource value: 0x7f050004
-			public const int btnSubscribe = 2131034116;
-			
-			// aapt resource value: 0x7f050009
-			public const int btnTime = 2131034121;
-			
-			// aapt resource value: 0x7f05000a
-			public const int btnUnsub = 2131034122;
+			public const int btnSubscribeConnCallback = 2131034116;
 			
 			// aapt resource value: 0x7f05000b
-			public const int btnUnsubPres = 2131034123;
+			public const int btnTime = 2131034123;
 			
 			// aapt resource value: 0x7f05000c
-			public const int scroll = 2131034124;
+			public const int btnUnsub = 2131034124;
+			
+			// aapt resource value: 0x7f05000d
+			public const int btnUnsubPres = 2131034125;
+			
+			// aapt resource value: 0x7f05000e
+			public const int scroll = 2131034126;
 			
 			// aapt resource value: 0x7f050001
 			public const int tbSsl = 2131034113;
@@ -76,8 +82,8 @@ namespace PubNub_Messaging
 			// aapt resource value: 0x7f050002
 			public const int txtCipher = 2131034114;
 			
-			// aapt resource value: 0x7f05000d
-			public const int txtViewLog = 2131034125;
+			// aapt resource value: 0x7f05000f
+			public const int txtViewLog = 2131034127;
 			
 			private Id()
 			{
@@ -101,50 +107,56 @@ namespace PubNub_Messaging
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f04000e
-			public const int app_name = 2130968590;
-			
-			// aapt resource value: 0x7f040008
-			public const int channel = 2130968584;
-			
-			// aapt resource value: 0x7f04000c
-			public const int cipher = 2130968588;
-			
-			// aapt resource value: 0x7f040004
-			public const int detailedHistory = 2130968580;
-			
-			// aapt resource value: 0x7f040009
-			public const int enablessl = 2130968585;
-			
-			// aapt resource value: 0x7f040003
-			public const int herenow = 2130968579;
-			
-			// aapt resource value: 0x7f04000d
-			public const int launch = 2130968589;
-			
-			// aapt resource value: 0x7f040002
-			public const int presence = 2130968578;
-			
-			// aapt resource value: 0x7f040001
-			public const int publish = 2130968577;
-			
-			// aapt resource value: 0x7f04000b
-			public const int sslOff = 2130968587;
-			
-			// aapt resource value: 0x7f04000a
-			public const int sslOn = 2130968586;
+			// aapt resource value: 0x7f040010
+			public const int app_name = 2130968592;
 			
 			// aapt resource value: 0x7f040000
-			public const int subscribe = 2130968576;
+			public const int cancel = 2130968576;
 			
-			// aapt resource value: 0x7f040005
-			public const int time = 2130968581;
+			// aapt resource value: 0x7f04000a
+			public const int channel = 2130968586;
+			
+			// aapt resource value: 0x7f04000e
+			public const int cipher = 2130968590;
 			
 			// aapt resource value: 0x7f040006
-			public const int unsubscribe = 2130968582;
+			public const int detailedHistory = 2130968582;
+			
+			// aapt resource value: 0x7f04000b
+			public const int enablessl = 2130968587;
+			
+			// aapt resource value: 0x7f040005
+			public const int herenow = 2130968581;
+			
+			// aapt resource value: 0x7f04000f
+			public const int launch = 2130968591;
+			
+			// aapt resource value: 0x7f040004
+			public const int presence = 2130968580;
+			
+			// aapt resource value: 0x7f040003
+			public const int publish = 2130968579;
+			
+			// aapt resource value: 0x7f04000d
+			public const int sslOff = 2130968589;
+			
+			// aapt resource value: 0x7f04000c
+			public const int sslOn = 2130968588;
+			
+			// aapt resource value: 0x7f040001
+			public const int subscribe = 2130968577;
+			
+			// aapt resource value: 0x7f040002
+			public const int subscribeConnCallback = 2130968578;
 			
 			// aapt resource value: 0x7f040007
-			public const int unsubscribePres = 2130968583;
+			public const int time = 2130968583;
+			
+			// aapt resource value: 0x7f040008
+			public const int unsubscribe = 2130968584;
+			
+			// aapt resource value: 0x7f040009
+			public const int unsubscribePres = 2130968585;
 			
 			private String()
 			{

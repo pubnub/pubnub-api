@@ -15,63 +15,79 @@ namespace PubnubMessaging
 {
 	public partial class Pubnub_MessagingSub : DialogViewController
 	{
-		Pubnub pubnub;
-		string channel {
+		Pubnub _pubnub;
+		string _Channel {
 			get;set;
 		}
 
-		DialogViewController dvc;
-		RootElement root;
-		Section secOutput;
-		UIFont font12 = UIFont.SystemFontOfSize (12);
-		UIFont font13 = UIFont.SystemFontOfSize (13);
+		string _Cipher {
+			get;set;
+		}
+
+		bool _Ssl {
+			get;set;
+		}
+
+		DialogViewController _dvc;
+		RootElement _root;
+		Section _secOutput;
+		UIFont _font12 = UIFont.SystemFontOfSize (12);
+		UIFont _font13 = UIFont.SystemFontOfSize (13);
 
 		public Pubnub_MessagingSub (string strChannelName, string strCipher, bool bEnableSSL) : base (UITableViewStyle.Grouped, null)
 		{
-			channel = strChannelName;
-			string strSsl = "";
-			if (bEnableSSL)
-				strSsl = ", SSL";
+			_Channel = strChannelName;
+			_Ssl = bEnableSSL;
+			_Cipher = strCipher;
 
+			string strSsl = "";
+			if (_Ssl) {
+				strSsl = ", SSL";
+			}
+			
 			string strCip = "";
-			if (!String.IsNullOrWhiteSpace (strCipher)) {
+			if (!String.IsNullOrWhiteSpace (_Cipher)) {
 				strCip = ", Cipher";
 			}
-
-			string strHead = String.Format ("Ch: {0} {1} {2}", strChannelName, strSsl, strCip);
-			pubnub = new Pubnub ("demo", "demo", "", strCipher, bEnableSSL);
-
+			
+			string strHead = String.Format ("Ch: {0} {1} {2}", _Channel, strSsl, strCip);
+			_pubnub = new Pubnub ("demo", "demo", "", _Cipher, _Ssl);
+			
 			Section secAction = new Section ();
-
+			
 			bool bIphone = true;
-
+			
 			string strHardwareVer = DeviceHardware.Version.ToString ().ToLower ();
 			if (strHardwareVer.IndexOf ("ipad") >= 0) {
 				bIphone = false;
 			}
-
+			
 			Dictionary<string, RectangleF> dictRect = null;
-			int iViewHeight = 100;
-
+			int iViewHeight = 140;
+			
 			if (bIphone) {
 				dictRect = GetRectanglesForIphone();
-				iViewHeight = 100;
+				iViewHeight = 140;
 			} else {
 				dictRect = GetRectanglesForIpad();
-				iViewHeight = 40;
+				iViewHeight = 85;
 			}
-
+			
 			secAction.HeaderView = CreateHeaderView(dictRect, iViewHeight);
-
-			secOutput = new Section("Output");
-
-			root = new RootElement (strHead) {
+			
+			_secOutput = new Section("Output");
+			
+			_root = new RootElement (strHead) {
 				secAction,
-				secOutput
+				_secOutput
 			};
-			Root = root;
-			dvc = new DialogViewController (root, true);
-			AppDelegate.navigation.PushViewController (dvc, true);
+			Root = _root;
+			_dvc = new DialogViewController (_root, true);
+			_dvc.NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, delegate {
+				_pubnub.EndPendingRequests ();
+				AppDelegate.navigation.PopToRootViewController(true);
+			});
+			AppDelegate.navigation.PushViewController (_dvc, true);
 		}
 
 		Dictionary<string, RectangleF> GetRectanglesForIphone ()
@@ -83,38 +99,47 @@ namespace PubnubMessaging
 			int iRow1Y = 10;
 			int iRow2Y = iRow1Y + iButtonHeight + 5;
 			int iRow3Y = iRow2Y + iButtonHeight + 5;
+			int iRow4Y = iRow3Y + iButtonHeight + 5;
 
+			//row1
 			int iSubsX = iSpacingX;
-			int iSubsWidth = 110;
+			int iSubsWidth = 100;
 			dicRect.Add("subscribe", new RectangleF (iSubsX, iRow1Y, iSubsWidth, iButtonHeight));
 
-			int iPubX = iSubsX + iSubsWidth + iSpacingX;
-			int iPubWidth = 95;
-			dicRect.Add("publish", new RectangleF (iPubX, iRow1Y, iPubWidth, iButtonHeight));
+			int iSubsCX = iSubsX + iSubsWidth + iSpacingX;
+			int iSubsCWidth = 205;
+			dicRect.Add("subscribeconncallback", new RectangleF (iSubsCX, iRow1Y, iSubsCWidth, iButtonHeight));
+
+			//row2
+			int iPubX = iSpacingX;
+			int iPubWidth = 100;
+			dicRect.Add("publish", new RectangleF (iPubX, iRow2Y, iPubWidth, iButtonHeight));
 
 			int iPresX = iPubX + iPubWidth + iSpacingX;
-			int iPresWidth = 95;
-			dicRect.Add("presence", new RectangleF (iPresX, iRow1Y, iPresWidth, iButtonHeight));
+			int iPresWidth = 105;
+			dicRect.Add("presence", new RectangleF (iPresX, iRow2Y, iPresWidth, iButtonHeight));
 
-			int iHistX = iSpacingX;
-			int iHistWidth = 110;
-			dicRect.Add("detailedhis", new RectangleF (iHistX, iRow2Y, iHistWidth, iButtonHeight));
-
-			int iHerenowX = iHistX + iHistWidth + iSpacingX;
-			int iHerenowWidth = 100;
-			dicRect.Add("herenow", new RectangleF (iHerenowX, iRow2Y, iHerenowWidth, iButtonHeight));
-
-			int iTimeX = iHerenowX + iHerenowWidth + iSpacingX;
-			int iTimeWidth = 90;
+			int iTimeX = iPresX + iPresWidth + iSpacingX;
+			int iTimeWidth = 95;
 			dicRect.Add("time", new RectangleF (iTimeX, iRow2Y, iTimeWidth, iButtonHeight));
 
+			//row3
+			int iHistX = iSpacingX;
+			int iHistWidth = 150;
+			dicRect.Add("detailedhis", new RectangleF (iHistX, iRow3Y, iHistWidth, iButtonHeight));
+
+			int iHerenowX = iHistX + iHistWidth + iSpacingX * 2;
+			int iHerenowWidth = 150;
+			dicRect.Add("herenow", new RectangleF (iHerenowX, iRow3Y, iHerenowWidth, iButtonHeight));
+
+			//row4
 			int iUnsubX = iSpacingX;
 			int iUnsubWidth = 150;
-			dicRect.Add("unsub", new RectangleF (iUnsubX, iRow3Y, iUnsubWidth, iButtonHeight));
+			dicRect.Add("unsub", new RectangleF (iUnsubX, iRow4Y, iUnsubWidth, iButtonHeight));
 
 			int iUnsubPresX = iUnsubX + iUnsubWidth + iSpacingX * 2;
 			int iUnsubPresWidth = 150;
-			dicRect.Add("unsubpres", new RectangleF (iUnsubPresX, iRow3Y, iUnsubPresWidth, iButtonHeight));
+			dicRect.Add("unsubpres", new RectangleF (iUnsubPresX, iRow4Y, iUnsubPresWidth, iButtonHeight));
 
 			return dicRect;
 		}
@@ -126,38 +151,43 @@ namespace PubnubMessaging
 			int iSpacingX = 5;
 
 			int iRow1Y = 10;
+			int iRow2Y = iRow1Y + iButtonHeight + 5;
 
 			int iSubsX = iSpacingX;
-			int iSubsWidth = 85;
+			int iSubsWidth = 150;
 			dicRect.Add("subscribe", new RectangleF (iSubsX, iRow1Y, iSubsWidth, iButtonHeight));
 
-			int iPubX = iSubsX + iSubsWidth + iSpacingX;
-			int iPubWidth = 70;
+			int iSubsCX = iSubsX + iSubsWidth + iSpacingX;
+			int iSubsCWidth = 205;
+			dicRect.Add("subscribeconncallback", new RectangleF (iSubsCX, iRow1Y, iSubsCWidth, iButtonHeight));
+
+			int iPubX = iSubsCX + iSubsCWidth + iSpacingX;
+			int iPubWidth = 140;
 			dicRect.Add("publish", new RectangleF (iPubX, iRow1Y, iPubWidth, iButtonHeight));
 
 			int iPresX = iPubX + iPubWidth + iSpacingX;
-			int iPresWidth = 80;
+			int iPresWidth = 140;
 			dicRect.Add("presence", new RectangleF (iPresX, iRow1Y, iPresWidth, iButtonHeight));
 
-			int iHistX = iPresX + iPresWidth + iSpacingX;
-			int iHistWidth = 110;
-			dicRect.Add("detailedhis", new RectangleF (iHistX, iRow1Y, iHistWidth, iButtonHeight));
-
-			int iHerenowX = iHistX + iHistWidth + iSpacingX;
-			int iHerenowWidth = 80;
-			dicRect.Add("herenow", new RectangleF (iHerenowX, iRow1Y, iHerenowWidth, iButtonHeight));
-
-			int iTimeX = iHerenowX + iHerenowWidth + iSpacingX;
-			int iTimeWidth = 55;
+			int iTimeX = iPresX + iPresWidth + iSpacingX;
+			int iTimeWidth = 100;
 			dicRect.Add("time", new RectangleF (iTimeX, iRow1Y, iTimeWidth, iButtonHeight));
 
-			int iUnsubX = iTimeX + iTimeWidth + iSpacingX;;
-			int iUnsubWidth = 100;
-			dicRect.Add("unsub", new RectangleF (iUnsubX, iRow1Y, iUnsubWidth, iButtonHeight));
+			int iHistX = iSpacingX;
+			int iHistWidth = 180;
+			dicRect.Add("detailedhis", new RectangleF (iHistX, iRow2Y, iHistWidth, iButtonHeight));
+
+			int iHerenowX = iHistX + iHistWidth + iSpacingX;
+			int iHerenowWidth = 180;
+			dicRect.Add("herenow", new RectangleF (iHerenowX, iRow2Y, iHerenowWidth, iButtonHeight));
+
+			int iUnsubX = iHerenowX + iHerenowWidth + iSpacingX;;
+			int iUnsubWidth = 180;
+			dicRect.Add("unsub", new RectangleF (iUnsubX, iRow2Y, iUnsubWidth, iButtonHeight));
 
 			int iUnsubPresX = iUnsubX + iUnsubWidth + iSpacingX;
-			int iUnsubPresWidth = 145;
-			dicRect.Add("unsubpres", new RectangleF (iUnsubPresX, iRow1Y, iUnsubPresWidth, iButtonHeight));
+			int iUnsubPresWidth = 200;
+			dicRect.Add("unsubpres", new RectangleF (iUnsubPresX, iRow2Y, iUnsubPresWidth, iButtonHeight));
 
 			return dicRect;
 		}
@@ -169,15 +199,23 @@ namespace PubnubMessaging
 			
 			//subscribe
 			GlassButton gbSubs = new GlassButton (dicRect["subscribe"]);
-			gbSubs.Font = font13;
+			gbSubs.Font = _font13;
 			gbSubs.SetTitle ("Subscribe", UIControlState.Normal);
 			gbSubs.Enabled = true;
 			gbSubs.Tapped += delegate{Subscribe();};
 			uiView.AddSubview (gbSubs);
 
+			//subscribe
+			GlassButton gbSubsConnect = new GlassButton (dicRect["subscribeconncallback"]);
+			gbSubsConnect.Font = _font13;
+			gbSubsConnect.SetTitle ("Subscribe - Connect Callback", UIControlState.Normal);
+			gbSubsConnect.Enabled = true;
+			gbSubsConnect.Tapped += delegate{SubscribeConnectCallback();};
+			uiView.AddSubview (gbSubsConnect);
+
 			//publish
 			GlassButton gbPublish = new GlassButton (dicRect["publish"]);
-			gbPublish.Font = font13;
+			gbPublish.Font = _font13;
 			gbPublish.SetTitle ("Publish", UIControlState.Normal);
 			gbPublish.Enabled = true;
 			gbPublish.Tapped += delegate{Publish();};
@@ -185,7 +223,7 @@ namespace PubnubMessaging
 
 			//presence
 			GlassButton gbPresence = new GlassButton (dicRect["presence"]);
-			gbPresence.Font = font13;
+			gbPresence.Font = _font13;
 			gbPresence.SetTitle ("Presence", UIControlState.Normal);
 			gbPresence.Enabled = true;
 			gbPresence.Tapped += delegate{Presence();};
@@ -193,7 +231,7 @@ namespace PubnubMessaging
 			
 			//Detailed History
 			GlassButton gbDetailedHis = new GlassButton (dicRect["detailedhis"]);
-			gbDetailedHis.Font = font13;
+			gbDetailedHis.Font = _font13;
 			gbDetailedHis.SetTitle ("Detailed History", UIControlState.Normal);
 			gbDetailedHis.Enabled = true;
 			gbDetailedHis.Tapped += delegate{DetailedHistory();};
@@ -201,7 +239,7 @@ namespace PubnubMessaging
 
 			//Here Now
 			GlassButton gbHereNow = new GlassButton (dicRect["herenow"]);
-			gbHereNow.Font = font13;
+			gbHereNow.Font = _font13;
 			gbHereNow.SetTitle ("Here Now", UIControlState.Normal);
 			gbHereNow.Enabled = true;
 			gbHereNow.Tapped += delegate{HereNow();};
@@ -209,7 +247,7 @@ namespace PubnubMessaging
 			
 			//Time
 			GlassButton gbTime = new GlassButton (dicRect["time"]);
-			gbTime.Font = font13;
+			gbTime.Font = _font13;
 			gbTime.SetTitle ("Time", UIControlState.Normal);
 			gbTime.Enabled = true;
 			gbTime.Tapped += delegate{GetTime();};
@@ -217,7 +255,7 @@ namespace PubnubMessaging
 			
 			//Unsubscribe
 			GlassButton gbUnsub = new GlassButton (dicRect["unsub"]);
-			gbUnsub.Font = font13;
+			gbUnsub.Font = _font13;
 			gbUnsub.SetTitle ("Unsubscribe", UIControlState.Normal);
 			gbUnsub.Enabled = true;
 			gbUnsub.Tapped += delegate{Unsub();};
@@ -225,7 +263,7 @@ namespace PubnubMessaging
 			
 			//Unsubscribe-Presence
 			GlassButton gbUnsubPres = new GlassButton (dicRect["unsubpres"]);
-			gbUnsubPres.Font = font13;
+			gbUnsubPres.Font = _font13;
 			gbUnsubPres.SetTitle ("Unsubscribe-Presence", UIControlState.Normal);
 			gbUnsubPres.Enabled = true;
 			gbUnsubPres.Tapped += delegate{UnsubPresence();};
@@ -238,7 +276,14 @@ namespace PubnubMessaging
 		{
 			//dvc.ReloadData();
 			Display("Running Subscribe");
-			pubnub.subscribe<string>(channel, DisplayReturnMessage);
+			_pubnub.subscribe<string>(_Channel, DisplayReturnMessage);
+		}
+
+		public void SubscribeConnectCallback()
+		{
+			//dvc.ReloadData();
+			Display("Running Subscribe with Connect Callback");
+			_pubnub.subscribe<string>(_Channel, DisplayReturnMessage, DisplayConnectStatusMessage);
 		}
 
 		public void Publish()
@@ -253,52 +298,60 @@ namespace PubnubMessaging
 			InputAlertView iav = (InputAlertView)sender;
 			if ((iav != null) && (!String.IsNullOrWhiteSpace (iav.EnteredText))) {
 				Display("Running Publish");
-				pubnub.publish<string> (channel, iav.EnteredText, DisplayReturnMessage);
+				_pubnub.publish<string> (_Channel, iav.EnteredText, DisplayReturnMessage);
 			}
 		}
 		
 		public void Presence()
 		{
 			Display("Running Presence");
-			pubnub.presence<string>(channel, DisplayReturnMessage);
+			_pubnub.presence<string>(_Channel, DisplayReturnMessage);
 		}
 		
 		public void DetailedHistory()
 		{
 			Display("Running Detailed History");
-			pubnub.detailedHistory<string>(channel, 100, DisplayReturnMessage);
+			_pubnub.detailedHistory<string>(_Channel, 100, DisplayReturnMessage);
 		}
 		
 		public void HereNow()
 		{
 			Display("Running Here Now");
-			pubnub.here_now<string>(channel, DisplayReturnMessage);
+			_pubnub.here_now<string>(_Channel, DisplayReturnMessage);
 		}
 		
 		public void Unsub()
 		{
 			Display("Running unsubscribe");
-			pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
+			_pubnub.unsubscribe<string>(_Channel, DisplayReturnMessage);
 		}
 
 		public void UnsubPresence()
 		{
 			Display("Running presence-unsubscribe");
-			pubnub.presence_unsubscribe<string>(channel, DisplayReturnMessage);
+			_pubnub.presence_unsubscribe<string>(_Channel, DisplayReturnMessage);
 		}
 
 		public void GetTime()
 		{
 			Display("Running Time");
-			pubnub.time<string>(DisplayReturnMessage);
+			_pubnub.time<string>(DisplayReturnMessage);
 		}
 
+		/// <summary>
+		/// Callback method to provide the connect status of Subscribe call
+		/// </summary>
+		/// <param name="result"></param>
+		void DisplayConnectStatusMessage(string result)
+		{
+			Display(String.Format("Connect Callback - {0}", result));
+		}
 		
 		public void Display (string strText)
 		{
 			StyledMultilineElement sme = new StyledMultilineElement (strText)
 			{
-				Font = font12
+				Font = _font12
 			};
 			ThreadPool.QueueUserWorkItem (delegate {
 				
@@ -306,18 +359,18 @@ namespace PubnubMessaging
 				
 				AppDelegate.navigation.BeginInvokeOnMainThread(delegate {
 					//this.Animating = false;
-					if(secOutput.Count > 20)
+					if(_secOutput.Count > 20)
 					{
-						secOutput.RemoveRange(0, 10);
+						_secOutput.RemoveRange(0, 10);
 					}
-					if (secOutput.Count > 0) {
-						secOutput.Insert (secOutput.Count, sme);					}
+					if (_secOutput.Count > 0) {
+						_secOutput.Insert (_secOutput.Count, sme);					}
 					else
 					{
-						secOutput.Add (sme);
+						_secOutput.Add (sme);
 					}
 					this.TableView.ReloadData();
-					var lastIndexPath = this.root.Last()[this.root.Last().Count-1].IndexPath;
+					var lastIndexPath = this._root.Last()[this._root.Last().Count-1].IndexPath;
 					this.TableView.ScrollToRow(lastIndexPath, UITableViewScrollPosition.Middle, true);	
 				});
 			});

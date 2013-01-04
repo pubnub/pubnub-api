@@ -56,7 +56,13 @@ namespace PubNub_Messaging
 
 			Button btnSubscribe = FindViewById<Button> (Resource.Id.btnSubscribe);
 			btnSubscribe.Click += delegate {Subscribe();};
-			
+
+			Button btnSubscribeConnCallback = FindViewById<Button> (Resource.Id.btnSubscribeConnCallback);
+			btnSubscribeConnCallback.Click += delegate {SubscribeConnCallback();};
+
+			Button btnCancel = FindViewById<Button> (Resource.Id.btnCancel);
+			btnCancel.Click += delegate {pubnub.EndPendingRequests();Finish();};
+
 			Button btnPresence = FindViewById<Button> (Resource.Id.btnPresence);
 			btnPresence.Click += delegate {Presence();};
 			
@@ -85,7 +91,13 @@ namespace PubNub_Messaging
 			Display("Running Subscribe");
 			pubnub.subscribe<string>(channel, DisplayReturnMessage);
 		}
-		
+
+		public void SubscribeConnCallback()
+		{
+			Display("Running Subscribe Connection Callback");
+			pubnub.subscribe<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage);
+		}
+
 		public void Publish()
 		{
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -145,7 +157,15 @@ namespace PubNub_Messaging
 			Display("Running Time");
 			pubnub.time<string>(DisplayReturnMessage);
 		}
-		
+
+		/// <summary>
+		/// Callback method to provide the connect status of Subscribe call
+		/// </summary>
+		/// <param name="result"></param>
+		void DisplayConnectStatusMessage(string result)
+		{
+			Display(String.Format("Connect Callback - {0}", result));
+		}
 		
 		public void Display (string strText)
 		{

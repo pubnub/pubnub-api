@@ -2,16 +2,21 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="PubNub_Messaging/Pubnub.cs">
     <Files>
-      <File FileName="PubNub_Messaging/MainActivity.cs" Line="6" Column="21" />
-      <File FileName="PubNub_Messaging/Resources/values/Strings.xml" Line="12" Column="13" />
-      <File FileName="PubNub_Messaging/Pubnub.cs" Line="45" Column="3" />
-      <File FileName="../../MonoTouch/Pubnub-Messaging/Pubnub-Messaging/Pubnub_MessagingSub.cs" Line="42" Column="4" />
-      <File FileName="PubNub_Messaging/LaunchScreen.cs" Line="62" Column="13" />
+      <File FileName="PubNub_Messaging/MainActivity.cs" Line="174" Column="1" />
+      <File FileName="PubNub_Messaging/Pubnub.cs" Line="1874" Column="28" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Andr.Unit" expanded="True" selected="True" />
+          <Node name="Andr.Unit" expanded="True" />
+          <Node name="PubNub_Messaging" expanded="True">
+            <Node name="Resources" expanded="True">
+              <Node name="layout" expanded="True" />
+              <Node name="layout-large" expanded="True" />
+              <Node name="values" expanded="True" />
+            </Node>
+            <Node name="Pubnub.cs" selected="True" />
+          </Node>
         </State>
       </Pad>
       <Pad Id="ClassPad">
@@ -26,9 +31,11 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/rajatkalsy/Projects/Client/ODesk/pubnub/MonoForAndroid/Pubnub-Messaging/PubNub_Messaging/MainActivity.cs" line="140" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.PubNub__Messaging AndroidDeviceId-Debug="emulator-5554" />
   <MonoDevelop.Ide.ItemProperties.Andr.Unit AndroidDeviceId-Debug="emulator-5554" />
+  <MonoDevelop.Ide.ItemProperties.PubNub__Messaging AndroidDeviceId-Debug="emulator-5554" />
 </Properties>
