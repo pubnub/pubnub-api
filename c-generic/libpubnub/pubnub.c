@@ -350,6 +350,12 @@ pubnub_publish(struct pubnub *p, const char *channel, struct json_object *messag
 	}
 	p->state = PNS_BUSY;
 
+	bool put_message = false;
+	if (p->cipher_key) {
+		message = pubnub_encrypt(p->cipher_key, json_object_to_json_string(message));
+		put_message = true;
+	}
+
 	const char *message_str = json_object_to_json_string(message);
 
 	char *signature;
@@ -362,6 +368,8 @@ pubnub_publish(struct pubnub *p, const char *channel, struct json_object *messag
 	const char *urlelems[] = { "publish", p->publish_key, p->subscribe_key, signature, channel, "0", message_str, NULL };
 	pubnub_http_request(p, urlelems, timeout, (pubnub_http_cb) cb, cb_data);
 	free(signature);
+	if (put_message)
+		json_object_put(message);
 }
 
 
@@ -397,7 +405,20 @@ error:
 		result = PNR_FORMAT_ERROR;
 		goto error;
 	}
-	int msg_n = json_object_array_length(msg);
+
+	if (p->cipher_key) {
+		/* Decrypt array elements, which must be strings. */
+		struct json_object *msg_new = pubnub_decrypt_array(p->cipher_key, msg);
+		if (!msg_new) {
+			result = PNR_FORMAT_ERROR;
+			goto error;
+		}
+		/* Replacing msg in the response[] array will make sure
+		 * the refcounting is correct; this drops old msg and
+		 * will drop msg_new when we drop the whole response. */
+		json_object_array_put_idx(response, 0, msg_new);
+		msg = msg_new;
+	}
 
 	/* Extract and save time token (mandatory). */
 	json_object *time_token = json_object_array_get_idx(response, 1);
@@ -411,6 +432,7 @@ error:
 	/* Extract and update channel name (not mandatory, present only
 	 * when multiplexing). */
 	json_object *channelset_json = json_object_array_get_idx(response, 2);
+	int msg_n = json_object_array_length(msg);
 	char **channels = malloc((msg_n + 1) * sizeof(channels[0]));
 	if (channelset_json) {
 		if (!json_object_is_type(channelset_json, json_type_string)) {
@@ -443,7 +465,7 @@ error:
 	free(channelset);
 
 	/* Finally call the user callback. */
-	cb(p, result, channels, json_object_array_get_idx(response, 0), ctx_data, call_data);
+	cb(p, result, channels, msg, ctx_data, call_data);
 }
 
 void
@@ -485,6 +507,50 @@ pubnub_subscribe_multi(struct pubnub *p, const char *channels[], int channels_n,
 }
 
 
+struct pubnub_history_http_cb {
+	pubnub_history_cb cb;
+	void *call_data;
+};
+
+static void
+pubnub_history_http_cb(struct pubnub *p, enum pubnub_res result, struct json_object *response, void *ctx_data, void *call_data)
+{
+	struct pubnub_history_http_cb *cb_http_data = call_data;
+	call_data = cb_http_data->call_data;
+	pubnub_history_cb cb = cb_http_data->cb;
+	free(cb_http_data);
+
+	if (result != PNR_OK) {
+error:
+		cb(p, result, response, ctx_data, call_data);
+		return;
+	}
+
+	/* Response must be an array. */
+	if (!json_object_is_type(response, json_type_array)) {
+		result = PNR_FORMAT_ERROR;
+		goto error;
+	}
+
+	bool put_response = false;
+	if (p->cipher_key) {
+		/* Decrypt array elements, which must be strings. */
+		struct json_object *response_new = pubnub_decrypt_array(p->cipher_key, response);
+		if (!response_new) {
+			result = PNR_FORMAT_ERROR;
+			goto error;
+		}
+		put_response = true;
+		response = response_new;
+	}
+
+	/* Finally call the user callback. */
+	cb(p, result, response, ctx_data, call_data);
+
+	if (put_response)
+		json_object_put(response);
+}
+
 void
 pubnub_history(struct pubnub *p, const char *channel, int limit,
 		long timeout, pubnub_history_cb cb, void *cb_data)
@@ -498,7 +564,11 @@ pubnub_history(struct pubnub *p, const char *channel, int limit,
 	}
 	p->state = PNS_BUSY;
 
+	struct pubnub_history_http_cb *cb_http_data = malloc(sizeof(*cb_http_data));
+	cb_http_data->cb = cb;
+	cb_http_data->call_data = cb_data;
+
 	char strlimit[64]; snprintf(strlimit, sizeof(strlimit), "%d", limit);
 	const char *urlelems[] = { "history", p->subscribe_key, channel, "0", strlimit, NULL };
-	pubnub_http_request(p, urlelems, timeout, (pubnub_http_cb) cb, cb_data);
+	pubnub_http_request(p, urlelems, timeout, pubnub_history_http_cb, cb_http_data);
 }
