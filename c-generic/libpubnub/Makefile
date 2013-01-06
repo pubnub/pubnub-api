@@ -4,7 +4,7 @@ LIBS=`pkg-config --libs json libcurl libcrypto`
 # TODO: Build a .so library
 # TODO: Symbol visibility
 
-LIBOBJS=pubnub.o pubnub-sync.o
+LIBOBJS=pubnub.o pubnub-sync.o crypto.o
 OBJS=$(LIBOBJS) example-sync-demo.o
 
 all: example-sync-demo
