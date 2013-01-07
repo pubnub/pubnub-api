@@ -1,4 +1,5 @@
-CUSTOM_CFLAGS=-Wall -ggdb3 -O3 -std=gnu99 -I. `pkg-config --cflags json libcurl libcrypto libevent` -DDEBUG
+# Compile using `make XCFLAGS=-DDEBUG` to enable debugging code.
+CUSTOM_CFLAGS=-Wall -ggdb3 -O3 -std=gnu99 -I. `pkg-config --cflags json libcurl libcrypto libevent`
 LIBS=`pkg-config --libs json libcurl libcrypto libevent`
 
 # TODO: Build a .so library
