@@ -7,6 +7,7 @@
 
 #include "pubnub.h"
 #include "pubnub-priv.h"
+#include "pubnub-sync.h"
 
 
 /** Data structures. */
