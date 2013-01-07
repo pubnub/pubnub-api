@@ -36,6 +36,21 @@ struct pubnub_sync {
 	char **channels;
 };
 
+static void
+pubnub_sync_reset(struct pubnub_sync *sync)
+{
+	if (sync->response) {
+		json_object_put(sync->response);
+		sync->response = NULL;
+	}
+	if (sync->channels) {
+		for (int i = 0; sync->channels[i]; i++)
+			free(sync->channels[i]);
+		free(sync->channels);
+		sync->channels = NULL;
+	}
+}
+
 
 /** Public API */
 
@@ -200,6 +215,7 @@ void
 pubnub_sync_done(struct pubnub *p, void *ctx_data)
 {
 	struct pubnub_sync *sync = ctx_data;
+	pubnub_sync_reset(sync);
 	if (sync->fdset) free(sync->fdset);
 	if (sync->cbset) free(sync->cbset);
 	free(sync);
@@ -213,16 +229,7 @@ pubnub_sync_generic_cb(struct pubnub *p, enum pubnub_res result, struct json_obj
 {
 	struct pubnub_sync *sync = ctx_data;
 
-	if (sync->response) {
-		json_object_put(sync->response);
-		sync->response = NULL;
-	}
-	if (sync->channels) {
-		for (int i = 0; sync->channels[i]; i++)
-			free(sync->channels[i]);
-		free(sync->channels);
-		sync->channels = NULL;
-	}
+	pubnub_sync_reset(sync);
 
 	sync->result = result;
 	if (response)
