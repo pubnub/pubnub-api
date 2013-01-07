@@ -102,8 +102,16 @@ struct pubnub_callbacks {
 	pubnub_publish_cb publish;
 	pubnub_subscribe_cb subscribe;
 	pubnub_history_cb history;
+
+	/* This extra pointer is reserved for forward binary
+	 * compatibility in case more callbacks need to be added;
+	 * then, it will point to a chained callback structure
+	 * or some entirely new and more flexible contraption. */
+	void *unused;
 };
 
+
+/* TODO documentation for the functions below. */
 
 /* origin is optional */
 /* curl_global_init() caveat */
