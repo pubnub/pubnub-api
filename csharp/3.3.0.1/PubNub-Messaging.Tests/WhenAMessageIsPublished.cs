@@ -8,8 +8,9 @@ using System.Threading;
 using System.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PubNubMessaging.Core;
 
-namespace PubNub_Messaging.Tests
+namespace PubNubMessaging.Tests
 {
     [TestFixture]
     public class WhenAMessageIsPublished
@@ -66,7 +67,7 @@ namespace PubNub_Messaging.Tests
             string channel = "my/channel";
             string message = messageForUnencryptPublish;
 
-            pubnub.publish<string>(channel, message, ReturnSuccessUnencryptPublishCodeCallback);
+            pubnub.Publish<string>(channel, message, ReturnSuccessUnencryptPublishCodeCallback);
             manualEvent1.WaitOne(310*1000);
 
             if (!isUnencryptPublished)
@@ -75,7 +76,7 @@ namespace PubNub_Messaging.Tests
             }
             else
             {
-                pubnub.detailedHistory<string>(channel, -1, unEncryptPublishTimetoken, -1, false, CaptureUnencryptDetailedHistoryCallback);
+                pubnub.DetailedHistory<string>(channel, -1, unEncryptPublishTimetoken, -1, false, CaptureUnencryptDetailedHistoryCallback);
                 mreUnencryptDH.WaitOne(310 * 1000);
                 Assert.IsTrue(isUnencryptDH, "Unable to match the successful unencrypt Publish");
             }
@@ -94,7 +95,7 @@ namespace PubNub_Messaging.Tests
             object message = new CustomClass();
             messageObjectForUnencryptPublish = JsonConvert.SerializeObject(message);
 
-            pubnub.publish<string>(channel, message, ReturnSuccessUnencryptObjectPublishCodeCallback);
+            pubnub.Publish<string>(channel, message, ReturnSuccessUnencryptObjectPublishCodeCallback);
             mreUnencryptObjectPub.WaitOne(310 * 1000);
 
             if (!isUnencryptObjectPublished)
@@ -103,7 +104,7 @@ namespace PubNub_Messaging.Tests
             }
             else
             {
-                pubnub.detailedHistory<string>(channel, -1, unEncryptObjectPublishTimetoken, -1, false, CaptureUnencryptObjectDetailedHistoryCallback);
+                pubnub.DetailedHistory<string>(channel, -1, unEncryptObjectPublishTimetoken, -1, false, CaptureUnencryptObjectDetailedHistoryCallback);
                 mreUnencryptObjectDH.WaitOne(310 * 1000);
                 Assert.IsTrue(isUnencryptObjectDH, "Unable to match the successful unencrypt object Publish");
             }
@@ -125,7 +126,7 @@ namespace PubNub_Messaging.Tests
             object message = new SecretCustomClass();
             messageObjectForEncryptPublish = JsonConvert.SerializeObject(message);
 
-            pubnub.publish<string>(channel, message, ReturnSuccessEncryptObjectPublishCodeCallback);
+            pubnub.Publish<string>(channel, message, ReturnSuccessEncryptObjectPublishCodeCallback);
             mreEncryptObjectPub.WaitOne(310 * 1000);
 
             if (!isEncryptObjectPublished)
@@ -134,7 +135,7 @@ namespace PubNub_Messaging.Tests
             }
             else
             {
-                pubnub.detailedHistory<string>(channel, -1, encryptObjectPublishTimetoken, -1, false, CaptureEncryptObjectDetailedHistoryCallback);
+                pubnub.DetailedHistory<string>(channel, -1, encryptObjectPublishTimetoken, -1, false, CaptureEncryptObjectDetailedHistoryCallback);
                 mreEncryptObjectDH.WaitOne(310 * 1000);
                 Assert.IsTrue(isEncryptObjectDH, "Unable to match the successful encrypt object Publish");
             }
@@ -155,7 +156,7 @@ namespace PubNub_Messaging.Tests
             string channel = "my/channel";
             string message = messageForEncryptPublish;
 
-            pubnub.publish<string>(channel, message, ReturnSuccessEncryptPublishCodeCallback);
+            pubnub.Publish<string>(channel, message, ReturnSuccessEncryptPublishCodeCallback);
             mreEncryptPub.WaitOne(310 * 1000);
 
             if (!isEncryptPublished)
@@ -164,7 +165,7 @@ namespace PubNub_Messaging.Tests
             }
             else
             {
-                pubnub.detailedHistory<string>(channel, -1, encryptPublishTimetoken, -1, false, CaptureEncryptDetailedHistoryCallback);
+                pubnub.DetailedHistory<string>(channel, -1, encryptPublishTimetoken, -1, false, CaptureEncryptDetailedHistoryCallback);
                 mreEncryptDH.WaitOne(310 * 1000);
                 Assert.IsTrue(isEncryptDH, "Unable to decrypt the successful Publish");
             }
@@ -185,7 +186,7 @@ namespace PubNub_Messaging.Tests
             string channel = "my/channel";
             string message = messageForSecretEncryptPublish;
 
-            pubnub.publish<string>(channel, message, ReturnSuccessSecretEncryptPublishCodeCallback);
+            pubnub.Publish<string>(channel, message, ReturnSuccessSecretEncryptPublishCodeCallback);
             mreSecretEncryptPub.WaitOne(310 * 1000);
 
             if (!isSecretEncryptPublished)
@@ -194,7 +195,7 @@ namespace PubNub_Messaging.Tests
             }
             else
             {
-                pubnub.detailedHistory<string>(channel, -1, secretEncryptPublishTimetoken, -1, false, CaptureSecretEncryptDetailedHistoryCallback);
+                pubnub.DetailedHistory<string>(channel, -1, secretEncryptPublishTimetoken, -1, false, CaptureSecretEncryptDetailedHistoryCallback);
                 mreSecretEncryptDH.WaitOne(310 * 1000);
                 Assert.IsTrue(isSecretEncryptDH, "Unable to decrypt the successful Secret key Publish");
             }
@@ -390,7 +391,7 @@ namespace PubNub_Messaging.Tests
         {
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
 
-            Assert.IsNotNull(pubnub.generateGUID());
+            Assert.IsNotNull(pubnub.GenerateGuid());
         }
 
         [Test]
@@ -409,7 +410,7 @@ namespace PubNub_Messaging.Tests
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.publish<string>(channel, message, null);
+            pubnub.Publish<string>(channel, message, null);
         }
 
 
@@ -429,7 +430,7 @@ namespace PubNub_Messaging.Tests
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.publish<string>(channel, message, ReturnSecretKeyPublishCallback);
+            pubnub.Publish<string>(channel, message, ReturnSecretKeyPublishCallback);
             manualEvent2.WaitOne(310 * 1000);
 
             Assert.IsTrue(isPublished2, "Publish Failed with secret key");
@@ -469,7 +470,7 @@ namespace PubNub_Messaging.Tests
             string channel = "my/channel";
             string message = "Pubnub API Usage Example";
 
-            pubnub.publish<string>(channel, message, ReturnNoSSLDefaultFalseCallback);
+            pubnub.Publish<string>(channel, message, ReturnNoSSLDefaultFalseCallback);
             manualEvent3.WaitOne(310 * 1000);
             Assert.IsTrue(isPublished3, "Publish Failed with no SSL");
         }

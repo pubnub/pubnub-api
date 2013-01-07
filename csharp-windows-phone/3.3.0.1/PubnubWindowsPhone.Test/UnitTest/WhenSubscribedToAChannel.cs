@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Phone.Testing;
-using PubNub_Messaging;
+using PubNubMessaging.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading;
@@ -46,15 +46,15 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "ThenSubscribeShouldReturnReceivedMessage";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.subscribe<string>(channel, ReceivedMessageCallback);
+                    pubnub.Subscribe<string>(channel, ReceivedMessageCallback);
 
-                    pubnub.publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummyPublishCallback);
+                    pubnub.Publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummyPublishCallback);
                     mePublish.WaitOne(310 * 1000);
                     //Thread.Sleep(100);
 
                     meSubNoConnect.WaitOne(310 * 1000);
                     
-                    pubnub.unsubscribe<string>(channel, dummyUnsubCallback);
+                    pubnub.Unsubscribe<string>(channel, dummyUnsubCallback);
                     meUnsub.WaitOne(310 * 1000);
                     Thread.Sleep(100);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
@@ -81,11 +81,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
                     string channel = "my/channel";
 
-                    pubnub.subscribe<string>(channel, ReceivedMessageCallbackYesConnect, ConnectStatusCallback);
+                    pubnub.Subscribe<string>(channel, ReceivedMessageCallbackYesConnect, ConnectStatusCallback);
                     meSubYesConnect.WaitOne(310 * 1000);
                     Thread.Sleep(200);
 
-                    pubnub.unsubscribe<string>(channel, dummyUnsubCallback);
+                    pubnub.Unsubscribe<string>(channel, dummyUnsubCallback);
                     meUnsub.WaitOne(310 * 1000);
                     Thread.Sleep(200);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>

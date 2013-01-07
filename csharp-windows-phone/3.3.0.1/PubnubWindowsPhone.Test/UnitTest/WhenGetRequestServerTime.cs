@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Phone.Testing;
-using PubNub_Messaging;
+using PubNubMessaging.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading;
@@ -39,7 +39,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "ThenItShouldReturnTimeStamp";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.time<string>(ReturnTimeStampCallback);
+                    pubnub.Time<string>(ReturnTimeStampCallback);
                     manualEvent1.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
@@ -74,7 +74,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
         public void TranslateDateTimeToUnixTime()
         {
             DateTime dt = new DateTime(2012, 6, 26, 0, 0, 0, DateTimeKind.Utc);
-            long nanosecTime = Pubnub.translateDateTimeToPubnubUnixNanoSeconds(dt);
+            long nanosecTime = Pubnub.TranslateDateTimeToPubnubUnixNanoSeconds(dt);
             //Test for 26th June 2012 GMT
             Assert.AreEqual<long>(13406688000000000, nanosecTime);
         }
@@ -84,7 +84,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
         {
             //Test for 26th June 2012 GMT
             DateTime expectedDt = new DateTime(2012, 6, 26, 0, 0, 0, DateTimeKind.Utc);
-            DateTime actualDt = Pubnub.translatePubnubUnixNanoSecondsToDateTime(13406688000000000);
+            DateTime actualDt = Pubnub.TranslatePubnubUnixNanoSecondsToDateTime(13406688000000000);
             Assert.AreEqual<DateTime>(expectedDt, actualDt);
         }
     }

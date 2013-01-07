@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Phone.Testing;
-using PubNub_Messaging;
+using PubNubMessaging.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading;
@@ -50,7 +50,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "DetailHistoryCount10ReturnsRecords";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.detailedHistory<string>(channel, 10, DetailedHistoryCount10Callback);
+                    pubnub.DetailedHistory<string>(channel, 10, DetailedHistoryCount10Callback);
                     mreMsgCount10.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
@@ -96,7 +96,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "DetailHistoryCount10ReverseTrueReturnsRecords";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.detailedHistory<string>(channel, -1, -1, 10, true, DetailedHistoryCount10ReverseTrueCallback);
+                    pubnub.DetailedHistory<string>(channel, -1, -1, 10, true, DetailedHistoryCount10ReverseTrueCallback);
                     mreMsgCount10ReverseTrue.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
@@ -143,10 +143,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     pubnub.PubnubUnitTest = unitTest;
 
                     string channel = "my/channel";
-                    startTimeWithReverseTrue = Pubnub.translateDateTimeToPubnubUnixNanoSeconds(new DateTime(2012, 12, 1));
+                    startTimeWithReverseTrue = Pubnub.TranslateDateTimeToPubnubUnixNanoSeconds(new DateTime(2012, 12, 1));
                     for (int index = 0; index < 10; index++)
                     {
-                        pubnub.publish<string>(channel,
+                        pubnub.Publish<string>(channel,
                             string.Format("DetailedHistoryStartTimeWithReverseTrue {0}", index),
                             DetailedHistorySamplePublishCallback);
                         mrePublishStartReverseTrue.WaitOne(310 * 1000);
@@ -155,7 +155,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
                     //Thread.Sleep(2000);
 
-                    pubnub.detailedHistory<string>(channel, startTimeWithReverseTrue, DetailedHistoryStartWithReverseTrueCallback, true);
+                    pubnub.DetailedHistory<string>(channel, startTimeWithReverseTrue, DetailedHistoryStartWithReverseTrueCallback, true);
                     mreMsgStartReverseTrue.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {

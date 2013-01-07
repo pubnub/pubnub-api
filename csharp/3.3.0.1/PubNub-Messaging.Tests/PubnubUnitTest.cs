@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PubNubMessaging.Core;
 
-namespace PubNub_Messaging.Tests
+namespace PubNubMessaging.Tests
 {
     public class PubnubUnitTest : IPubnubUnitTest
     {
-        private bool _enableStubTest = true;
+        private bool enableStubTest = true;
         private string _testClassName = "";
         private string _testCaseName = "";
 
@@ -15,15 +16,15 @@ namespace PubNub_Messaging.Tests
         {
             get
             {
-                return _enableStubTest;
+                return enableStubTest;
             }
             set
             {
-                _enableStubTest = value;
+                enableStubTest = value;
             }
         }
 
-        private Dictionary<string, string> Load_WhenAClientIsPresented_ThenPresenceShouldReturnReceivedMessage()
+        private Dictionary<string, string> LoadWhenAClientIsPresentedThenPresenceShouldReturnReceivedMessage()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -46,7 +47,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenAClientIsPresented_IfHereNowIsCalledThenItShouldReturnInfo()
+        private Dictionary<string, string> LoadWhenAClientIsPresentedIfHereNowIsCalledThenItShouldReturnInfo()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -57,7 +58,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenAMessageIsPublished_ThenUnencryptPublishShouldReturnSuccessCodeAndInfo()
+        private Dictionary<string, string> LoadWhenAMessageIsPublishedThenUnencryptPublishShouldReturnSuccessCodeAndInfo()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -70,7 +71,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenAMessageIsPublished_ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo()
+        private Dictionary<string, string> LoadWhenAMessageIsPublishedThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -83,7 +84,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenAMessageIsPublished_ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo()
+        private Dictionary<string, string> LoadWhenAMessageIsPublishedThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -96,7 +97,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenAMessageIsPublished_ThenEncryptPublishShouldReturnSuccessCodeAndInfo()
+        private Dictionary<string, string> LoadWhenAMessageIsPublishedThenEncryptPublishShouldReturnSuccessCodeAndInfo()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -109,7 +110,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenAMessageIsPublished_ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo()
+        private Dictionary<string, string> LoadWhenAMessageIsPublishedThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -123,7 +124,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenAMessageIsPublished_ThenOptionalSecretKeyShouldBeProvidedInConstructor()
+        private Dictionary<string, string> LoadWhenAMessageIsPublishedThenOptionalSecretKeyShouldBeProvidedInConstructor()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -134,7 +135,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenAMessageIsPublished_IfSSLNotProvidedThenDefaultShouldBeFalse()
+        private Dictionary<string, string> LoadWhenAMessageIsPublishedIfSSLNotProvidedThenDefaultShouldBeFalse()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -145,7 +146,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenDetailedHistoryIsRequested_DetailHistoryCount10ReturnsRecords()
+        private Dictionary<string, string> LoadWhenDetailedHistoryIsRequestedDetailHistoryCount10ReturnsRecords()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -156,7 +157,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenDetailedHistoryIsRequested_DetailHistoryCount10ReverseTrueReturnsRecords()
+        private Dictionary<string, string> LoadWhenDetailedHistoryIsRequestedDetailHistoryCount10ReverseTrueReturnsRecords()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -167,7 +168,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenDetailedHistoryIsRequested_DetailedHistoryStartWithReverseTrue()
+        private Dictionary<string, string> LoadWhenDetailedHistoryIsRequestedDetailedHistoryStartWithReverseTrue()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -198,14 +199,21 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenGetRequestServerTime_ThenItShouldReturnTimeStamp()
+        private Dictionary<string, string> LoadWhenGetRequestServerTimeThenItShouldReturnTimeStamp()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
             data.Add("/time/0", "[13559011090230537]");
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenSubscribedToAChannel_ThenSubscribeShouldReturnReceivedMessage()
+        private Dictionary<string, string> LoadWhenGetRequestServerTimeThenWithProxyItShouldReturnTimeStamp()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+            data.Add("/time/0", "[13559011090230537]");
+            return data;
+        }
+
+        private Dictionary<string, string> LoadWhenSubscribedToAChannelThenSubscribeShouldReturnReceivedMessage()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -224,7 +232,7 @@ namespace PubNub_Messaging.Tests
             return data;
         }
 
-        private Dictionary<string, string> Load_WhenSubscribedToAChannel_ThenSubscribeShouldReturnConnectStatus()
+        private Dictionary<string, string> LoadWhenSubscribedToAChannelThenSubscribeShouldReturnConnectStatus()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
@@ -254,10 +262,10 @@ namespace PubNub_Messaging.Tests
                     switch (_testCaseName)
                     {
                         case "ThenPresenceShouldReturnReceivedMessage":
-                            respDic = Load_WhenAClientIsPresented_ThenPresenceShouldReturnReceivedMessage();
+                            respDic = LoadWhenAClientIsPresentedThenPresenceShouldReturnReceivedMessage();
                             break;
                         case "IfHereNowIsCalledThenItShouldReturnInfo":
-                            respDic = Load_WhenAClientIsPresented_IfHereNowIsCalledThenItShouldReturnInfo();
+                            respDic = LoadWhenAClientIsPresentedIfHereNowIsCalledThenItShouldReturnInfo();
                             break;
                         default:
                             break;
@@ -267,25 +275,25 @@ namespace PubNub_Messaging.Tests
                     switch (_testCaseName)
                     {
                         case "ThenUnencryptPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = Load_WhenAMessageIsPublished_ThenUnencryptPublishShouldReturnSuccessCodeAndInfo();
+                            respDic = LoadWhenAMessageIsPublishedThenUnencryptPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = Load_WhenAMessageIsPublished_ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo();
+                            respDic = LoadWhenAMessageIsPublishedThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = Load_WhenAMessageIsPublished_ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo();
+                            respDic = LoadWhenAMessageIsPublishedThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenEncryptPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = Load_WhenAMessageIsPublished_ThenEncryptPublishShouldReturnSuccessCodeAndInfo();
+                            respDic = LoadWhenAMessageIsPublishedThenEncryptPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = Load_WhenAMessageIsPublished_ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo();
+                            respDic = LoadWhenAMessageIsPublishedThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenOptionalSecretKeyShouldBeProvidedInConstructor":
-                            respDic = Load_WhenAMessageIsPublished_ThenOptionalSecretKeyShouldBeProvidedInConstructor();
+                            respDic = LoadWhenAMessageIsPublishedThenOptionalSecretKeyShouldBeProvidedInConstructor();
                             break;
                         case "IfSSLNotProvidedThenDefaultShouldBeFalse":
-                            respDic = Load_WhenAMessageIsPublished_IfSSLNotProvidedThenDefaultShouldBeFalse();
+                            respDic = LoadWhenAMessageIsPublishedIfSSLNotProvidedThenDefaultShouldBeFalse();
                             break;
                         default:
                             break;
@@ -295,13 +303,13 @@ namespace PubNub_Messaging.Tests
                     switch (_testCaseName)
                     {
                         case "DetailHistoryCount10ReturnsRecords":
-                            respDic = Load_WhenDetailedHistoryIsRequested_DetailHistoryCount10ReturnsRecords();
+                            respDic = LoadWhenDetailedHistoryIsRequestedDetailHistoryCount10ReturnsRecords();
                             break;
                         case "DetailHistoryCount10ReverseTrueReturnsRecords":
-                            respDic = Load_WhenDetailedHistoryIsRequested_DetailHistoryCount10ReverseTrueReturnsRecords();
+                            respDic = LoadWhenDetailedHistoryIsRequestedDetailHistoryCount10ReverseTrueReturnsRecords();
                             break;
                         case "DetailedHistoryStartWithReverseTrue":
-                            respDic = Load_WhenDetailedHistoryIsRequested_DetailedHistoryStartWithReverseTrue();
+                            respDic = LoadWhenDetailedHistoryIsRequestedDetailedHistoryStartWithReverseTrue();
                             break;
                         default:
                             break;
@@ -311,7 +319,10 @@ namespace PubNub_Messaging.Tests
                     switch (_testCaseName)
                     {
                         case "ThenItShouldReturnTimeStamp":
-                            respDic = Load_WhenGetRequestServerTime_ThenItShouldReturnTimeStamp();
+                            respDic = LoadWhenGetRequestServerTimeThenItShouldReturnTimeStamp();
+                            break;
+                        case "ThenWithProxyItShouldReturnTimeStamp":
+                            respDic = LoadWhenGetRequestServerTimeThenWithProxyItShouldReturnTimeStamp();
                             break;
                         default:
                             break;
@@ -321,10 +332,10 @@ namespace PubNub_Messaging.Tests
                     switch (_testCaseName)
                     {
                         case "ThenSubscribeShouldReturnReceivedMessage":
-                            respDic = Load_WhenSubscribedToAChannel_ThenSubscribeShouldReturnReceivedMessage();
+                            respDic = LoadWhenSubscribedToAChannelThenSubscribeShouldReturnReceivedMessage();
                             break;
                         case "ThenSubscribeShouldReturnConnectStatus":
-                            respDic = Load_WhenSubscribedToAChannel_ThenSubscribeShouldReturnConnectStatus();
+                            respDic = LoadWhenSubscribedToAChannelThenSubscribeShouldReturnConnectStatus();
                             break;
                         default:
                             break;

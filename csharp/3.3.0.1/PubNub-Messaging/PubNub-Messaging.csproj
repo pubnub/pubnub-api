@@ -8,8 +8,8 @@
     <ProjectGuid>{B1ED98C3-FD0B-4B45-B0BE-40AFD37182CB}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PubNub_Messaging</RootNamespace>
-    <AssemblyName>PubNub-Messaging</AssemblyName>
+    <RootNamespace>PubNubMessaging.Core</RootNamespace>
+    <AssemblyName>PubNubMessaging.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -51,7 +51,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>PubNub_Messaging.Pubnub_Example</StartupObject>
+    <StartupObject>PubNubMessaging.Core.PubnubExample</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -160,7 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Pubnub.cs" />
-    <Compile Include="Pubnub_Example.cs" />
+    <Compile Include="PubnubExample.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="v4.0\" />
@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

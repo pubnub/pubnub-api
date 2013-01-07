@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Phone.Testing;
-using PubNub_Messaging;
+using PubNubMessaging.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Utilities;
@@ -85,7 +85,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "ThenUnencryptPublishShouldReturnSuccessCodeAndInfo";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.publish<string>(channel, message, ReturnSuccessUnencryptPublishCodeCallback);
+                    pubnub.Publish<string>(channel, message, ReturnSuccessUnencryptPublishCodeCallback);
                     manualEvent1.WaitOne(310 * 1000);
 
                     if (!isUnencryptPublished)
@@ -98,7 +98,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     }
                     else
                     {
-                        pubnub.detailedHistory<string>(channel, -1, unEncryptPublishTimetoken, -1, false, CaptureUnencryptDetailedHistoryCallback);
+                        pubnub.DetailedHistory<string>(channel, -1, unEncryptPublishTimetoken, -1, false, CaptureUnencryptDetailedHistoryCallback);
                         mreUnencryptDH.WaitOne(310 * 1000);
                         Deployment.Current.Dispatcher.BeginInvoke(() =>
                        {
@@ -125,7 +125,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.publish<string>(channel, message, ReturnSuccessUnencryptObjectPublishCodeCallback);
+                    pubnub.Publish<string>(channel, message, ReturnSuccessUnencryptObjectPublishCodeCallback);
                     mreUnencryptObjectPub.WaitOne(310 * 1000);
 
                     if (!isUnencryptObjectPublished)
@@ -138,7 +138,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     }
                     else
                     {
-                        pubnub.detailedHistory<string>(channel, -1, unEncryptObjectPublishTimetoken, -1, false, CaptureUnencryptObjectDetailedHistoryCallback);
+                        pubnub.DetailedHistory<string>(channel, -1, unEncryptObjectPublishTimetoken, -1, false, CaptureUnencryptObjectDetailedHistoryCallback);
                         mreUnencryptObjectDH.WaitOne(310 * 1000);
                         Deployment.Current.Dispatcher.BeginInvoke(() =>
                        {
@@ -167,7 +167,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.publish<string>(channel, message, ReturnSuccessEncryptObjectPublishCodeCallback);
+                    pubnub.Publish<string>(channel, message, ReturnSuccessEncryptObjectPublishCodeCallback);
                     mreEncryptObjectPub.WaitOne(310 * 1000);
 
                     if (!isEncryptObjectPublished)
@@ -180,7 +180,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     }
                     else
                     {
-                        pubnub.detailedHistory<string>(channel, -1, encryptObjectPublishTimetoken, -1, false, CaptureEncryptObjectDetailedHistoryCallback);
+                        pubnub.DetailedHistory<string>(channel, -1, encryptObjectPublishTimetoken, -1, false, CaptureEncryptObjectDetailedHistoryCallback);
                         mreEncryptObjectDH.WaitOne(310 * 1000);
                         Deployment.Current.Dispatcher.BeginInvoke(() =>
                        {
@@ -207,7 +207,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "ThenEncryptPublishShouldReturnSuccessCodeAndInfo";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.publish<string>(channel, message, ReturnSuccessEncryptPublishCodeCallback);
+                    pubnub.Publish<string>(channel, message, ReturnSuccessEncryptPublishCodeCallback);
                     mreEncryptPub.WaitOne(310 * 1000);
 
                     if (!isEncryptPublished)
@@ -220,7 +220,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     }
                     else
                     {
-                        pubnub.detailedHistory<string>(channel, -1, encryptPublishTimetoken, -1, false, CaptureEncryptDetailedHistoryCallback);
+                        pubnub.DetailedHistory<string>(channel, -1, encryptPublishTimetoken, -1, false, CaptureEncryptDetailedHistoryCallback);
                         mreEncryptDH.WaitOne(310 * 1000);
                         Deployment.Current.Dispatcher.BeginInvoke(() =>
                        {
@@ -246,7 +246,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.publish<string>(channel, message, ReturnSuccessSecretEncryptPublishCodeCallback);
+                    pubnub.Publish<string>(channel, message, ReturnSuccessSecretEncryptPublishCodeCallback);
                     mreSecretEncryptPub.WaitOne(310 * 1000);
 
                     if (!isSecretEncryptPublished)
@@ -259,7 +259,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     }
                     else
                     {
-                        pubnub.detailedHistory<string>(channel, -1, secretEncryptPublishTimetoken, -1, false, CaptureSecretEncryptDetailedHistoryCallback);
+                        pubnub.DetailedHistory<string>(channel, -1, secretEncryptPublishTimetoken, -1, false, CaptureSecretEncryptDetailedHistoryCallback);
                         mreSecretEncryptDH.WaitOne(310 * 1000);
                         Deployment.Current.Dispatcher.BeginInvoke(() =>
                        {
@@ -475,7 +475,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                                {
-                                   Assert.IsNotNull(pubnub.generateGUID());
+                                   Assert.IsNotNull(pubnub.GenerateGuid());
                                    TestComplete();
                                });
                 });
@@ -495,7 +495,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
                     try
                     {
-                        pubnub.publish<string>(channel, message, null);
+                        pubnub.Publish<string>(channel, message, null);
                     }
                     catch (MissingFieldException)
                     {
@@ -529,7 +529,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "ThenOptionalSecretKeyShouldBeProvidedInConstructor";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.publish<string>(channel, message, ReturnSecretKeyPublishCallback);
+                    pubnub.Publish<string>(channel, message, ReturnSecretKeyPublishCallback);
                     manualEvent2.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                                {
@@ -573,7 +573,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     unitTest.TestCaseName = "IfSSLNotProvidedThenDefaultShouldBeFalse";
                     pubnub.PubnubUnitTest = unitTest;
 
-                    pubnub.publish<string>(channel, message, ReturnNoSSLDefaultFalseCallback);
+                    pubnub.Publish<string>(channel, message, ReturnNoSSLDefaultFalseCallback);
                     manualEvent3.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                                {

@@ -5,9 +5,9 @@ using System.Text;
 using System.ComponentModel;
 using System.Threading;
 
-namespace PubNub_Messaging
+namespace PubNubMessaging.Core
 {
-    public class Pubnub_Example
+    public class PubnubExample
     {
         static public Pubnub pubnub;
 
@@ -16,6 +16,8 @@ namespace PubNub_Messaging
 
         static public void Main()
         {
+            PubnubProxy proxy = null;
+
             Console.WriteLine("HINT: TO TEST RE-CONNECT AND CATCH-UP,");
             Console.WriteLine("      DISCONNECT YOUR MACHINE FROM NETWORK/INTERNET AND ");
             Console.WriteLine("      RE-CONNECT YOUR MACHINE AFTER SOMETIME.");
@@ -58,6 +60,49 @@ namespace PubNub_Messaging
             pubnub = new Pubnub("demo", "demo", "", cipheryKey,
                 (enableSSL.Trim().ToLower() == "y") ? true : false);
 
+            Console.WriteLine("Proxy Server exists? ENTER Y for Yes, else N");
+            string enableProxy = Console.ReadLine();
+            if (enableProxy.Trim().ToLower() == "y")
+            {
+                bool proxyAccepted = false;
+                while (!proxyAccepted)
+                {
+                    Console.WriteLine("ENTER proxy server name or IP.");
+                    string proxyServer = Console.ReadLine();
+                    Console.WriteLine("ENTER port number of proxy server.");
+                    string proxyPort = Console.ReadLine();
+                    int port;
+                    Int32.TryParse(proxyPort, out port);
+                    Console.WriteLine("ENTER user name for proxy server authentication.");
+                    string proxyUsername = Console.ReadLine();
+                    Console.WriteLine("ENTER password for proxy server authentication.");
+                    string proxyPassword = Console.ReadLine();
+                    
+                    proxy = new PubnubProxy();
+                    proxy.ProxyServer = proxyServer;
+                    proxy.ProxyPort = port;
+                    proxy.ProxyUserName = proxyUsername;
+                    proxy.ProxyPassword = proxyPassword;
+                    try
+                    {
+                        pubnub.Proxy = proxy;
+                        proxyAccepted = true;
+                        Console.WriteLine("Proxy details accepted");
+                    }
+                    catch (MissingFieldException mse)
+                    {
+                        Console.WriteLine(mse.Message);
+                        Console.WriteLine("Please RE-ENTER Proxy Server details.");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("No Proxy");
+            }
+            Console.WriteLine();
+
+
             Console.WriteLine("ENTER 1 FOR Subscribe (not implementing connectCallback)");
             Console.WriteLine("ENTER 2 FOR Subscribe (implementing connectCallback)");
             Console.WriteLine("ENTER 3 FOR Publish");
@@ -83,11 +128,11 @@ namespace PubNub_Messaging
                         break;
                     case "1":
                         Console.WriteLine("Running subscribe() (not implementing connectCallback)");
-                        pubnub.subscribe<string>(channel, DisplayReturnMessage);
+                        pubnub.Subscribe<string>(channel, DisplayReturnMessage);
                         break;
                     case "2":
                         Console.WriteLine("Running subscribe() (implementing connectCallback)");
-                        pubnub.subscribe<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage);
+                        pubnub.Subscribe<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage);
                         break;
                     case "3":
                         Console.WriteLine("Running publish()");
@@ -97,11 +142,11 @@ namespace PubNub_Messaging
                         int intData;
                         if (int.TryParse(publishMsg, out intData)) //capture numeric data
                         {
-                            pubnub.publish<string>(channel, intData, DisplayReturnMessage);
+                            pubnub.Publish<string>(channel, intData, DisplayReturnMessage);
                         }
                         else if (double.TryParse(publishMsg, out doubleData)) //capture numeric data
                         {
-                            pubnub.publish<string>(channel, doubleData, DisplayReturnMessage);
+                            pubnub.Publish<string>(channel, doubleData, DisplayReturnMessage);
                         }
                         else
                         {
@@ -111,46 +156,46 @@ namespace PubNub_Messaging
                                 string strMsg = publishMsg.Substring(1, publishMsg.Length - 2);
                                 if (int.TryParse(strMsg, out intData))
                                 {
-                                    pubnub.publish<string>(channel, strMsg, DisplayReturnMessage);
+                                    pubnub.Publish<string>(channel, strMsg, DisplayReturnMessage);
                                 }
                                 else if (double.TryParse(strMsg, out doubleData))
                                 {
-                                    pubnub.publish<string>(channel, strMsg, DisplayReturnMessage);
+                                    pubnub.Publish<string>(channel, strMsg, DisplayReturnMessage);
                                 }
                                 else
                                 {
-                                    pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
+                                    pubnub.Publish<string>(channel, publishMsg, DisplayReturnMessage);
                                 }
                             }
                             else
                             {
-                                pubnub.publish<string>(channel, publishMsg, DisplayReturnMessage);
+                                pubnub.Publish<string>(channel, publishMsg, DisplayReturnMessage);
                             }
                         }
                         break;
                     case "4":
                         Console.WriteLine("Running presence()");
-                        pubnub.presence<string>(channel, DisplayReturnMessage);
+                        pubnub.Presence<string>(channel, DisplayReturnMessage);
                         break;
                     case "5":
                         Console.WriteLine("Running detailed history()");
-                        pubnub.detailedHistory<string>(channel, 100, DisplayReturnMessage);
+                        pubnub.DetailedHistory<string>(channel, 100, DisplayReturnMessage);
                         break;
                     case "6":
                         Console.WriteLine("Running Here_Now()");
-                        pubnub.here_now<string>(channel, DisplayReturnMessage);
+                        pubnub.HereNow<string>(channel, DisplayReturnMessage);
                         break;
                     case "7":
                         Console.WriteLine("Running unsubscribe()");
-                        pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
+                        pubnub.Unsubscribe<string>(channel, DisplayReturnMessage);
                         break;
                     case "8":
                         Console.WriteLine("Running presence-unsubscribe()");
-                        pubnub.presence_unsubscribe<string>(channel, DisplayReturnMessage);
+                        pubnub.PresenceUnsubscribe<string>(channel, DisplayReturnMessage);
                         break;
                     case "9":
                         Console.WriteLine("Running time()");
-                        pubnub.time<string>(DisplayReturnMessage);
+                        pubnub.Time<string>(DisplayReturnMessage);
                         break;
                     default:
                         Console.WriteLine("INVALID CHOICE.");

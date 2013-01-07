@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
-using PubNub_Messaging;
+using PubNubMessaging.Core;
 using System.Windows.Controls.Primitives;
 
 
@@ -60,7 +60,7 @@ namespace PubnubWindowsPhone
 
         private void btnTime_Click(object sender, RoutedEventArgs e)
         {
-            pubnub.time<string>(pubnubCallbackResult);
+            pubnub.Time<string>(pubnubCallbackResult);
         }
 
         private void pubnubCallbackResult(string result)
@@ -119,7 +119,7 @@ namespace PubnubWindowsPhone
             {
                 publishPopup.IsOpen = false;
                 string pubMsg = control.txtPublish.Text;
-                pubnub.publish<string>(channel, pubMsg, pubnubCallbackResult);
+                pubnub.Publish<string>(channel, pubMsg, pubnubCallbackResult);
                 TextBlock tb = new TextBlock();
                 tb.Text = string.Format("Publishing {0}\n", pubMsg);
                 stackPanel1.Children.Add(tb);
@@ -139,22 +139,22 @@ namespace PubnubWindowsPhone
 
         private void btnHereNow_Click(object sender, RoutedEventArgs e)
         {
-            pubnub.here_now<string>(channel, pubnubCallbackResult);
+            pubnub.HereNow<string>(channel, pubnubCallbackResult);
         }
 
         private void btnPresence_Click(object sender, RoutedEventArgs e)
         {
-            pubnub.presence<string>(channel, pubnubCallbackResult);
+            pubnub.Presence<string>(channel, pubnubCallbackResult);
         }
 
         private void btnSubscribe_Click(object sender, RoutedEventArgs e)
         {
-            pubnub.subscribe<string>(channel, pubnubCallbackResult);
+            pubnub.Subscribe<string>(channel, pubnubCallbackResult);
         }
 
         private void btnDetailedHistory_Click(object sender, RoutedEventArgs e)
         {
-            pubnub.detailedHistory<string>(channel, 10, pubnubCallbackResult);
+            pubnub.DetailedHistory<string>(channel, 10, pubnubCallbackResult);
         }
 
         private void svResult_DoubleTap(object sender, GestureEventArgs e)
@@ -168,17 +168,17 @@ namespace PubnubWindowsPhone
 
         private void btnUnsubscribe_Click(object sender, RoutedEventArgs e)
         {
-            pubnub.unsubscribe<string>(channel, pubnubCallbackResult);
+            pubnub.Unsubscribe<string>(channel, pubnubCallbackResult);
         }
 
         private void btnPresenceUnsub_Click(object sender, RoutedEventArgs e)
         {
-            pubnub.presence_unsubscribe<string>(channel, pubnubCallbackResult);
+            pubnub.PresenceUnsubscribe<string>(channel, pubnubCallbackResult);
         }
 
         private void btnSubscribeConnect_Click(object sender, RoutedEventArgs e)
         {
-            pubnub.subscribe<string>(channel, pubnubCallbackResult, pubnubConnectCallbackResult);
+            pubnub.Subscribe<string>(channel, pubnubCallbackResult, pubnubConnectCallbackResult);
         }
 
 

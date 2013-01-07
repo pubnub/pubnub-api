@@ -8,9 +8,9 @@ using System.Threading;
 using System.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PubNubMessaging.Core;
 
-
-namespace PubNub_Messaging.Tests
+namespace PubNubMessaging.Tests
 {
     [TestFixture]
     public class WhenSubscribedToAChannel
@@ -38,14 +38,14 @@ namespace PubNub_Messaging.Tests
 
             string channel = "my/channel";
 
-            pubnub.subscribe<string>(channel, ReceivedMessageCallbackNoConnect);
+            pubnub.Subscribe<string>(channel, ReceivedMessageCallbackNoConnect);
             //Thread.Sleep(5000);
 
-            pubnub.publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummyPublishCallback);
+            pubnub.Publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummyPublishCallback);
             mePublish.WaitOne(310 * 1000);
 
             meSubNoConnect.WaitOne(310 * 1000);
-            pubnub.unsubscribe<string>(channel, dummyUnsubCallback);
+            pubnub.Unsubscribe<string>(channel, dummyUnsubCallback);
             
             meUnsub.WaitOne(310 * 1000);
             Assert.IsTrue(receivedMessage,"WhenSubscribedToAChannel --> ThenItShouldReturnReceivedMessage Failed");
@@ -66,10 +66,10 @@ namespace PubNub_Messaging.Tests
 
             string channel = "my/channel";
 
-            pubnub.subscribe<string>(channel, ReceivedMessageCallbackYesConnect, ConnectStatusCallback);
+            pubnub.Subscribe<string>(channel, ReceivedMessageCallbackYesConnect, ConnectStatusCallback);
             meSubYesConnect.WaitOne(310 * 1000);
 
-            pubnub.unsubscribe<string>(channel, dummyUnsubCallback);
+            pubnub.Unsubscribe<string>(channel, dummyUnsubCallback);
             meUnsub.WaitOne(310 * 1000);
 
             Assert.IsTrue(receivedMessage, "WhenSubscribedToAChannel --> ThenSubscribeShouldReturnConnectStatus Failed");

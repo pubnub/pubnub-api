@@ -8,9 +8,9 @@ using System.Threading;
 using System.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PubNubMessaging.Core;
 
-
-namespace PubNub_Messaging.Tests
+namespace PubNubMessaging.Tests
 {
     [TestFixture]
     public class WhenAClientIsPresented
@@ -39,18 +39,18 @@ namespace PubNub_Messaging.Tests
             
             string channel = "my/channel";
 
-            pubnub.presence<string>(channel, ThenPresenceShouldReturnMessage);
+            pubnub.Presence<string>(channel, ThenPresenceShouldReturnMessage);
 
             //since presence expects from stimulus from sub/unsub...
-            pubnub.subscribe<string>(channel, DummyMethodForSubscribe);
+            pubnub.Subscribe<string>(channel, DummyMethodForSubscribe);
             manualEvent1.WaitOne(2000);
 
-            pubnub.unsubscribe<string>(channel, DummyMethodForUnSubscribe);
+            pubnub.Unsubscribe<string>(channel, DummyMethodForUnSubscribe);
             manualEvent3.WaitOne(2000);
 
             manualEvent2.WaitOne(310 * 1000);
 
-            pubnub.presence_unsubscribe<string>(channel, DummyMethodForPreUnSub);
+            pubnub.PresenceUnsubscribe<string>(channel, DummyMethodForPreUnSub);
             preUnsubEvent.WaitOne();
             
             Assert.IsTrue(receivedFlag1, "Presence message not received");
@@ -91,7 +91,7 @@ namespace PubNub_Messaging.Tests
             unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
             pubnub.PubnubUnitTest = unitTest;
             string channel = "my/channel";
-            pubnub.here_now<string>(channel, ThenHereNowShouldReturnMessage);
+            pubnub.HereNow<string>(channel, ThenHereNowShouldReturnMessage);
             manualEvent4.WaitOne();
             Assert.IsTrue(receivedFlag2, "here_now message not received");
         }
