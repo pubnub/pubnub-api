@@ -46,4 +46,6 @@ struct pubnub {
 #define VERBOSE_VAL 0L
 #endif
 
+#define PUBNUB_API __attribute__ ((visibility("default")))
+
 #endif

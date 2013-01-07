@@ -227,6 +227,7 @@ pubnub_http_timercb(CURLM *multi, long timeout_ms, void *userp)
 	return 0;
 }
 
+PUBNUB_API
 struct pubnub *
 pubnub_init(const char *publish_key, const char *subscribe_key,
 		const char *secret_key, const char *cipher_key,
@@ -262,6 +263,7 @@ pubnub_init(const char *publish_key, const char *subscribe_key,
 	return p;
 }
 
+PUBNUB_API
 void
 pubnub_done(struct pubnub *p)
 {
@@ -341,6 +343,7 @@ pubnub_http_request(struct pubnub *p, const char *urlelems[],
 }
 
 
+PUBNUB_API
 void
 pubnub_publish(struct pubnub *p, const char *channel, struct json_object *message,
 		long timeout, pubnub_publish_cb cb, void *cb_data)
@@ -472,6 +475,7 @@ error:
 	cb(p, result, channels, msg, ctx_data, call_data);
 }
 
+PUBNUB_API
 void
 pubnub_subscribe(struct pubnub *p, const char *channel,
 		long timeout, pubnub_subscribe_cb cb, void *cb_data)
@@ -494,6 +498,7 @@ pubnub_subscribe(struct pubnub *p, const char *channel,
 	pubnub_http_request(p, urlelems, timeout, pubnub_subscribe_http_cb, cb_http_data);
 }
 
+PUBNUB_API
 void
 pubnub_subscribe_multi(struct pubnub *p, const char *channels[], int channels_n,
 		long timeout, pubnub_subscribe_cb cb, void *cb_data)
@@ -555,6 +560,7 @@ error:
 		json_object_put(response);
 }
 
+PUBNUB_API
 void
 pubnub_history(struct pubnub *p, const char *channel, int limit,
 		long timeout, pubnub_history_cb cb, void *cb_data)

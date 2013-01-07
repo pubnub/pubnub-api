@@ -63,6 +63,7 @@ pubnub_libevent_eventcb(int fd, short kind, void *userp)
 
 /** Public API */
 
+PUBNUB_API
 struct pubnub_libevent *
 pubnub_libevent_init(void)
 {
@@ -174,6 +175,7 @@ pubnub_libevent_done(struct pubnub *p, void *ctx_data)
 
 /** Callback table */
 
+PUBNUB_API
 struct pubnub_callbacks pubnub_libevent_callbacks = {
 	.add_socket = pubnub_libevent_add_socket,
 	.rem_socket = pubnub_libevent_rem_socket,

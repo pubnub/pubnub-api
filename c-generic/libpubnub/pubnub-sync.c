@@ -55,6 +55,7 @@ pubnub_sync_reset(struct pubnub_sync *sync)
 
 /** Public API */
 
+PUBNUB_API
 struct pubnub_sync *
 pubnub_sync_init(void)
 {
@@ -65,18 +66,21 @@ pubnub_sync_init(void)
 	return sync;
 }
 
+PUBNUB_API
 enum pubnub_res
 pubnub_sync_last_result(struct pubnub_sync *sync)
 {
 	return sync->result;
 }
 
+PUBNUB_API
 struct json_object *
 pubnub_sync_last_response(struct pubnub_sync *sync)
 {
 	return sync->response ? json_object_get(sync->response) : NULL;
 }
 
+PUBNUB_API
 char **
 pubnub_sync_last_channels(struct pubnub_sync *sync)
 {
@@ -250,6 +254,7 @@ pubnub_sync_subscribe_cb(struct pubnub *p, enum pubnub_res result, char **channe
 
 /** Callback table */
 
+PUBNUB_API
 struct pubnub_callbacks pubnub_sync_callbacks = {
 	.add_socket = pubnub_sync_add_socket,
 	.rem_socket = pubnub_sync_rem_socket,
