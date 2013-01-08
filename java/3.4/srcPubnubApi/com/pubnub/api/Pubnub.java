@@ -3,9 +3,9 @@ package com.pubnub.api;
 import java.util.Hashtable;
 
 import org.bouncycastle.util.SecureRandom;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.me.JSONArray;
+import org.json.me.JSONException;
+import org.json.me.JSONObject;
 
 import com.pubnub.crypto.PubnubCrypto;
 import com.pubnub.http.HttpManager;
@@ -206,7 +206,7 @@ public class Pubnub {
      * @param interval
      */
     public static void startHeartbeat(int interval) {
-        HttpManager.startHeartbeat("https://pubsub.pubnub.com/time/0",
+        HttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0",
                 interval);
     }
 

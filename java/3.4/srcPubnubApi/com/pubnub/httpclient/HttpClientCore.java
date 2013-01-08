@@ -80,10 +80,6 @@ public class HttpClientCore extends HttpClient {
 				|| rc == HttpConnection.HTTP_SEE_OTHER || rc == HttpConnection.HTTP_TEMP_REDIRECT);
 	}
 
-	public boolean isOk(int rc) {
-		return (rc == HttpConnection.HTTP_OK);
-	}
-
 	public boolean checkResponse(int rc) {
 
 		return (rc == HttpConnection.HTTP_OK || isRedirect(rc));
@@ -104,7 +100,6 @@ public class HttpClientCore extends HttpClient {
 
 		while (follow-- > 0) {
 
-			System.out.println(url);
 			hc = (HttpConnection) Connector.open(url, Connector.READ_WRITE,
 					true);
 			hc.setRequestMethod(HttpConnection.GET);
@@ -153,5 +148,9 @@ public class HttpClientCore extends HttpClient {
 		response = readResponse(hc);
 		hc.close();
 		return new HttpResponse(rc, response);
+	}
+
+	public boolean isOk(int rc) {
+		return (rc == HttpConnection.HTTP_OK );
 	}
 }

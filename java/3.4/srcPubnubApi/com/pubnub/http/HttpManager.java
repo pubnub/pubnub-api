@@ -3,7 +3,6 @@ package com.pubnub.http;
 import java.io.IOException;
 import java.util.Vector;
 
-
 import com.pubnub.httpclient.HttpClient;
 import com.pubnub.httpclient.HttpResponse;
 

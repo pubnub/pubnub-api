@@ -42,9 +42,9 @@ public abstract class HttpClient {
 
 	public abstract boolean isRedirect(int rc);
 
-	public abstract boolean isOk(int rc);
-
 	public abstract boolean checkResponse(int rc);
+
+	public abstract boolean isOk(int rc);
 
 	public abstract HttpResponse fetch(String url) throws IOException;
 
