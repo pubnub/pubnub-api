@@ -68,12 +68,12 @@ namespace PubnubWindowsPhone
             Deployment.Current.Dispatcher.BeginInvoke(
                 () =>
                     {
-                        TextBlock tb = new TextBlock();
-                        tb.TextWrapping = TextWrapping.Wrap;
-                        tb.Text = result;
-                        stackPanel1.Children.Add(tb);
-                        svResult.UpdateLayout();
-                        svResult.ScrollToVerticalOffset(svResult.ExtentHeight);
+                        TextBlock textBlock = new TextBlock();
+                        textBlock.TextWrapping = TextWrapping.Wrap;
+                        textBlock.Text = result;
+                        messageStackPanel.Children.Add(textBlock);
+                        scrollViewerResult.UpdateLayout();
+                        scrollViewerResult.ScrollToVerticalOffset(scrollViewerResult.ExtentHeight);
                     }
                 );
         }
@@ -83,12 +83,12 @@ namespace PubnubWindowsPhone
             Deployment.Current.Dispatcher.BeginInvoke(
                 () =>
                 {
-                    TextBlock tb = new TextBlock();
-                    tb.TextWrapping = TextWrapping.Wrap;
-                    tb.Text = result;
-                    stackPanel1.Children.Add(tb);
-                    svResult.UpdateLayout();
-                    svResult.ScrollToVerticalOffset(svResult.ExtentHeight);
+                    TextBlock textBlock = new TextBlock();
+                    textBlock.TextWrapping = TextWrapping.Wrap;
+                    textBlock.Text = result;
+                    messageStackPanel.Children.Add(textBlock);
+                    scrollViewerResult.UpdateLayout();
+                    scrollViewerResult.ScrollToVerticalOffset(scrollViewerResult.ExtentHeight);
                 }
                 );
         }
@@ -99,10 +99,10 @@ namespace PubnubWindowsPhone
             border.BorderBrush = new SolidColorBrush(Colors.Black);
             border.BorderThickness = new Thickness(5.0);
 
-            StackPanel panel1 = new StackPanel();
-            panel1.Background = new SolidColorBrush(Colors.Blue);
-            panel1.Width = 300;
-            panel1.Height = 300;
+            StackPanel publishStackPanel = new StackPanel();
+            publishStackPanel.Background = new SolidColorBrush(Colors.Blue);
+            publishStackPanel.Width = 300;
+            publishStackPanel.Height = 300;
 
             publishPopup = new Popup();
             publishPopup.Height = 300;
@@ -110,21 +110,21 @@ namespace PubnubWindowsPhone
             publishPopup.VerticalOffset = 100;
             publishPopup.HorizontalOffset = 100;
             PublishMessageUserControl control = new PublishMessageUserControl();
-            panel1.Children.Add(control);
-            border.Child = panel1;
+            publishStackPanel.Children.Add(control);
+            border.Child = publishStackPanel;
 
             publishPopup.Child = border;
             publishPopup.IsOpen = true;
             control.btnOK.Click += (s, args) =>
             {
                 publishPopup.IsOpen = false;
-                string pubMsg = control.txtPublish.Text;
-                pubnub.Publish<string>(channel, pubMsg, pubnubCallbackResult);
-                TextBlock tb = new TextBlock();
-                tb.Text = string.Format("Publishing {0}\n", pubMsg);
-                stackPanel1.Children.Add(tb);
-                svResult.UpdateLayout();
-                svResult.ScrollToVerticalOffset(svResult.ExtentHeight);
+                string publishedMessage = control.txtPublish.Text;
+                pubnub.Publish<string>(channel, publishedMessage, pubnubCallbackResult);
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = string.Format("Publishing {0}\n", publishedMessage);
+                messageStackPanel.Children.Add(textBlock);
+                scrollViewerResult.UpdateLayout();
+                scrollViewerResult.ScrollToVerticalOffset(scrollViewerResult.ExtentHeight);
                 publishPopup = null;
                 this.IsEnabled = true;
             };
@@ -157,12 +157,12 @@ namespace PubnubWindowsPhone
             pubnub.DetailedHistory<string>(channel, 10, pubnubCallbackResult);
         }
 
-        private void svResult_DoubleTap(object sender, GestureEventArgs e)
+        private void scrollViewerResult_DoubleTap(object sender, GestureEventArgs e)
         {
             MessageBoxResult action = MessageBox.Show("Delete?", "Confirm", MessageBoxButton.OKCancel);
             if (action == MessageBoxResult.OK)
             {
-                stackPanel1.Children.Clear();
+                messageStackPanel.Children.Clear();
             }
         }
 
@@ -180,7 +180,6 @@ namespace PubnubWindowsPhone
         {
             pubnub.Subscribe<string>(channel, pubnubCallbackResult, pubnubConnectCallbackResult);
         }
-
 
     }
 }

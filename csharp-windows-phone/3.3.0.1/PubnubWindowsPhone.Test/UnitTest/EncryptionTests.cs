@@ -41,12 +41,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //serialized string
-                    string strMessage = null;
+                    string message = null;
 
                     try
                     {
                         //Encrypt
-                        string enc = pc.Encrypt(strMessage);
+                        string encryptedMessage = pc.Encrypt(message);
                     }
                     catch (ArgumentNullException)
                     {
@@ -70,16 +70,16 @@ namespace PubnubWindowsPhone.Test.UnitTest
         public void TestNullDecryption()
         {
             bool isExpectedException = false;
-            string dec = "";
+            string decryptedMessage = "";
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //deserialized string
-                    string strMessage = null;
+                    string message = null;
                     try
                     {
                         //Decrypt
-                        dec = pc.Decrypt(strMessage);
+                        decryptedMessage = pc.Decrypt(message);
                     }
                     catch (ArgumentNullException)
                     {
@@ -106,13 +106,13 @@ namespace PubnubWindowsPhone.Test.UnitTest
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
-                    string strMessage = "q/xJqqN6qbiZMXYmiQC1Fw==";
+                    string message = "q/xJqqN6qbiZMXYmiQC1Fw==";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //deserialize again
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("yay!", dec);
+                            Assert.AreEqual("yay!", decryptedMessage);
                             TestComplete();
                         });
                 });
@@ -130,12 +130,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //deserialized string
-                    string strMessage = "yay!";
+                    string message = "yay!";
                     //Encrypt
-                    string enc = pc.Encrypt(strMessage);
+                    string encryptedMessage = pc.Encrypt(message);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("q/xJqqN6qbiZMXYmiQC1Fw==", enc);
+                            Assert.AreEqual("q/xJqqN6qbiZMXYmiQC1Fw==", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -154,16 +154,16 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //string strMessage= "\"q/xJqqN6qbiZMXYmiQC1Fw==\"";
                     //Non deserialized string
-                    string strMessage = "\"Wi24KS4pcTzvyuGOHubiXg==\"";
+                    string message = "\"Wi24KS4pcTzvyuGOHubiXg==\"";
                     //Deserialize 
-                    strMessage = JsonConvert.DeserializeObject<string>(strMessage);
+                    message = JsonConvert.DeserializeObject<string>(message);
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //deserialize again
-                    strMessage = JsonConvert.DeserializeObject<string>(dec);
+                    message = JsonConvert.DeserializeObject<string>(decryptedMessage);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("yay!", strMessage);
+                            Assert.AreEqual("yay!", message);
                             TestComplete();
                         });
                 });
@@ -180,15 +180,15 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //deserialized string
-                    string strMessage = "yay!";
+                    string message = "yay!";
                     //serialize the string
-                    strMessage = JsonConvert.SerializeObject(strMessage);
-                    Console.WriteLine(strMessage);
+                    message = JsonConvert.SerializeObject(message);
+                    Console.WriteLine(message);
                     //Encrypt
-                    string enc = pc.Encrypt(strMessage);
+                    string encryptedMessage = pc.Encrypt(message);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("Wi24KS4pcTzvyuGOHubiXg==", enc);
+                            Assert.AreEqual("Wi24KS4pcTzvyuGOHubiXg==", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -206,14 +206,14 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //create an empty array object
-                    object[] objArr = { };
+                    object[] emptyArray = { };
                     //serialize
-                    string strArr = JsonConvert.SerializeObject(objArr);
+                    string serializedArray = JsonConvert.SerializeObject(emptyArray);
                     //Encrypt
-                    string enc = pc.Encrypt(strArr);
+                    string encryptedMessage = pc.Encrypt(serializedArray);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("Ns4TB41JjT2NCXaGLWSPAQ==", enc);
+                            Assert.AreEqual("Ns4TB41JjT2NCXaGLWSPAQ==", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -232,16 +232,16 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //Input the deserialized string
-                    string strMessage = "Ns4TB41JjT2NCXaGLWSPAQ==";
+                    string message = "Ns4TB41JjT2NCXaGLWSPAQ==";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //create a serialized object
-                    object[] objArr = { };
-                    string res = JsonConvert.SerializeObject(objArr);
+                    object[] emptyArrayObject = { };
+                    string result = JsonConvert.SerializeObject(emptyArrayObject);
                     //compare the serialized object and the return of the Decrypt method
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual(res, dec);
+                            Assert.AreEqual(result, decryptedMessage);
                             TestComplete();
                         });
                 });
@@ -261,12 +261,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     //create an object
                     Object obj = new Object();
                     //serialize
-                    string strObj = JsonConvert.SerializeObject(obj);
+                    string serializedObject = JsonConvert.SerializeObject(obj);
                     //Encrypt
-                    string enc = pc.Encrypt(strObj);
+                    string encryptedMessage = pc.Encrypt(serializedObject);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("IDjZE9BHSjcX67RddfCYYg==", enc);
+                            Assert.AreEqual("IDjZE9BHSjcX67RddfCYYg==", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -284,16 +284,16 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //Deserialized
-                    string strMessage = "IDjZE9BHSjcX67RddfCYYg==";
+                    string message = "IDjZE9BHSjcX67RddfCYYg==";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //create an object
                     Object obj = new Object();
                     //Serialize the object
-                    string res = JsonConvert.SerializeObject(obj);
+                    string result = JsonConvert.SerializeObject(obj);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual(res, dec);
+                            Assert.AreEqual(result, decryptedMessage);
                             TestComplete();
                         });
                 });
@@ -312,13 +312,13 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     //create an object of the custom class
                     CustomClass cc = new CustomClass();
                     //serialize it
-                    string res = JsonConvert.SerializeObject(cc);
+                    string result = JsonConvert.SerializeObject(cc);
 
                     //Encrypt it
-                    string enc = pc.Encrypt(res);
+                    string encryptedMessage = pc.Encrypt(result);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("Zbr7pEF/GFGKj1rOstp0tWzA4nwJXEfj+ezLtAr8qqE=", enc);
+                            Assert.AreEqual("Zbr7pEF/GFGKj1rOstp0tWzA4nwJXEfj+ezLtAr8qqE=", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -335,17 +335,17 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //Deserialized
-                    string strMessage = "Zbr7pEF/GFGKj1rOstp0tWzA4nwJXEfj+ezLtAr8qqE=";
+                    string message = "Zbr7pEF/GFGKj1rOstp0tWzA4nwJXEfj+ezLtAr8qqE=";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //create an object of the custom class
                     CustomClass cc = new CustomClass();
 
                     //Serialize it
-                    string res = JsonConvert.SerializeObject(cc);
+                    string result = JsonConvert.SerializeObject(cc);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual(res, dec);
+                            Assert.AreEqual(result, decryptedMessage);
                             TestComplete();
                         });
                 });
@@ -363,15 +363,15 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //Deserialized
-                    string strMessage = "Pubnub Messaging API 2";
+                    string message = "Pubnub Messaging API 2";
                     //serialize the message
-                    strMessage = JsonConvert.SerializeObject(strMessage);
+                    message = JsonConvert.SerializeObject(message);
 
                     //Encrypt
-                    string enc = pc.Encrypt(strMessage);
+                    string encryptedMessage = pc.Encrypt(message);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("f42pIQcWZ9zbTbH8cyLwB/tdvRxjFLOYcBNMVKeHS54=", enc);
+                            Assert.AreEqual("f42pIQcWZ9zbTbH8cyLwB/tdvRxjFLOYcBNMVKeHS54=", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -389,14 +389,14 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //Deserialized string    
-                    string strMessage = "f42pIQcWZ9zbTbH8cyLwB/tdvRxjFLOYcBNMVKeHS54=";
+                    string message = "f42pIQcWZ9zbTbH8cyLwB/tdvRxjFLOYcBNMVKeHS54=";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //Deserialize
-                    strMessage = JsonConvert.DeserializeObject<string>(dec);
+                    message = JsonConvert.DeserializeObject<string>(decryptedMessage);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("Pubnub Messaging API 2", strMessage);
+                            Assert.AreEqual("Pubnub Messaging API 2", message);
                             TestComplete();
                         });
                 });
@@ -414,14 +414,14 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //non serialized string
-                    string strMessage = "Pubnub Messaging API 1";
+                    string message = "Pubnub Messaging API 1";
                     //serialize
-                    strMessage = JsonConvert.SerializeObject(strMessage);
+                    message = JsonConvert.SerializeObject(message);
                     //Encrypt
-                    string enc = pc.Encrypt(strMessage);
+                    string encryptedMessage = pc.Encrypt(message);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("f42pIQcWZ9zbTbH8cyLwByD/GsviOE0vcREIEVPARR0=", enc);
+                            Assert.AreEqual("f42pIQcWZ9zbTbH8cyLwByD/GsviOE0vcREIEVPARR0=", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -439,14 +439,14 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //deserialized string
-                    string strMessage = "f42pIQcWZ9zbTbH8cyLwByD/GsviOE0vcREIEVPARR0=";
+                    string message = "f42pIQcWZ9zbTbH8cyLwByD/GsviOE0vcREIEVPARR0=";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //deserialize
-                    strMessage = (dec != "**DECRYPT ERROR**") ? JsonConvert.DeserializeObject<string>(dec) : "";
+                    message = (decryptedMessage != "**DECRYPT ERROR**") ? JsonConvert.DeserializeObject<string>(decryptedMessage) : "";
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("Pubnub Messaging API 1", strMessage);
+                            Assert.AreEqual("Pubnub Messaging API 1", message);
                             TestComplete();
                         });
                 });
@@ -464,12 +464,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //input serialized string
-                    string strMessage = "{\"this stuff\":{\"can get\":\"complicated!\"}}";
+                    string message = "{\"this stuff\":{\"can get\":\"complicated!\"}}";
                     //Encrypt
-                    string enc = pc.Encrypt(strMessage);
+                    string encryptedMessage = pc.Encrypt(message);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("zMqH/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF", enc);
+                            Assert.AreEqual("zMqH/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -486,12 +486,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //deserialized string
-                    string strMessage = "zMqH/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF";
+                    string message = "zMqH/RTPlC8yrAZ2UhpEgLKUVzkMI2cikiaVg30AyUu7B6J0FLqCazRzDOmrsFsF";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("{\"this stuff\":{\"can get\":\"complicated!\"}}", dec);
+                            Assert.AreEqual("{\"this stuff\":{\"can get\":\"complicated!\"}}", decryptedMessage);
                             TestComplete();
                         });
                 });
@@ -509,12 +509,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //serialized string
-                    string strMessage = "{\"foo\":{\"bar\":\"foobar\"}}";
+                    string message = "{\"foo\":{\"bar\":\"foobar\"}}";
                     //Encrypt
-                    string enc = pc.Encrypt(strMessage);
+                    string encryptedMessage = pc.Encrypt(message);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("GsvkCYZoYylL5a7/DKhysDjNbwn+BtBtHj2CvzC4Y4g=", enc);
+                            Assert.AreEqual("GsvkCYZoYylL5a7/DKhysDjNbwn+BtBtHj2CvzC4Y4g=", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -531,12 +531,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
                     //deserialized string
-                    string strMessage = "GsvkCYZoYylL5a7/DKhysDjNbwn+BtBtHj2CvzC4Y4g=";
+                    string message = "GsvkCYZoYylL5a7/DKhysDjNbwn+BtBtHj2CvzC4Y4g=";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("{\"foo\":{\"bar\":\"foobar\"}}", dec);
+                            Assert.AreEqual("{\"foo\":{\"bar\":\"foobar\"}}", decryptedMessage);
                             TestComplete();
                         });
                 });
@@ -552,15 +552,15 @@ namespace PubnubWindowsPhone.Test.UnitTest
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
-                    string strMessage = "漢語";
+                    string message = "漢語";
 
-                    strMessage = JsonConvert.SerializeObject(strMessage);
-                    Console.WriteLine(strMessage);
-                    string enc = pc.Encrypt(strMessage);
-                    Console.WriteLine(enc);
+                    message = JsonConvert.SerializeObject(message);
+                    Console.WriteLine(message);
+                    string encryptedMessage = pc.Encrypt(message);
+                    Console.WriteLine(encryptedMessage);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("+BY5/miAA8aeuhVl4d13Kg==", enc);
+                            Assert.AreEqual("+BY5/miAA8aeuhVl4d13Kg==", encryptedMessage);
                             TestComplete();
                         });
                 });
@@ -577,15 +577,15 @@ namespace PubnubWindowsPhone.Test.UnitTest
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
-                    string strMessage = "+BY5/miAA8aeuhVl4d13Kg==";
+                    string message = "+BY5/miAA8aeuhVl4d13Kg==";
                     //JavaScriptSerializer js = new JavaScriptSerializer();
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //deserialize
-                    strMessage = (dec != "**DECRYPT ERROR**") ? JsonConvert.DeserializeObject<string>(dec) : "";
+                    message = (decryptedMessage != "**DECRYPT ERROR**") ? JsonConvert.DeserializeObject<string>(decryptedMessage) : "";
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("漢語", strMessage);
+                            Assert.AreEqual("漢語", message);
                             TestComplete();
                         });
                 });
@@ -602,14 +602,14 @@ namespace PubnubWindowsPhone.Test.UnitTest
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
-                    string strMessage = "stpgsG1DZZxb44J7mFNSzg==";
+                    string message = "stpgsG1DZZxb44J7mFNSzg==";
                     //Decrypt
-                    string dec = pc.Decrypt(strMessage);
+                    string decryptedMessage = pc.Decrypt(message);
                     //deserialize
-                    strMessage = (dec != "**DECRYPT ERROR**") ? JsonConvert.DeserializeObject<string>(dec) : "";
+                    message = (decryptedMessage != "**DECRYPT ERROR**") ? JsonConvert.DeserializeObject<string>(decryptedMessage) : "";
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("ÜÖ", strMessage);
+                            Assert.AreEqual("ÜÖ", message);
                             TestComplete();
                         });
                 });
@@ -624,15 +624,15 @@ namespace PubnubWindowsPhone.Test.UnitTest
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     PubnubCrypto pc = new PubnubCrypto("enigma");
-                    string strMessage = "ÜÖ";
+                    string message = "ÜÖ";
 
-                    strMessage = JsonConvert.SerializeObject(strMessage);
-                    Console.WriteLine(strMessage);
-                    string enc = pc.Encrypt(strMessage);
-                    Console.WriteLine(enc);
+                    message = JsonConvert.SerializeObject(message);
+                    Console.WriteLine(message);
+                    string encryptedMessage = pc.Encrypt(message);
+                    Console.WriteLine(encryptedMessage);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.AreEqual("stpgsG1DZZxb44J7mFNSzg==", enc);
+                            Assert.AreEqual("stpgsG1DZZxb44J7mFNSzg==", encryptedMessage);
                             TestComplete();
                         });
                 });

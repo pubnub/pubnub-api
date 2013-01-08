@@ -23,15 +23,15 @@ namespace PubnubWindowsPhone.Test.UnitTest
     [TestClass]
     public class WhenDetailedHistoryIsRequested : WorkItemTest
     {
-        ManualResetEvent mreMsgCount10 = new ManualResetEvent(false);
-        ManualResetEvent mreMsgCount10ReverseTrue = new ManualResetEvent(false);
-        ManualResetEvent mreMsgStartReverseTrue = new ManualResetEvent(false);
+        ManualResetEvent mreMessageCount10 = new ManualResetEvent(false);
+        ManualResetEvent mreMessageCount10ReverseTrue = new ManualResetEvent(false);
+        ManualResetEvent mreMessageStartReverseTrue = new ManualResetEvent(false);
         ManualResetEvent mrePublishStartReverseTrue = new ManualResetEvent(false);
 
 
-        bool msg10Received = false;
-        bool msg10ReverseTrueReceived = false;
-        bool msgStartReverseTrue = false;
+        bool message10Received = false;
+        bool message10ReverseTrueReceived = false;
+        bool messageStartReverseTrue = false;
 
         int expectedCountAtStartTimeWithReverseTrue=0;
         long startTimeWithReverseTrue = 0;
@@ -39,7 +39,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
         [TestMethod,Asynchronous]
         public void DetailHistoryCount10ReturnsRecords()
         {
-            msg10Received = false;
+            message10Received = false;
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
@@ -51,10 +51,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     pubnub.PubnubUnitTest = unitTest;
 
                     pubnub.DetailedHistory<string>(channel, 10, DetailedHistoryCount10Callback);
-                    mreMsgCount10.WaitOne(310 * 1000);
+                    mreMessageCount10.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.IsTrue(msg10Received, "Detailed History Failed");
+                            Assert.IsTrue(message10Received, "Detailed History Failed");
                             TestComplete();
                         });
                 });
@@ -65,27 +65,27 @@ namespace PubnubWindowsPhone.Test.UnitTest
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
                 {
-                    JArray jArr = receivedObj[0] as JArray;
-                    if (jArr != null)
+                    JArray message = deserializedMessage[0] as JArray;
+                    if (message != null)
                     {
-                        if (jArr.Count >= 0)
+                        if (message.Count >= 0)
                         {
-                            msg10Received = true;
+                            message10Received = true;
                         }
                     }
                 }
             }
 
-            mreMsgCount10.Set();
+            mreMessageCount10.Set();
         }
 
         [TestMethod,Asynchronous]
         public void DetailHistoryCount10ReverseTrueReturnsRecords()
         {
-            msg10ReverseTrueReceived = false;
+            message10ReverseTrueReceived = false;
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
@@ -97,10 +97,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     pubnub.PubnubUnitTest = unitTest;
 
                     pubnub.DetailedHistory<string>(channel, -1, -1, 10, true, DetailedHistoryCount10ReverseTrueCallback);
-                    mreMsgCount10ReverseTrue.WaitOne(310 * 1000);
+                    mreMessageCount10ReverseTrue.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.IsTrue(msg10ReverseTrueReceived, "Detailed History Failed");
+                            Assert.IsTrue(message10ReverseTrueReceived, "Detailed History Failed");
                             TestComplete();
                         });
                 });
@@ -111,28 +111,28 @@ namespace PubnubWindowsPhone.Test.UnitTest
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
                 {
-                    JArray jArr = receivedObj[0] as JArray;
-                    if (jArr != null)
+                    JArray message = deserializedMessage[0] as JArray;
+                    if (message != null)
                     {
-                       if (jArr.Count >= 0)
+                       if (message.Count >= 0)
                         {
-                            msg10ReverseTrueReceived = true;
+                            message10ReverseTrueReceived = true;
                         }
                     }
                 }
             }
 
-            mreMsgCount10ReverseTrue.Set();
+            mreMessageCount10ReverseTrue.Set();
         }
 
         [TestMethod,Asynchronous]
         public void DetailedHistoryStartWithReverseTrue()
         {
             expectedCountAtStartTimeWithReverseTrue = 0;
-            msgStartReverseTrue = false;
+            messageStartReverseTrue = false;
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
@@ -153,13 +153,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                         Thread.Sleep(200);
                     }
 
-                    //Thread.Sleep(2000);
-
                     pubnub.DetailedHistory<string>(channel, startTimeWithReverseTrue, DetailedHistoryStartWithReverseTrueCallback, true);
-                    mreMsgStartReverseTrue.WaitOne(310 * 1000);
+                    mreMessageStartReverseTrue.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
-                            Assert.IsTrue(msgStartReverseTrue, "Detailed History with Start and Reverse True Failed");
+                            Assert.IsTrue(messageStartReverseTrue, "Detailed History with Start and Reverse True Failed");
                             TestComplete();
                         });
                 });
@@ -171,15 +169,15 @@ namespace PubnubWindowsPhone.Test.UnitTest
             int actualCountAtStartTimeWithReverseFalse = 0;
             if (!string.IsNullOrWhiteSpace(result))
             {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
                 {
-                    JArray jArr = receivedObj[0] as JArray;
-                    if (jArr != null)
+                    JArray message = deserializedMessage[0] as JArray;
+                    if (message != null)
                     {
-                        if (jArr.Count >= expectedCountAtStartTimeWithReverseTrue)
+                        if (message.Count >= expectedCountAtStartTimeWithReverseTrue)
                         {
-                            foreach (object item in jArr)
+                            foreach (object item in message)
                             {
                                 if (item.ToString().Contains("DetailedHistoryStartTimeWithReverseTrue"))
                                 {
@@ -188,13 +186,13 @@ namespace PubnubWindowsPhone.Test.UnitTest
                             }
                             if (actualCountAtStartTimeWithReverseFalse == expectedCountAtStartTimeWithReverseTrue)
                             {
-                                msgStartReverseTrue = true;
+                                messageStartReverseTrue = true;
                             }
                         }
                     }
                 }
             }
-            mreMsgStartReverseTrue.Set();
+            mreMessageStartReverseTrue.Set();
         }
 
         [Asynchronous]
@@ -202,12 +200,12 @@ namespace PubnubWindowsPhone.Test.UnitTest
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
                 {
-                    int statusCode = Int32.Parse(receivedObj[0].ToString());
-                    string statusMsg = (string)receivedObj[1];
-                    if (statusCode == 1 && statusMsg.ToLower() == "sent")
+                    int statusCode = Int32.Parse(deserializedMessage[0].ToString());
+                    string statusMessage = (string)deserializedMessage[1];
+                    if (statusCode == 1 && statusMessage.ToLower() == "sent")
                     {
                         expectedCountAtStartTimeWithReverseTrue++;
                     }

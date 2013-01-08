@@ -259,7 +259,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
         public string GetStubResponse(Uri request)
         {
-            Dictionary<string, string> respDic = null;
+            Dictionary<string, string> responseDictionary = null;
             string stubResponse = "!! Stub Response Not Assigned !!";
 
             switch (_testClassName)
@@ -268,10 +268,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     switch (_testCaseName)
                     {
                         case "ThenPresenceShouldReturnReceivedMessage":
-                            respDic = LoadWhenAClientIsPresentedThenPresenceShouldReturnReceivedMessage();
+                            responseDictionary = LoadWhenAClientIsPresentedThenPresenceShouldReturnReceivedMessage();
                             break;
                         case "IfHereNowIsCalledThenItShouldReturnInfo":
-                            respDic = LoadWhenAClientIsPresentedIfHereNowIsCalledThenItShouldReturnInfo();
+                            responseDictionary = LoadWhenAClientIsPresentedIfHereNowIsCalledThenItShouldReturnInfo();
                             break;
                         default:
                             break;
@@ -281,25 +281,25 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     switch (_testCaseName)
                     {
                         case "ThenUnencryptPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = LoadWhenAMessageIsPublishedThenUnencryptPublishShouldReturnSuccessCodeAndInfo();
+                            responseDictionary = LoadWhenAMessageIsPublishedThenUnencryptPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = LoadWhenAMessageIsPublishedThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo();
+                            responseDictionary = LoadWhenAMessageIsPublishedThenUnencryptObjectPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = LoadWhenAMessageIsPublishedThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo();
+                            responseDictionary = LoadWhenAMessageIsPublishedThenEncryptObjectPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenEncryptPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = LoadWhenAMessageIsPublishedThenEncryptPublishShouldReturnSuccessCodeAndInfo();
+                            responseDictionary = LoadWhenAMessageIsPublishedThenEncryptPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo":
-                            respDic = LoadWhenAMessageIsPublishedThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo();
+                            responseDictionary = LoadWhenAMessageIsPublishedThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo();
                             break;
                         case "ThenOptionalSecretKeyShouldBeProvidedInConstructor":
-                            respDic = LoadWhenAMessageIsPublishedThenOptionalSecretKeyShouldBeProvidedInConstructor();
+                            responseDictionary = LoadWhenAMessageIsPublishedThenOptionalSecretKeyShouldBeProvidedInConstructor();
                             break;
                         case "IfSSLNotProvidedThenDefaultShouldBeFalse":
-                            respDic = LoadWhenAMessageIsPublishedIfSSLNotProvidedThenDefaultShouldBeFalse();
+                            responseDictionary = LoadWhenAMessageIsPublishedIfSSLNotProvidedThenDefaultShouldBeFalse();
                             break;
                         default:
                             break;
@@ -309,13 +309,13 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     switch (_testCaseName)
                     {
                         case "DetailHistoryCount10ReturnsRecords":
-                            respDic = LoadWhenDetailedHistoryIsRequestedDetailHistoryCount10ReturnsRecords();
+                            responseDictionary = LoadWhenDetailedHistoryIsRequestedDetailHistoryCount10ReturnsRecords();
                             break;
                         case "DetailHistoryCount10ReverseTrueReturnsRecords":
-                            respDic = LoadWhenDetailedHistoryIsRequestedDetailHistoryCount10ReverseTrueReturnsRecords();
+                            responseDictionary = LoadWhenDetailedHistoryIsRequestedDetailHistoryCount10ReverseTrueReturnsRecords();
                             break;
                         case "DetailedHistoryStartWithReverseTrue":
-                            respDic = LoadWhenDetailedHistoryIsRequestedDetailedHistoryStartWithReverseTrue();
+                            responseDictionary = LoadWhenDetailedHistoryIsRequestedDetailedHistoryStartWithReverseTrue();
                             break;
                         default:
                             break;
@@ -325,10 +325,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     switch (_testCaseName)
                     {
                         case "ThenItShouldReturnTimeStamp":
-                            respDic = LoadWhenGetRequestServerTimeThenItShouldReturnTimeStamp();
+                            responseDictionary = LoadWhenGetRequestServerTimeThenItShouldReturnTimeStamp();
                             break;
                         case "ThenWithProxyItShouldReturnTimeStamp":
-                            respDic = LoadWhenGetRequestServerTimeThenWithProxyItShouldReturnTimeStamp();
+                            responseDictionary = LoadWhenGetRequestServerTimeThenWithProxyItShouldReturnTimeStamp();
                             break;
                         default:
                             break;
@@ -338,10 +338,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     switch (_testCaseName)
                     {
                         case "ThenSubscribeShouldReturnReceivedMessage":
-                            respDic = LoadWhenSubscribedToAChannelThenSubscribeShouldReturnReceivedMessage();
+                            responseDictionary = LoadWhenSubscribedToAChannelThenSubscribeShouldReturnReceivedMessage();
                             break;
                         case "ThenSubscribeShouldReturnConnectStatus":
-                            respDic = LoadWhenSubscribedToAChannelThenSubscribeShouldReturnConnectStatus();
+                            responseDictionary = LoadWhenSubscribedToAChannelThenSubscribeShouldReturnConnectStatus();
                             break;
                         default:
                             break;
@@ -351,9 +351,9 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     break;
             }
 
-            if (respDic != null && respDic.ContainsKey(request.AbsolutePath))
+            if (responseDictionary != null && responseDictionary.ContainsKey(request.AbsolutePath))
             {
-                stubResponse = respDic[request.AbsolutePath];
+                stubResponse = responseDictionary[request.AbsolutePath];
             }
             else
             {

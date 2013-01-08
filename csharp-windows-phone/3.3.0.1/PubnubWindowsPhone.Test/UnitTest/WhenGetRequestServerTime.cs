@@ -22,7 +22,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
     [TestClass]
     public class WhenGetRequestServerTime : WorkItemTest
     {
-        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
+        ManualResetEvent mreTime = new ManualResetEvent(false);
         bool timeReceived = false;
 
         [TestMethod]
@@ -40,7 +40,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     pubnub.PubnubUnitTest = unitTest;
 
                     pubnub.Time<string>(ReturnTimeStampCallback);
-                    manualEvent1.WaitOne(310 * 1000);
+                    mreTime.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
                             Assert.IsTrue(timeReceived, "time() Failed");
@@ -56,10 +56,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 {
                     if (!string.IsNullOrWhiteSpace(result))
                     {
-                        object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                        if (receivedObj is object[])
+                        object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                        if (deserializedMessage is object[])
                         {
-                            string time = receivedObj[0].ToString();
+                            string time = deserializedMessage[0].ToString();
                             if (time.Length > 0)
                             {
                                 timeReceived = true;
@@ -67,25 +67,25 @@ namespace PubnubWindowsPhone.Test.UnitTest
                         }
                     }
                 });
-            manualEvent1.Set();
+            mreTime.Set();
         }
 
         [TestMethod]
         public void TranslateDateTimeToUnixTime()
         {
             DateTime dt = new DateTime(2012, 6, 26, 0, 0, 0, DateTimeKind.Utc);
-            long nanosecTime = Pubnub.TranslateDateTimeToPubnubUnixNanoSeconds(dt);
+            long nanoSecondTime = Pubnub.TranslateDateTimeToPubnubUnixNanoSeconds(dt);
             //Test for 26th June 2012 GMT
-            Assert.AreEqual<long>(13406688000000000, nanosecTime);
+            Assert.AreEqual<long>(13406688000000000, nanoSecondTime);
         }
 
         [TestMethod]
         public void TranslateUnixTimeToDateTime()
         {
             //Test for 26th June 2012 GMT
-            DateTime expectedDt = new DateTime(2012, 6, 26, 0, 0, 0, DateTimeKind.Utc);
-            DateTime actualDt = Pubnub.TranslatePubnubUnixNanoSecondsToDateTime(13406688000000000);
-            Assert.AreEqual<DateTime>(expectedDt, actualDt);
+            DateTime expectedDate = new DateTime(2012, 6, 26, 0, 0, 0, DateTimeKind.Utc);
+            DateTime actualDate = Pubnub.TranslatePubnubUnixNanoSecondsToDateTime(13406688000000000);
+            Assert.AreEqual<DateTime>(expectedDate, actualDate);
         }
     }
 }

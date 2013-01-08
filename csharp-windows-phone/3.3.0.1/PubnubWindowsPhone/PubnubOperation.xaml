@@ -36,8 +36,8 @@
             <Button Content="Subscribe (with ConnectCallback)" Height="72" HorizontalAlignment="Left" Margin="9,81,0,0" Name="btnSubscribeConnect" VerticalAlignment="Top" Width="414" Click="btnSubscribeConnect_Click" FontSize="22" />
             <Button Content="Detailed History" Height="72" HorizontalAlignment="Left" Margin="9,199,0,0" Name="btnDetailedHistory" VerticalAlignment="Top" Width="240" Click="btnDetailedHistory_Click" FontSize="22" />
 
-            <ScrollViewer Height="201" HorizontalAlignment="Stretch" Margin="0,400,0,0" Name="svResult" VerticalAlignment="Top" Width="420" Background="#FFCCC6C6" BorderThickness="2" Foreground="#FF0D0D0D" ManipulationMode="Control" UseLayoutRounding="False" DoubleTap="svResult_DoubleTap" BorderBrush="SteelBlue" VerticalScrollBarVisibility="Visible">
-                <StackPanel Name="stackPanel1" Orientation="Vertical"></StackPanel>
+            <ScrollViewer Height="201" HorizontalAlignment="Stretch" Margin="0,400,0,0" Name="scrollViewerResult" VerticalAlignment="Top" Width="420" Background="#FFCCC6C6" BorderThickness="2" Foreground="#FF0D0D0D" ManipulationMode="Control" UseLayoutRounding="False" BorderBrush="SteelBlue" VerticalScrollBarVisibility="Visible" DoubleTap="scrollViewerResult_DoubleTap">
+                <StackPanel Name="messageStackPanel" Orientation="Vertical"></StackPanel>
             </ScrollViewer>
             <Button Content="Unsubscribe" Height="72" HorizontalAlignment="Left" Margin="9,258,0,0" Name="btnUnsubscribe" VerticalAlignment="Top" Width="237" Click="btnUnsubscribe_Click" FontSize="22" />
             <Button Content="Presence-Unsub" Height="72" HorizontalAlignment="Left" Margin="6,322,0,0" Name="btnPresenceUnsub" VerticalAlignment="Top" Width="240" Click="btnPresenceUnsub_Click" FontSize="22" />

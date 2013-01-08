@@ -23,10 +23,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
     [TestClass]
     public class WhenSubscribedToAChannel : WorkItemTest
     {
-        ManualResetEvent meSubNoConnect = new ManualResetEvent(false);
+        ManualResetEvent meSubscribeNoConnect = new ManualResetEvent(false);
+        ManualResetEvent meSubscribeYesConnect = new ManualResetEvent(false);
         ManualResetEvent mePublish = new ManualResetEvent(false);
-        ManualResetEvent meUnsub = new ManualResetEvent(false);
-        ManualResetEvent meSubYesConnect = new ManualResetEvent(false);
+        ManualResetEvent meUnsubscribe = new ManualResetEvent(false);
 
         bool receivedMessage = false;
         bool receivedConnectMessage = false;
@@ -50,12 +50,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
                     pubnub.Publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummyPublishCallback);
                     mePublish.WaitOne(310 * 1000);
-                    //Thread.Sleep(100);
 
-                    meSubNoConnect.WaitOne(310 * 1000);
+                    meSubscribeNoConnect.WaitOne(310 * 1000);
                     
                     pubnub.Unsubscribe<string>(channel, dummyUnsubCallback);
-                    meUnsub.WaitOne(310 * 1000);
+                    meUnsubscribe.WaitOne(310 * 1000);
                     Thread.Sleep(100);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
@@ -82,11 +81,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     string channel = "my/channel";
 
                     pubnub.Subscribe<string>(channel, ReceivedMessageCallbackYesConnect, ConnectStatusCallback);
-                    meSubYesConnect.WaitOne(310 * 1000);
+                    meSubscribeYesConnect.WaitOne(310 * 1000);
                     Thread.Sleep(200);
 
                     pubnub.Unsubscribe<string>(channel, dummyUnsubCallback);
-                    meUnsub.WaitOne(310 * 1000);
+                    meUnsubscribe.WaitOne(310 * 1000);
                     Thread.Sleep(200);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                         {
@@ -107,35 +106,35 @@ namespace PubnubWindowsPhone.Test.UnitTest
         {
             if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
                 {
-                    long statusCode = Int64.Parse(receivedObj[0].ToString());
-                    string statusMsg = (string)receivedObj[1];
-                    if (statusCode == 1 && statusMsg.ToLower() == "connected")
+                    long statusCode = Int64.Parse(deserializedMessage[0].ToString());
+                    string statusMessage = (string)deserializedMessage[1];
+                    if (statusCode == 1 && statusMessage.ToLower() == "connected")
                     {
                         receivedConnectMessage = true;
                     }
                 }
             }
-            meSubYesConnect.Set();
+            meSubscribeYesConnect.Set();
         }
         [Asynchronous]
         private void ReceivedMessageCallback(string result)
         {
             if (!string.IsNullOrWhiteSpace(result))
             {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
                 {
-                    object subscribedObj = (object)receivedObj[0];
+                    object subscribedObj = (object)deserializedMessage[0];
                     if (subscribedObj != null)
                     {
                         receivedMessage = true;
                     }
                 }
             }
-            meSubNoConnect.Set();
+            meSubscribeNoConnect.Set();
         }
 
         [Asynchronous]
@@ -147,7 +146,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
         [Asynchronous]
         private void dummyUnsubCallback(string result)
         {
-            meUnsub.Set();
+            meUnsubscribe.Set();
         }
     }
 }

@@ -22,20 +22,20 @@ namespace PubnubWindowsPhone.Test.UnitTest
     [TestClass]
     public class WhenAClientIsPresented : WorkItemTest
     {
-        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
-        ManualResetEvent manualEvent2 = new ManualResetEvent(false);
-        ManualResetEvent manualEvent3 = new ManualResetEvent(false);
+        ManualResetEvent subscribeManualEvent = new ManualResetEvent(false);
+        ManualResetEvent presenceManualEvent = new ManualResetEvent(false);
+        ManualResetEvent unsubscribeManualEvent = new ManualResetEvent(false);
 
-        ManualResetEvent manualEvent4 = new ManualResetEvent(false);
-        ManualResetEvent preUnsubEvent = new ManualResetEvent(false);
+        ManualResetEvent hereNowManualEvent = new ManualResetEvent(false);
+        ManualResetEvent presenceUnsubscribeEvent = new ManualResetEvent(false);
 
-        static bool receivedFlag1 = false;
-        static bool receivedFlag2 = false;
+        static bool receivedPresenceMessage = false;
+        static bool receivedHereNowMessage = false;
 
         [TestMethod,Asynchronous]
         public void ThenPresenceShouldReturnReceivedMessage()
         {
-            receivedFlag1 = false;
+            receivedPresenceMessage = false;
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
@@ -50,18 +50,18 @@ namespace PubnubWindowsPhone.Test.UnitTest
 
                     //since presence expects from stimulus from sub/unsub...
                     pubnub.Subscribe<string>(channel, DummyMethodForSubscribe);
-                    manualEvent1.WaitOne(2000);
+                    subscribeManualEvent.WaitOne(2000);
 
                     pubnub.Unsubscribe<string>(channel, DummyMethodForUnSubscribe);
-                    manualEvent3.WaitOne(2000);
+                    unsubscribeManualEvent.WaitOne(2000);
 
                     pubnub.PresenceUnsubscribe<string>(channel, DummyMethodForPreUnSub);
-                    preUnsubEvent.WaitOne(2000);
+                    presenceUnsubscribeEvent.WaitOne(2000);
 
-                    manualEvent2.WaitOne(310 * 1000);
+                    presenceManualEvent.WaitOne(310 * 1000);
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                        {
-                           Assert.IsTrue(receivedFlag1, "Presence message not received");
+                           Assert.IsTrue(receivedPresenceMessage, "Presence message not received");
                            TestComplete();
                        });
                 });
@@ -74,19 +74,19 @@ namespace PubnubWindowsPhone.Test.UnitTest
             {
                 if (!string.IsNullOrWhiteSpace(receivedMessage))
                 {
-                    object[] receivedObj = JsonConvert.DeserializeObject<object[]>(receivedMessage);
-                    JContainer dic = receivedObj[0] as JContainer;
-                    var uuid = dic["uuid"].ToString();
+                    object[] serializedMessage = JsonConvert.DeserializeObject<object[]>(receivedMessage);
+                    JContainer dictionary = serializedMessage[0] as JContainer;
+                    var uuid = dictionary["uuid"].ToString();
                     if (uuid != null)
                     {
-                        receivedFlag1 = true;
+                        receivedPresenceMessage = true;
                     }
                 }
             }
             catch { }
             finally
             {
-                manualEvent2.Set();
+                presenceManualEvent.Set();
             }
         }
 
@@ -94,7 +94,7 @@ namespace PubnubWindowsPhone.Test.UnitTest
         [TestMethod,Asynchronous]
         public void IfHereNowIsCalledThenItShouldReturnInfo()
         {
-            receivedFlag2 = false;
+            receivedHereNowMessage = false;
             ThreadPool.QueueUserWorkItem((s) =>
                 {
                     Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
@@ -106,10 +106,10 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     pubnub.PubnubUnitTest = unitTest;
 
                     pubnub.HereNow<string>(channel, ThenHereNowShouldReturnMessage);
-                    manualEvent4.WaitOne();
+                    hereNowManualEvent.WaitOne();
                     Deployment.Current.Dispatcher.BeginInvoke(() =>
                        {
-                           Assert.IsTrue(receivedFlag2, "here_now message not received");
+                           Assert.IsTrue(receivedHereNowMessage, "here_now message not received");
                            TestComplete();
                        });
                 });
@@ -124,11 +124,11 @@ namespace PubnubWindowsPhone.Test.UnitTest
                        {
                            if (!string.IsNullOrWhiteSpace(receivedMessage))
                            {
-                               object[] receivedObj = JsonConvert.DeserializeObject<object[]>(receivedMessage);
-                               var dic = ((JContainer)receivedObj[0])["uuids"];
-                               if (dic != null)
+                               object[] serializedMessage = JsonConvert.DeserializeObject<object[]>(receivedMessage);
+                               var dictionary = ((JContainer)serializedMessage[0])["uuids"];
+                               if (dictionary != null)
                                {
-                                   receivedFlag2 = true;
+                                   receivedHereNowMessage = true;
                                }
                            }
                        });
@@ -136,28 +136,28 @@ namespace PubnubWindowsPhone.Test.UnitTest
             catch { }
             finally
             {
-                manualEvent4.Set();
+                hereNowManualEvent.Set();
             }
         }
 
         [Asynchronous]
         void DummyMethodForSubscribe(string receivedMessage)
         {
-            manualEvent1.Set();
+            subscribeManualEvent.Set();
             //Dummary callback method for subscribe and unsubscribe to test presence
         }
 
         [Asynchronous]
         void DummyMethodForUnSubscribe(string receivedMessage)
         {
-            manualEvent3.Set();
+            unsubscribeManualEvent.Set();
             //Dummary callback method for unsubscribe to test presence
         }
 
         [Asynchronous]
         void DummyMethodForPreUnSub(string receivedMessage)
         {
-            preUnsubEvent.Set();
+            presenceUnsubscribeEvent.Set();
         }
     }
 }

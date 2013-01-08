@@ -15,8 +15,8 @@ namespace PubNubMessaging.Tests
     [TestFixture]
     public class WhenGetRequestServerTime
     {
-        ManualResetEvent manualEvent1 = new ManualResetEvent(false);
-        ManualResetEvent meProxy = new ManualResetEvent(false);
+        ManualResetEvent mreTime = new ManualResetEvent(false);
+        ManualResetEvent mreProxy = new ManualResetEvent(false);
         bool timeReceived = false;
         bool timeReceivedWhenProxy = false;
 
@@ -32,7 +32,7 @@ namespace PubNubMessaging.Tests
             pubnub.PubnubUnitTest = unitTest;
 
             pubnub.Time<string>(ReturnTimeStampCallback);
-            manualEvent1.WaitOne(310 * 1000);
+            mreTime.WaitOne(310 * 1000);
             Assert.IsTrue(timeReceived, "time() Failed");
         }
 
@@ -55,7 +55,7 @@ namespace PubNubMessaging.Tests
             pubnub.PubnubUnitTest = unitTest;
 
             pubnub.Time<string>(ReturnProxyPresenceTimeStampCallback);
-            meProxy.WaitOne(310 * 1000);
+            mreProxy.WaitOne(310 * 1000);
             Assert.IsTrue(timeReceivedWhenProxy, "time() Failed");
         }
 
@@ -63,10 +63,10 @@ namespace PubNubMessaging.Tests
         {
             if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
                 {
-                    string time = receivedObj[0].ToString();
+                    string time = deserializedMessage[0].ToString();
                     Int64 nanoTime;
                     if (time.Length > 2 && Int64.TryParse(time, out nanoTime))
                     {
@@ -74,17 +74,17 @@ namespace PubNubMessaging.Tests
                     }
                 }
             }
-            manualEvent1.Set();
+            mreTime.Set();
         }
 
         private void ReturnProxyPresenceTimeStampCallback(string result)
         {
             if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
-                object[] receivedObj = JsonConvert.DeserializeObject<object[]>(result);
-                if (receivedObj is object[])
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
                 {
-                    string time = receivedObj[0].ToString();
+                    string time = deserializedMessage[0].ToString();
                     Int64 nanoTime;
                     if (time.Length > 2 && Int64.TryParse(time, out nanoTime))
                     {
@@ -92,7 +92,7 @@ namespace PubNubMessaging.Tests
                     }
                 }
             }
-            meProxy.Set();
+            mreProxy.Set();
         }
 
         [Test]
@@ -100,17 +100,17 @@ namespace PubNubMessaging.Tests
         {
             //Test for 26th June 2012 GMT
             DateTime dt = new DateTime(2012,6,26,0,0,0,DateTimeKind.Utc);
-            long nanosecTime = Pubnub.TranslateDateTimeToPubnubUnixNanoSeconds(dt);
-            Assert.AreEqual(13406688000000000, nanosecTime);
+            long nanoSecondTime = Pubnub.TranslateDateTimeToPubnubUnixNanoSeconds(dt);
+            Assert.AreEqual(13406688000000000, nanoSecondTime);
         }
 
         [Test]
         public void TranslateUnixTimeToDateTime()
         {
             //Test for 26th June 2012 GMT
-            DateTime expectedDt = new DateTime(2012, 6, 26, 0, 0, 0, DateTimeKind.Utc);
-            DateTime actualDt = Pubnub.TranslatePubnubUnixNanoSecondsToDateTime(13406688000000000);
-            Assert.AreEqual(expectedDt, actualDt);
+            DateTime expectedDate = new DateTime(2012, 6, 26, 0, 0, 0, DateTimeKind.Utc);
+            DateTime actualDate = Pubnub.TranslatePubnubUnixNanoSecondsToDateTime(13406688000000000);
+            Assert.AreEqual(expectedDate, actualDate);
         }
     }
 }
