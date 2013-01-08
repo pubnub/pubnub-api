@@ -93,6 +93,7 @@ public class Pubnub {
      */
     public void setWebRequestCallbackInterval(int interval){
         this.PUBNUB_WEBREQUEST_CALLBACK_INTERVAL = interval;
+        this.init(this.PUBLISH_KEY, this.SUBSCRIBE_KEY, this.SECRET_KEY, this.CIPHER_KEY, this.SSL);
     }
     /**
      *  Sets number of retries to be made for network availability check
@@ -120,6 +121,7 @@ public class Pubnub {
      */
     public void setConnectionTimeout(int timeout) {
         this.PUBNUB_DEFAULT_CONN_TIMEOUT = timeout;
+        this.init(this.PUBLISH_KEY, this.SUBSCRIBE_KEY, this.SECRET_KEY, this.CIPHER_KEY, this.SSL);
     }
     
     
