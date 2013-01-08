@@ -9,6 +9,25 @@ namespace PubNubTest
   {
         public object objResponse = null;
         public bool deliveryStatus = false;
+        
+        public void DisplayReturnMessageDummy(object result)
+        {
+          IList<object> message = result as IList<object>;
+          
+          if (message != null && message.Count >= 2)
+          {
+            for (int index = 0; index < message.Count; index++)
+            {
+              //ParseObject(message[index], 1);
+            }
+          }
+          else
+          {
+            Console.WriteLine("unable to parse data");
+          }
+          //deliveryStatus = true;
+          //objResponse = result;
+        }
 
         public void DisplayReturnMessage(object result)
         {
@@ -18,7 +37,7 @@ namespace PubNubTest
             {
                 for (int index = 0; index < message.Count; index++)
                 {
-                    ParseObject(message[index], 1);
+                    //ParseObject(message[index], 1);
                 }
             }
             else

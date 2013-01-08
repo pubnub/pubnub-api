@@ -5,7 +5,9 @@
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Pubnub-Messaging" expanded="True" />
-          <Node name="Pubnub-Messaging.Tests" expanded="True" selected="True" />
+          <Node name="Pubnub-Messaging.Tests" expanded="True">
+            <Node name="WhenGetRequestServerTime.cs" selected="True" />
+          </Node>
         </State>
       </Pad>
     </Pads>
