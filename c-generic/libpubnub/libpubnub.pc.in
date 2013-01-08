@@ -1,0 +1,11 @@
+libdir=@LIBDIR@
+includedir=@INCDIR@
+
+Name: pubnub
+Description: PubNub Cloud Messaging Library
+Version: 0.1
+Requires: json, libcurl, libcrypto, libevent
+Conflicts:
+Libs: -L${libdir} -lpubnub
+Cflags: -I${includedir}
+
