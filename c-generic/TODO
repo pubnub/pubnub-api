@@ -1,15 +1,12 @@
 urgent clean up TODOs so that the C library is fully usable:
-- move examples to separate directories
-- build examples to be executable against locally built library
-	(now, running them requires setting LD_LIBRARY_PATH=.)
 - make install target for the library
 - introduce library version
 - pkg-config for the library
+- fix missing function documentation in pubnub.h
 
 afterwards:
 - factor out libpubnub-event.so so that libevent is not hard dep for libpubnub
 - make some RPi examples integrating the C e.g. with WiringPi
-- fix missing function documentation in pubnub.h
 - add README.md with general description
 - build C++ wrapper
 

@@ -1,26 +1,18 @@
 # Compile using `make XCFLAGS=-DDEBUG` to enable debugging code.
 CUSTOM_CFLAGS=-Wall -ggdb3 -O3
-SYS_CFLAGS=-std=gnu99 -fPIC -fvisibility=internal -I. `pkg-config --cflags json libcurl libcrypto libevent`
+SOFLAGS=-fPIC -fvisibility=internal
+SYS_CFLAGS=-std=gnu99 $(SOFLAGS) -I. `pkg-config --cflags json libcurl libcrypto libevent`
 LIBS=`pkg-config --libs json libcurl libcrypto libevent`
-SO_LDFLAGS=-fPIC -fvisibility=internal -shared
+LDFLAGS=$(SOFLAGS) -shared
 
-LIBOBJS=pubnub.o pubnub-sync.o pubnub-libevent.o crypto.o
+OBJS=pubnub.o pubnub-sync.o pubnub-libevent.o crypto.o
 
-# This list is just for Makefile.lib's dependency tracking
-OBJS=$(LIBOBJS) example-sync-demo.o example-libevent-demo.o
+all: libpubnub.so
 
-all: libpubnub.so example-sync-demo example-libevent-demo
-
-libpubnub.so: $(LIBOBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SO_LDFLAGS) -o $@ $^ $(LIBS)
-
-example-sync-demo: example-sync-demo.o ./libpubnub.so
-	$(call cmd,link)
-
-example-libevent-demo: example-libevent-demo.o ./libpubnub.so
-	$(call cmd,link)
+libpubnub.so: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm -f *.o example-sync-demo example-libevent-demo
+	rm -f *.o libpubnub.so
 
--include Makefile.lib
+-include ../Makefile.lib
