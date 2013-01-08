@@ -13,4 +13,6 @@ example-sync-demo: example-sync-demo.o ../../libpubnub/libpubnub.so
 clean:
 	rm -f *.o example-sync-demo
 
+install:
+
 -include ../../Makefile.lib

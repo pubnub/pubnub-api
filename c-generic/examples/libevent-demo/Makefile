@@ -13,4 +13,6 @@ example-libevent-demo: example-libevent-demo.o ../../libpubnub/libpubnub.so
 clean:
 	rm -f *.o example-libevent-demo
 
+install:
+
 -include ../../Makefile.lib

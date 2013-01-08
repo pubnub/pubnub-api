@@ -51,6 +51,7 @@ unexport CFLAGS
 CFLAGS += $(CUSTOM_CFLAGS) $(XCFLAGS) $(INCLUDES) $(SYS_CFLAGS)
 COMPILE = $(CC) $(CFLAGS)
 LINK = $(CC) $(LDFLAGS) $(XLDFLAGS)
+INSTALL = install
 
 DEP_FILES_1 = $(foreach src,$(OBJS),.deps/$(src))
 DEP_FILES = $(DEP_FILES_1:%.o=%.P)
@@ -75,8 +76,8 @@ endif
 
 # Recursion:
 
-.PHONY: all-recursive clean-recursive clean-profiles-recursive
-all-recursive clean-recursive clean-profiled-recursive:
+.PHONY: all-recursive clean-recursive install-recursive
+all-recursive clean-recursive install-recursive:
 	+@target=`echo $@ | sed s/-recursive//`; \
 	for subdir in $(SUBDIRS); do \
 		$(call ncmd,recmake) || exit 1; \

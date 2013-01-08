@@ -15,4 +15,11 @@ libpubnub.so: $(OBJS)
 clean:
 	rm -f *.o libpubnub.so
 
+install:
+	$(INSTALL) -D -m 0644 pubnub.h $(DESTDIR)$(INCDIR)/pubnub.h
+	$(INSTALL) -D -m 0644 pubnub-sync.h $(DESTDIR)$(INCDIR)/pubnub-sync.h
+	$(INSTALL) -D -m 0644 pubnub-libevent.h $(DESTDIR)$(INCDIR)/pubnub-libevent.h
+	$(INSTALL) -D -m 0755 libpubnub.so $(DESTDIR)$(LIBDIR)/libpubnub.so
+	ldconfig
+
 -include ../Makefile.lib

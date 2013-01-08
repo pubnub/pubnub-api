@@ -1,5 +1,4 @@
 urgent clean up TODOs so that the C library is fully usable:
-- make install target for the library
 - introduce library version
 - pkg-config for the library
 - fix missing function documentation in pubnub.h
