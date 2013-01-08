@@ -176,7 +176,7 @@ pubnub_libevent_done(struct pubnub *p, void *ctx_data)
 /** Callback table */
 
 PUBNUB_API
-struct pubnub_callbacks pubnub_libevent_callbacks = {
+const struct pubnub_callbacks pubnub_libevent_callbacks = {
 	.add_socket = pubnub_libevent_add_socket,
 	.rem_socket = pubnub_libevent_rem_socket,
 	.timeout = pubnub_libevent_timeout,

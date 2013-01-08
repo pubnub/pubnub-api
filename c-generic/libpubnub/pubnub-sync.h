@@ -12,7 +12,7 @@ struct pubnub_sync;
 struct json_object;
 
 /* Callback structure to pass pubnub_init(). */
-extern struct pubnub_callbacks pubnub_sync_callbacks;
+extern const struct pubnub_callbacks pubnub_sync_callbacks;
 
 /* Callback data to pass pubnub_init(). */
 struct pubnub_sync *pubnub_sync_init(void);

@@ -255,7 +255,7 @@ pubnub_sync_subscribe_cb(struct pubnub *p, enum pubnub_res result, char **channe
 /** Callback table */
 
 PUBNUB_API
-struct pubnub_callbacks pubnub_sync_callbacks = {
+const struct pubnub_callbacks pubnub_sync_callbacks = {
 	.add_socket = pubnub_sync_add_socket,
 	.rem_socket = pubnub_sync_rem_socket,
 	.timeout = pubnub_sync_timeout,
