@@ -60,7 +60,9 @@ class PubnubCrypto() :
         #* @return key in MD5 format
         #**
         """
-        return MD5.new(key).digest()
+        m = hashlib.sha256()
+        m.update(key)
+        return m.hexdigest()[:32]
 
     def encrypt( self, key, msg ):
         """
