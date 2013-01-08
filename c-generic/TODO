@@ -1,13 +1,11 @@
-urgent clean up TODOs so that the C library is fully usable:
-- fix missing function documentation in pubnub.h
-
 afterwards:
-- factor out libpubnub-event.so so that libevent is not hard dep for libpubnub
 - make some RPi examples integrating the C e.g. with WiringPi
+- fix missing function documentation in pubnub.h
 - add README.md with general description
 - build C++ wrapper
 
 later?
+- factor out libpubnub-event.so so that libevent is not hard dep for libpubnub
 - way to configure NOSIGNAL curl mode
 - standardized timeout handling (configurable)
 - standardized error retry policy (configurable)
