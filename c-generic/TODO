@@ -14,6 +14,7 @@ afterwards:
 - make some RPi examples integrating the C/C++ e.g. with WiringPi
 
 later?
+- way to configure NOSIGNAL curl mode
 - standardized timeout handling (configurable)
 - standardized error retry policy (configurable)
 - more demo's?

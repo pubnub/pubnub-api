@@ -321,6 +321,7 @@ pubnub_http_request(struct pubnub *p, const char *urlelems[],
 	curl_easy_setopt(p->curl, CURLOPT_ERRORBUFFER, p->curl_error);
 	curl_easy_setopt(p->curl, CURLOPT_PRIVATE, p);
 	curl_easy_setopt(p->curl, CURLOPT_NOPROGRESS, 1L);
+	/* TODO: Make this user-configurable */
 	curl_easy_setopt(p->curl, CURLOPT_NOSIGNAL, 1L);
 	curl_easy_setopt(p->curl, CURLOPT_TIMEOUT, timeout);
 
