@@ -23,7 +23,7 @@ ssl_on        = len(sys.argv) > 4 and bool(sys.argv[4]) or False
 ## -----------------------------------------------------------------------
 
 pubnub = Pubnub( publish_key, subscribe_key, secret_key, ssl_on )
-crazy  = ' ~`!@#$%^&*(顶顅Ȓ)+=[]\\{}|;\':",./<>?abcd'
+crazy  = ' ~`!@#$%^&*(顶顅Ȓ)+=[]\\{}|;\':"./<>?abcd'
 
 ## ---------------------------------------------------------------------------
 ## Unit Test Function
@@ -46,15 +46,6 @@ test( pubish_success[0] == 1, 'Publish First Message Success' )
 ## -----------------------------------------------------------------------
 ## History Example
 ## -----------------------------------------------------------------------
-history = pubnub.history({
-    'channel' : crazy,
-    'limit'   : 1
-})
-test(
-    history[0].encode('utf-8') == crazy,
-    'History Message: ' + history[0]
-)
-test( len(history) == 1, 'History Message Count' )
 
 ## -----------------------------------------------------------------------
 ## PubNub Server Time Example
