@@ -22,13 +22,19 @@
 @implementation PNTimeTokenRequest
 
 
-#pragma mark - Instance methods
+#pragma mark - Instance methods}
+
+- (NSString *)callbackMethodName {
+
+    return PNServiceResponseCallbacks.timeTokenCallback;
+}
 
 - (NSString *)resourcePath {
     
-    return [NSString stringWithFormat:@"%@/time/%@",
+    return [NSString stringWithFormat:@"%@/time/%@_%@",
             kPNRequestAPIVersionPrefix,
-            PNServiceResponseCallbacks.timeTokenCallback];
+            [self callbackMethodName],
+            self.shortIdentifier];
 }
 
 #pragma mark -

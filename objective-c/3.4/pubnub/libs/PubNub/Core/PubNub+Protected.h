@@ -13,6 +13,7 @@
 //
 
 #import "PNConfiguration.h"
+#import "PNReachability.h"
 #import "PNDelegate.h"
 #import "PubNub.h"
 
@@ -23,9 +24,6 @@ typedef enum _PNPubNubClientState {
     
     // Client instance was just created
     PNPubNubClientStateCreated,
-    
-    // Client instance is in error state
-    PNPubNubClientStateError,
     
     // Client is trying to establish connection
     // to remote PubNub services
@@ -73,6 +71,15 @@ typedef enum _PNPubNubClientState {
 // (created each time when PubNub stack is configured
 // after application launch)
 @property (nonatomic, strong) NSString *launchSessionIdentifier;
+
+
+#pragma mark - Instance methods
+
+/**
+ * Return reference on reachability instance which is used to
+ * treck network state
+ */
+- (PNReachability *)reachability;
 
 
 #pragma mark -

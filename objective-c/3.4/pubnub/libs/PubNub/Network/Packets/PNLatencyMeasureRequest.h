@@ -15,9 +15,35 @@
 //
 //
 
-#import "PNBaseRequest.h"
+#import "PNMessagePostRequest.h"
 
 
-@interface PNLatencyMeasureRequest : PNBaseRequest
+#pragma mark Class forward
+
+@class PNResponse;
+
+
+@interface PNLatencyMeasureRequest : PNMessagePostRequest
+
+
+#pragma mark - Instance methods
+
+/**
+ * Latency packet profiling interval manipulation
+ */
+- (void)markStartTime;
+- (void)markEndTime;
+
+/**
+ * Calculates request latency
+ */
+- (double)latency;
+
+/**
+ * Calculates network bandwidth based on amount of data
+ * sent during request execution time
+ * @return bytes per second
+ */
+- (double)bandwidthToLoadResponse:(PNResponse *)response;
 
 @end

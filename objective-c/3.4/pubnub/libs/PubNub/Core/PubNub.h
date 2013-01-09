@@ -13,18 +13,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PNStructures.h"
 #import "PNDelegate.h"
 
 
 #pragma mark Class forward
 
-@class PNConfiguration;
+@class PNConfiguration, PNChannel, PNMessage;
 
 
 @interface PubNub : NSObject
 
 
-#pragma mark Class methods
+#pragma mark - Class methods
 
 /**
  * Retrieve reference on shared PubNub client instance
@@ -36,11 +37,18 @@
 
 /**
  * Launch configured PubNub client (this will cause initial
- * connection which will retrieve time token from backend 
- * and open two connections/sockets which will be used for 
+ * connection which will retrieve time token from backend
+ * and open two connections/sockets which will be used for
  * communication with PubNub services).
  */
 + (void)connect;
+
+/**
+ * Perform same action as +connect but in addition provides
+ * handling blocks
+ */
++ (void)connectWithSuccessBlock:(PNClientConnectionSuccessBlock)success
+                     errorBlock:(PNClientConnectionFailureBlock)failure;
 
 /**
  * Will disconnect from all channels w/o sending leave
@@ -58,10 +66,9 @@
  * If PubNub was previously configured, it will perform
  * "hard reset".
  * "hard reset" - is action when all connection will be 
- *                dropped w/o notify to the server.
- *                All scheduled messages will be discarded 
- *                (try to avoid runtime re-configuration 
- *                of the client)
+ * dropped w/o notify to the server. All scheduled
+ * messages will be discarded (try to avoid runtime client
+ * re-configuration)
  */
 + (void)setConfiguration:(PNConfiguration *)configuration;
 + (void)setupWithConfiguration:(PNConfiguration *)configuration andDelegate:(id<PNDelegate>)delegate;
@@ -95,6 +102,256 @@
 + (NSString *)clientIdentifier;
 
 
+#pragma mark - Channels subscription management
+
+/**
+ * Check whether client subscribed for specified channel or not
+ */
++ (BOOL)isSubscribedOnChannel:(PNChannel *)channel;
+
+/**
+ * Will subscribe client for another one channel.
+ * This request will add provided channel to the
+ * list of channels on which client already subscribed.
+ * By default this method will trigger presence event
+ * by sending leave to channels to which client already
+ * connected and then re-subscribe generating 'join' event.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track subscribe process from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)subscribeOnChannel:(PNChannel *)channel;
++ (void) subscribeOnChannel:(PNChannel *)channel
+withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBlock;
+
+/**
+ * Will subscribe client for another one channel.
+ * This request will add provided channel to the
+ * list of channels on which client already subscribed.
+ *
+ * If 'withPresenceEvent' is set to YES, than 'join' presence
+ * event will be triggered right after connected channels will
+ * trigger 'leave' presence event.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track subscribe process from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)subscribeOnChannel:(PNChannel *)channel withPresenceEvent:(BOOL)withPresenceEvent;
++ (void)subscribeOnChannel:(PNChannel *)channel
+         withPresenceEvent:(BOOL)withPresenceEvent
+andCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBlock;
+
+/**
+ * Will subscribe client for another channels set.
+ * This request will add provided channels set to the
+ * list of channels on which client already subscribed.
+ * By default this method will trigger presence event
+ * by sending leave to channels to which client already
+ * connected and then re-subscribe generating 'join' event.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track subscribe process from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)subscribeOnChannels:(NSArray *)channels;
++ (void)subscribeOnChannels:(NSArray *)channels
+withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBlock;
+
+/**
+ * Will subscribe client for another one channel.
+ * This request will add provided channel to the
+ * list of channels on which client already subscribed.
+ *
+ * If 'withPresenceEvent' is set to YES, than 'join' presence
+ * event will be triggered right after connected channels will
+ * trigger 'leave' presence event.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track subscribe process from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)subscribeOnChannels:(NSArray *)channels withPresenceEvent:(BOOL)withPresenceEvent;
++ (void)subscribeOnChannels:(NSArray *)channels
+          withPresenceEvent:(BOOL)withPresenceEvent
+ andCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBlock;
+
+/**
+ * Will unsubscribe client from specified channel.
+ * Specified channel will be removed from the list
+ * of subscribed channels.
+ *
+ * If there is no connection, than all channels will
+ * be leaved w/o sending "leave" message.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track unsubscribe process from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)unsubscribeFromChannel:(PNChannel *)channel;
++ (void)unsubscribeFromChannel:(PNChannel *)channel
+   withCompletionHandlingBlock:(PNClientChannelUnsubscriptionHandlerBlock)handlerBlock;
+
+/**
+ * Will unsubscribe client from specified channel.
+ * Specified channel will be removed from the list
+ * of subscribed channels.
+ *
+ * If there is no connection, than all channels will
+ * be leaved w/o sending "leave" message.
+ *
+ * If 'withPresenceEvent' is set to YES, than 'leave' presence
+ * event will be triggered.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track unsubscribe process from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)unsubscribeFromChannel:(PNChannel *)channel withPresenceEvent:(BOOL)withPresenceEvent;
++ (void)unsubscribeFromChannel:(PNChannel *)channel
+             withPresenceEvent:(BOOL)withPresenceEvent
+    andCompletionHandlingBlock:(PNClientChannelUnsubscriptionHandlerBlock)handlerBlock;
+
+/**
+ * Will unsubscribe client from set of channels.
+ * Specified set of channels will be removed from
+ * the list of subscribed channels.
+ * Leave event will be sent on provided list of
+ * channels.
+ * If there is no connection, than all channels will
+ * be leaved w/o sending 'leave' message.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track unsubscribe process from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)unsubscribeFromChannels:(NSArray *)channels;
++ (void)unsubscribeFromChannels:(NSArray *)channels
+    withCompletionHandlingBlock:(PNClientChannelUnsubscriptionHandlerBlock)handlerBlock;
+
+/**
+ * Will unsubscribe client from set of channels.
+ * Specified set of channels will be removed from
+ * the list of subscribed channels.
+ *
+ * If there is no connection, than all channels will
+ * be leaved w/o sending "leave" message.
+ *
+ * If 'withPresenceEvent' is set to YES, than 'leave' presence
+ * event will be triggered.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track unsubscribe process from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)unsubscribeFromChannels:(NSArray *)channels withPresenceEvent:(BOOL)withPresenceEvent;
++ (void)unsubscribeFromChannels:(NSArray *)channels
+              withPresenceEvent:(BOOL)withPresenceEvent
+     andCompletionHandlingBlock:(PNClientChannelUnsubscriptionHandlerBlock)handlerBlock;
+
+
+#pragma mark - Presence management
+
+/**
+ * Checking whether client added presence observation on particular
+ * channel or not
+ */
++ (BOOL)isPresenceObservationEnabledForChannel:(PNChannel *)channel;
+
+/**
+ * Enable presence observation for specific channel
+ */
++ (void)enablePresenceObservationForChannel:(PNChannel *)channel;
+
+/**
+ * Enable presence observation for list of channels
+ */
++ (void)enablePresenceObservationForChannels:(NSArray *)channels;
+
+/**
+ * Disable presence observation for specific channel
+ */
++ (void)disablePresenceObservationForChannel:(PNChannel *)channel;
+
+/**
+ * Disable presence observation for list of channels
+ */
++ (void)disablePresenceObservationForChannels:(NSArray *)channels;
+
+
+#pragma mark - Time token
+
+/**
+ * Send asynchronous time token request to PubNub
+ * services.
+ * Response will retrieve all who subscribed for
+ * time token retrieval via observer center or
+ * notifications
+ */
++ (void)requestServerTimeToken;
+
+/**
+ * Same as +requestServerTimeToken but allow to specify
+ * completion block which will be called when time token
+ * will be fetched from remote PubNub services.
+ * If more than 1 observer want to know about time token
+ * arrival, than they can use PNObservationCenter and
+ * subscribe for event with block or listen notifications.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track time token retrieval from many places,
+ * use PNObservationCenter methods for this purpose.
+ */
++ (void)requestServerTimeTokenWithCompletionBlock:(PNClientTimeTokenReceivingCompleteBlock)success;
+
+
+#pragma mark - Messages processing methods
+
+/**
+ * Asynchronously send message to the PubNub service.
+ * All messages which sent to the PubNub service are
+ * sent via FIFO queue which guarantee that they all
+ * will be sent in same order as thet was scheduled.
+ * Delegate as well as observers will receive
+ * notification when message will/did sent
+ *
+ * @return PNMessage instance which will represent message
+ *         which is sent for processing
+ */
++ (PNMessage *)sendMessage:(NSString *)message toChannel:(PNChannel *)channel;
+
+/**
+ * Same as +sendMessage:toChannel: but allow to specify
+ * completion block which will be called when message will
+ * be sent or in case of error.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track message sending from many places, use
+ * PNObservationCenter methods for this purpose.
+ */
++ (PNMessage *)sendMessage:(NSString *)message
+                 toChannel:(PNChannel *)channel
+       withCompletionBlock:(PNClientMessageSendingCompletionBlock)success;
+
+/**
+ * Asynchronously send configured message object
+ * to PubNub service.
+ */
++ (void)sendMessage:(PNMessage *)message;
+
+/**
+ * Same as +sendMessage: but allow to specify
+ * completion block which will be called when message will
+ * be sent or in case of error.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track message sending from many places, use
+ * PNObservationCenter methods for this purpose.
+ */
++ (void)sendMessage:(PNMessage *)message withCompletionBlock:(PNClientMessageSendingCompletionBlock)success;
+
+
 #pragma mark - Instance methods
 
 /**
@@ -102,16 +359,6 @@
  * and ready to work or not
  */
 - (BOOL)isConnected;
-
-/**
- * Send asynchronous time token request to PubNub
- * services.
- * Response will retrieve all who subscribed for
- * time token retrival via observer center or
- * notifications
- */
-- (void)requestServerTimeToken;
-
 
 #pragma mark -
 

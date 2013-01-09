@@ -11,6 +11,7 @@
 //
 
 #import "PNJSONSerialization.h"
+#import "PNObservationCenter.h"
 #import "PNChannelPresence.h"
 #import "PNConfiguration.h"
 #import "PNNotifications.h"

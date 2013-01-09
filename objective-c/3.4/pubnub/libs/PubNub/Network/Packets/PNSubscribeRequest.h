@@ -23,6 +23,13 @@
 @interface PNSubscribeRequest : PNBaseRequest
 
 
+#pragma mark - Properties
+
+// Stores reference on list of channels on which client
+// should subscribe
+@property (nonatomic, readonly, strong) NSArray *channels;
+
+
 #pragma mark - Class methods
 
 + (PNSubscribeRequest *)subscribeRequestForChannel:(PNChannel *)channel;

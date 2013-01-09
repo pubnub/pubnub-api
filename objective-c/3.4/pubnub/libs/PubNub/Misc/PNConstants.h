@@ -42,6 +42,9 @@ static BOOL const kPNShouldAutoReconnectClientByDefault = YES;
 static BOOL const kPNShouldReduceSecurityLevelOnErrorByDefault = YES;
 static BOOL const kPNCanIgnoreSecureConnectionRequirementByDefault = NO;
 
+// Stores how many times request can be rescheduled because
+// of stream errors
+static NSUInteger const kPNRequestMaximumRetryCount = 3;
 
 // This is the channel which is used by latency
 // meter to measure network latency (prefix from unique

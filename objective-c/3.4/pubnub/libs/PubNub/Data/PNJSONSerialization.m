@@ -11,7 +11,6 @@
 //
 //
 
-#import "PNJSONSerialization.h"
 #import "JSONKit.h"
 
 
@@ -39,41 +38,45 @@
 @implementation PNJSONSerialization
 
 
-#pragma mark Class methods
+#pragma mark - Class methods
 
-/**
- * Parse provided binary data object.
- * Method will automatically detect JSON and JSONP
- * format and provide callback method name in addition
- * to parsed data.
- */
 + (void)JSONObjectWithData:(NSData *)jsonData
            completionBlock:(void(^)(id result, BOOL isJSONPStyle, NSString *callbackMethodName))completionBlock
                 errorBlock:(void(^)(NSError *error))errorBlock {
     
-    NSString *jsonCallbackMethodName = nil;
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    [self JSONObjectWithString:jsonString completionBlock:completionBlock errorBlock:errorBlock];
+}
+
++ (void)JSONObjectWithString:(NSString *)jsonString
+             completionBlock:(void(^)(id result, BOOL isJSONPStyle, NSString *callbackMethodName))completionBlock
+                  errorBlock:(void(^)(NSError *error))errorBlock {
+    
+    NSString *jsonCallbackMethodName = nil;
     [self getCallbackMethodName:&jsonCallbackMethodName fromJSONString:jsonString];
     
     // Check whether callback name was found in JSON string or not
     if(jsonCallbackMethodName != nil) {
         
         jsonString = [self JSONStringFromJSONPString:jsonString callbackMethodName:jsonCallbackMethodName];
-        jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     }
     
     
     // Checking whether native JSONSerializer is available or not
     NSError *parsingError = nil;
     id result = nil;
-    if ([NSJSONSerialization class]) {
+    if (NSClassFromString(@"NSJSONSerialization")) {
         
-        result = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&parsingError];
+        result = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]
+                                                 options:(NSJSONReadingOptions)kNilOptions
+                                                   error:&parsingError];
     }
     // Fallback to JSONKit usage
     else {
         
-        result = [jsonData objectFromJSONDataWithParseOptions:JKParseOptionNone error:&parsingError];
+        result = [[jsonString dataUsingEncoding:NSUTF8StringEncoding] objectFromJSONDataWithParseOptions:JKParseOptionNone
+                                                                                                   error:&parsingError];
     }
     
     
@@ -92,7 +95,6 @@
             errorBlock(parsingError);
         }
     }
-    
 }
 
 + (void)getCallbackMethodName:(NSString **)callbackMethodName fromJSONString:(NSString *)jsonString {

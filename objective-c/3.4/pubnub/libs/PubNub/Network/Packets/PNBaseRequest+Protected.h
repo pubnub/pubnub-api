@@ -18,6 +18,23 @@
 
 #pragma mark - Instance methods
 
+#pragma mark - Processing retry
+
+/**
+ * Retrieve how many times request can be
+ * rescheduled for processing
+ */
+- (NSUInteger)allowedRetryCount;
+
+- (void)resetRetryCount;
+- (void)increaseRetryCount;
+
+/**
+ * Check whether request can retry processing
+ * one more time or not
+ */
+- (BOOL)canRetry;
+
 /**
  * Require from request fully prepared HTTP
  * payload which will be sent to the PubNub

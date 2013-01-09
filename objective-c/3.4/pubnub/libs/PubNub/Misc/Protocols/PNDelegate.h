@@ -14,7 +14,7 @@
 
 #pragma mark Class forward
 
-@class PubNub, PNError;
+@class PubNub, PNError, PNMessage;
 
 
 @protocol PNDelegate <NSObject>
@@ -47,16 +47,16 @@
 - (void)pubnubClient:(PubNub *)client didDisconnectFromOrigin:(NSString *)origin;
 
 /**
+ * Called on delegate when client disconnected from PubNub services
+ * because of error
+ */
+- (void)pubnubClient:(PubNub *)client didDisconnectFromOrigin:(NSString *)origin withError:(PNError *)error;
+
+/**
  * Called on delegate when come error occurred during PubNub client
  * connection session and it will be closed
  */
 - (void)pubnubClient:(PubNub *)client willDisconnectWithError:(PNError *)error;
-
-/**
- * Called on delegate when come error occurred during PubNub client
- * connection session and it was closed
- */
-- (void)pubnubClient:(PubNub *)client didDisconnectWithError:(PNError *)error;
 
 /**
  * Called on delegate when occurred error while tried to connect
@@ -67,12 +67,57 @@
 - (void)pubnubClient:(PubNub *)client connectionDidFailWithError:(PNError *)error;
 
 /**
+ * Called on delegate when client successfully subscribed to specified
+ * set of channels
+ */
+- (void)pubnubClient:(PubNub *)client didSubscribeOnChannels:(NSArray *)channels;
+
+/**
  * Called on delegate when some kind of error occurred during 
  * subscription creation
  * error - returned error will contain information about channel
  *         on which this error occurred and possible reason of error
  */
 - (void)pubnubClient:(PubNub *)client subscriptionDidFailWithError:(PNError *)error;
+
+/**
+ * Called on delegate when some kind of error occurred during
+ * unsubscribe
+ * error - returned error will contain information about channel
+ *         on which this error occurred and possible reason of error
+ */
+- (void)pubnubClient:(PubNub *)client unsubscriptionDidFailWithError:(PNError *)error;
+
+/**
+ * Called on delegate when PubNub client retrieved time
+ * token from PubNub service
+ */
+- (void)pubnubClient:(PubNub *)client didReceiveTimeToken:(NSString *)timeToken;
+
+/**
+ * Called on delegate when PubNub client failed to
+ * retrieve time token from PubNub service because
+ * of some error
+ */
+- (void)pubnubClient:(PubNub *)client timeTokenReceiveDidFailWithError:(PNError *)error;
+
+/**
+ * Called on delegate when PubNub client is about to send
+ * message to remote server
+ */
+- (void)pubnubClient:(PubNub *)client willSendMessage:(PNMessage *)message;
+
+/**
+ * Called on delegate when some kind of error occurred while
+ * tried to send message to PubNub services
+ */
+- (void)pubnubClient:(PubNub *)client didFailMessageSend:(PNMessage *)message withError:(PNError *)error;
+
+/**
+ * Called on delegate when message was successfully set to
+ * the PubNub service
+ */
+- (void)pubnubClient:(PubNub *)client didSendMessage:(PNMessage *)message;
 
 
 #pragma mark - Configuration override delegate methods

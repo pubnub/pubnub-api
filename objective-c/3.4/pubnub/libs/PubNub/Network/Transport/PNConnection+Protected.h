@@ -6,8 +6,11 @@
 //
 //
 
+#import "PNConnection.h"
+#import "PNBaseRequest+Protected.h"
 
-#pragma mark Structures
+
+#pragma mark - Structures
 
 // Structure describes list of available
 // connection identifiers
@@ -27,27 +30,3 @@ static struct PNConnectionIdentifiersStruct PNConnectionIdentifiers = {
     .messagingConnection = @"PNMessaginConnectionIdentifier",
     .serviceConnection = @"PNServiceConnectionIdentifier"
 };
-
-// Structure describes error notification body
-struct PNConnectionErrorNotificationBodyStruct {
-    
-    // Used to store error message
-    __unsafe_unretained NSString *error;
-};
-
-static struct PNConnectionErrorNotificationBodyStruct PNConnectionErrorNotificationBody = {
-    
-    .error = @"errorObject"
-};
-
-
-#pragma mark - Notifications
-
-// List of notifications which is used to inform observation
-// center about connection state change
-extern NSString * const kPNConnectionDidConnectNotication;
-extern NSString * const kPNConnectionDidDisconnectNotication;
-extern NSString * const kPNConnectionDidDisconnectWithErrorNotication;
-extern NSString * const kPNConnectionErrorNotification;
-
-#pragma mark -

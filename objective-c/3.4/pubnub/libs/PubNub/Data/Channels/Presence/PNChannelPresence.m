@@ -14,15 +14,7 @@
 //
 //
 
-#import "PNChannelPresence.h"
-
-
-#pragma mark Static
-
-// Stores reference on suffix which is used
-// to mark channel as presence observer for
-// another channel
-static NSString * const kPNPresenceObserverChannelSuffix = @"-pnpres";
+#import "PNChannelPresence+Protected.h"
 
 
 #pragma mark Public interface methods
@@ -37,27 +29,9 @@ static NSString * const kPNPresenceObserverChannelSuffix = @"-pnpres";
  * for specified channel
  */
 + (PNChannelPresence *)presenceForChannel:(PNChannel *)channel {
-    
-    return [[[self class] alloc] initForChannel:channel];
-}
 
-
-#pragma mark - Instance methods
-
-/**
- * Initiate presence observing object for specified
- * channel
- */
-- (id)initForChannel:(PNChannel *)channel {
-    
-    // Check whether intialization is successful or not
-    if((self = [super init])) {
-        
-        self.name = [channel.name stringByAppendingString:kPNPresenceObserverChannelSuffix];
-    }
-    
-    
-    return self;
+    return [super channelWithName:[channel.name stringByAppendingString:kPNPresenceObserverChannelSuffix]
+            shouldObservePresence:NO];
 }
 
 #pragma mark -

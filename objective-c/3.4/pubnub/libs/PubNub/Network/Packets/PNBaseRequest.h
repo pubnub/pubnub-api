@@ -26,15 +26,30 @@
 
 @property (nonatomic, strong) NSString *identifier;
 
+// Short identifier is hash from original
+// one which will be used to identify request
+// from response JSONP callback method name
+@property (nonatomic, strong) NSString *shortIdentifier;
+
 // Stores whether this request is currently
 // processed by connection or not
 @property (nonatomic, assign) BOOL processing;
+
+// Stores whether this request already prcessed
+// or not
+@property (nonatomic, assign) BOOL processed;
 
 
 #pragma mark - Instance methods
 
 /**
- * Return resouce path which will be used
+ * Returns callback method name which should be
+ * used to identify this request's response
+ */
+- (NSString *)callbackMethodName;
+
+/**
+ * Return resource path which will be used
  * in serialized HTTP header to specify
  * requested resource path:
  * GET {resource_path} HTTP/1.1

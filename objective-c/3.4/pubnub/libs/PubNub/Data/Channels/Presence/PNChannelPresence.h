@@ -15,7 +15,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PNChannel.h"
+#import "PNChannel+Protected.h"
 
 
 @interface PNChannelPresence : PNChannel
@@ -28,15 +28,6 @@
  * for specified channel
  */
 + (PNChannelPresence *)presenceForChannel:(PNChannel *)channel;
-
-
-#pragma mark - Instance methods
-
-/**
- * Initiate presence observing object for specified 
- * channel
- */
-- (id)initForChannel:(PNChannel *)channel;
 
 #pragma mark -
 

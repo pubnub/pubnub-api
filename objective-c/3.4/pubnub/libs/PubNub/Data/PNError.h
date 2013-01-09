@@ -29,17 +29,32 @@ static NSString * const kPNServiceErrorDomain = @"com.pubnub.remote-service";
 @interface PNError : NSError
 
 
+#pragma mark - Properties
+
+// Stores reference on list of channels on which
+// error is occured
+@property (nonatomic, readonly, strong) NSArray *channels;
+
+// Stores reference on associated object with which
+// error is occurred
+@property (nonatomic, readonly, strong) id associatedObject;
+
+
 #pragma mark - Class methods
 
++ (PNError *)errorWithResponseErrorMessage:(NSString *)errorMessage;
 + (PNError *)errorWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode;
 + (PNError *)errorWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channel:(NSString *)channelName;
++ (PNError *)errorWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channels:(NSArray *)channels;
 + (PNError *)errorWithCode:(NSInteger)errorCode;
 + (PNError *)errorWithCode:(NSInteger)errorCode channel:(NSString *)channelName;
++ (PNError *)errorWithCode:(NSInteger)errorCode channels:(NSArray *)channels;
 
 
 #pragma mark - Instance methods
 
 - (id)initWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channel:(NSString *)channelName;
+- (id)initWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channels:(NSArray *)channels;
 
 #pragma mark -
 

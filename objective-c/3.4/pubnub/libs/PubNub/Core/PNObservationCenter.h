@@ -25,7 +25,7 @@
  * which manage all observers and notify them by request
  * or notification.
  */
-+ (void)defaultCenter;
++ (id)defaultCenter;
 
 
 #pragma mark - Instance methods
@@ -42,15 +42,39 @@
 - (void)removeClientConnectionStateObserver:(id)observer;
 
 
+#pragma mark - Client channels action/event observation
+
+/**
+ * Add/remove observer which would like to know when PubNub client
+ * subscribes/unsubscribe on/from channel
+ */
+- (void)addClientChannelSubscriptionObserver:(id)observer
+                           withCallbackBlock:(PNClientChannelSubscriptionHandlerBlock)callbackBlock;
+- (void)removeClientChannelSubscriptionObserver:(id)observer;
+- (void)addClientChannelUnsubscriptionObserver:(id)observer
+                             withCallbackBlock:(PNClientChannelUnsubscriptionHandlerBlock)callbackBlock;
+- (void)removeClientChannelUnsubscriptionObserver:(id)observer;
+
+
 #pragma mark - Time token observation
 
 /**
  * Add/remove observers which would like to know when PubNub service
  * will return requested time token
  */
-- (void)addTimeTokenObtentionObserver:(id)observer
-                    withCallbackBlock:(PNClientTimeTokenObtentionCompleteBlock)callbackBlock;
-- (void)removeTimeTokenObtentionObserver:(id)observer;
+- (void)addTimeTokenReceivingObserver:(id)observer
+                    withCallbackBlock:(PNClientTimeTokenReceivingCompleteBlock)callbackBlock;
+- (void)removeTimeTokenReceivingObserver:(id)observer;
+
+
+#pragma mark - Message sending observers
+
+/**
+ * Add/remove observers for message sending process (completion
+ * or error).
+ */
+- (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageSendingCompletionBlock)handleBlock;
+- (void)removeMessageProcessingObserver:(id)observer;
 
 
 

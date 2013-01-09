@@ -14,7 +14,7 @@
 
 #pragma mark Class forward
 
-@class PNConnection, PNError, PNWriteBuffer;
+@class PNConnection, PNWriteBuffer, PNResponse, PNError;
 
 
 #pragma mark - Connection observer delegate methods
@@ -28,6 +28,12 @@
  * connected to the opened socket
  */
 - (void)connection:(PNConnection *)connection didConnectToHost:(NSString *)hostName;
+
+/**
+ * Sent to the delegate each time when new response
+ * arrives via socket from remote server
+ */
+- (void)connection:(PNConnection *)connection didReceiveResponse:(PNResponse *)response;
 
 /**
  * Sent to the delegate when both streams (read/write)
@@ -87,6 +93,18 @@
  */
 - (void)connection:(PNConnection *)connection didSendRequestWithIdentifier:(NSString *)requestIdentifier;
 
-- (void)connection:(PNConnection *)connection didFailToProcessRequestWithIdentifier:(NSString *)requestIdentifier;
+/**
+ * Notify data source that request with specified identifier
+ * has been canceled (unscheduled) from execution
+ */
+- (void)connection:(PNConnection *)connection didCancelRequestWithIdentifier:(NSString *)requestIdentifier;
+
+/**
+ * Notify data source that request with specified identifier
+ * wasn't sent because of some error
+ */
+- (void)connection:(PNConnection *)connection
+        didFailToProcessRequestWithIdentifier:(NSString *)requestIdentifier
+         withError:(PNError *)error;
 
 @end

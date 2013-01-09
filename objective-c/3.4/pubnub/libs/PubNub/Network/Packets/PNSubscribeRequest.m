@@ -16,8 +16,6 @@
 #import "PNServiceResponseCallbacks.h"
 #import "PubNub+Protected.h"
 #import "PNConstants.h"
-#import "PNChannel.h"
-#import "PubNub.h"
 
 
 #pragma mark Private interface methods
@@ -27,8 +25,9 @@
 
 #pragma mark - Properties
 
-// Stores comma-separated channel names list
-@property (nonatomic, strong) NSString *channelsList;
+// Stores reference on list of channels on which client
+// should subscribe
+@property (nonatomic, strong) NSArray *channels;
 
 // Stores recen channels/presence state update
 // time (token)
@@ -67,7 +66,7 @@
     // Check whether initialization successful or not
     if((self = [super init])) {
         
-        self.channelsList = [[channels valueForKey:@"name"] componentsJoinedByString:@","];
+        self.channels = [NSArray arrayWithArray:channels];
         
         
         // Retrieve largest update time token from set of
@@ -82,13 +81,19 @@
     return self;
 }
 
+- (NSString *)callbackMethodName {
+
+    return PNServiceResponseCallbacks.subscriptionCallback;
+}
+
 - (NSString *)resourcePath {
     
-    return [NSString stringWithFormat:@"%@/subscribe/%@/%@/%@/%@?uuid=%@",
+    return [NSString stringWithFormat:@"%@/subscribe/%@/%@/%@_%@/%@?uuid=%@",
             kPNRequestAPIVersionPrefix,
             [PubNub sharedInstance].configuration.publishKey,
-            self.channelsList,
-            PNServiceResponseCallbacks.subscriptionCallback,
+            [[self.channels valueForKey:@"escapedName"] componentsJoinedByString:@","],
+            [self callbackMethodName],
+            self.shortIdentifier,
             self.updateTimeToken,
             [PubNub clientIdentifier]];
 }

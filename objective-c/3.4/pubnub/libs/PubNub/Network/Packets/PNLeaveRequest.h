@@ -23,16 +23,21 @@
 @interface PNLeaveRequest : PNBaseRequest
 
 
+#pragma mark - Properties
+
+// Stores reference on channels list
+@property (nonatomic, readonly, strong) NSArray *channels;
+
+
 #pragma mark - Class methods
 
-+ (PNLeaveRequest *)leaveRequestForChannel:(PNChannel *)channel;
-+ (PNLeaveRequest *)leaveRequestForChannels:(NSArray *)channels;
++ (PNLeaveRequest *)leaveRequestForChannel:(PNChannel *)channel byUserRequest:(BOOL)isLeavingByUserRequest;
++ (PNLeaveRequest *)leaveRequestForChannels:(NSArray *)channels byUserRequest:(BOOL)isLeavingByUserRequest;
 
 
 #pragma mark - Instance methods
 
-- (id)initForChannel:(PNChannel *)channel;
-- (id)initForChannels:(NSArray *)channels;
+- (id)initForChannels:(NSArray *)channels byUserRequest:(BOOL)isLeavingByUserRequest;
 
 #pragma mark -
 

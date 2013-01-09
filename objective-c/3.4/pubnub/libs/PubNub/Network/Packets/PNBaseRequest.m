@@ -13,14 +13,26 @@
 
 #import "PNBaseRequest.h"
 #import "PubNub+Protected.h"
-#import "PNConfiguration.h"
 #import "PNWriteBuffer.h"
 #import "PNConstants.h"
-#import "PNMacro.h"
-#import "PubNub.h"
 
 
-#pragma mark Public interface methods
+#pragma mark Private interface methods
+
+@interface PNBaseRequest ()
+
+#pragma mark - Properties
+
+// Stores number of request sending retries
+// (when it will reach limit communication
+// channel should remove it from queue
+@property (nonatomic, assign) NSUInteger retryCount;
+
+
+@end
+
+
+#pragma mark - Public interface methods
 
 @implementation PNBaseRequest
 
@@ -29,19 +41,25 @@
 
 - (id)init {
     
-    // Check whetehr initialization is successful or not
+    // Check whether initialization is successful or not
     if((self = [super init])) {
         
-        self.identifier = PNNewUniqueIdentifier();
+        self.identifier = PNUniqueIdentifier();
+        self.shortIdentifier = PNShortenedIdentifierFromUUID(self.identifier);
     }
     
     
     return self;
 }
 
+- (NSString *)callbackMethodName {
+
+    return @"0";
+}
+
 - (NSString *)resourcePath {
     
-    PNLog(@"{WARN} THIS METHOD SHOULD BE RELOADED IN SUBCLASS");
+    PNLog(PNLogCommunicationChannelLayerWarnLevel, self, @" THIS METHOD SHOULD BE RELOADED IN SUBCLASS");
     
     return @"/";
 }
@@ -49,6 +67,26 @@
 - (PNWriteBuffer *)buffer {
     
     return [PNWriteBuffer writeBufferForRequest:self];
+}
+
+- (void)resetRetryCount {
+
+    self.retryCount = 0;
+}
+
+- (void)increaseRetryCount {
+
+    self.retryCount++;
+}
+
+- (BOOL)canRetry {
+
+    return self.retryCount < [self allowedRetryCount];
+}
+
+- (NSUInteger)allowedRetryCount {
+
+    return kPNRequestMaximumRetryCount;
 }
 
 - (NSString *)HTTPPayload {

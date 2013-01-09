@@ -12,11 +12,10 @@
 //
 //
 
-#import "PNLeaveRequest.h"
+#import "PNLeaveRequest+Protected.h"
 #import "PNServiceResponseCallbacks.h"
 #import "PubNub+Protected.h"
 #import "PNConstants.h"
-#import "PNChannel.h"
 
 
 @interface PNLeaveRequest ()
@@ -24,8 +23,8 @@
 
 #pragma mark - Properties
 
-// Stores comma-separated channel names list
-@property (nonatomic, strong) NSString *channelsList;
+// Stores reference on channels list
+@property (nonatomic, strong) NSArray *channels;
 
 
 @end
@@ -36,44 +35,47 @@
 
 #pragma mark - Class methods
 
-+ (PNLeaveRequest *)leaveRequestForChannel:(PNChannel *)channel {
++ (PNLeaveRequest *)leaveRequestForChannel:(PNChannel *)channel byUserRequest:(BOOL)isLeavingByUserRequest {
     
-    return [self leaveRequestForChannels:@[channel]];
+    return [self leaveRequestForChannels:@[channel] byUserRequest:isLeavingByUserRequest];
 }
 
-+ (PNLeaveRequest *)leaveRequestForChannels:(NSArray *)channels {
++ (PNLeaveRequest *)leaveRequestForChannels:(NSArray *)channels byUserRequest:(BOOL)isLeavingByUserRequest {
     
-    return [[[self class] alloc] initForChannels:channels];
+    return [[[self class] alloc] initForChannels:channels byUserRequest:isLeavingByUserRequest];
 }
 
 
 #pragma mark - Instance methods
 
-- (id)initForChannel:(PNChannel *)channel {
-    
-    return [self initForChannels:@[channel]];
-}
-
-- (id)initForChannels:(NSArray *)channels {
+- (id)initForChannels:(NSArray *)channels byUserRequest:(BOOL)isLeavingByUserRequest {
     
     // Check whether initialization successful or not
     if((self = [super init])) {
-        
-        self.channelsList = [[channels valueForKey:@"name"] componentsJoinedByString:@","];
+
+        self.sendingByUserRequest = isLeavingByUserRequest;
+        self.closeConnection = YES;
+        self.channels = [NSArray arrayWithArray:channels];
     }
     
     
     return self;
 }
 
+- (NSString *)callbackMethodName {
+
+    return PNServiceResponseCallbacks.leaveChannelCallback;
+}
+
 - (NSString *)resourcePath {
     
-    return [NSString stringWithFormat:@"%@/presence/sub_key/%@/channel/%@/leave?uuid=%@&callback=%@",
+    return [NSString stringWithFormat:@"%@/presence/sub_key/%@/channel/%@/leave?uuid=%@&callback=%@_%@",
             kPNRequestAPIVersionPrefix,
             [PubNub sharedInstance].configuration.subscriptionKey,
-            self.channelsList,
+            [[self.channels valueForKey:@"escapedName"] componentsJoinedByString:@","],
             [PubNub clientIdentifier],
-            PNServiceResponseCallbacks.leaveChannelCallback];
+            [self callbackMethodName],
+            self.shortIdentifier];
 }
 
 #pragma mark -

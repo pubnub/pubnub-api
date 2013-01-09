@@ -15,6 +15,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PNRequestsQueueDelegate.h"
 #import "PNConnectionDelegate.h"
 
 
@@ -39,19 +40,25 @@
 #pragma mark - Instance methods
 
 /**
+ * Managing connection delegates pool
+ */
+- (void)assignDelegate:(id<PNRequestsQueueDelegate>)delegate;
+- (void)resignDelegate:(id<PNRequestsQueueDelegate>)delegate;
+
+/**
  * Will add request into the queue if it is still not
  * there.
  * Returns whether request has been placed into queue 
  * or not
  */
-- (BOOL)enqueueRequest:(PNBaseRequest *)request;
+- (BOOL)enqueueRequest:(PNBaseRequest *)request sender:(id)sender;
 - (void)removeRequest:(PNBaseRequest *)request;
 
 /**
  * Removes all requests which is not placed for processing
  * into connection buffer
  */
-- (void)removeAllRequests;
+- (void)removeAllRequestsFromSender:(id)sender;
 
 #pragma mark -
 

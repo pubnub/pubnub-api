@@ -45,6 +45,9 @@
 // to spacebars in specified piece of data
 @property (nonatomic, strong) NSData *spaceCharacterData;
 
+// Reflects whether deserializer still working or not
+@property (nonatomic, assign, getter = isDeserializing) BOOL deserializing;
+
 
 #pragma mark - Instance methods
 
@@ -60,7 +63,9 @@
  */
 - (NSUInteger)nextResponseStartIndexForData:(NSData *)data inRange:(NSRange)responseRange;
 
-- (NSRange)nextResponseStartSearchRangeForData:(NSData *)data;
+- (NSRange)nextResponseStartSearchRangeInRange:(NSRange)responseRange;
+
+- (BOOL)hasMoreValidResponseInData:(NSMutableData *)data withinRange:(NSRange)checkRange;
 
 /**
  * Allow to find piece of data enclosed between two 
@@ -99,8 +104,11 @@
 
 - (NSArray *)parseResponseData:(NSMutableData *)data {
     
+    self.deserializing = YES;
+    
     NSMutableArray *parsedData = [NSMutableArray array];
     NSRange responseRange = NSMakeRange(0, [data length]);
+    NSRange contentRange = NSMakeRange(0, [data length]);
     
     
     @autoreleasepool {
@@ -109,38 +117,76 @@
         if (nextResponseIndex == NSNotFound) {
             
             // Try contruct response instance
-            PNResponse *response = [self responseInRange:responseRange ofData:data];
+            PNResponse *response = [self responseInRange:contentRange ofData:data];
             if(response) {
                 
                 [parsedData addObject:response];
             }
+            else {
+                
+                contentRange = NSMakeRange(NSNotFound, 0);
+            }
         }
         else {
+            
+            // Stores previous content range and will be used to
+            // update current content range in case of parsing error
+            // (maybe tried parse incomplete response)
+            NSRange previousContentRange = NSMakeRange(NSNotFound, 0);
             
             // Search for another responses while it is possible
             while (nextResponseIndex != NSNotFound) {
                 
-                responseRange.length = nextResponseIndex - responseRange.location;
+                contentRange.length = nextResponseIndex - contentRange.location;
                 
                 
                 // Try contruct response instance
-                PNResponse *response = [self responseInRange:responseRange ofData:data];
+                PNResponse *response = [self responseInRange:contentRange ofData:data];
                 if(response) {
                     
                     [parsedData addObject:response];
+                    
+                    
+                    // Update content search range
+                    responseRange.location = responseRange.location + contentRange.length;
+                    responseRange.length = responseRange.length - contentRange.length;
+                    if(responseRange.length > 0) {
+                        
+                        nextResponseIndex = [self nextResponseStartIndexForData:data inRange:responseRange];
+                        if(nextResponseIndex == NSNotFound) {
+                            
+                            nextResponseIndex = responseRange.location + responseRange.length;
+                        }
+                        
+                        previousContentRange.location = contentRange.location;
+                        previousContentRange.length = contentRange.length;
+                        contentRange.location = responseRange.location;
+                    }
+                    else {
+                        
+                        nextResponseIndex = NSNotFound;
+                    }
                 }
-                
-                nextResponseIndex = [self nextResponseStartIndexForData:data inRange:responseRange];
+                else {
+                    
+                    contentRange.location = previousContentRange.location;
+                    contentRange.length = previousContentRange.length;
+                }
             }
         }
     }
     
     
-    // Update provided data to remove from it
-    // response content which successfully was
-    // parsed
-    NSUInteger lastResponseEndIndex = responseRange.location + responseRange.length;
-    [data setData:[data subdataWithRange:NSMakeRange(lastResponseEndIndex, [data length]-lastResponseEndIndex)]];
+    if(contentRange.location != NSNotFound) {
+        
+        // Update provided data to remove from it
+        // response content which successfully was
+        // parsed
+        NSUInteger lastResponseEndIndex = contentRange.location + contentRange.length;
+        [data setData:[data subdataWithRange:NSMakeRange(lastResponseEndIndex, [data length]-lastResponseEndIndex)]];
+    }
+    
+    self.deserializing = NO;
     
     
     return parsedData;
@@ -149,7 +195,6 @@
 - (PNResponse *)responseInRange:(NSRange)responseRange ofData:(NSData *)data {
     
     PNResponse *response = nil;
-    NSUInteger responseSize = [[data subdataWithRange:responseRange] length];
     
     // Try to fetch HTTP status from body
     NSUInteger statusCode = [self responseStatusCodeFromData:data inRange:responseRange];
@@ -161,31 +206,30 @@
             
             // Searching for HTTP header and response content
             // separator
-            NSRange separatorRange = [data rangeOfData:self.httpContentSeparatorData options:0 range:responseRange];
+            NSRange separatorRange = [data rangeOfData:self.httpContentSeparatorData
+                                               options:(NSDataSearchOptions)0
+                                                 range:responseRange];
             if(separatorRange.location != NSNotFound) {
-                
                 
                 // Check whether full response body loaded or not
                 // (taking into account content size which arrived
                 // in HTTP header)
-                NSUInteger contentSizeLeft = responseRange.length-(separatorRange.location+separatorRange.length);
-                if (contentSize == contentSizeLeft) {
+                NSUInteger contentSeparatorendIndex = (separatorRange.location+separatorRange.length);
+                NSUInteger contentSizeLeft = (responseRange.location + responseRange.length) - contentSeparatorendIndex;
+                if (contentSizeLeft > 0 && contentSize == contentSizeLeft) {
                     
-                    NSRange responseContenrRange = NSMakeRange((separatorRange.location+separatorRange.length), contentSize);
+                    NSRange responseContenrRange = NSMakeRange(contentSeparatorendIndex, contentSize);
                     NSData *responseData = [data subdataWithRange:responseContenrRange];
                     
-                    response = [PNResponse responseWithContent:responseData size:responseSize code:statusCode];
+                    response = [PNResponse responseWithContent:responseData size:responseRange.length code:statusCode];
                 }
             }
         }
     }
     else {
         
-        response = [PNResponse responseWithContent:nil size:responseSize code:statusCode];
+        response = [PNResponse responseWithContent:nil size:responseRange.length code:statusCode];
     }
-    
-    
-    NSLog(@"RESPONSE: %@", response);
     
     
     return response;
@@ -226,6 +270,15 @@
 
 - (BOOL)hasMoreValidResponseInData:(NSMutableData *)data {
     
+    return [self hasMoreValidResponseInData:data withinRange:NSMakeRange(0, [data length])];
+}
+
+- (BOOL)hasMoreValidResponseInData:(NSMutableData *)data withinRange:(NSRange)checkRange {
+    
+    BOOL hasValidData = NO;
+    
+    
+    return hasValidData;
 }
 
 - (NSData *)dataBetween:(NSData *)startData
@@ -236,19 +289,20 @@
     NSData *result = nil;
     
     // Searching for content start marker
-    NSRange startDataRange = [data rangeOfData:startData options:0 range:searchRange];
+    NSRange startDataRange = [data rangeOfData:startData options:(NSDataSearchOptions)0 range:searchRange];
     if(startDataRange.location != NSNotFound) {
         
         NSUInteger startMarkerEndIndex = startDataRange.location+startDataRange.length;
         
         // Searching for content end marker
-        NSRange endSearchRange = NSMakeRange(startMarkerEndIndex, searchRange.length-startMarkerEndIndex);
-        NSRange endDataRange = [data rangeOfData:endData options:0 range:endSearchRange];
+        NSRange endSearchRange = NSMakeRange(startMarkerEndIndex,
+                                             (searchRange.location + searchRange.length) - startMarkerEndIndex);
+        NSRange endDataRange = [data rangeOfData:endData options:(NSDataSearchOptions)0 range:endSearchRange];
         if (endDataRange.location != NSNotFound) {
             
             // Fetching data which is enclosed between two data markers
-            result = [data subdataWithRange:NSMakeRange(endSearchRange.location,
-                                                        (endDataRange.location-endSearchRange.location))];
+            NSRange resultRange = NSMakeRange(endSearchRange.location, (endDataRange.location-endSearchRange.location));
+            result = [data subdataWithRange:resultRange];
         }
     }
     
@@ -259,16 +313,16 @@
 - (NSUInteger)nextResponseStartIndexForData:(NSData *)data inRange:(NSRange)responseRange {
     
     NSRange range = [data rangeOfData:self.httpHeaderStartData
-                              options:0
-                                range:[self nextResponseStartSearchRangeForData:data]];
+                              options:(NSDataSearchOptions)0
+                                range:[self nextResponseStartSearchRangeInRange:responseRange]];
     
     
     return range.location;
 }
 
-- (NSRange)nextResponseStartSearchRangeForData:(NSData *)data {
+- (NSRange)nextResponseStartSearchRangeInRange:(NSRange)responseRange; {
     
-    return NSMakeRange(1, [data length]-1);
+    return NSMakeRange(responseRange.location + 1, responseRange.length-1);
 }
 
 #pragma mark -

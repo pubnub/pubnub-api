@@ -10,7 +10,7 @@
 //
 //
 
-#import "PNError.h"
+#import "PNError+Protected.h"
 
 
 #pragma mark Data keys (internal)
@@ -18,13 +18,15 @@
 // This structure describes keys used to store
 // data inside error's user info dictionary
 struct PNErrorInfoKeysStruct {
-  
+    
     __unsafe_unretained NSString *channelName;
+    __unsafe_unretained NSString *channelsName;
 };
 
 static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
     
-    .channelName = @"channelName"
+    .channelName = @"channelName",
+    .channelsName = @"channelsName"
 };
 
 
@@ -36,6 +38,10 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
 #pragma mark - Properties
 
 @property (nonatomic, copy) NSString *errorMessage;
+
+// Stores reference on list of channels on which
+// error is occured
+@property (nonatomic, strong) NSArray *channels;
 
 
 #pragma mark - Instance methods
@@ -66,6 +72,59 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
     return [self errorWithMessage:nil code:errorCode channel:channelName];
 }
 
++ (PNError *)errorWithCode:(NSInteger)errorCode channels:(NSArray *)channels {
+    
+    return [self errorWithMessage:nil code:errorCode channels:channels];
+}
+
++ (PNError *)errorWithResponseErrorMessage:(NSString *)errorMessage {
+
+    NSInteger errorCode = kPNUnknownError;
+
+    // Check whether error message tell something about presence
+    // (this mean that PubNub client tried to use presence API
+    // which is not enabled on https://admin.pubnub.com
+    if ([errorMessage rangeOfString:@"Presence"].location != NSNotFound) {
+
+        errorCode = kPNPresenceAPINotAvailableError;
+    }
+    // Check whether error caused by malformed data sent to the PubNub service
+    else if ([errorMessage rangeOfString:@"Invalid"].location != NSNotFound) {
+
+        // Check whether server reported that wrong JSON format has been sent
+        // to it
+        if ([errorMessage rangeOfString:@"JSON"].location != NSNotFound) {
+
+            errorCode = kPNInvalidJSONError;
+        }
+        // Check whether restricted characters has been used in request
+        else if ([errorMessage rangeOfString:@"Character"].location != NSNotFound) {
+
+            // Check whether restricted characters has been used in channel names
+            if ([errorMessage rangeOfString:@"Channel"].location != NSNotFound) {
+
+                errorCode = kPNRestrictedCharacterInChannelNameError;
+            }
+        }
+    }
+    else {
+
+    }
+
+    PNError *error = nil;
+    if (errorCode == kPNUnknownError) {
+
+        error = [PNError errorWithMessage:errorMessage code:errorCode];
+    }
+    else {
+
+        error = [self errorWithCode:errorCode];
+    }
+
+
+    return error;
+}
+
 + (PNError *)errorWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode {
     
     return [self errorWithMessage:errorMessage code:errorCode channel:nil];
@@ -76,19 +135,36 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
     return [[[self class] alloc] initWithMessage:errorMessage code:errorCode channel:channelName];
 }
 
++ (PNError *)errorWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channels:(NSArray *)channels {
+    
+    return [[[self class] alloc] initWithMessage:errorMessage code:errorCode channels:channels];
+}
+
 
 #pragma mark - Instance methods
 
 - (id)initWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channel:(NSString *)channelName {
     
+    return [self initWithMessage:errorMessage code:errorCode channels:@[channelName]];
+}
+
+- (id)initWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channels:(NSArray *)channels {
+    
+    NSDictionary *userInfo = nil;
+    if([channels count]) {
+        
+        self.channels = [NSArray arrayWithArray:channels];
+        NSString *channelKey = [channels count] > 1 ? PNErrorInfoKeys.channelsName : PNErrorInfoKeys.channelName;
+        userInfo = @{channelKey:[channels componentsJoinedByString:@","]};
+    }
+    
     // Check whether initialization successful or not
-    NSDictionary *userInfo = channelName?@{PNErrorInfoKeys.channelName:channelName}:nil;
     if((self = [super initWithDomain:[self domainForError:errorCode] code:errorCode userInfo:userInfo])) {
         
         self.errorMessage = errorMessage;
     }
-        
-        
+    
+    
     return self;
 }
 
@@ -105,19 +181,44 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
                 
                 errorDescription = @"Incomplete PubNub client configuration";
                 break;
-            case kPNClientConnectWhileConnected:
+            case kPNClientTriedConnectWhileConnectedError:
                 
                 errorDescription = @"PubNub client already connected to origin";
                 break;
-            case kPNClientConnectionFailedOnInternetFailure:
+            case kPNClientConnectionFailedOnInternetFailureError:
                 
                 errorDescription = @"PubNub client connection failed";
+                break;
+            case kPNRequestExecutionFailedOnInternetFailureError:
+            case kPNRequestExecutionFailedClientNotReadyError:
+                
+                errorDescription = @"PubNub client channel subscription failed";
                 break;
             case kPNConnectionErrorOnSetup:
                 
                 errorDescription = @"PubNub client connection can't be opened";
                 break;
+            case kPNPresenceAPINotAvailableError:
+
+                errorDescription = @"PubNub client can't use presence API";
+                break;
+            case kPNInvalidJSONError:
+
+                errorDescription = @"PubNub service can't process JSON";
+                break;
+            case kPNRestrictedCharacterInChannelNameError:
+
+                errorDescription = @"PubNub service process request for channel";
+                break;
+            case kPNMessageHasNoContentError:
+            case kPNMessageHasNoChannelError:
+            case kPNMessageObjectError:
+
+                errorDescription = @"PubNub client can't submit message";
+                break;
             default:
+
+                errorDescription = @"Unknown error.";
                 break;
         }
     }
@@ -136,19 +237,53 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
             
             failureReason = @"One of required configuration field is empty:\n- publish key\n- subscribe key\n- secret key";
             break;
-        case kPNClientConnectWhileConnected:
+        case kPNClientTriedConnectWhileConnectedError:
             
             failureReason = @"Looks like client tried to connecte to remote PubNub service while already has connection";
             break;
-        case kPNClientConnectionFailedOnInternetFailure:
+        case kPNClientConnectionFailedOnInternetFailureError:
             
             failureReason = @"Looks like client lost connection while trying to connect to remote PubNub service";
+            break;
+        case kPNRequestExecutionFailedOnInternetFailureError:
+            
+            failureReason = @"Looks like client lost connection";
             break;
         case kPNConnectionErrorOnSetup:
             
             failureReason = @"Connection can't be opened becuase of errors in configuration";
             break;
+        case kPNRequestExecutionFailedClientNotReadyError:
+
+            failureReason = @"Looks like client is not connected to PubNub service";
+            break;
+        case kPNPresenceAPINotAvailableError:
+
+            failureReason = @"Looks like presence API access not enabled";
+            break;
+        case kPNInvalidJSONError:
+
+            failureReason = @"Looks like one of requests tried to send malformed JSON";
+            break;
+        case kPNRestrictedCharacterInChannelNameError:
+
+            failureReason = @"Looks like one of reqests used restricted characters in channel name";
+            break;
+        case kPNMessageHasNoContentError:
+
+            failureReason = @"Looks like message has empty body or doesnt have it at all";
+            break;
+        case kPNMessageHasNoChannelError:
+
+            failureReason = @"Looks like target channel for message not specified";
+            break;
+        case kPNMessageObjectError:
+
+            failureReason = @"Looks like there is no message object has been passed";
+            break;
         default:
+
+            failureReason = @"Unknown error reason.";
             break;
     }
     
@@ -166,11 +301,12 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
             
             fixSuggestion = @"Ensure that you specified all required keys while creating PNConfiguration instance or all values specified in PNDefaultConfiguration.h. You can always visit https://admin.pubnub.comto get all required keys for PubNub client";
             break;
-        case kPNClientConnectWhileConnected:
+        case kPNClientTriedConnectWhileConnectedError:
             
             fixSuggestion = @"If it is required to reconnect PubNub client, close connection first and then try connect again";
             break;
-        case kPNClientConnectionFailedOnInternetFailure:
+        case kPNClientConnectionFailedOnInternetFailureError:
+        case kPNRequestExecutionFailedOnInternetFailureError:
             
             fixSuggestion = @"Ensure that all network configuration (including proxy if there is) is correct and try again";
             break;
@@ -178,7 +314,37 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
             
             fixSuggestion = @"Check whether client was configured to use secure connection and whether remote origin has valid certificate.\nIf remote origin doesn't provide correct SSL certificate, you can set kPNShouldReduceSecurityLevelOnError to YES in PNDefaultConfiguration.h or provide YES when initializing PNConfiguration instance.";
             break;
+        case kPNRequestExecutionFailedClientNotReadyError:
+
+            fixSuggestion = @"Ensure that PubNub client connected to the PubNub service and try again.";
+            break;
+        case kPNPresenceAPINotAvailableError:
+
+            fixSuggestion = @"Please visit https://admin.pubnub.com and enable presence API feature and try again.";
+            break;
+        case kPNInvalidJSONError:
+
+            fixSuggestion = @"Review all JSON request which is sent for processing to the PubNub services";
+            break;
+        case kPNRestrictedCharacterInChannelNameError:
+
+            fixSuggestion = @"Ensure that you don't use in channel name next characters: ','";
+            break;
+        case kPNMessageHasNoContentError:
+
+            fixSuggestion = @"Ensure that you are not sending empty message (maybe there only spaces in it).";
+            break;
+        case kPNMessageHasNoChannelError:
+
+            fixSuggestion = @"Ensure that you specified valid channel as message target";
+            break;
+        case kPNMessageObjectError:
+
+            fixSuggestion = @"Ensure that you provide correct message object to be used for sending request";
+            break;
         default:
+
+            fixSuggestion = @"There is no known solutions.";
             break;
     }
     
@@ -189,7 +355,18 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
 - (NSString *)domainForError:(NSInteger)errorCode {
     
     NSString *domain = kPNDefaultErrorDomain;
-    
+
+    switch (errorCode) {
+
+        case kPNPresenceAPINotAvailableError:
+        case kPNInvalidJSONError:
+        case kPNRestrictedCharacterInChannelNameError:
+
+                domain = kPNServiceErrorDomain;
+            break;
+        default:
+            break;
+    }
     
     return domain;
 }

@@ -9,14 +9,19 @@
 
 #pragma mark Class forward
 
-@class PNError;
+@class PNError, PNMessage;
 
 
 #ifndef PNStructures_h
 #define PNStructures_h
 
+typedef void (^PNClientConnectionSuccessBlock)(NSString *);
+typedef void (^PNClientConnectionFailureBlock)(PNError *);
 typedef void (^PNClientConnectionStateChangeBlock)(NSString *, BOOL, PNError *);
-typedef void (^PNClientTimeTokenObtentionCompleteBlock)(NSString *);
+typedef void (^PNClientChannelSubscriptionHandlerBlock)(NSArray *, BOOL, PNError *);
+typedef void (^PNClientChannelUnsubscriptionHandlerBlock)(NSArray *, PNError *);
+typedef void (^PNClientTimeTokenReceivingCompleteBlock)(NSString *, PNError *);
+typedef void (^PNClientMessageSendingCompletionBlock)(PNMessage *, BOOL, PNError *);
 
 
 // This enum represent possible stream

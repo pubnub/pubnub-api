@@ -29,6 +29,16 @@
            completionBlock:(void(^)(id result, BOOL isJSONPStyle, NSString *callbackMethodName))completionBlock
                 errorBlock:(void(^)(NSError *error))errorBlock;
 
+/**
+ * Parse provided JSON(P) string
+ * Method will automatically detect JSON and JSONP
+ * format and provide callback method name in addition
+ * to parsed data.
+ */
++ (void)JSONObjectWithString:(NSString *)jsonString
+             completionBlock:(void(^)(id result, BOOL isJSONPStyle, NSString *callbackMethodName))completionBlock
+                  errorBlock:(void(^)(NSError *error))errorBlock;
+
 #pragma mark -
 
 

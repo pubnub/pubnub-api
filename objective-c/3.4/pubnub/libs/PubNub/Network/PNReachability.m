@@ -15,7 +15,6 @@
 #import "PNReachability.h"
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "PubNub+Protected.h"
-#import "PNNotifications.h"
 #import <netinet/in.h>
 #import <arpa/inet.h>
 #import "PNMacro.h"
@@ -75,7 +74,7 @@ typedef enum _PNReachabilityStatus {
 
 - (id)init {
     
-    // Check whether initalization was successful or not
+    // Check whether initialization was successful or not
     if((self = [super init])) {
         
         self.status = PNReachabilityStatusUnknown;
@@ -217,8 +216,8 @@ void PNReachabilityCallback(SCNetworkReachabilityRef reachability, SCNetworkReac
                        context:(void *)context {
     
     // Retrieved changed values (old/new)
-    PNReachabilityStatus newStatus = [[change valueForKey:NSKeyValueChangeNewKey] intValue];
-    PNReachabilityStatus oldStatus = [[change valueForKey:NSKeyValueChangeOldKey] intValue];
+    PNReachabilityStatus newStatus = (PNReachabilityStatus)[[change valueForKey:NSKeyValueChangeNewKey] intValue];
+    PNReachabilityStatus oldStatus = (PNReachabilityStatus)[[change valueForKey:NSKeyValueChangeOldKey] intValue];
     
     // Checking whether service reachability
     // really changed or not
@@ -226,7 +225,7 @@ void PNReachabilityCallback(SCNetworkReachabilityRef reachability, SCNetworkReac
         
         if (newStatus != PNReachabilityStatusUnknown) {
             
-            PNLog(@"PubNub services reachability changed [CONNECTED? %@]", [self isServiceAvailable]?@"YES":@"NO");
+            PNLog(PNLogReachabilityLevel, self, @" PubNub services reachability changed [CONNECTED? %@]", [self isServiceAvailable]?@"YES":@"NO");
             
             if (self.reachabilityChangeHandleBlock) {
                 
@@ -263,7 +262,7 @@ void PNReachabilityCallback(SCNetworkReachabilityRef reachability, SCNetworkReac
     
     // Clean up
     [self stopServiceReachabilityMonitoring];
-    [self removeObserver:self forKeyPath:@"status" context:nil];
+    [self removeObserver:self forKeyPath:@"status"];
 }
 
 #pragma mark -

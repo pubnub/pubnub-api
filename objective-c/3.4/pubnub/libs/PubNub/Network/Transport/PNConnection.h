@@ -52,6 +52,9 @@
 
 #pragma mark - Instance methods
 
+/**
+ * Managing connection delegates pool
+ */
 - (void)assignDelegate:(id<PNConnectionDelegate>)delegate;
 - (void)resignDelegate:(id<PNConnectionDelegate>)delegate;
 
@@ -76,6 +79,11 @@
 - (BOOL)connect;
 - (BOOL)isConnected;
 - (BOOL)isDisconnected;
+
+/**
+ * Reconnect sockets and streams by user request
+ */
+- (void)reconnect;
 
 /**
  * Close socket and streams on particular 

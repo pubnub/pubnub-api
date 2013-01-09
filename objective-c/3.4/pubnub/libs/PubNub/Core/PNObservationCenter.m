@@ -11,8 +11,7 @@
 //
 //
 
-#import "PNObservationCenter.h"
-#import "NSMutableDictionary+PNAdditions.h"
+#import "PubNub+Protected.h"
 
 
 #pragma mark Static
@@ -21,17 +20,32 @@
 static PNObservationCenter *_sharedInstance = nil;
 
 struct PNObservationEventsStruct {
-    
-    __unsafe_unretained NSString *clientConnectionFailure;
+
     __unsafe_unretained NSString *clientConnectionStateChange;
-    __unsafe_unretained NSString *clientTimeTokenObtentionComplete;
+    __unsafe_unretained NSString *clientSubscriptionOnChannels;
+    __unsafe_unretained NSString *clientUnsubscribeFromChannels;
+    __unsafe_unretained NSString *clientTimeTokenReceivingComplete;
+    __unsafe_unretained NSString *clientMessageSendCompletion;
+};
+
+struct PNObservationObserverDataStruct {
+
+    __unsafe_unretained NSString *observer;
+    __unsafe_unretained NSString *observerCallbackBlock;
 };
 
 static struct PNObservationEventsStruct PNObservationEvents = {
-    
-    .clientConnectionFailure = @"clientConnectionFailure",
-    .clientConnectionStateChange = @"clientConnectionStateChange",
-    .clientTimeTokenObtentionComplete = @"clientObtainedTimeToken"
+    .clientConnectionStateChange = @"clientConnectionStateChangeEvent",
+    .clientTimeTokenReceivingComplete = @"clientReceivingTimeTokenEvent",
+    .clientSubscriptionOnChannels = @"clientSubscribtionOnChannelsEvent",
+    .clientUnsubscribeFromChannels = @"clientUnsubscribeFromChannelsEvent",
+    .clientMessageSendCompletion = @"clientMessageSendCompletionEvent"
+};
+
+static struct PNObservationObserverDataStruct PNObservationObserverData = {
+
+    .observer = @"observer",
+    .observerCallbackBlock = @"observerCallbackBlock"
 };
 
 
@@ -46,14 +60,45 @@ static struct PNObservationEventsStruct PNObservationEvents = {
 // and execution block provided by subscriber
 @property (nonatomic, strong) NSMutableDictionary *observers;
 
+// Stores mapped observers to events wich they want to track
+// and execution block provided by subscriber
+// This is FIFO observer type which means that as soon as event
+// will occur observer will be removed from list
+@property (nonatomic, strong) NSMutableDictionary *oneTimeObservers;
+
 
 #pragma mark - Instance methods
 
 /**
+ * Helper methods which will create collection for specified
+ * event name if it doesn't exist or return existing.
+ */
+- (NSMutableArray *)persistentObserversForEvent:(NSString *)eventName;
+- (NSMutableArray *)oneTimeObserversForEvent:(NSString *)eventName;
+
+- (void)removeOneTimeObserversForEvent:(NSString *)eventName;
+
+/**
  * Managing observation list
  */
-- (void)addObserver:(id)observer forEvent:(NSString *)eventName withBlock:(id)block;
-- (void)removeObserver:(id)observer forEvent:(NSString *)eventName;
+- (void)addObserver:(id)observer forEvent:(NSString *)eventName oneTimeEvent:(BOOL)isOneTimeEvent withBlock:(id)block;
+- (void)removeObserver:(id)observer forEvent:(NSString *)eventName oneTimeEvent:(BOOL)isOneTimeEvent;
+
+
+#pragma mark - Handler methods
+
+- (void)handleClientConnectionStateChange:(NSNotification *)notification;
+- (void)handleClientSubscriptionProcess:(NSNotification *)notification;
+- (void)handleClientUnsubscriptionProcess:(NSNotification *)notification;
+- (void)handleClientCompletedTimeTokenProcessing:(NSNotification *)notification;
+
+#pragma mark - Misc methods
+
+/**
+ * Retrieve full list of observers for specified event name
+ */
+- (NSMutableArray *)observersForEvent:(NSString *)eventName;
+
 
 @end
 
@@ -65,13 +110,16 @@ static struct PNObservationEventsStruct PNObservationEvents = {
 
 #pragma mark Class methods
 
-+ (void)defaultCenter {
++ (id)defaultCenter {
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         
         _sharedInstance = [[[self class] alloc] init];
     });
+    
+    
+    return _sharedInstance;
 }
 
 
@@ -82,12 +130,100 @@ static struct PNObservationEventsStruct PNObservationEvents = {
     // Check whether initialization was successful or not
     if((self = [super init])) {
         
-        // Configure dictionary which wouldn't retain it's value and keys
         self.observers = [NSMutableDictionary dictionary];
+        self.oneTimeObservers = [NSMutableDictionary dictionary];
+        
+        // TODO: SUBSCRIBE ON NOTIFICATIONS TO FORVARD THEM TO THE EVENT OBSERVERS WITH BLOCKS
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientConnectionStateChange:)
+                                                     name:kPNClientDidConnectToOriginNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientConnectionStateChange:)
+                                                     name:kPNClientDidDisconnectFromOriginNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientConnectionStateChange:)
+                                                     name:kPNClientConnectionDidFailWithErrorNotification
+                                                   object:nil];
+        
+        
+        // Handle subscription events
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientSubscriptionProcess:)
+                                                     name:kPNClientSubscriptionDidCompleteNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientSubscriptionProcess:)
+                                                     name:kPNClientSubscriptionDidFailNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientUnsubscriptionProcess:)
+                                                     name:kPNClientUnsubscriptionDidCompleteNotification
+                                                   object:nil];
+
+
+        // Handle time token events
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientCompletedTimeTokenProcessing:)
+                                                     name:kPNClientDidReceiveTimeTokenNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientCompletedTimeTokenProcessing:)
+                                                     name:kPNClientDidFailTimeTokenReceiveNotification
+                                                   object:nil];
+        
+        
     }
     
     
     return self;
+}
+
+- (BOOL)isSubscribedOnClientStateChange:(id)observer {
+
+    NSMutableArray *observersData = [self oneTimeObserversForEvent:PNObservationEvents.clientConnectionStateChange];
+    NSArray *observers = [observersData valueForKey:PNObservationObserverData.observer];
+
+
+    return [observers containsObject:observer];
+}
+
+- (void)removeOneTimeObserversForEvent:(NSString *)eventName {
+
+    [self.oneTimeObservers removeObjectForKey:eventName];
+}
+
+- (void)addObserver:(id)observer forEvent:(NSString *)eventName oneTimeEvent:(BOOL)isOneTimeEvent withBlock:(id)block {
+
+    NSDictionary *observerData = @{PNObservationObserverData.observer:observer,
+                      PNObservationObserverData.observerCallbackBlock:block};
+
+    // Retrieve reference on list of observers for specific event
+    SEL observersSelector = isOneTimeEvent?@selector(oneTimeObserversForEvent:): @selector(persistentObserversForEvent:);
+    NSMutableArray *observers = [self performSelector:observersSelector withObject:eventName];
+
+    [observers addObject:observerData];
+}
+
+- (void)removeObserver:(id)observer forEvent:(NSString *)eventName oneTimeEvent:(BOOL)isOneTimeEvent {
+
+    // Retrieve reference on list of observers for specific event
+    SEL observersSelector = isOneTimeEvent?@selector(oneTimeObserversForEvent:): @selector(persistentObserversForEvent:);
+    NSMutableArray *observers = [self performSelector:observersSelector withObject:eventName];
+
+    // Retrieve list of observing requests with specified observer
+    NSString *filterFormat = [NSString stringWithFormat:@"%@ = %%@", PNObservationObserverData.observer];
+    NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:filterFormat, observer];
+
+    NSArray *filteredObservers = [observers filteredArrayUsingPredicate:filterPredicate];
+
+
+    if ([filteredObservers count] > 0) {
+
+        // Removing first occurrence of observer request in list
+        [observers removeObject:[filteredObservers objectAtIndex:0]];
+    }
 }
 
 
@@ -95,52 +231,355 @@ static struct PNObservationEventsStruct PNObservationEvents = {
 
 - (void)addClientConnectionStateObserver:(id)observer
                        withCallbackBlock:(PNClientConnectionStateChangeBlock)callbackBlock {
-    
-    [self addObserver:observer forEvent:PNObservationEvents.clientConnectionStateChange withBlock:callbackBlock];
+
+    [self addClientConnectionStateObserver:observer oneTimeEvent:NO withCallbackBlock:callbackBlock];
 }
 
 - (void)removeClientConnectionStateObserver:(id)observer {
-    
-    [self removeObserver:observer forEvent:PNObservationEvents.clientConnectionStateChange];
+
+    [self removeClientConnectionStateObserver:observer oneTimeEvent:NO];
+}
+
+- (void)addClientConnectionStateObserver:(id)observer
+                            oneTimeEvent:(BOOL)isOneTimeEventObserver
+                       withCallbackBlock:(PNClientConnectionStateChangeBlock)callbackBlock {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientConnectionStateChange
+         oneTimeEvent:isOneTimeEventObserver
+            withBlock:callbackBlock];
+
+}
+- (void)removeClientConnectionStateObserver:(id)observer oneTimeEvent:(BOOL)isOneTimeEventObserver {
+
+    [self removeObserver:observer
+                forEvent:PNObservationEvents.clientConnectionStateChange
+            oneTimeEvent:isOneTimeEventObserver];
+}
+
+
+#pragma mark - Client channels action/event observation
+
+- (void)addClientChannelSubscriptionObserver:(id)observer
+                           withCallbackBlock:(PNClientChannelSubscriptionHandlerBlock)callbackBlock {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientSubscriptionOnChannels
+         oneTimeEvent:NO
+            withBlock:callbackBlock];
+}
+
+- (void)removeClientChannelSubscriptionObserver:(id)observer {
+
+    [self removeObserver:observer forEvent:PNObservationEvents.clientSubscriptionOnChannels oneTimeEvent:NO];
+}
+
+- (void)addClientChannelUnsubscriptionObserver:(id)observer
+                             withCallbackBlock:(PNClientChannelUnsubscriptionHandlerBlock)callbackBlock {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientUnsubscribeFromChannels
+         oneTimeEvent:NO
+            withBlock:callbackBlock];
+}
+
+- (void)removeClientChannelUnsubscriptionObserver:(id)observer {
+
+    [self removeObserver:observer forEvent:PNObservationEvents.clientUnsubscribeFromChannels oneTimeEvent:NO];
+}
+
+
+
+#pragma mark - Subscription observation
+
+- (void)addClientAsSubscriptionObserverWithBlock:(PNClientChannelSubscriptionHandlerBlock)handleBlock {
+
+    [self addObserver:[PubNub sharedInstance]
+             forEvent:PNObservationEvents.clientSubscriptionOnChannels
+         oneTimeEvent:YES
+            withBlock:handleBlock];
+}
+
+- (void)removeClientAsSubscriptionObserver {
+
+    [self removeObserver:[PubNub sharedInstance]
+                forEvent:PNObservationEvents.clientSubscriptionOnChannels
+            oneTimeEvent:YES];
+}
+
+- (void)addClientAsUnsubscribeObserverWithBlock:(PNClientChannelUnsubscriptionHandlerBlock)handleBlock {
+
+    [self addObserver:[PubNub sharedInstance]
+             forEvent:PNObservationEvents.clientUnsubscribeFromChannels
+         oneTimeEvent:YES
+            withBlock:handleBlock];
+}
+
+- (void)removeClientAsUnsubscribeObserver {
+
+    [self removeObserver:[PubNub sharedInstance]
+                forEvent:PNObservationEvents.clientUnsubscribeFromChannels
+            oneTimeEvent:YES];
 }
 
 
 #pragma mark - Time token observation
 
+- (void)addClientAsTimeTokenReceivingObserverWithCallbackBlock:(PNClientTimeTokenReceivingCompleteBlock)callbackBlock {
+
+    [self addObserver:[PubNub sharedInstance]
+             forEvent:PNObservationEvents.clientTimeTokenReceivingComplete
+         oneTimeEvent:YES
+            withBlock:callbackBlock];
+}
+
+- (void)removeClientAsTimeTokenReceivingObserver {
+
+    [self removeObserver:[PubNub sharedInstance]
+                forEvent:PNObservationEvents.clientTimeTokenReceivingComplete
+            oneTimeEvent:YES];
+}
+
 /**
  * Add/remove observers which would like to know when PubNub service
  * will return requested time token
  */
-- (void)addTimeTokenObtentionObserver:(id)observer
-                    withCallbackBlock:(PNClientTimeTokenObtentionCompleteBlock)callbackBlock {
-    
-    [self addObserver:observer forEvent:PNObservationEvents.clientTimeTokenObtentionComplete withBlock:callbackBlock];
+- (void)addTimeTokenReceivingObserver:(id)observer
+                    withCallbackBlock:(PNClientTimeTokenReceivingCompleteBlock)callbackBlock {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientTimeTokenReceivingComplete
+         oneTimeEvent:NO
+            withBlock:callbackBlock];
 }
 
-- (void)removeTimeTokenObtentionObserver:(id)observer {
+- (void)removeTimeTokenReceivingObserver:(id)observer {
+
+    [self removeObserver:observer forEvent:PNObservationEvents.clientTimeTokenReceivingComplete oneTimeEvent:NO];
+}
+
+
+#pragma mark - Message sending observers
+
+- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageSendingCompletionBlock)handleBlock
+                                         oneTimeEvent:(BOOL)isOneTimeEventObserver {
+
+    [self addMessageProcessingObserver:[PubNub sharedInstance] withBlock:handleBlock oneTimeEvent:YES];
+
+}
+- (void)removeClientAsMessageProcessingObserver {
+
+    [self removeMessageProcessingObserver:[PubNub sharedInstance] oneTimeEvent:YES];
+}
+
+- (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageSendingCompletionBlock)handleBlock {
+
+    [self addMessageProcessingObserver:observer withBlock:handleBlock oneTimeEvent:NO];
+}
+
+- (void)removeMessageProcessingObserver:(id)observer {
+
+    [self removeMessageProcessingObserver:observer oneTimeEvent:NO];
+}
+
+- (void)addMessageProcessingObserver:(id)observer
+                           withBlock:(PNClientMessageSendingCompletionBlock)handleBlock
+                        oneTimeEvent:(BOOL)isOneTimeEventObserver {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientMessageSendCompletion
+         oneTimeEvent:isOneTimeEventObserver
+            withBlock:handleBlock];
+}
+
+- (void)removeMessageProcessingObserver:(id)observer oneTimeEvent:(BOOL)isOneTimeEventObserver {
+
+    [self removeObserver:observer
+                forEvent:PNObservationEvents.clientMessageSendCompletion
+            oneTimeEvent:isOneTimeEventObserver];
+}
+
+
+#pragma mark - Handler methods
+
+- (void)handleClientConnectionStateChange:(NSNotification *)notification {
     
-    [self removeObserver:observer forEvent:PNObservationEvents.clientTimeTokenObtentionComplete];
+    // Default field values
+    BOOL connected = YES;
+    PNError *connectionError = nil;
+    NSString *origin = [PubNub sharedInstance].configuration.origin;
+    
+    if([notification.name isEqualToString:kPNClientDidConnectToOriginNotification] ||
+       [notification.name isEqualToString:kPNClientDidDisconnectFromOriginNotification]) {
+        
+        origin = (NSString *)notification.userInfo;
+        connected = [notification.name isEqualToString:kPNClientDidConnectToOriginNotification];
+    }
+    else if([notification.name isEqualToString:kPNClientConnectionDidFailWithErrorNotification]) {
+        
+        connected = NO;
+        connectionError = (PNError *)notification.userInfo;
+    }
+
+    // Retrieving list of observers (including one time and persistent observers)
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientConnectionStateChange];
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                            NSUInteger observerDataIdx,
+                                            BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientConnectionStateChangeBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(origin, connected, connectionError);
+        }
+    }];
+
+
+    // Clean one time observers for specific event
+    [self removeOneTimeObserversForEvent:PNObservationEvents.clientConnectionStateChange];
+}
+
+- (void)handleClientSubscriptionProcess:(NSNotification *)notification {
+    
+    NSArray *channels = nil;
+    PNError *error = nil;
+    
+    if ([notification.name isEqualToString:kPNClientSubscriptionDidCompleteNotification]) {
+        
+        channels = (NSArray *)notification.userInfo;
+    }
+    else {
+        
+        error = (PNError *)notification.userInfo;
+        channels = error.channels;
+    }
+    
+    BOOL subscribed = YES;
+
+
+    // Retrieving list of observers (including one time and persistent observers)
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientSubscriptionOnChannels];
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                                NSUInteger observerDataIdx,
+                                                BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientChannelSubscriptionHandlerBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(channels, subscribed, error);
+        }
+    }];
+
+
+    // Clean one time observers for specific event
+    [self removeOneTimeObserversForEvent:PNObservationEvents.clientSubscriptionOnChannels];
+}
+
+- (void)handleClientUnsubscriptionProcess:(NSNotification *)notification {
+
+    // Retrieve reference on list of channels
+    NSArray *channels = (NSArray *)notification.userInfo;
+
+
+    // Retrieving list of observers (including one time and persistent observers)
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientUnsubscribeFromChannels];
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                                NSUInteger observerDataIdx,
+                                                BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientChannelUnsubscriptionHandlerBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(channels, nil);
+        }
+    }];
+
+
+    // Clean one time observers for specific event
+    [self removeOneTimeObserversForEvent:PNObservationEvents.clientUnsubscribeFromChannels];
+}
+
+- (void)handleClientCompletedTimeTokenProcessing:(NSNotification *)notification {
+
+    PNError *error = nil;
+    NSString *timeToken = nil;
+    if ([[notification name] isEqualToString:kPNClientDidReceiveTimeTokenNotification]) {
+
+        timeToken = (NSString *)notification.userInfo;
+    }
+    else {
+
+        error = (PNError *)notification.userInfo;
+    }
+
+    // Retrieving list of observers (including one time and persistent observers)
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientTimeTokenReceivingComplete];
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                                NSUInteger observerDataIdx,
+                                                BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientTimeTokenReceivingCompleteBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(timeToken, error);
+        }
+    }];
+
+
+    // Clean one time observers for specific event
+    [self removeOneTimeObserversForEvent:PNObservationEvents.clientTimeTokenReceivingComplete];
 }
 
 
 #pragma mark - Misc methods
 
-- (void)addObserver:(id)observer forEvent:(NSString *)eventName withBlock:(id)block {
-    
+- (NSMutableArray *)persistentObserversForEvent:(NSString *)eventName {
+
     if ([self.observers valueForKey:eventName] == nil) {
         
-        [self.observers setValue:[NSMutableDictionary dictionaryWithNonRetainedValuesAndKeys] forKey:eventName];
+        [self.observers setValue:[NSMutableArray array] forKey:eventName];
     }
     
-    [[self.observers valueForKey:eventName] setValue:block forKey:NSStringFromClass([observer class])];
+    
+    return [self.observers valueForKey:eventName];
 }
 
-- (void)removeObserver:(id)observer forEvent:(NSString *)eventName {
+- (NSMutableArray *)oneTimeObserversForEvent:(NSString *)eventName {
     
-    if ([self.observers valueForKey:eventName] != nil) {
+    if ([self.oneTimeObservers valueForKey:eventName] == nil) {
         
-        [[self.observers valueForKey:eventName] removeObjectForKey:NSStringFromClass([observer class])];
+        [self.oneTimeObservers setValue:[NSMutableArray array] forKey:eventName];
     }
+    
+    
+    return [self.oneTimeObservers valueForKey:eventName];
+}
+
+- (NSMutableArray *)observersForEvent:(NSString *)eventName {
+
+    NSMutableArray *persistentObservers = [self persistentObserversForEvent:eventName];
+    NSMutableArray *oneTimeEventObservers = [self oneTimeObserversForEvent:eventName];
+
+
+    // Composing full observers list depending on whether at least
+    // one object exist in retrieved arrays
+    NSMutableArray *allObservers = [NSMutableArray array];
+    if ([persistentObservers count] > 0) {
+
+        [allObservers addObjectsFromArray:persistentObservers];
+    }
+
+    if ([oneTimeEventObservers count] > 0) {
+
+        [allObservers addObjectsFromArray:oneTimeEventObservers];
+    }
+
+
+    return allObservers;
 }
 
 #pragma mark -

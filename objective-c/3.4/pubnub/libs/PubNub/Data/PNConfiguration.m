@@ -10,10 +10,8 @@
 //
 //
 
-#import "PNConfiguration.h"
 #import "PNDefaultConfiguration.h"
 #import "PNConstants.h"
-#import "PNMacro.h"
 
 
 #pragma mark Public interface methods
@@ -113,12 +111,30 @@ canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement 
         // Checking whether user changed origin host from default
         // or not
         if ([self.origin isEqualToString:kPNDefaultOriginHost]) {
-            PNLog(@"\n{WARN} Before running in production, please contact support@pubnub.com for your custom origin.\nPlease set the origin from %@ to IUNDERSTAND.pubnub.com to remove this warning.", self.origin);
+            PNLog(PNLogGeneralLevel, self, @"\n{WARN} Before running in production, please contact support@pubnub.com for your custom origin.\nPlease set the origin from %@ to IUNDERSTAND.pubnub.com to remove this warning.", self.origin);
         }
     }
     
     
     return self;
+}
+
+- (BOOL)requiresConnectionResetWithConfiguration:(PNConfiguration *)configuration {
+
+    BOOL shouldReset = NO;
+
+
+    if (configuration != nil) {
+
+        // Checking whether critical configuration information has been changed or not
+        if ((self.shouldUseSecureConnection != configuration.shouldUseSecureConnection) ||
+            ![self.origin isEqualToString:configuration.origin]) {
+
+            shouldReset = YES;
+        }
+    }
+
+    return shouldReset;
 }
 
 - (BOOL)isValid {

@@ -23,9 +23,13 @@
 // this buffer using it's identifier
 @property (nonatomic, copy) NSString *requestIdentifier;
 
+// Stores whether buffer sending initialized or not
+// (write buffer bytes readout started)
+@property  (nonatomic, assign, getter = isSendingBytes) BOOL sendingBytes;
+
 // Stores reference on how long packet payload which should
 // be sent over the socket
-@property (nonatomic, readonly) CFIndex length;
+@property (nonatomic, readonly, assign) CFIndex length;
 
 // Stores offest for data which already sent via socket
 @property (nonatomic, assign) CFIndex offset;

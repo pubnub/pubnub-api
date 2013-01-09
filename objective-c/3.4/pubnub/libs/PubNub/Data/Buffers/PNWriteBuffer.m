@@ -60,8 +60,8 @@ static NSUInteger const kPNWriteBufferSize = 4096;
         self.length = sizeof(char)*[[request HTTPPayload] length];
         
         // Allocate buffer for HTTP payload
-        buffer = malloc(self.length);
-        strncpy((char *)buffer, [[request HTTPPayload] UTF8String], self.length);
+        buffer = malloc((size_t)self.length);
+        strncpy(buffer, [[request HTTPPayload] UTF8String], (size_t)self.length);
     }
     
     
@@ -86,6 +86,13 @@ static NSUInteger const kPNWriteBufferSize = 4096;
 - (CFIndex)bufferLength {
     
     return MIN(kPNWriteBufferSize, self.length);
+}
+
+- (NSString *)description {
+
+    return [NSString stringWithFormat:@"WRITE BUFFER CONTENT: %@", [[NSString alloc] initWithBytes:buffer
+                                                                                            length:(NSUInteger)self.length
+                                                                                          encoding:NSUTF8StringEncoding]];
 }
 
 

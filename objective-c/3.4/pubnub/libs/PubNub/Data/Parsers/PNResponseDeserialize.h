@@ -19,7 +19,13 @@
 @interface PNResponseDeserialize : NSObject
 
 
-#pragma mark Instance methods
+#pragma mark Properties
+
+// Reflects whether deserializer still working or not
+@property (nonatomic, readonly, assign, getter = isDeserializing) BOOL deserializing;
+
+
+#pragma mark - Instance methods
 
 /**
  * Will parse response which arrived from PubNub service

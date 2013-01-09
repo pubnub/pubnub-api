@@ -20,9 +20,29 @@
 
 #pragma mark Properties
 
+// Stores binary response from PubNub services
 @property (nonatomic, readonly, strong) NSData *content;
+
+// Stores HTTP status code which was returned
+// on sent request
 @property (nonatomic, readonly, assign) NSUInteger statusCode;
+
+// Stores response size (including HTTP header
+// fields)
 @property (nonatomic, readonly, assign) NSUInteger size;
+
+// Stores reference on request small identifier
+// hash which will be used to find request
+// which sent this request
+@property (nonatomic, readonly, copy) NSString *requestIdentifier;
+
+// Stores reference on callback function name
+// which will be returned in JSONP response
+@property (nonatomic, readonly, copy) NSString *callbackMethod;
+
+// Stores reference on response body object
+// (array in most of cases)
+@property (nonatomic, readonly, strong) id response;
 
 
 #pragma mark - Class methods

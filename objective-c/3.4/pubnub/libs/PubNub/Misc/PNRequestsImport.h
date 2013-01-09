@@ -15,6 +15,8 @@
 #define PNRequestsImport_h
 
 #import "PNBaseRequest.h"
+#import "PNMessagePostRequest+Protected.h"
+#import "PNServiceResponseCallbacks.h"
 #import "PNLatencyMeasureRequest.h"
 #import "PNSubscribeRequest.h"
 #import "PNTimeTokenRequest.h"
