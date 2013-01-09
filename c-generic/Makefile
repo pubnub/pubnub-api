@@ -5,8 +5,9 @@ LIBDIR=$(PREFIX)/lib
 INCDIR=$(PREFIX)/include
 export PREFIX LIBDIR INCDIR
 
-# libpubnub must come first!
-SUBDIRS=libpubnub examples/sync-demo examples/libevent-demo
+# We ignore examples/, they shall not be built by default and
+# their makefiles depend on libpubnub already being installed anyway.
+SUBDIRS=libpubnub
 
 all: all-recursive
 

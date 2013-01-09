@@ -1,12 +1,12 @@
 CUSTOM_CFLAGS=-Wall -ggdb3 -O3
-SYS_CFLAGS=-std=gnu99 -I../../libpubnub `pkg-config --cflags json libcurl libcrypto libevent`
-LIBS=`pkg-config --libs json libcurl libcrypto libevent`
+SYS_CFLAGS=-std=gnu99 `pkg-config --cflags libpubnub`
+LIBS=`pkg-config --libs libpubnub`
 
 OBJS=example-libevent-demo.o
 
 all: example-libevent-demo
 
-example-libevent-demo: example-libevent-demo.o ../../libpubnub/libpubnub.so
+example-libevent-demo: example-libevent-demo.o
 	$(call cmd,link)
 
 clean:
