@@ -1,267 +1,190 @@
 package com.pubnub.examples;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Hashtable;
 
-import org.json.me.JSONArray;
-import org.json.me.JSONException;
-import org.json.me.JSONObject;
-import com.pubnub.api.Pubnub;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.pubnub.api.Callback;
+import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubException;
 
-class Receiver implements Callback {
-
-    public boolean successCallback(String channel, Object message) {
-
-        try {
-            if (message instanceof JSONObject) {
-                JSONObject obj = (JSONObject) message;
-                @SuppressWarnings("rawtypes")
-                Iterator keys = obj.keys();
-                while (keys.hasNext()) {
-                    System.out.print(obj.get(keys.next().toString())
-                            + " ");
-                }
-                System.out.println();
-            } else if (message instanceof String) {
-                String obj = (String) message;
-                System.out.print(obj + " ");
-                System.out.println();
-            } else if (message instanceof JSONArray) {
-                JSONArray obj = (JSONArray) message;
-                System.out.print(obj.toString() + " ");
-                System.out.println();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // Continue Listening?
-        return true;
-    }
-
-    public void errorCallback(String channel, Object message) {
-        System.err.println("Channel:" + channel + "-"
-                + message.toString());
-
-    }
-
-    public void connectCallback(String channel) {
-        System.out.println("Connected to channel :" + channel);
-        System.out.println("Waiting for message ...");
-    }
-
-    public void reconnectCallback(String channel) {
-        System.out.println("Reconnected to channel :" + channel);
-    }
-
-    public void disconnectCallback(String channel) {
-        System.out.println("Disconnected to channel :" + channel);
-    }
-
-}
-
 public class PubnubExample {
-    static String publish_key = "demo";
-    static String subscribe_key = "demo";
-    static String secret_key = "demo";
-    static String cipher_key = ""; // (Cipher key is optional)
-    static String channel = "hello_world";
-    static Pubnub pubnub = null;
 
-    /**
-     * @param params
-     */
-    public static void main(String[] params) {
+	String channel = "hello_world";
+	String[] channels = { "hello_world1", "hello_world2", "hello_world3",
+			"hello_world4" };
 
-        pubnub = new Pubnub(publish_key, subscribe_key, secret_key,
-                cipher_key, true);
-        System.out.println("\nRunning publish()");
-        PublishExample();
+	public PubnubExample() {
+	}
 
-        System.out.println("\nRunning history()");
-        HistoryExample();
+	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", false);
 
-        System.out.println("\nRunning timestamp()");
-        TimestampExample();
+	/**
+	 * @param params
+	 */
+	public static void main(String[] params) {
+		PubnubExample pex = new PubnubExample();
+		System.out.println("\nRunning publish()");
+		pex.publish();
 
-        System.out.println("\nRunning here_now()");
-        HereNowExample();
+		System.out.println("\nRunning history()");
+		pex.history();
 
-        System.out.println("\nRunning detailedHistory()");
-        DetailedHistoryExample();
+		System.out.println("\nRunning here_now()");
+		pex.hereNow();
 
-//        System.out.println("\nRunning presence()");
-//        PresenceExample();
+		System.out.println("\nRunning detailedHistory()");
+		pex.detailedHistory();
 
-        System.out.println("\nRunning subscribe()");
-        SubscribeExample();
+		System.out.println("\nRunning presence()");
+		pex.presence();
 
-    }
+		System.out.println("\nRunning subscribe()");
+		pex.subscribe();
 
-    private static void PublishExample() {
+	}
 
-        int publish_message_count = 1;
+	private static void notifyUser(Object message) {
+		try {
+			if (message instanceof JSONObject) {
+				JSONObject obj = (JSONObject) message;
+				System.out.println("Received : " + obj.toString());
+			} else if (message instanceof String) {
+				String obj = (String) message;
+				System.out.println("Received : " + obj);
+			} else if (message instanceof JSONArray) {
+				JSONArray obj = (JSONArray) message;
+				System.out.println("Received : " + obj.toString());
+			}
+		} catch (Exception e) {
 
-        int count = 0;
-        while (true) {
-            if (count >= publish_message_count)
-                break;
-            count++;
+		}
+	}
 
-            // Create JSON Message
-            JSONObject message = new JSONObject();
-            try {
-                message.put("text", "Hello World!" + count);
-                /*
-                 * message.put("title", "Java Client PubNub";
-                 * message.put("some_val",
-                 * "This is a push to all users! Fighting!" message.put("url",
-                 * "http://www.pubnub.com"
-                 */
-            } catch (org.json.JSONException jsonError) {
-            }
+	public void publish() {
+		try {
+			JSONObject message = new JSONObject();
+			message.put("some_key", "Java says hello, world!");
 
-            // Publish
-            HashMap<String, Object> args = new HashMap<String, Object>(2);
-            args.put("channel", channel);
-            args.put("message", message);
-            JSONArray response = null;
-            response = pubnub.publish(channel, message);
-            System.out.println(response);
+			Hashtable args = new Hashtable(2);
+			args.put("channel", channel); // Channel Name
+			args.put("message", message); // JSON Message
+			_pubnub.publish(args, new Callback() {
+				public void successCallback(String channel, Object message) {
+					notifyUser(message.toString());
+				}
 
-            try {
-                response = pubnub.publish(channel, new JSONObject("{'data' : 'Hello World'}"));
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            System.out.println(response);
+				public void errorCallback(String channel, Object message) {
+					notifyUser(channel + " : " + message.toString());
+				}
+			});
 
-            JSONArray array = new JSONArray();
-            array.put("Sunday");
-            array.put("Monday");
-            array.put("Tuesday");
-            array.put("Wednesday");
-            array.put("Thursday");
-            array.put("Friday");
-            array.put("Saturday");
+		} catch (JSONException ex) {
 
-            response = pubnub.publish(channel, new JSONObject(array));
-            System.out.println(response);
-        }
-    }
+		}
+	}
 
-    private static void HistoryExample() {
-        int limit = 1;
+	public void subscribe() {
+		Hashtable args = new Hashtable(6);
+		args.put("channels", channels);
 
-        // Get History
-        JSONArray response = pubnub.history(channel, limit);
+		try {
+			_pubnub.subscribe(args, new Callback() {
+				public void connectCallback(String channel) {
+					notifyUser("CONNECT on channel:" + channel);
+				}
 
-        // Print Response from PubNub JSONP REST Service
-        System.out.println(response);
+				public void disconnectCallback(String channel) {
+					notifyUser("DISCONNECT on channel:" + channel);
+				}
 
-        try {
-            if (response != null) {
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject jsono = response.optJSONObject(i);
-                    if (jsono != null) {
-                        @SuppressWarnings("rawtypes")
-                        Iterator keys = jsono.keys();
-                        while (keys.hasNext()) {
-                            System.out.println(jsono
-                                    .get(keys.next().toString()) + " ");
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+				public void reconnectCallback(String channel) {
+					notifyUser("RECONNECT on channel:" + channel);
+				}
 
-    private static void DetailedHistoryExample() {
-        int count = 1;
+				public void successCallback(String channel, Object message) {
+					notifyUser(channel + " " + message.toString());
+				}
+			});
 
+		} catch (Exception e) {
 
-        // Get History
-        JSONArray response = pubnub.detailedHistory(channel, count, false);
+		}
+	}
 
-        // Print Response from PubNub JSONP REST Service
-        System.out.println(response);
+	public void unsubscribe() {
+		Hashtable args = new Hashtable(1);
+		args.put("channels", channels);
+		_pubnub.unsubscribe(args);
 
-        try {
-            if (response != null) {
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject jsono = response.optJSONObject(i);
-                    if (jsono != null) {
-                        @SuppressWarnings("rawtypes")
-                        Iterator keys = jsono.keys();
-                        while (keys.hasNext()) {
-                            System.out.println(jsono
-                                    .get(keys.next().toString()) + " ");
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	}
 
-    private static void TimestampExample() {
+	public void time() {
+		_pubnub.time(new Callback() {
+			public void successCallback(String channel, Object message) {
+				notifyUser(message.toString());
+			}
 
-        // Print Server Time
-        System.out.println("Time: " + Double.toString(pubnub.time()));
-    }
+			public void errorCallback(String channel, Object message) {
+				notifyUser(channel + " : " + message.toString());
+			}
+		});
+	}
 
-    private static void SubscribeExample() {
+	public void history() {
 
-        // Listen for Messages (Subscribe)
-        try {
-            pubnub.subscribe(channel, new Receiver());
-        } catch (PubnubException e) {
-            e.printStackTrace();
-            return;
-        }
-    }
+		_pubnub.history(channel, 2, new Callback() {
+			public void successCallback(String channel, Object message) {
+				notifyUser(message.toString());
+			}
 
-    private static void PresenceExample() {
+			public void errorCallback(String channel, Object message) {
+				notifyUser(channel + " : " + message.toString());
+			}
+		});
+	}
 
-        // Listen for Messages (Presence)
-        try {
-            pubnub.presence(channel, new Receiver());
-        } catch (PubnubException e) {
-            e.printStackTrace();
-            return;
-        }
-    }
+	private void hereNow() {
+		_pubnub.hereNow(channel, new Callback() {
+			public void successCallback(String channel, Object message) {
+				notifyUser(message.toString());
+			}
 
-    private static void HereNowExample() {
+			public void errorCallback(String channel, Object message) {
+				notifyUser(channel + " : " + message.toString());
+			}
+		});
+	}
 
-        // Get Here Now
-        JSONArray response = pubnub.here_now(channel);
+	private void presence() {
+		try {
+			_pubnub.presence(channel, new Callback() {
+				public void successCallback(String channel, Object message) {
+					notifyUser(message.toString());
+				}
 
-        // Print Response from PubNub JSONP REST Service
-        System.out.println(response);
+				public void errorCallback(String channel, Object message) {
+					notifyUser(channel + " : " + message.toString());
+				}
+			});
+		} catch (PubnubException e) {
 
-        try {
-            if (response != null) {
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject jsono = response.optJSONObject(i);
-                    if (jsono != null) {
-                        @SuppressWarnings("rawtypes")
-                        Iterator keys = jsono.keys();
-                        while (keys.hasNext()) {
-                            System.out.println(jsono
-                                    .get(keys.next().toString()) + " ");
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		}
+	}
+
+	private void detailedHistory() {
+
+		_pubnub.detailedHistory(channel, 2, new Callback() {
+			public void successCallback(String channel, Object message) {
+				notifyUser(message.toString());
+			}
+
+			public void errorCallback(String channel, Object message) {
+				notifyUser(channel + " : " + message.toString());
+			}
+		});
+	}
 
 }

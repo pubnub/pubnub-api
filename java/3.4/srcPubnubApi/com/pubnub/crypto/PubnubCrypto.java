@@ -167,7 +167,7 @@ public class PubnubCrypto {
 
         JSONObject message_encrypted = new JSONObject();
 
-        Enumeration it = message.keys();
+        Enumeration it = (Enumeration) message.keys();
         while (it.hasMoreElements()) {
             String key = (String) it.nextElement();
             String val = message.getString(key);
@@ -194,7 +194,7 @@ public class PubnubCrypto {
             InvalidCipherTextException, IOException {
 
         JSONObject message_decrypted = new JSONObject();
-        Enumeration it = message_encrypted.keys();
+        Enumeration it = (Enumeration) message_encrypted.keys();
 
         while (it.hasMoreElements()) {
             String key1 = (String) it.nextElement();

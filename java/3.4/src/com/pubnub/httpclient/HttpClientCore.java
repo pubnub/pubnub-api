@@ -6,13 +6,16 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 
 public class HttpClientCore extends HttpClient {
 	private int requestTimeout = 310000;
 	private int connTimeout = 5000;
-
+	private DefaultHttpClient httpclient = new DefaultHttpClient();
 	public HttpClientCore() {
 
 	}
@@ -38,119 +41,55 @@ public class HttpClientCore extends HttpClient {
 		this.connTimeout = connTimeout;
 	}
 
-	private String readResponse(HttpConnection hconn) {
-		InputStream in = null;
-		String prefix = "";
-		try {
-			StringBuffer b = new StringBuffer();
-			int ch;
-			b.append(prefix);
-			in = hconn.openInputStream();
 
-			byte[] data = null;
-			ByteArrayOutputStream tmp = new ByteArrayOutputStream();
-
-			while ((ch = in.read()) != -1) {
-				tmp.write(ch);
-			}
-			data = tmp.toByteArray();
-			tmp.close();
-			b.append(new String(data, "UTF-8"));
-
-			if (b.length() > 0) {
-				return b.toString();
-			} else
-				return null;
-
-		} catch (IOException ioe) {
-			return null;
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-	}
 
 	public boolean isRedirect(int rc) {
-		return (rc == HttpConnection.HTTP_MOVED_PERM
-				|| rc == HttpConnection.HTTP_MOVED_TEMP
-				|| rc == HttpConnection.HTTP_SEE_OTHER || rc == HttpConnection.HTTP_TEMP_REDIRECT);
+		return (rc == HttpStatus.SC_MOVED_PERMANENTLY
+				|| rc == HttpStatus.SC_MOVED_TEMPORARILY
+				|| rc == HttpStatus.SC_SEE_OTHER || rc == HttpStatus.SC_TEMPORARY_REDIRECT);
 	}
 
 	public boolean checkResponse(int rc) {
 
-		return (rc == HttpConnection.HTTP_OK || isRedirect(rc));
+		return (rc == HttpStatus.SC_OK || isRedirect(rc));
 	}
+
+	private static String readInput(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte bytes[] = new byte[1024];
+
+        int n = in.read(bytes);
+
+        while (n != -1) {
+            out.write(bytes, 0, n);
+            n = in.read(bytes);
+        }
+
+        return new String(out.toString());
+    }
 
 	public HttpResponse fetch(String url) throws IOException {
 		return fetch(url, null);
 	}
 
 	public HttpResponse fetch(String url, Hashtable headers) throws IOException {
-		if (url == null)
-			throw new IOException("Invalid Url");
+		HttpGet httpget = new HttpGet(url);
+		if (headers != null) {
+			Enumeration en = headers.keys();
+			while (en.hasMoreElements()) {
+			String key = (String) en.nextElement();
+			String val = (String) headers.get(key);
+			httpget.addHeader(key, val);
 
-		int follow = 5;
-		int rc = 0;
-		HttpConnection hc = null;
-		String response = null;
-
-		while (follow-- > 0) {
-
-			hc = (HttpConnection) Connector.open(url, Connector.READ_WRITE,
-					true);
-			hc.setRequestMethod(HttpConnection.GET);
-			if (headers != null) {
-				Enumeration en = headers.keys();
-				while (en.hasMoreElements()) {
-					String key = (String) en.nextElement();
-					String val = (String) headers.get(key);
-					hc.setRequestProperty(key, val);
-
-				}
 			}
-
-			rc = hc.getResponseCode();
-
-			if (!checkResponse(rc)) {
-				break;
-			} else if (!isRedirect(rc)) {
-				break;
-			}
-
-			url = hc.getHeaderField("Location");
-
-			if (url == null) {
-				throw new IOException("No Location header");
-			}
-
-			if (url.startsWith("/")) {
-				StringBuffer b = new StringBuffer();
-				b.append("http://");
-				b.append(hc.getHost());
-				b.append(':');
-				b.append(hc.getPort());
-				b.append(url);
-				url = b.toString();
-			} else if (url.startsWith("ttp:")) {
-				url = "h" + url;
-			}
-			hc.close();
 		}
-
-		if (follow == 0) {
-			throw new IOException("Too many redirects");
-		}
-
-		response = readResponse(hc);
-		hc.close();
-		return new HttpResponse(rc, response);
+		org.apache.http.HttpResponse response = httpclient.execute(httpget);
+		HttpEntity entity = response.getEntity();
+        String page = readInput(entity.getContent());
+		return new HttpResponse(response.getStatusLine().getStatusCode(), page);
 	}
 
 	public boolean isOk(int rc) {
-		return (rc == HttpConnection.HTTP_OK );
+		return (rc == HttpStatus.SC_OK );
 	}
 }

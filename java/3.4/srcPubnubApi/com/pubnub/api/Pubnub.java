@@ -1,5 +1,7 @@
 package com.pubnub.api;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Hashtable;
 
 import org.bouncycastle.util.SecureRandom;
@@ -29,7 +31,7 @@ public class Pubnub {
     private String CIPHER_KEY = "";
     private boolean SSL = true;
     private String UUID = null;
-    private Hashtable _headers;
+	private Hashtable _headers;
     private Subscriptions subscriptions;
 
     private HttpManager longPollConnManager;
@@ -46,7 +48,7 @@ public class Pubnub {
         String valueBeforeMD5;
         String valueAfterMD5;
         SecureRandom mySecureRand = new SecureRandom();
-        String s_id = System.getProperty("microedition.platform");
+        String s_id = "";
         StringBuffer sbValueBeforeMD5 = new StringBuffer();
         try {
             long time = System.currentTimeMillis();
@@ -238,7 +240,7 @@ public class Pubnub {
      * @param callback
      *            Callback
      */
-    public void publish(String channel, JSONArray message, Callback callback) {
+	public void publish(String channel, JSONArray message, Callback callback) {
         Hashtable args = new Hashtable();
         args.put("channel", channel);
         args.put("message", message);
@@ -283,7 +285,8 @@ public class Pubnub {
      * @param args
      *            Hashtable containing channel name, message, callback
      */
-    public void publish(Hashtable args) {
+
+	public void publish(Hashtable args) {
 
         final String channel = (String) args.get("channel");
         Object message = args.get("message");
@@ -301,6 +304,7 @@ public class Pubnub {
                     jsarr = new JSONArray();
                     jsarr.put("0").put("Error: Encryption Failure");
                     callback.errorCallback(channel, jsarr);
+                    return;
                 }
             } else {
                 message = obj;
@@ -317,6 +321,7 @@ public class Pubnub {
                     jsarr = new JSONArray();
                     jsarr.put("0").put("Error: Encryption Failure");
                     callback.errorCallback(channel, jsarr);
+                    return;
                 }
             } else {
                 message = obj;
@@ -336,6 +341,7 @@ public class Pubnub {
                     jsarr = new JSONArray();
                     jsarr.put("0").put("Error: Encryption Failure");
                     callback.errorCallback(channel, jsarr);
+                    return;
                 }
 
             } else {
@@ -357,10 +363,19 @@ public class Pubnub {
             signature = PubnubCrypto.getHMacSHA256(this.SECRET_KEY,
                     string_to_sign.toString());
         }
-
+        String encoded = null;
+        try {
+			encoded = URLEncoder.encode(message.toString(), "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			JSONArray jsarr;
+            jsarr = new JSONArray();
+            jsarr.put("0").put("Error: Encoding Failure");
+            callback.errorCallback(channel, jsarr);
+            return;
+		}
         String[] urlComponents = { this.ORIGIN, "publish", this.PUBLISH_KEY,
                 this.SUBSCRIBE_KEY, signature, channel, "0",
-                PubnubUtil.urlEncode(message.toString()) };
+                encoded};
 
         PubnubRequest req = new PubnubRequest(urlComponents, channel,
                 new ResponseHandler() {
@@ -385,7 +400,7 @@ public class Pubnub {
                                     "Error: Failed JSON HTTP PubnubRequest");
                         }
                         callback.errorCallback(channel, jsarr);
-
+                        return;
                     }
                 });
 
