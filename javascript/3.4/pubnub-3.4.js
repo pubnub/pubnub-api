@@ -42,7 +42,7 @@ window['PUBNUB'] || (function() {
  * UTIL LOCALS
  */
 var NOW             = 1
-,   SWF             = 'https://dh15atwfs066y.cloudfront.net/pubnub.swf'
+,   SWF             = 'https://pubnub.a.ssl.fastly.net/pubnub.swf'
 ,   REPL            = /{([\w\-]+)}/g
 ,   ASYNC           = 'async'
 ,   URLBIT          = '/'
@@ -684,6 +684,9 @@ var PDIV          = $('pubnub') || {}
         'unsubscribe' : function(args) {
             var channel = args['channel'];
 
+            TIMETOKEN   = 0;
+            SUB_RESTORE = 1;
+
             // Prepare Channel(s)
             channel = map( (
                 channel.join ? channel.join(',') : ''+channel
@@ -716,6 +719,8 @@ var PDIV          = $('pubnub') || {}
             ,   reconnect     = args['reconnect']     || function(){}
             ,   disconnect    = args['disconnect']    || function(){}
             ,   presence      = args['presence']      || 0
+            ,   noheresync    = args['noheresync']    || 0
+            ,   sub_timeout   = args['timeout']       || SUB_TIMEOUT
             ,   restore       = args['restore']
             ,   origin        = nextorigin(ORIGIN);
 
@@ -757,7 +762,8 @@ var PDIV          = $('pubnub') || {}
                 // Presence Subscribed?
                 if (settings.subscribed) return;
 
-                // See Who's Here Now
+                // See Who's Here Now?
+                if (noheresync) return;
                 SELF['here_now']({
                     'channel'  : channel,
                     'callback' : function(here) {
@@ -782,7 +788,7 @@ var PDIV          = $('pubnub') || {}
 
                 // Connect to PubNub Subscribe Servers
                 SUB_RECEIVER = xdr({
-                    timeout  : SUB_TIMEOUT,
+                    timeout  : sub_timeout,
                     callback : jsonp,
                     data     : { 'uuid' : UUID },
                     url      : [
@@ -824,9 +830,9 @@ var PDIV          = $('pubnub') || {}
                         });
 
                         // Restore Previous Connection Point if Needed
-                        if (!TIMETOKEN && SUB_RESTORE)
-                             TIMETOKEN = db['get'](SUBSCRIBE_KEY) || messages[1];
-                        else TIMETOKEN = messages[1];
+                        TIMETOKEN = !TIMETOKEN               &&
+                                    SUB_RESTORE              &&
+                                    db['get'](SUBSCRIBE_KEY) || messages[1];
 
                         // Update Saved Timetoken
                         db['set']( SUBSCRIBE_KEY, messages[1] );
