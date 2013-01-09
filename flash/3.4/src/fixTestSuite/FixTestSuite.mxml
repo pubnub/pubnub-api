@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" width="1024" height="600" 
+   xmlns:flexUnitUIRunner="http://www.adobe.com/2009/flexUnitUIRunner"
+   creationComplete="runTests();"
+   layout="absolute">
+   
+   <mx:Script>
+      <![CDATA[
+		  import fixTestSuite.tests.*;
+		  import flash.events.*;
+		  import mx.logging.*;
+		  import org.flexunit.internals.*;
+		  import org.flexunit.listeners.*;
+		  import org.flexunit.runner.*;
+         
+         public function runTests() : void {
+			var core : FlexUnitCore = new FlexUnitCore();
+			/**If you don't need graphical test results, comment out the line below and the MXML declaring 
+			the TestRunnerBase. **/
+			core.addListener(new UIListener(uiListener));
+			core.addListener(new CIListener());
+			
+			/**If you would like to see text output in verbose mode, umcomment either of the follow listeners **/
+			//core.addListener( new TraceListener() ); - For AS3 Projects
+			//core.addListener( TextListener.getDefaultTextListener( LogEventLevel.DEBUG ) ); - For Flex Projects
+				
+            //core.run(InitTest, SubscribeTest, PublishTest, UnsubscribeTest);
+            core.run(InitTest);
+            //core.run(CreateMockolatesManually);
+            //core.run(LoginDelegateTest);
+         }
+      ]]>
+   </mx:Script>
+   <flexUnitUIRunner:TestRunnerBase id="uiListener" width="100%" height="100%"   />
+</mx:Application>

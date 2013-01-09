@@ -43,9 +43,9 @@
     <Compile Include="WhenDetailedHistoryIsRequested.cs" />
     <Compile Include="WhenGetRequestServerTime.cs" />
     <Compile Include="WhenSubscribedToAChannel.cs" />
-    <Compile Include="WhenGetRequestHistoryMessages.cs" />
     <Compile Include="WhenAClientIsPresented.cs" />
     <Compile Include="Common.cs" />
+    <Compile Include="PubnubUnitTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

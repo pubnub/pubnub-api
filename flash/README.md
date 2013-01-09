@@ -1,7 +1,7 @@
 # YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
 http://www.pubnub.com/account
 
-## PubNub 3.3.1 Real-time Cloud Push API - AS3 and Flex
+## PubNub 3.4 Real-time Cloud Push API - AS3, Flex, and Air
 
 PubNub is a blazingly fast cloud-hosted messaging service for building
 real-time web and mobile apps. Hundreds of apps and thousands of developers
@@ -11,5 +11,5 @@ the infrastructure needed to build amazing MMO games, social apps,
 business collaborative solutions, and more.
 
 ## Examples
-Checkout 3.3.1/PubNubAS3Example and PubNubFlexExample and the tests for information and examples on how to use!
+Checkout 3.4/src/PubNubFlexExample and the tests for information and examples on how to use!
 

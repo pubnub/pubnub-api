@@ -1,0 +1,420 @@
+<!doctype html>
+<style>
+
+    .relative { position: relative }
+
+    .console-title {
+        font-family: "helvetica neue", helvetica, arial, sans-serif;
+        font-weight: 200;
+        font-size: 30px;
+    }
+
+    #console-stage {
+        width: 960px;
+        height: 560px;
+        margin: 0 auto;
+        background: #eee;
+        background: transparent;
+    }
+
+    .console-section-header,
+    .console-input-visual,
+    .console-input,
+    .console-button,
+    .console-input-heading,
+    .console-box {
+        cursor: default;
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        outline: 0;
+        font-family: "helvetica neue", helvetica, arial, sans-serif;
+    }
+
+    #console-arrow-right {
+        position: absolute;
+        top: 40px;
+        left: 460px;
+        width: 0; 
+        height: 0; 
+        border-top: 40px solid transparent;
+        border-left: 50px solid #ee432e;
+        border-bottom: 40px solid transparent;
+        -webkit-filter: drop-shadow(-2px 0px 5px #888);
+    }
+
+    /* POSITIONING OF ELEMENTS HERE */
+    #console-subscribe-area {
+        position: absolute;
+        left: 558px;
+    }
+
+    .console-box {
+        width: 400px;
+        height: 150px;
+    }
+
+    .console-output {
+        padding-top: 10px;
+        position: absolute;
+        top: 35px;
+        overflow: scroll;
+        overflow-x: hidden;
+        width: 400px;
+        height: 100px;
+        background: #111;
+        border: 1px solid #111;
+        color: #eee;
+        font-size: 12px;
+        font-family: monaco, m, mono;
+        line-height: 14px;
+
+        -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+        -ms-box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+        -o-box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    .console-section-header {
+        display: none;
+    }
+
+    .console-input-label {
+        position: absolute;
+        top: 3px;
+        left: 130px;
+        font-weight: 400;
+        font-size: 8px;
+        color: #444;
+    }
+    .console-output-label,
+    .console-textarea-label {
+        top: 46px;
+        left: 10px;
+    }
+    .console-output-label {
+        color: #fff;
+    }
+
+    /* INPUT & TEXTAREA BOXES */
+    .console-input-visual {
+        font-size: 20px;
+        width: 400px;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid #951100;
+
+        background-color: #effafa;
+
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        -ms-border-radius: 6px;
+        -o-border-radius: 6px;
+        border-radius: 6px;
+
+        -webkit-box-shadow: 
+            inset 0px 0px 30px 1px rgba(120, 120, 120, 0.6),
+            0 0 5px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 
+            inset 0px 0px 30px 1px rgba(120, 120, 120, 0.6),
+            0 0 5px rgba(0, 0, 0, 0.4);
+        -ms-box-shadow: 
+            inset 0px 0px 30px 1px rgba(120, 120, 120, 0.6),
+            0 0 5px rgba(0, 0, 0, 0.4);
+        -o-box-shadow: 
+            inset 0px 0px 30px 1px rgba(120, 120, 120, 0.6),
+            0 0 5px rgba(0, 0, 0, 0.4);
+        box-shadow: 
+            inset 0px 0px 30px 1px rgba(120, 120, 120, 0.6),
+            0 0 5px rgba(0, 0, 0, 0.4);
+    }
+
+    .console-input {
+        top: 10px;
+        left: 130px;
+        border: 0;
+        width: 260px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 20px;
+        background: transparent;
+    }
+    .console-textarea-visual {
+        padding-top: 10px;
+        top: 35px;
+        width: 400px;
+        height: 100px;
+        background-color: #fafafa;
+
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        border-radius: 3px;
+    }
+    .console-textarea {
+        overflow: scroll;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        top: 60px;
+        left: 10px;
+        border: 0;
+        width: 380px;
+        height: 80px;
+        font-size: 12px;
+        font-family: monaco, m, mono;
+        line-height: 14px;
+        background: transparent;
+        resize: none;
+    }
+
+
+    .disabled,
+    .disabled:active,
+    .disabled:hover {
+        cursor: default;
+        -webkit-filter: blur(1px) grayscale(.5) opacity(0.8);
+    }
+    .console-input-heading {
+        width: 120px;
+        height: 40px;
+        line-height: 40px;
+        background-color: #888;
+        border: 1px solid #951100;
+        border-right: 0;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 500;
+        text-align: center;
+        text-shadow: 0px -1px 1px rgba(0, 0, 0, 0.3);
+
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        -ms-border-radius: 5px;
+        -o-border-radius: 5px;
+        border-radius: 5px;
+    }
+    .console-button {
+        cursor: pointer;
+        width: 120px;
+        height: 40px;
+        line-height: 40px;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 500;
+        text-align: center;
+        text-shadow: 0px -1px 1px rgba(0, 0, 0, 0.8);
+
+        background-color: #ee432e;
+
+        background-image: -webkit-gradient(
+            linear, left top, left bottom,
+            color-stop(0%, #ee432e),
+            color-stop(50%, #c63929),
+            color-stop(50%, #b51700),
+            color-stop(100%, #891100)
+        );
+        background-image: -webkit-linear-gradient(
+            top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%
+        );
+        background-image: -moz-linear-gradient(
+            top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%
+        );
+        background-image: -ms-linear-gradient(
+            top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%
+        );
+        background-image: -o-linear-gradient(
+            top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%
+        );
+        background-image: linear-gradient(
+            top, #ee432e 0%, #c63929 50%, #b51700 50%, #891100 100%
+        );
+
+        border: 1px solid #951100;
+
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        -ms-border-radius: 5px;
+        -o-border-radius: 5px;
+        border-radius: 5px;
+
+        -webkit-box-shadow:
+            inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4),
+            0 0 5px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow:
+            inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4),
+            0 0 5px rgba(0, 0, 0, 0.4);
+        -ms-box-shadow:
+            inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4),
+            0 0 5px rgba(0, 0, 0, 0.4);
+        -o-box-shadow:
+            inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4),
+            0 0 5px rgba(0, 0, 0, 0.4);
+        box-shadow:
+            inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4),
+            0 0 5px rgba(0, 0, 0, 0.4);
+    }
+    .console-button:hover {
+        cursor: pointer;
+        background-color: #f37873;
+        background-image: -webkit-gradient(
+            linear, left top, left bottom,
+            color-stop(0%, #f37873),
+            color-stop(50%, #db504d),
+            color-stop(50%, #cb0500),
+            color-stop(100%, #a20601)
+        );
+        background-image: -webkit-linear-gradient(
+            top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%
+        );
+        background-image: -moz-linear-gradient(
+            top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%
+        );
+        background-image: -ms-linear-gradient(
+            top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%
+        );
+        background-image: -o-linear-gradient(
+            top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%
+        );
+        background-image: linear-gradient(
+            top, #f37873 0%, #db504d 50%, #cb0500 50%, #a20601 100%
+        );
+    }
+    .console-button:active {
+        background-color: #d43c28;
+        background-image: -webkit-gradient(
+            linear, left top, left bottom,
+            color-stop(0%, #d43c28),
+            color-stop(50%, #ad3224),
+            color-stop(50%, #9c1500),
+            color-stop(100%, #700d00)
+        );
+        background-image: -webkit-linear-gradient(
+            top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%
+        );
+        background-image: -moz-linear-gradient(
+            top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%
+        );
+        background-image: -ms-linear-gradient(
+            top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%
+        );
+        background-image: -o-linear-gradient(
+            top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%
+        );
+        background-image: linear-gradient(
+            top, #d43c28 0%, #ad3224 50%, #9c1500 50%, #700d00 100%
+        );
+        -webkit-box-shadow: inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4);
+        box-shadow: inset 0px 0px 0px 1px rgba(255, 115, 100, 0.4);
+    }
+
+</style>
+
+<div id=console-stage class=relative>
+<h1 class=console-title>Dev Console</h1>
+<div class=relative>
+
+    <!-- CONNECTION STATUS -->
+    <div id=console-connection-status><div class=relative>
+        <div id=console-connection-status-you></div>
+    </div></div>
+
+    <!-- PUBLISH + SUBSCRIBE AREA -->
+    <div id=console-publish-subscribe><div class=relative>
+
+        <!-- PUBLISH AREA -->
+        <div id=console-publish-area><div class=relative>
+            <div class=console-section-header>PUBLISH</div>
+            <div class=console-box><div class=relative>
+                <div
+                    class='console-input-visual console-textarea-visual'
+                ></div>
+                <textarea
+                    class='console-input console-textarea'
+                >{"my_key":"data"}</textarea>
+                <div
+                    class='console-input-label console-textarea-label'
+                >MESSAGE TO SEND</div>
+                <div class=console-input-visual></div>
+                <div class=console-input-label>CHANNEL</div>
+                <input
+                    id=console-publish-channel
+                    class=console-input
+                    value=my_channel
+                ></input>
+                <div action=publish class=console-button>PUBLISH</div>
+            </div></div>
+        </div></div>
+
+        <!-- PUBLISH => SUBSCRIBE ARROW -->
+        <div id=console-arrow-right></div>
+
+        <!-- SUBSCRIBE AREA -->
+        <div id=console-subscribe-area><div class=relative>
+            <div class=console-section-header>SUBSCRIBE</div>
+            <div class=console-box><div class=relative>
+                <div class=console-output></div>
+                <div
+                    id=console-subscribe-output
+                    class=console-output-text>aslkjdfalk sjdflakj</div>
+                <div
+                    class='console-input-label console-output-label'
+                >RECEIVED MESSAGES</div>
+                <div class=console-input-visual></div>
+                <div class=console-input-label>CHANNEL</div>
+                <input
+                    id=console-subscribe-channel
+                    class=console-input
+                    value=my_channel
+                ></input>
+                <div
+                    action=subscribe
+                    class=console-input-heading
+                >SUBSCRIBE</div>
+            </div></div>
+        </div></div>
+    </div></div>
+    <!-- END: PUBLISH + SUBSCRIBE AREA -->
+
+    <!-- EDIT SETTINGS AREA -->
+    <div id=console-edit-settings>
+        <div class=console-section-header>MODIFY YOUR SETTINGS</div>
+        
+    </div>
+
+    <!-- DETAILS AREA -->
+    <div id=console-details-area>
+
+        <!-- LATENCY -->
+        <div id=console-latency>
+            
+        </div>
+
+        <!-- OCCUPANCY -->
+        <div id=console-occupancy>
+            
+        </div>
+
+        <!-- JOIN/LEAVE BLINKER -->
+        <div id=console-join-leave>
+            
+        </div>
+
+    </div>
+
+</div></div> <!-- END CONSOLE STAGE -->
+
+<div id=pubnub></div>
+<script src=https://pubnub.s3.amazonaws.com/pubnub-3.4.min.js></script>
+<script>(function(){
+
+})();</script>
