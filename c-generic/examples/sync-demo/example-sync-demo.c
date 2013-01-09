@@ -12,7 +12,14 @@ int
 main(void)
 {
 	struct pubnub_sync *sync = pubnub_sync_init();
-	struct pubnub *p = pubnub_init("demo", "demo", NULL, NULL, NULL, &pubnub_sync_callbacks, sync);
+	struct pubnub *p = pubnub_init(
+			/* publish_key */ "demo",
+			/* subscribe_key */ "demo",
+			/* secret_key for signing */ NULL,
+			/* cipher_key for encryption */ NULL,
+			/* origin, by default pubsub.pubnub.com" */ NULL,
+			/* pubnub_callbacks */ &pubnub_sync_callbacks,
+			/* pubnub_callbacks data */ sync);
 	json_object *msg;
 
 
@@ -22,7 +29,13 @@ main(void)
 	json_object_object_add(msg, "num", json_object_new_int(42));
 	json_object_object_add(msg, "str", json_object_new_string("\"Hello, world!\" she said."));
 
-	pubnub_publish(p, "my_channel", msg, 0, NULL, NULL);
+	pubnub_publish(
+			/* struct pubnub */ p,
+			/* channel */ "my_channel",
+			/* message */ msg,
+			/* timeout */ 0,
+			/* callback; sync needs NULL! */ NULL,
+			/* callback data */ NULL);
 
 	json_object_put(msg);
 
@@ -39,7 +52,13 @@ main(void)
 
 	/* History */
 
-	pubnub_history(p, "my_channel", 10, 0, NULL, NULL);
+	pubnub_history(
+			/* struct pubnub */ p,
+			/* channel */ "my_channel",
+			/* #messages */ 10,
+			/* timeout */ 0,
+			/* callback; sync needs NULL! */ NULL,
+			/* callback data */ NULL);
 	if (pubnub_sync_last_result(sync) != PNR_OK) {
 		msg = pubnub_sync_last_response(sync);
 		fprintf(stderr, "pubnub history error: %d [%s]\n", pubnub_sync_last_result(sync), json_object_get_string(msg));
@@ -55,7 +74,13 @@ main(void)
 
 	do {
 		const char *channels[] = { "my_channel", "demo_channel" };
-		pubnub_subscribe_multi(p, channels, 2, 300, NULL, NULL);
+		pubnub_subscribe_multi(
+				/* struct pubnub */ p,
+				/* list of channels */ channels,
+				/* number of listed channels */ 2,
+				/* timeout */ 300,
+				/* callback; sync needs NULL! */ NULL,
+				/* callback data */NULL);
 		if (pubnub_sync_last_result(sync) == PNR_TIMEOUT) {
 			fprintf(stderr, "Time out after 300s reached. Forcibly re-issuing.\n");
 			continue;
