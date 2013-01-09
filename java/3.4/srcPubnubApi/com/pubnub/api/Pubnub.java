@@ -1,13 +1,12 @@
 package com.pubnub.api;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Hashtable;
 
 import org.bouncycastle.util.SecureRandom;
-import org.json.me.JSONArray;
-import org.json.me.JSONException;
-import org.json.me.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.pubnub.crypto.PubnubCrypto;
 import com.pubnub.http.HttpManager;
@@ -363,19 +362,11 @@ public class Pubnub {
             signature = PubnubCrypto.getHMacSHA256(this.SECRET_KEY,
                     string_to_sign.toString());
         }
-        String encoded = null;
-        try {
-			encoded = URLEncoder.encode(message.toString(), "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			JSONArray jsarr;
-            jsarr = new JSONArray();
-            jsarr.put("0").put("Error: Encoding Failure");
-            callback.errorCallback(channel, jsarr);
-            return;
-		}
-        String[] urlComponents = { this.ORIGIN, "publish", this.PUBLISH_KEY,
-                this.SUBSCRIBE_KEY, signature, channel, "0",
-                encoded};
+
+        String[] urlComponents = { this.ORIGIN, "publish", PubnubUtil.urlEncode(this.PUBLISH_KEY),
+                PubnubUtil.urlEncode(this.SUBSCRIBE_KEY), PubnubUtil.urlEncode(signature),
+                PubnubUtil.urlEncode(channel), PubnubUtil.urlEncode("0"),
+                PubnubUtil.urlEncode(message.toString())};
 
         PubnubRequest req = new PubnubRequest(urlComponents, channel,
                 new ResponseHandler() {

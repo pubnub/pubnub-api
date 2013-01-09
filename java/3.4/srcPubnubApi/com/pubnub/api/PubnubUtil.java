@@ -108,6 +108,15 @@ class PubnubUtil {
             case '-':
                 urlOK.append("%2D");
                 break;
+            case '{':
+                urlOK.append("%7B");
+                break;
+            case '}':
+                urlOK.append("%7D");
+                break;
+            case '"':
+                urlOK.append("%22");
+                break;
             default:
                 urlOK.append(ch);
                 break;
