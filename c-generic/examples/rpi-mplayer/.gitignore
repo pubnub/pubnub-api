@@ -1,0 +1,3 @@
+*.o
+.deps
+pubnub-rpi-mplayer
