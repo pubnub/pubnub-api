@@ -11,5 +11,5 @@ the infrastructure needed to build amazing MMO games, social apps,
 business collaborative solutions, and more.
 
 ## Examples
-Checkout 3.4/PubNubFlexExample and the tests for information and examples on how to use!
+Checkout 3.4/src/PubNubFlexExample and the tests for information and examples on how to use!
 
