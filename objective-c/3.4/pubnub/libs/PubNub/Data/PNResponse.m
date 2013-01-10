@@ -99,9 +99,9 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
  */
 - (id)initWithContent:(NSData *)content size:(NSUInteger)responseSize code:(NSUInteger)statusCode {
     
-    // Check whether intialization was successful or not
+    // Check whether initialization was successful or not
     if((self = [super init])) {
-     
+
         self.content = content;
         self.size = responseSize;
         self.statusCode = statusCode;

@@ -37,7 +37,7 @@ didFailSubscribeOnChannels:(NSArray *)channels
  * Sent to the delegate when client unsubscribed from
  * specified set of channels
  */
-- (void)messagingChannel:(PNMessagingChannel *)channel didUnsibscribeFromChannels:(NSArray *)channels;
+- (void)messagingChannel:(PNMessagingChannel *)channel didUnsubscribeFromChannels:(NSArray *)channels;
 
 /**
  * Sent to the delegate when client failed to unsubscribe

@@ -12,6 +12,7 @@
 //
 
 #import "PubNub+Protected.h"
+#import "PNError+Protected.h"
 
 
 #pragma mark Static
@@ -452,7 +453,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
     else {
         
         error = (PNError *)notification.userInfo;
-        channels = error.channels;
+        channels = error.associatedObject;
     }
     
     BOOL subscribed = YES;

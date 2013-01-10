@@ -198,37 +198,30 @@
     
     // Try to fetch HTTP status from body
     NSUInteger statusCode = [self responseStatusCodeFromData:data inRange:responseRange];
-    
-    if (statusCode == 200) {
         
-        NSUInteger contentSize = [self responseSizeFromData:data inRange:responseRange];
-        if(contentSize > 0) {
-            
-            // Searching for HTTP header and response content
-            // separator
-            NSRange separatorRange = [data rangeOfData:self.httpContentSeparatorData
-                                               options:(NSDataSearchOptions)0
-                                                 range:responseRange];
-            if(separatorRange.location != NSNotFound) {
-                
-                // Check whether full response body loaded or not
-                // (taking into account content size which arrived
-                // in HTTP header)
-                NSUInteger contentSeparatorendIndex = (separatorRange.location+separatorRange.length);
-                NSUInteger contentSizeLeft = (responseRange.location + responseRange.length) - contentSeparatorendIndex;
-                if (contentSizeLeft > 0 && contentSize == contentSizeLeft) {
-                    
-                    NSRange responseContenrRange = NSMakeRange(contentSeparatorendIndex, contentSize);
-                    NSData *responseData = [data subdataWithRange:responseContenrRange];
-                    
-                    response = [PNResponse responseWithContent:responseData size:responseRange.length code:statusCode];
-                }
+    NSUInteger contentSize = [self responseSizeFromData:data inRange:responseRange];
+    if(contentSize > 0) {
+
+        // Searching for HTTP header and response content
+        // separator
+        NSRange separatorRange = [data rangeOfData:self.httpContentSeparatorData
+                                           options:(NSDataSearchOptions)0
+                                             range:responseRange];
+        if(separatorRange.location != NSNotFound) {
+
+            // Check whether full response body loaded or not
+            // (taking into account content size which arrived
+            // in HTTP header)
+            NSUInteger contentSeparatorendIndex = (separatorRange.location+separatorRange.length);
+            NSUInteger contentSizeLeft = (responseRange.location + responseRange.length) - contentSeparatorendIndex;
+            if (contentSizeLeft > 0 && contentSize == contentSizeLeft) {
+
+                NSRange responseContenrRange = NSMakeRange(contentSeparatorendIndex, contentSize);
+                NSData *responseData = [data subdataWithRange:responseContenrRange];
+
+                response = [PNResponse responseWithContent:responseData size:responseRange.length code:statusCode];
             }
         }
-    }
-    else {
-        
-        response = [PNResponse responseWithContent:nil size:responseRange.length code:statusCode];
     }
     
     

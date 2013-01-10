@@ -176,6 +176,11 @@ static NSMutableDictionary *_channelsCache = nil;
     return [self.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
+- (NSString *)description {
+
+    return [NSString stringWithFormat:@"%@(%p) %@", NSStringFromClass([self class]), self, self.name];
+}
+
 #pragma mark -
 
 

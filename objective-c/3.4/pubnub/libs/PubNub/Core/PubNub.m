@@ -1254,7 +1254,16 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
 - (void)messagingChannel:(PNMessagingChannel *)channel didSubscribeOnChannels:(NSArray *)channels {
 
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT SUCCESSFULLY SUBSCRIBED ON CHANNELS
+    // Check whether delegate can handle subscription on channel or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didSubscribeOnChannels:)]) {
+
+        [self.delegate performSelector:@selector(pubnubClient:didSubscribeOnChannels:)
+                            withObject:self
+                            withObject:channels];
+    }
+
+
+    [self sendNotification:kPNClientSubscriptionDidCompleteNotification withObject:channels];
 }
 
 - (void)  messagingChannel:(PNMessagingChannel *)channel
@@ -1264,7 +1273,7 @@ didFailSubscribeOnChannels:(NSArray *)channels
     // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT FAILED TO SUBSCRIBE ON CHANNELS
 }
 
-- (void)messagingChannel:(PNMessagingChannel *)channel didUnsibscribeFromChannels:(NSArray *)channels {
+- (void)messagingChannel:(PNMessagingChannel *)channel didUnsubscribeFromChannels:(NSArray *)channels {
 
     // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT UNSUBSCRIBED FROM SET OF CHANNELS
 }

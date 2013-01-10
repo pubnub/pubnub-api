@@ -14,12 +14,12 @@
 #ifndef PNRequestsImport_h
 #define PNRequestsImport_h
 
-#import "PNBaseRequest.h"
 #import "PNMessagePostRequest+Protected.h"
+#import "PNSubscribeRequest+Protected.h"
 #import "PNServiceResponseCallbacks.h"
+#import "PNLeaveRequest+Protected.h"
+#import "PNBaseRequest+Protected.h"
 #import "PNLatencyMeasureRequest.h"
-#import "PNSubscribeRequest.h"
 #import "PNTimeTokenRequest.h"
-#import "PNLeaveRequest.h"
 
 #endif // PNRequestsImport_h

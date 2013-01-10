@@ -54,11 +54,11 @@
 
            if (connected) {
 
-               PNLog(PNLogGeneralLevel, self, @"PubNub client successfully connected to: %@", channels);
+               PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client successfully subscribed on channels: %@", channels);
            }
            else {
 
-               PNLog(PNLogGeneralLevel, self, @"PubNub client failed to subscribe on %@ because of error: %@",
+               PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client failed to subscribe on %@ because of error: %@",
                      channels, subscribeError);
            }
         }];

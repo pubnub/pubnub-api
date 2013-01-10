@@ -32,13 +32,13 @@
 
 #pragma mark - Class methods
 
-+ (PNSubscribeRequest *)subscribeRequestForChannel:(PNChannel *)channel;
-+ (PNSubscribeRequest *)subscribeRequestForChannels:(NSArray *)channels;
++ (PNSubscribeRequest *)subscribeRequestForChannel:(PNChannel *)channel byUserRequest:(BOOL)isSubscribingByUserRequest;
++ (PNSubscribeRequest *)subscribeRequestForChannels:(NSArray *)channels byUserRequest:(BOOL)isSubscribingByUserRequest;
 
 
 #pragma mark - Instance methods
 
-- (id)initForChannel:(PNChannel *)channel;
-- (id)initForChannels:(NSArray *)channels;
+- (id)initForChannel:(PNChannel *)channel byUserRequest:(BOOL)isSubscribingByUserRequest;
+- (id)initForChannels:(NSArray *)channels byUserRequest:(BOOL)isSubscribingByUserRequest;
 
 @end

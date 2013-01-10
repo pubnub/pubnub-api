@@ -107,7 +107,7 @@
         // Check whether request is 'Time token' request or not
         if ([request isKindOfClass:[PNTimeTokenRequest class]]){
 
-            PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" TIME TOKEN MESSAGE HAS BEEDN PROCESSED");
+            PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" TIME TOKEN MESSAGE HAS BEEN PROCESSED");
             [self.serviceDelegate serviceChannel:self didReceiveTimeToken:parser.updateTimeToken];
         }
         else {
@@ -152,8 +152,9 @@
     // Forward to the super class
     [super requestsQueue:queue willSendRequest:request];
 
-
-    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" WILL START REQUEST PROCESSING: %@", request);
+    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" WILL START REQUEST PROCESSING: %@ [BODY: %@]",
+              request,
+              request.resourcePath);
 }
 
 - (void)requestsQueue:(PNRequestsQueue *)queue didSendRequest:(PNBaseRequest *)request {

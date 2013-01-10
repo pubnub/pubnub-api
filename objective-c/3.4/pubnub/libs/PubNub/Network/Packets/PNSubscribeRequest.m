@@ -12,7 +12,7 @@
 //
 //
 
-#import "PNSubscribeRequest.h"
+#import "PNSubscribeRequest+Protected.h"
 #import "PNServiceResponseCallbacks.h"
 #import "PubNub+Protected.h"
 #import "PNConstants.h"
@@ -33,6 +33,10 @@
 // time (token)
 @property (nonatomic, copy) NSString *updateTimeToken;
 
+// Stores whether leave request was sent to subscribe
+// on new channels or as result of user request
+@property (nonatomic, assign, getter = isSendingByUserRequest) BOOL sendingByUserRequest;
+
 
 @end
 
@@ -44,28 +48,29 @@
 
 #pragma mark - Class methods
 
-+ (PNSubscribeRequest *)subscribeRequestForChannel:(PNChannel *)channel {
++ (PNSubscribeRequest *)subscribeRequestForChannel:(PNChannel *)channel byUserRequest:(BOOL)isSubscribingByUserRequest {
     
-    return [self subscribeRequestForChannels:@[channel]];
+    return [self subscribeRequestForChannels:@[channel] byUserRequest:isSubscribingByUserRequest];
 }
 
-+ (PNSubscribeRequest *)subscribeRequestForChannels:(NSArray *)channels {
++ (PNSubscribeRequest *)subscribeRequestForChannels:(NSArray *)channels byUserRequest:(BOOL)isSubscribingByUserRequest {
     
-    return [[[self class] alloc] initForChannels:channels];
+    return [[[self class] alloc] initForChannels:channels byUserRequest:isSubscribingByUserRequest];
 }
 
 #pragma mark - Instance methods
 
-- (id)initForChannel:(PNChannel *)channel {
+- (id)initForChannel:(PNChannel *)channel byUserRequest:(BOOL)isSubscribingByUserRequest {
     
-    return [self initForChannels:@[channel]];
+    return [self initForChannels:@[channel] byUserRequest:isSubscribingByUserRequest];
 }
 
-- (id)initForChannels:(NSArray *)channels {
+- (id)initForChannels:(NSArray *)channels byUserRequest:(BOOL)isSubscribingByUserRequest {
     
     // Check whether initialization successful or not
     if((self = [super init])) {
-        
+
+        self.sendingByUserRequest = isSubscribingByUserRequest;
         self.channels = [NSArray arrayWithArray:channels];
         
         

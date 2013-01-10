@@ -40,7 +40,7 @@ static NSString * const kPNClientDidDisconnectFromOriginNotification = @"PNClien
 static NSString * const kPNClientConnectionDidFailWithErrorNotification = @"PNClientConnectionDidFailWithErrorNotification";
 
 // Sent when PubNub client was able to subscribe on
-// specified channel(s) (channel name will be passed
+// specified channel(s) (channel(s) will be passed
 // in userInfo like plain NSArray)
 static NSString * const kPNClientSubscriptionDidCompleteNotification = @"PNClientSubscriptionDidCompleteNotification";
 

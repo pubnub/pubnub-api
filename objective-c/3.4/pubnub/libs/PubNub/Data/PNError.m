@@ -13,23 +13,6 @@
 #import "PNError+Protected.h"
 
 
-#pragma mark Data keys (internal)
-
-// This structure describes keys used to store
-// data inside error's user info dictionary
-struct PNErrorInfoKeysStruct {
-    
-    __unsafe_unretained NSString *channelName;
-    __unsafe_unretained NSString *channelsName;
-};
-
-static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
-    
-    .channelName = @"channelName",
-    .channelsName = @"channelsName"
-};
-
-
 #pragma mark - Private interface methods
 
 @interface PNError ()
@@ -38,10 +21,6 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
 #pragma mark - Properties
 
 @property (nonatomic, copy) NSString *errorMessage;
-
-// Stores reference on list of channels on which
-// error is occured
-@property (nonatomic, strong) NSArray *channels;
 
 
 #pragma mark - Instance methods
@@ -63,18 +42,8 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
 #pragma mark - Class methods
 
 + (PNError *)errorWithCode:(NSInteger)errorCode {
-    
-    return [self errorWithCode:errorCode channel:nil];
-}
 
-+ (PNError *)errorWithCode:(NSInteger)errorCode channel:(NSString *)channelName {
-    
-    return [self errorWithMessage:nil code:errorCode channel:channelName];
-}
-
-+ (PNError *)errorWithCode:(NSInteger)errorCode channels:(NSArray *)channels {
-    
-    return [self errorWithMessage:nil code:errorCode channels:channels];
+    return [self errorWithMessage:nil code:errorCode];
 }
 
 + (PNError *)errorWithResponseErrorMessage:(NSString *)errorMessage {
@@ -127,44 +96,21 @@ static struct PNErrorInfoKeysStruct PNErrorInfoKeys = {
 
 + (PNError *)errorWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode {
     
-    return [self errorWithMessage:errorMessage code:errorCode channel:nil];
-}
-
-+ (PNError *)errorWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channel:(NSString *)channelName {
-    
-    return [[[self class] alloc] initWithMessage:errorMessage code:errorCode channel:channelName];
-}
-
-+ (PNError *)errorWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channels:(NSArray *)channels {
-    
-    return [[[self class] alloc] initWithMessage:errorMessage code:errorCode channels:channels];
+    return [[[self class] alloc] initWithMessage:errorMessage code:errorCode];
 }
 
 
 #pragma mark - Instance methods
 
-- (id)initWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channel:(NSString *)channelName {
-    
-    return [self initWithMessage:errorMessage code:errorCode channels:@[channelName]];
-}
+- (id)initWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode {
 
-- (id)initWithMessage:(NSString *)errorMessage code:(NSInteger)errorCode channels:(NSArray *)channels {
-    
-    NSDictionary *userInfo = nil;
-    if([channels count]) {
-        
-        self.channels = [NSArray arrayWithArray:channels];
-        NSString *channelKey = [channels count] > 1 ? PNErrorInfoKeys.channelsName : PNErrorInfoKeys.channelName;
-        userInfo = @{channelKey:[channels componentsJoinedByString:@","]};
-    }
-    
     // Check whether initialization successful or not
-    if((self = [super initWithDomain:[self domainForError:errorCode] code:errorCode userInfo:userInfo])) {
-        
+    if((self = [super initWithDomain:[self domainForError:errorCode] code:errorCode userInfo:nil])) {
+
         self.errorMessage = errorMessage;
     }
-    
-    
+
+
     return self;
 }
 

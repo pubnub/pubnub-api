@@ -19,15 +19,12 @@
 
 #import "PNMessagingChannel.h"
 #import "PNConnectionChannel+Protected.h"
-#import "PNBaseRequest+Protected.h"
-#import "PNChannel+Protected.h"
 #import "PNMessage+Protected.h"
 #import "PubNub+Protected.h"
 #import "PNRequestsImport.h"
 #import "PNResponseParser.h"
 #import "PNRequestsQueue.h"
 #import "PNResponse.h"
-#import "PNLeaveRequest+Protected.h"
 
 
 #pragma mark - Private interface methods
@@ -72,6 +69,12 @@
               withPresenceEvent:(BOOL)withPresenceEvent
                   byUserRequest:(BOOL)isLeavingByUserRequest;
 
+/**
+ * Same as -updateSubscription but allow to specify on which
+ * channels subscription should be updated
+ */
+- (void)updateSubscriptionForChannels:(NSSet *)channels;
+
 
 #pragma mark - Presence management
 
@@ -84,6 +87,7 @@
  * channels will be ignored
  */
 - (void)leaveSubscribedChannelsByUserRequest:(BOOL)isLeavingByUserRequest;
+
 - (void)leaveChannels:(NSArray *)channels byUserRequest:(BOOL)isLeavingByUserRequest;
 
 
@@ -93,7 +97,9 @@
  * Called every time when client complete
  * leave request processing
  */
-- (void)handleClientDidLeaveChannels:(NSArray *)channels;
+- (void)handleLeaveRequestCompletionForChannels:(NSArray *)channels
+                                   withResponse:(PNResponse *)response
+                                  byUserRequest:(BOOL)isLeavingByUserRequest;
 
 /**
  * Called every time when one of events occur on
@@ -102,7 +108,19 @@
  *     - message
  *     - presence event
  */
-- (void)handleEventOnChannels:(NSArray *)channels withResponse:(PNResponse *)response;
+- (void)handleEventOnChannelsForRequest:(PNSubscribeRequest *)request withResponse:(PNResponse *)response;
+
+/**
+ * Called every time when message sending request
+ * processing completed
+ */
+- (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response;
+
+/**
+ * Called every time when subscribe/unsubscribe
+ * request processing is completed
+ */
+- (void)handleSubscribeUnsubscribeRequestCompletion:(PNBaseRequest *)request;
 
 
 #pragma mark - Misc methods
@@ -118,6 +136,8 @@
  * instances
  */
 - (NSArray *)channelsWithOutPresenceFromList:(NSArray *)channelsList;
+
+- (BOOL)isRequestSendingInitiatedByUser:(PNBaseRequest *)request;
 
 
 @end
@@ -142,7 +162,7 @@
        andDelegate:(id<PNConnectionChannelDelegate>)delegate {
 
     // Check whether initialization was successful or not
-    if((self = [super initWithType:PNConnectionChannelMessaging andDelegate:delegate])) {
+    if ((self = [super initWithType:PNConnectionChannelMessaging andDelegate:delegate])) {
 
         self.subscribedChannels = [NSMutableSet set];
     }
@@ -164,37 +184,38 @@
     if ([request isKindOfClass:[PNLeaveRequest class]]) {
 
         // Process leave request process completion
-        [self handleClientDidLeaveChannels:[(PNLeaveRequest *)request channels]];
+        [self handleLeaveRequestCompletionForChannels:((PNLeaveRequest *)request).channels
+                                         withResponse:response
+                                        byUserRequest:[self isRequestSendingInitiatedByUser:request]];
 
         // Remove request from queue to unblock it (subscribe events and message post
         // requests was blocked)
         [self destroyRequest:request];
     }
     // Check whether 'Subscription'/'Presence'/'Events' request has been processed or not
-    else if([request isKindOfClass:[PNSubscribeRequest class]]) {
+    else if (request == nil || [request isKindOfClass:[PNSubscribeRequest class]]) {
 
         // Process subscription on channels
-        [self handleEventOnChannels:[(PNSubscribeRequest *)request channels] withResponse:response];
+        [self handleEventOnChannelsForRequest:(PNSubscribeRequest *)request withResponse:response];
     }
     // Check whether request was sent for message posting
     else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
 
-        // Notify delegate about that message post request will be sent now
-        [self.messagingDelegate messagingChannel:self didSendMessage:((PNMessagePostRequest *)request).message];
+        [self handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:response];
     }
 }
 
 #pragma mark - Connection management
 
 - (void)disconnectWithReset:(BOOL)shouldResetCommunicationChannel {
-    
+
     // Forward to the super class
     [super disconnect];
-    
-    
+
+
     // Check whether communication channel should reset state or not
-    if(shouldResetCommunicationChannel) {
-        
+    if (shouldResetCommunicationChannel) {
+
         // Clean up channels stack
         [self.subscribedChannels removeAllObjects];
         [self purgeObservedRequestsPool];
@@ -205,14 +226,14 @@
 #pragma mark - Presence management
 
 - (void)leaveSubscribedChannelsByUserRequest:(BOOL)isLeavingByUserRequest {
-    
+
     // Check whether there some channels which
     // user can leave
-    if([self.subscribedChannels count] > 0) {
+    if ([self.subscribedChannels count] > 0) {
 
         // Reset last update time token for channels in list
         [self.subscribedChannels makeObjectsPerformSelector:@selector(resetUpdateTimeToken)];
-        
+
         // Schedule request to be processed as soon as
         // queue will be processed
         [self scheduleRequest:[PNLeaveRequest leaveRequestForChannels:[self.subscribedChannels allObjects]
@@ -236,7 +257,7 @@
     // Retrieve set of channels (including presence observers) from
     // which client should unsubscribe
     NSSet *channelsForUnsubscribe = [self channelsWithPresenceFromList:[channelsSet allObjects]];
-    if([channelsForUnsubscribe count] > 0) {
+    if ([channelsForUnsubscribe count] > 0) {
 
         // Reset last update time token for channels in list
         [channels makeObjectsPerformSelector:@selector(resetUpdateTimeToken)];
@@ -254,7 +275,7 @@
 #pragma mark - Channels management
 
 - (BOOL)isSubscribedForChannel:(PNChannel *)channel {
-    
+
     return [self.subscribedChannels containsObject:channel];
 }
 
@@ -267,21 +288,28 @@
         // event generation
         NSArray *oldChannels = [self unsubscribeFromChannelsWithPresenceEvent:YES];
 
-        [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:oldChannels]
+        [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:oldChannels byUserRequest:YES]
       shouldObserveProcessing:YES];
     }
 }
 
 - (void)updateSubscription {
 
+    [self updateSubscriptionForChannels:self.subscribedChannels];
+}
+
+- (void)updateSubscriptionForChannels:(NSSet *)channels {
+
     PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" UPDATE CHANNELS SUBSCRIPTION");
 
     // Ensure that client connected to at least one channel
-    if ([self.subscribedChannels count] > 0) {
+    if ([channels count] > 0) {
 
-        [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[self.subscribedChannels allObjects]]
+        [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[channels allObjects]
+                                                                byUserRequest:YES]
       shouldObserveProcessing:NO];
     }
+
 }
 
 - (void)subscribeOnChannels:(NSArray *)channels {
@@ -318,7 +346,7 @@
     }
 
 
-    [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:subscriptionChannels]
+    [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:subscriptionChannels byUserRequest:YES]
   shouldObserveProcessing:YES];
 }
 
@@ -340,13 +368,9 @@
     }
     else {
 
-        // Clean up list of subscribed channels so this communication
-        // channel will ignore further messages from those channels if
-        // they will arrive
-        [self.subscribedChannels removeAllObjects];
-
-        // Notify delegate that client leaved set of channels
-        [self handleClientDidLeaveChannels:subscribedChannels];
+        [self handleLeaveRequestCompletionForChannels:subscribedChannels
+                                         withResponse:nil
+                                        byUserRequest:isLeavingByUserRequest];
     }
 
 
@@ -381,19 +405,15 @@
     }
     else {
 
-        // Remove all channels from subscribed channels set
-        // (all further messages from those channels will
-        // be ignored)
-        [self.subscribedChannels removeAllObjects];
-
-
-        // Notify delegate that client leaved set of channels
-        [self handleClientDidLeaveChannels:channels];
+        [self handleLeaveRequestCompletionForChannels:channels
+                                         withResponse:nil
+                                        byUserRequest:isLeavingByUserRequest];
     }
 
 
     // Resubscribe on rest of channels which is left after unsubscribe
-    [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[currentlySubscribedChannels allObjects]]
+    [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[currentlySubscribedChannels allObjects]
+                                                            byUserRequest:isLeavingByUserRequest]
   shouldObserveProcessing:YES];
 }
 
@@ -401,10 +421,10 @@
 #pragma mark - Presence observation management
 
 - (BOOL)isPresenceObservationEnabledForChannel:(PNChannel *)channel {
-    
+
     PNChannelPresence *presenceObserver = [channel presenceObserver];
-    
-    
+
+
     return presenceObserver != nil && [self.subscribedChannels containsObject:presenceObserver];;
 }
 
@@ -449,22 +469,40 @@
     if (message) {
 
         // Schedule message sending request
-        [self scheduleRequest:[PNMessagePostRequest postMessageRequestWithMessage:message]
-      shouldObserveProcessing:YES];
+        [self sendMessage:message.message toChannel:message.channel];
     }
 }
 
 
 #pragma mark - Handler methods
 
-- (void)handleClientDidLeaveChannels:(NSArray *)channels {
+- (void)handleLeaveRequestCompletionForChannels:(NSArray *)channels
+                                   withResponse:(PNResponse *)response
+                                  byUserRequest:(BOOL)isLeavingByUserRequest {
 
-    // Forward unsubscribe request to PubNub client so he can
-    // distribute further notifications
-    [self.messagingDelegate messagingChannel:self didUnsibscribeFromChannels:channels];
+    BOOL shouldRemoveChannels = [channels count] > 0;
+
+    if (response != nil) {
+
+        PNResponseParser *parser = [PNResponseParser parserForResponse:response];
+        PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" LEAVE REQUEST RESULT: %@", parser);
+
+        shouldRemoveChannels = parser.error == nil && parser.isProcessed;
+    }
+
+    if (shouldRemoveChannels) {
+
+        [self.subscribedChannels minusSet:[NSSet setWithArray:channels]];
+    }
+
+
+    if (isLeavingByUserRequest) {
+
+        [self.messagingDelegate messagingChannel:self didUnsubscribeFromChannels:channels];
+    }
 }
 
-- (void)handleEventOnChannels:(NSArray *)channels withResponse:(PNResponse *)response {
+- (void)handleEventOnChannelsForRequest:(PNSubscribeRequest *)request withResponse:(PNResponse *)response {
 
     PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" SUBSCRIBE REQUEST RESPONSE: %@", response);
 
@@ -475,6 +513,14 @@
     // Check whether there is no error in response
     if (parser.error == nil) {
 
+        // Retrieve event time token
+        NSString *timeToken = parser.updateTimeToken ? parser.updateTimeToken : @"0";
+
+        // Update channels state update time token
+        [self.subscribedChannels makeObjectsPerformSelector:@selector(setUpdateTimeToken:) withObject:timeToken];
+        [request.channels makeObjectsPerformSelector:@selector(setUpdateTimeToken:) withObject:timeToken];
+
+
         // Check whether events arrived from PubNub service
         // (messages, presence)
         if ([parser.events count] > 0) {
@@ -483,34 +529,9 @@
         }
         else {
 
-            NSUInteger oldChannelsCount = [self.subscribedChannels count];
-
-            // Append channels to the list of channels on which client
-            // is subscribed at this moment
-            [self.subscribedChannels addObjectsFromArray:channels];
-
-            // Checking whether number of channels on which client subscribed
-            // is changed or not (if changed, this means that we should notify
-            // delegate and observer that client subscribed on new channels)
-            if (oldChannelsCount != [self.subscribedChannels count]) {
-
-                PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" NOTIFY ON SUBSCRIPTION");
-
-                // Notify delegate that message channel subscribed on specified
-                // set of channels
-                [self.messagingDelegate messagingChannel:self didSubscribeOnChannels:channels];
-            }
+            // Subscribe to the channels with new update time token
+            [self updateSubscriptionForChannels:request.channels];
         }
-
-        // Retrieve event time token
-        NSString *timeToken = parser.updateTimeToken?parser.updateTimeToken:@"0";
-
-        // Update channels state update time token
-        [self.subscribedChannels makeObjectsPerformSelector:@selector(setUpdateTimeToken:) withObject:timeToken];
-
-
-        // Subscribe to the channels with new update time token
-        [self updateSubscription];
     }
     else {
 
@@ -518,11 +539,66 @@
     }
 }
 
+- (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response {
+
+    if ([self isRequestSendingInitiatedByUser:request]) {
+
+        PNResponseParser *parser = [PNResponseParser parserForResponse:response];
+
+        PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" MESSAGE SENDING RESPONSE: %@", parser);
+
+        // Notify delegate about that message post request will be sent now
+        [self.messagingDelegate messagingChannel:self didSendMessage:request.message];
+    }
+}
+
+- (void)handleSubscribeUnsubscribeRequestCompletion:(PNBaseRequest *)request {
+
+    // Prepare selectors which will be pulled on delegate and
+    // list of subscribed channels
+    SEL delegateSelector = @selector(messagingChannel:didSubscribeOnChannels:);
+    SEL dataUpdateSelector = @selector(unionSet:);
+
+    if ([request isKindOfClass:[PNLeaveRequest class]]) {
+        dataUpdateSelector = @selector(minusSet:);
+    }
+
+    // Store number of subscribed channels before updating it
+    NSArray *subscribedChannels = [self channelsWithOutPresenceFromList:[self.subscribedChannels allObjects]];
+    NSUInteger oldChannelsCount = [subscribedChannels count];
+
+
+
+    // Add channels on which client subscribed to the set
+    if ([[request valueForKey:@"channels"] count] > 0) {
+
+        // Updating list of subscribed channels
+        [self.subscribedChannels performSelector:dataUpdateSelector
+                                      withObject:[NSSet setWithArray:[request valueForKey:@"channels"]]];
+    }
+
+    subscribedChannels = [self channelsWithOutPresenceFromList:[self.subscribedChannels allObjects]];
+    NSUInteger newChannelsCount = [subscribedChannels count];
+    if (newChannelsCount != oldChannelsCount) {
+
+        // Retrieve list of channels w/o presence channels to notify
+        // user that client subscribed on new channels
+        NSArray *channels = [self channelsWithOutPresenceFromList:[request valueForKey:@"channels"]];
+
+
+        // Check whether leave was generated by user request or not
+        if ([channels count] > 0 && [self isRequestSendingInitiatedByUser:request]) {
+
+            [self.messagingDelegate performSelector:delegateSelector withObject:self withObject:channels];
+        }
+    }
+}
+
 
 #pragma mark - Misc methods
 
 - (NSSet *)channelsWithPresenceFromList:(NSArray *)channelsList {
-    
+
     NSMutableSet *fullChannelsList = [NSMutableSet setWithCapacity:[channelsList count]];
     [channelsList enumerateObjectsUsingBlock:^(PNChannel *channel,
                                                NSUInteger channelIdx,
@@ -535,8 +611,8 @@
             [fullChannelsList addObject:presenceObserver];
         }
     }];
-    
-    
+
+
     return fullChannelsList;
 }
 
@@ -551,12 +627,28 @@
     return [channelsList filteredArrayUsingPredicate:filterPredicate];
 }
 
+- (BOOL)isRequestSendingInitiatedByUser:(PNBaseRequest *)request {
+
+    BOOL requestSentByUser = NO;
+    if ([request isKindOfClass:[PNSubscribeRequest class]]) {
+
+        requestSentByUser = ((PNSubscribeRequest *)request).isSendingByUserRequest;
+    }
+    else if ([request isKindOfClass:[PNLeaveRequest class]]) {
+
+        requestSentByUser = ((PNLeaveRequest *)request).isSendingByUserRequest;
+    }
+
+
+    return requestSentByUser;
+}
+
 
 #pragma mark - Connection delegate methods
 
 - (void)connection:(PNConnection *)connection didReceiveResponse:(PNResponse *)response {
-    
-    if([self shouldHandleResponse:response]) {
+
+    if ([self shouldHandleResponse:response]) {
 
         PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" RECIEVED RESPONSE: %@", response);
 
@@ -567,8 +659,12 @@
         [self processResponse:response forRequest:request];
 
 
-        // Asking to schedule next request
-        [self scheduleNextRequest];
+        // Check whether connection available or not
+        if ([self isConnected] && [[PubNub sharedInstance].reachability isServiceAvailable]) {
+
+            // Asking to schedule next request
+            [self scheduleNextRequest];
+        }
     }
 }
 
@@ -581,8 +677,12 @@
     [super requestsQueue:queue willSendRequest:request];
 
 
-    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" WILL START REQUEST PROCESSING: %@ [BODY: %@]", request, request.resourcePath);
+    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" WILL START REQUEST PROCESSING: %@ [BODY: %@]",
+          request,
+          request.resourcePath);
 
+
+    // Check whether this is 'Leave' request or not
     if ([request isKindOfClass:[PNLeaveRequest class]]) {
 
         // Check whether connection should be closed for resubscribe
@@ -598,7 +698,7 @@
             [self reconnect];
         }
     }
-    // Check whether request was sent for message posting
+    // Check whether this is 'Message post' request or not
     else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
 
         // Notify delegate about that message post request will be sent now
@@ -612,34 +712,26 @@
     [super requestsQueue:queue didSendRequest:request];
 
 
-    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" DID SEND REQUEST: %@ [BODY: %@]", request, request.resourcePath);
+    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" DID SEND REQUEST: %@ [BODY: %@]",
+          request,
+          request.resourcePath);
 
 
     // If we are not waiting for request completion, inform delegate
     // immediately
     if (![self isWaitingRequestCompletion:request.shortIdentifier]) {
 
-        // Check whether this is 'Subscribe' request or not
+        // Check whether this is 'Subscribe' or 'Leave' request or not
         // (there probably no situation when this situation will take place)
-        if ([request isKindOfClass:[PNSubscribeRequest class]]) {
+        if ([request isKindOfClass:[PNSubscribeRequest class]] ||
+            [request isKindOfClass:[PNLeaveRequest class]]) {
 
-            // Notify delegate about that client subscribed on required channels
-            [self.messagingDelegate messagingChannel:self
-                              didSubscribeOnChannels:((PNSubscribeRequest *)request).channels];
-        }
-        // Check whether this is 'Leave' request or not
-        // (there probably no situation when this situation will take place)
-        else if ([request isKindOfClass:[PNLeaveRequest class]]) {
-
-            // Notify delegate about that client leaved set of channels
-            [self.messagingDelegate messagingChannel:self
-                          didUnsibscribeFromChannels:((PNLeaveRequest *)request).channels];
+            [self handleSubscribeUnsubscribeRequestCompletion:request];
         }
         // Check whether this is 'Post message' request or not
         else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
 
-            // Notify delegate about that message post request has been sent
-            [self.messagingDelegate messagingChannel:self didSendMessage:((PNMessagePostRequest *)request).message];
+            [self handleMessageRequestCompletion:request withResponse:nil];
         }
     }
 
@@ -658,51 +750,58 @@
           request.resourcePath);
 
 
-    // Check whether connection available or not
-    if ([self isConnected] && [[PubNub sharedInstance].reachability isServiceAvailable]) {
+    // Check whether request can be rescheduled or not
+    if (![request canRetry]) {
 
-        // Check whether request can be rescheduled or not
-        if (![request canRetry]) {
-
-            // Removing failed request from queue
-            [self destroyRequest:request];
+        // Removing failed request from queue
+        [self destroyRequest:request];
 
 
-            PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" REQUEST PROCESSING FAILED (REMOVED): %@",
-                  request);
+        PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" REQUEST PROCESSING FAILED (REMOVED): %@",
+              request);
 
-            // Check whether this is 'Subscribe' request or not
-            if ([request isKindOfClass:[PNSubscribeRequest class]]) {
+        // Check whether this is 'Subscribe' or 'Leave' request or not
+        if ([request isKindOfClass:[PNSubscribeRequest class]] ||
+            [request isKindOfClass:[PNLeaveRequest class]]) {
 
-                // Notify delegate about that client failed to subscribe on channels
-                [self.messagingDelegate messagingChannel:self
-                              didFailSubscribeOnChannels:((PNSubscribeRequest *)request).channels
-                                               withError:error];
-            }
-            // Check whether this is 'Leave' request or not
-            else if ([request isKindOfClass:[PNLeaveRequest class]]) {
+            // Retrieve list of channels w/o presence channels to notify
+            // user that client subscribed on new channels
+            NSArray *channels = [self channelsWithOutPresenceFromList:[request valueForKey:@"channels"]];
 
-                // Notify delegate about that client failed to leave set of channels
-                [self.messagingDelegate messagingChannel:self
-                            didFailUnsubscribeOnChannels:((PNLeaveRequest *)request).channels
-                                               withError:error];
-            }
-            // Check whether this is 'Post message' request or not
-            else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
+            if ([channels count] > 0 && [self isRequestSendingInitiatedByUser:request]) {
 
-                // Notify delegate about that message can't be send
-                [self.messagingDelegate messagingChannel:self
-                                      didFailMessageSend:((PNMessagePostRequest *)request).message
-                                               withError:error];
+                if ([request isKindOfClass:[PNSubscribeRequest class]]) {
+
+                    // Notify delegate about that client failed to subscribe on channels
+                    [self.messagingDelegate messagingChannel:self didFailSubscribeOnChannels:channels withError:error];
+                }
+                else {
+
+                    // Notify delegate about that client failed to leave set of channels
+                    [self.messagingDelegate messagingChannel:self didFailUnsubscribeOnChannels:channels withError:error];
+                }
             }
         }
+                // Check whether this is 'Post message' request or not
+        else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
 
+            // Notify delegate about that message can't be send
+            [self.messagingDelegate messagingChannel:self
+                                  didFailMessageSend:((PNMessagePostRequest *)request).message
+                                           withError:error];
+        }
+    }
+
+
+    // Check whether connection available or not
+    if ([self isConnected] && [[PubNub sharedInstance].reachability isServiceAvailable]) {
 
         [self scheduleNextRequest];
     }
 }
 
-- (void)requestsQueue:(PNRequestsQueue *)queue didCancelRequest:(PNBaseRequest *)request {
+- (void)requestsQueue:(PNRequestsQueue *)queue
+     didCancelRequest:(PNBaseRequest *)request {
 
     // Forward to the super class
     [super requestsQueue:queue didCancelRequest:request];
