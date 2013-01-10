@@ -5,6 +5,23 @@
     android:stretchColumns="*">
     <TableRow>
         <Button
+            android:layout_span="2"
+            android:layout_column="0"
+            android:padding="2dip"
+            android:id="@+id/btnSubscribeConnCallback"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/subscribeConnCallback" />
+        <Button
+            android:layout_column="1"
+            android:padding="2dip"
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/cancel" />
+    </TableRow>
+    <TableRow>
+        <Button
             android:layout_column="0"
             android:padding="2dip"
             android:id="@+id/btnSubscribe"
