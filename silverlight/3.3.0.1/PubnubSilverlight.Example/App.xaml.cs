@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace PubnubSilverlight.Example
+namespace PubNub_Messaging
 {
     public partial class App : Application
     {

@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-namespace PubnubSilverlight.Example.Dialogs
+namespace PubNub_Messaging
 {
     public partial class PublishMessageDialog : ChildWindow
     {

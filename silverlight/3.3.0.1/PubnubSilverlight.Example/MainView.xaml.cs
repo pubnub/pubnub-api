@@ -10,16 +10,13 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Navigation;
-using PubnubSilverlight.Core;
-//using PubNub_Messaging;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using Microsoft.Silverlight.Testing;
-using PubnubSilverlight.Example.Views;
 
-namespace PubnubSilverlight.Example
+namespace PubNub_Messaging
 {
     public partial class MainView : Page
     {
