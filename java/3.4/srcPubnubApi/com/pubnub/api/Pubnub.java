@@ -1,6 +1,5 @@
 package com.pubnub.api;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 
 import org.bouncycastle.util.SecureRandom;
@@ -47,7 +46,7 @@ public class Pubnub {
         String valueBeforeMD5;
         String valueAfterMD5;
         SecureRandom mySecureRand = new SecureRandom();
-        String s_id = "";
+        String s_id = String.valueOf(Pubnub.class.hashCode());
         StringBuffer sbValueBeforeMD5 = new StringBuffer();
         try {
             long time = System.currentTimeMillis();

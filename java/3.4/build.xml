@@ -6,7 +6,9 @@
     <property name="source" value="1.5"/>
     <path id="PubnubApi.classpath">
         <pathelement location="bin"/>
-        <pathelement location="libs/bouncycastle.jar"/>
+        <pathelement location="libs/httpcore-4.2.2.jar"/>
+        <pathelement location="libs/httpclient-4.2.2.jar"/>
+		<pathelement location="libs/bouncycastle.jar"/>
         <pathelement location="libs/json.jar"/>
     </path>
     <target name="init">
@@ -39,5 +41,3 @@
         </javac>
     </target>
 </project>
-
-http://pubsub.pubnub.com/publish/demo/demo/d92e240c3845ca823f645299549212df0169b187148c5e585bb3b45cf1f76d48/hello_world/0/{"some_key"%3A"j2me%20says%20hello,%20world!"}

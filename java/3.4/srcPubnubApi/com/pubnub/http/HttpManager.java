@@ -13,7 +13,7 @@ public class HttpManager {
 	private Worker _workers[];
 	private static Network network;
 
-	private class Network {
+	private static class Network {
 		private boolean available = true;
 
 		public synchronized boolean isAvailable() {
@@ -31,6 +31,7 @@ public class HttpManager {
 	}
 
 	public static void startHeartbeat(String url, int interval) {
+		init();
 		new Thread(new Heartbeat(url, interval), "heartbeat").start();
 	}
 
@@ -38,7 +39,7 @@ public class HttpManager {
 		return _maxWorkers;
 	}
 
-	private void init(int maxCalls, String name) {
+	private void initManager(int maxCalls, String name) {
 		if (maxCalls < 1) {
 			maxCalls = 1;
 		}
@@ -53,8 +54,14 @@ public class HttpManager {
 		}
 	}
 
+	public static void init() {
+		if (network == null) {
+			network = new Network();
+		}
+	}
 	public HttpManager(String name) {
-		init(_maxWorkers, name);
+		init();
+		initManager(_maxWorkers, name);
 	}
 
 	public void queue(HttpRequest hreq) {

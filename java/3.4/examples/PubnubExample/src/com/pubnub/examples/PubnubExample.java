@@ -19,7 +19,7 @@ public class PubnubExample {
 	public PubnubExample() {
 	}
 
-	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", false);
+	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "demo", false);
 
 	/**
 	 * @param params
