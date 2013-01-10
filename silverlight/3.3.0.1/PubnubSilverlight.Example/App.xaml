@@ -1,0 +1,14 @@
+﻿<Application xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             x:Class="PubNub_Messaging.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="/PubnubSilverlight.Example;component/Styles/ButtonStyle.xaml"/>
+                <ResourceDictionary Source="/PubnubSilverlight.Example;component/Styles/Styles.xaml"/>
+
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

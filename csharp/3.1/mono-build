@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo -e "Building..."
+#gmcs -debug Pubnub.cs -r:/usr/lib/mono/2.0/System.Web.Extensions.dll
+gmcs -debug Pubnub.cs -r:System.Web.Extensions.dll
+
+echo -e "Running:"
+mono --debug Pubnub.exe

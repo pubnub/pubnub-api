@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo -e "Building..."
+gmcs -debug PubnubAsync.cs -r:System.Runtime.Serialization.Json.dll -r:/usr/lib/mono/2.0/System.ServiceModel.Web.dll
+
+echo -e "Running:"
+mono --debug PubnubAsync.exe
