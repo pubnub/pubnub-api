@@ -1,14 +1,14 @@
-afterwards:
-- make some RPi examples integrating the C e.g. with WiringPi
-- fix missing function documentation in pubnub.h
+/ make some RPi examples integrating the C e.g. with WiringPi
 - add README.md with general description
-- build C++ wrapper
-
-later?
-- factor out libpubnub-event.so so that libevent is not hard dep for libpubnub
-- way to configure NOSIGNAL curl mode
 - standardized timeout handling (configurable)
 - standardized error retry policy (configurable)
+- fix missing function documentation in pubnub.h
+
+later?
+- build C++ wrapper
+- factor out libpubnub-event.so so that libevent is not hard dep for libpubnub
+- way to configure NOSIGNAL curl mode
 - more demo's?
+- executable wrapper for PubNub integration in shell scripts?
 - some unit tests?
 - SSL support?
