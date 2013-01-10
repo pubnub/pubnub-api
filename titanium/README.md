@@ -9,6 +9,9 @@ to millions of web and mobile clients simultaneously.
 #### API Usage Summary
 API Usage summary follows. But checkout the real working examples in examples 3.3/mobile!
 
+And be sure to checkout how easy it is to run the demo chat application with this quick video demo: 
+https://vimeo.com/57166260
+
 ### Init
 
 ```javascript
