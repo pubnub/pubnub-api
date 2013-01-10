@@ -1,5 +1,5 @@
 / make some RPi examples integrating the C e.g. with WiringPi
-- add README.md with general description
+/ add README.md with general description
 - standardized timeout handling (configurable)
 - standardized error retry policy (configurable)
 - fix missing function documentation in pubnub.h
