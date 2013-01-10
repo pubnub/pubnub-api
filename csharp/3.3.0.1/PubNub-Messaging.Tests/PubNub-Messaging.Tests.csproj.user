@@ -6,6 +6,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
     <StartProgram>C:\Program Files (x86)\NUnit 2.6.1\bin\nunit-x86.exe</StartProgram>
+    <StartArguments>PubNubMessaging.Tests.dll</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Program Files (x86)\NUnit 2.6.1\bin\nunit.exe</StartProgram>
     <StartArguments>PubNub-Messaging.Tests.dll</StartArguments>
   </PropertyGroup>
 </Project>

@@ -8,8 +8,8 @@
     <ProjectGuid>{BD61C09A-BE66-466F-B9A6-F58BEC59E21B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PubNub_Messaging.Tests</RootNamespace>
-    <AssemblyName>PubNub-Messaging.Tests</AssemblyName>
+    <RootNamespace>PubNubMessaging.Tests</RootNamespace>
+    <AssemblyName>PubNubMessaging.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -98,14 +98,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="v3.5\" />
+    <Folder Include="v4.0\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\PubNub-Messaging\PubNub-Messaging.csproj">
       <Project>{B1ED98C3-FD0B-4B45-B0BE-40AFD37182CB}</Project>
       <Name>PubNub-Messaging</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="v3.5\" />
-    <Folder Include="v4.0\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

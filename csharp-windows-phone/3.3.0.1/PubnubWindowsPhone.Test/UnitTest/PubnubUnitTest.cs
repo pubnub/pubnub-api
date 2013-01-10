@@ -4,7 +4,13 @@ using System.Linq;
 using System.Text;
 using PubNubMessaging.Core;
 
-namespace PubNubMessaging.Tests
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Phone.Testing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Threading;
+
+namespace PubnubWindowsPhone.Test.UnitTest
 {
     public class PubnubUnitTest : IPubnubUnitTest
     {
