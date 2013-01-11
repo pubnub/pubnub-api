@@ -14,8 +14,10 @@
 
 
 #import "PNResponseParser.h"
-#import "PNResponse.h"
+#import "PNChannelPresence+Protected.h"
 #import "PNPresenceEvent.h"
+#import "PNResponse.h"
+#import "PNPresenceEvent+Protected.h"
 
 
 #pragma mark Static
@@ -145,7 +147,6 @@ static NSString * const kPNResponseErrorMessageKey = @"error";
                 // Retrieving list of events
                 NSArray *events = [responseData objectAtIndex:kPNResponseEventsListElementIndex];
 
-
                 // Retrieving list of channels on which events fired
                 NSArray *channels = nil;
                 if ([responseData count] > kPNResponseChannelsListElementIndex) {
@@ -154,10 +155,45 @@ static NSString * const kPNResponseErrorMessageKey = @"error";
                             componentsSeparatedByString:@","];
                 }
 
-                // Check whether events can be mapped to the channels on
-                // which they fired
-                if ([channels count] > 0) {
+                if ([events count] > 0) {
 
+                    NSMutableArray *eventObjects = [NSMutableArray arrayWithCapacity:[events count]];
+                    [events enumerateObjectsUsingBlock:^(id event,
+                                                         NSUInteger eventIdx,
+                                                         BOOL *eventEnumeratorStop) {
+
+                        PNChannel *channel = nil;
+                        if ([channels count] > 0) {
+
+                            // Retrieve reference on channel on which event is occurred
+                            channel = [PNChannel channelWithName:[channels objectAtIndex:eventIdx]];
+
+                            // Checking whether event occurred on presence observing channel
+                            // or no and retrieve reference on original channel
+                            if ([channel isPresenceObserver]) {
+
+                                channel = [(PNChannelPresence *)channel observedChannel];
+                            }
+                        }
+
+                        // Checking whether event is object or not
+                        if ([event isKindOfClass:[NSDictionary class]]) {
+
+                            // Check whether object is presence event or not
+                            if ([PNPresenceEvent isPresenceEventObject:event]) {
+
+                                PNPresenceEvent *eventObject = [PNPresenceEvent presenceEventForResponse:event];
+                                eventObject.channel = channel;
+                                [eventObjects addObject:eventObject];
+                            }
+                            else {
+
+
+                            }
+                        }
+                    }];
+
+                    self.events = eventObjects;
                 }
             }
             // Check whether there is only single item in array which will mean

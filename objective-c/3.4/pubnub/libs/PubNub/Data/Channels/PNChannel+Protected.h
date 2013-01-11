@@ -36,6 +36,11 @@
 #pragma mark - Instance methods
 
 /**
+ * Return whether channel is presence observer or not
+ */
+- (BOOL)isPresenceObserver;
+
+/**
  * Depending on whether channel was configured
  * to receive presence events or not it will
  * return presence observing channel

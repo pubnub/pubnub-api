@@ -513,7 +513,7 @@
     if ([[request valueForKey:@"channels"] count] > 0) {
 
         // Turn off error warning on performSelector, because ARC
-        // can't understand what is goingon there
+        // can't understand what is going on there
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         // Updating list of subscribed channels
@@ -570,8 +570,7 @@
 
     // Compose filtering predicate to retrieve list of channels
     // which are not presence observing channels
-    NSString *filterFormat = @"shouldObservePresence = %@";
-    NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:filterFormat, @NO];
+    NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"isPresenceObserver = %@", @NO];
 
 
     return [channelsList filteredArrayUsingPredicate:filterPredicate];

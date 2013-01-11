@@ -11,7 +11,7 @@
 //
 //
 
-#import "PNPresenceEvent.h"
+#import "PNPresenceEvent+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -19,15 +19,26 @@
 @interface PNPresenceEvent ()
 
 
-#pragma mark - Class methods
+#pragma mark Properties
 
-/**
- * This method will analyze and filter response
- * (filtering from channel messages is working in
- * multiplex mode) and return how many presence
- * events occurred
- */
-+ (NSUInteger)numberOfEventsInResponse:(id)presenceResponse;
+// Stores reference on presence event type
+@property (nonatomic, assign) PNPresenceEventType type;
+
+// Stores reference on presence occurrence
+// date
+@property (nonatomic, strong) NSDate *date;
+
+// Stores reference on user identifier which
+// is triggered presence event
+@property (nonatomic, copy) NSString *uuid;
+
+// Stores reference on number of persons in channel
+// on which this event is occurred
+@property (nonatomic, assign) NSUInteger occupancy;
+
+// Stores reference on channel on which this event
+// is fired
+@property (nonatomic, assign) PNChannel *channel;
 
 
 @end
@@ -45,9 +56,12 @@
     return [[[self class] alloc] initWithResponse:presenceResponse];
 }
 
-+ (NSUInteger)numberOfEventsInResponse:(id)presenceResponse {
-    
-    return 0;
++ (BOOL)isPresenceEventObject:(NSDictionary *)event {
+
+    return [event objectForKey:PNPresenceEventDataKeys.action] != nil &&
+           [event objectForKey:PNPresenceEventDataKeys.timestamp] != nil &&
+           [event objectForKey:PNPresenceEventDataKeys.uuid] != nil &&
+           [event objectForKey:PNPresenceEventDataKeys.occupancy] != nil;
 }
 
 
@@ -57,11 +71,49 @@
     
     // Check whether intialization successful or not
     if((self = [super init])) {
-        
+
+        // Extracting event type from response
+        self.type = PNPresenceEventJoin;
+        NSString *type = [presenceResponse valueForKey:PNPresenceEventDataKeys.action];
+        if ([type isEqualToString:@"leave"]) {
+
+            self.type = PNPresenceEventLeave;
+        }
+        else if ([type isEqualToString:@"timeout"]) {
+
+            self.type = PNPresenceEventTimeout;
+        }
+
+        // Extracting event date from response
+        NSNumber *timestamp = [presenceResponse valueForKey:PNPresenceEventDataKeys.timestamp];
+        self.date = [NSDate dateWithTimeIntervalSince1970:[timestamp longLongValue]];
+
+        // Extracting user identifier from response
+        self.uuid = [presenceResponse valueForKey:PNPresenceEventDataKeys.uuid];
+
+        // Extracting channel occupancy from response
+        self.occupancy = [[presenceResponse valueForKey:PNPresenceEventDataKeys.occupancy] unsignedIntegerValue];
     }
     
     
     return self;
+}
+
+- (NSString *)description {
+
+    NSString *action = @"join";
+    if (self.type == PNPresenceEventLeave) {
+
+        action = @"leave";
+    }
+    else if (self.type == PNPresenceEventTimeout) {
+
+        action = @"timeout";
+    }
+
+
+    return [NSString stringWithFormat:@"\nEVENT: %@\nUSER IDENTIFIER: %@\nDATE: %@\nOCCUPANCY: %d\nCHANNEL: %@",
+                    action, self.uuid, self.date, self.occupancy, self.channel];
 }
 
 #pragma mark -

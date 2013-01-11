@@ -49,7 +49,7 @@
         // be enabled, if it is required, than user should use another
         // method + channelWithName:shouldObservePresence: with last parameter
         // set to 'YES'
-        [PubNub subscribeOnChannel:[PNChannel channelWithName:@"iosdev"]
+        [PubNub subscribeOnChannels:@[[PNChannel channelWithName:@"iosdev" shouldObservePresence:YES]]
        withCompletionHandlingBlock:^(NSArray *channels, BOOL connected, PNError *subscribeError) {
 
            if (connected) {
@@ -141,9 +141,11 @@
 
     PNLog(PNLogGeneralLevel, self, @"PubNub client successfully subscribed on channels: %@", channels);
 
-    [PubNub sendMessage:@"Hello world" toChannel:[channels lastObject] withCompletionBlock:^(PNMessage *message,
-                                                                                             BOOL sent,
-                                                                                             PNError *sendingError) {
+    [PubNub sendMessage:@"Hello world"
+              toChannel:[channels lastObject]
+    withCompletionBlock:^(PNMessage *message,
+                          BOOL sent,
+                          PNError *sendingError) {
 
         if (sent) {
 

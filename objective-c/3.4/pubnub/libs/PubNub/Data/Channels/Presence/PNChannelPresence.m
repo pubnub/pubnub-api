@@ -30,8 +30,44 @@
  */
 + (PNChannelPresence *)presenceForChannel:(PNChannel *)channel {
 
-    return [super channelWithName:[channel.name stringByAppendingString:kPNPresenceObserverChannelSuffix]
-            shouldObservePresence:NO];
+    NSString *channelName = channel.name;
+    if (![channelName hasSuffix:kPNPresenceObserverChannelSuffix]) {
+
+        channelName = [channelName stringByAppendingString:kPNPresenceObserverChannelSuffix];
+    }
+
+
+    return [super channelWithName:channelName shouldObservePresence:NO];
+}
+
++ (PNChannelPresence *)presenceForChannelWithName:(NSString *)channelName {
+
+    if (![channelName hasSuffix:kPNPresenceObserverChannelSuffix]) {
+
+        channelName = [channelName stringByAppendingString:kPNPresenceObserverChannelSuffix];
+    }
+
+
+    return [super channelWithName:channelName shouldObservePresence:NO];
+}
+
++ (BOOL)isPresenceObservingChannelName:(NSString *)channelName {
+
+    return [channelName hasSuffix:kPNPresenceObserverChannelSuffix];
+}
+
+
+#pragma mark - Instance methods
+
+- (PNChannel *)observedChannel {
+
+    return [PNChannel channelWithName:[self.name stringByReplacingOccurrencesOfString:kPNPresenceObserverChannelSuffix
+                                                                           withString:@""]];
+}
+
+- (BOOL)isPresenceObserver {
+
+    return YES;
 }
 
 #pragma mark -

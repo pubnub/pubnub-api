@@ -11,6 +11,7 @@
 //
 
 #import "PNChannel+Protected.h"
+#import "PNChannelPresence+Protected.h"
 
 
 #pragma mark Static
@@ -89,9 +90,19 @@ static NSMutableDictionary *_channelsCache = nil;
     return channels;
 }
 
-+ (PNChannel *)channelWithName:(NSString *)channelName {
++ (id)channelWithName:(NSString *)channelName {
+
+    id channel = nil;
+    if ([PNChannelPresence isPresenceObservingChannelName:channelName]) {
+
+        channel = [PNChannelPresence presenceForChannelWithName:channelName];
+    }
+    else {
+
+        channel = [self channelWithName:channelName shouldObservePresence:NO];
+    }
     
-    return [self channelWithName:channelName shouldObservePresence:NO];
+    return channel;
 }
 
 + (PNChannel *)channelWithName:(NSString *)channelName shouldObservePresence:(BOOL)observePresence {
@@ -179,6 +190,11 @@ static NSMutableDictionary *_channelsCache = nil;
 - (NSString *)description {
 
     return [NSString stringWithFormat:@"%@(%p) %@", NSStringFromClass([self class]), self, self.name];
+}
+
+- (BOOL)isPresenceObserver {
+
+    return NO;
 }
 
 #pragma mark -
