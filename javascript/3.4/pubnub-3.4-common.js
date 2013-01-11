@@ -1,34 +1,71 @@
-    
- var    NOW             = 1
-,   SWF             = 'https://pubnub.a.ssl.fastly.net/pubnub.swf'
-,   REPL            = /{([\w\-]+)}/g
-,   SUB_TIMEOUT     = 310000
-,   PRESENCE_SUFFIX = '-pnpres'
-,   SECOND          = 1000
-, READY = 0
-, READY_BUFFER =[]
-;
+
+var     NOW             = 1
+,       SWF             = 'https://pubnub.a.ssl.fastly.net/pubnub.swf'
+,       REPL            = /{([\w\-]+)}/g
+,       SUB_TIMEOUT     = 310000
+,       PRESENCE_SUFFIX = '-pnpres'
+,       SECOND          = 1000
+,       READY           = 0
+,       READY_BUFFER    = [] ;
 
 /**
- * UTILITIES
- */
+* UTILITIES
+*/
 function unique() { return'x'+ ++NOW+''+(+new Date) }
 function rnow()   { return+new Date }
 
 /**
- * timeout
- * =======
- * timeout( function(){}, 100 );
- */
+* timeout
+* =======
+* timeout( function(){}, 100 );
+*/
 function timeout( fun, wait ) {
     return setTimeout( fun, wait );
 }
 
 /**
- * EACH
- * ====
- * each( [1,2,3], function(item) { } )
- */
+* NEXTORIGIN
+* ==========
+* var next_origin = nextorigin();
+*/
+var nextorigin = (function() {
+    var max = 20
+    ,   ori = Math.floor(Math.random() * max);
+    return function(origin) {
+        return origin.indexOf('pubsub') > 0
+        && origin.replace(
+           'pubsub', 'ps' + (++ori < max? ori : ori=1)
+           ) || origin;
+    }
+})();
+
+/**
+* UPDATER
+* =======
+* var timestamp = unique();
+*/
+function updater( fun, rate ) {
+    var timeout
+    ,   last   = 0
+    ,   runnit = function() {
+        if (last + rate > rnow()) {
+            clearTimeout(timeout);
+            timeout = setTimeout( runnit, rate );
+        }
+        else {
+            last = rnow();
+            fun();
+        }
+    };
+
+    return runnit;
+}
+
+/**
+* EACH
+* ====
+* each( [1,2,3], function(item) { } )
+*/
 function each( o, f ) {
     if ( !o || !f ) return;
 
@@ -39,24 +76,16 @@ function each( o, f ) {
     } else {
         for ( var i in o )
             o.hasOwnProperty    &&
-            o.hasOwnProperty(i) &&
-            f.call( o[i], i, o[i] );
+        o.hasOwnProperty(i) &&
+        f.call( o[i], i, o[i] );
     }
 }
 
-// PUBNUB READY TO CONNECT
-function ready() { PUBNUB['time'](rnow);
-PUBNUB['time'](function(t){ timeout( function() {
-    if (READY) return;
-    READY = 1;
-    each( READY_BUFFER, function(connect) { connect(); } );
-}, SECOND ); }); }
-
 /**
- * MAP
- * ===
- * var list = map( [1,2,3], function(item) { return item + 1 } )
- */
+* MAP
+* ===
+* var list = map( [1,2,3], function(item) { return item + 1 } )
+*/
 function map( list, fun ) {
     var fin = [];
     each( list || [], function( k, v ) { fin.push(fun( k, v )) } );
@@ -64,10 +93,10 @@ function map( list, fun ) {
 }
 
 /**
- * GREP
- * ====
- * var list = grep( [1,2,3], function(item) { return item % 2 } )
- */
+* GREP
+* ====
+* var list = grep( [1,2,3], function(item) { return item % 2 } )
+*/
 function grep( list, fun ) {
     var fin = [];
     each( list || [], function(l) { fun(l) && fin.push(l) } );
@@ -75,10 +104,36 @@ function grep( list, fun ) {
 }
 
 /**
- * SUPPLANT
- * ========
- * var text = supplant( 'Hello {name}!', { name : 'John' } )
- */
+* EVENTS
+* ======
+* PUBNUB.events.bind( 'you-stepped-on-flower', function(message) {
+*     // Do Stuff with message
+* } );
+*
+* PUBNUB.events.fire( 'you-stepped-on-flower', "message-data" );
+* PUBNUB.events.fire( 'you-stepped-on-flower', {message:"data"} );
+* PUBNUB.events.fire( 'you-stepped-on-flower', [1,2,3] );
+*
+*/
+var events = {
+    'list'   : {},
+    'unbind' : function( name ) { events.list[name] = [] },
+    'bind'   : function( name, fun ) {
+        (events.list[name] = events.list[name] || []).push(fun);
+    },
+    'fire' : function( name, data ) {
+        each(
+            events.list[name] || [],
+            function(fun) { fun(data) }
+            );
+    }
+};
+
+/**
+* SUPPLANT
+* ========
+* var text = supplant( 'Hello {name}!', { name : 'John' } )
+*/
 function supplant( str, values ) {
     return str.replace( REPL, function( _, match ) {
         return values[match] || _
@@ -86,38 +141,38 @@ function supplant( str, values ) {
 }
 
 /**
- * NEXTORIGIN
- * ==========
- * var next_origin = nextorigin();
- */
+* NEXTORIGIN
+* ==========
+* var next_origin = nextorigin();
+*/
 var nextorigin = (function() {
     var max = 20
     ,   ori = Math.floor(Math.random() * max);
     return function(origin) {
         return origin.indexOf('pubsub') > 0
-            && origin.replace(
-             'pubsub', 'ps' + (++ori < max? ori : ori=1)
-            ) || origin;
+        && origin.replace(
+           'pubsub', 'ps' + (++ori < max? ori : ori=1)
+           ) || origin;
     }
 })();
 
 /**
- * ENCODE
- * ======
- * var encoded_path = encode('path');
- */
+* ENCODE
+* ======
+* var encoded_path = encode('path');
+*/
 function encode(path) {
     return map( (encodeURIComponent(path)).split(''), function(chr) {
         return "-_.!~*'()".indexOf(chr) < 0 ? chr :
-               "%"+chr.charCodeAt(0).toString(16).toUpperCase()
+        "%"+chr.charCodeAt(0).toString(16).toUpperCase()
     } ).join('');
 }
 
 /**
- * Generate Subscription Channel List
- * ==================================
- *  generate_channel_list(channels_object);
- */
+* Generate Subscription Channel List
+* ==================================
+*  generate_channel_list(channels_object);
+*/
 function generate_channel_list(channels) {
     var list = [];
     each( channels, function( channel, status ) {
@@ -140,13 +195,15 @@ function PN_API(setup) {
     ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
     ,   SSL           = setup['ssl'] ? 's' : ''
     ,   db            = setup['db'] || {'set' : function(){}, 'get': function(){}}
-    ,   jsonp_cb      = setup['jsonp_cb'] || function(){}
+    ,   jsonp_cb      = setup['jsonp_cb'] || function(){ return 0;}
+    ,   bind_leave    = setup['bind_leave'] || function() {}
     ,   xdr           = setup['xdr']
     ,   UUID          = setup['uuid'] || db['get'](SUBSCRIBE_KEY+'uuid') || ''
     ,   ORIGIN        = 'http'+SSL+'://'+(setup['origin']||'pubsub.pubnub.com')
     ,   LEAVE         = function(){}
     ,   CONNECT       = function(){}
     ,   SELF          = {
+
         /*
             PUBNUB.history({
                 channel  : 'my_chat_channel',
@@ -183,8 +240,8 @@ function PN_API(setup) {
                 success  : function(response) { callback(response) },
                 fail     : err,
                 url      : [
-                    ORIGIN, 'v2', 'history', 'sub-key',
-                    SUBSCRIBE_KEY, 'channel', encode(channel)
+                ORIGIN, 'v2', 'history', 'sub-key',
+                SUBSCRIBE_KEY, 'channel', encode(channel)
                 ]
             });
         },
@@ -224,9 +281,9 @@ function PN_API(setup) {
 
             // Compose URL Parts
             url = [
-                ORIGIN, 'v1', 'replay',
-                PUBLISH_KEY, SUBSCRIBE_KEY,
-                source, destination
+            ORIGIN, 'v1', 'replay',
+            PUBLISH_KEY, SUBSCRIBE_KEY,
+            source, destination
             ];
 
             // Start (or Stop) Replay!
@@ -259,10 +316,10 @@ function PN_API(setup) {
         */
         'uuid' : function(callback) {
             var u = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
-            function(c) {
-                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-                return v.toString(16);
-            });
+                function(c) {
+                    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                    return v.toString(16);
+                });
             if (callback) callback(u);
             return u;
         },
@@ -290,10 +347,10 @@ function PN_API(setup) {
 
             // Create URL
             url = [
-                ORIGIN, 'publish',
-                PUBLISH_KEY, SUBSCRIBE_KEY,
-                0, encode(channel),
-                jsonp, encode(message)
+            ORIGIN, 'publish',
+            PUBLISH_KEY, SUBSCRIBE_KEY,
+            0, encode(channel),
+            jsonp, encode(message)
             ];
 
             // Send Message
@@ -318,7 +375,7 @@ function PN_API(setup) {
             // Prepare Channel(s)
             channel = map( (
                 channel.join ? channel.join(',') : ''+channel
-            ).split(','), function(channel) {
+                ).split(','), function(channel) {
                 return channel + ',' + channel + PRESENCE_SUFFIX;
             } ).join(',');
 
@@ -362,8 +419,8 @@ function PN_API(setup) {
 
             // Setup Channel(s)
             each( (channel.join ? channel.join(',') : ''+channel).split(','),
-            function(channel) {
-                var settings = CHANNELS[channel] || {};
+                function(channel) {
+                    var settings = CHANNELS[channel] || {};
 
                 // Store Channel State
                 CHANNELS[SUB_CHANNEL = channel] = {
@@ -396,12 +453,12 @@ function PN_API(setup) {
                     'channel'  : channel,
                     'callback' : function(here) {
                         each( 'uuids' in here ? here['uuids'] : [],
-                        function(uuid) { presence( {
-                            'action'    : 'join',
-                            'uuid'      : uuid,
-                            'timestamp' : rnow(),
-                            'occupancy' : here['occupancy'] || 1
-                        }, here, channel ); } );
+                            function(uuid) { presence( {
+                                'action'    : 'join',
+                                'uuid'      : uuid,
+                                'timestamp' : rnow(),
+                                'occupancy' : here['occupancy'] || 1
+                            }, here, channel ); } );
                     }
                 });
             } );
@@ -420,9 +477,9 @@ function PN_API(setup) {
                     callback : jsonp,
                     data     : { 'uuid' : UUID },
                     url      : [
-                        origin, 'subscribe',
-                        SUBSCRIBE_KEY, encode(channels),
-                        jsonp, TIMETOKEN
+                    origin, 'subscribe',
+                    SUBSCRIBE_KEY, encode(channels),
+                    jsonp, TIMETOKEN
                     ],
                     fail : function() {
                         // Disconnect
@@ -449,7 +506,7 @@ function PN_API(setup) {
                     },
                     success : function(messages) {
                         if (!messages) return timeout( _connect, 10 );
-
+                        
                         // Connect
                         each_channel(function(channel){
                             if (channel.connected) return;
@@ -459,8 +516,8 @@ function PN_API(setup) {
 
                         // Restore Previous Connection Point if Needed
                         TIMETOKEN = !TIMETOKEN               &&
-                                    SUB_RESTORE              &&
-                                    db['get'](SUBSCRIBE_KEY) || messages[1];
+                        SUB_RESTORE              &&
+                        db['get'](SUBSCRIBE_KEY) || messages[1];
 
                         // Update Saved Timetoken
                         db['set']( SUBSCRIBE_KEY, messages[1] );
@@ -473,10 +530,10 @@ function PN_API(setup) {
                             return function() {
                                 var channel = list.shift()||'';
                                 return [
-                                    (CHANNELS[channel]||{})
-                                    .callback||SUB_CALLBACK,
-                                    (channel||SUB_CHANNEL)
-                                    .split(PRESENCE_SUFFIX)[0]
+                                (CHANNELS[channel]||{})
+                                .callback||SUB_CALLBACK,
+                                (channel||SUB_CHANNEL)
+                                .split(PRESENCE_SUFFIX)[0]
                                 ];
                             };
                         })();
@@ -495,15 +552,12 @@ function PN_API(setup) {
             CONNECT = function() {
                 // Close Previous Subscribe Connection
                 SUB_RECEIVER && SUB_RECEIVER();
-
                 // Begin Recursive Subscribe
                 clearTimeout(SUB_BUFF_WAIT);
                 SUB_BUFF_WAIT = timeout( _connect, 100 );
             };
-
             // Reduce Status Flicker
             if (!READY) return READY_BUFFER.push(CONNECT);
-
             // Connect Now
             CONNECT();
         },
@@ -519,7 +573,7 @@ function PN_API(setup) {
             if (!channel)       return error('Missing Channel');
             if (!callback)      return error('Missing Callback');
             if (!SUBSCRIBE_KEY) return error('Missing Subscribe Key');
-            
+
             if (jsonp != '0') data['callback'] = jsonp;
 
             xdr({
@@ -528,9 +582,9 @@ function PN_API(setup) {
                 success  : function(response) { callback(response) },
                 fail     : err,
                 url      : [
-                    ORIGIN, 'v2', 'presence',
-                    'sub_key', SUBSCRIBE_KEY, 
-                    'channel', encode(channel)
+                ORIGIN, 'v2', 'presence',
+                'sub_key', SUBSCRIBE_KEY, 
+                'channel', encode(channel)
                 ]
             });
         }
@@ -561,12 +615,27 @@ function PN_API(setup) {
             callback : jsonp,
             data     : data,
             url      : [
-                origin, 'v2', 'presence', 'sub_key',
-                SUBSCRIBE_KEY, 'channel', encode(channel), 'leave'
+            origin, 'v2', 'presence', 'sub_key',
+            SUBSCRIBE_KEY, 'channel', encode(channel), 'leave'
             ]
         });
     };
+
     if (!UUID) UUID = SELF['uuid']();
     db['set']( SUBSCRIBE_KEY + 'uuid', UUID );
+
+    bind_leave();
+
     return SELF;
 }
+
+// PUBNUB READY TO CONNECT
+function ready(PUBNUB) { PUBNUB['time'](rnow);
+PUBNUB['time'](function(t){ timeout( function() {
+    if (READY) return;
+    READY = 1;
+    each( READY_BUFFER, function(connect) { connect(); } );
+}, SECOND ); }); }
+
+module.exports.PN_API = PN_API;
+module.exports.ready = ready;

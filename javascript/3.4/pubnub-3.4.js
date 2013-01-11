@@ -84,43 +84,7 @@ var db = (function(){
     };
 })();
 
-/**
- * NEXTORIGIN
- * ==========
- * var next_origin = nextorigin();
- */
-var nextorigin = (function() {
-    var max = 20
-    ,   ori = Math.floor(Math.random() * max);
-    return function(origin) {
-        return origin.indexOf('pubsub') > 0
-            && origin.replace(
-             'pubsub', 'ps' + (++ori < max? ori : ori=1)
-            ) || origin;
-    }
-})();
 
-/**
- * UPDATER
- * =======
- * var timestamp = unique();
- */
-function updater( fun, rate ) {
-    var timeout
-    ,   last   = 0
-    ,   runnit = function() {
-        if (last + rate > rnow()) {
-            clearTimeout(timeout);
-            timeout = setTimeout( runnit, rate );
-        }
-        else {
-            last = rnow();
-            fun();
-        }
-    };
-
-    return runnit;
-}
 
 /**
  * $
@@ -239,31 +203,7 @@ function jsonp_cb() { return XORIGN || FDomainRequest() ? 0 : unique() }
 
 
 
-/**
- * EVENTS
- * ======
- * PUBNUB.events.bind( 'you-stepped-on-flower', function(message) {
- *     // Do Stuff with message
- * } );
- *
- * PUBNUB.events.fire( 'you-stepped-on-flower', "message-data" );
- * PUBNUB.events.fire( 'you-stepped-on-flower', {message:"data"} );
- * PUBNUB.events.fire( 'you-stepped-on-flower', [1,2,3] );
- *
- */
-var events = {
-    'list'   : {},
-    'unbind' : function( name ) { events.list[name] = [] },
-    'bind'   : function( name, fun ) {
-        (events.list[name] = events.list[name] || []).push(fun);
-    },
-    'fire' : function( name, data ) {
-        each(
-            events.list[name] || [],
-            function(fun) { fun(data) }
-        );
-    }
-};
+
 
 /**
  * XDR Cross Domain Request
@@ -416,12 +356,7 @@ var PDIV          = $('pubnub') || {}
 ,   READY         = 0
 ,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
-    var SUB_CALLBACK  = 0
-    ,   SUB_CHANNEL   = 0
-    ,   SUB_RECEIVER  = 0
-    ,   SUB_RESTORE   = 0
-    ,   SUB_BUFF_WAIT = 0
-    ,   TIMETOKEN     = 0
+    var TIMETOKEN     = 0
     ,   PUBLISH_KEY   = setup['publish_key']   || ''
     ,   SUBSCRIBE_KEY = setup['subscribe_key'] || ''
     ,   SSL           = setup['ssl'] ? 's' : ''
@@ -455,19 +390,14 @@ var PDIV          = $('pubnub') || {}
     setup['xdr'] = xdr;
     setup['db'] = db;
     setup['jsonp_cb'] = jsonp_cb;
-    setup['bind_leave'] = function() {};
+    setup['bind_leave'] = function() {   
+        // Add Leave Functions
+        bind( 'beforeunload', window, function() {
+            each_channel(function(ch){ LEAVE( ch.name, 1 ) });
+            return true;
+    } );};
+
     SELF.__proto__= PN_API(setup);
-
-
-
-    
-
-    // Add Leave Functions
-    bind( 'beforeunload', window, function() {
-        each_channel(function(ch){ LEAVE( ch.name, 1 ) });
-        return true;
-    } );
-
     return SELF;
 };
 
@@ -494,7 +424,7 @@ var pubnubs = $('pubnubs') || {};
 
 
 // Bind for PUBNUB Readiness to Subscribe
-bind( 'load', window, function(){ timeout( ready, 0 ) } );
+bind( 'load', window, function(){ timeout( ready(PUBNUB), 0 ) } );
 
 // Create Interface for Opera Flash
 PUBNUB['rdx'] = function( id, data ) {
@@ -524,6 +454,6 @@ FDomainRequest['id'] = SECOND;
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
 
 // For Modern JS + Testling.js - http://testling.com/
-typeof(module) !== 'undefined' && (module['exports'] = PUBNUB) && ready();
+typeof(module) !== 'undefined' && (module['exports'] = PUBNUB) && ready(PUBNUB);
 
 })();
