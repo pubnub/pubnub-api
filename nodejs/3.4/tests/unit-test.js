@@ -1,6 +1,6 @@
 var PUBNUB, channel, here_now_test, history_test, nodeunit, publish_dummy, publish_test, pubnub, run_dummy_subscribe, subscribe_test, time_test, uuid_test, detailed_history_test_1, detailed_history_test_2, detailed_history_test_3;
 
-PUBNUB = require('../pubnub');
+PUBNUB = require('../pubnub-3.4');
 
 nodeunit = require('nodeunit');
 

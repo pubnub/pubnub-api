@@ -119,10 +119,8 @@ exports.init = function(setup) {
     var PN = {};
     setup['xdr'] = xdr;
     setup['timeout'] = 1000;
-	var pnapi = require('../../javascript/3.4/pubnub-3.4-common').PN_API(setup);
-    PN.__proto__ = pnapi;    
-	require('../../javascript/3.4/pubnub-3.4-common').ready(pnapi);
-   
+    PN.__proto__ = PN_API(setup);    
+    PN.ready();
     return PN;
 }
 exports.unique = unique

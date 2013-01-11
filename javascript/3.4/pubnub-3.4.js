@@ -367,7 +367,6 @@ var PDIV          = $('pubnub') || {}
     ,   SELF          = {
         // Expose PUBNUB Functions
         'xdr'      : xdr,
-        'ready'    : ready,
         'db'       : db,
         'each'     : each,
         'map'      : map,
@@ -424,7 +423,7 @@ var pubnubs = $('pubnubs') || {};
 
 
 // Bind for PUBNUB Readiness to Subscribe
-bind( 'load', window, function(){ timeout( ready(PUBNUB), 0 ) } );
+bind( 'load', window, function(){ timeout( PUBNUB.ready(), 0 ) } );
 
 // Create Interface for Opera Flash
 PUBNUB['rdx'] = function( id, data ) {
@@ -454,6 +453,6 @@ FDomainRequest['id'] = SECOND;
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
 
 // For Modern JS + Testling.js - http://testling.com/
-typeof(module) !== 'undefined' && (module['exports'] = PUBNUB) && ready(PUBNUB);
+typeof(module) !== 'undefined' && (module['exports'] = PUBNUB) && PUBNUB.ready();
 
 })();

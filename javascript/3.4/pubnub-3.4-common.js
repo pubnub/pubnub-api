@@ -587,6 +587,16 @@ function PN_API(setup) {
                 'channel', encode(channel)
                 ]
             });
+        },
+        // PUBNUB READY TO CONNECT
+        'ready' : function () { this.time(rnow);
+            this.time(function(t){ 
+                timeout( function() {
+                    if (READY) return;
+                        READY = 1;
+                    each( READY_BUFFER, function(connect) { connect(); } );
+                }, SECOND ); 
+            }); 
         }
     }
 
@@ -628,14 +638,3 @@ function PN_API(setup) {
 
     return SELF;
 }
-
-// PUBNUB READY TO CONNECT
-function ready(PUBNUB) { PUBNUB['time'](rnow);
-PUBNUB['time'](function(t){ timeout( function() {
-    if (READY) return;
-    READY = 1;
-    each( READY_BUFFER, function(connect) { connect(); } );
-}, SECOND ); }); }
-
-module.exports.PN_API = PN_API;
-module.exports.ready = ready;
