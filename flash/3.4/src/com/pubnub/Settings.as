@@ -8,7 +8,7 @@ package com.pubnub {
 		public static const MAX_RECONNECT_RETRIES:uint = 30; //100;
 
         // if true, after reconnecting (after detecting disconnect), 'catches up' on missed messages upon reconnect
-        public static const RESUME_ON_RECONNECT:Boolean = false;
+        public static const RESUME_ON_RECONNECT:Boolean = true;
 
         // Given the above defaults
         // the client would check for 5 minutes (300s) after network loss
@@ -24,6 +24,6 @@ package com.pubnub {
 		public static const PING_OPERATION_INTERVAL:uint = 5000;
 		
 		// chck a network status uses URL
-		public static const PING_OPERATION_URL:String = 'http://internic.net';
+		public static const PING_OPERATION_URL:String = 'http://pubsub.pubnub.com/time/0';
 	}
 }
