@@ -5,7 +5,7 @@
 //  This channel instance is required for
 //  messages exchange between client and
 //  PubNub service:
-//      - channels messages (subscribe, publish)
+//      - channels messages (subscribe)
 //      - channels presence events
 //      - leave
 //
@@ -129,19 +129,6 @@
 - (BOOL)isPresenceObservationEnabledForChannel:(PNChannel *)channel;
 - (void)enablePresenceObservationForChannels:(NSArray *)channels;
 - (void)disablePresenceObservationForChannels:(NSArray *)channels;
-
-
-#pragma mark - Messages processing methods
-
-/**
- * Generate message sending request to specified channel
- */
-- (PNMessage *)sendMessage:(NSString *)message toChannel:(PNChannel *)channel;
-
-/**
- * Sends configured message request to the PubNub service
- */
-- (void)sendMessage:(PNMessage *)message;
 
 #pragma mark -
 

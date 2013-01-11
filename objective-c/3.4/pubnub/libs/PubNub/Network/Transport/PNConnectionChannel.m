@@ -29,10 +29,10 @@
 // PubNub service
 @property (nonatomic, strong) PNConnection *connection;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED
+//#if __MAC_OS_X_VERSION_MIN_REQUIRED
 // Stores reference on array of scheduled requests
 @property (nonatomic, strong) PNRequestsQueue *requestsQueue;
-#endif
+//#endif
 
 // Stores reference on all requests on which we are waiting
 // for response
@@ -69,7 +69,7 @@
         self.observedRequests = [NSMutableDictionary dictionary];
         
         
-        // Retrieve connection idetifier based on connection channel type
+        // Retrieve connection identifier based on connection channel type
         NSString *connectionIdentifier = PNConnectionIdentifiers.messagingConnection;
         if (connectionChannelType == PNConnectionChannelService) {
             
@@ -80,14 +80,14 @@
         // Initialize connection to the PubNub services
         self.connection = [PNConnection connectionWithIdentifier:connectionIdentifier];
         [self.connection assignDelegate:self];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
+/*#if __IPHONE_OS_VERSION_MIN_REQUIRED
         self.connection.dataSource = [PNRequestsQueue sharedInstance];
         [[PNRequestsQueue sharedInstance] assignDelegate:self];
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED*/
         self.requestsQueue = [PNRequestsQueue new];
         self.connection.dataSource = self.requestsQueue;
         [self.requestsQueue assignDelegate:self];
-#endif
+//#endif
         [self connect];
     }
     
@@ -166,7 +166,7 @@
 
 
 #pragma mark - Requests queue management methods
-
+/*
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
 - (void)scheduleRequest:(PNBaseRequest *)request shouldObserveProcessing:(BOOL)shouldObserveProcessing {
     
@@ -205,7 +205,7 @@
     
     [[PNRequestsQueue sharedInstance] removeAllRequestsFromSender:self];
 }
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED */
 - (void)scheduleRequest:(PNBaseRequest *)request shouldObserveProcessing:(BOOL)shouldObserveProcessing {
     
     if([self.requestsQueue enqueueRequest:request sender:self]) {
@@ -234,11 +234,16 @@
     [self.requestsQueue removeRequest:request];
 }
 
+- (void)reconnect {
+
+    [self.connection reconnect];
+}
+
 - (void)clearScheduledRequestsQueue {
     
     [self.requestsQueue removeAllRequestsFromSender:self];
 }
-#endif
+//#endif
 
 
 #pragma mark - Connection delegate methods
@@ -354,13 +359,13 @@
     // channel
     [self clearScheduledRequestsQueue];
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
-    [[PNRequestsQueue sharedInstance] resignDelegate:self];
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED
+//    [[PNRequestsQueue sharedInstance] resignDelegate:self];
+//#elif __MAC_OS_X_VERSION_MIN_REQUIRED
     self.connection.dataSource = nil;
     [self.requestsQueue resignDelegate:self];
     self.requestsQueue = nil;
-#endif
+//#endif
     
     if (self.state == PNConnectionChannelStateConnected) {
         

@@ -5,6 +5,7 @@
 //  This channel is required to manage
 //  service message sending to PubNub service.
 //  Will send messages like:
+//      - publish
 //      - time
 //      - history
 //      - here now (list of participants)
@@ -23,11 +24,12 @@
 #import "PNServiceChannelDelegate.h"
 #import "PNLatencyMeasureRequest.h"
 #import "PNConnection+Protected.h"
+#import "PNMessage+Protected.h"
 #import "PubNub+Protected.h"
 #import "PNRequestsImport.h"
+#import "PNResponseParser.h"
 #import "PNRequestsQueue.h"
 #import "PNResponse.h"
-#import "PNResponseParser.h"
 
 
 #pragma mark Private interface methods
@@ -43,7 +45,16 @@
  */
 - (BOOL)shouldHandleResponse:(PNResponse *)response;
 
-- (void)processObservedRequest:(PNBaseRequest *)request withResponse:(PNResponse *)response;
+- (void)processResponse:(PNResponse *)response forRequest:(PNBaseRequest *)request;
+
+
+#pragma mark - Handler methods
+
+/**
+ * Called every time when message sending request
+ * processing completed
+ */
+- (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response;
 
 
 @end
@@ -84,10 +95,11 @@
 - (BOOL)shouldHandleResponse:(PNResponse *)response {
     
     return ([response.callbackMethod hasPrefix:PNServiceResponseCallbacks.latencyMeasureMessageCallback] ||
-            [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.timeTokenCallback]);
+            [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.timeTokenCallback] ||
+            [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.sendMessageCallback]);
 }
 
-- (void)processObservedRequest:(PNBaseRequest *)request withResponse:(PNResponse *)response {
+- (void)processResponse:(PNResponse *)response forRequest:(PNBaseRequest *)request {
 
     // Check whether request is 'Latency meter' request or not
     if ([request isKindOfClass:[PNLatencyMeasureRequest class]]) {
@@ -110,6 +122,11 @@
             PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" TIME TOKEN MESSAGE HAS BEEN PROCESSED");
             [self.serviceDelegate serviceChannel:self didReceiveTimeToken:parser.updateTimeToken];
         }
+        // Check whether request was sent for message posting
+        else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
+
+            [self handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:response];
+        }
         else {
 
             PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" PARSED DATA: %@", parser);
@@ -119,28 +136,75 @@
 }
 
 
+#pragma mark - Messages processing methods
+
+- (PNMessage *)sendMessage:(NSString *)message toChannel:(PNChannel *)channel {
+
+    // Create message instance
+    PNError *error = nil;
+    PNMessage *messageObject = [PNMessage messageWithText:message forChannel:channel error:&error];
+
+    // Checking whether
+    if (messageObject) {
+
+        // Schedule message sending request
+        [self scheduleRequest:[PNMessagePostRequest postMessageRequestWithMessage:messageObject]
+      shouldObserveProcessing:YES];
+    }
+    else {
+
+        // Notify delegate about message sending error
+        [self.serviceDelegate serviceChannel:self didFailMessageSend:messageObject withError:error];
+    }
+
+
+    return messageObject;
+}
+
+- (void)sendMessage:(PNMessage *)message {
+
+    if (message) {
+
+        // Schedule message sending request
+        [self sendMessage:message.message toChannel:message.channel];
+    }
+}
+
+
+#pragma mark - Handler methods
+
+- (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response {
+
+    PNResponseParser *parser = [PNResponseParser parserForResponse:response];
+
+    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" MESSAGE SENDING RESPONSE: %@", parser);
+
+    // Notify delegate about that message post request will be sent now
+    [self.serviceDelegate serviceChannel:self didSendMessage:request.message];
+}
+
+
 #pragma mark - Connection delegate methods
 
 - (void)connection:(PNConnection *)connection didReceiveResponse:(PNResponse *)response {
 
-    if([self shouldHandleResponse:response]) {
+    if ([self shouldHandleResponse:response]) {
 
         PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" RECIEVED RESPONSE: %@", response);
 
-        // Checking whether communication channel is waiting
-        // for request processing completion confirmation from
-        // remote PubNub services or not
-        if ([self isWaitingRequestCompletion:response.requestIdentifier]) {
+        // Retrieve reference on observer request
+        PNBaseRequest *request = [self observedRequestWithIdentifier:response.requestIdentifier];
+        [self destroyRequest:request];
 
-            // Retrieve reference on observer request
-            PNBaseRequest *request = [self observedRequestWithIdentifier:response.requestIdentifier];
-            [self removeObservationFromRequest:request];
+        [self processResponse:response forRequest:request];
 
-            [self processObservedRequest:request withResponse:response];
+
+        // Check whether connection available or not
+        if ([self isConnected] && [[PubNub sharedInstance].reachability isServiceAvailable]) {
+
+            // Asking to schedule next request
+            [self scheduleNextRequest];
         }
-
-
-        [self scheduleNextRequest];
     }
 }
 
@@ -152,15 +216,29 @@
     // Forward to the super class
     [super requestsQueue:queue willSendRequest:request];
 
+
     PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" WILL START REQUEST PROCESSING: %@ [BODY: %@]",
-              request,
-              request.resourcePath);
+          request,
+          request.resourcePath);
+
+
+    // Check whether this is 'Message post' request or not
+    if ([request isKindOfClass:[PNMessagePostRequest class]]) {
+
+        // Notify delegate about that message post request will be sent now
+        [self.serviceDelegate serviceChannel:self willSendMessage:((PNMessagePostRequest *)request).message];
+    }
 }
 
 - (void)requestsQueue:(PNRequestsQueue *)queue didSendRequest:(PNBaseRequest *)request {
 
     // Forward to the super class
     [super requestsQueue:queue didSendRequest:request];
+
+
+    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" DID SEND REQUEST: %@ [BODY: %@]",
+          request,
+          request.resourcePath);
 
 
     // If we are not waiting for request completion, inform delegate
@@ -174,6 +252,14 @@
             [(PNLatencyMeasureRequest *)request markStartTime];
         }
     }
+    else {
+
+        // Check whether this is 'Post message' request or not
+        if ([request isKindOfClass:[PNMessagePostRequest class]]) {
+
+            [self handleMessageRequestCompletion:request withResponse:nil];
+        }
+    }
 
 
     [self scheduleNextRequest];
@@ -185,30 +271,43 @@
     [super requestsQueue:queue didFailRequestSend:request withError:error];
 
 
+    PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" DID FAIL TO SEND REQUEST: %@ [BODY: %@]",
+          request,
+          request.resourcePath);
+
+
+    // Check whether request can be rescheduled or not
+    if (![request canRetry]) {
+
+        // Removing failed request from queue
+        [self destroyRequest:request];
+
+
+        PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" REQUEST PROCESSING FAILED: %@", request);
+
+        // Check whether request is 'Latency meter' request or not
+        if ([request isKindOfClass:[PNLatencyMeasureRequest class]]) {
+
+            PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" LATENCY METER REQUEST SENDING FAILED");
+        }
+        // Check whether request is 'Time token' request or not
+        else if ([request isKindOfClass:[PNTimeTokenRequest class]]) {
+
+            [self.serviceDelegate serviceChannel:self receiveTimeTokenDidFailWithError:error];
+        }
+        // Check whether this is 'Post message' request or not
+        else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
+
+            // Notify delegate about that message can't be send
+            [self.serviceDelegate serviceChannel:self
+                              didFailMessageSend:((PNMessagePostRequest *)request).message
+                                       withError:error];
+        }
+    }
+
+
     // Check whether connection available or not
     if ([self isConnected] && [[PubNub sharedInstance].reachability isServiceAvailable]) {
-
-        // Check whether request can be rescheduled or not
-        if (![request canRetry]) {
-
-            // Removing failed request from queue
-            [self destroyRequest:request];
-
-
-            PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" REQUEST PROCESSING FAILED: %@", request);
-
-            // Check whether request is 'Latency meter' request or not
-            if ([request isKindOfClass:[PNLatencyMeasureRequest class]]) {
-
-                PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" LATENCY METER REQUEST SENDING FAILED");
-            }
-            // Check whether request is 'Time token' request or not
-            else if ([request isKindOfClass:[PNTimeTokenRequest class]]) {
-
-                [self.serviceDelegate serviceChannel:self receiveTimeTokenDidFailWithError:error];
-            }
-        }
-
 
         [self scheduleNextRequest];
     }

@@ -42,4 +42,26 @@
 didReceiveNetworkLatency:(double)latency
      andNetworkBandwidth:(double)bandwidth;
 
+
+/**
+ * Sent to the delegate right before message post
+ * request will be sent to the PubNub service
+ */
+- (void)serviceChannel:(PNServiceChannel *)channel willSendMessage:(PNMessage *)message;
+
+/**
+ * Sent to the delegate when PubNub service responded
+ * that message has been processed
+ */
+- (void)serviceChannel:(PNServiceChannel *)channel didSendMessage:(PNMessage *)message;
+
+/**
+ * Sent to the delegate if PubNub reported with
+ * processing error or message was unable to send
+ * because of some other issues
+ */
+- (void)serviceChannel:(PNServiceChannel *)channel
+    didFailMessageSend:(PNMessage *)message
+             withError:(PNError *)error;
+
 @end

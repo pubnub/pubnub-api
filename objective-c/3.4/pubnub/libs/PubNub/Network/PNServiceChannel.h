@@ -5,6 +5,7 @@
 //  This channel is required to manage
 //  service message sending to PubNub service.
 //  Will send messages like:
+//      - publish
 //      - time
 //      - history
 //      - here now (list of participants)
@@ -42,6 +43,21 @@
  * channel with specified delegate
  */
 + (PNServiceChannel *)serviceChannelWithDelegate:(id<PNConnectionChannelDelegate>)delegate;
+
+
+#pragma mark - Instance methods
+
+#pragma mark - Messages processing methods
+
+/**
+ * Generate message sending request to specified channel
+ */
+- (PNMessage *)sendMessage:(NSString *)message toChannel:(PNChannel *)channel;
+
+/**
+ * Sends configured message request to the PubNub service
+ */
+- (void)sendMessage:(PNMessage *)message;
 
 
 #pragma mark -

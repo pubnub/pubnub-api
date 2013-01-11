@@ -5,7 +5,7 @@
 //  This channel instance is required for
 //  messages exchange between client and
 //  PubNub service:
-//      - channels messages
+//      - channels messages (subscribe)
 //      - channels presence events
 //      - leave
 //
@@ -73,7 +73,7 @@
  * Same as -updateSubscription but allow to specify on which
  * channels subscription should be updated
  */
-- (void)updateSubscriptionForChannels:(NSSet *)channels;
+- (void)updateSubscriptionForChannels:(NSArray *)channels;
 
 
 #pragma mark - Presence management
@@ -109,12 +109,6 @@
  *     - presence event
  */
 - (void)handleEventOnChannelsForRequest:(PNSubscribeRequest *)request withResponse:(PNResponse *)response;
-
-/**
- * Called every time when message sending request
- * processing completed
- */
-- (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response;
 
 /**
  * Called every time when subscribe/unsubscribe
@@ -174,7 +168,6 @@
 - (BOOL)shouldHandleResponse:(PNResponse *)response {
 
     return ([response.callbackMethod hasPrefix:PNServiceResponseCallbacks.subscriptionCallback] ||
-            [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.sendMessageCallback] ||
             [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.leaveChannelCallback]);
 }
 
@@ -197,11 +190,6 @@
 
         // Process subscription on channels
         [self handleEventOnChannelsForRequest:(PNSubscribeRequest *)request withResponse:response];
-    }
-    // Check whether request was sent for message posting
-    else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
-
-        [self handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:response];
     }
 }
 
@@ -295,18 +283,17 @@
 
 - (void)updateSubscription {
 
-    [self updateSubscriptionForChannels:self.subscribedChannels];
+    [self updateSubscriptionForChannels:[self.subscribedChannels allObjects]];
 }
 
-- (void)updateSubscriptionForChannels:(NSSet *)channels {
-
-    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" UPDATE CHANNELS SUBSCRIPTION");
+- (void)updateSubscriptionForChannels:(NSArray *)channels {
 
     // Ensure that client connected to at least one channel
     if ([channels count] > 0) {
 
-        [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[channels allObjects]
-                                                                byUserRequest:YES]
+        PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" UPDATE CHANNELS SUBSCRIPTION");
+
+        [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:channels byUserRequest:YES]
       shouldObserveProcessing:NO];
     }
 
@@ -439,41 +426,6 @@
 }
 
 
-#pragma mark - Messages processing methods
-
-- (PNMessage *)sendMessage:(NSString *)message toChannel:(PNChannel *)channel {
-
-    // Create message instance
-    PNError *error = nil;
-    PNMessage *messageObject = [PNMessage messageWithText:message forChannel:channel error:&error];
-
-    // Checking whether
-    if (messageObject) {
-
-        // Schedule message sending request
-        [self scheduleRequest:[PNMessagePostRequest postMessageRequestWithMessage:messageObject]
-      shouldObserveProcessing:YES];
-    }
-    else {
-
-        // Notify delegate about message sending error
-        [self.messagingDelegate messagingChannel:self didFailMessageSend:messageObject withError:error];
-    }
-
-
-    return messageObject;
-}
-
-- (void)sendMessage:(PNMessage *)message {
-
-    if (message) {
-
-        // Schedule message sending request
-        [self sendMessage:message.message toChannel:message.channel];
-    }
-}
-
-
 #pragma mark - Handler methods
 
 - (void)handleLeaveRequestCompletionForChannels:(NSArray *)channels
@@ -504,7 +456,10 @@
 
 - (void)handleEventOnChannelsForRequest:(PNSubscribeRequest *)request withResponse:(PNResponse *)response {
 
-    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" SUBSCRIBE REQUEST RESPONSE: %@", response);
+    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" SUBSCRIBE REQUEST RESPONSE: %@\nCHANNELS: %@\nREQUEST: %@",
+          response,
+          request.channels,
+          request);
 
     PNResponseParser *parser = [PNResponseParser parserForResponse:response];
 
@@ -527,28 +482,13 @@
 
             // TODO: NOTIFY DELEGATE ON MESSAGES AND PRESENCE EVENTS
         }
-        else {
 
-            // Subscribe to the channels with new update time token
-            [self updateSubscriptionForChannels:request.channels];
-        }
+        // Subscribe to the channels with new update time token
+        [self updateSubscriptionForChannels:request.channels];
     }
     else {
 
         // TODO: NOTIFY DELEGATE THAT SUBSCRIBE ERROR OCCURRED
-    }
-}
-
-- (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response {
-
-    if ([self isRequestSendingInitiatedByUser:request]) {
-
-        PNResponseParser *parser = [PNResponseParser parserForResponse:response];
-
-        PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" MESSAGE SENDING RESPONSE: %@", parser);
-
-        // Notify delegate about that message post request will be sent now
-        [self.messagingDelegate messagingChannel:self didSendMessage:request.message];
     }
 }
 
@@ -698,12 +638,6 @@
             [self reconnect];
         }
     }
-    // Check whether this is 'Message post' request or not
-    else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
-
-        // Notify delegate about that message post request will be sent now
-        [self.messagingDelegate messagingChannel:self willSendMessage:((PNMessagePostRequest *)request).message];
-    }
 }
 
 - (void)requestsQueue:(PNRequestsQueue *)queue didSendRequest:(PNBaseRequest *)request {
@@ -727,11 +661,6 @@
             [request isKindOfClass:[PNLeaveRequest class]]) {
 
             [self handleSubscribeUnsubscribeRequestCompletion:request];
-        }
-        // Check whether this is 'Post message' request or not
-        else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
-
-            [self handleMessageRequestCompletion:request withResponse:nil];
         }
     }
 
@@ -781,14 +710,6 @@
                     [self.messagingDelegate messagingChannel:self didFailUnsubscribeOnChannels:channels withError:error];
                 }
             }
-        }
-                // Check whether this is 'Post message' request or not
-        else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
-
-            // Notify delegate about that message can't be send
-            [self.messagingDelegate messagingChannel:self
-                                  didFailMessageSend:((PNMessagePostRequest *)request).message
-                                           withError:error];
         }
     }
 

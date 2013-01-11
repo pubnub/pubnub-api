@@ -29,12 +29,12 @@
 
 #pragma mark Class methods
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED
 /**
  * Retrieve reference on single queue manager instance
  */
-+ (PNRequestsQueue *)sharedInstance;
-#endif
+//+ (PNRequestsQueue *)sharedInstance;
+//#endif
 
 
 #pragma mark - Instance methods

@@ -767,7 +767,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
                                                                  oneTimeEvent:YES];
         }
 
-        messageObject = [[self sharedInstance].messagingChannel sendMessage:message toChannel:channel];
+        messageObject = [[self sharedInstance].serviceChannel sendMessage:message toChannel:channel];
     }
     // Looks like client can't send request because of some reasons
     else {
@@ -1082,7 +1082,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
             // components to complete their tasks
             int64_t delayInSeconds = 1;
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
                 
                 self.state = PNPubNubClientStateCreated;
                 self.configuration = self.temporaryConfiguration;
@@ -1285,17 +1285,35 @@ didFailUnsubscribeOnChannels:(NSArray *)channels
     // TODO: NOTIFY DELEGATE AND SEND NOTIFICATIONS ABOUT THAT CLIENT FAILED TO UNSUBSCRIBE FROM CHANNELS
 }
 
-- (void)messagingChannel:(PNMessagingChannel *)channel willSendMessage:(PNMessage *)message {
+- (void)messagingChannel:(PNMessagingChannel *)messagingChannel
+       didReceiveMessage:(PNMessage *)message
+               onChannel:(PNChannel*)channel {
+
+    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT RECEIVED MESSAGE FROM CHANNEL
+}
+
+/**
+ * Sent to delegate when client received presence event from channel
+ * on which it subscribed
+ */
+- (void)messagingChannel:(PNMessagingChannel *)messagingChannel
+         didReceiveEvent:(PNPresenceEvent *)event
+               onChannel:(PNChannel *)channel {
+
+    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT RECEIVED PRESENCE EVENT FROM CHANNEL
+}
+
+- (void)serviceChannel:(PNServiceChannel *)channel willSendMessage:(PNMessage *)message {
 
     // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT MESSAGE WILL BE SENT
 }
 
-- (void)messagingChannel:(PNMessagingChannel *)channel didSendMessage:(PNMessage *)message {
+- (void)serviceChannel:(PNServiceChannel *)channel didSendMessage:(PNMessage *)message {
 
     // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT MESSAGE HAS BEEN SENT
 }
 
-- (void)messagingChannel:(PNMessagingChannel *)channel
+- (void)serviceChannel:(PNServiceChannel *)channel
       didFailMessageSend:(PNMessage *)message
                withError:(PNError *)error{
 

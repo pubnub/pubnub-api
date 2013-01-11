@@ -22,9 +22,9 @@
 
 #pragma mark Static
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
-static PNRequestsQueue *_sharedInstance = nil;
-#endif
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED
+//static PNRequestsQueue *_sharedInstance = nil;
+//#endif
 
 static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 
@@ -42,15 +42,15 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 // Stores map of sender and their requests
 @property (nonatomic, strong) NSMutableDictionary *requestsMap;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED
 // Stores list of connection delegates which would like to retrieve
 // connection events
-@property (nonatomic, strong) NSMutableArray *delegates;
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+//@property (nonatomic, strong) NSMutableArray *delegates;
+//#elif __MAC_OS_X_VERSION_MIN_REQUIRED
 // Stores reference on connection delegate which also will
 // be packet provider for connection
 @property (nonatomic, pn_desired_weak) id<PNRequestsQueueDelegate> delegate;
-#endif
+//#endif
 
 
 #pragma mark - Instance methods
@@ -82,7 +82,7 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 
 
 #pragma mark Class methods
-
+/*
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
 + (PNRequestsQueue *)sharedInstance {
     
@@ -95,7 +95,7 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
     
     return _sharedInstance;
 }
-#endif
+#endif  */
 
 
 #pragma mark - Instance methods
@@ -241,7 +241,7 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 
 
 #pragma mark - Misc methods
-
+/*
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
 - (void)assignDelegate:(id<PNRequestsQueueDelegate>)delegate {
 
@@ -252,7 +252,7 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 
     [[self delegates] removeObject:delegate];
 }
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED */
 - (void)assignDelegate:(id<PNRequestsQueueDelegate>)delegate {
 
     self.delegate = delegate;
@@ -262,7 +262,7 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 
     self.delegate = nil;
 }
-#endif
+//#endif
 
 /**
  * Reloading property to handle connection instance
@@ -272,7 +272,7 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 - (NSMutableArray *)delegates {
 
     NSMutableArray *delegates = nil;
-
+/*
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
     if (_delegates == nil) {
 
@@ -281,9 +281,9 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 
 
     delegates = _delegates;
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED*/
     delegates = @[self.delegate];
-#endif
+//#endif
 
 
     return delegates;
@@ -391,11 +391,11 @@ static NSUInteger const kPNRequestQueueNextRequestIndex = 0;
 
 - (void)dealloc {
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
-    _delegates = nil;
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED
+//    _delegates = nil;
+//#elif __MAC_OS_X_VERSION_MIN_REQUIRED
     _delegate = nil;
-#endif
+//#endif
 }
 
 #pragma mark -

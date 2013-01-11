@@ -56,11 +56,11 @@ static UInt32 const kPNOriginSSLConnectionPort = 443;
 static int const kPNStreamBufferSize = 32768;
 
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED
 // Stores identifier which is used to store single connection
 // which is used on iOS for all kind of requests
-static NSString *const kPNSingleConnectionIdentifier = @"PNUniversalConnectionIdentifier";
-#endif
+//static NSString *const kPNSingleConnectionIdentifier = @"PNUniversalConnectionIdentifier";
+//#endif
 
 
 #pragma mark - Private interface methods
@@ -75,15 +75,15 @@ static NSString *const kPNSingleConnectionIdentifier = @"PNUniversalConnectionId
 // Connection configuration information
 @property (nonatomic, strong) PNConfiguration *configuration;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED
 // Stores list of connection delegates which would like to retrieve
 // connection events
-@property (nonatomic, strong) NSMutableArray *delegates;
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+//@property (nonatomic, strong) NSMutableArray *delegates;
+//#elif __MAC_OS_X_VERSION_MIN_REQUIRED
 // Stores reference on connection delegate which also will
 // be packet provider for connection
 @property (nonatomic, pn_desired_weak) id<PNConnectionDelegate> delegate;
-#endif
+//#endif
 
 // Stores flag of whether connection should process next
 // request from queue or not
@@ -303,7 +303,7 @@ static NSString *const kPNSingleConnectionIdentifier = @"PNUniversalConnectionId
     PNConnection *connection = [self connectionFromPoolWithIdentifier:identifier];
 
     if (connection == nil) {
-
+/*
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
         connection = [self connectionFromPoolWithIdentifier:kPNSingleConnectionIdentifier];
         if (connection == nil) {
@@ -314,12 +314,12 @@ static NSString *const kPNSingleConnectionIdentifier = @"PNUniversalConnectionId
             connection.name = kPNSingleConnectionIdentifier;
             [self storeConnection:connection withIdentifier:kPNSingleConnectionIdentifier];
         }
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED */
         // Create new connection initialized with settings retrieved from
         // PubNub configuration object
         connection = [[[self class] alloc] initWithConfiguration:[PubNub sharedInstance].configuration];
         connection.name = identifier;
-#endif
+//#endif
         [self storeConnection:connection withIdentifier:identifier];
     }
 
@@ -881,6 +881,8 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         }];
     }
 
+    NSLog(@"ELSPED DATA: %@", [[NSString alloc] initWithData:self.retrievedData encoding:NSUTF8StringEncoding]);
+
 
     // Check whether connection stored some response in temporary
     // storage or not
@@ -1334,7 +1336,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 
 #pragma mark - Misc methods
-
+/*
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
 - (void)assignDelegate:(id<PNConnectionDelegate>)delegate {
 
@@ -1345,7 +1347,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
     [[self delegates] removeObject:delegate];
 }
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED*/
 - (void)assignDelegate:(id<PNConnectionDelegate>)delegate {
 
     self.delegate = delegate;
@@ -1355,7 +1357,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
     self.delegate = nil;
 }
-#endif
+//#endif
 
 - (CFStreamClientContext)streamClientContext {
 
@@ -1406,7 +1408,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 - (NSMutableArray *)delegates {
 
     NSMutableArray *delegates = nil;
-
+/*
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
     if (_delegates == nil) {
 
@@ -1415,9 +1417,9 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
 
     delegates = _delegates;
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED */
     delegates = @[self.delegate];
-#endif
+//#endif
 
 
     return delegates;
@@ -1466,11 +1468,11 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     // Closing all streams and free up resources
     // which was allocated for their support
     [self closeConnection];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
-    _delegates = nil;
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED
+//    _delegates = nil;
+//#elif __MAC_OS_X_VERSION_MIN_REQUIRED
     _delegate = nil;
-#endif
+//#endif
     _proxySettings = nil;
     PNCFRelease(_streamSecuritySettings);
 }
