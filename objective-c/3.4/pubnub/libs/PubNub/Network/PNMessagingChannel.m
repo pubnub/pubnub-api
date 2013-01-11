@@ -484,7 +484,7 @@
         }
 
         // Subscribe to the channels with new update time token
-        [self updateSubscriptionForChannels:request.channels];
+        [self updateSubscriptionForChannels:(request != nil ? request.channels : [self.subscribedChannels allObjects])];
     }
     else {
 

@@ -18,6 +18,7 @@
 #import "PNPresenceEvent.h"
 #import "PNResponse.h"
 #import "PNPresenceEvent+Protected.h"
+#import "PNMessage.h"
 
 
 #pragma mark Static
@@ -162,6 +163,8 @@ static NSString * const kPNResponseErrorMessageKey = @"error";
                                                          NSUInteger eventIdx,
                                                          BOOL *eventEnumeratorStop) {
 
+                        BOOL isPresenceEvent = NO;
+
                         PNChannel *channel = nil;
                         if ([channels count] > 0) {
 
@@ -177,19 +180,19 @@ static NSString * const kPNResponseErrorMessageKey = @"error";
                         }
 
                         // Checking whether event is object or not
-                        if ([event isKindOfClass:[NSDictionary class]]) {
+                        if ([event isKindOfClass:[NSDictionary class]] && [PNPresenceEvent isPresenceEventObject:event]) {
 
-                            // Check whether object is presence event or not
-                            if ([PNPresenceEvent isPresenceEventObject:event]) {
+                            isPresenceEvent = YES;
 
-                                PNPresenceEvent *eventObject = [PNPresenceEvent presenceEventForResponse:event];
-                                eventObject.channel = channel;
-                                [eventObjects addObject:eventObject];
-                            }
-                            else {
+                            PNPresenceEvent *eventObject = [PNPresenceEvent presenceEventForResponse:event];
+                            eventObject.channel = channel;
+                            [eventObjects addObject:eventObject];
+                        }
 
+                        if (!isPresenceEvent) {
 
-                            }
+                            PNMessage *message = [PNMessage new];
+                            [eventObjects addObject:message];
                         }
                     }];
 

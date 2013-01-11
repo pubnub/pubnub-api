@@ -31,7 +31,7 @@
 @property (nonatomic, strong) PNChannel *channel;
 
 // Stores reference on message body
-@property (nonatomic, copy) NSString *message;
+@property (nonatomic, strong) id message;
 
 // Stores whether message has been sent or not
 @property (nonatomic, assign, getter = isSent) BOOL sent;

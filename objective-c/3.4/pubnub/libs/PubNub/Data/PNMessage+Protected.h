@@ -25,6 +25,12 @@
 @interface PNMessage (Protected)
 
 
+#pragma mark - Properties
+
+// Stores reference on message body
+@property (nonatomic, strong) id message;
+
+
 #pragma mark - Class methods
 
 /**
