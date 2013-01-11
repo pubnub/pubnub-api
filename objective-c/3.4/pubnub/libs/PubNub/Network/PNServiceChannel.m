@@ -257,7 +257,7 @@
         // Check whether this is 'Post message' request or not
         if ([request isKindOfClass:[PNMessagePostRequest class]]) {
 
-            [self handleMessageRequestCompletion:request withResponse:nil];
+            [self handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:nil];
         }
     }
 

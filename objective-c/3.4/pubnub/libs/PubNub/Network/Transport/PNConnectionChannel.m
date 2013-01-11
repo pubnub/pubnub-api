@@ -29,10 +29,8 @@
 // PubNub service
 @property (nonatomic, strong) PNConnection *connection;
 
-//#if __MAC_OS_X_VERSION_MIN_REQUIRED
 // Stores reference on array of scheduled requests
 @property (nonatomic, strong) PNRequestsQueue *requestsQueue;
-//#endif
 
 // Stores reference on all requests on which we are waiting
 // for response
@@ -79,15 +77,10 @@
         
         // Initialize connection to the PubNub services
         self.connection = [PNConnection connectionWithIdentifier:connectionIdentifier];
-        [self.connection assignDelegate:self];
-/*#if __IPHONE_OS_VERSION_MIN_REQUIRED
-        self.connection.dataSource = [PNRequestsQueue sharedInstance];
-        [[PNRequestsQueue sharedInstance] assignDelegate:self];
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED*/
+        self.connection.delegate = self;
         self.requestsQueue = [PNRequestsQueue new];
+        self.requestsQueue.delegate = self;
         self.connection.dataSource = self.requestsQueue;
-        [self.requestsQueue assignDelegate:self];
-//#endif
         [self connect];
     }
     
@@ -166,49 +159,10 @@
 
 
 #pragma mark - Requests queue management methods
-/*
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
+
 - (void)scheduleRequest:(PNBaseRequest *)request shouldObserveProcessing:(BOOL)shouldObserveProcessing {
     
-    if([[PNRequestsQueue sharedInstance] enqueueRequest:request sender:self]) {
-        
-        if (shouldObserveProcessing) {
-            
-            [self.observedRequests setValue:request forKey:request.shortIdentifier];
-        }
-        
-        [self scheduleNextRequest];
-    }
-}
-
-- (void)scheduleNextRequest {
-
-    [self.connection scheduleNextRequestExecution];
-}
-
-- (void)unscheduleNextRequest {
-
-    [self.connection unscheduleRequestsExecution];
-}
-
-- (void)unscheduleRequest:(PNBaseRequest *)request {
-    
-    [[PNRequestsQueue sharedInstance] removeRequest:request];
-}
-
-- (void)reconnect {
-
-    [self.connection reconnect];
-}
-
-- (void)clearScheduledRequestsQueue {
-    
-    [[PNRequestsQueue sharedInstance] removeAllRequestsFromSender:self];
-}
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED */
-- (void)scheduleRequest:(PNBaseRequest *)request shouldObserveProcessing:(BOOL)shouldObserveProcessing {
-    
-    if([self.requestsQueue enqueueRequest:request sender:self]) {
+    if([self.requestsQueue enqueueRequest:request]) {
         
         if (shouldObserveProcessing) {
             
@@ -240,10 +194,9 @@
 }
 
 - (void)clearScheduledRequestsQueue {
-    
-    [self.requestsQueue removeAllRequestsFromSender:self];
+
+    [self.requestsQueue removeAllRequests];
 }
-//#endif
 
 
 #pragma mark - Connection delegate methods
@@ -359,20 +312,16 @@
     // channel
     [self clearScheduledRequestsQueue];
 
-//#if __IPHONE_OS_VERSION_MIN_REQUIRED
-//    [[PNRequestsQueue sharedInstance] resignDelegate:self];
-//#elif __MAC_OS_X_VERSION_MIN_REQUIRED
     self.connection.dataSource = nil;
-    [self.requestsQueue resignDelegate:self];
+    self.requestsQueue.delegate = nil;
     self.requestsQueue = nil;
-//#endif
     
     if (self.state == PNConnectionChannelStateConnected) {
         
         [self.delegate connectionChannel:self didDisconnectFromOrigin:nil];
     }
-    
-    [self.connection resignDelegate:self];
+
+    self.connection.delegate = nil;
     [PNConnection destroyConnection:self.connection];
     self.connection = nil;
 }

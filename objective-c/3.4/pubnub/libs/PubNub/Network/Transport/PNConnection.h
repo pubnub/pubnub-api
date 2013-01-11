@@ -26,6 +26,10 @@
 // requests pool for connection
 @property (nonatomic, pn_desired_weak) id<PNConnectionDataSource> dataSource;
 
+// Stores reference on connection delegate which also will
+// be packet provider for connection
+@property (nonatomic, pn_desired_weak) id<PNConnectionDelegate> delegate;
+
 
 #pragma mark - Class methods
 
@@ -51,13 +55,6 @@
 
 
 #pragma mark - Instance methods
-
-/**
- * Managing connection delegates pool
- */
-- (void)assignDelegate:(id<PNConnectionDelegate>)delegate;
-- (void)resignDelegate:(id<PNConnectionDelegate>)delegate;
-
 
 #pragma mark - Requests queue execution management
 

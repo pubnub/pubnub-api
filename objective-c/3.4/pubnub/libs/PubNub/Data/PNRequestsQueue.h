@@ -27,23 +27,14 @@
 @interface PNRequestsQueue : NSObject <PNConnectionDataSource>
 
 
-#pragma mark Class methods
+#pragma mark - Properties
 
-//#if __IPHONE_OS_VERSION_MIN_REQUIRED
-/**
- * Retrieve reference on single queue manager instance
- */
-//+ (PNRequestsQueue *)sharedInstance;
-//#endif
+// Stores reference on connection delegate which also will
+// be packet provider for connection
+@property (nonatomic, pn_desired_weak) id<PNRequestsQueueDelegate> delegate;
 
 
 #pragma mark - Instance methods
-
-/**
- * Managing connection delegates pool
- */
-- (void)assignDelegate:(id<PNRequestsQueueDelegate>)delegate;
-- (void)resignDelegate:(id<PNRequestsQueueDelegate>)delegate;
 
 /**
  * Will add request into the queue if it is still not
@@ -51,14 +42,14 @@
  * Returns whether request has been placed into queue 
  * or not
  */
-- (BOOL)enqueueRequest:(PNBaseRequest *)request sender:(id)sender;
+- (BOOL)enqueueRequest:(PNBaseRequest *)request;
 - (void)removeRequest:(PNBaseRequest *)request;
 
 /**
  * Removes all requests which is not placed for processing
  * into connection buffer
  */
-- (void)removeAllRequestsFromSender:(id)sender;
+- (void)removeAllRequests;
 
 #pragma mark -
 

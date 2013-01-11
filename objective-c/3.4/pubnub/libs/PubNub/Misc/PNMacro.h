@@ -89,7 +89,7 @@ void PNLog(PNLogLevels level, id sender, ...) {
 
     if(formattedLog != nil && additionalData != nil) {
 
-        NSLog([NSString stringWithFormat:formattedLog, additionalData]);
+        NSLog(@"%@", [NSString stringWithFormat:formattedLog, additionalData]);
     }
 }
 

@@ -909,9 +909,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 - (void)warmUpConnection {
     
     [self sendRequest:[PNTimeTokenRequest new] onChannel:self.messagingChannel shouldObserveProcessing:NO];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED
     [self sendRequest:[PNTimeTokenRequest new] onChannel:self.serviceChannel shouldObserveProcessing:NO];
-#endif
 }
 
 - (void)sendRequest:(PNBaseRequest *)request shouldObserveProcessing:(BOOL)shouldObserveProcessing {

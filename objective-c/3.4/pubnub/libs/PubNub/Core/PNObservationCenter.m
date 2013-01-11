@@ -202,7 +202,13 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
     // Retrieve reference on list of observers for specific event
     SEL observersSelector = isOneTimeEvent?@selector(oneTimeObserversForEvent:): @selector(persistentObserversForEvent:);
+
+    // Turn off error warning on performSelector, because ARC
+    // can't understand what is goingon there
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     NSMutableArray *observers = [self performSelector:observersSelector withObject:eventName];
+    #pragma clang diagnostic pop
 
     [observers addObject:observerData];
 }
@@ -211,7 +217,13 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
     // Retrieve reference on list of observers for specific event
     SEL observersSelector = isOneTimeEvent?@selector(oneTimeObserversForEvent:): @selector(persistentObserversForEvent:);
+
+    // Turn off error warning on performSelector, because ARC
+    // can't understand what is goingon there
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     NSMutableArray *observers = [self performSelector:observersSelector withObject:eventName];
+    #pragma clang diagnostic pop
 
     // Retrieve list of observing requests with specified observer
     NSString *filterFormat = [NSString stringWithFormat:@"%@ = %%@", PNObservationObserverData.observer];
