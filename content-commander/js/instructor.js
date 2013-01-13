@@ -3,7 +3,7 @@
 $("#pub-content").click(function(){
   $.PUBNUB.publish({
     channel:   'content-commander',
-    message:   {"nihao" : "nihao"} 
+    message:   {"element" : $("#pub-element").val()} 
   });
 });
 
