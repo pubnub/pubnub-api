@@ -8,6 +8,7 @@ package com.pubnub {
 	import com.pubnub.subscribe.*;
 	import flash.errors.*;
 	import flash.events.*;
+	import flash.system.Security;
 	import flash.utils.*;
 	use namespace pn_internal;
 	
@@ -45,6 +46,8 @@ package com.pubnub {
 		}
 		
 		private function setup():void {
+			//Security.loadPolicyFile('http://pubsub.pubnub.com/crossdomain.xml');
+			
 			operationsFactory = new Dictionary();
 			operationsFactory[INIT_OPERATION] = 	createInitOperation; 
 			operationsFactory[PUBLISH_OPERATION] = 	createPublishOperation; 
@@ -56,6 +59,9 @@ package com.pubnub {
 			environment.addEventListener(EnvironmentEvent.SHUTDOWN, 	onEnvironmentShutdown);
 			environment.addEventListener(NetMonEvent.HTTP_ENABLE, 		onEnvironmentHttpEnable);
 			environment.addEventListener(NetMonEvent.HTTP_DISABLE, 		onEnvironmentHttpDisable);
+			
+			//Security.loadPolicyFile('http://pubsub.pubnub.com/crossdomain.xml:80');
+			
 		}
 		
 		private function onEnvironmentHttpDisable(e:NetMonEvent):void {
