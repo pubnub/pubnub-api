@@ -1,18 +1,19 @@
 using System;
-using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Threading;
+using PubNubMessaging.Core;
 
 
-namespace PubNubTest
+namespace PubNubMessaging.Tests
 {
-    [TestFixture]
-    public class WhenGetRequestServerTime
-    {
-        [Test]
-        public void ThenItShouldReturnTimeStamp()
-        {
+	[TestFixture]
+	public class WhenGetRequestServerTime
+	{
+		[Test]
+		public void ThenItShouldReturnTimeStamp()
+		{
 			Pubnub pubnub = new Pubnub(
 				"demo",
 				"demo",
@@ -21,27 +22,23 @@ namespace PubNubTest
 				false
 				);
 			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenGetRequestServerTime";
-			unitTest.TestCaseName = "ThenItShouldReturnTimeStamp";
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;
 			
-			pubnub.PubnubUnitTest = unitTest;
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenGetRequestServerTime", "ThenItShouldReturnTimeStamp");;
 			
-			string strResponse = "";
-			Common cm = new Common();
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
+			string response = "";
 			
-			pubnub.time(cm.DisplayReturnMessage);
-			//cm.objResponse = null;
-			while (!cm.deliveryStatus) ;
+			pubnub.Time(common.DisplayReturnMessage);
 			
-			IList<object> fields = cm.objResponse as IList<object>;
-			strResponse = fields[0].ToString();
-			Console.WriteLine("Resp:" + strResponse);
-			Assert.False(("0").Equals(strResponse));
-        }
-
-    }
+			while (!common.DeliveryStatus) ;
+			
+			IList<object> fields = common.Response as IList<object>;
+			response = fields[0].ToString();
+			Console.WriteLine("Response:" + response);
+			Assert.False(("0").Equals(response));
+		}
+	}
 }
 

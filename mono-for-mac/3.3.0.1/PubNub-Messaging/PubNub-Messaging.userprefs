@@ -1,18 +1,18 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="PubNubTest/PubnubUnitTest.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub-Console/Pubnub.cs">
     <Files>
-      <File FileName="PubNub-Console/Pubnub.cs" Line="75" Column="41" />
-      <File FileName="PubNub-Console/Pubnub_Example.cs" Line="82" Column="18" />
-      <File FileName="PubNub-Console/app.config" Line="4" Column="43" />
-      <File FileName="PubNubTest/PubnubUnitTest.cs" Line="18" Column="14" />
+      <File FileName="PubNub-Console/PubnubExample.cs" Line="76" Column="49" />
+      <File FileName="PubNub-Console/Pubnub.cs" Line="2110" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="PubNub-Messaging" expanded="True" />
+          <Node name="PubNub-Messaging" expanded="True">
+            <Node name="Pubnub.cs" selected="True" />
+          </Node>
           <Node name="PubNub-Messaging.Tests" expanded="True">
-            <Node name="PubnubUnitTest.cs" selected="True" />
+            <Node name="References" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -37,17 +37,7 @@
         </State>
       </Pad>
       <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State expanded="True">
-          <Node name="PubNub-Messaging.Tests" expanded="True">
-            <Node name="PubNubTest" expanded="True">
-              <Node name="EncryptionTests" expanded="True" />
-              <Node name="WhenAClientIsPresented" expanded="True" />
-              <Node name="WhenDetailedHistoryIsRequested" expanded="True" />
-              <Node name="WhenGetRequestServerTime" expanded="True" />
-              <Node name="WhenSubscribedToAChannel" expanded="True" selected="True" />
-            </Node>
-          </Node>
-        </State>
+        <State expanded="True" selected="True" />
       </Pad>
       <Pad Id="ConnectionManagerPad">
         <State selected="True" />
@@ -55,7 +45,10 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="1171" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="2110" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="PubNub-Messaging/Pubnub.cs" line="549" offsetX="648" offsetY="6960" expression="result" liveUpdate="False" />

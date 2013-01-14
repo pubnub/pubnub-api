@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9A973E1B-A9F2-400F-A5DE-C95C085A50EC}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PubNubConsole</RootNamespace>
+    <RootNamespace>PubNubMessaging.Core</RootNamespace>
     <AssemblyName>PubNub-Messaging</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">

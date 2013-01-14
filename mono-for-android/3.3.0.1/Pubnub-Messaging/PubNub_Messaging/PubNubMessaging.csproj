@@ -8,7 +8,7 @@
     <ProjectGuid>{F1BE10BB-84AE-42A0-895A-8A7918F87A28}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>PubNub_Messaging</RootNamespace>
+    <RootNamespace>PubNubMessaging.Core</RootNamespace>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidResgenClass>Resource</AndroidResgenClass>
@@ -64,6 +64,7 @@
     <AndroidResource Include="Resources\layout\Launch.axml" />
     <AndroidResource Include="Resources\layout-large\Main.axml" />
     <AndroidResource Include="Resources\layout-large\Launch.axml" />
+    <AndroidResource Include="Resources\layout\Proxy.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

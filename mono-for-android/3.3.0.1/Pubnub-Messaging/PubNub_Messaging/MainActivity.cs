@@ -1,5 +1,4 @@
 using System;
-
 using Android.App;
 using Android.Content;
 using Android.Runtime;
@@ -11,9 +10,9 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
 
-namespace PubNub_Messaging
+namespace PubNubMessaging.Core
 {
-	[Activity (Label = "PubNub_Messaging")]
+	[Activity (Label = "PubNubMessaging")]
 	public class MainActivity : Activity
 	{
 		Pubnub pubnub;
@@ -35,24 +34,26 @@ namespace PubNub_Messaging
 
 			SetContentView (Resource.Layout.Main);
 
-			string strChannelName = Intent.GetStringExtra("Channel");
-			channel = strChannelName;
+			string channelName = Intent.GetStringExtra("Channel");
+			channel = channelName;
 
-			bool bEnableSSL = Convert.ToBoolean((Intent.GetStringExtra("SslOn")));
-			string strCipher = (Intent.GetStringExtra("Cipher"));
+			bool enableSSL = Convert.ToBoolean((Intent.GetStringExtra("SslOn")));
+			string cipher = (Intent.GetStringExtra("Cipher"));
 
-			string strSsl= "";
-			if (bEnableSSL)
-				strSsl = ", SSL";
+			string ssl= "";
+			if (enableSSL)
+				ssl = ", SSL";
 
-			if (!String.IsNullOrWhiteSpace (strCipher)) {
-				strCipher = ", Cipher";
+			if (!String.IsNullOrWhiteSpace (cipher)) {
+				cipher = ", Cipher";
 			}
 
-			string strHead = String.Format ("Channel: {0}{1}{2}", strChannelName, strSsl, strCipher);
-			pubnub = new Pubnub ("demo", "demo", "", strCipher, bEnableSSL);
+			string head = String.Format ("Channel: {0}{1}{2}", channelName, ssl, cipher);
 
-			Title = strHead;
+			pubnub = LaunchScreen.pubnub;
+			//pubnub = new Pubnub ("demo", "demo", "", cipher, enableSSL);
+
+			Title = head;
 
 			Button btnSubscribe = FindViewById<Button> (Resource.Id.btnSubscribe);
 			btnSubscribe.Click += delegate {Subscribe();};
@@ -89,13 +90,13 @@ namespace PubNub_Messaging
 		public void Subscribe()
 		{
 			Display("Running Subscribe");
-			pubnub.subscribe<string>(channel, DisplayReturnMessage);
+			pubnub.Subscribe<string>(channel, DisplayReturnMessage);
 		}
 
 		public void SubscribeConnCallback()
 		{
 			Display("Running Subscribe Connection Callback");
-			pubnub.subscribe<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage);
+			pubnub.Subscribe<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage);
 		}
 
 		public void Publish()
@@ -112,7 +113,7 @@ namespace PubNub_Messaging
 			alert.SetPositiveButton("OK", (sender, e) =>
 			                        {
 				Display("Running Publish");
-				pubnub.publish<string> (channel, input.Text, DisplayReturnMessage);
+				pubnub.Publish<string> (channel, input.Text, DisplayReturnMessage);
 			});
 			
 			alert.SetNegativeButton("Cancel", (sender, e) =>
@@ -125,37 +126,37 @@ namespace PubNub_Messaging
 		public void Presence()
 		{
 			Display("Running Presence");
-			pubnub.presence<string>(channel, DisplayReturnMessage);
+			pubnub.Presence<string>(channel, DisplayReturnMessage);
 		}
 		
 		public void DetailedHistory()
 		{
 			Display("Running Detailed History");
-			pubnub.detailedHistory<string>(channel, 100, DisplayReturnMessage);
+			pubnub.DetailedHistory<string>(channel, 100, DisplayReturnMessage);
 		}
 		
 		public void HereNow()
 		{
 			Display("Running Here Now");
-			pubnub.here_now<string>(channel, DisplayReturnMessage);
+			pubnub.HereNow<string>(channel, DisplayReturnMessage);
 		}
 		
 		public void Unsub()
 		{
 			Display("Running unsubscribe");
-			pubnub.unsubscribe<string>(channel, DisplayReturnMessage);
+			pubnub.Unsubscribe<string>(channel, DisplayReturnMessage);
 		}
 		
 		public void UnsubPresence()
 		{
 			Display("Running presence-unsubscribe");
-			pubnub.presence_unsubscribe<string>(channel, DisplayReturnMessage);
+			pubnub.PresenceUnsubscribe<string>(channel, DisplayReturnMessage);
 		}
 		
 		public void GetTime()
 		{
 			Display("Running Time");
-			pubnub.time<string>(DisplayReturnMessage);
+			pubnub.Time<string>(DisplayReturnMessage);
 		}
 
 		/// <summary>
@@ -182,76 +183,6 @@ namespace PubNub_Messaging
 			Display (result);
 		}
 		
-		void DisplayReturnMessage(object result)
-		{
-			IList<object> message = result as IList<object>;
-			
-			if (message != null && message.Count >= 1)
-			{
-				for (int index = 0; index < message.Count; index++)
-				{
-					ParseObject(message[index], 1);
-				}
-			}
-			else
-			{
-				Display ("unable to parse data");
-			}
-		}
-		
-		void ParseObject(object result, int loop)
-		{
-			if (result is object[])
-			{
-				object[] arrResult = (object[])result;
-				foreach (object item in arrResult)
-				{
-					if (item != null)
-					{
-						if (!item.GetType().IsGenericType)
-						{
-							if (!item.GetType().IsArray)
-							{
-								Display(item.ToString());
-							}
-							else
-							{
-								ParseObject(item, loop + 1);
-							}
-						}
-						else
-						{
-							ParseObject(item, loop + 1);
-						}
-					}
-					else
-					{
-						Display("");
-					}
-				}
-			}
-			else if (result.GetType().IsGenericType && (result.GetType().Name == typeof(Dictionary<,>).Name))
-			{
-				Dictionary<string, object> itemList = (Dictionary<string, object>)result;
-				foreach (KeyValuePair<string, object> pair in itemList)
-				{
-					Display(string.Format("key = {0}", pair.Key));
-					if (pair.Value is object[])
-					{
-						Display("value = ");
-						ParseObject(pair.Value, loop);
-					}
-					else
-					{
-						Display (string.Format("value = {0}", pair.Value));
-					}
-				}
-			}
-			else
-			{
-				Display(result.ToString());
-			}			
-		}
 	}
 }
 
