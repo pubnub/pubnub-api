@@ -26,9 +26,10 @@ namespace PubnubWindowsPhone
             bool ssl = chkSSL.IsChecked.Value;
             string secretKey = txtSecret.Text;
             string cipherKey = txtCipher.Text;
+            string sessionUUID = txtUUID.Text;
 
 
-            Uri nextPage = new Uri(string.Format("/PubnubOperation.xaml?channel={0}&ssl={1}&cipherkey={2}&secretkey={3}", channel, ssl, cipherKey, secretKey), UriKind.Relative);
+            Uri nextPage = new Uri(string.Format("/PubnubOperation.xaml?channel={0}&ssl={1}&cipherkey={2}&secretkey={3}&uuid={4}", channel, ssl, cipherKey, secretKey,sessionUUID), UriKind.Relative);
             NavigationService.Navigate(nextPage);
         }
     }

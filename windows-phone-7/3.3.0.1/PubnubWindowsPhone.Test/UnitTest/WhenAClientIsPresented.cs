@@ -26,13 +26,21 @@ namespace PubnubWindowsPhone.Test.UnitTest
         ManualResetEvent presenceManualEvent = new ManualResetEvent(false);
         ManualResetEvent unsubscribeManualEvent = new ManualResetEvent(false);
 
+        ManualResetEvent subscribeUUIDManualEvent = new ManualResetEvent(false);
+        ManualResetEvent presenceUUIDManualEvent = new ManualResetEvent(false);
+        ManualResetEvent unsubscribeUUIDManualEvent = new ManualResetEvent(false);
+
         ManualResetEvent hereNowManualEvent = new ManualResetEvent(false);
         ManualResetEvent presenceUnsubscribeEvent = new ManualResetEvent(false);
+        ManualResetEvent presenceUnsubscribeUUIDEvent = new ManualResetEvent(false);
 
         static bool receivedPresenceMessage = false;
         static bool receivedHereNowMessage = false;
+        static bool receivedCustomUUID = false;
 
-        [TestMethod,Asynchronous]
+        string customUUID = "mylocalmachine.mydomain.com";
+
+        [TestMethod, Asynchronous]
         public void ThenPresenceShouldReturnReceivedMessage()
         {
             receivedPresenceMessage = false;
@@ -67,6 +75,44 @@ namespace PubnubWindowsPhone.Test.UnitTest
                 });
         }
 
+        [TestMethod, Asynchronous]
+        public void ThenPresenceShouldReturnCustomUUID()
+        {
+            receivedCustomUUID = false;
+            ThreadPool.QueueUserWorkItem((s) =>
+                {
+                    Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+
+                    PubnubUnitTest unitTest = new PubnubUnitTest();
+                    unitTest.TestClassName = "WhenAClientIsPresented";
+                    unitTest.TestCaseName = "ThenPresenceShouldReturnCustomUUID";
+                    pubnub.PubnubUnitTest = unitTest;
+
+                    string channel = "my/channel";
+
+                    pubnub.Presence<string>(channel, ThenPresenceWithCustomUUIDShouldReturnMessage);
+
+                    //since presence expects from stimulus from sub/unsub...
+                    pubnub.SessionUUID = customUUID;
+                    pubnub.Subscribe<string>(channel, DummyMethodForSubscribeUUID);
+                    subscribeUUIDManualEvent.WaitOne(2000);
+
+                    pubnub.Unsubscribe<string>(channel, DummyMethodForUnSubscribeUUID);
+                    unsubscribeUUIDManualEvent.WaitOne(2000);
+
+                    presenceUUIDManualEvent.WaitOne(310 * 1000);
+
+                    pubnub.PresenceUnsubscribe<string>(channel, DummyMethodForPreUnSubUUID);
+                    presenceUnsubscribeUUIDEvent.WaitOne();
+
+                    Deployment.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            Assert.IsTrue(receivedCustomUUID, "Custom UUID not received");
+                            TestComplete();
+                        });
+                });
+        }
+
         [Asynchronous]
         void ThenPresenceShouldReturnMessage(string receivedMessage)
         {
@@ -90,6 +136,28 @@ namespace PubnubWindowsPhone.Test.UnitTest
             }
         }
 
+        [Asynchronous]
+        void ThenPresenceWithCustomUUIDShouldReturnMessage(string receivedMessage)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(receivedMessage) && !string.IsNullOrEmpty(receivedMessage.Trim()))
+                {
+                    object[] serializedMessage = JsonConvert.DeserializeObject<object[]>(receivedMessage);
+                    JContainer dictionary = serializedMessage[0] as JContainer;
+                    var uuid = dictionary["uuid"].ToString();
+                    if (uuid != null && uuid.Contains(customUUID))
+                    {
+                        receivedCustomUUID = true;
+                    }
+                }
+            }
+            catch { }
+            finally
+            {
+                presenceUUIDManualEvent.Set();
+            }
+        }
 
         [TestMethod,Asynchronous]
         public void IfHereNowIsCalledThenItShouldReturnInfo()
@@ -148,6 +216,13 @@ namespace PubnubWindowsPhone.Test.UnitTest
         }
 
         [Asynchronous]
+        void DummyMethodForSubscribeUUID(string receivedMessage)
+        {
+            subscribeUUIDManualEvent.Set();
+            //Dummary callback method for subscribe and unsubscribe to test presence
+        }
+
+        [Asynchronous]
         void DummyMethodForUnSubscribe(string receivedMessage)
         {
             unsubscribeManualEvent.Set();
@@ -155,9 +230,22 @@ namespace PubnubWindowsPhone.Test.UnitTest
         }
 
         [Asynchronous]
+        void DummyMethodForUnSubscribeUUID(string receivedMessage)
+        {
+            unsubscribeUUIDManualEvent.Set();
+            //Dummary callback method for unsubscribe to test presence
+        }
+
+        [Asynchronous]
         void DummyMethodForPreUnSub(string receivedMessage)
         {
             presenceUnsubscribeEvent.Set();
+        }
+
+        [Asynchronous]
+        void DummyMethodForPreUnSubUUID(string receivedMessage)
+        {
+            presenceUnsubscribeUUIDEvent.Set();
         }
     }
 }
