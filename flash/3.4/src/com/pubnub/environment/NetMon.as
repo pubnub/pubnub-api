@@ -52,7 +52,6 @@ package com.pubnub.environment {
 		
 		private function onLoaderHTTPStatus(e:HTTPStatusEvent):void {
 			if (_isRunning == false) return;
-			//trace('onLoaderHTTPStatus : '  + e.status);
 			var pingEndTime:int = getTimer() - pingStartTime;
 			clearTimeout(pingDelayTimeout);
 			clearTimeout(pingTimeout);
@@ -65,13 +64,12 @@ package com.pubnub.environment {
 			if (pingEndTime >= Settings.PING_OPERATION_INTERVAL) {
 				ping();
 			}else {
-				//trace('### : ' + (Settings.PING_OPERATION_INTERVAL - pingEndTime));
 				pingDelayTimeout = setTimeout(ping,  Settings.PING_OPERATION_INTERVAL - pingEndTime);
 			}
 		}
 		
 		private function ping():void {
-            trace('Ping!');
+            //trace('Ping!');
             if (_isRunning == false) return;
 			clearTimeout(pingTimeout);
 			pingStartTime = getTimer();

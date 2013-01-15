@@ -57,7 +57,6 @@ package com.pubnub.connection {
 			//trace(this, 'onTimeout');
 			if (operation) {
 				logTimeoutError(operation);
-				Log.logTimeout(Errors.OPERATION_TIMEOUT + ', ' + operation.request.url);
 				operation.onError( { message:Errors.OPERATION_TIMEOUT, operation:operation } );
 				removeOperation(operation);
 			}

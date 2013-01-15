@@ -9,6 +9,7 @@ package com.pubnub.operation {
 		
 		public static const RESULT:String = 'OperationEvent.result';
 		public static const FAULT:String = 'OperationEvent.fault';
+		public static const TIMEOUT:String = 'OperationEvent.timeout';
 		
 		private var _data:Object;
 		
