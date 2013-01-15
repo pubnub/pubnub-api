@@ -119,8 +119,20 @@
         // Check whether request is 'Time token' request or not
         if ([request isKindOfClass:[PNTimeTokenRequest class]]){
 
-            PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" TIME TOKEN MESSAGE HAS BEEN PROCESSED");
-            [self.serviceDelegate serviceChannel:self didReceiveTimeToken:parser.updateTimeToken];
+            if (![[parser parsedData] isKindOfClass:[PNError class]]) {
+
+                PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" TIME TOKEN MESSAGE HAS BEEN PROCESSED");
+                [self.serviceDelegate serviceChannel:self
+                                 didReceiveTimeToken:[parser parsedData]];
+            }
+            else {
+
+                PNError *error = [parser parsedData];
+                PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" TIME TOKEN MESSAGE PROCESSING HAS BEEN FAILED: %@",
+                      error);
+
+                [self.serviceDelegate serviceChannel:self receiveTimeTokenDidFailWithError:error];
+            }
         }
         // Check whether request was sent for message posting
         else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
@@ -292,6 +304,9 @@
         }
         // Check whether request is 'Time token' request or not
         else if ([request isKindOfClass:[PNTimeTokenRequest class]]) {
+
+            PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" TIME TOKEN MESSAGE PROCESSING HAS BEEN FAILED: %@",
+                  error);
 
             [self.serviceDelegate serviceChannel:self receiveTimeTokenDidFailWithError:error];
         }

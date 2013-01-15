@@ -518,10 +518,10 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 - (void)handleClientCompletedTimeTokenProcessing:(NSNotification *)notification {
 
     PNError *error = nil;
-    NSString *timeToken = nil;
+    NSNumber *timeToken = nil;
     if ([[notification name] isEqualToString:kPNClientDidReceiveTimeTokenNotification]) {
 
-        timeToken = (NSString *)notification.userInfo;
+        timeToken = (NSNumber *)notification.userInfo;
     }
     else {
 

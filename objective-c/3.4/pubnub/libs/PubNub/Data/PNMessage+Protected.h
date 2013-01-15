@@ -36,6 +36,7 @@
 /**
  * Return reference on message data object initialized with
  * message and target channel
+ * Message should be in stringified JSON format
  */
 + (PNMessage *)messageWithText:(NSString *)message forChannel:(PNChannel *)channel error:(PNError **)error;
 

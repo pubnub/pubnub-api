@@ -140,5 +140,30 @@ NSString* PNShortenedIdentifierFromUUID(NSString *uuid) {
     return shortenedUUID;
 }
 
+static NSNumber* PNNumberFromUnsignedLongLongString(id timeToken);
+NSNumber* PNNumberFromUnsignedLongLongString(id timeToken) {
+
+    if ([timeToken isKindOfClass:[NSString class]]) {
+
+        unsigned long long longLongToken = strtoull([timeToken UTF8String], NULL, 0);
+        timeToken = [[NSNumber alloc] initWithUnsignedLongLong:longLongToken];
+    }
+
+
+    return timeToken;
+}
+
+static NSString* PNStringFromUnsignedLongLongNumber(id timeToken);
+NSString* PNStringFromUnsignedLongLongNumber(id timeToken) {
+
+    if ([timeToken isKindOfClass:[NSNumber class]]) {
+
+        timeToken = [NSString stringWithFormat:@"%llu", [timeToken unsignedLongLongValue]];
+    }
+
+
+    return timeToken;
+}
+
 
 #endif

@@ -103,7 +103,7 @@
     
     PNLog(PNLogGeneralLevel, self, @"PubNub client successfully connected to PubNub origin at: %@", origin);
 
-    [PubNub requestServerTimeTokenWithCompletionBlock:^(NSString *timeToken, PNError *error) {
+    [PubNub requestServerTimeTokenWithCompletionBlock:^(NSNumber *timeToken, PNError *error) {
 
         if (error == nil) {
 
@@ -170,7 +170,7 @@
     PNLog(PNLogGeneralLevel, self, @"PubNub client failed to unsubscribe because of error: %@", error);
 }
 
-- (void)pubnubClient:(PubNub *)client didReceiveTimeToken:(NSString *)timeToken {
+- (void)pubnubClient:(PubNub *)client didReceiveTimeToken:(NSNumber *)timeToken {
 
     PNLog(PNLogGeneralLevel, self, @"PubNub client recieved time token: %@", timeToken);
 }

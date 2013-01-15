@@ -1321,7 +1321,7 @@ didFailUnsubscribeOnChannels:(NSArray *)channels
 
 #pragma mark - Service channel delegate methods
 
-- (void)serviceChannel:(PNServiceChannel *)channel didReceiveTimeToken:(NSString *)timeToken {
+- (void)serviceChannel:(PNServiceChannel *)channel didReceiveTimeToken:(NSNumber *)timeToken {
 
     // Check whether delegate can handle time token retrieval or not
     if ([self.delegate respondsToSelector:@selector(pubnubClient:didReceiveTimeToken:)]) {

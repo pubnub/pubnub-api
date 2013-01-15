@@ -92,7 +92,7 @@
  * Called on delegate when PubNub client retrieved time
  * token from PubNub service
  */
-- (void)pubnubClient:(PubNub *)client didReceiveTimeToken:(NSString *)timeToken;
+- (void)pubnubClient:(PubNub *)client didReceiveTimeToken:(NSNumber *)timeToken;
 
 /**
  * Called on delegate when PubNub client failed to

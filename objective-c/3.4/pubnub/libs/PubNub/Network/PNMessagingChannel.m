@@ -19,12 +19,16 @@
 
 #import "PNMessagingChannel.h"
 #import "PNConnectionChannel+Protected.h"
+#import "PNChannelEventsResponseParser.h"
 #import "PNMessage+Protected.h"
 #import "PubNub+Protected.h"
 #import "PNRequestsImport.h"
 #import "PNResponseParser.h"
 #import "PNRequestsQueue.h"
 #import "PNResponse.h"
+#import "PNActionResponseParser.h"
+#import "PNChannelEvents.h"
+#import "PNChannelEvents+Protected.h"
 
 
 #pragma mark - Private interface methods
@@ -439,7 +443,14 @@
         PNResponseParser *parser = [PNResponseParser parserForResponse:response];
         PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" LEAVE REQUEST RESULT: %@", parser);
 
-        shouldRemoveChannels = parser.error == nil && parser.isProcessed;
+        // Ensure that parsed data has numeric data, which will
+        // mean that this is status code or event enum value
+        if ([[parser parsedData] isKindOfClass:[NSNumber class]]) {
+
+            PNOperationResultEvent result = [[parser parsedData] intValue];
+
+            shouldRemoveChannels = result == PNOperationResultLeave;
+        }
     }
 
     if (shouldRemoveChannels) {
@@ -462,14 +473,19 @@
           request);
 
     PNResponseParser *parser = [PNResponseParser parserForResponse:response];
-
     PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" PARSED DATA: %@", parser);
 
-    // Check whether there is no error in response
-    if (parser.error == nil) {
+    if (![[parser parsedData] isKindOfClass:[PNError class]]) {
+
+        PNChannelEvents *events = [parser parsedData];
 
         // Retrieve event time token
-        NSString *timeToken = parser.updateTimeToken ? parser.updateTimeToken : @"0";
+        NSString *timeToken = @"0";
+        if (events.timeToken) {
+
+            timeToken = PNStringFromUnsignedLongLongNumber(events.timeToken);
+        }
+
 
         // Update channels state update time token
         [self.subscribedChannels makeObjectsPerformSelector:@selector(setUpdateTimeToken:) withObject:timeToken];
@@ -478,7 +494,7 @@
 
         // Check whether events arrived from PubNub service
         // (messages, presence)
-        if ([parser.events count] > 0) {
+        if ([events.events count] > 0) {
 
             // TODO: NOTIFY DELEGATE ON MESSAGES AND PRESENCE EVENTS
         }

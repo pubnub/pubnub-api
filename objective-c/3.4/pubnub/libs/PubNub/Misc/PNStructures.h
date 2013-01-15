@@ -20,7 +20,7 @@ typedef void (^PNClientConnectionFailureBlock)(PNError *);
 typedef void (^PNClientConnectionStateChangeBlock)(NSString *, BOOL, PNError *);
 typedef void (^PNClientChannelSubscriptionHandlerBlock)(NSArray *, BOOL, PNError *);
 typedef void (^PNClientChannelUnsubscriptionHandlerBlock)(NSArray *, PNError *);
-typedef void (^PNClientTimeTokenReceivingCompleteBlock)(NSString *, PNError *);
+typedef void (^PNClientTimeTokenReceivingCompleteBlock)(NSNumber *, PNError *);
 typedef void (^PNClientMessageSendingCompletionBlock)(PNMessage *, BOOL, PNError *);
 
 
@@ -60,5 +60,15 @@ typedef enum _PNPresenceEventType {
     // Person leaved channel because of timeout
     PNPresenceEventTimeout
 } PNPresenceEventType;
+
+// This enum represent list of possible
+// events which can occurre during requests
+// execution
+typedef enum _PNOperationResultEvent {
+
+   // Stores unknown event
+   PNOperationResultUnknown,
+   PNOperationResultLeave = PNPresenceEventLeave
+} PNOperationResultEvent;
 
 #endif

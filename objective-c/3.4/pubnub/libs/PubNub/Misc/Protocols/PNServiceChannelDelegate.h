@@ -26,7 +26,7 @@
  * Sent to the delegate when time token arrived
  * from backend by request
  */
-- (void)serviceChannel:(PNServiceChannel *)channel didReceiveTimeToken:(NSString *)timeToken;
+- (void)serviceChannel:(PNServiceChannel *)channel didReceiveTimeToken:(NSNumber *)timeToken;
 
 /**
  * Sent to the delegate when some error occurred
