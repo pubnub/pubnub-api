@@ -16,9 +16,7 @@ package com.pubnub {
 		
 		// time in millseconds to wait for web server to return a response. DO NOT CHANGE unless requested by support
 		public static const OPERATION_TIMEOUT:uint = 310000;
-		
-		//public static const RESUBCRIBE_WITH_LAST_TOKEN_TIMEOUT:uint = 5000;
-		
+				
 		// for wait a response of a ping operation with [PING_OPERATION_URL], ms 
 		public static const PING_OPERATION_TIMEOUT:uint = 2000;
 		
