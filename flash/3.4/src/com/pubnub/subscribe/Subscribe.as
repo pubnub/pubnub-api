@@ -62,7 +62,7 @@ package com.pubnub.subscribe {
 			if (_networkEnabled) {
 				var tkn:String = Settings.RESUME_ON_RECONNECT ? _lastToken : '0';
 				var chs:Array = _channels.concat();
-				close('Resubcribe with a timeout');
+				close('Reconnecting due to client-side timeout');
 				if (chs && chs.length > 0) {
 					subcribe(chs.join(','), tkn);
 				}
