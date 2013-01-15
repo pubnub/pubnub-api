@@ -62,7 +62,6 @@ package com.pubnub.subscribe {
 			if (_networkEnabled) {
 				var tkn:String = Settings.RESUME_ON_RECONNECT ? _lastToken : '0';
 				var chs:Array = _channels.concat();
-				trace('saved_channels : ' + chs, Boolean(savedChannels && savedChannels.length > 0));
 				close('Resubcribe with a timeout');
 				if (chs && chs.length > 0) {
 					subcribe(chs.join(','), tkn);
@@ -379,6 +378,7 @@ package com.pubnub.subscribe {
 			if (_destroyed) return;
 			_destroyed = true;
 			close();
+			connection.removeEventListener(OperationEvent.TIMEOUT, onTimeout);
 			connection.destroy();
 			connection = null;
 		}
@@ -415,8 +415,6 @@ package com.pubnub.subscribe {
 		public function set networkEnabled(value:Boolean):void {
 			_networkEnabled = value;
 			connection.networkEnabled = value;
-			
-			//trace(this, value, Settings.RESUME_ON_RECONNECT);
 			if (value) {
 				
 				if (Settings.RESUME_ON_RECONNECT) {
