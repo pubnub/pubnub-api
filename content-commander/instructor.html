@@ -23,12 +23,35 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
+
+    <!--publish arbitary element-->
     <div id=pubnub pub-key=demo sub-key=demo></div>
-    <div class="span4 well">
-      <textarea class="span4" id="pub-element" name="new_message"
-        placeholder="inject your html element" rows="5"></textarea>
-      <button class="btn btn-info pull-right" id="publish">Publish</button>
+    
+    <div class="row">
+      <div class="span4 well">
+        <textarea class="span4" id="pub-element" name="new_message"
+          placeholder="inject your html element" rows="5"></textarea>
+        <button class="btn btn-info pull-right" id="publish">Publish</button>
+      </div>
     </div>
+
+    <!--search from other resource-->
+    <div class="row">
+      <div class="span4 well">
+        <div class="btn-group  span4" id="media-toggle" data-toggle="buttons-radio">
+          <button class="btn active">youtube</button>
+          <button class="btn">flickr</button>
+          <button class="btn">soundcloud</button>
+          <button class="btn">vimeo</button>
+        </div>
+        <div class="input-append pull-right">
+          <input type="text" class="span4">
+        </div>
+        <button class="btn btn-info pull-right" id="publish">Search</button>
+      </div>
+    </div>
+
+    
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
     <script src="js/plugins.js"></script>
