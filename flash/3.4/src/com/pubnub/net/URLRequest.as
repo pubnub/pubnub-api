@@ -29,7 +29,6 @@ package com.pubnub.net {
 		public function URLRequest(url:String = null) {
 			_url = url;
 			uri = new URI(url);
-			// Create default header
 			loadDefaultHeaders();
 		}
     
@@ -38,20 +37,12 @@ package com.pubnub.net {
 		 */
 		protected function loadDefaultHeaders():void {
 			_header = new URLRequestHeader();
-			_header.add("Connection", "Keep-Alive"); 
+			//_header.add("Connection", "Keep-Alive"); 
 		}
 		
 		public function destroy():void {
 			if(_header) _header.destroy();
 			_header = null;
-		}
-		
-		/**
-		 * Set content type.
-		 * @param contentType
-		 */
-		public function set contentType(contentType:String):void {
-		  _header.replace("Content-Type", contentType);
 		}
 		
 		public function get header():URLRequestHeader {
