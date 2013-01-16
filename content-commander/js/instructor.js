@@ -9,10 +9,7 @@ $("#publish").click(function(){
 });
 
 $(".media-option").click(function(){
-    $(this).addClass("active");
-    $(this).click(function(){
-        $(this).removeClass("active");
-    });
+    $(this).toggleClass("active");
 });
 
 
