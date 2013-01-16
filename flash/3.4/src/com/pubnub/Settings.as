@@ -15,7 +15,7 @@ package com.pubnub {
         // ie, 100 times, every 3 seconds for a network connection
 		
 		// time in millseconds to wait for web server to return a response. DO NOT CHANGE unless requested by support
-		public static const OPERATION_TIMEOUT:uint = 10000;
+		public static const OPERATION_TIMEOUT:uint = 310000;
 				
 		// for wait a response of a ping operation with [PING_OPERATION_URL], ms 
 		public static const PING_OPERATION_TIMEOUT:uint = 2000;

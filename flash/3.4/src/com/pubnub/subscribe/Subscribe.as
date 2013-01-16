@@ -228,7 +228,6 @@ package com.pubnub.subscribe {
 		
 		/*---------------------------SUBSCRIBE---------------------------*/
 		private function doSubscribe():void {
-			//trace('doSubscribe');
 			var operation:Operation = getOperation(SUBSCRIBE);
 			connection.sendOperation(operation);
 		}
@@ -246,9 +245,9 @@ package com.pubnub.subscribe {
 			}
 			
 			var messages:Array = responce[0] as Array;
-		
 			_lastToken = responce[1];
 			var chStr:String = responce[2];
+			
 			/*
 			 * MX (array.length = 3)
 			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
@@ -277,12 +276,18 @@ package com.pubnub.subscribe {
 						channel = chArray[i];
 						var message:* = messages[i]
 						if (hasChannel(channel)) {
-							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : message}));
+							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
+								channel:channel, 
+								message : message}));
 						}
 					}
 				}else {
 					channel = chStr || _channels[0];
-					dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : messages}));
+					for (var j:int = 0; j < messages.length; j++) {
+						dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
+								channel:channel, 
+								message : messages[j]}));
+					}
 				}
 			}
 			doSubscribe();
