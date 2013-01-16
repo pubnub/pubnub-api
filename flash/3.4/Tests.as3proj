@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\PubNubAS3Example.swf" />
+    <movie path="bin\TestSuite.swf" />
     <movie fps="30" />
     <movie width="800" />
     <movie height="600" />
