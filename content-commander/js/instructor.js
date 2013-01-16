@@ -1,5 +1,6 @@
 (function(){
 //TODO: show code snippet
+//TODO: add font icon for media option  
 
 // bind click handler on #publish button
 $("#publish").click(function(){
@@ -37,6 +38,24 @@ $("#search").click(function(){
         }
     });
     console.log("selected is；"+selected);
+    searchYoutube();
 });
 
+// search_youtube
+function searchYoutube(){
+    var query = "test";
+    query = encodeURIComponent(query);
+    var jsonpURL = "http://gdata.youtube.com/feeds/videos?vq="+ query + 
+        "&max-results=50&alt=json-in-script&callback=listYoutube";
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = jsonpURL;
+    var head = document.getElementsByTagName("head")[0];
+    head.appendChild(script);
+}  
+
+
 })();
+function listYoutube(data){
+    console.log(data);
+} 
