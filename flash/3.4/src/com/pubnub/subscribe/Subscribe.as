@@ -209,7 +209,7 @@ package com.pubnub.subscribe {
 			}
 			_connected = true;
 			_lastToken = e.data[1];
-			trace('onSubscribeInit : ' + _lastToken);
+			//trace('onSubscribeInit : ' + _lastToken);
 			if (_reusedToken) {
 				_lastToken = _reusedToken;
 				_reusedToken = null;
