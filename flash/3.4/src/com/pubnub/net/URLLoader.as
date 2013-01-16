@@ -5,7 +5,6 @@ package com.pubnub.net {
 	import flash.errors.IOError;
 	import flash.events.*;
 	import flash.net.Socket;
-	import flash.system.Security;
 	import flash.utils.*;
 	
 	/**

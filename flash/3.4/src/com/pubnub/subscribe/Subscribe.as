@@ -16,10 +16,10 @@ package com.pubnub.subscribe {
 	 */
 	public class Subscribe extends EventDispatcher {
 		
-		static public const PNPRES_PREFIX:String = '-pnpres';
-		static public const SUBSCRIBE:String = 'subscribe';
+		static public const PNPRES_PREFIX:String = 	'-pnpres';
+		static public const SUBSCRIBE:String = 		'subscribe';
 		static public const INIT_SUBSCRIBE:String = 'init_subscribe';
-		static public const LEAVE:String = 'leave';
+		static public const LEAVE:String = 			'leave';
 		
 		public var subscribeKey:String;
 		public var sessionUUID:String;
