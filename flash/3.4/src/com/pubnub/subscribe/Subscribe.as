@@ -245,6 +245,7 @@ package com.pubnub.subscribe {
 			}
 			
 			var messages:Array = responce[0] as Array;
+			
 			_lastToken = responce[1];
 			var chStr:String = responce[2];
 			
@@ -269,12 +270,12 @@ package com.pubnub.subscribe {
 			}else {
 				if (!messages) return;
 				decryptMessages(messages);
-				
+				var message:String;
 				if (multiplexResponce) {
 					var chArray:Array = chStr.split(',');
 					for (var i:int = 0; i < messages.length; i++) {
 						channel = chArray[i];
-						var message:* = messages[i]
+						message = messages[i];
 						if (hasChannel(channel)) {
 							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
 								channel:channel, 
@@ -284,9 +285,13 @@ package com.pubnub.subscribe {
 				}else {
 					channel = chStr || _channels[0];
 					for (var j:int = 0; j < messages.length; j++) {
-						dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
+						message = messages[j];
+						var isValidMessage:Boolean = message && message.length > 0;
+						if (isValidMessage) {
+							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
 								channel:channel, 
 								message : messages[j]}));
+						}
 					}
 				}
 			}
