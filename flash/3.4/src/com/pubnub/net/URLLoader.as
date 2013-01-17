@@ -47,7 +47,7 @@ package com.pubnub.net {
 			socket = getSocket(request.url);
 			destroyResponce();
 			sendRequest(request);
-			Log.logURL(unescape(request.url), Log.DEBUG);
+			Log.logURL('REQUEST: ' + unescape(request.url), Log.DEBUG);
 		}
 		
 		private function getSocket(url:String):*{
@@ -145,6 +145,7 @@ package com.pubnub.net {
 			try {
 				if (request) {
 					_response = new URLResponse(bytes, request);
+					Log.log('RESPONCE: ' + _response.body, Log.DEBUG);
 				}
 				//trace('onResponce : ' + _response.body);
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.COMPLETE, _response));

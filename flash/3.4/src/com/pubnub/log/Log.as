@@ -35,7 +35,7 @@ package com.pubnub.log {
 		}
 		
 		static public function log(message:String, level:String = NORMAL, type:String = ''):void{
-			trace(new Date() + " " + message);
+			//trace(new Date() + " " + message);
 			var record:LogRecord = new LogRecord(message, type, level, instance.recodrs.length); 
 			if (instance.recodrs.length > MAX_RECORDS) {
 				// flush log
@@ -128,7 +128,7 @@ class LogRecord {
 	
 	public function toString():String{
 		//return (index+1) + '.' +  date.toString() + ' [' + level+  '] '+': ' + message;
-		return (index+1) + '.' + ' [' + level.toUpperCase()+  '] '+' : ' +  '[' + date.toString() + '] : ' + message;
+		return (index+1) + '.' + ' [' + level.toUpperCase()+  '], \n'+ message +', \ndate: [' + date.toString() + ']' ;
 	}
 	
 }

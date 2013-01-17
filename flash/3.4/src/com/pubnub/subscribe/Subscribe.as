@@ -3,6 +3,7 @@ package com.pubnub.subscribe {
 	import com.pubnub.connection.*;
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
+	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
@@ -238,6 +239,7 @@ package com.pubnub.subscribe {
 			
 			var responce:Object = e.data;
 			
+			//Log.log('RESPONCE : '
 			// something is wrong
 			if (responce == null) {
 				doSubscribe();
