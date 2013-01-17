@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Pubnub.cs" />
-    <Compile Include="Pubnub_Example.cs" />
+    <Compile Include="PubnubExample.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -31,7 +31,7 @@ namespace Andr.Unit {
 			// tests can be inside the main assembly
 			Add (Assembly.GetExecutingAssembly ());
 			// or in any reference assemblies			
-			//Add (typeof (PubNubTest.EncryptionTests).Assembly);
+			//Add (typeof (PubNubMessaging.Core.EncryptionTests).Assembly);
 			// or in any assembly that you load (since JIT is available)
 			
 #if false

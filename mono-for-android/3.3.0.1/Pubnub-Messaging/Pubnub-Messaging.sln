@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Android.NUnitLite", "Andr.U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoDroid.Dialog", "MonoDroid.Dialog\MonoDroid.Dialog.csproj", "{33044C7B-47A4-4113-A61A-EB429407F818}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNub_Messaging", "PubNub_Messaging\PubNub_Messaging.csproj", "{F1BE10BB-84AE-42A0-895A-8A7918F87A28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNubMessaging", "PubNub_Messaging\PubNubMessaging.csproj", "{F1BE10BB-84AE-42A0-895A-8A7918F87A28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -114,6 +114,6 @@ Global
 		{F1BE10BB-84AE-42A0-895A-8A7918F87A28}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = PubNub_Messaging\PubNub_Messaging.csproj
+		StartupItem = PubNub_Messaging\PubNubMessaging.csproj
 	EndGlobalSection
 EndGlobal
