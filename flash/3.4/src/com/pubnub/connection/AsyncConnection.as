@@ -19,6 +19,8 @@ package com.pubnub.connection {
 		}
 		
 		override public function sendOperation(operation:Operation):void {
+			trace('sendOperation : ' + loader.connected);
+			
 			super.sendOperation(operation);
 			if (ready) {
 				doSendOperation(operation);

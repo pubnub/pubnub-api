@@ -16,10 +16,10 @@ package com.pubnub.subscribe {
 	 */
 	public class Subscribe extends EventDispatcher {
 		
-		static public const PNPRES_PREFIX:String = '-pnpres';
-		static public const SUBSCRIBE:String = 'subscribe';
+		static public const PNPRES_PREFIX:String = 	'-pnpres';
+		static public const SUBSCRIBE:String = 		'subscribe';
 		static public const INIT_SUBSCRIBE:String = 'init_subscribe';
-		static public const LEAVE:String = 'leave';
+		static public const LEAVE:String = 			'leave';
 		
 		public var subscribeKey:String;
 		public var sessionUUID:String;
@@ -209,7 +209,7 @@ package com.pubnub.subscribe {
 			}
 			_connected = true;
 			_lastToken = e.data[1];
-			trace('onSubscribeInit : ' + _lastToken);
+			//trace('onSubscribeInit : ' + _lastToken);
 			if (_reusedToken) {
 				_lastToken = _reusedToken;
 				_reusedToken = null;
@@ -228,7 +228,6 @@ package com.pubnub.subscribe {
 		
 		/*---------------------------SUBSCRIBE---------------------------*/
 		private function doSubscribe():void {
-			//trace('doSubscribe');
 			var operation:Operation = getOperation(SUBSCRIBE);
 			connection.sendOperation(operation);
 		}
@@ -246,9 +245,10 @@ package com.pubnub.subscribe {
 			}
 			
 			var messages:Array = responce[0] as Array;
-		
+			
 			_lastToken = responce[1];
 			var chStr:String = responce[2];
+			
 			/*
 			 * MX (array.length = 3)
 			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
@@ -270,19 +270,29 @@ package com.pubnub.subscribe {
 			}else {
 				if (!messages) return;
 				decryptMessages(messages);
-				
+				var message:String;
 				if (multiplexResponce) {
 					var chArray:Array = chStr.split(',');
 					for (var i:int = 0; i < messages.length; i++) {
 						channel = chArray[i];
-						var message:* = messages[i]
+						message = messages[i];
 						if (hasChannel(channel)) {
-							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : message}));
+							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
+								channel:channel, 
+								message : message}));
 						}
 					}
 				}else {
 					channel = chStr || _channels[0];
-					dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : messages}));
+					for (var j:int = 0; j < messages.length; j++) {
+						message = messages[j];
+						var isValidMessage:Boolean = message && message.length > 0;
+						if (isValidMessage) {
+							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
+								channel:channel, 
+								message : messages[j]}));
+						}
+					}
 				}
 			}
 			doSubscribe();
