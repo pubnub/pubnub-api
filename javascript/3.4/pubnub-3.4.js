@@ -543,11 +543,12 @@ var PDIV          = $('pubnub') || {}
             if (!callback)      return error('Missing Callback');
             if (!SUBSCRIBE_KEY) return error('Missing Subscribe Key');
 
-            params["count"]   = count;
-            params["reverse"] = reverse;
+            params['stringtoken'] = 'true';
+            params['count']       = count;
+            params['reverse']     = reverse;
 
-            if (start) params["start"] = start;
-            if (end)   params["end"]   = end;
+            if (start) params['start'] = start;
+            if (end)   params['end']   = end;
 
             // Send Message
             xdr({
