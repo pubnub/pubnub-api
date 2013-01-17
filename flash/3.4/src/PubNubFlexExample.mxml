@@ -27,8 +27,8 @@
 			import utils.*;
 			
         [Bindable]
-        public var channel:String = 'a,b';
-        //public var channel:String = 'test_channel';
+        //public var channel:String = 'a,b';
+        public var channel:String = 'maximtest';
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
@@ -51,7 +51,7 @@
         //public var publishMessageText:String = '{"text":"hey"}';
 		
 		[Bindable]
-        public var ssl:Boolean = false;
+        public var ssl:Boolean = true;
 		
 		[Bindable]
 		private var channelsDataProvider:ArrayCollection;
