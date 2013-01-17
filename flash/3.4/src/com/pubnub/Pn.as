@@ -8,6 +8,7 @@ package com.pubnub {
 	import com.pubnub.subscribe.*;
 	import flash.errors.*;
 	import flash.events.*;
+	import flash.system.Security;
 	import flash.utils.*;
 	use namespace pn_internal;
 	
@@ -45,6 +46,7 @@ package com.pubnub {
 		}
 		
 		private function setup():void {
+			
 			operationsFactory = new Dictionary();
 			operationsFactory[INIT_OPERATION] = 	createInitOperation; 
 			operationsFactory[PUBLISH_OPERATION] = 	createPublishOperation; 

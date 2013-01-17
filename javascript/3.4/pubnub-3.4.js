@@ -509,6 +509,7 @@ var PDIV          = $('pubnub') || {}
     ,   SUB_CHANNEL   = 0
     ,   SUB_RECEIVER  = 0
     ,   SUB_RESTORE   = 0
+    ,   SUB_WINDOWING = 10
     ,   SUB_BUFF_WAIT = 0
     ,   TIMETOKEN     = 0
     ,   PUBLISH_KEY   = setup['publish_key']   || ''
@@ -714,13 +715,13 @@ var PDIV          = $('pubnub') || {}
             var channel       = args['channel']
             ,   callback      = callback              || args['callback']
             ,   callback      = callback              || args['message']
-            ,   err           = args['error']         || function(){}
             ,   connect       = args['connect']       || function(){}
             ,   reconnect     = args['reconnect']     || function(){}
             ,   disconnect    = args['disconnect']    || function(){}
             ,   presence      = args['presence']      || 0
             ,   noheresync    = args['noheresync']    || 0
             ,   sub_timeout   = args['timeout']       || SUB_TIMEOUT
+            ,   windowing     = args['windowing']     || SUB_WINDOWING
             ,   restore       = args['restore']
             ,   origin        = nextorigin(ORIGIN);
 
@@ -745,7 +746,6 @@ var PDIV          = $('pubnub') || {}
                     subscribed   : 1,
                     callback     : SUB_CALLBACK = callback,
                     connect      : connect,
-                    error        : err,
                     disconnect   : disconnect,
                     reconnect    : reconnect
                 };
@@ -815,12 +815,11 @@ var PDIV          = $('pubnub') || {}
                                     channel.disconnected = 0;
                                     channel.reconnect(channel.name);
                                 }
-                                else channel.error();
                             });
                         });
                     },
                     success : function(messages) {
-                        if (!messages) return timeout( _connect, 10 );
+                        if (!messages) return timeout( _connect, windowing );
 
                         // Connect
                         each_channel(function(channel){
@@ -859,7 +858,7 @@ var PDIV          = $('pubnub') || {}
                             next[0]( msg, messages, next[1] );
                         } );
 
-                        timeout( _connect, 10 );
+                        timeout( _connect, windowing );
                     }
                 });
             }
