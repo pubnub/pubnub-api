@@ -5,6 +5,7 @@ package com.pubnub.net {
 	import flash.errors.IOError;
 	import flash.events.*;
 	import flash.net.Socket;
+	import flash.system.Security;
 	import flash.utils.*;
 	
 	/**
@@ -67,6 +68,7 @@ package com.pubnub.net {
 			var port:int = getPort(url);
 			socket = getSocket(url);
 			//trace('connect : ' + host, port, socket);
+			//Security.loadPolicyFile("xmlsocket://pubsub.pubnub.com:80");
 			socket.connect(host, port);
 		}
 		

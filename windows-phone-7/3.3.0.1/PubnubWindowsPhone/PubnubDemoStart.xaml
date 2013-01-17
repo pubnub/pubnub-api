@@ -42,8 +42,12 @@
                 <TextBlock Name="lblSecret" VerticalAlignment="Center" Text="Secret Key"></TextBlock>
                 <TextBox Name="txtSecret" Text="" Width="236"></TextBox>
             </StackPanel>
-            <Button Content="Continue" Height="72" HorizontalAlignment="Stretch" Margin="131,253,165,0" Name="btnContinue" VerticalAlignment="Top" Width="160" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" Click="btnContinue_Click" />
-            <Button Content="Cancel" Height="72" HorizontalAlignment="Stretch" Margin="131,331,165,0" Name="btnCancel" VerticalAlignment="Top" Width="160" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" />
+            <StackPanel Orientation="Horizontal" Margin="20,244,19,0" Name="spnlInput4" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <TextBlock Name="lblUUID" VerticalAlignment="Center" Text="Session UUID"></TextBlock>
+                <TextBox Name="txtUUID" Text="" Width="236"></TextBox>
+            </StackPanel>
+            <Button Content="Continue" Height="72" HorizontalAlignment="Stretch" Margin="131,342,165,0" Name="btnContinue" VerticalAlignment="Top" Width="160" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" Click="btnContinue_Click" />
+            <Button Content="Cancel" Height="72" HorizontalAlignment="Stretch" Margin="131,420,165,0" Name="btnCancel" VerticalAlignment="Top" Width="160" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" />
 
         </Grid>
     </Grid>

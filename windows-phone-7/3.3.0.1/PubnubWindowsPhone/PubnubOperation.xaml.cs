@@ -23,6 +23,7 @@ namespace PubnubWindowsPhone
         bool ssl = false;
         string secretKey = "";
         string cipherKey = "";
+        string uuid = "";
 
         Popup publishPopup = null;
 
@@ -34,6 +35,7 @@ namespace PubnubWindowsPhone
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
             pubnub = new Pubnub("demo", "demo", secretKey, cipherKey, ssl);
+            pubnub.SessionUUID = uuid;
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
@@ -43,6 +45,7 @@ namespace PubnubWindowsPhone
             ssl = Boolean.Parse(NavigationContext.QueryString["ssl"].ToString());
             cipherKey = NavigationContext.QueryString["cipherkey"].ToString();
             secretKey = NavigationContext.QueryString["secretkey"].ToString();
+            uuid = NavigationContext.QueryString["uuid"].ToString();
         }
 
         protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)

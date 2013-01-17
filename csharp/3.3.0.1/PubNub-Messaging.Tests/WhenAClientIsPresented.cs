@@ -19,11 +19,19 @@ namespace PubNubMessaging.Tests
         ManualResetEvent presenceManualEvent = new ManualResetEvent(false);
         ManualResetEvent unsubscribeManualEvent = new ManualResetEvent(false);
 
+        ManualResetEvent subscribeUUIDManualEvent = new ManualResetEvent(false);
+        ManualResetEvent presenceUUIDManualEvent = new ManualResetEvent(false);
+        ManualResetEvent unsubscribeUUIDManualEvent = new ManualResetEvent(false);
+
         ManualResetEvent hereNowManualEvent = new ManualResetEvent(false);
         ManualResetEvent presenceUnsubscribeEvent = new ManualResetEvent(false);
+        ManualResetEvent presenceUnsubscribeUUIDEvent = new ManualResetEvent(false);
 
         static bool receivedPresenceMessage = false;
         static bool receivedHereNowMessage = false;
+        static bool receivedCustomUUID = false;
+
+        string customUUID = "mylocalmachine.mydomain.com";
 
         [Test]
         public void ThenPresenceShouldReturnReceivedMessage()
@@ -56,6 +64,54 @@ namespace PubNubMessaging.Tests
             Assert.IsTrue(receivedPresenceMessage, "Presence message not received");
         }
 
+        [Test]
+        public void ThenPresenceShouldReturnCustomUUID()
+        {
+            receivedCustomUUID = false;
+
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenAClientIsPresented";
+            unitTest.TestCaseName = "ThenPresenceShouldReturnCustomUUID";
+            pubnub.PubnubUnitTest = unitTest;
+
+            string channel = "my/channel";
+
+            pubnub.Presence<string>(channel, ThenPresenceWithCustomUUIDShouldReturnMessage);
+
+            //since presence expects from stimulus from sub/unsub...
+            pubnub.SessionUUID = customUUID;
+            pubnub.Subscribe<string>(channel, DummyMethodForSubscribeUUID);
+            subscribeUUIDManualEvent.WaitOne(2000);
+
+            pubnub.Unsubscribe<string>(channel, DummyMethodForUnSubscribeUUID);
+            unsubscribeUUIDManualEvent.WaitOne(2000);
+
+            presenceUUIDManualEvent.WaitOne(310 * 1000);
+
+            pubnub.PresenceUnsubscribe<string>(channel, DummyMethodForPreUnSubUUID);
+            presenceUnsubscribeUUIDEvent.WaitOne();
+
+            Assert.IsTrue(receivedCustomUUID, "Custom UUID not received");
+        }
+
+        [Test]
+        public void IfHereNowIsCalledThenItShouldReturnInfo()
+        {
+            receivedHereNowMessage = false;
+
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenAClientIsPresented";
+            unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
+            pubnub.PubnubUnitTest = unitTest;
+            string channel = "my/channel";
+            pubnub.HereNow<string>(channel, ThenHereNowShouldReturnMessage);
+            hereNowManualEvent.WaitOne();
+            Assert.IsTrue(receivedHereNowMessage, "here_now message not received");
+        }
+
         void ThenPresenceShouldReturnMessage(string receivedMessage)
         {
             try
@@ -78,22 +134,26 @@ namespace PubNubMessaging.Tests
             }
         }
 
-
-
-        [Test]
-        public void IfHereNowIsCalledThenItShouldReturnInfo()
+        void ThenPresenceWithCustomUUIDShouldReturnMessage(string receivedMessage)
         {
-            receivedHereNowMessage = false;
-
-            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenAClientIsPresented";
-            unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
-            pubnub.PubnubUnitTest = unitTest;
-            string channel = "my/channel";
-            pubnub.HereNow<string>(channel, ThenHereNowShouldReturnMessage);
-            hereNowManualEvent.WaitOne();
-            Assert.IsTrue(receivedHereNowMessage, "here_now message not received");
+            try
+            {
+                if (!string.IsNullOrEmpty(receivedMessage) && !string.IsNullOrEmpty(receivedMessage.Trim()))
+                {
+                    object[] serializedMessage = JsonConvert.DeserializeObject<object[]>(receivedMessage);
+                    JContainer dictionary = serializedMessage[0] as JContainer;
+                    var uuid = dictionary["uuid"].ToString();
+                    if (uuid != null && uuid.Contains(customUUID))
+                    {
+                        receivedCustomUUID = true;
+                    }
+                }
+            }
+            catch { }
+            finally
+            {
+                presenceUUIDManualEvent.Set();
+            }
         }
 
         void ThenHereNowShouldReturnMessage(string receivedMessage)
@@ -123,15 +183,32 @@ namespace PubNubMessaging.Tests
             //Dummary callback method for subscribe and unsubscribe to test presence
         }
 
+        void DummyMethodForSubscribeUUID(string receivedMessage)
+        {
+            subscribeUUIDManualEvent.Set();
+            //Dummary callback method for subscribe and unsubscribe to test presence
+        }
+
         void DummyMethodForUnSubscribe(string receivedMessage)
         {
             unsubscribeManualEvent.Set();
             //Dummary callback method for unsubscribe to test presence
         }
 
+        void DummyMethodForUnSubscribeUUID(string receivedMessage)
+        {
+            unsubscribeUUIDManualEvent.Set();
+            //Dummary callback method for unsubscribe to test presence
+        }
+
         void DummyMethodForPreUnSub(string receivedMessage)
         {
             presenceUnsubscribeEvent.Set();
+        }
+
+        void DummyMethodForPreUnSubUUID(string receivedMessage)
+        {
+            presenceUnsubscribeUUIDEvent.Set();
         }
     }
 }

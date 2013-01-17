@@ -53,6 +53,29 @@ namespace PubnubWindowsPhone.Test.UnitTest
             return data;
         }
 
+        private Dictionary<string, string> LoadWhenAClientIsPresentedThenPresenceShouldReturnCustomUUID()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+#if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/0", "[[],\"13559007117760880\"]");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 1}],\"13559011560379628\"]");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
+            data.Add("/subscribe/demo/my%2Fchannel/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel/0/13559006802662768", "[[\"demo test for stubs\"],\"13559014566792816\"]");
+            data.Add("/subscribe/demo/my%2Fchannel/0/13559014566792816", "[[],\"13559014566792816\"]");
+            data.Add("/v2/presence/sub_key/demo/channel/my%2Fchannel/leave", "{\"action\": \"leave\"}");
+#else
+            data.Add("/subscribe/demo/my/channel-pnpres/0/0", "[[],\"13559007117760880\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 1}],\"13559011560379628\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
+            data.Add("/subscribe/demo/my/channel/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel/0/13559006802662768", "[[\"demo test for stubs\"],\"13559014566792816\"]");
+            data.Add("/subscribe/demo/my/channel/0/13559014566792816", "[[],\"13559014566792816\"]");
+            data.Add("/v2/presence/sub_key/demo/channel/my%252Fchannel/leave", "{\"action\": \"leave\"}");
+#endif
+            return data;
+        }
+
         private Dictionary<string, string> LoadWhenAClientIsPresentedIfHereNowIsCalledThenItShouldReturnInfo()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
@@ -269,6 +292,9 @@ namespace PubnubWindowsPhone.Test.UnitTest
                     {
                         case "ThenPresenceShouldReturnReceivedMessage":
                             responseDictionary = LoadWhenAClientIsPresentedThenPresenceShouldReturnReceivedMessage();
+                            break;
+                        case "ThenPresenceShouldReturnCustomUUID":
+                            responseDictionary = LoadWhenAClientIsPresentedThenPresenceShouldReturnCustomUUID();
                             break;
                         case "IfHereNowIsCalledThenItShouldReturnInfo":
                             responseDictionary = LoadWhenAClientIsPresentedIfHereNowIsCalledThenItShouldReturnInfo();

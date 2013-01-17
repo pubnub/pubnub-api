@@ -3,7 +3,6 @@ package com.pubnub.subscribe {
 	import com.pubnub.connection.*;
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
-	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
@@ -16,6 +15,7 @@ package com.pubnub.subscribe {
 	 * @author firsoff maxim, support@pubnub.com
 	 */
 	public class Subscribe extends EventDispatcher {
+		
 		static public const PNPRES_PREFIX:String = '-pnpres';
 		static public const SUBSCRIBE:String = 'subscribe';
 		static public const INIT_SUBSCRIBE:String = 'init_subscribe';
@@ -38,7 +38,8 @@ package com.pubnub.subscribe {
 		protected var savedTimetoken:String
 		
 		protected var connection:AsyncConnection;
-		protected var _networkEnabled:Boolean
+		protected var _networkEnabled:Boolean;
+		
 		
 		public function Subscribe() {
 			super(null);
@@ -53,6 +54,19 @@ package com.pubnub.subscribe {
 			factory[LEAVE] = 			getLeaveOperation;
 			
 			connection = new AsyncConnection();
+			connection.addEventListener(OperationEvent.TIMEOUT, onTimeout);
+		}
+		
+		private function onTimeout(e:OperationEvent):void {
+			var operation:Operation = e.data as Operation;
+			if (_networkEnabled) {
+				var tkn:String = Settings.RESUME_ON_RECONNECT ? _lastToken : '0';
+				var chs:Array = _channels.concat();
+				close('Reconnecting due to client-side timeout');
+				if (chs && chs.length > 0) {
+					subcribe(chs.join(','), tkn);
+				}
+			}
 		}
 		
 		/**
@@ -133,6 +147,7 @@ package com.pubnub.subscribe {
 		}
 		
 		private function doUnsubscribeAll(reason:Object = null):void {
+			//clearInterval(resubTimer);
 			var allChannels:String = _channels.join(',');
 			unsubscribe(allChannels, reason);
 		}
@@ -213,6 +228,7 @@ package com.pubnub.subscribe {
 		
 		/*---------------------------SUBSCRIBE---------------------------*/
 		private function doSubscribe():void {
+			//trace('doSubscribe');
 			var operation:Operation = getOperation(SUBSCRIBE);
 			connection.sendOperation(operation);
 		}
@@ -362,21 +378,10 @@ package com.pubnub.subscribe {
 			if (_destroyed) return;
 			_destroyed = true;
 			close();
+			connection.removeEventListener(OperationEvent.TIMEOUT, onTimeout);
 			connection.destroy();
 			connection = null;
 		}
-		
-		/*public function reconnect():void {
-			// save current channels
-			var channels:String = _channels.join(',');
-			// disconnect and leave from all channels
-			unsubscribeAll('reconnect...');
-			Log.log("Network Restored: Resubscribing on " + 0); 
-			// restore connection with last channels
-			if (channels.length > 0) {
-				subcribe(channels);
-			}
-		}*/
 		
 		public function close(reason:String = null):void {
 			doUnsubscribeAll(reason);
@@ -410,8 +415,6 @@ package com.pubnub.subscribe {
 		public function set networkEnabled(value:Boolean):void {
 			_networkEnabled = value;
 			connection.networkEnabled = value;
-			
-			//trace(this, value, Settings.RESUME_ON_RECONNECT);
 			if (value) {
 				
 				if (Settings.RESUME_ON_RECONNECT) {
