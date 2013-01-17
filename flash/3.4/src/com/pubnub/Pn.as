@@ -67,9 +67,14 @@ package com.pubnub {
 		}
 		
 		private function onEnvironmentHttpEnable(e:NetMonEvent):void {
+			//trace('onEnvironmentHttpEnable : ' +  Settings.RESUME_ON_RECONNECT)
 			syncConnection.networkEnabled = true;
 			if (subscribeConnection) {
 				subscribeConnection.networkEnabled = true;
+				/*if (_checkReconnect && Settings.RESUME_ON_RECONNECT == false) {
+					trace('RECONNECT');
+					subscribeConnection.reconnect();
+				}*/
 			}
 			
 			if (_initialized == false) {
@@ -107,6 +112,7 @@ package com.pubnub {
 			Log.logRetry('Shutdown', Log.WARNING);
 			
 			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
+			//dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN, null, [0, Errors.NETWORK_LOST, channels, lastToken]));
 			dispatchEvent(new EnvironmentEvent(EnvironmentEvent.SHUTDOWN, null, [0, reason, channels, lastToken]));
 		}
 		
@@ -181,7 +187,6 @@ package com.pubnub {
 		 */
 		public function subscribe(channel:String, token:String = null):void {
 			throwInit();
-			if (!_initialized) return;
 			subscribeConnection.subcribe(channel, token);
 		}
 			
@@ -219,7 +224,6 @@ package com.pubnub {
 
 		public function unsubscribe(channel:String):void {
 			throwInit(); 
-			if (!_initialized) return;
 			subscribeConnection.unsubscribe(channel);
 		}
 		
@@ -229,14 +233,12 @@ package com.pubnub {
 		
 		public function unsubscribeAll():void {
 			throwInit();
-			if (!_initialized) return;
 			if(subscribeConnection) subscribeConnection.unsubscribeAll();
 		}
 		
 		/*---------------DETAILED HISTORY---------------*/
 		public function detailedHistory(args:Object):void {
 			throwInit();
-			if (!_initialized) return;
 			var channel:String = args.channel;
 			var sub_key:String = args['sub-key'];
 			if (channel == null || 
@@ -278,7 +280,6 @@ package com.pubnub {
 		
 		public function publish(args:Object):void {
 			throwInit();
-			if (!_initialized) return;
 			var operation:Operation = createOperation(PUBLISH_OPERATION, args)
 			syncConnection.sendOperation(operation);
 		}
@@ -315,6 +316,7 @@ package com.pubnub {
 		}
 		
 		public function time():void {
+			//throwInit();
 			var operation:Operation = createOperation(TIME_OPERATION);
 			operation.addEventListener(OperationEvent.RESULT, onTimeResult);
 			operation.addEventListener(OperationEvent.FAULT, onTimeFault);
@@ -365,9 +367,7 @@ package com.pubnub {
 		}
 		
 		private function throwInit():void {
-			if (!_initialized) {
-				Log.log("You must initialize (run init) first.", Log.WARNING);
-			}
+			if (!_initialized) throw new IllegalOperationError("[PUBNUB] Not initialized yet"); 
 		}
 		
 		public function destroy():void {
