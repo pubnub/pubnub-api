@@ -145,6 +145,7 @@ package com.pubnub.net {
 			try {
 				if (request) {
 					_response = new URLResponse(bytes, request);
+					//trace(_response.body);
 					Log.log('RESPONCE: ' + _response.body, Log.DEBUG);
 				}
 				//trace('onResponce : ' + _response.body);

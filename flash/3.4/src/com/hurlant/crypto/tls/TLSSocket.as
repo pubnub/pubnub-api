@@ -125,7 +125,7 @@ package com.hurlant.crypto.tls {
 		public function close():void {
 			_ready = false;
 			_engine.close();
-			//_socket.flush();
+			_socket.flush();
 			_socket.close();
 		}
 	

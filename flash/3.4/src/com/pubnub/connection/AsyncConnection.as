@@ -44,6 +44,7 @@ package com.pubnub.connection {
 		}
 		
 		private function doSendOperation(operation:Operation):void {
+			trace('doSendOperation');
 			clearTimeout(timeout);
 			timeout = setTimeout(onTimeout, Settings.OPERATION_TIMEOUT, operation);
 			this.operation = operation;
@@ -51,6 +52,7 @@ package com.pubnub.connection {
 		}
 		
 		private function onTimeout(operation:Operation):void {
+			trace('onTimeout');
 			dispatchEvent(new OperationEvent(OperationEvent.TIMEOUT, operation));
 		}
 		
@@ -60,11 +62,13 @@ package com.pubnub.connection {
 		}
 		
 		override protected function onError(e:URLLoaderEvent):void {
+			trace('onError');
 			clearTimeout(timeout);
 			super.onError(e);
 		}
 		
 		override protected function onClose(e:Event):void {
+			trace('onClose');
 			clearTimeout(timeout);
 			super.onClose(e);
 		}

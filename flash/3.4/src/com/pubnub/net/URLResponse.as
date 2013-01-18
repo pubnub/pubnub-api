@@ -55,8 +55,8 @@ package com.pubnub.net {
 				_code = matches[2];
 				_message = matches[3];
 			}else {
-				Log.log("Invalid header: " + firstLine + ", matches: " + matches, Log.ERROR);
-				trace("Invalid header: " + firstLine + ", matches: " + matches);
+				Log.log(this + "Invalid header: " + firstLine + ", matches: " + matches, Log.ERROR);
+				trace(this + "Invalid header: " + firstLine + ", matches: " + matches);
 			}
 		}
 		
@@ -117,8 +117,8 @@ package com.pubnub.net {
 					var value:String = line.substring(ind + 1, line.length);
 					result.push( { name: name, value: value } );
 				} else {
-					trace("Invalid header: " + line);
-					Log.log("Invalid header: " + line, Log.ERROR);
+					trace("[URLResponse] Invalid header: " + line);
+					Log.log("[URLResponse] Invalid header: " + line, Log.ERROR);
 				}
 			}
 			return result;
