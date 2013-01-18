@@ -4,6 +4,7 @@
 Open 3.3.0.1/PubNub-Messaging/PubNub-Messaging.sln, and the example Pubnub_Example.cs should demonstrate all functionality, asyncronously using delegates.
 You can also view and inspect the tests for additional insight. 
 
+NuGet usage and example screencast is also available here: https://vimeo.com/pubnub/videos/search:.net/sort:date/format:detail
 ## Running the Demo App
 
 1. Open up the solution file
