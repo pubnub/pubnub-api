@@ -617,12 +617,11 @@ var PDIV          = $('pubnub') || {}
             PUBNUB.time(function(time){ });
         */
         'time' : function(callback) {
-            var jsonp  = jsonp_cb()
-            ,   origin = nextorigin(ORIGIN);
+            var jsonp = jsonp_cb();
 
             xdr({
                 callback : jsonp,
-                url      : [origin, 'time', jsonp],
+                url      : [ORIGIN, 'time', jsonp],
                 success  : function(response) { callback(response[0]) },
                 fail     : function() { callback(0) }
             });
