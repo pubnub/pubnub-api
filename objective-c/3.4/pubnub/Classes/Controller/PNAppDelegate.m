@@ -7,8 +7,10 @@
 //
 
 #import "PNAppDelegate.h"
+#include <stdlib.h>
 #import "PNViewController.h"
 #import "PNMessage.h"
+#import "PNError+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -74,7 +76,7 @@
 #pragma mark - UIApplication delegate methods
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+
     // Configure application window and its content
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = [PNViewController  new];
@@ -143,19 +145,35 @@
 
     [PubNub sendMessage:@"Hello world"
               toChannel:[channels lastObject]
-    withCompletionBlock:^(PNMessage *message,
-                          BOOL sent,
-                          PNError *sendingError) {
+    withCompletionBlock:^(PNMessageState processingState, id processingData) {
 
-        if (sent) {
+        switch (processingState) {
 
-            PNLog(PNLogGeneralLevel, @"PubNub client successfully sent message %@ to %@",
-                  message, message.channel);
-        }
-        else {
+            case PNMessageSending:
 
-            PNLog(PNLogGeneralLevel, @"PubNub client failed to send message %@ because of error: %@",
-                  message, sendingError);
+                PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client is sending message %@ to %@",
+                      (PNMessage *)processingData, ((PNMessage *)processingData).channel);
+                break;
+
+            case PNMessageSent:
+
+                PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client successfully sent message %@ to %@",
+                      (PNMessage *)processingData, ((PNMessage *)processingData).channel);
+                break;
+
+            case PNMessageSendingError:
+                {
+                    PNError *error = (PNError *)processingData;
+                    PNMessage *message = error.associatedObject;
+
+                    PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client failed to send message %@ because of error: %@",
+                          (PNMessage *)processingData,
+                          message.channel);
+
+                    [PubNub sendMessage:@"\"Hello my lovely PubNub client\""
+                              toChannel:message.channel];
+                }
+                break;
         }
     }];
 }
@@ -163,6 +181,11 @@
 - (void)pubnubClient:(PubNub *)client subscriptionDidFailWithError:(NSError *)error {
     
     PNLog(PNLogGeneralLevel, self, @"PubNub client failed to subscribe because of error: %@", error);
+}
+
+- (void)pubnubClient:(PubNub *)client didUnsubscribeOnChannels:(NSArray *)channels {
+
+    PNLog(PNLogGeneralLevel, self, @"PubNub client successfully unsubscribed from channels: %@", channels);
 }
 
 - (void)pubnubClient:(PubNub *)client unsubscriptionDidFailWithError:(PNError *)error {
@@ -187,7 +210,7 @@
 
 - (void)pubnubClient:(PubNub *)client didFailMessageSend:(PNMessage *)message withError:(PNError *)error {
 
-    PNLog(PNLogGeneralLevel, self, @"PubNub client failed to send message %@ because of error: %@", message, error);
+    PNLog(PNLogGeneralLevel, self, @"PubNub client failed to send message '%@' because of error: %@", message, error);
 }
 
 - (void)pubnubClient:(PubNub *)client didSendMessage:(PNMessage *)message {

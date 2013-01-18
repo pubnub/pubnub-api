@@ -73,7 +73,7 @@
  * Add/remove observers for message sending process (completion
  * or error).
  */
-- (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageSendingCompletionBlock)handleBlock;
+- (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageProcessingBlock)handleBlock;
 - (void)removeMessageProcessingObserver:(id)observer;
 
 

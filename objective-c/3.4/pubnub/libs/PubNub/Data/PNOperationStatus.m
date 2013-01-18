@@ -30,4 +30,19 @@
 @implementation PNOperationStatus
 
 
+#pragma mark - Instance methods
+
+- (NSString *)description {
+
+    return [NSString stringWithFormat:@"%@ (%p) <successful: %@, time token: %@, description: %@, error: %@>",
+                    NSStringFromClass([self class]),
+                    self, self.isSuccessful?@"YES":@"NO",
+                    self.timeToken,
+                    self.statusDescription,
+                    self.error];
+}
+
+#pragma mark -
+
+
 @end

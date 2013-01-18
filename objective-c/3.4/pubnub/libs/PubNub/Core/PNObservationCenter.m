@@ -13,6 +13,7 @@
 
 #import "PubNub+Protected.h"
 #import "PNError+Protected.h"
+#import "PNMessage.h"
 
 
 #pragma mark Static
@@ -91,6 +92,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 - (void)handleClientConnectionStateChange:(NSNotification *)notification;
 - (void)handleClientSubscriptionProcess:(NSNotification *)notification;
 - (void)handleClientUnsubscriptionProcess:(NSNotification *)notification;
+- (void)handleClientMessageProcessingStateChange:(NSNotification *)notification;
 - (void)handleClientCompletedTimeTokenProcessing:(NSNotification *)notification;
 
 #pragma mark - Misc methods
@@ -172,6 +174,21 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleClientCompletedTimeTokenProcessing:)
                                                      name:kPNClientDidFailTimeTokenReceiveNotification
+                                                   object:nil];
+
+
+        // Handle message processinf events
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientMessageProcessingStateChange:)
+                                                     name:kPNClientWillSendMessageNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientMessageProcessingStateChange:)
+                                                     name:kPNClientDidSendMessageNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientMessageProcessingStateChange:)
+                                                     name:kPNClientMessageSendingDidFailNotification
                                                    object:nil];
         
         
@@ -374,7 +391,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
 #pragma mark - Message sending observers
 
-- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageSendingCompletionBlock)handleBlock
+- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageProcessingBlock)handleBlock
                                          oneTimeEvent:(BOOL)isOneTimeEventObserver {
 
     [self addMessageProcessingObserver:[PubNub sharedInstance] withBlock:handleBlock oneTimeEvent:YES];
@@ -385,7 +402,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
     [self removeMessageProcessingObserver:[PubNub sharedInstance] oneTimeEvent:YES];
 }
 
-- (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageSendingCompletionBlock)handleBlock {
+- (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageProcessingBlock)handleBlock {
 
     [self addMessageProcessingObserver:observer withBlock:handleBlock oneTimeEvent:NO];
 }
@@ -396,7 +413,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 }
 
 - (void)addMessageProcessingObserver:(id)observer
-                           withBlock:(PNClientMessageSendingCompletionBlock)handleBlock
+                           withBlock:(PNClientMessageProcessingBlock)handleBlock
                         oneTimeEvent:(BOOL)isOneTimeEventObserver {
 
     [self addObserver:observer
@@ -513,6 +530,49 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
     // Clean one time observers for specific event
     [self removeOneTimeObserversForEvent:PNObservationEvents.clientUnsubscribeFromChannels];
+}
+
+- (void)handleClientMessageProcessingStateChange:(NSNotification *)notification {
+
+    PNMessageState state = PNMessageSending;
+    id processingData = nil;
+    BOOL shouldUnsubscribe = NO;
+    if ([notification.name isEqualToString:kPNClientMessageSendingDidFailNotification]) {
+
+        state = PNMessageSendingError;
+        shouldUnsubscribe = YES;
+        processingData = (PNError *)notification.userInfo;
+    }
+    else {
+
+        shouldUnsubscribe = [notification.name isEqualToString:kPNClientDidSendMessageNotification];
+        if (shouldUnsubscribe) {
+
+            state = PNMessageSent;
+        }
+        processingData = (PNMessage *)notification.userInfo;
+    }
+
+    // Retrieving list of observers (including one time and persistent observers)
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientMessageSendCompletion];
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                                    NSUInteger observerDataIdx,
+                                                    BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientMessageProcessingBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(state, processingData);
+        }
+    }];
+
+
+    if (shouldUnsubscribe) {
+
+        // Clean one time observers for specific event
+        [self removeOneTimeObserversForEvent:PNObservationEvents.clientMessageSendCompletion];
+    }
 }
 
 - (void)handleClientCompletedTimeTokenProcessing:(NSNotification *)notification {

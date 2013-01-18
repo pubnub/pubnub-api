@@ -76,11 +76,11 @@
  * After event will be fired this observation request will be
  * removed from queue.
  */
-- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageSendingCompletionBlock)handleBlock
+- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageProcessingBlock)handleBlock
                                          oneTimeEvent:(BOOL)isOneTimeEventObserver;
 - (void)removeClientAsMessageProcessingObserver;
 - (void)addMessageProcessingObserver:(id)observer
-                           withBlock:(PNClientMessageSendingCompletionBlock)handleBlock
+                           withBlock:(PNClientMessageProcessingBlock)handleBlock
                         oneTimeEvent:(BOOL)isOneTimeEventObserver;
 - (void)removeMessageProcessingObserver:(id)observer oneTimeEvent:(BOOL)isOneTimeEventObserver;
 

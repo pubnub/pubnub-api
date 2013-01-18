@@ -51,7 +51,7 @@ static NSString * const kPNClientSubscriptionDidCompleteNotification = @"PNClien
 static NSString * const kPNClientSubscriptionDidFailNotification = @"PNClientSubscriptionDidFailNotification";
 
 // Sent when PubNub client successfully unsubscribed
-// from specified channel(s) (channel name will be
+// from specified channel(s) (channel(s) will be
 // passed in userInfo like plain NSArray)
 static NSString * const kPNClientUnsubscriptionDidCompleteNotification = @"PNClientUnsubscriptionDidCompleteNotification";
 

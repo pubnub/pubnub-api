@@ -15,13 +15,28 @@
 #ifndef PNStructures_h
 #define PNStructures_h
 
-typedef void (^PNClientConnectionSuccessBlock)(NSString *);
-typedef void (^PNClientConnectionFailureBlock)(PNError *);
-typedef void (^PNClientConnectionStateChangeBlock)(NSString *, BOOL, PNError *);
-typedef void (^PNClientChannelSubscriptionHandlerBlock)(NSArray *, BOOL, PNError *);
-typedef void (^PNClientChannelUnsubscriptionHandlerBlock)(NSArray *, PNError *);
-typedef void (^PNClientTimeTokenReceivingCompleteBlock)(NSNumber *, PNError *);
-typedef void (^PNClientMessageSendingCompletionBlock)(PNMessage *, BOOL, PNError *);
+// This enum represents possible message
+// processing states
+typedef enum _PNMessageState {
+
+    // Message was scheduled for processing.
+    // "processingData" field will contain message
+    // instance which was scheduled for processing
+    PNMessageSending,
+
+    // Message was successfully sent to the
+    // PubNub service.
+    // "processingData" field will contain message
+    // instance which was sent for processing
+    PNMessageSent,
+
+    // PubNub client failed to send message because
+    // of some reasons.
+    // "processingData" field will contain error instance
+    // which will describe error which occurred during
+    // message processing
+    PNMessageSendingError
+} PNMessageState;
 
 
 // This enum represent possible stream
@@ -70,5 +85,14 @@ typedef enum _PNOperationResultEvent {
    PNOperationResultUnknown,
    PNOperationResultLeave = PNPresenceEventLeave
 } PNOperationResultEvent;
+
+
+typedef void (^PNClientConnectionSuccessBlock)(NSString *);
+typedef void (^PNClientConnectionFailureBlock)(PNError *);
+typedef void (^PNClientConnectionStateChangeBlock)(NSString *, BOOL, PNError *);
+typedef void (^PNClientChannelSubscriptionHandlerBlock)(NSArray *, BOOL, PNError *);
+typedef void (^PNClientChannelUnsubscriptionHandlerBlock)(NSArray *, PNError *);
+typedef void (^PNClientTimeTokenReceivingCompleteBlock)(NSNumber *, PNError *);
+typedef void (^PNClientMessageProcessingBlock)(PNMessageState, id);
 
 #endif

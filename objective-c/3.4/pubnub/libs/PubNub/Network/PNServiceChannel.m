@@ -30,6 +30,8 @@
 #import "PNResponseParser.h"
 #import "PNRequestsQueue.h"
 #import "PNResponse.h"
+#import "PNOperationStatus.h"
+#import "PNOperationStatus+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -49,12 +51,6 @@
 
 
 #pragma mark - Handler methods
-
-/**
- * Called every time when message sending request
- * processing completed
- */
-- (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response;
 
 
 @end
@@ -115,29 +111,49 @@
     else {
 
         PNResponseParser *parser = [PNResponseParser parserForResponse:response];
+        id parsedData = [parser parsedData];
 
         // Check whether request is 'Time token' request or not
         if ([request isKindOfClass:[PNTimeTokenRequest class]]){
 
-            if (![[parser parsedData] isKindOfClass:[PNError class]]) {
+            if (![parsedData isKindOfClass:[PNError class]]) {
 
                 PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" TIME TOKEN MESSAGE HAS BEEN PROCESSED");
-                [self.serviceDelegate serviceChannel:self
-                                 didReceiveTimeToken:[parser parsedData]];
+
+                [self.serviceDelegate serviceChannel:self didReceiveTimeToken:[parser parsedData]];
             }
             else {
 
-                PNError *error = [parser parsedData];
-                PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" TIME TOKEN MESSAGE PROCESSING HAS BEEN FAILED: %@",
-                      error);
+                PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" TIME TOKEN MESSAGE PROCESSING HAS BEEN FAILED: %@", parsedData);
 
-                [self.serviceDelegate serviceChannel:self receiveTimeTokenDidFailWithError:error];
+                [self.serviceDelegate serviceChannel:self receiveTimeTokenDidFailWithError:parsedData];
             }
         }
         // Check whether request was sent for message posting
         else if ([request isKindOfClass:[PNMessagePostRequest class]]) {
 
-            [self handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:response];
+            // Retrieve reference on message which has been sent
+            PNMessage *message = ((PNMessagePostRequest *)request).message;
+
+            if (![parsedData isKindOfClass:[PNError class]] &&
+                [parsedData isKindOfClass:[PNOperationStatus class]] &&
+                ((PNOperationStatus *)parsedData).error == nil) {
+
+                PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" MESSAGE HAS BEEN SENT. SERVICE RESPONSE: %@", parsedData);
+
+                [self.serviceDelegate serviceChannel:self didSendMessage:message];
+            }
+            else {
+
+                if ([parsedData isKindOfClass:[PNOperationStatus class]]) {
+
+                    parsedData = ((PNOperationStatus *)parsedData).error;
+                }
+
+                PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" MESSAGE SENDING FAILED WITH ERROR: %@", parsedData);
+
+                [self.serviceDelegate serviceChannel:self didFailMessageSend:message withError:parsedData];
+            }
         }
         else {
 
@@ -186,13 +202,6 @@
 #pragma mark - Handler methods
 
 - (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response {
-
-    PNResponseParser *parser = [PNResponseParser parserForResponse:response];
-
-    PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" MESSAGE SENDING RESPONSE: %@", parser);
-
-    // Notify delegate about that message post request will be sent now
-    [self.serviceDelegate serviceChannel:self didSendMessage:request.message];
 }
 
 
@@ -269,7 +278,8 @@
         // Check whether this is 'Post message' request or not
         if ([request isKindOfClass:[PNMessagePostRequest class]]) {
 
-            [self handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:nil];
+            // Notify delegate about that message post request will be sent now
+            [self.serviceDelegate serviceChannel:self didSendMessage:((PNMessagePostRequest *)request).message];
         }
     }
 

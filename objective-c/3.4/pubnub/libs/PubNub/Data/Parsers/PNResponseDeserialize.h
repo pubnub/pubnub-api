@@ -33,13 +33,6 @@
  */
 - (NSArray *)parseResponseData:(NSMutableData *)data;
 
-/**
- * Will search for valid portions of response in provided
- * data (will search for complete HTTP header and complete
- * response after that headers)
- */
-- (BOOL)hasMoreValidResponseInData:(NSMutableData *)data;
-
 #pragma mark -
 
 

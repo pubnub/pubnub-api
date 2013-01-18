@@ -81,6 +81,12 @@
 - (void)pubnubClient:(PubNub *)client subscriptionDidFailWithError:(PNError *)error;
 
 /**
+ * Called on delegate when client successfully unsubscribed from specified
+ * set of channels
+ */
+- (void)pubnubClient:(PubNub *)client didUnsubscribeOnChannels:(NSArray *)channels;
+
+/**
  * Called on delegate when some kind of error occurred during
  * unsubscribe
  * error - returned error will contain information about channel

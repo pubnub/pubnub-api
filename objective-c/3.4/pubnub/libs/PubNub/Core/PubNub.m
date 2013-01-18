@@ -751,7 +751,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
 + (PNMessage *)sendMessage:(NSString *)message
                  toChannel:(PNChannel *)channel
-       withCompletionBlock:(PNClientMessageSendingCompletionBlock)success {
+       withCompletionBlock:(PNClientMessageProcessingBlock)success {
 
     PNMessage *messageObject = nil;
 
@@ -781,7 +781,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
         if (success) {
 
-            success(failedMessage, NO, sendingError);
+            success(PNMessageSendingError, sendingError);
         }
     }
 
@@ -794,7 +794,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
     [self sendMessage:message withCompletionBlock:nil];
 }
 
-+ (void)sendMessage:(PNMessage *)message withCompletionBlock:(PNClientMessageSendingCompletionBlock)success {
++ (void)sendMessage:(PNMessage *)message withCompletionBlock:(PNClientMessageProcessingBlock)success {
 
     [self sendMessage:message.message toChannel:message.channel withCompletionBlock:success];
 }
@@ -1268,19 +1268,29 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 didFailSubscribeOnChannels:(NSArray *)channels
                  withError:(PNError *)error {
 
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT FAILED TO SUBSCRIBE ON CHANNELS
+    error.associatedObject = channels;
+    [self notifyDelegateAboutSubscriptionFailWithError:error];
 }
 
 - (void)messagingChannel:(PNMessagingChannel *)channel didUnsubscribeFromChannels:(NSArray *)channels {
 
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT UNSUBSCRIBED FROM SET OF CHANNELS
+    // Check whether delegate can handle unsubscription event or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didUnsubscribeOnChannels:)]) {
+
+        [self.delegate performSelector:@selector(pubnubClient:didUnsubscribeOnChannels:)
+                            withObject:self
+                            withObject:channels];
+    }
+
+    [self sendNotification:kPNClientUnsubscriptionDidCompleteNotification withObject:channels];
 }
 
 - (void)    messagingChannel:(PNMessagingChannel *)channel
 didFailUnsubscribeOnChannels:(NSArray *)channels
                    withError:(PNError *)error {
 
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATIONS ABOUT THAT CLIENT FAILED TO UNSUBSCRIBE FROM CHANNELS
+    error.associatedObject = channels;
+    [self notifyDelegateAboutUnsubscriptionFailWithError:error];
 }
 
 - (void)messagingChannel:(PNMessagingChannel *)messagingChannel
@@ -1299,23 +1309,6 @@ didFailUnsubscribeOnChannels:(NSArray *)channels
                onChannel:(PNChannel *)channel {
 
     // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT RECEIVED PRESENCE EVENT FROM CHANNEL
-}
-
-- (void)serviceChannel:(PNServiceChannel *)channel willSendMessage:(PNMessage *)message {
-
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT MESSAGE WILL BE SENT
-}
-
-- (void)serviceChannel:(PNServiceChannel *)channel didSendMessage:(PNMessage *)message {
-
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT MESSAGE HAS BEEN SENT
-}
-
-- (void)serviceChannel:(PNServiceChannel *)channel
-      didFailMessageSend:(PNMessage *)message
-               withError:(PNError *)error{
-
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT MESSAGE WASN'T SENT BECAUSE OF ERROR
 }
 
 
@@ -1343,7 +1336,42 @@ didFailUnsubscribeOnChannels:(NSArray *)channels
 - (void)  serviceChannel:(PNServiceChannel *)channel
 didReceiveNetworkLatency:(double)latency
      andNetworkBandwidth:(double)bandwidth {
+
     // TODO: NOTIFY NETWORK METER INSTANCE ABOUT ARRIVED DATA
+}
+
+- (void)serviceChannel:(PNServiceChannel *)channel willSendMessage:(PNMessage *)message {
+
+    // Check whether delegate can handle message sending event or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:willSendMessage:)]) {
+
+        [self.delegate performSelector:@selector(pubnubClient:willSendMessage:)
+                            withObject:self
+                            withObject:message];
+    }
+
+    [self sendNotification:kPNClientWillSendMessageNotification withObject:message];
+}
+
+- (void)serviceChannel:(PNServiceChannel *)channel didSendMessage:(PNMessage *)message {
+
+    // Check whether delegate can handle message sent event or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didSendMessage:)]) {
+
+        [self.delegate performSelector:@selector(pubnubClient:didSendMessage:)
+                            withObject:self
+                            withObject:message];
+    }
+
+    [self sendNotification:kPNClientDidSendMessageNotification withObject:message];
+}
+
+- (void)serviceChannel:(PNServiceChannel *)channel
+      didFailMessageSend:(PNMessage *)message
+               withError:(PNError *)error{
+
+    error.associatedObject = message;
+    [self notifyDelegateAboutMessageSendingFailedWithError:error];
 }
 
 #pragma mark -

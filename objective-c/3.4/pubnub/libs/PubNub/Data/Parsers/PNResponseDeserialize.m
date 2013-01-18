@@ -14,6 +14,7 @@
 //
 
 #import "PNResponseDeserialize.h"
+#import "NSData+PNAdditions.h"
 #import "PNResponse.h"
 
 
@@ -34,12 +35,27 @@
 @property (nonatomic, strong) NSData *httpContentLengthData;
 
 // Stores reference on data object which is used
+// to find HTTP header which is responsible for
+// whether response in sent in chunked form or not
+@property (nonatomic, strong) NSData *httpChunkedTransferEncodingData;
+
+// Stores reference on data object which is used
+// to mark chunked content end in HTTP response
+// body
+@property (nonatomic, strong) NSData *httpChunkedContentEndData;
+
+// Stores reference on data object which is used
 // to find HTTP headers and content separator
 @property (nonatomic, strong) NSData *httpContentSeparatorData;
 
 // Stores reference on data object which is used
 // to find new line char in provided data
 @property (nonatomic, strong) NSData *endLineCharacterData;
+
+// Stores reference on data object which is used
+// to find new line chars (\r\n) in provided data
+@property (nonatomic, strong) NSData *endLineCharactersData;
+
 
 // Stores reference on data object which is used
 // to spacebars in specified piece of data
@@ -54,7 +70,11 @@
 - (PNResponse *)responseInRange:(NSRange)responseRange ofData:(NSData *)data;
 
 - (NSInteger)responseStatusCodeFromData:(NSData *)data inRange:(NSRange)responseRange;
-- (NSInteger)responseSizeFromData:(NSData *)data inRange:(NSRange)responseRange;
+- (BOOL)isChunkedResponse:(NSData *)data inRange:(NSRange)responseRange;
+- (NSInteger)responseSizeFromData:(NSData *)data
+               forChunkedResponse:(BOOL)isChunked
+                          inRange:(NSRange)responseRange
+          chunkedContentSizeRange:(NSRange*)chunkedContentSizeRange;
 
 /**
  * Return reference on index where next HTTP
@@ -64,8 +84,7 @@
 - (NSUInteger)nextResponseStartIndexForData:(NSData *)data inRange:(NSRange)responseRange;
 
 - (NSRange)nextResponseStartSearchRangeInRange:(NSRange)responseRange;
-
-- (BOOL)hasMoreValidResponseInData:(NSMutableData *)data withinRange:(NSRange)checkRange;
+- (NSRange)contentSeparatorRangeForData:(NSData *)data inRange:(NSRange)responseRange;
 
 /**
  * Allow to find piece of data enclosed between two 
@@ -74,7 +93,8 @@
 - (NSData *)dataBetween:(NSData *)startData
                  andEnd:(NSData *)endData
                  inData:(NSData *)data
-              withRange:(NSRange)searchRange;
+              withRange:(NSRange)searchRange
+              dataRange:(NSRange*)searchedDataRange;
 
 @end
 
@@ -93,8 +113,11 @@
         
         self.httpHeaderStartData = [@"HTTP/1.1 " dataUsingEncoding:NSUTF8StringEncoding];
         self.httpContentLengthData = [@"Content-Length: " dataUsingEncoding:NSUTF8StringEncoding];
+        self.httpChunkedTransferEncodingData = [@"Transfer-Encoding: chunked" dataUsingEncoding:NSUTF8StringEncoding];
+        self.httpChunkedContentEndData = [@"0\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.httpContentSeparatorData = [@"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.endLineCharacterData = [@"\n" dataUsingEncoding:NSUTF8StringEncoding];
+        self.endLineCharactersData = [@"\r\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.spaceCharacterData = [@" " dataUsingEncoding:NSUTF8StringEncoding];
     }
     
@@ -116,7 +139,7 @@
         NSUInteger nextResponseIndex = [self nextResponseStartIndexForData:data inRange:responseRange];
         if (nextResponseIndex == NSNotFound) {
             
-            // Try contruct response instance
+            // Try construct response instance
             PNResponse *response = [self responseInRange:contentRange ofData:data];
             if(response) {
                 
@@ -140,7 +163,7 @@
                 contentRange.length = nextResponseIndex - contentRange.location;
                 
                 
-                // Try contruct response instance
+                // Try construct response instance
                 PNResponse *response = [self responseInRange:contentRange ofData:data];
                 if(response) {
                     
@@ -168,7 +191,8 @@
                     }
                 }
                 else {
-                    
+
+                    nextResponseIndex = NSNotFound;
                     contentRange.location = previousContentRange.location;
                     contentRange.length = previousContentRange.length;
                 }
@@ -195,29 +219,56 @@
 - (PNResponse *)responseInRange:(NSRange)responseRange ofData:(NSData *)data {
     
     PNResponse *response = nil;
+    NSUInteger responseEndIndex = (responseRange.location + responseRange.length);
     
     // Try to fetch HTTP status from body
     NSUInteger statusCode = [self responseStatusCodeFromData:data inRange:responseRange];
-        
-    NSUInteger contentSize = [self responseSizeFromData:data inRange:responseRange];
+
+    NSRange chunkedContentSizeRange = NSMakeRange(NSNotFound, 0);
+    BOOL responseIsChunked = [self isChunkedResponse:data inRange:responseRange];
+    NSUInteger contentSize = [self responseSizeFromData:data
+                                     forChunkedResponse:responseIsChunked
+                                                inRange:responseRange
+                                chunkedContentSizeRange:&chunkedContentSizeRange];
     if(contentSize > 0) {
 
         // Searching for HTTP header and response content
         // separator
-        NSRange separatorRange = [data rangeOfData:self.httpContentSeparatorData
-                                           options:(NSDataSearchOptions)0
-                                             range:responseRange];
+        NSRange separatorRange = [self contentSeparatorRangeForData:data inRange:responseRange];
         if(separatorRange.location != NSNotFound) {
 
             // Check whether full response body loaded or not
             // (taking into account content size which arrived
             // in HTTP header)
-            NSUInteger contentSeparatorendIndex = (separatorRange.location+separatorRange.length);
-            NSUInteger contentSizeLeft = (responseRange.location + responseRange.length) - contentSeparatorendIndex;
-            if (contentSizeLeft > 0 && contentSize == contentSizeLeft) {
+            BOOL isFullBody = NO;
+            NSUInteger contentSeparatorEndIndex = (separatorRange.location+separatorRange.length);
 
-                NSRange responseContenrRange = NSMakeRange(contentSeparatorendIndex, contentSize);
-                NSData *responseData = [data subdataWithRange:responseContenrRange];
+            if(!responseIsChunked) {
+
+                NSUInteger contentSizeLeft = (responseRange.location + responseRange.length) - contentSeparatorEndIndex;
+                isFullBody = contentSizeLeft > 0 && contentSize == contentSizeLeft;
+            }
+            else {
+
+                // Retrieve range of content end
+                NSRange contentEndRange = [data rangeOfData:self.httpChunkedContentEndData
+                                                    options:NSDataSearchBackwards
+                                                      range:responseRange];
+
+                if (contentEndRange.location != NSNotFound) {
+
+                    NSUInteger contentEndRangeIndex = contentEndRange.location + contentEndRange.length;
+                    isFullBody = responseEndIndex == contentEndRangeIndex;
+
+                    contentSeparatorEndIndex = chunkedContentSizeRange.location + chunkedContentSizeRange.length;
+                    contentSeparatorEndIndex += [self.endLineCharactersData length];
+                }
+            }
+
+            if (isFullBody) {
+
+                NSRange responseContentRange = NSMakeRange(contentSeparatorEndIndex, contentSize);
+                NSData *responseData = [data subdataWithRange:responseContentRange];
                 PNLog(PNLogGeneralLevel, self, @"\nRAW DATA: %@", [[NSString alloc] initWithData:responseData
                                                                                       encoding:NSUTF8StringEncoding]);
                 response = [PNResponse responseWithContent:responseData size:responseRange.length code:statusCode];
@@ -235,57 +286,77 @@
     NSData *responseStatusCodeData = [self dataBetween:self.httpHeaderStartData
                                                 andEnd:self.spaceCharacterData
                                                 inData:data
-                                             withRange:responseRange];
+                                             withRange:responseRange
+                                             dataRange:NULL];
     
     if (responseStatusCodeData != nil) {
-        
-        statusCode = [[NSString stringWithUTF8String:[responseStatusCodeData bytes]] integerValue];
+
+        statusCode = strtol([responseStatusCodeData bytes], NULL, 0);
     }
     
     
     return statusCode;
 }
 
-- (NSInteger)responseSizeFromData:(NSData *)data inRange:(NSRange)responseRange {
+- (BOOL)isChunkedResponse:(NSData *)data inRange:(NSRange)responseRange {
+
+    NSRange chunkedMarkerRange = [data rangeOfData:self.httpChunkedTransferEncodingData
+                                           options:(NSDataSearchOptions)0
+                                             range:responseRange];
+
+    return chunkedMarkerRange.location != NSNotFound;
+}
+
+- (NSInteger)responseSizeFromData:(NSData *)data
+               forChunkedResponse:(BOOL)isChunked
+                          inRange:(NSRange)responseRange
+          chunkedContentSizeRange:(NSRange*)chunkedContentSizeRange{
     
     NSInteger contentSize = 0;
-    NSData *contentSizeData = [self dataBetween:self.httpContentLengthData
-                                         andEnd:self.endLineCharacterData
-                                         inData:data
-                                      withRange:responseRange];
-    if (contentSizeData != nil) {
-        
-        contentSize = [[NSString stringWithUTF8String:[contentSizeData bytes]] integerValue];
+
+    if (!isChunked) {
+
+        NSData *contentSizeData = [self dataBetween:self.httpContentLengthData
+                                             andEnd:self.endLineCharacterData
+                                             inData:data
+                                          withRange:responseRange
+                                          dataRange:NULL];
+        if (contentSizeData != nil) {
+
+            contentSize = strtoull([contentSizeData bytes], NULL, 0);
+        }
+    }
+    else {
+
+        // Check whether chunked content size marker is found or not
+        NSData *chunkedContentSizeMarker = [self dataBetween:self.httpContentSeparatorData
+                                                      andEnd:self.endLineCharactersData
+                                                      inData:data
+                                                   withRange:responseRange
+                                                   dataRange:chunkedContentSizeRange];
+
+        if (chunkedContentSizeMarker) {
+
+            contentSize = [chunkedContentSizeMarker unsignedLongLongFromHEXData];
+        }
     }
     
     
     return contentSize;
 }
 
-- (BOOL)hasMoreValidResponseInData:(NSMutableData *)data {
-    
-    return [self hasMoreValidResponseInData:data withinRange:NSMakeRange(0, [data length])];
-}
-
-- (BOOL)hasMoreValidResponseInData:(NSMutableData *)data withinRange:(NSRange)checkRange {
-    
-    BOOL hasValidData = NO;
-    
-    
-    return hasValidData;
-}
-
 - (NSData *)dataBetween:(NSData *)startData
                  andEnd:(NSData *)endData
                  inData:(NSData *)data
-              withRange:(NSRange)searchRange {
+              withRange:(NSRange)searchRange
+              dataRange:(NSRange*)searchedDataRange {
     
     NSData *result = nil;
     
     // Searching for content start marker
     NSRange startDataRange = [data rangeOfData:startData options:(NSDataSearchOptions)0 range:searchRange];
     if(startDataRange.location != NSNotFound) {
-        
+
         NSUInteger startMarkerEndIndex = startDataRange.location+startDataRange.length;
         
         // Searching for content end marker
@@ -297,6 +368,11 @@
             // Fetching data which is enclosed between two data markers
             NSRange resultRange = NSMakeRange(endSearchRange.location, (endDataRange.location-endSearchRange.location));
             result = [data subdataWithRange:resultRange];
+
+            if (searchedDataRange != NULL) {
+
+                *searchedDataRange = resultRange;
+            }
         }
     }
     
@@ -317,6 +393,11 @@
 - (NSRange)nextResponseStartSearchRangeInRange:(NSRange)responseRange; {
     
     return NSMakeRange(responseRange.location + 1, responseRange.length-1);
+}
+
+- (NSRange)contentSeparatorRangeForData:(NSData *)data inRange:(NSRange)responseRange {
+
+    return [data rangeOfData:self.httpContentSeparatorData options:(NSDataSearchOptions)0 range:responseRange];
 }
 
 #pragma mark -

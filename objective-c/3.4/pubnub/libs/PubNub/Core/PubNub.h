@@ -332,7 +332,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
  */
 + (PNMessage *)sendMessage:(NSString *)message
                  toChannel:(PNChannel *)channel
-       withCompletionBlock:(PNClientMessageSendingCompletionBlock)success;
+       withCompletionBlock:(PNClientMessageProcessingBlock)success;
 
 /**
  * Asynchronously send configured message object
@@ -349,7 +349,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
  * If you need to track message sending from many places, use
  * PNObservationCenter methods for this purpose.
  */
-+ (void)sendMessage:(PNMessage *)message withCompletionBlock:(PNClientMessageSendingCompletionBlock)success;
++ (void)sendMessage:(PNMessage *)message withCompletionBlock:(PNClientMessageProcessingBlock)success;
 
 
 #pragma mark - Instance methods

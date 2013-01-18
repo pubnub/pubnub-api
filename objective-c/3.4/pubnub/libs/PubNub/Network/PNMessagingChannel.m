@@ -516,6 +516,8 @@
     SEL dataUpdateSelector = @selector(unionSet:);
 
     if ([request isKindOfClass:[PNLeaveRequest class]]) {
+
+        delegateSelector = @selector(messagingChannel:didUnsubscribeFromChannels:);
         dataUpdateSelector = @selector(minusSet:);
     }
 
@@ -551,7 +553,7 @@
         if ([channels count] > 0 && [self isRequestSendingInitiatedByUser:request]) {
 
             // Turn off error warning on performSelector, because ARC
-            // can't understand what is goingon there
+            // can't understand what is going on there
             #pragma clang diagnostic push
             #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
             [self.messagingDelegate performSelector:delegateSelector withObject:self withObject:channels];

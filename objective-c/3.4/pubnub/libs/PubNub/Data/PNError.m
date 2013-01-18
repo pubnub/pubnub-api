@@ -22,6 +22,10 @@
 
 @property (nonatomic, copy) NSString *errorMessage;
 
+// Stores reference on associated object with which
+// error is occurred
+@property (nonatomic, strong) id associatedObject;
+
 
 #pragma mark - Instance methods
 
@@ -74,6 +78,11 @@
 
                 errorCode = kPNRestrictedCharacterInChannelNameError;
             }
+        }
+        // Check whether wrong key was specified for request
+        else if([errorMessage rangeOfString:@"Key"].location != NSNotFound) {
+
+            errorCode = kPNInvalidSubscribeOrPublishKeyError;
         }
     }
     else {
@@ -152,6 +161,10 @@
 
                 errorDescription = @"PubNub service can't process JSON";
                 break;
+            case kPNInvalidSubscribeOrPublishKeyError:
+
+                errorDescription = @"PubNub service can't process request";
+                break;
             case kPNRestrictedCharacterInChannelNameError:
 
                 errorDescription = @"PubNub service process request for channel";
@@ -210,6 +223,10 @@
         case kPNInvalidJSONError:
 
             failureReason = @"Looks like one of requests tried to send malformed JSON";
+            break;
+        case kPNInvalidSubscribeOrPublishKeyError:
+
+            failureReason = @"Looks like one of subscribe or publish key is wrong";
             break;
         case kPNRestrictedCharacterInChannelNameError:
 
@@ -271,6 +288,10 @@
         case kPNInvalidJSONError:
 
             fixSuggestion = @"Review all JSON request which is sent for processing to the PubNub services";
+            break;
+        case kPNInvalidSubscribeOrPublishKeyError:
+
+            fixSuggestion = @"Review request and ensure that correct publish or(and) subscribe key was specified in it";
             break;
         case kPNRestrictedCharacterInChannelNameError:
 
