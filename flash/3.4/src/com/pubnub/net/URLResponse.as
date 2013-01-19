@@ -46,7 +46,7 @@ package com.pubnub.net {
 			_isChunked = isChunked(_headers);
 			var lines:/*String*/Array = rawString.split(END_LINE);
 			var firstLine:String = lines[0];
-			
+
 			// Regex courtesy of ruby 1.8 Net::HTTP
 			// Example, HTTP/1.1 200 OK      
 			var matches:Array = firstLine.match(/\AHTTP(?:\/(\d+\.\d+))?\s+(\d\d\d)\s*(.*)\z/);
@@ -66,7 +66,9 @@ package com.pubnub.net {
 			var separator:String = END_LINE + END_LINE
 			var ind:int = _rawData.indexOf(separator);
 			var bodyRawStr:String = _rawData.substr(ind + separator.length, _rawData.length);
-			
+
+            isChunked(headers);
+
 			if (_isChunked) {
 				var lines:/*String*/Array = bodyRawStr.split(END_LINE);
 				var len:int = lines.length;
@@ -86,7 +88,9 @@ package com.pubnub.net {
 				_body = bodyRawStr;
 			}
 		}
-		
+
+        //TODO: Refactor into URLLoader getEndSymbol
+
 		static public function isChunked(headers:Array):Boolean{
 			if (headers && headers.length > 1) {
 				for each(var o:Object  in headers) {
@@ -115,8 +119,10 @@ package com.pubnub.net {
 				if (ind != -1) {
 					var name:String = line.substring(0, ind);
 					var value:String = line.substring(ind + 1, line.length);
-					result.push( { name: name, value: value } );
-				} else {
+					result.push( { name: name, value: value.replace(/^ /,"") } );
+                    //result.add(name,value.replace(/^ /,""));
+
+                } else {
 					trace("[URLResponse] Invalid header: " + line);
 					Log.log("[URLResponse] Invalid header: " + line, Log.ERROR);
 				}
