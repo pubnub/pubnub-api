@@ -6,8 +6,10 @@ package com.pubnub.net {
 	import flash.events.*;
 	import flash.net.Socket;
 	import flash.utils.*;
-	
-	/**
+
+import org.httpclient.HttpHeader;
+
+/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
@@ -29,7 +31,9 @@ package com.pubnub.net {
 		protected var uri:URI;
 		protected var request:URLRequest;
 		protected var _response:URLResponse;
-		protected var answer:ByteArray = new ByteArray();
+        private var _header:HttpHeader;
+
+        protected var answer:ByteArray = new ByteArray();
 		protected var temp:ByteArray = new ByteArray();
 		
 		
@@ -45,7 +49,7 @@ package com.pubnub.net {
 			uri = new URI(request.url);
 			//trace(request.url);
 			socket = getSocket(request.url);
-			destroyResponce();
+			destroyRESPONSE();
 			sendRequest(request);
 			Log.logURL('REQUEST: ' + unescape(request.url), Log.DEBUG);
 		}
@@ -86,7 +90,7 @@ package com.pubnub.net {
 			}catch (err:IOError){
                 Log.log("Close: " + err, Log.WARNING);
 			}
-			destroyResponce();
+			destroyRESPONSE();
 			request = null;
 		}
 		
@@ -127,7 +131,7 @@ package com.pubnub.net {
 			var endSymbol:String = getEndSymbol(tempStr);
 			//trace('tempStr: ' + tempStr);
 			if (tempStr.indexOf(endSymbol) != -1) {
-				onResponce(answer)
+				onRESPONSE(answer)
 				answer.clear();	
 			}
 		}
@@ -141,14 +145,14 @@ package com.pubnub.net {
 			}
 		}
 		
-		protected function onResponce(bytes:ByteArray):void {
+		protected function onRESPONSE(bytes:ByteArray):void {
 			try {
 				if (request) {
 					_response = new URLResponse(bytes, request);
 					//trace(_response.body);
-					Log.log('RESPONCE: ' + _response.body, Log.DEBUG);
+					Log.log('RESPONSE: ' + _response.body, Log.DEBUG);
 				}
-				//trace('onResponce : ' + _response.body);
+				//trace('onRESPONSE : ' + _response.body);
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.COMPLETE, _response));
 			}catch (err:Error){
 				dispatchEvent(new URLLoaderEvent(URLLoaderEvent.ERROR, _response));
@@ -183,7 +187,7 @@ package com.pubnub.net {
 		
 		public function get connected():Boolean { return socket && socket.connected ; }
 		
-		private function destroyResponce():void {
+		private function destroyRESPONSE():void {
 			if (_response) {
 				_response.destroy();
 				_response = null;
@@ -244,5 +248,9 @@ package com.pubnub.net {
 		public function get response():URLResponse {
 			return _response;
 		}
+
+        public function get isChunked():Boolean {
+            return _header.contains("Transfer-Encoding", "Chunked");
+        }
 	}
 }

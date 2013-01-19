@@ -237,43 +237,43 @@ package com.pubnub.subscribe {
 			
 			if (_networkEnabled == false) return;
 			
-			var responce:Object = e.data;
+			var RESPONSE:Object = e.data;
 			
-			//Log.log('RESPONCE : '
+			//Log.log('RESPONSE : '
 			// something is wrong
-			if (responce == null) {
+			if (RESPONSE == null) {
 				doSubscribe();
 				return;
 			}
 			
-			var messages:Array = responce[0] as Array;
+			var messages:Array = RESPONSE[0] as Array;
 			
-			_lastToken = responce[1];
-			var chStr:String = responce[2];
+			_lastToken = RESPONSE[1];
+			var chStr:String = RESPONSE[2];
 			
 			/*
 			 * MX (array.length = 3)
-			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
+			 * RESPONSE = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
 			 * 
 			 * ch1 - m1
 			 * ch2 - m2,m3
 			 * ch3 - m4
 			 * 
-			 * Single channel responce (array.length = 2)
-			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken];
+			 * Single channel RESPONSE (array.length = 2)
+			 * RESPONSE = [['m1', 'm2', 'm3', 'm4'], lastToken];
 			*/
 			
-			var multiplexResponce:Boolean = chStr && chStr.length > 0 && chStr.indexOf(',') > -1;
-			var presenceResponce:Boolean = chStr && chStr.indexOf(PNPRES_PREFIX) > -1;
+			var multiplexRESPONSE:Boolean = chStr && chStr.length > 0 && chStr.indexOf(',') > -1;
+			var presenceRESPONSE:Boolean = chStr && chStr.indexOf(PNPRES_PREFIX) > -1;
 			var channel:String;
 			
-			if (presenceResponce) {
+			if (presenceRESPONSE) {
 				dispatchEvent(new SubscribeEvent(SubscribeEvent.PRESENCE, {channel:chStr, message : messages}));
 			}else {
 				if (!messages) return;
 				decryptMessages(messages);
 				var message:String;
-				if (multiplexResponce) {
+				if (multiplexRESPONSE) {
 					var chArray:Array = chStr.split(',');
 					for (var i:int = 0; i < messages.length; i++) {
 						channel = chArray[i];
