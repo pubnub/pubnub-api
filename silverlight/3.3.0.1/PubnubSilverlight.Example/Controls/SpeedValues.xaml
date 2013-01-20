@@ -1,0 +1,345 @@
+﻿<UserControl x:Class="PubnubMeterSilverlight.SpeedValues"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <Grid x:Name="dataGrid" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Standart Deviation"
+                   Foreground="#FF27363F"
+                   FontWeight="SemiBold"
+                   FontFamily="Courier New" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="18"/>
+        <Grid Grid.Row="1"
+              Background="LightGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="56ms" FontSize="18" HorizontalAlignment="Center" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       Margin="3" />
+            <TextBlock Grid.Column="1" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="2" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="3" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="4" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="5" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="6" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="7" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center" />
+
+            <Grid Background="Gray" Grid.Row="1" Margin="0,0,1,0">
+                <TextBlock Text="Fastest"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3" />
+            </Grid>
+
+            <Grid Background="Gray"
+                  Grid.Row="1" Grid.Column="1"
+                  Margin="0,0,1,0">
+                <TextBlock Text="5%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3" HorizontalAlignment="Center"/>
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="1"
+                  Grid.Column="2"
+                  Margin="0,0,1,0">
+                <TextBlock Text="10%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="1"
+                  Grid.Column="3"
+                  Margin="0,0,1,0">
+                <TextBlock Text="20%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="1"
+                  Grid.Column="4"
+                  Margin="0,0,1,0">
+                <TextBlock Text="25%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="1"
+                  Grid.Column="5"
+                  Margin="0,0,1,0">
+                <TextBlock Text="30%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="1"
+                  Grid.Column="6"
+                  Margin="0,0,1,0">
+                <TextBlock Text="40%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="1"
+                  Grid.Column="7"
+                  Margin="0,0,1,0">
+                <TextBlock Text="45%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3" />
+            </Grid>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="74ms" Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="2"
+                       Grid.Column="1"
+                       Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="2"
+                       Grid.Column="2"
+                       Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="2"
+                       Grid.Column="3"
+                       Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="2"
+                       Grid.Column="4"
+                       Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="2"
+                       Grid.Column="5"
+                       Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="2"
+                       Grid.Column="6"
+                       Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="2"
+                       Grid.Column="7"
+                       Foreground="#FF27363F"
+                       FontWeight="SemiBold"
+                       FontFamily="Courier New"
+                       FontSize="18"
+                       Margin="3"
+                       HorizontalAlignment="Center"/>
+
+            <Grid Background="Gray"
+                  Grid.Row="3"
+                  Grid.Column="0"
+                  Margin="0,0,1,0">
+                <TextBlock Text="50%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="1"
+                  Grid.Column="7"
+                  Margin="0,0,1,0">
+                <TextBlock Text="45%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="3"
+                  Grid.Column="1"
+                  Margin="0,0,1,0">
+                <TextBlock Text="66%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="3"
+                  Grid.Column="2"
+                  Margin="0,0,1,0">
+                <TextBlock Text="75%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="3"
+                  Grid.Column="3"
+                  Margin="0,0,1,0">
+                <TextBlock Text="80%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="3"
+                  Grid.Column="4"
+                  Margin="0,0,1,0">
+                <TextBlock Text="90%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="3"
+                  Grid.Column="5"
+                  Margin="0,0,1,0">
+                <TextBlock Text="95%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="3"
+                  Grid.Column="6"
+                  Margin="0,0,1,0">
+                <TextBlock Text="98%"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+            <Grid Background="Gray"
+                  Grid.Row="3"
+                  Grid.Column="7"
+                  Margin="0,0,1,0">
+                <TextBlock Text="Slowest"
+                           Foreground="#FF27363F"
+                           FontWeight="SemiBold"
+                           FontFamily="Courier New"
+                           FontSize="18"
+                           Margin="3"
+                           HorizontalAlignment="Center" />
+            </Grid>
+
+        </Grid>
+    </Grid>
+</UserControl>

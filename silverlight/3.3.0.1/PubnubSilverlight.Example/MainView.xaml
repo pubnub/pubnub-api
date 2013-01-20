@@ -45,6 +45,10 @@
 
                     <HyperlinkButton x:Name="Link2" Style="{StaticResource LinkStyle}" NavigateUri="/CodeUnitTestView" TargetName="ContentFrame" Content="Unit Test"/>
 
+                    <Rectangle x:Name="Divider2" Style="{StaticResource DividerStyle}"/>
+
+                    <HyperlinkButton x:Name="Link3" Style="{StaticResource LinkStyle}" NavigateUri="/CodePerformanceMeterView" TargetName="ContentFrame" Content="Performance Meter"/>
+
                 </StackPanel>
                 
             </Border>

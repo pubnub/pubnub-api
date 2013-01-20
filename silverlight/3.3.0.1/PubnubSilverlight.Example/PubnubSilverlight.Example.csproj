@@ -103,7 +103,20 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CustomItem.xaml.cs">
+      <DependentUpon>CustomItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PubnubDiagramItem.xaml.cs">
+      <DependentUpon>PubnubDiagramItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SpeedMetterControl.xaml.cs">
+      <DependentUpon>SpeedMetterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SpeedValues.xaml.cs">
+      <DependentUpon>SpeedValues.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Pubnub.cs" />
+    <Compile Include="Core\PubnubPerformanceMeter.cs" />
     <Compile Include="Imports\ArrayList.cs" />
     <Compile Include="Imports\AtlasWeb.cs" />
     <Compile Include="Imports\HttpEncoder.cs" />
@@ -130,6 +143,9 @@
     <Compile Include="Views\CodeExampleView.xaml.cs">
       <DependentUpon>CodeExampleView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CodePerformanceMeterView.xaml.cs">
+      <DependentUpon>CodePerformanceMeterView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CodeUnitTestView.xaml.cs">
       <DependentUpon>CodeUnitTestView.xaml</DependentUpon>
     </Compile>
@@ -148,6 +164,22 @@
     <None Include="Properties\AppManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\CustomItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PubnubDiagramItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\SpeedMetterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\SpeedValues.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -165,6 +197,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CodeExampleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CodePerformanceMeterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

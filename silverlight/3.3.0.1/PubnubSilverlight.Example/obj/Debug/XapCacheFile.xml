@@ -1,11 +1,11 @@
-﻿<xapCache source="E:\pubnub-api\silverlight\3.3.0.1\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Example.xap" wasSigned="False" certificateThumbprint="" TimeStampUrl="" lastWriteTime="1/4/2013 11:54:07 AM">
-  <file source="E:\pubnub-api\silverlight\3.3.0.1\PubnubSilverlight.Example\obj\Debug\PubnubSilverlight.Example.dll" archivePath="PubnubSilverlight.Example.dll" lastWriteTime="1/4/2013 11:54:06 AM" />
-  <file source="E:\pubnub-api\silverlight\3.3.0.1\Libraries\ConcurrentHashtable_Silverlight.dll" archivePath="ConcurrentHashtable_Silverlight.dll" lastWriteTime="1/4/2013 10:45:00 AM" />
-  <file source="E:\pubnub-api\silverlight\3.3.0.1\Libraries\Microsoft.Silverlight.Testing.dll" archivePath="Microsoft.Silverlight.Testing.dll" lastWriteTime="1/4/2013 10:45:00 AM" />
-  <file source="E:\pubnub-api\silverlight\3.3.0.1\Libraries\Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll" archivePath="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll" lastWriteTime="1/4/2013 10:45:00 AM" />
-  <file source="E:\pubnub-api\silverlight\3.3.0.1\Libraries\Newtonsoft.Json.dll" archivePath="Newtonsoft.Json.dll" lastWriteTime="1/4/2013 10:45:00 AM" />
-  <file source="E:\pubnub-api\silverlight\3.3.0.1\packages\System.Threading.Tasks.3.0.2-beta2\lib\sl50\System.Threading.Tasks.SL5.dll" archivePath="System.Threading.Tasks.SL5.dll" lastWriteTime="1/4/2013 11:48:29 AM" />
-  <file source="C:\Program Files (x86)\Microsoft SDKs\Silverlight\v5.0\Libraries\Client\System.Windows.Controls.dll" archivePath="System.Windows.Controls.dll" lastWriteTime="11/18/2011 5:40:20 PM" />
-  <file source="C:\Program Files (x86)\Microsoft SDKs\Silverlight\v5.0\Libraries\Client\System.Windows.Controls.Navigation.dll" archivePath="System.Windows.Controls.Navigation.dll" lastWriteTime="11/18/2011 5:40:20 PM" />
-  <file source="E:\pubnub-api\silverlight\3.3.0.1\PubnubSilverlight.Example\Bin\Debug\AppManifest.xaml" archivePath="AppManifest.xaml" lastWriteTime="1/4/2013 11:54:07 AM" />
+﻿<xapCache source="E:\oDesk\geremy\LastSource\silverlight\3.3.0.1\PubnubSilverlight.Example\Bin\Debug\PubnubSilverlight.Example.xap" wasSigned="False" certificateThumbprint="" TimeStampUrl="" lastWriteTime="1/20/2013 6:14:25 PM">
+  <file source="E:\oDesk\geremy\LastSource\silverlight\3.3.0.1\PubnubSilverlight.Example\obj\Debug\PubnubSilverlight.Example.dll" archivePath="PubnubSilverlight.Example.dll" lastWriteTime="1/20/2013 5:25:59 PM" />
+  <file source="E:\oDesk\geremy\LastSource\silverlight\3.3.0.1\Libraries\ConcurrentHashtable_Silverlight.dll" archivePath="ConcurrentHashtable_Silverlight.dll" lastWriteTime="1/4/2013 10:45:02 AM" />
+  <file source="E:\oDesk\geremy\LastSource\silverlight\3.3.0.1\Libraries\Microsoft.Silverlight.Testing.dll" archivePath="Microsoft.Silverlight.Testing.dll" lastWriteTime="1/4/2013 10:45:02 AM" />
+  <file source="E:\oDesk\geremy\LastSource\silverlight\3.3.0.1\Libraries\Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll" archivePath="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll" lastWriteTime="1/4/2013 10:45:02 AM" />
+  <file source="E:\oDesk\geremy\LastSource\silverlight\3.3.0.1\Libraries\Newtonsoft.Json.dll" archivePath="Newtonsoft.Json.dll" lastWriteTime="1/4/2013 10:45:02 AM" />
+  <file source="E:\oDesk\geremy\LastSource\silverlight\3.3.0.1\packages\System.Threading.Tasks.3.0.2-beta2\lib\sl50\System.Threading.Tasks.SL5.dll" archivePath="System.Threading.Tasks.SL5.dll" lastWriteTime="1/10/2013 1:18:24 PM" />
+  <file source="C:\Program Files\Microsoft SDKs\Silverlight\v5.0\Libraries\Client\System.Windows.Controls.dll" archivePath="System.Windows.Controls.dll" lastWriteTime="11/18/2011 5:40:20 PM" />
+  <file source="C:\Program Files\Microsoft SDKs\Silverlight\v5.0\Libraries\Client\System.Windows.Controls.Navigation.dll" archivePath="System.Windows.Controls.Navigation.dll" lastWriteTime="11/18/2011 5:40:20 PM" />
+  <file source="E:\oDesk\geremy\LastSource\silverlight\3.3.0.1\PubnubSilverlight.Example\Bin\Debug\AppManifest.xaml" archivePath="AppManifest.xaml" lastWriteTime="1/18/2013 10:30:22 PM" />
 </xapCache>

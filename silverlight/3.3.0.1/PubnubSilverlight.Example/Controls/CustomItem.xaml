@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="PubNub_Messaging.CustomItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300" d:DesignWidth="400" >
+
+    <Grid x:Name="LayoutRoot" >
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="{Binding Value}" Grid.Row="0" Width="{Binding Width}" Foreground="#a3a0ab" FontSize="20" HorizontalAlignment="Center"  VerticalAlignment="Center" />
+
+        <Rectangle Grid.Row="1"
+                   Fill="LightGray"/>
+
+        <TextBlock Text="{Binding Info}" Grid.Row="1" Width="{Binding Width}" Foreground="#FF615C57" FontSize="20" FontWeight="ExtraBold" HorizontalAlignment="Center"  VerticalAlignment="Center" >
+            <TextBlock.Effect>
+                <DropShadowEffect Color="White" Direction="0" ShadowDepth="0" BlurRadius="5" />
+            </TextBlock.Effect>
+        </TextBlock>
+
+    </Grid>
+</UserControl>
