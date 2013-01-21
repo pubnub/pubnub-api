@@ -115,6 +115,9 @@ public class URLLoader extends EventDispatcher {
         socket = normalSocket;
     }
 
+    // When we get socket data. Fire ONResponse() when the response has been complete.
+    // We determine if its complete by either Content-size or Chunked strategies.
+
     protected function onSocketData(e:ProgressEvent):void {
         //trace('------onSocketData------' + socket.bytesAvailable);
         temp.clear();
