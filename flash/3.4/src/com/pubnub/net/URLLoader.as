@@ -139,7 +139,7 @@ public class URLLoader extends EventDispatcher {
             onRESPONSE(answer)
             answer.clear();
         } else {
-            Log.log("onSocketData: did not find EOF in response.", Log.DEBUG);
+            Log.log("Waiting for end of response...", Log.DEBUG);
         }
     }
 
@@ -151,8 +151,10 @@ public class URLLoader extends EventDispatcher {
         if (_headers) {
 
             if (_headers.contains("Transfer-Encoding", "chunked")) {
+                Log.log(Log.DEBUG, "Received chunked server response.");
                 return END_SYMBOL_CHUNKED;
             } else {
+                Log.log(Log.DEBUG, "Received non-chunked server response.");
                 return END_SYMBOL;
             }
         }
