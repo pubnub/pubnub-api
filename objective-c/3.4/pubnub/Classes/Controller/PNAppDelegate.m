@@ -7,10 +7,12 @@
 //
 
 #import "PNAppDelegate.h"
-#include <stdlib.h>
-#import "PNViewController.h"
-#import "PNMessage.h"
+#import "PNIdentificationViewController.h"
+#import "PNMainViewController.h"
+#import "PNObservationCenter.h"
 #import "PNError+Protected.h"
+#import "PNPresenceEvent.h"
+#import "PNMessage.h"
 
 
 #pragma mark Private interface methods
@@ -35,13 +37,45 @@
 
 - (void)initializePubNubClient {
 
-    // Performing initial PubNub client configuration
-    [PubNub setupWithConfiguration:[PNConfiguration defaultConfiguration] andDelegate:self];
-    
-    // If identity is set to 'nil' then PubNub client
-    // will provide unique identifier instead
-    [PubNub setClientIdentifier:nil];
-    
+    [PubNub setDelegate:self];
+
+    // Subscribe application delegate on subscription updates
+    // (events when client subscribe on some channel)
+    [[PNObservationCenter defaultCenter] addClientChannelSubscriptionObserver:self
+                                                            withCallbackBlock:^(NSArray *channels,
+                                                                                BOOL subscribed,
+                                                                                PNError *subscriptionError) {
+
+                                if (subscribed) {
+
+                                    PNLog(PNLogGeneralLevel, self,
+                                          @"{BLOCK-P} PubNub client subscribed on channels: %@",
+                                          channels);
+                                }
+                                else {
+
+                                    PNLog(PNLogGeneralLevel, self,
+                                          @"{BLOCK-P} PubNub client subscription failed with error: %@",
+                                          subscriptionError);
+                                }
+                            }];
+
+    // Subscribe on message arrival events with block
+    [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
+                                                         withBlock:^(PNMessage *message) {
+
+                                     PNLog(PNLogGeneralLevel, self, @"{BLOCK-P} PubNubc client received new message: %@",
+                                           message);
+                            }];
+
+    // Subscribe on presence event arrival events with block
+    [[PNObservationCenter defaultCenter] addPresenceEventObserver:self
+                                                         withBlock:^(PNPresenceEvent *presenceEvent) {
+
+                                     PNLog(PNLogGeneralLevel, self, @"{BLOCK-P} PubNubc client received new event: %@",
+                                           presenceEvent);
+                            }];
+     /*
     // Initialize connection to PubNub service
     [PubNub connectWithSuccessBlock:^(NSString *origin) {
 
@@ -70,6 +104,7 @@
                              PNLog(PNLogGeneralLevel, self, @"{BLOCK} FAILED TO CONNECTE WITH ERROR: %@",
                                    connectionError);
                          }];
+                         */
 }
 
 
@@ -79,7 +114,7 @@
 
     // Configure application window and its content
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.rootViewController = [PNViewController  new];
+    self.window.rootViewController = [PNIdentificationViewController  new];
     [self.window makeKeyAndVisible];
     
     [self initializePubNubClient];
@@ -105,18 +140,15 @@
     
     PNLog(PNLogGeneralLevel, self, @"PubNub client successfully connected to PubNub origin at: %@", origin);
 
-    [PubNub requestServerTimeTokenWithCompletionBlock:^(NSNumber *timeToken, PNError *error) {
 
-        if (error == nil) {
+    int64_t delayInSeconds = 1.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 
-            PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client successfully fetched time token: %@", timeToken);
-        }
-        else {
-
-            PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client failed to recieve time token because of error: "
-                    "%@", error);
-        }
-    }];
+        PNMainViewController *mainViewController = [PNMainViewController new];
+        mainViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+        [self.window.rootViewController presentModalViewController:mainViewController animated:YES];
+    });
 }
 
 - (void)pubnubClient:(PubNub *)client connectionDidFailWithError:(PNError *)error {
@@ -172,6 +204,9 @@
 
                     [PubNub sendMessage:@"\"Hello my lovely PubNub client\""
                               toChannel:message.channel];
+
+                    [PubNub sendMessage:@"\"Привет всем ;)\""
+                              toChannel:message.channel];
                 }
                 break;
         }
@@ -216,6 +251,26 @@
 - (void)pubnubClient:(PubNub *)client didSendMessage:(PNMessage *)message {
 
     PNLog(PNLogGeneralLevel, self, @"PubNub client sent message: %@", message);
+}
+
+- (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message {
+
+    PNLog(PNLogGeneralLevel, self, @"PubNub client received message: %@", message);
+}
+
+- (void)pubnubClient:(PubNub *)client didReceivePresenceEvent:(PNPresenceEvent *)event {
+
+    PNLog(PNLogGeneralLevel, self, @"PubNub client received presence event: %@", event);
+}
+
+- (void)pubnubClient:(PubNub *)client
+        didReceiveMessageHistory:(NSArray *)messages
+        forChannel:(PNChannel *)channel
+        startingFrom:(NSDate *)startDate
+        to:(NSDate *)endDate {
+
+    PNLog(PNLogGeneralLevel, self, @"PubNub client received history for %@ starting from %@ to %@: %@",
+          channel, startDate, endDate, messages);
 }
 
 #pragma mark -

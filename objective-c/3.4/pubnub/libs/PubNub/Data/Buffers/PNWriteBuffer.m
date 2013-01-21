@@ -55,13 +55,14 @@ static NSUInteger const kPNWriteBufferSize = 4096;
     
     // Check whether initialization successful or not
     if((self = [super init])) {
-        
+
+        NSString *httpPayload = [request HTTPPayload];
         self.requestIdentifier = request.identifier;
-        self.length = sizeof(char)*[[request HTTPPayload] length];
+        self.length = sizeof(char)*[httpPayload length];
         
         // Allocate buffer for HTTP payload
         buffer = malloc((size_t)self.length);
-        strncpy(buffer, [[request HTTPPayload] UTF8String], (size_t)self.length);
+        strncpy(buffer, [httpPayload UTF8String], (size_t)self.length);
     }
     
     

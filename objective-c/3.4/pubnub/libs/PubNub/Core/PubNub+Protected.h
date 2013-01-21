@@ -61,23 +61,33 @@ typedef enum _PNPubNubClientState {
 #pragma mark - Properties
 
 // Stores reference on configuration which was used to
-// perform intial PubNub client initialization
+// perform initial PubNub client initialization
 @property (nonatomic, strong) PNConfiguration *configuration;
 
 // Stores reference on current client identifier
 @property (nonatomic, strong) NSString *clientIdentifier;
 
-// Stores unique client intialization session identifier
+// Stores unique client initialization session identifier
 // (created each time when PubNub stack is configured
 // after application launch)
 @property (nonatomic, strong) NSString *launchSessionIdentifier;
+
+
+#pragma mark - Class methods
+
+/**
+ * Return reference on client identifier which is ready
+ * to be sent as part of GET HTTP request (encoded with %
+ * which allow to use it to send in HTTP requests)
+ */
++ (NSString *)escapedClientIdentifier;
 
 
 #pragma mark - Instance methods
 
 /**
  * Return reference on reachability instance which is used to
- * treck network state
+ * track network state
  */
 - (PNReachability *)reachability;
 

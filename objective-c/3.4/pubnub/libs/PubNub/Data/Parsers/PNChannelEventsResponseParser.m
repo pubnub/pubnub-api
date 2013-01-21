@@ -71,12 +71,14 @@ static NSUInteger const kPNResponseTimeTokenElementIndexForEvent = 1;
 
         NSArray *responseData = response.response;
         self.events = [PNChannelEvents new];
+        NSDate *eventDate = nil;
 
         // Check whether time token is available or not
         if ([responseData count] > kPNResponseTimeTokenElementIndexForEvent) {
 
             id timeToken = [responseData objectAtIndex:kPNResponseTimeTokenElementIndexForEvent];
             self.events.timeToken = PNNumberFromUnsignedLongLongString(timeToken);
+            eventDate = [NSDate dateWithTimeIntervalSince1970:PNUnixTimeStampFromTimeToken(self.events.timeToken)];
         }
 
         // Retrieving list of events
@@ -97,8 +99,6 @@ static NSUInteger const kPNResponseTimeTokenElementIndexForEvent = 1;
                                                  NSUInteger eventIdx,
                                                  BOOL *eventEnumeratorStop) {
 
-                BOOL isPresenceEvent = NO;
-
                 PNChannel *channel = nil;
                 if ([channels count] > 0) {
 
@@ -118,15 +118,12 @@ static NSUInteger const kPNResponseTimeTokenElementIndexForEvent = 1;
                 // Checking whether event presence event or not
                 if ([event isKindOfClass:[NSDictionary class]] && [PNPresenceEvent isPresenceEventObject:event]) {
 
-                    isPresenceEvent = YES;
-
                     eventObject = [PNPresenceEvent presenceEventForResponse:event];
                     ((PNPresenceEvent *)eventObject).channel = channel;
                 }
                 else {
 
-                    eventObject = [PNMessage new];
-                    ((PNMessage *)eventObject).message = event;
+                    eventObject = [PNMessage messageFromServiceResponse:event onChannel:channel atDate:eventDate];
                 }
 
                 [eventObjects addObject:eventObject];

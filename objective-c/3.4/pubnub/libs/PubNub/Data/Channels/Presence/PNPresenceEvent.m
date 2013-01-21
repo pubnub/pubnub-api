@@ -86,7 +86,7 @@
 
         // Extracting event date from response
         NSNumber *timestamp = [presenceResponse valueForKey:PNPresenceEventDataKeys.timestamp];
-        self.date = [NSDate dateWithTimeIntervalSince1970:[timestamp longLongValue]];
+        self.date = [NSDate dateWithTimeIntervalSince1970:PNUnixTimeStampFromTimeToken(timestamp)];
 
         // Extracting user identifier from response
         self.uuid = [presenceResponse valueForKey:PNPresenceEventDataKeys.uuid];

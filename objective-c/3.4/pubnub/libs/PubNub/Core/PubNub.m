@@ -24,6 +24,7 @@
 #import "PNServiceChannel.h"
 #import "PNRequestsImport.h"
 #import "PNMessage.h"
+#import "PNPresenceEvent+Protected.h"
 
 
 #pragma mark Static
@@ -163,6 +164,12 @@ shouldObserveProcessing:(BOOL)shouldObserveProcessing;
  * message sending failed because of error
  */
 - (void)notifyDelegateAboutMessageSendingFailedWithError:(PNError *)error;
+
+/**
+ * This method will notify delegate about that
+ * history loading error occurred
+ */
+- (void)notifyDelegateAboutHistoryDownloadFailedWithError:(PNError *)error;
 
 /**
  * This method allow to ensure that delegate can
@@ -492,8 +499,18 @@ shouldObserveProcessing:(BOOL)shouldObserveProcessing;
     return [self sharedInstance].clientIdentifier;
 }
 
++ (NSString *)escapedClientIdentifier {
+
+    return [[self clientIdentifier] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
+
 
 #pragma mark - Channels subscription management
+
++ (NSArray *)subscribedChannels {
+
+    return [[[self sharedInstance].messagingChannel subscribedChannels] allObjects];
+}
 
 + (BOOL)isSubscribedOnChannel:(PNChannel *)channel {
 
@@ -759,12 +776,10 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
     NSInteger statusCode = [[self sharedInstance] requestExecutionPossibilityStatusCode];
     if (statusCode == 0) {
 
-        [[PNObservationCenter defaultCenter] removeMessageProcessingObserver:self oneTimeEvent:YES];
+        [[PNObservationCenter defaultCenter] removeClientAsMessageProcessingObserver];
         if (success) {
 
-            [[PNObservationCenter defaultCenter] addMessageProcessingObserver:self
-                                                                    withBlock:success
-                                                                 oneTimeEvent:YES];
+            [[PNObservationCenter defaultCenter] addClientAsMessageProcessingObserverWithBlock:success];
         }
 
         messageObject = [[self sharedInstance].serviceChannel sendMessage:message toChannel:channel];
@@ -797,6 +812,104 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 + (void)sendMessage:(PNMessage *)message withCompletionBlock:(PNClientMessageProcessingBlock)success {
 
     [self sendMessage:message.message toChannel:message.channel withCompletionBlock:success];
+}
+
+
+#pragma mark - History methods
+
++ (void)requestFullHistoryForChannel:(PNChannel *)channel {
+
+    [self requestFullHistoryForChannel:channel withCompletionBlock:nil];
+}
+
++ (void)requestFullHistoryForChannel:(PNChannel *)channel
+                 withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock {
+
+    [self requestHistoryForChannel:channel from:nil to:nil withCompletionBlock:handleBlock];
+}
+
++ (void)requestHistoryForChannel:(PNChannel *)channel from:(NSDate *)startDate to:(NSDate *)endDate {
+
+    [self requestHistoryForChannel:channel from:startDate to:endDate withCompletionBlock:nil];
+}
+
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+             withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock {
+
+    [self requestHistoryForChannel:channel from:startDate to:endDate limit:0 withCompletionBlock:handleBlock];
+}
+
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+                           limit:(NSUInteger)limit {
+
+    [self requestHistoryForChannel:channel from:startDate to:endDate limit:limit withCompletionBlock:nil];
+}
+
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+                           limit:(NSUInteger)limit
+             withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock {
+
+    [self requestHistoryForChannel:channel
+                              from:startDate
+                                to:endDate
+                             limit:limit
+                    reverseHistory:NO
+               withCompletionBlock:handleBlock];
+}
+
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+                           limit:(NSUInteger)limit
+                  reverseHistory:(BOOL)shouldReverseMessageHistory {
+
+    [self requestHistoryForChannel:channel
+                              from:startDate
+                                to:endDate
+                             limit:limit
+                    reverseHistory:shouldReverseMessageHistory
+               withCompletionBlock:nil];
+}
+
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+                           limit:(NSUInteger)limit
+                  reverseHistory:(BOOL)shouldReverseMessageHistory
+             withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock {
+
+    // Check whether client is able to send request or not
+    NSInteger statusCode = [[self sharedInstance] requestExecutionPossibilityStatusCode];
+    if (statusCode == 0) {
+
+        [[PNObservationCenter defaultCenter] removeClientAsHistoryDownloadObserver];
+        if (handleBlock) {
+
+            [[PNObservationCenter defaultCenter] addClientAsHistoryDownloadObserverWithBlock:handleBlock];
+        }
+
+        PNMessageHistoryRequest *request = [PNMessageHistoryRequest messageHistoryRequestForChannel:channel
+                                                                                               from:startDate
+                                                                                                 to:endDate
+                                                                                              limit:limit
+                                                                                     reverseHistory:shouldReverseMessageHistory];
+
+        [[self sharedInstance] sendRequest:request shouldObserveProcessing:YES];
+    }
+    // Looks like client can't send request because of some reasons
+    else {
+
+        PNError *sendingError = [PNError errorWithCode:statusCode];
+        sendingError.associatedObject = channel;
+
+        [[self sharedInstance] notifyDelegateAboutHistoryDownloadFailedWithError:sendingError];
+    }
 }
 
 
@@ -921,6 +1034,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
     // connection channel or not
     if ([request isKindOfClass:[PNLeaveRequest class]] ||
         [request isKindOfClass:[PNTimeTokenRequest class]] ||
+        [request isKindOfClass:[PNMessageHistoryRequest class]] ||
         [request isKindOfClass:[PNLatencyMeasureRequest class]]) {
         
         shouldSendOnMessageChannel = NO;
@@ -1207,6 +1321,11 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
     [self sendNotification:kPNClientMessageSendingDidFailNotification withObject:error];
 }
 
+- (void)notifyDelegateAboutHistoryDownloadFailedWithError:(PNError *)error {
+
+    [self sendNotification:kPNClientDidReceiveMessagesHistoryNotification withObject:error];
+}
+
 - (void)notifyDelegateAboutError:(PNError *)error {
         
     if ([self.delegate respondsToSelector:@selector(pubnubClient:error:)]) {
@@ -1293,22 +1412,41 @@ didFailUnsubscribeOnChannels:(NSArray *)channels
     [self notifyDelegateAboutUnsubscriptionFailWithError:error];
 }
 
-- (void)messagingChannel:(PNMessagingChannel *)messagingChannel
-       didReceiveMessage:(PNMessage *)message
-               onChannel:(PNChannel*)channel {
+- (void)messagingChannel:(PNMessagingChannel *)messagingChannel didReceiveMessage:(PNMessage *)message {
 
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT RECEIVED MESSAGE FROM CHANNEL
+    // Check whether delegate can handle new message arrival or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didReceiveMessage:)]) {
+
+        [self.delegate performSelector:@selector(pubnubClient:didReceiveMessage:)
+                            withObject:self
+                            withObject:message];
+    }
+
+    [self sendNotification:kPNClientDidReceiveMessageNotification withObject:message];
 }
 
 /**
  * Sent to delegate when client received presence event from channel
  * on which it subscribed
  */
-- (void)messagingChannel:(PNMessagingChannel *)messagingChannel
-         didReceiveEvent:(PNPresenceEvent *)event
-               onChannel:(PNChannel *)channel {
+- (void)messagingChannel:(PNMessagingChannel *)messagingChannel didReceiveEvent:(PNPresenceEvent *)event {
 
-    // TODO: NOTIFY DELEGATE AND SEND NOTIFICATION ABOUT THAT CLIENT RECEIVED PRESENCE EVENT FROM CHANNEL
+    // Try to update cached channel data
+    PNChannel *channel = event.channel;
+    if (channel) {
+
+        [channel updateWithEvent:event];
+    }
+
+    // Check whether delegate can handle presence event arrival or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didReceivePresenceEvent:)]) {
+
+        [self.delegate performSelector:@selector(pubnubClient:didReceivePresenceEvent:)
+                            withObject:self
+                            withObject:event];
+    }
+
+    [self sendNotification:kPNClientDidReceivePresenceEventNotification withObject:event];
 }
 
 
@@ -1367,8 +1505,8 @@ didReceiveNetworkLatency:(double)latency
 }
 
 - (void)serviceChannel:(PNServiceChannel *)channel
-      didFailMessageSend:(PNMessage *)message
-               withError:(PNError *)error{
+    didFailMessageSend:(PNMessage *)message
+             withError:(PNError *)error {
 
     error.associatedObject = message;
     [self notifyDelegateAboutMessageSendingFailedWithError:error];

@@ -39,6 +39,10 @@ struct PNServiceResponseCallbacksStruct {
     // retrieve current time token from
     // PubNub service
     __unsafe_unretained NSString *timeTokenCallback;
+
+    // Name of the function which is used to
+    // retrieve channel history
+    __unsafe_unretained NSString *messageHistoryCallback;
 };
 
 static struct PNServiceResponseCallbacksStruct PNServiceResponseCallbacks = {
@@ -47,7 +51,8 @@ static struct PNServiceResponseCallbacksStruct PNServiceResponseCallbacks = {
     .subscriptionCallback = @"s",
     .leaveChannelCallback = @"lv",
     .sendMessageCallback = @"m",
-    .timeTokenCallback = @"t"
+    .timeTokenCallback = @"t",
+    .messageHistoryCallback = @"h"
 };
 
 

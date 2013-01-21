@@ -45,6 +45,10 @@ static struct PNPresenceEventDataKeysStruct PNPresenceEventDataKeys = {
 // is fired
 @property (nonatomic, assign) PNChannel *channel;
 
+// Stores reference on presence occurrence
+// date
+@property (nonatomic, strong) NSDate *date;
+
 #pragma mark -
 
 

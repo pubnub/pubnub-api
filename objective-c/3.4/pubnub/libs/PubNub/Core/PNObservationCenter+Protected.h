@@ -76,13 +76,23 @@
  * After event will be fired this observation request will be
  * removed from queue.
  */
-- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageProcessingBlock)handleBlock
-                                         oneTimeEvent:(BOOL)isOneTimeEventObserver;
+- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageProcessingBlock)handleBlock;
 - (void)removeClientAsMessageProcessingObserver;
 - (void)addMessageProcessingObserver:(id)observer
                            withBlock:(PNClientMessageProcessingBlock)handleBlock
                         oneTimeEvent:(BOOL)isOneTimeEventObserver;
 - (void)removeMessageProcessingObserver:(id)observer oneTimeEvent:(BOOL)isOneTimeEventObserver;
+
+
+#pragma mark - History observers
+
+/**
+ * Add/remove observers for history messages download
+ * After event will be fired this observation request will be
+ * removed from queue.
+ */
+- (void)addClientAsHistoryDownloadObserverWithBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;
+- (void)removeClientAsHistoryDownloadObserver;
 
 
 #pragma mark -

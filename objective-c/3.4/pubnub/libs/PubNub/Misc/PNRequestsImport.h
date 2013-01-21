@@ -18,6 +18,7 @@
 #import "PNSubscribeRequest+Protected.h"
 #import "PNServiceResponseCallbacks.h"
 #import "PNLeaveRequest+Protected.h"
+#import "PNMessageHistoryRequest.h"
 #import "PNBaseRequest+Protected.h"
 #import "PNLatencyMeasureRequest.h"
 #import "PNTimeTokenRequest.h"

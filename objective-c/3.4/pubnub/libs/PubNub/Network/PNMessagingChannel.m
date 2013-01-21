@@ -29,6 +29,10 @@
 #import "PNActionResponseParser.h"
 #import "PNChannelEvents.h"
 #import "PNChannelEvents+Protected.h"
+#import "PNOperationStatus.h"
+#import "PNPresenceEvent.h"
+#import "PNPresenceEvent+Protected.h"
+#import "PNChannelPresence+Protected.h"
 
 
 #pragma mark - Private interface methods
@@ -473,9 +477,21 @@
           request);
 
     PNResponseParser *parser = [PNResponseParser parserForResponse:response];
+    id parsedData = [parser parsedData];
     PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" PARSED DATA: %@", parser);
 
-    if (![[parser parsedData] isKindOfClass:[PNError class]]) {
+    if ([parsedData isKindOfClass:[PNError class]] ||
+        ([parsedData isKindOfClass:[PNOperationStatus class]] &&
+         ((PNOperationStatus *)parsedData).error != nil)) {
+
+        if ([parsedData isKindOfClass:[PNOperationStatus class]]) {
+
+            parsedData = ((PNOperationStatus *)parsedData).error;
+        }
+
+        [self.messagingDelegate messagingChannel:self didFailSubscribeOnChannels:request.channels withError:parsedData];
+    }
+    else {
 
         PNChannelEvents *events = [parser parsedData];
 
@@ -496,15 +512,49 @@
         // (messages, presence)
         if ([events.events count] > 0) {
 
-            // TODO: NOTIFY DELEGATE ON MESSAGES AND PRESENCE EVENTS
+            NSArray *channels = [self channelsWithOutPresenceFromList:[self.subscribedChannels allObjects]];
+            PNChannel *channel = nil;
+            if ([channels count] == 0) {
+
+                channels = [self.subscribedChannels allObjects];
+                channel = [(PNChannelPresence *)[channels lastObject] observedChannel];
+            }
+            else if ([channels count] == 1) {
+
+                channel = (PNChannel *)[channels lastObject];
+            }
+
+            [events.events enumerateObjectsUsingBlock:^(id event, NSUInteger eventIdx, BOOL *eventsEnumeratorStop) {
+
+                if ([event isKindOfClass:[PNPresenceEvent class]]) {
+
+                    // Check whether channel was assigned to presence event or not
+                    // (channel may not arrive with server response if client
+                    // subscribed only for single channel)
+                    if (((PNPresenceEvent *)event).channel == nil) {
+
+                        ((PNPresenceEvent *)event).channel = channel;
+                    }
+
+                    [self.messagingDelegate messagingChannel:self didReceiveEvent:event];
+                }
+                else {
+
+                    // Check whether channel was assigned to message or not
+                    // (channel may not arrive with server response if client
+                    // subscribed only for single channel)
+                    if (((PNMessage *)event).channel == nil) {
+
+                        ((PNMessage *)event).channel = channel;
+                    }
+
+                    [self.messagingDelegate messagingChannel:self didReceiveMessage:event];
+                }
+            }];
         }
 
         // Subscribe to the channels with new update time token
         [self updateSubscriptionForChannels:(request != nil ? request.channels : [self.subscribedChannels allObjects])];
-    }
-    else {
-
-        // TODO: NOTIFY DELEGATE THAT SUBSCRIBE ERROR OCCURRED
     }
 }
 

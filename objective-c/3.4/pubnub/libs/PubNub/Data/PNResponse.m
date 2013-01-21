@@ -137,8 +137,9 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
 }
 
 - (NSString *)decodedResponse {
-    
-    return [[NSString alloc] initWithUTF8String:[self.content bytes]];
+
+    NSString *encodedString = [[NSString alloc] initWithData:self.content encoding:NSUTF8StringEncoding];
+    return [encodedString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (NSString *)description {

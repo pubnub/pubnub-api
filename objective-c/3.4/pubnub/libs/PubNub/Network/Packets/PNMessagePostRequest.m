@@ -32,6 +32,14 @@
 @property (nonatomic, strong) PNMessage *message;
 
 
+#pragma mark - Instance methods
+
+/**
+ * Retrieve message post request signature
+ */
+- (NSString *)signature;
+
+
 @end
 
 
@@ -77,12 +85,32 @@
                     kPNRequestAPIVersionPrefix,
                     [PubNub sharedInstance].configuration.publishKey,
                     [PubNub sharedInstance].configuration.subscriptionKey,
-                    [PubNub sharedInstance].configuration.secretKey,
+                    [self signature],
                     [self.message.channel escapedName],
                     [self callbackMethodName],
                     self.shortIdentifier,
                     escapedMessage,
-                    [PubNub clientIdentifier]];
+                    [PubNub escapedClientIdentifier]];
+}
+
+- (NSString *)signature {
+
+    NSString *signature = @"0";
+    NSString *secretKey = [PubNub sharedInstance].configuration.secretKey;
+    if ([secretKey length] > 0) {
+
+        NSString *signedRequestPath = [NSString stringWithFormat:@"%@/%@/%@/%@/%@",
+                        [PubNub sharedInstance].configuration.publishKey,
+                        [PubNub sharedInstance].configuration.subscriptionKey,
+                        secretKey,
+                        [self.message.channel escapedName],
+                        self.message.message];
+
+        signature = PNHMACSHA256String(secretKey, signedRequestPath);
+    }
+
+
+    return signature;
 }
 
 #pragma mark -

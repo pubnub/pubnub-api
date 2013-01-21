@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "PNImports.h"
 
 
 @interface PNAppDelegate : UIResponder <UIApplicationDelegate, PNDelegate>

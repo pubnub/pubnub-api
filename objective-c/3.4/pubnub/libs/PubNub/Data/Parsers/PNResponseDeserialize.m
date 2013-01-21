@@ -269,7 +269,7 @@
 
                 NSRange responseContentRange = NSMakeRange(contentSeparatorEndIndex, contentSize);
                 NSData *responseData = [data subdataWithRange:responseContentRange];
-                PNLog(PNLogGeneralLevel, self, @"\nRAW DATA: %@", [[NSString alloc] initWithData:responseData
+                PNLog(PNLogGeneralLevel, self, @"RAW DATA: %@", [[NSString alloc] initWithData:responseData
                                                                                       encoding:NSUTF8StringEncoding]);
                 response = [PNResponse responseWithContent:responseData size:responseRange.length code:statusCode];
             }

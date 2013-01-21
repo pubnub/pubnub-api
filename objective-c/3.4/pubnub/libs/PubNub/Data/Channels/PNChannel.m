@@ -12,6 +12,7 @@
 
 #import "PNChannel+Protected.h"
 #import "PNChannelPresence+Protected.h"
+#import "PNPresenceEvent.h"
 
 
 #pragma mark Static
@@ -28,25 +29,10 @@ static NSMutableDictionary *_channelsCache = nil;
 
 // Channel name
 @property (nonatomic, copy) NSString *name;
-
-// Last state update time
 @property (nonatomic, copy) NSString *updateTimeToken;
-
-// Stores number of participants for particular
-// channel (this number fetched from presence API
-// if it is used and updated when requested list
-// of participants)
-// INFO: it may differ in count from participants
-//       name because of nature of this value
-//       update logic
+@property (nonatomic, strong) NSDate *presenceUpdateDate;
 @property (nonatomic, assign) NSUInteger participantsCount;
-
-// Stores list of participants names for particular
-// channel (updated and initially filled only by
-// participants list request)
 @property (nonatomic, strong) NSMutableArray *participantsList;
-
-// Stores whether channel presence observation is required
 @property (nonatomic, assign, getter = shouldObservePresence) BOOL observePresence;
 
 
@@ -182,9 +168,30 @@ static NSMutableDictionary *_channelsCache = nil;
     return self.participantsList;
 }
 
+- (void)updateWithEvent:(PNPresenceEvent *)event {
+
+    self.participantsCount = event.occupancy;
+
+
+    // Checking whether someone is joined to channel or not
+    if (event.type == PNPresenceEventJoin) {
+
+        [self.participantsList addObject:event.uuid];
+    }
+    // Looks like someone leaved or was kicked by timeout
+    else {
+
+        [self.participantsList removeObject:event.uuid];
+    }
+
+    self.presenceUpdateDate = [NSDate date];
+}
+
 - (NSString *)escapedName {
 
-    return [self.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *escapedName = [self.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+    return [escapedName stringByReplacingOccurrencesOfString:@"/" withString:@"%2f"];
 }
 
 - (NSString *)description {

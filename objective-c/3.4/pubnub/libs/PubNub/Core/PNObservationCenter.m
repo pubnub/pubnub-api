@@ -11,8 +11,11 @@
 //
 //
 
-#import "PubNub+Protected.h"
+#import "PNObservationCenter+Protected.h"
+#import "PNMessagesHistory+Protected.h"
 #import "PNError+Protected.h"
+#import "PubNub+Protected.h"
+#import "PNPresenceEvent.h"
 #import "PNMessage.h"
 
 
@@ -28,6 +31,9 @@ struct PNObservationEventsStruct {
     __unsafe_unretained NSString *clientUnsubscribeFromChannels;
     __unsafe_unretained NSString *clientTimeTokenReceivingComplete;
     __unsafe_unretained NSString *clientMessageSendCompletion;
+    __unsafe_unretained NSString *clientReceivedMessage;
+    __unsafe_unretained NSString *clientReceivedPresenceEvent;
+    __unsafe_unretained NSString *clientReceivedHistory;
 };
 
 struct PNObservationObserverDataStruct {
@@ -41,7 +47,10 @@ static struct PNObservationEventsStruct PNObservationEvents = {
     .clientTimeTokenReceivingComplete = @"clientReceivingTimeTokenEvent",
     .clientSubscriptionOnChannels = @"clientSubscribtionOnChannelsEvent",
     .clientUnsubscribeFromChannels = @"clientUnsubscribeFromChannelsEvent",
-    .clientMessageSendCompletion = @"clientMessageSendCompletionEvent"
+    .clientMessageSendCompletion = @"clientMessageSendCompletionEvent",
+    .clientReceivedMessage = @"clientReceivedMessageEvent",
+    .clientReceivedPresenceEvent = @"clientReceivedPresenceEvent",
+    .clientReceivedHistory = @"clientReceivedHistoryEvent"
 };
 
 static struct PNObservationObserverDataStruct PNObservationObserverData = {
@@ -93,7 +102,12 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 - (void)handleClientSubscriptionProcess:(NSNotification *)notification;
 - (void)handleClientUnsubscriptionProcess:(NSNotification *)notification;
 - (void)handleClientMessageProcessingStateChange:(NSNotification *)notification;
+- (void)handleClientDidReceiveMessage:(NSNotification *)notification;
+- (void)handleClientDidReceivePresenceEvent:(NSNotification *)notification;
+- (void)handleClientMessageHistoryProcess:(NSNotification *)notification;
+- (void)handleClientHereNowProcess:(NSNotification *)notification;
 - (void)handleClientCompletedTimeTokenProcessing:(NSNotification *)notification;
+
 
 #pragma mark - Misc methods
 
@@ -177,7 +191,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
                                                    object:nil];
 
 
-        // Handle message processinf events
+        // Handle message processing events
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleClientMessageProcessingStateChange:)
                                                      name:kPNClientWillSendMessageNotification
@@ -189,6 +203,26 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleClientMessageProcessingStateChange:)
                                                      name:kPNClientMessageSendingDidFailNotification
+                                                   object:nil];
+
+        // Handle messages/presence event arrival
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientDidReceiveMessage:)
+                                                     name:kPNClientDidReceiveMessageNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientDidReceivePresenceEvent:)
+                                                     name:kPNClientDidReceivePresenceEventNotification
+                                                   object:nil];
+
+        // Handle message history events arrival
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientMessageHistoryProcess:)
+                                                     name:kPNClientDidReceiveMessagesHistoryNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientMessageHistoryProcess:)
+                                                     name:kPNClientHistoryDownloadFailedWithErrorNotification
                                                    object:nil];
         
         
@@ -391,8 +425,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
 #pragma mark - Message sending observers
 
-- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageProcessingBlock)handleBlock
-                                         oneTimeEvent:(BOOL)isOneTimeEventObserver {
+- (void)addClientAsMessageProcessingObserverWithBlock:(PNClientMessageProcessingBlock)handleBlock {
 
     [self addMessageProcessingObserver:[PubNub sharedInstance] withBlock:handleBlock oneTimeEvent:YES];
 
@@ -427,6 +460,57 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
     [self removeObserver:observer
                 forEvent:PNObservationEvents.clientMessageSendCompletion
             oneTimeEvent:isOneTimeEventObserver];
+}
+
+- (void)addMessageReceiveObserver:(id)observer withBlock:(PNClientMessageHandlingBlock)handleBlock {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientReceivedMessage
+         oneTimeEvent:NO
+            withBlock:handleBlock];
+}
+
+- (void)removeMessageReceiveObserver:(id)observer {
+
+    [self removeObserver:observer
+                forEvent:PNObservationEvents.clientReceivedMessage
+            oneTimeEvent:NO];
+}
+
+
+#pragma mark - Presence observing
+
+- (void)addPresenceEventObserver:(id)observer withBlock:(PNClientPresenceEventHandlingBlock)handleBlock {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientReceivedPresenceEvent
+         oneTimeEvent:NO
+            withBlock:handleBlock];
+}
+
+- (void)removePresenceEventObserver:(id)observer {
+
+    [self removeObserver:observer
+                forEvent:PNObservationEvents.clientReceivedPresenceEvent
+            oneTimeEvent:NO];
+}
+
+
+#pragma mark - History observers
+
+- (void)addClientAsHistoryDownloadObserverWithBlock:(PNClientHistoryLoadHandlingBlock)handleBlock {
+
+    [self addObserver:[PubNub sharedInstance]
+             forEvent:PNObservationEvents.clientReceivedHistory
+         oneTimeEvent:YES
+            withBlock:handleBlock];
+}
+
+- (void)removeClientAsHistoryDownloadObserver {
+
+    [self removeObserver:[PubNub sharedInstance]
+                forEvent:PNObservationEvents.clientReceivedHistory
+            oneTimeEvent:YES];
 }
 
 
@@ -573,6 +657,78 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
         // Clean one time observers for specific event
         [self removeOneTimeObserversForEvent:PNObservationEvents.clientMessageSendCompletion];
     }
+}
+
+- (void)handleClientDidReceiveMessage:(NSNotification *)notification {
+
+    // Retrieve reference on message which was received
+    PNMessage *message = (PNMessage *)notification.userInfo;
+
+
+    // Retrieving list of observers
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientReceivedMessage];
+
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                            NSUInteger observerDataIdx,
+                                            BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientMessageHandlingBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(message);
+        }
+    }];
+}
+
+- (void)handleClientDidReceivePresenceEvent:(NSNotification *)notification {
+
+    // Retrieve reference on presence event which was received
+    PNPresenceEvent *presenceEvent = (PNPresenceEvent *)notification.userInfo;
+
+
+    // Retrieving list of observers
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientReceivedPresenceEvent];
+
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                            NSUInteger observerDataIdx,
+                                            BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientPresenceEventHandlingBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(presenceEvent);
+        }
+    }];
+}
+
+- (void)handleClientMessageHistoryProcess:(NSNotification *)notification {
+
+    // Retrieve reference on history object
+    PNMessagesHistory *history = (PNMessagesHistory *)notification.userInfo;
+
+    // Retrieving list of observers (including one time and persistent observers)
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientReceivedHistory];
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                                NSUInteger observerDataIdx,
+                                                BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientHistoryLoadHandlingBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(history.messages, history.channel, history.startDate, history.endDate);
+        }
+    }];
+
+
+    // Clean one time observers for specific event
+    [self removeOneTimeObserversForEvent:PNObservationEvents.clientReceivedHistory];
+}
+
+- (void)handleClientHereNowProcess:(NSNotification *)notification {
+
 }
 
 - (void)handleClientCompletedTimeTokenProcessing:(NSNotification *)notification {

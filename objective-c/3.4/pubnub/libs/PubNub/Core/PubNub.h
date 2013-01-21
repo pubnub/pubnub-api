@@ -105,6 +105,11 @@
 #pragma mark - Channels subscription management
 
 /**
+ * Retrieve list of channels on which client is subscribed
+ */
++ (NSArray *)subscribedChannels;
+
+/**
  * Check whether client subscribed for specified channel or not
  */
 + (BOOL)isSubscribedOnChannel:(PNChannel *)channel;
@@ -350,6 +355,96 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
  * PNObservationCenter methods for this purpose.
  */
 + (void)sendMessage:(PNMessage *)message withCompletionBlock:(PNClientMessageProcessingBlock)success;
+
+
+#pragma mark - History methods
+
+/**
+ * Fetch all history for specified channel
+ */
++ (void)requestFullHistoryForChannel:(PNChannel *)channel;
+
+/**
+ * Same as +requestFullHistoryForChannel: but allow to specify
+ * completion block which will be called when messages history will
+ * be received.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track history loading events from many places, use
+ * PNObservationCenter methods for this purpose.
+ */
++ (void)requestFullHistoryForChannel:(PNChannel *)channel withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;
+
+/**
+ * Fetch history for specified channel in defined
+ * time frame
+ */
++ (void)requestHistoryForChannel:(PNChannel *)channel from:(NSDate *)startDate to:(NSDate *)endDate;
+
+/**
+ * Same as +requestHistoryForChannel:from:to: but allow to specify
+ * completion block which will be called when messages history will
+ * be received.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track history loading events from many places, use
+ * PNObservationCenter methods for this purpose.
+ */
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+             withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;
+
+/**
+ * Fetch history for specified channel in defined
+ * time frame with specified limits
+ */
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+                           limit:(NSUInteger)limit;
+
+/**
+ * Same as +requestHistoryForChannel:from:to:limit: but allow to specify
+ * completion block which will be called when messages history will
+ * be received.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track history loading events from many places, use
+ * PNObservationCenter methods for this purpose.
+ */
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+                           limit:(NSUInteger)limit
+             withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;
+
+/**
+ * Fetch history for specified channel in defined
+ * time frame, limit and whether response should
+ * be inverted or not
+ */
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+                           limit:(NSUInteger)limit
+                  reverseHistory:(BOOL)shouldReverseMessageHistory;
+
+/**
+ * Same as +requestHistoryForChannel:from:to:limit:reverseHistory:
+ * but allow to specify completion block which will be called when
+ * messages history will be received.
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track history loading events from many places, use
+ * PNObservationCenter methods for this purpose.
+ */
++ (void)requestHistoryForChannel:(PNChannel *)channel
+                            from:(NSDate *)startDate
+                              to:(NSDate *)endDate
+                           limit:(NSUInteger)limit
+                  reverseHistory:(BOOL)shouldReverseMessageHistory
+             withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;
 
 
 #pragma mark - Instance methods

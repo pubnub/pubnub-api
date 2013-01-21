@@ -33,9 +33,6 @@
 // Stores reference on message body
 @property (nonatomic, strong) id message;
 
-// Stores whether message has been sent or not
-@property (nonatomic, assign, getter = isSent) BOOL sent;
-
 // Stores reference on date when this message was received
 // (doesn't work for history, only for presence events)
 @property (nonatomic, strong) NSDate *receiveDate;
@@ -84,6 +81,17 @@
     return messageObject;
 }
 
++ (PNMessage *)messageFromServiceResponse:(id)messageBody onChannel:(PNChannel *)channel atDate:(NSDate *)messagePostDate {
+
+    PNMessage *message = [[self class] new];
+    message.message = messageBody;
+    message.channel = channel;
+    message.receiveDate = messagePostDate;
+
+
+    return message;
+}
+
 
 #pragma mark - Instance methods
 
@@ -102,9 +110,11 @@
 
 - (NSString *)description {
 
-    return [NSString stringWithFormat:@"Message (%p) information: {message: %@, channel: %@}",
+    return [NSString stringWithFormat:@"%@ (%p): <message: %@, date: %@, channel: %@>",
+                                      NSStringFromClass([self class]),
                                       self,
                                       self.message,
+                                      self.receiveDate,
                                       self.channel.name];
 }
 

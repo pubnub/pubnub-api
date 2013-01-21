@@ -100,7 +100,7 @@
             [self callbackMethodName],
             self.shortIdentifier,
             self.updateTimeToken,
-            [PubNub clientIdentifier]];
+            [PubNub escapedClientIdentifier]];
 }
 
 @end

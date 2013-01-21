@@ -35,6 +35,10 @@
 // messaging channel events
 @property (nonatomic, pn_desired_weak) id<PNMessageChannelDelegate> messagingDelegate;
 
+// Stores list of channels (including presence)
+// on which this client is subscribed now
+@property (nonatomic, readonly, strong) NSMutableSet *subscribedChannels;
+
 
 #pragma mark - Class methods
 

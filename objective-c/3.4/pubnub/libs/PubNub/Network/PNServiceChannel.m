@@ -135,15 +135,9 @@
             // Retrieve reference on message which has been sent
             PNMessage *message = ((PNMessagePostRequest *)request).message;
 
-            if (![parsedData isKindOfClass:[PNError class]] &&
-                [parsedData isKindOfClass:[PNOperationStatus class]] &&
-                ((PNOperationStatus *)parsedData).error == nil) {
-
-                PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" MESSAGE HAS BEEN SENT. SERVICE RESPONSE: %@", parsedData);
-
-                [self.serviceDelegate serviceChannel:self didSendMessage:message];
-            }
-            else {
+            if ([parsedData isKindOfClass:[PNError class]] ||
+                ([parsedData isKindOfClass:[PNOperationStatus class]] &&
+                 ((PNOperationStatus *)parsedData).error != nil)) {
 
                 if ([parsedData isKindOfClass:[PNOperationStatus class]]) {
 
@@ -153,6 +147,17 @@
                 PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" MESSAGE SENDING FAILED WITH ERROR: %@", parsedData);
 
                 [self.serviceDelegate serviceChannel:self didFailMessageSend:message withError:parsedData];
+            }
+            else {
+
+                PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" MESSAGE HAS BEEN SENT. SERVICE RESPONSE: %@", parsedData);
+
+                [self.serviceDelegate serviceChannel:self didSendMessage:message];
+            }
+
+            if (![parsedData isKindOfClass:[PNError class]] &&
+                [parsedData isKindOfClass:[PNOperationStatus class]] &&
+                ((PNOperationStatus *)parsedData).error == nil) {
             }
         }
         else {
@@ -200,9 +205,6 @@
 
 
 #pragma mark - Handler methods
-
-- (void)handleMessageRequestCompletion:(PNMessagePostRequest *)request withResponse:(PNResponse *)response {
-}
 
 
 #pragma mark - Connection delegate methods
@@ -277,6 +279,8 @@
 
         // Check whether this is 'Post message' request or not
         if ([request isKindOfClass:[PNMessagePostRequest class]]) {
+
+            PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" DID SEND MESSAGE REQUEST");
 
             // Notify delegate about that message post request will be sent now
             [self.serviceDelegate serviceChannel:self didSendMessage:((PNMessagePostRequest *)request).message];

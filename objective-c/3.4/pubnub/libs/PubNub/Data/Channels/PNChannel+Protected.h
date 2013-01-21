@@ -12,6 +12,7 @@
 #pragma mark Class forward
 
 @class PNChannelPresence;
+@class PNPresenceEvent;
 
 
 #pragma mark Protected interface methods
@@ -57,6 +58,12 @@
  * in GET HTTP request to the PubNub service
  */
 - (NSString *)escapedName;
+
+/**
+ * Updating cached channel data with information arrived
+ * from presence event
+ */
+- (void)updateWithEvent:(PNPresenceEvent *)event;
 
 /**
  * Update channel update time token

@@ -52,17 +52,13 @@ didFailUnsubscribeOnChannels:(NSArray *)channels
  * Sent to delegate when client received message from channel
  * on which it subscribed
  */
-- (void)messagingChannel:(PNMessagingChannel *)messagingChannel
-       didReceiveMessage:(PNMessage *)message
-               onChannel:(PNChannel*)channel;
+- (void)messagingChannel:(PNMessagingChannel *)messagingChannel didReceiveMessage:(PNMessage *)message;
 
 /**
  * Sent to delegate when client received presence event from channel
  * on which it subscribed
  */
-- (void)messagingChannel:(PNMessagingChannel *)messagingChannel
-         didReceiveEvent:(PNPresenceEvent *)event
-               onChannel:(PNChannel *)channel;
+- (void)messagingChannel:(PNMessagingChannel *)messagingChannel didReceiveEvent:(PNPresenceEvent *)event;
 
 #pragma mark -
 

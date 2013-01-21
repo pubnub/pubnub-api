@@ -87,4 +87,29 @@ static NSString * const kPNClientDidSendMessageNotification = @"PNClientDidSendM
 // will be passed as property of PNError "associatedObject")
 static NSString * const kPNClientMessageSendingDidFailNotification = @"PNClientMessageSendingDidFailNotification";
 
+// Sent when PubNub client received new message from
+// Pubnub service on subscribed channels (received message
+// will be passed in userInfo like PNMessage instance)
+static NSString * const kPNClientDidReceiveMessageNotification = @"PNClientDidReceiveMessageNotification";
+
+// Sent when PubNub client received new presence event from
+// PubNub service on channels on which presence observing
+// is enable (presence event object will be passed with
+// userInfo in PNPresenceEvent object instance)
+static NSString * const kPNClientDidReceivePresenceEventNotification = @"PNClientDidReceivePresenceEventNotification";
+
+// Sent when PubNub client successfully downloaded history
+// messages for specified channel (history object will be
+// passed in userInfo as PNMessageHistory instance)
+static NSString * const kPNClientDidReceiveMessagesHistoryNotification = @"PNClientDidReceiveMessagesHistoryNotification";
+
+// Sent when PubNub client failed to download messages history
+// for specified channel (error message will be passed in
+// userInfo as PNError and channel for which client can't
+// download history will be passed in error's "associatedObject")
+static NSString * const kPNClientHistoryDownloadFailedWithErrorNotification = @"PNClientHistoryDownloadFailedWithErrorNotification";
+
+// Sent when PubNub client successfully downloaded 'here now'
+// (participants list) request for specific channel ()
+
 #endif

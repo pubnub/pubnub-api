@@ -11,6 +11,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CommonCrypto/CommonCryptor.h>
+#import <CommonCrypto/CommonHMAC.h>
+#import "NSData+PNAdditions.h"
 
 
 #ifndef PNMacro_h
@@ -63,7 +66,7 @@ void PNLog(PNLogLevels level, id sender, ...) {
     NSString *formattedLogString = [[NSString alloc] initWithFormat:logFormatString arguments:args];
     va_end(args);
 
-    formattedLog = [NSString stringWithFormat:@"(%p) %%@%@", weakSender, formattedLogString];
+    formattedLog = [NSString stringWithFormat:@"%@ (%p) %%@", NSStringFromClass([weakSender class]), weakSender];
     NSString *additionalData = nil;
 
     if ((level == PNLogGeneralLevel && PNLOG_GENERAL_LOGGING_ENABLED) ||
@@ -89,18 +92,18 @@ void PNLog(PNLogLevels level, id sender, ...) {
 
     if(formattedLog != nil && additionalData != nil) {
 
-        NSLog(@"%@", [NSString stringWithFormat:formattedLog, additionalData]);
+        NSLog(@"%@%@", [NSString stringWithFormat:formattedLog, additionalData], formattedLogString);
     }
 }
 
 
-static void PNCFRelease(CFTypeRef cfobject);
-void PNCFRelease(CFTypeRef cfobject) {
+static void PNCFRelease(CFTypeRef CFObject);
+void PNCFRelease(CFTypeRef CFObject) {
 
-    if (cfobject != NULL) {
+    if (CFObject != NULL) {
 
-        CFRelease(cfobject);
-        cfobject = NULL;
+        CFRelease(CFObject);
+        CFObject = NULL;
     }
 }
 
@@ -140,6 +143,29 @@ NSString* PNShortenedIdentifierFromUUID(NSString *uuid) {
     return shortenedUUID;
 }
 
+static NSTimeInterval PNUnixTimeStampFromTimeToken(NSNumber *timeToken);
+NSTimeInterval PNUnixTimeStampFromTimeToken(NSNumber *timeToken) {
+
+    unsigned long long int longLongValue = [timeToken unsignedLongLongValue];
+    NSTimeInterval timeStamp = longLongValue;
+    if (longLongValue > INT32_MAX) {
+
+        timeStamp = longLongValue/10000000;
+    }
+
+
+    return timeStamp;
+}
+
+static NSNumber* PNTimeTokenFromDate(NSDate *date);
+NSNumber* PNTimeTokenFromDate(NSDate *date) {
+
+    unsigned long long int longLongValue = [date timeIntervalSince1970]*10000000;
+
+
+    return [NSNumber numberWithUnsignedLongLong:longLongValue];
+}
+
 static NSNumber* PNNumberFromUnsignedLongLongString(id timeToken);
 NSNumber* PNNumberFromUnsignedLongLongString(id timeToken) {
 
@@ -163,6 +189,21 @@ NSString* PNStringFromUnsignedLongLongNumber(id timeToken) {
 
 
     return timeToken;
+}
+
+static NSString *PNHMACSHA256String(NSString *key, NSString *signedData);
+NSString *PNHMACSHA256String(NSString *key, NSString *signedData) {
+
+    const char *cKey = [key cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *cSignedData = [signedData cStringUsingEncoding:NSUTF8StringEncoding];
+
+    unsigned char cHMAC[CC_SHA256_DIGEST_LENGTH];
+
+    CCHmac(kCCHmacAlgSHA256, cKey, strlen(cKey), cSignedData, strlen(cSignedData), cHMAC);
+    NSData *HMACData = [[NSData alloc] initWithBytes:cHMAC length:sizeof(cHMAC)];
+
+
+    return [HMACData HEXString];
 }
 
 

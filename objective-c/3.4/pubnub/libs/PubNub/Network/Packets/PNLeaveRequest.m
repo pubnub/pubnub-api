@@ -81,7 +81,7 @@
             kPNRequestAPIVersionPrefix,
             [PubNub sharedInstance].configuration.subscriptionKey,
             [[self.channels valueForKey:@"escapedName"] componentsJoinedByString:@","],
-            [PubNub clientIdentifier],
+            [PubNub escapedClientIdentifier],
             [self callbackMethodName],
             self.shortIdentifier];
 }

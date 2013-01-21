@@ -50,9 +50,13 @@ static NSInteger const kPNInvalidJSONError = 107;
 // wrong subscribe/publish key
 static NSInteger const kPNInvalidSubscribeOrPublishKeyError = 108;
 
+// PubNub service refuse to process message sending because
+// it is too long
+static NSInteger const kPNTooLongMessageError = 109;
+
 // PubNub service reported that restricted characters has been
 // used in channel name and request can't be processed
-static NSInteger const kPNRestrictedCharacterInChannelNameError = 109;
+static NSInteger const kPNRestrictedCharacterInChannelNameError = 110;
 
 
 
@@ -60,18 +64,18 @@ static NSInteger const kPNRestrictedCharacterInChannelNameError = 109;
 
 // Developer tries to submit empty (nil) request by passing
 // no message object to PubNub service
-static NSInteger const kPNMessageObjectError = 110;
+static NSInteger const kPNMessageObjectError = 111;
 
 // Developer tried to submit message w/o text to PubNub service
-static NSInteger const kPNMessageHasNoContentError = 111;
+static NSInteger const kPNMessageHasNoContentError = 112;
 
 // Developer tried to submit message w/o target channel to
 // PubNub service
-static NSInteger const kPNMessageHasNoChannelError = 112;
+static NSInteger const kPNMessageHasNoChannelError = 113;
 
 
 #pragma mark - Connection (transport layer) error codes
 
 // Was unable to configure connection because of some
 // errors
-static NSInteger const kPNConnectionErrorOnSetup = 113;
+static NSInteger const kPNConnectionErrorOnSetup = 114;

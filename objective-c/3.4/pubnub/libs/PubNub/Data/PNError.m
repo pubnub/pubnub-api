@@ -85,6 +85,15 @@
             errorCode = kPNInvalidSubscribeOrPublishKeyError;
         }
     }
+    // Check whether error caused by message content or not
+    else if ([errorMessage rangeOfString:@"Message"].location != NSNotFound) {
+
+        // Check whether message is too long or not
+        if ([errorMessage rangeOfString:@"Too Large"].location != NSNotFound) {
+
+            errorCode = kPNTooLongMessageError;
+        }
+    }
     else {
 
     }
@@ -171,6 +180,7 @@
                 break;
             case kPNMessageHasNoContentError:
             case kPNMessageHasNoChannelError:
+            case kPNTooLongMessageError:
             case kPNMessageObjectError:
 
                 errorDescription = @"PubNub client can't submit message";
@@ -222,7 +232,7 @@
             break;
         case kPNInvalidJSONError:
 
-            failureReason = @"Looks like one of requests tried to send malformed JSON";
+            failureReason = @"Looks like one of requests tried to send malformed JSON or message hase been changed after signature was generated";
             break;
         case kPNInvalidSubscribeOrPublishKeyError:
 
@@ -243,6 +253,10 @@
         case kPNMessageObjectError:
 
             failureReason = @"Looks like there is no message object has been passed";
+            break;
+        case kPNTooLongMessageError:
+
+            failureReason = @"Looks like message is too large and can't be processed";
             break;
         default:
 
@@ -287,7 +301,7 @@
             break;
         case kPNInvalidJSONError:
 
-            fixSuggestion = @"Review all JSON request which is sent for processing to the PubNub services";
+            fixSuggestion = @"Review all JSON request which is sent for processing to the PubNub services. Ensure that you don't try to change message while request is prepared.";
             break;
         case kPNInvalidSubscribeOrPublishKeyError:
 
@@ -304,6 +318,10 @@
         case kPNMessageHasNoChannelError:
 
             fixSuggestion = @"Ensure that you specified valid channel as message target";
+            break;
+        case kPNTooLongMessageError:
+
+            fixSuggestion = @"Please visit https://admin.pubnub.com and change maximum message size.";
             break;
         case kPNMessageObjectError:
 

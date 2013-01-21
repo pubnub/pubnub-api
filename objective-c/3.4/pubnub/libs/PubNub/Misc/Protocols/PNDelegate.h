@@ -15,6 +15,7 @@
 #pragma mark Class forward
 
 @class PubNub, PNError, PNMessage;
+@class PNPresenceEvent;
 
 
 @protocol PNDelegate <NSObject>
@@ -124,6 +125,28 @@
  * the PubNub service
  */
 - (void)pubnubClient:(PubNub *)client didSendMessage:(PNMessage *)message;
+
+/**
+ * Called on delegate when client received message from remote
+ * PubNub service
+ */
+- (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message;
+
+/**
+ * Called on delegate when client received presence event from remote
+ * PubNub service
+ */
+- (void)pubnubClient:(PubNub *)client didReceivePresenceEvent:(PNPresenceEvent *)event;
+
+/**
+ * Called on delegate when client completed message history download
+ * for specific channel
+ */
+- (void)pubnubClient:(PubNub *)client
+        didReceiveMessageHistory:(NSArray *)messages
+        forChannel:(PNChannel *)channel
+        startingFrom:(NSDate *)startDate
+        to:(NSDate *)endDate;
 
 
 #pragma mark - Configuration override delegate methods

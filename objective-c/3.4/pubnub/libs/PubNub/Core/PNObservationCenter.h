@@ -67,7 +67,7 @@
 - (void)removeTimeTokenReceivingObserver:(id)observer;
 
 
-#pragma mark - Message sending observers
+#pragma mark - Message processing observers
 
 /**
  * Add/remove observers for message sending process (completion
@@ -75,6 +75,22 @@
  */
 - (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageProcessingBlock)handleBlock;
 - (void)removeMessageProcessingObserver:(id)observer;
+
+/**
+ * Add/remove observers for message arrival (messages arrived from
+ * PubNub service on subscribed channels)
+ */
+- (void)addMessageReceiveObserver:(id)observer withBlock:(PNClientMessageHandlingBlock)handleBlock;
+- (void)removeMessageReceiveObserver:(id)observer;
+
+
+#pragma mark - Presence observing
+
+/**
+ * Add/remove channels presence event observing
+ */
+- (void)addPresenceEventObserver:(id)observer withBlock:(PNClientPresenceEventHandlingBlock)handleBlock;
+- (void)removePresenceEventObserver:(id)observer;
 
 
 

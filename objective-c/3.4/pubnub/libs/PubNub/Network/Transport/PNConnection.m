@@ -618,7 +618,6 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     // Clean up cached data
     [self unscheduleRequestsExecution];
     _proxySettings = nil;
-    PNCFRelease(_streamSecuritySettings);
 
 
     [self destroyReadStream:self.socketReadStream];
@@ -1357,6 +1356,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
     [self closeConnection];
     _delegate = nil;
     _proxySettings = nil;
+
     PNCFRelease(_streamSecuritySettings);
 }
 

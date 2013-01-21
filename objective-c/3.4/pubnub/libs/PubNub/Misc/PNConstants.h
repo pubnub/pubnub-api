@@ -26,7 +26,7 @@ static NSString * const kPNClientName = @"Obj-C-MacOS";
 #endif
 
 
-#pragma mark - Request contants
+#pragma mark - Request constants
 
 // Stores resource path prefix which will allow to change
 // API version on the flight

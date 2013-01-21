@@ -15,9 +15,9 @@ static NSString * const kPNOriginHost = @"pubsub.pubnub.com";
 
 // Stores reference on keys which is required
 // to establish connection and send packets to it
-static NSString * const kPNPublishKey = @"demorg";
-static NSString * const kPNSubscriptionKey = @"demorg";
-static NSString * const kPNSecretKey = @"0";
+static NSString * const kPNPublishKey = @"demo";
+static NSString * const kPNSubscriptionKey = @"demo";
+static NSString * const kPNSecretKey = nil;
 static NSString * const kPNCipherKey = nil;
 static BOOL const kPNSecureConnectionRequired = YES;
 static BOOL const kPNShouldAutoReconnectClient = YES;

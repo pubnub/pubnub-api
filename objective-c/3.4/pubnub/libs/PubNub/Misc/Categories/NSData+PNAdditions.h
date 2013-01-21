@@ -21,6 +21,12 @@
  */
 - (unsigned long long int)unsignedLongLongFromHEXData;
 
+/**
+ * Allow to extract HEX string from bytes stored
+ * inside object
+ */
+- (NSString *)HEXString;
+
 #pragma mark -
 
 

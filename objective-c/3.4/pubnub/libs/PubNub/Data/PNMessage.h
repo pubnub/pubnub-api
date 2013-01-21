@@ -34,9 +34,6 @@
 // Stores reference on message body
 @property (nonatomic, readonly, strong) id message;
 
-// Stores whether message has been sent or not
-@property (nonatomic, readonly, assign, getter = isSent) BOOL sent;
-
 // Stores reference on date when this message was received
 // (doesn't work for history, only for presence events)
 @property (nonatomic, readonly, strong) NSDate *receiveDate;
