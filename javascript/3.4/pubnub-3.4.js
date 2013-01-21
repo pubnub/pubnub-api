@@ -29,14 +29,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 --------------------------------------------------------------------------- */
-
-/* =-====================================================================-= */
-/* =-====================================================================-= */
-/* =-=========================     UTIL     =============================-= */
-/* =-====================================================================-= */
-/* =-====================================================================-= */
-
-window['PUBNUB'] || (function() {
+window['PUBNUB'] || (function(){
 
 /**
  * UTIL LOCALS
@@ -45,7 +38,10 @@ var ASYNC           = 'async'
 ,   URLBIT          = '/'
 ,   PARAMSBIT       = '&'
 ,   DEF_TIMEOUT     = 10000
+,   SWF             = 'https://pubnub.a.ssl.fastly.net/pubnub.swf'
 ,   UA              = navigator.userAgent
+,   SECOND          = PUBNUB_COMMON_JS.SECOND
+,   timeout         = PUBNUB_COMMON_JS.timeout
 ,   XORIGN          = UA.indexOf('MSIE 6') == -1;
 
 /**
@@ -109,7 +105,7 @@ function error(message) { console['error'](message) }
  */
 function search( elements, start ) {
     var list = [];
-    each( elements.split(/\s+/), function(el) {
+    PUBNUB_COMMON_JS.each( elements.split(/\s+/), function(el) {
         each( (start || document).getElementsByTagName(el), function(node) {
             list.push(node);
         } );
@@ -126,7 +122,7 @@ function search( elements, start ) {
  * } );
  */
 function bind( type, el, fun ) {
-    each( type.split(','), function(etype) {
+    PUBNUB_COMMON_JS.each( type.split(','), function(etype) {
         var rapfun = function(e) {
             if (!e) e = window.event;
             if (!fun(e)) {
@@ -353,8 +349,6 @@ function ajax( setup ) {
 /* =-====================================================================-= */
 
 var PDIV          = $('pubnub') || {}
-,   READY         = 0
-,   READY_BUFFER  = []
 ,   CREATE_PUBNUB = function(setup) {
     var TIMETOKEN     = 0
     ,   PUBLISH_KEY   = setup['publish_key']   || ''
@@ -368,21 +362,21 @@ var PDIV          = $('pubnub') || {}
         // Expose PUBNUB Functions
         'xdr'      : xdr,
         'db'       : db,
-        'each'     : each,
-        'map'      : map,
-        'grep'     : grep,
+        'each'     : PUBNUB_COMMON_JS.each,
+        'map'      : PUBNUB_COMMON_JS.map,
+        'grep'     : PUBNUB_COMMON_JS.grep,
         'css'      : css,
         '$'        : $,
         'create'   : create,
         'bind'     : bind,
-        'supplant' : supplant,
+        'supplant' : PUBNUB_COMMON_JS.supplant,
         'head'     : head,
         'search'   : search,
         'attr'     : attr,
-        'now'      : rnow,
-        'unique'   : unique,
-        'events'   : events,
-        'updater'  : updater,
+        'now'      : PUBNUB_COMMON_JS.rnow,
+        'unique'   : PUBNUB_COMMON_JS.unique,
+        'events'   : PUBNUB_COMMON_JS.events,
+        'updater'  : PUBNUB_COMMON_JS.updater,
         'init'     : CREATE_PUBNUB
     };
 
@@ -396,7 +390,7 @@ var PDIV          = $('pubnub') || {}
             return true;
     } );};
 
-    SELF.__proto__= PN_API(setup);
+    SELF.__proto__= PUBNUB_COMMON_JS.PN_API(setup);
     return SELF;
 };
 
@@ -453,6 +447,7 @@ FDomainRequest['id'] = SECOND;
 window['jQuery'] && (window['jQuery']['PUBNUB'] = PUBNUB);
 
 // For Modern JS + Testling.js - http://testling.com/
-typeof(module) !== 'undefined' && (module['exports'] = PUBNUB) && PUBNUB.ready();
+//typeof exports !== 'undefined' && (exports.PUBNUB = PUBNUB) && PUBNUB.ready();
 
+typeof(module) !== 'undefined' && (module['exports'] = PUBNUB) && ready();
 })();

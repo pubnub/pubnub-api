@@ -1,17 +1,12 @@
-
-var     NOW             = 1
-,       SWF             = 'https://pubnub.a.ssl.fastly.net/pubnub.swf'
-,       REPL            = /{([\w\-]+)}/g
-,       SUB_TIMEOUT     = 310000
-,       PRESENCE_SUFFIX = '-pnpres'
-,       SECOND          = 1000
-,       READY           = 0
-,       READY_BUFFER    = [] ;
+(function(exports) {
 
 /**
 * UTILITIES
 */
-function unique() { return'x'+ ++NOW+''+(+new Date) }
+function unique() { 
+	var NOW = 1;
+	return'x'+ ++NOW+''+(+new Date);
+}
 function rnow()   { return+new Date }
 
 /**
@@ -22,6 +17,7 @@ function rnow()   { return+new Date }
 function timeout( fun, wait ) {
     return setTimeout( fun, wait );
 }
+exports.timeout = timeout;
 
 /**
 * NEXTORIGIN
@@ -79,7 +75,8 @@ function each( o, f ) {
         o.hasOwnProperty(i) &&
         f.call( o[i], i, o[i] );
     }
-}
+} 
+exports.each = each;
 
 /**
 * MAP
@@ -91,6 +88,7 @@ function map( list, fun ) {
     each( list || [], function( k, v ) { fin.push(fun( k, v )) } );
     return fin;
 }
+exports.map = map;
 
 /**
 * GREP
@@ -135,6 +133,7 @@ var events = {
 * var text = supplant( 'Hello {name}!', { name : 'John' } )
 */
 function supplant( str, values ) {
+ 	var REPL = /{([\w\-]+)}/g;
     return str.replace( REPL, function( _, match ) {
         return values[match] || _
     } );
@@ -181,10 +180,15 @@ function generate_channel_list(channels) {
     return list.sort();
 }
 
+SECOND = 1000;
+exports.SECOND = SECOND;
 
-
-function PN_API(setup) {
+exports.PN_API = function(setup) {
     var CHANNELS      = {}
+    ,   READY_BUFFER  = [] 
+    ,   READY         = 0 
+    ,   PRESENCE_SUFFIX = '-pnpres'
+    ,   SUB_TIMEOUT   = 310000
     ,   SUB_CALLBACK  = 0
     ,   SUB_CHANNEL   = 0
     ,   SUB_RECEIVER  = 0
@@ -637,4 +641,7 @@ function PN_API(setup) {
     bind_leave();
 
     return SELF;
-}
+
+
+};
+})(typeof exports === 'undefined'? this['PUBNUB_COMMON_JS']={}: exports);
