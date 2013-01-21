@@ -290,7 +290,8 @@ shouldObserveProcessing:(BOOL)shouldObserveProcessing;
 
                     // Check whether PubNub client was just created and there
                     // is no resources for reuse or not
-                    if ([self sharedInstance].state == PNPubNubClientStateCreated) {
+                    if ([self sharedInstance].state == PNPubNubClientStateCreated ||
+                        [self sharedInstance].state == PNPubNubClientStateDisconnected) {
                         
                         [self sharedInstance].state = PNPubNubClientStateConnecting;
                         

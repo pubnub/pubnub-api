@@ -14,13 +14,16 @@
 #import "PNMainViewController.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <QuartzCore/QuartzCore.h>
+#import "PNObservationCenter+Protected.h"
+#import "PNChannelCreationDelegate.h"
 #import "PNDataManager.h"
 #import "PNMacro.h"
+#import "PNChannelCreationView.h"
 
 
 #pragma mark Private interface methods
 
-@interface PNMainViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface PNMainViewController () <UITableViewDelegate, UITableViewDataSource, PNChannelCreationDelegate>
 
 
 #pragma mark - Properties
@@ -43,25 +46,26 @@
 // Stores reference on channels section background image
 @property (nonatomic, pn_desired_weak) IBOutlet UIImageView *channelsBackgroundImageView;
 
-// Stores reference on channels information section background image
-@property (nonatomic, pn_desired_weak) IBOutlet UIImageView *channelsInformationBackgroundImageView;
-
 // Stores reference on button which allow to subscribe on new channel
 @property (nonatomic, pn_desired_weak) IBOutlet UIButton *addChannelButton;
 
+// Stores reference on button which allow to disconnect client
 @property (nonatomic, pn_desired_weak) IBOutlet UIButton *disconnectButton;
 
+// Stores reference on button which allow to see information about client and
+// change some of the options
 @property (nonatomic, pn_desired_weak) IBOutlet UIButton *clientInformationButton;
+
+// Stores reference on button which allow to retrieve server time from PubNub service
+@property (nonatomic, pn_desired_weak) IBOutlet UIButton *serverTimeButton;
+
+@property (nonatomic, pn_desired_weak) IBOutlet UILabel *recentServerTimeLabel;
 
 // Stores reference on utility panel background view
 @property (nonatomic, pn_desired_weak) IBOutlet UIView *utilityPanelBackgroundView;
 
 // Stores reference on channel information holding view
 @property (nonatomic, pn_desired_weak) IBOutlet UIView *channelInformationView;
-
-// Stores reference on button which allow to configure
-// history viewing option
-@property (nonatomic, pn_desired_weak) IBOutlet UIButton *channelHistoryButton;
 
 
 #pragma mark - Instance methods
@@ -76,13 +80,7 @@
 - (IBAction)disconnectButtonTapped:(id)sender;
 - (IBAction)clientInformationButtonTapper:(id)sender;
 - (IBAction)addChannelButtonTapped:(id)sender;
-- (IBAction)channelHistoryButtonTapped:(id)sender;
-
-
-#pragma mark - Misc methods
-
-- (void)showChannelInformationForChannel:(PNChannel *)channel;
-- (void)hideChannelInformation;
+- (IBAction)getServerTimeButtonTapped:(id)sender;
 
 
 @end
@@ -102,6 +100,38 @@
 
 
     [self prepareInterface];
+
+
+    PNMainViewController *weakSelf = self;
+    [[PNObservationCenter defaultCenter] addTimeTokenReceivingObserver:self
+                                                     withCallbackBlock:^(NSNumber *timeToken, PNError *error) {
+
+         NSString *alertMessage = nil;
+         if (!error) {
+
+             NSDateFormatter *dateFormatter = [NSDateFormatter new];
+             dateFormatter.dateFormat = @"HH:mm:ss MM/dd/yy";
+             NSDate *timeTokenDate = [NSDate dateWithTimeIntervalSince1970:PNUnixTimeStampFromTimeToken(timeToken)];
+
+             alertMessage = [NSString stringWithFormat:@"Server time token: %@\nDate: %@",
+                                                       timeToken,
+                                                       [dateFormatter stringFromDate:timeTokenDate]];
+             weakSelf.recentServerTimeLabel.text = [dateFormatter stringFromDate:timeTokenDate];
+         }
+         else {
+
+             alertMessage = [NSString stringWithFormat:@"Time token request failed with error:\n%@",
+                                                       error];
+         }
+
+
+         UIAlertView *timeTokenAlertView = [UIAlertView new];
+         timeTokenAlertView.title = @"Server time token";
+         timeTokenAlertView.message = alertMessage;
+         [timeTokenAlertView addButtonWithTitle:@"OK"];
+         [timeTokenAlertView show];
+
+     }];
 
 
     // Subscribe on data manager properties change
@@ -136,20 +166,14 @@
     self.participantsBackgroundImageView.image = stretchedLeftSectionImage;
     self.channelsBackgroundImageView.image = stretchedRightSectionImage;
 
-    self.channelsInformationBackgroundImageView.image = stretchedRightSectionImage;
-
 
 
     UIImage *whiteButtonImage = [UIImage imageNamed:@"white-button"];
     UIImage *stretchedWhiteButtonImageImage = [whiteButtonImage stretchableImageWithLeftCapWidth:5.0f
                                                                                     topCapHeight:10.0f];
 
-    UIImage *redButtonImage = [UIImage imageNamed:@"red-button"];
-    UIImage *stretchedRedButtonImageImage = [whiteButtonImage stretchableImageWithLeftCapWidth:5.0f
-                                                                                  topCapHeight:10.0f];
-
     [self.addChannelButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
-    [self.channelHistoryButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
+    [self.serverTimeButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
     [self.disconnectButton setBackgroundImage:stretchedRightSingleEntryImage forState:UIControlStateNormal];
 
     [self.clientInformationButton setBackgroundImage:stretchedRightSingleEntryImage forState:UIControlStateNormal];
@@ -181,12 +205,26 @@
     [PubNub disconnect];
     [self dismissModalViewControllerAnimated:YES];
 }
+
 - (IBAction)clientInformationButtonTapper:(id)sender {
 
 }
 
 - (IBAction)addChannelButtonTapped:(id)sender {
 
+    PNChannelCreationView *view = [PNChannelCreationView viewFromNib];
+    view.delegate = self;
+    CGRect targetFrame = view.frame;
+    targetFrame.origin.x = self.view.bounds.size.width*0.5f-targetFrame.size.width*0.5f;
+    targetFrame.origin.y = self.view.bounds.size.height*0.5f-targetFrame.size.height;
+    view.frame = targetFrame;
+
+    [self.view addSubview:view];
+}
+
+- (IBAction)getServerTimeButtonTapped:(id)sender {
+
+    [PubNub requestServerTimeToken];
 }
 
 - (IBAction)channelHistoryButtonTapped:(id)sender {
@@ -194,14 +232,28 @@
 }
 
 
-#pragma mark - Misc methods
+- (void)creationView:(PNChannelCreationView*)view subscribeOnChannel:(PNChannel *)channel {
 
-- (void)showChannelInformationForChannel:(PNChannel *)channel {
+    [view removeFromSuperview];
 
-}
+    [PubNub subscribeOnChannel:channel withCompletionHandlingBlock:^(NSArray *channels,
+                                                                     BOOL subscribed,
+                                                                     PNError *subscriptionError) {
 
-- (void)hideChannelInformation {
+        NSString *alertMessage = [NSString stringWithFormat:@"Subscribed on channel: %@", channel.name];
+        if (!subscribed) {
 
+            alertMessage = [NSString stringWithFormat:@"Failed to subscribe on: %@", channel.name];
+        }
+
+
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Subscribe"
+                                                            message:alertMessage
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+        [alertView show];
+   }];
 }
 
 
@@ -298,6 +350,14 @@
     return shouldAutorotate;
 }
 
+
+#pragma mark - Memory management
+
+- (void)dealloc {
+
+    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannel"];
+    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"subscribedChannelsList"];
+}
 
 #pragma mark -
 
