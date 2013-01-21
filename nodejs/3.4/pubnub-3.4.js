@@ -33,6 +33,7 @@ THE SOFTWARE.
  * UTIL LOCALS
  */
 var NOW    = 1
+,   PUBNUB_COMMON_JS = require('../../javascript/3.4/pubnub-3.4-common.js')
 ,   http   = require('http')
 ,   https  = require('https')
 ,   URLBIT = '/'
@@ -119,7 +120,7 @@ exports.init = function(setup) {
     var PN = {};
     setup['xdr'] = xdr;
     setup['timeout'] = 1000;
-    PN.__proto__ = PN_API(setup);    
+    PN.__proto__ = PUBNUB_COMMON_JS.PN_API(setup);    
     PN.ready();
     return PN;
 }
