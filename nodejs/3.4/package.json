@@ -1,0 +1,39 @@
+{
+  "name": "pubnub",
+  "preferGlobal": false,
+  "version": "3.3.1", 
+  "author": "Pubnub <stephen@pubnub.com>",
+  "description": "Publish & Subscribe Real-time Messaging with PubNub",
+  "contributors": [
+    {
+      "name": "Stephen Blum",
+      "email": "stephen@pubnub.com"
+    }
+  ],
+  "bin": {},
+  "scripts": { },
+  "main": "./pubnub.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pubnub/pubnub-api.git"
+  },
+  "keywords": [
+    "cloud",
+    "publish",
+    "subscribe",
+    "websockets",
+    "comet",
+    "bosh",
+    "xmpp",
+    "real-time",
+    "messaging"
+  ],
+  "dependencies" : { },
+  "noAnalyze": false,
+  "devDependencies": {},
+  "bundleDependencies": [],
+  "license": "MIT",
+  "engine": {
+    "node": ">=0.2"
+  }
+}
