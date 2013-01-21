@@ -74,7 +74,7 @@ package com.pubnub.net {
 				var len:int = lines.length;
 				var i:int = 0;
 				for (i; i < len; i++) {
-					var size:int= int(lines[i]);
+					var size:int= int("0x" + lines[i]);
 					var data:String = lines[i+1];
 					if (size > 0) {
 						_body += data;
