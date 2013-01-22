@@ -4,7 +4,7 @@
 <div id="output"></div>
 
 <div id=pubnub ssl=on pub-key=demo sub-key=demo></div>
-<script src=../pubnub-3.4.js></script>
+<script src=../../pubnub-3.4.min.js></script>
 <script>
     var p       = PUBNUB.init({ 'subscribe_key': 'demo', 'publish_key': 'demo', ssl : true })
     ,   out     = p.$('output')

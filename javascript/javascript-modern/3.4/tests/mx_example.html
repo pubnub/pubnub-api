@@ -1,12 +1,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
-<script src=../../../javascript/3.4/pubnub-3.4-common.js></script>
-<script src=../pubnub-3.4.js></script>
+<script src=../../pubnub-3.4.min.js></script>
 
 <script>
 
     var setup = {"origin":"multiplexing.pubnub.com", "subscribe_key":"demo", "publish_key":"demo"};
-    var p = PUBNUB(setup);
+    var p = PUBNUB.init(setup);
 
     // LISTEN
     p.subscribe({
