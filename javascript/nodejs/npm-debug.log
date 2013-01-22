@@ -1,0 +1,73 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'pubnub' ]
+2 info using npm@1.1.59
+3 info using node@v0.8.8
+4 verbose read json /home/workpn/package.json
+5 verbose read json /home/workpn/node_modules/browserify/package.json
+6 verbose read json /home/workpn/node_modules/connect/package.json
+7 verbose read json /home/workpn/node_modules/testling/package.json
+8 verbose read json /home/workpn/package.json
+9 verbose cache add [ 'pubnub', null ]
+10 silly cache add name=undefined spec="pubnub" args=["pubnub",null]
+11 verbose parsed url { pathname: 'pubnub', path: 'pubnub', href: 'pubnub' }
+12 silly lockFile 1c554603-pubnub pubnub
+13 verbose lock pubnub /home/workpn/.npm/1c554603-pubnub.lock
+14 silly lockFile 1c554603-pubnub pubnub
+15 verbose addNamed [ 'pubnub', '' ]
+16 verbose addNamed [ null, '' ]
+17 silly lockFile f0268c50-pubnub pubnub@
+18 verbose lock pubnub@ /home/workpn/.npm/f0268c50-pubnub.lock
+19 silly addNameRange { name: 'pubnub', range: '', hasData: false }
+20 verbose url raw pubnub
+21 verbose url resolving [ 'https://registry.npmjs.org/', './pubnub' ]
+22 verbose url resolved https://registry.npmjs.org/pubnub
+23 info retry registry request attempt 1 at 13:22:53
+24 http GET https://registry.npmjs.org/pubnub
+25 http 200 https://registry.npmjs.org/pubnub
+26 silly registry.get cb [ 200,
+26 silly registry.get   { vary: 'Accept',
+26 silly registry.get     server: 'CouchDB/1.2.1 (Erlang OTP/R15B)',
+26 silly registry.get     etag: '"8070RQ0KOT177M99TF0AUKFAV"',
+26 silly registry.get     date: 'Tue, 22 Jan 2013 07:51:22 GMT',
+26 silly registry.get     'content-type': 'application/json',
+26 silly registry.get     'content-length': '12535' } ]
+27 silly addNameRange number 2 { name: 'pubnub', range: '', hasData: true }
+28 silly addNameRange versions [ 'pubnub',
+28 silly addNameRange   [ '3.1.0',
+28 silly addNameRange     '3.1.1',
+28 silly addNameRange     '3.1.2',
+28 silly addNameRange     '3.1.3',
+28 silly addNameRange     '3.1.4',
+28 silly addNameRange     '3.1.5',
+28 silly addNameRange     '3.1.6',
+28 silly addNameRange     '3.1.7',
+28 silly addNameRange     '3.1.8',
+28 silly addNameRange     '3.1.9',
+28 silly addNameRange     '3.3.1' ] ]
+29 verbose addNamed [ 'pubnub', '3.3.1' ]
+30 verbose addNamed [ '3.3.1', '3.3.1' ]
+31 silly lockFile d2bc19f0-pubnub-3-3-1 pubnub@3.3.1
+32 verbose lock pubnub@3.3.1 /home/workpn/.npm/d2bc19f0-pubnub-3-3-1.lock
+33 silly lockFile f97e59c6-pmjs-org-pubnub-pubnub-3-3-1-tgz https://registry.npmjs.org/pubnub/-/pubnub-3.3.1.tgz
+34 verbose lock https://registry.npmjs.org/pubnub/-/pubnub-3.3.1.tgz /home/workpn/.npm/f97e59c6-pmjs-org-pubnub-pubnub-3-3-1-tgz.lock
+35 verbose addRemoteTarball [ 'https://registry.npmjs.org/pubnub/-/pubnub-3.3.1.tgz',
+35 verbose addRemoteTarball   '70c46f3d694088c19ed14f733c69bb71f16ead1d' ]
+36 silly lockFile f97e59c6-pmjs-org-pubnub-pubnub-3-3-1-tgz https://registry.npmjs.org/pubnub/-/pubnub-3.3.1.tgz
+37 silly lockFile d2bc19f0-pubnub-3-3-1 pubnub@3.3.1
+38 silly lockFile f0268c50-pubnub pubnub@
+39 error Error: EACCES, mkdir '/home/workpn/tmp/npm-11401'
+39 error  { [Error: EACCES, mkdir '/home/workpn/tmp/npm-11401'] errno: 3, code: 'EACCES', path: '/home/workpn/tmp/npm-11401' }
+40 error Please try running this command again as root/Administrator.
+41 error System Linux 2.6.32-33-generic
+42 error command "/usr/local/bin/node" "/usr/local/bin/npm" "install" "pubnub"
+43 error cwd /home/workpn/pubnub-api/nodejs
+44 error node -v v0.8.8
+45 error npm -v 1.1.59
+46 error path /home/workpn/tmp/npm-11401
+47 error code EACCES
+48 error errno 3
+49 error stack Error: EACCES, mkdir '/home/workpn/tmp/npm-11401'
+50 verbose exit [ 3, true ]
