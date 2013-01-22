@@ -75,36 +75,7 @@
                                      PNLog(PNLogGeneralLevel, self, @"{BLOCK-P} PubNubc client received new event: %@",
                                            presenceEvent);
                             }];
-     /*
-    // Initialize connection to PubNub service
-    [PubNub connectWithSuccessBlock:^(NSString *origin) {
 
-        PNLog(PNLogGeneralLevel, self, @"{BLOCK} CONNECTED TO: %@", origin);
-
-        // Subscribe for channel (by default to presence observation will
-        // be enabled, if it is required, than user should use another
-        // method + channelWithName:shouldObservePresence: with last parameter
-        // set to 'YES'
-        [PubNub subscribeOnChannels:@[[PNChannel channelWithName:@"iosdev" shouldObservePresence:YES]]
-       withCompletionHandlingBlock:^(NSArray *channels, BOOL connected, PNError *subscribeError) {
-
-           if (connected) {
-
-               PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client successfully subscribed on channels: %@", channels);
-           }
-           else {
-
-               PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client failed to subscribe on %@ because of error: %@",
-                     channels, subscribeError);
-           }
-        }];
-    }
-                         errorBlock:^(PNError *connectionError) {
-                             
-                             PNLog(PNLogGeneralLevel, self, @"{BLOCK} FAILED TO CONNECTE WITH ERROR: %@",
-                                   connectionError);
-                         }];
-                         */
 }
 
 
@@ -174,43 +145,6 @@
 - (void)pubnubClient:(PubNub *)client didSubscribeOnChannels:(NSArray *)channels {
 
     PNLog(PNLogGeneralLevel, self, @"PubNub client successfully subscribed on channels: %@", channels);
-
-    /*[PubNub sendMessage:@"Hello world"
-              toChannel:[channels lastObject]
-    withCompletionBlock:^(PNMessageState processingState, id processingData) {
-
-        switch (processingState) {
-
-            case PNMessageSending:
-
-                PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client is sending message %@ to %@",
-                      (PNMessage *)processingData, ((PNMessage *)processingData).channel);
-                break;
-
-            case PNMessageSent:
-
-                PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client successfully sent message %@ to %@",
-                      (PNMessage *)processingData, ((PNMessage *)processingData).channel);
-                break;
-
-            case PNMessageSendingError:
-                {
-                    PNError *error = (PNError *)processingData;
-                    PNMessage *message = error.associatedObject;
-
-                    PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client failed to send message %@ because of error: %@",
-                          (PNMessage *)processingData,
-                          message.channel);
-
-                    [PubNub sendMessage:@"\"Hello my lovely PubNub client\""
-                              toChannel:message.channel];
-
-                    [PubNub sendMessage:@"\"Привет всем ;)\""
-                              toChannel:message.channel];
-                }
-                break;
-        }
-    }];    */
 }
 
 - (void)pubnubClient:(PubNub *)client subscriptionDidFailWithError:(NSError *)error {

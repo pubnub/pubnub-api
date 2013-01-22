@@ -50,7 +50,11 @@
     // Check whether initialization successful or not
     if ((self = [super init])) {
 
-        self.actionType = [[response.response objectForKey:kPNResponseActionKey] intValue];
+        NSString *action = [response.response objectForKey:kPNResponseActionKey];
+        if ([action isEqualToString:@"leave"]) {
+
+            self.actionType = PNOperationResultLeave;
+        }
     }
 
 

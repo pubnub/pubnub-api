@@ -251,7 +251,7 @@ void PNReachabilityCallback(SCNetworkReachabilityRef reachability, SCNetworkReac
 - (BOOL)isServiceAvailable {
     
     return (self.status == PNReachabilityStatusReachableViaCellular ||
-            self.status == PNReachabilityStatusReachableViaWiFi);;
+            self.status == PNReachabilityStatusReachableViaWiFi);
     
 }
 

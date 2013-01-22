@@ -203,6 +203,7 @@
 
 - (void)dealloc {
 
+    [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:self];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannel"];
 }
 

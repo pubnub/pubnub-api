@@ -8,6 +8,11 @@
 
 
 #import "PNDataManager.h"
+#import "PNObservationCenter.h"
+#import "PNPresenceEvent.h"
+#import "PNMessage.h"
+#import "PNMessage+Protected.h"
+#import "PNPresenceEvent+Protected.h"
 
 
 #pragma mark Static
@@ -27,6 +32,9 @@ static PNDataManager *_sharedInstance = nil;
 
 // Stores reference on list of channels on which client is subscribed
 @property (nonatomic, strong) NSArray *subscribedChannelsList;
+
+// Stores reference on dictionary which stores messages for each of channels
+@property (nonatomic, strong) NSMutableDictionary *messages;
 
 
 @end
@@ -59,9 +67,11 @@ static PNDataManager *_sharedInstance = nil;
     // Check whether initialization successful or not
     if((self = [super init])) {
 
+        self.messages = [NSMutableDictionary dictionary];
         self.configuration = [PNConfiguration defaultConfiguration];
         self.subscribedChannelsList = [NSMutableArray array];
 
+        PNDataManager *weakSelf = self;
         [[PNObservationCenter defaultCenter] addClientChannelSubscriptionObserver:self
                                                                 withCallbackBlock:^(NSArray *channels,
                                                                                     BOOL subscribed,
@@ -82,6 +92,57 @@ static PNDataManager *_sharedInstance = nil;
                   NSSortDescriptor *nameSorting = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
                   self.subscribedChannelsList = [unsortedList sortedArrayUsingDescriptors:@[nameSorting]];
               }];
+
+        [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
+                                                             withBlock:^(PNMessage *message) {
+
+                 NSDateFormatter *dateFormatter = [NSDateFormatter new];
+                 dateFormatter.dateFormat = @"HH:mm:ss MM/dd/yy";
+
+                 PNChannel *channel = message.channel;
+                 NSString *messages = [weakSelf.messages valueForKey:channel.name];
+                 if (messages == nil) {
+
+                     messages = @"";
+                 }
+                 messages = [messages stringByAppendingFormat:@"<%@> %@\n",
+                                 [dateFormatter stringFromDate:message.receiveDate],
+                                 message.message];
+                 [weakSelf.messages setValue:messages forKey:channel.name];
+
+
+                 weakSelf.currentChannelChat = [weakSelf.messages valueForKey:weakSelf.currentChannel.name];
+             }];
+
+        [[PNObservationCenter defaultCenter] addPresenceEventObserver:self
+                                                            withBlock:^(PNPresenceEvent *event) {
+
+                NSDateFormatter *dateFormatter = [NSDateFormatter new];
+                dateFormatter.dateFormat = @"HH:mm:ss MM/dd/yy";
+                NSString *eventType = @"joined";
+                if (event.type == PNPresenceEventLeave) {
+
+                    eventType = @"leaved";
+                }
+                else if (event.type == PNPresenceEventTimeout) {
+
+                    eventType = @"timeout";
+                }
+                PNChannel *channel = event.channel;
+                NSString *eventMessage = [weakSelf.messages valueForKey:channel.name];
+                if (eventMessage == nil) {
+
+                    eventMessage = @"";
+                }
+                eventMessage = [eventMessage stringByAppendingFormat:@"<%@> %@ '%@'\n",
+                                                                     [dateFormatter stringFromDate:event.date],
+                                                                     event.uuid,
+                                                                     eventType];
+                [weakSelf.messages setValue:eventMessage forKey:channel.name];
+
+
+                weakSelf.currentChannelChat = [weakSelf.messages valueForKey:weakSelf.currentChannel.name];
+            }];
 }
 
 
@@ -111,6 +172,14 @@ static PNDataManager *_sharedInstance = nil;
     _currentChannel = currentChannel;
     [self didChangeValueForKey:@"currentChannel"];
 
+    if (_currentChannel == nil) {
+
+        self.currentChannelChat = nil;
+    }
+    else {
+
+        self.currentChannelChat = [self.messages valueForKey:self.currentChannel.name];
+    }
 
     // Checking whether participants list not updated
     // for a while and send request to get participants list
@@ -119,7 +188,7 @@ static PNDataManager *_sharedInstance = nil;
     BOOL shouldUpdate = NO;
     if(_currentChannel.presenceUpdateDate != nil) {
 
-        if ([[NSDate date] timeIntervalSinceDate:_currentChannel.presenceUpdateDate] > 2.0f) {
+        if ([[NSDate date] timeIntervalSinceDate:_currentChannel.presenceUpdateDate] > 5.0f) {
 
             shouldUpdate = YES;
         }

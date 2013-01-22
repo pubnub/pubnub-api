@@ -221,6 +221,14 @@
     return shouldAutorotate;
 }
 
+
+#pragma mark - Memory management
+
+- (void)dealloc {
+
+    [[PNObservationCenter defaultCenter] removeClientConnectionStateObserver:self];
+}
+
 #pragma mark -
 
 

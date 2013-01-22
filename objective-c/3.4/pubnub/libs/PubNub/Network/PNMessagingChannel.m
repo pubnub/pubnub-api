@@ -242,7 +242,7 @@
 
     // Check whether specified channels set contains channels
     // on which client not subscribed
-    NSSet *channelsSet = [self channelsWithPresenceFromList:channels];
+    NSSet *channelsSet = [NSSet setWithArray:channels];
     if (![self.subscribedChannelsSet intersectsSet:channelsSet]) {
 
         NSMutableSet *filteredChannels = [self.subscribedChannelsSet mutableCopy];
@@ -252,7 +252,7 @@
 
     // Retrieve set of channels (including presence observers) from
     // which client should unsubscribe
-    NSSet *channelsForUnsubscribe = [self channelsWithPresenceFromList:[channelsSet allObjects]];
+    NSArray *channelsForUnsubscribe = [self channelsWithOutPresenceFromList:[channelsSet allObjects]];
     if ([channelsForUnsubscribe count] > 0) {
 
         // Reset last update time token for channels in list
@@ -261,7 +261,7 @@
 
         // Schedule request to be processed as soon as
         // queue will be processed
-        [self scheduleRequest:[PNLeaveRequest leaveRequestForChannels:[channelsForUnsubscribe allObjects]
+        [self scheduleRequest:[PNLeaveRequest leaveRequestForChannels:channelsForUnsubscribe
                                                         byUserRequest:isLeavingByUserRequest]
       shouldObserveProcessing:YES];
     }
@@ -398,10 +398,10 @@
 
     if (withPresenceEvent) {
 
-        [self leaveChannels:channels byUserRequest:isLeavingByUserRequest];
-
         // Reset last update time token for channels in list
         [currentlySubscribedChannels makeObjectsPerformSelector:@selector(resetUpdateTimeToken)];
+
+        [self leaveChannels:channels byUserRequest:isLeavingByUserRequest];
     }
     else {
 
@@ -411,10 +411,13 @@
     }
 
 
-    // Resubscribe on rest of channels which is left after unsubscribe
-    [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[currentlySubscribedChannels allObjects]
-                                                            byUserRequest:isLeavingByUserRequest]
-  shouldObserveProcessing:YES];
+    if ([currentlySubscribedChannels count] > 0) {
+
+        // Resubscribe on rest of channels which is left after unsubscribe
+        [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[currentlySubscribedChannels allObjects]
+                                                                byUserRequest:isLeavingByUserRequest]
+      shouldObserveProcessing:YES];
+    }
 }
 
 
@@ -464,7 +467,7 @@
 
     if (shouldRemoveChannels) {
 
-        [self.subscribedChannelsSet minusSet:[NSSet setWithArray:channels]];
+        [self.subscribedChannelsSet minusSet:[self channelsWithPresenceFromList:channels]];
     }
 
 

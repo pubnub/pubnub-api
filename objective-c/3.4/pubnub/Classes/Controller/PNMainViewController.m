@@ -19,6 +19,8 @@
 #import "NSString+PNAddition.h"
 #import "PNDataManager.h"
 #import "PNChannelHistoryView.h"
+#import "PNPresenceEvent.h"
+#import "PNPresenceEvent+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -183,10 +185,37 @@
             [timeTokenAlertView show];
         }];
 
+    [[PNObservationCenter defaultCenter] addPresenceEventObserver:self
+                                                        withBlock:^(PNPresenceEvent *event) {
+
+            NSString *eventType = @"joined to";
+            if (event.type == PNPresenceEventLeave) {
+
+                eventType = @"leaved";
+            }
+            else if (event.type == PNPresenceEventTimeout) {
+
+                eventType = @"kiked by timeout from";
+            }
+
+            UIAlertView *timeTokenAlertView = [UIAlertView new];
+            timeTokenAlertView.title = @"Presence event";
+            timeTokenAlertView.message = [NSString stringWithFormat:@"%@ %@ %@",
+                            event.uuid, eventType, event.channel.name];
+            [timeTokenAlertView addButtonWithTitle:@"OK"];
+            [timeTokenAlertView show];
+
+            [weakSelf.channelParticipantsTableView reloadData];
+        }];
+
 
     // Subscribe on data manager properties change
     [[PNDataManager sharedInstance] addObserver:self
                                      forKeyPath:@"currentChannel"
+                                        options:NSKeyValueObservingOptionNew
+                                        context:nil];
+    [[PNDataManager sharedInstance] addObserver:self
+                                     forKeyPath:@"currentChannelChat"
                                         options:NSKeyValueObservingOptionNew
                                         context:nil];
     [[PNDataManager sharedInstance] addObserver:self
@@ -259,6 +288,8 @@
         [self.channelsTableView reloadData];
     }
 
+    self.messageTextView.text = [PNDataManager sharedInstance].currentChannelChat;
+
     [self updateMessageSendingInterfaceWithMessage:nil];
 }
 
@@ -291,7 +322,9 @@
 
 - (IBAction)sendMessageButtonTapped:(id)sender {
 
-    [PubNub sendMessage:self.messageTextField.text toChannel:[PNDataManager sharedInstance].currentChannel];
+    [PubNub sendMessage:[NSString stringWithFormat:@"\"%@\"", self.messageTextField.text]
+              toChannel:[PNDataManager sharedInstance].currentChannel];
+    self.messageTextField.text = nil;
     [self.view endEditing:YES];
 }
 
@@ -311,7 +344,7 @@
     BOOL isChannelSelected = [PNDataManager sharedInstance].currentChannel != nil;
     if (message == nil) {
 
-        message = self.messageTextView.text;
+        message = self.messageTextField.text;
     }
 
     self.sendMessageButton.enabled = isSubscribed && ![message isEmptyString] && isChannelSelected;
@@ -516,7 +549,11 @@ shouldChangeCharactersInRange:(NSRange)range
 
 - (void)dealloc {
 
+    [[PNObservationCenter defaultCenter] removeTimeTokenReceivingObserver:self];
+    [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:nil];
+    [[PNObservationCenter defaultCenter] removePresenceEventObserver:self];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannel"];
+    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannelChat"];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"subscribedChannelsList"];
 }
 

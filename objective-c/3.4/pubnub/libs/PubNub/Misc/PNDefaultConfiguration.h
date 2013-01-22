@@ -29,7 +29,7 @@ static BOOL const kPNShouldAutoReconnectClient = YES;
 // If set to YES, client will try to preserve SSL security
 // but will use not so strict rules as for remote origin
 // SSL certificate
-static BOOL const kPNShouldReduceSecurityLevelOnError = NO;
+static BOOL const kPNShouldReduceSecurityLevelOnError = YES;
 
 // This flag tells whether client can discard security
 // option and connect using plain HTTP connection or not

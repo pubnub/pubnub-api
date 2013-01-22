@@ -76,14 +76,13 @@
 }
 
 - (NSString *)resourcePath {
-    
-    return [NSString stringWithFormat:@"%@/presence/sub_key/%@/channel/%@/leave?uuid=%@&callback=%@_%@",
-            kPNRequestAPIVersionPrefix,
-            [PubNub sharedInstance].configuration.subscriptionKey,
-            [[self.channels valueForKey:@"escapedName"] componentsJoinedByString:@","],
-            [PubNub escapedClientIdentifier],
-            [self callbackMethodName],
-            self.shortIdentifier];
+
+    return [NSString stringWithFormat:@"/v2/presence/sub_key/%@/channel/%@/leave?uuid=%@&callback=%@_%@",
+                                      [PubNub sharedInstance].configuration.subscriptionKey,
+                                      [[self.channels valueForKey:@"escapedName"] componentsJoinedByString:@","],
+                                      [PubNub escapedClientIdentifier],
+                                      [self callbackMethodName],
+                                      self.shortIdentifier];
 }
 
 #pragma mark -

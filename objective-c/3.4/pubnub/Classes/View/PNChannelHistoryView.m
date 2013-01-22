@@ -273,6 +273,14 @@
     return YES;
 }
 
+
+#pragma mark - Memory management
+
+- (void)dealloc {
+
+    [[PNObservationCenter defaultCenter] removeMessageHistoryProcessingObserver:self];
+}
+
 #pragma mark -
 
 

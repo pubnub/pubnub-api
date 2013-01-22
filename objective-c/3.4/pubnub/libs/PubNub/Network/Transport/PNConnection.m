@@ -702,14 +702,6 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         isStreamReady = CFReadStreamSetProperty(readStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
     }
 
-    // Configure proxy settings only for insecure connection
-    if (self.streamSecuritySettings == NULL && self.proxySettings != nil) {
-
-        isStreamReady = CFReadStreamSetProperty(readStream,
-                                                kCFStreamPropertyHTTPProxy,
-                                                (__bridge CFDictionaryRef)(self.proxySettings));
-    }
-
     if (self.streamSecuritySettings != NULL && isStreamReady) {
 
         // Configuring stream to establish SSL connection

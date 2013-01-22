@@ -29,6 +29,9 @@
 // Stores reference on current channel
 @property (nonatomic, strong) PNChannel *currentChannel;
 
+// Stores reference on current chat history
+@property (nonatomic, strong) NSString *currentChannelChat;
+
 
 #pragma mark - Class methods
 
