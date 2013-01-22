@@ -258,8 +258,9 @@ public class URLLoader extends EventDispatcher {
         var requestBytes:ByteArray = request.toByteArray();
         requestBytes.position = 0;
         // Debug
-        //var hStr:String = "Header:\n" + requestBytes.readUTFBytes(requestBytes.length);
+        var hStr:String = "Header:\n" + requestBytes.readUTFBytes(requestBytes.length);
         //trace('socket.connected : ' + socket.connected);
+        Log.log(Log.DEBUG, "Request Header:\n" + hStr);
         socket.writeBytes(requestBytes);
         socket.flush();
     }
