@@ -35,7 +35,6 @@ THE SOFTWARE.
 var NOW        = 1
 ,   URLBIT     = '/'
 ,   PARAMSBIT  = '&'
-,   timeout    = PUBNUB_COMMON_JS.timeout
 ,   XHRTME     = 310000;
 
 /**
@@ -188,16 +187,16 @@ var CREATE_PUBNUB = function(setup) {
                // Expose PUBNUB Functions
         'xdr'    : xdr,
         'db'     : db,
-        'each'   : PUBNUB_COMMON_JS.each,
-        'map'    : PUBNUB_COMMON_JS.map,
+        'each'   : each,
+        'map'    : map,
         'events' : events,
         'init'   : CREATE_PUBNUB
         };
 
     setup['db'] = db;
     setup['xdr'] = xdr;
-    SELF.__proto__ = PUBNUB_COMMON_JS.PN_API(setup);
-	SELF.ready();
+    SELF.__proto__ = PN_API(setup);
+	SELF['ready']();
     return SELF;
 }
 

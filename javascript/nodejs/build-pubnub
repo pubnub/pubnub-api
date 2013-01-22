@@ -1,0 +1,4 @@
+#!/bin/bash
+cp 3.1/pubnub.js  ./pubnub-3.1.js
+cp 3.3/pubnub.js  ./pubnub-3.3.js
+cat ../pubnub-3.4-common.js 3.4/pubnub-3.4.js > pubnub-3.4.js
