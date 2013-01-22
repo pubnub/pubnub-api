@@ -268,7 +268,7 @@ package com.pubnub.subscribe {
 			var channel:String;
 			
 			if (presenceRESPONSE) {
-				dispatchEvent(new SubscribeEvent(SubscribeEvent.PRESENCE, {channel:chStr, message : messages}));
+				dispatchEvent(new SubscribeEvent(SubscribeEvent.PRESENCE, {channel:chStr, message : messages, timetoken: _lastToken}));
 			}else {
 				if (!messages) return;
 				decryptMessages(messages);
@@ -281,7 +281,8 @@ package com.pubnub.subscribe {
 						if (hasChannel(channel)) {
 							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
 								channel:channel, 
-								message : message}));
+								message : message,
+                                timetoken: _lastToken }));
 						}
 					}
 				}else {
@@ -292,7 +293,8 @@ package com.pubnub.subscribe {
 						if (isValidMessage) {
 							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
 								channel:channel, 
-								message : messages[j]}));
+								message : messages[j],
+                                timetoken: _lastToken }));
 						}
 					}
 				}
