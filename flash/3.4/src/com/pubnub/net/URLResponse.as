@@ -67,6 +67,8 @@ package com.pubnub.net {
 			var ind:int = _rawData.indexOf(separator);
 			var bodyRawStr:String = _rawData.substr(ind + separator.length, _rawData.length);
 
+            Log.log(Log.DEBUG, "raw data:\n" + _rawData);
+
             isChunked(headers);
 
 			if (_isChunked) {
@@ -81,11 +83,13 @@ package com.pubnub.net {
 						i++;
 					}else {
 						// end of body data
-						break;
+                        Log.log(Log.DEBUG, "Parsing Body Chunked returning:\n" + _body);
+                        break;
 					}
 				}
 			}else {
-				_body = bodyRawStr;
+                Log.log(Log.DEBUG, "Parsing Body Content-length returning:\n" + bodyRawStr);
+                _body = bodyRawStr;
 			}
 		}
 

@@ -157,7 +157,7 @@ public class URLLoader extends EventDispatcher {
                 Log.log(Log.DEBUG, "Received chunked server response.");
                 return END_SYMBOL_CHUNKED;
             } else {
-                Log.log(Log.DEBUG, "Received non-chunked server response.");
+                Log.log(Log.DEBUG, "Received Content-length server response.");
                 return END_SYMBOL;
             }
         }
