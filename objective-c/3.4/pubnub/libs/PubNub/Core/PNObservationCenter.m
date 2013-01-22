@@ -17,6 +17,7 @@
 #import "PubNub+Protected.h"
 #import "PNPresenceEvent.h"
 #import "PNMessage.h"
+#import "NSString+PNAddition.h"
 
 
 #pragma mark Static
@@ -513,6 +514,21 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
             oneTimeEvent:YES];
 }
 
+- (void)addMessageHistoryProcessingObserver:(id)observer withBlock:(PNClientHistoryLoadHandlingBlock)handleBlock {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientReceivedHistory
+         oneTimeEvent:NO
+            withBlock:handleBlock];
+}
+
+- (void)removeMessageHistoryProcessingObserver:(id)observer {
+
+    [self removeObserver:observer
+                forEvent:PNObservationEvents.clientReceivedHistory
+            oneTimeEvent:NO];
+}
+
 
 #pragma mark - Handler methods
 
@@ -706,19 +722,31 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 - (void)handleClientMessageHistoryProcess:(NSNotification *)notification {
 
     // Retrieve reference on history object
-    PNMessagesHistory *history = (PNMessagesHistory *)notification.userInfo;
+    PNMessagesHistory *history = nil;
+    PNChannel *channel = nil;
+    PNError *error = nil;
+    if ([notification.name isEqualToString:kPNClientDidReceiveMessagesHistoryNotification]) {
+
+        history = (PNMessagesHistory *)notification.userInfo;
+        channel = history.channel;
+    }
+    else {
+
+        error = (PNError *)notification.userInfo;
+        channel = error.associatedObject;
+    }
 
     // Retrieving list of observers (including one time and persistent observers)
     NSArray *observers = [self observersForEvent:PNObservationEvents.clientReceivedHistory];
     [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
-                                                NSUInteger observerDataIdx,
-                                                BOOL *observerDataEnumeratorStop) {
+                                            NSUInteger observerDataIdx,
+                                            BOOL *observerDataEnumeratorStop) {
 
         // Call handling blocks
         PNClientHistoryLoadHandlingBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
         if (block) {
 
-            block(history.messages, history.channel, history.startDate, history.endDate);
+            block(history.messages, channel, history.startDate, history.endDate, error);
         }
     }];
 

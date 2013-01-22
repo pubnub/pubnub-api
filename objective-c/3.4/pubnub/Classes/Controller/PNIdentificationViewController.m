@@ -80,13 +80,17 @@
                                                         withCallbackBlock:^(NSString *origin,
                                                                             BOOL connected,
                                                                             PNError *connectionError) {
+                NSString *clientIdentifier = [PubNub clientIdentifier];
+                if (!PNIsUserGeneratedUUID(clientIdentifier)) {
 
-                                                            weakSelf.clientIdentifier.text = [PubNub clientIdentifier];
+                    clientIdentifier = @"anonymous";
+                }
+                weakSelf.clientIdentifier.text = clientIdentifier;
 
-                                                            weakSelf.clientIdentifier.userInteractionEnabled = !connected;
-                                                            weakSelf.sslEnablingSwitch.enabled = !connected;
-                                                            weakSelf.connectButton.enabled = !connected;
-                                                        }];
+                weakSelf.clientIdentifier.userInteractionEnabled = !connected;
+                weakSelf.sslEnablingSwitch.enabled = !connected;
+                weakSelf.connectButton.enabled = !connected;
+            }];
 }
 
 - (BOOL)disablesAutomaticKeyboardDismissal {

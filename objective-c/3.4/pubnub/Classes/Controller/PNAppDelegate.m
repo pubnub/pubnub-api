@@ -175,7 +175,7 @@
 
     PNLog(PNLogGeneralLevel, self, @"PubNub client successfully subscribed on channels: %@", channels);
 
-    [PubNub sendMessage:@"Hello world"
+    /*[PubNub sendMessage:@"Hello world"
               toChannel:[channels lastObject]
     withCompletionBlock:^(PNMessageState processingState, id processingData) {
 
@@ -210,7 +210,7 @@
                 }
                 break;
         }
-    }];
+    }];    */
 }
 
 - (void)pubnubClient:(PubNub *)client subscriptionDidFailWithError:(NSError *)error {
@@ -271,6 +271,12 @@
 
     PNLog(PNLogGeneralLevel, self, @"PubNub client received history for %@ starting from %@ to %@: %@",
           channel, startDate, endDate, messages);
+}
+
+- (void)pubnubClient:(PubNub *)client didFailHistoryDownloadForChannel:(PNChannel *)channel withError:(PNError *)error {
+
+    PNLog(PNLogGeneralLevel, self, @"PubNub client failed to download history for %@ because of error: %@",
+          channel, error);
 }
 
 #pragma mark -

@@ -25,6 +25,7 @@
 #import "PNRequestsImport.h"
 #import "PNMessage.h"
 #import "PNPresenceEvent+Protected.h"
+#import "PNMessagesHistory+Protected.h"
 
 
 #pragma mark Static
@@ -1324,7 +1325,16 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
 - (void)notifyDelegateAboutHistoryDownloadFailedWithError:(PNError *)error {
 
-    [self sendNotification:kPNClientDidReceiveMessagesHistoryNotification withObject:error];
+    // Check whether delegate us able to handle message history download error
+    // or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didFailHistoryDownloadForChannel:withError:)]) {
+
+        [self.delegate pubnubClient:self
+   didFailHistoryDownloadForChannel:error.associatedObject
+                          withError:error];
+    }
+
+    [self sendNotification:kPNClientHistoryDownloadFailedWithErrorNotification withObject:error];
 }
 
 - (void)notifyDelegateAboutError:(PNError *)error {
@@ -1511,6 +1521,29 @@ didReceiveNetworkLatency:(double)latency
 
     error.associatedObject = message;
     [self notifyDelegateAboutMessageSendingFailedWithError:error];
+}
+
+- (void)serviceChannel:(PNServiceChannel *)serviceChannel didReceivedMessagesHistory:(PNMessagesHistory *)history {
+
+    // Check whether delegate can response on history download event or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didReceiveMessageHistory:forChannel:startingFrom:to:)]) {
+
+        [self.delegate pubnubClient:self
+           didReceiveMessageHistory:history.messages
+                         forChannel:history.channel
+                       startingFrom:history.startDate
+                                 to:history.endDate];
+    }
+
+    [self sendNotification:kPNClientDidReceiveMessagesHistoryNotification withObject:history];
+}
+
+- (void)serviceChannel:(PNServiceChannel *)serviceChannel
+        didFailHisoryDownloadForChannel:(PNChannel *)channel
+        withError:(PNError*)error {
+
+    error.associatedObject = channel;
+    [self notifyDelegateAboutHistoryDownloadFailedWithError:error];
 }
 
 #pragma mark -

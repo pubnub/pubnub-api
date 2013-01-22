@@ -21,17 +21,17 @@
 
 #import "PNServiceChannel.h"
 #import "PNConnectionChannel+Protected.h"
+#import "PNOperationStatus+Protected.h"
 #import "PNServiceChannelDelegate.h"
-#import "PNLatencyMeasureRequest.h"
 #import "PNConnection+Protected.h"
 #import "PNMessage+Protected.h"
+#import "PNOperationStatus.h"
 #import "PubNub+Protected.h"
 #import "PNRequestsImport.h"
 #import "PNResponseParser.h"
 #import "PNRequestsQueue.h"
 #import "PNResponse.h"
-#import "PNOperationStatus.h"
-#import "PNOperationStatus+Protected.h"
+#import "PNMessageHistoryRequest+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -92,7 +92,8 @@
     
     return ([response.callbackMethod hasPrefix:PNServiceResponseCallbacks.latencyMeasureMessageCallback] ||
             [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.timeTokenCallback] ||
-            [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.sendMessageCallback]);
+            [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.sendMessageCallback] ||
+            [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.messageHistoryCallback]);
 }
 
 - (void)processResponse:(PNResponse *)response forRequest:(PNBaseRequest *)request {
@@ -154,10 +155,30 @@
 
                 [self.serviceDelegate serviceChannel:self didSendMessage:message];
             }
+        }
+        // Check whether request was sent for message history or not
+        else if ([request isKindOfClass:[PNMessageHistoryRequest class]]) {
 
-            if (![parsedData isKindOfClass:[PNError class]] &&
-                [parsedData isKindOfClass:[PNOperationStatus class]] &&
-                ((PNOperationStatus *)parsedData).error == nil) {
+            PNChannel *channel = ((PNMessageHistoryRequest *)request).channel;
+
+            // Check whether there is no error while loading messages history
+            if (![parsedData isKindOfClass:[PNError class]]) {
+
+                ((PNMessagesHistory *)parsedData).channel = channel;
+                [((PNMessagesHistory *)parsedData).messages makeObjectsPerformSelector:@selector(setChannel:)
+                                                                            withObject:channel];
+
+                PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" HISTORY HAS BEEN DOWNLOADED. SERVICE RESPONSE: %@",
+                      parsedData);
+
+                [self.serviceDelegate serviceChannel:self didReceivedMessagesHistory:parsedData];
+            }
+            else {
+
+                PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" HISTORY DOWNLOAD FAILED WITH ERROR: %@",
+                      parsedData);
+
+                [self.serviceDelegate serviceChannel:self didFailHisoryDownloadForChannel:channel withError:parsedData];
             }
         }
         else {

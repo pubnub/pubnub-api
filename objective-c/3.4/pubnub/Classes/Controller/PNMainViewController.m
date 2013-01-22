@@ -12,18 +12,19 @@
 //
 
 #import "PNMainViewController.h"
-#import <CoreGraphics/CoreGraphics.h>
-#import <QuartzCore/QuartzCore.h>
-#import "PNObservationCenter+Protected.h"
+#import "PNChannelInformationDelegate.h"
 #import "PNChannelCreationDelegate.h"
-#import "PNDataManager.h"
-#import "PNMacro.h"
+#import "PNChannelInformationView.h"
 #import "PNChannelCreationView.h"
+#import "NSString+PNAddition.h"
+#import "PNDataManager.h"
+#import "PNChannelHistoryView.h"
 
 
 #pragma mark Private interface methods
 
-@interface PNMainViewController () <UITableViewDelegate, UITableViewDataSource, PNChannelCreationDelegate>
+@interface PNMainViewController () <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,
+                                    PNChannelCreationDelegate, PNChannelInformationDelegate>
 
 
 #pragma mark - Properties
@@ -61,11 +62,14 @@
 
 @property (nonatomic, pn_desired_weak) IBOutlet UILabel *recentServerTimeLabel;
 
-// Stores reference on utility panel background view
-@property (nonatomic, pn_desired_weak) IBOutlet UIView *utilityPanelBackgroundView;
-
 // Stores reference on channel information holding view
-@property (nonatomic, pn_desired_weak) IBOutlet UIView *channelInformationView;
+@property (nonatomic, pn_desired_weak) IBOutlet PNChannelInformationView *channelInformationView;
+
+// Stores reference on message sending button
+@property (nonatomic, pn_desired_weak) IBOutlet UIButton *sendMessageButton;
+
+// Stores reference on message input text field
+@property (nonatomic, pn_desired_weak) IBOutlet UITextField *messageTextField;
 
 
 #pragma mark - Instance methods
@@ -81,6 +85,19 @@
 - (IBAction)clientInformationButtonTapper:(id)sender;
 - (IBAction)addChannelButtonTapped:(id)sender;
 - (IBAction)getServerTimeButtonTapped:(id)sender;
+- (IBAction)sendMessageButtonTapped:(id)sender;
+
+
+#pragma mark - Misc methods
+
+/**
+ * Updating message sending interface according to current
+ * application state:
+ * - enable if client is connected at least to one channel
+ *   and inputted message
+ * - disable in other case
+ */
+- (void)updateMessageSendingInterfaceWithMessage:(NSString *)message;
 
 
 @end
@@ -174,10 +191,20 @@
 
     [self.addChannelButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
     [self.serverTimeButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
+    [self.sendMessageButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
     [self.disconnectButton setBackgroundImage:stretchedRightSingleEntryImage forState:UIControlStateNormal];
 
     [self.clientInformationButton setBackgroundImage:stretchedRightSingleEntryImage forState:UIControlStateNormal];
-    [self.clientInformationButton setTitle:[PubNub clientIdentifier] forState:UIControlStateNormal];
+    NSString *clientIdentifier = [PubNub clientIdentifier];
+    if (!PNIsUserGeneratedUUID(clientIdentifier)) {
+
+        clientIdentifier = @"anonymous";
+    }
+    [self.clientInformationButton setTitle:clientIdentifier forState:UIControlStateNormal];
+
+
+    self.channelInformationView.delegate = self;
+    [self updateMessageSendingInterfaceWithMessage:nil];
 }
 
 
@@ -195,9 +222,10 @@
     }
     // Looks like list of channels changed
     else {
-
         [self.channelsTableView reloadData];
     }
+
+    [self updateMessageSendingInterfaceWithMessage:nil];
 }
 
 - (IBAction)disconnectButtonTapped:(id)sender {
@@ -215,8 +243,8 @@
     PNChannelCreationView *view = [PNChannelCreationView viewFromNib];
     view.delegate = self;
     CGRect targetFrame = view.frame;
-    targetFrame.origin.x = self.view.bounds.size.width*0.5f-targetFrame.size.width*0.5f;
-    targetFrame.origin.y = self.view.bounds.size.height*0.5f-targetFrame.size.height;
+    targetFrame.origin.x = ceilf(self.view.bounds.size.width*0.5f-targetFrame.size.width*0.5f);
+    targetFrame.origin.y = ceilf(self.view.bounds.size.height*0.5f-targetFrame.size.height);
     view.frame = targetFrame;
 
     [self.view addSubview:view];
@@ -227,20 +255,46 @@
     [PubNub requestServerTimeToken];
 }
 
-- (IBAction)channelHistoryButtonTapped:(id)sender {
+- (IBAction)sendMessageButtonTapped:(id)sender {
 
+    [PubNub sendMessage:self.messageTextField.text toChannel:[PNDataManager sharedInstance].currentChannel];
+    [self.view endEditing:YES];
 }
 
 
-- (void)creationView:(PNChannelCreationView*)view subscribeOnChannel:(PNChannel *)channel {
+#pragma mark - Misc methods
 
-    [view removeFromSuperview];
+/**
+ * Updating message sending interface according to current
+ * application state:
+ * - enable if client is connected at least to one channel
+ *   and inputted message
+ * - disable in other case
+ */
+- (void)updateMessageSendingInterfaceWithMessage:(NSString *)message {
+
+    BOOL isSubscribed = [[PNDataManager sharedInstance].subscribedChannelsList count] > 0;
+    BOOL isChannelSelected = [PNDataManager sharedInstance].currentChannel != nil;
+    if (message == nil) {
+
+        message = self.messageTextView.text;
+    }
+
+    self.sendMessageButton.enabled = isSubscribed && ![message isEmptyString] && isChannelSelected;
+    self.messageTextField.enabled = isSubscribed && isChannelSelected;
+}
+
+
+#pragma mark - Channel subscription delegate methods
+
+- (void)creationView:(PNChannelCreationView*)view subscribeOnChannel:(PNChannel *)channel {
 
     [PubNub subscribeOnChannel:channel withCompletionHandlingBlock:^(NSArray *channels,
                                                                      BOOL subscribed,
                                                                      PNError *subscriptionError) {
 
-        NSString *alertMessage = [NSString stringWithFormat:@"Subscribed on channel: %@", channel.name];
+        NSString *alertMessage = [NSString stringWithFormat:@"Subscribed on channel: %@\nTo be able to send messages, select channel from righthand list",
+                                                            channel.name];
         if (!subscribed) {
 
             alertMessage = [NSString stringWithFormat:@"Failed to subscribe on: %@", channel.name];
@@ -254,6 +308,34 @@
                                                   otherButtonTitles:nil];
         [alertView show];
    }];
+}
+
+
+#pragma mark - Channel information delegate
+
+- (void)showHistoryRequestParameters {
+
+    PNChannelHistoryView *view = [PNChannelHistoryView viewFromNib];
+    CGRect targetFrame = view.frame;
+    targetFrame.origin.x = ceilf(self.view.bounds.size.width*0.5f-targetFrame.size.width*0.5f);
+    targetFrame.origin.y = ceilf(self.view.bounds.size.height*0.5f-targetFrame.size.height*0.5f);
+    view.frame = targetFrame;
+
+    [self.view addSubview:view];
+}
+
+
+#pragma mark - UITextField delegate methods
+
+- (BOOL)            textField:(UITextField *)textField
+shouldChangeCharactersInRange:(NSRange)range
+            replacementString:(NSString *)string {
+
+    NSString *inputtedMessage = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    [self updateMessageSendingInterfaceWithMessage:inputtedMessage];
+
+
+    return YES;
 }
 
 
@@ -292,7 +374,14 @@
  */
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 0;
+    NSInteger numberOfRows = 0;
+
+    if ([tableView isEqual:self.channelsTableView]) {
+
+        numberOfRows = [[PNDataManager sharedInstance].subscribedChannelsList count];
+    }
+
+    return numberOfRows;
 }
 
 /**
@@ -312,6 +401,10 @@
 
         // Create new cell instance copy
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier: cellIdentifier];
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.textLabel.shadowColor = [UIColor blackColor];
+        cell.textLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
     }
 
     if ([tableView isEqual:self.channelsTableView]) {

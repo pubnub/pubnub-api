@@ -16,6 +16,7 @@
 
 #import "PNMessagePostRequest+Protected.h"
 #import "PNSubscribeRequest+Protected.h"
+#import "PNMessagesHistory+Protected.h"
 #import "PNServiceResponseCallbacks.h"
 #import "PNLeaveRequest+Protected.h"
 #import "PNMessageHistoryRequest.h"

@@ -93,6 +93,15 @@
 - (void)removePresenceEventObserver:(id)observer;
 
 
+#pragma mark - History observing
+
+/**
+ * Add/remove channel history processing event observing
+ */
+- (void)addMessageHistoryProcessingObserver:(id)observer withBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;
+- (void)removeMessageHistoryProcessingObserver:(id)observer;
+
+
 
 #pragma mark -
 

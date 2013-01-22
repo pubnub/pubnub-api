@@ -148,6 +148,11 @@
         startingFrom:(NSDate *)startDate
         to:(NSDate *)endDate;
 
+/**
+ * Called on delegate when client failed to download messages history
+ */
+- (void)pubnubClient:(PubNub *)client didFailHistoryDownloadForChannel:(PNChannel *)channel withError:(PNError *)error;
+
 
 #pragma mark - Configuration override delegate methods
 

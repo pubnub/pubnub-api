@@ -42,7 +42,6 @@ static NSUInteger const kPNResponseTimeTokenElementIndexForEvent = 1;
 @property (nonatomic, strong) PNChannelEvents *events;
 
 
-
 @end
 
 

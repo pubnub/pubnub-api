@@ -127,12 +127,9 @@
     }
 
     // Check whether user specified limit or not
-    if (self.limit > 0) {
-
-        [parameters appendFormat:@"&count=%u", self.limit];
-    }
-
-    [parameters appendFormat:@"reverse=%@", self.shouldRevertMessages?@"true":@"false"];
+    self.limit = self.limit > 0 ? self.limit : 100;
+    [parameters appendFormat:@"&count=%u", self.limit];
+    [parameters appendFormat:@"&reverse=%@", self.shouldRevertMessages?@"true":@"false"];
 
 
     return [NSString stringWithFormat:@"/v2/history/sub-key/%@/channel/%@%@",

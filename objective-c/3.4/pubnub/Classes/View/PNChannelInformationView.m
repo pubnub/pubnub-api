@@ -10,6 +10,7 @@
 #import "PNChannelInformationView.h"
 #import "PNMacro.h"
 #import "PNDataManager.h"
+#import "PNChannelInformationDelegate.h"
 
 
 #pragma mark Private interface methods
@@ -46,6 +47,12 @@
  */
 - (void)showAnimated:(BOOL)animated;
 - (void)hideAnimated:(BOOL)animated;
+
+
+#pragma mark - Handler methods
+
+- (IBAction)historyButtonTapped:(id)sender;
+- (IBAction)presenceModeChanged:(id)sender;
 
 
 #pragma mark - Misc methods
@@ -107,7 +114,7 @@
 
 - (void)showAnimated:(BOOL)animated {
 
-    [UIView animateWithDuration:animated ? 1.0f : 0.0f
+    [UIView animateWithDuration:animated ? 0.3f : 0.0f
                           delay:0.0f
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
@@ -122,7 +129,7 @@
     CGRect targetFrame = CGRectFromString(NSStringFromCGRect(self.originalViewFrame));
     targetFrame.origin.x -= targetFrame.size.width;
 
-    [UIView animateWithDuration:animated ? 1.0f : 0.0f
+    [UIView animateWithDuration:animated ? 0.3f : 0.0f
                           delay:0.0f
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
@@ -150,6 +157,16 @@
 
         [self hideAnimated:YES];
     }
+}
+
+- (IBAction)historyButtonTapped:(id)sender {
+
+    [self.delegate showHistoryRequestParameters];
+}
+
+- (IBAction)presenceModeChanged:(id)sender {
+
+    BOOL enabled = ((UISwitch *)sender).isOn;
 }
 
 

@@ -206,5 +206,15 @@ NSString *PNHMACSHA256String(NSString *key, NSString *signedData) {
     return [HMACData HEXString];
 }
 
+static BOOL PNIsUserGeneratedUUID(NSString *uuid);
+BOOL PNIsUserGeneratedUUID(NSString *uuid) {
+
+    NSString *uuidSearchRegex = @"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+    NSPredicate *generatedUUIDCheckPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", uuidSearchRegex];
+
+
+    return ![generatedUUIDCheckPredicate evaluateWithObject:uuid];
+}
+
 
 #endif

@@ -24,6 +24,7 @@
 #import "PNActionResponseParser.h"
 #import "PNErrorResponseParser.h"
 #import "PNResponse.h"
+#import "PNChannelHistoryParser.h"
 
 
 
@@ -75,7 +76,19 @@
         // set of channels or at least one channel)
         else if ([[responseData objectAtIndex:0] isKindOfClass:[NSArray class]]) {
 
-            parserClass = [PNChannelEventsResponseParser class];
+            // Check whether there is 3 elements in response array or not
+            // (depending on whether two last elements is number or not,
+            // this will mean whether response is for history or not)
+            if ([responseData count] == 3 &&
+                [[responseData objectAtIndex:1] isKindOfClass:[NSNumber class]] &&
+                [[responseData objectAtIndex:2] isKindOfClass:[NSNumber class]]) {
+
+                parserClass = [PNChannelHistoryParser class];
+            }
+            else {
+
+                parserClass = [PNChannelEventsResponseParser class];
+            }
         }
         // Looks like this is response with status message
         else {

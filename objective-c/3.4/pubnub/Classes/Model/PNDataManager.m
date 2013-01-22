@@ -60,6 +60,7 @@ static PNDataManager *_sharedInstance = nil;
     if((self = [super init])) {
 
         self.configuration = [PNConfiguration defaultConfiguration];
+        self.subscribedChannelsList = [NSMutableArray array];
 
         [[PNObservationCenter defaultCenter] addClientChannelSubscriptionObserver:self
                                                                 withCallbackBlock:^(NSArray *channels,
@@ -68,7 +69,7 @@ static PNDataManager *_sharedInstance = nil;
 
                     if (subscribed) {
 
-                        NSArray *unsortedList = [self.subscribedChannelsList arrayByAddingObjectsFromArray:channels];
+                        NSArray *unsortedList = [PubNub subscribedChannels];
                         NSSortDescriptor *nameSorting = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
                         self.subscribedChannelsList = [unsortedList sortedArrayUsingDescriptors:@[nameSorting]];
                     }

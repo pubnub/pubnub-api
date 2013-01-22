@@ -26,6 +26,7 @@
 @property (nonatomic, pn_desired_weak) IBOutlet UISwitch *presenceSwitch;
 
 @property (nonatomic, pn_desired_weak) IBOutlet UIButton *subscribeButton;
+@property (nonatomic, pn_desired_weak) IBOutlet UIButton *closeButton;
 
 
 #pragma mark - Instance methods
@@ -38,6 +39,7 @@
 #pragma mark - Handler methods
 
 - (IBAction)subscribeButtonTapped:(id)sender;
+- (IBAction)closeButtonTapped:(id)sender;
 
 
 @end
@@ -73,9 +75,9 @@
     UIImage *stretchableButtonBackground = [[UIImage imageNamed:@"red-button.png"] stretchableImageWithLeftCapWidth:5.0f
                                                                                                topCapHeight:5.0f];
     [self.subscribeButton setBackgroundImage:stretchableButtonBackground forState:UIControlStateNormal];
+    [self.closeButton setBackgroundImage:stretchableButtonBackground forState:UIControlStateNormal];
 
     self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]];
-    self.layer.cornerRadius = 5.0f;
 }
 
 
@@ -86,6 +88,12 @@
     PNChannel *channel = [PNChannel channelWithName:self.channelName.text
                               shouldObservePresence:self.presenceSwitch.isOn];
     [self.delegate creationView:self subscribeOnChannel:channel];
+    [self removeFromSuperview];
+}
+
+- (IBAction)closeButtonTapped:(id)sender {
+
+    [self removeFromSuperview];
 }
 
 
