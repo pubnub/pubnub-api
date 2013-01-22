@@ -447,6 +447,26 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
              withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;
 
 
+#pragma mark - Participant methods
+
+/**
+ * Request list of participants for specified channel
+ */
++ (void)requestParticipantsListForChannel:(PNChannel *)channel;
+
+/**
+ * Same as +requestParticipantsListForChannel: but allow to
+ * specify completion block which will be called when
+ * list of participants will be returned by PubNub service
+ *
+ * Only last call of this method will call completion block.
+ * If you need to track history loading events from many places, use
+ * PNObservationCenter methods for this purpose.
+ */
++ (void)requestParticipantsListForChannel:(PNChannel *)channel
+                      withCompletionBlock:(PNClientParticipantsHandlingBlock)handleBlock;
+
+
 #pragma mark - Instance methods
 
 /**

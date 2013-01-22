@@ -92,6 +92,14 @@
                                      forKeyPath:@"currentChannel"
                                         options:(NSKeyValueObservingOptionNew)
                                         context:nil];
+
+    [[PNObservationCenter defaultCenter] addChannelParticipantsListProcessingObserver:self
+                                                                                withBlock:^(NSArray *participants,
+                                                                                            PNChannel *channel,
+                                                                                            PNError *fetchError) {
+
+                                [self updateLayoutForChannel:channel];
+                            }];
 }
 
 

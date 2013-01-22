@@ -13,6 +13,7 @@
 #import "PNChannel+Protected.h"
 #import "PNChannelPresence+Protected.h"
 #import "PNPresenceEvent.h"
+#import "PNHereNow+Protected.h"
 
 
 #pragma mark Static
@@ -185,6 +186,13 @@ static NSMutableDictionary *_channelsCache = nil;
     }
 
     self.presenceUpdateDate = [NSDate date];
+}
+
+- (void)updateWithParticipantsList:(PNHereNow *)hereNow {
+
+    self.presenceUpdateDate = [NSDate date];
+    self.participantsCount = hereNow.participantsCount;
+    self.participantsList = [hereNow.participants mutableCopy];
 }
 
 - (NSString *)escapedName {

@@ -279,6 +279,22 @@
           channel, error);
 }
 
+- (void)      pubnubClient:(PubNub *)client
+didReceiveParticipantsLits:(NSArray *)participantsList
+                forChannel:(PNChannel *)channel {
+
+    PNLog(PNLogGeneralLevel, self, @"PubNub client received participants list for channel %@: %@",
+          participantsList, channel);
+}
+
+- (void)                     pubnubClient:(PubNub *)client
+didFailParticipantsListDownloadForChannel:(PNChannel *)channel
+                                withError:(PNError *)error {
+
+    PNLog(PNLogGeneralLevel, self, @"PubNub client failed to download participants list for channel %@ because of error: %@",
+          channel, error);
+}
+
 #pragma mark -
 
 

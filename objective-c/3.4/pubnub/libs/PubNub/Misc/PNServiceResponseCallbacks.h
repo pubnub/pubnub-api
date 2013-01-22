@@ -43,6 +43,10 @@ struct PNServiceResponseCallbacksStruct {
     // Name of the function which is used to
     // retrieve channel history
     __unsafe_unretained NSString *messageHistoryCallback;
+
+    // Name of the function which is used to
+    // retrieve channel participants
+    __unsafe_unretained NSString *channelParticipantsCallback;
 };
 
 static struct PNServiceResponseCallbacksStruct PNServiceResponseCallbacks = {
@@ -52,7 +56,8 @@ static struct PNServiceResponseCallbacksStruct PNServiceResponseCallbacks = {
     .leaveChannelCallback = @"lv",
     .sendMessageCallback = @"m",
     .timeTokenCallback = @"t",
-    .messageHistoryCallback = @"h"
+    .messageHistoryCallback = @"h",
+    .channelParticipantsCallback = @"p"
 };
 
 

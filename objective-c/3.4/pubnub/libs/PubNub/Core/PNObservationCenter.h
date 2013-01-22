@@ -102,6 +102,16 @@
 - (void)removeMessageHistoryProcessingObserver:(id)observer;
 
 
+#pragma mark - Participants observing
+
+/**
+ * Add/remove channel participants processing event observing
+ */
+- (void)addChannelParticipantsListProcessingObserver:(id)observer
+                                           withBlock:(PNClientParticipantsHandlingBlock)handleBlock;
+- (void)removeChannelParticipantsListProcessingObserver:(id)observer;
+
+
 
 #pragma mark -
 

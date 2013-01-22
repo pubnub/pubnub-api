@@ -153,6 +153,22 @@
  */
 - (void)pubnubClient:(PubNub *)client didFailHistoryDownloadForChannel:(PNChannel *)channel withError:(PNError *)error;
 
+/**
+ * Called on delegate when client retrieved participants list
+ * for specific channel
+ */
+- (void)      pubnubClient:(PubNub *)client
+didReceiveParticipantsLits:(NSArray *)participantsList
+                forChannel:(PNChannel *)channel;
+
+/**
+ * Called on delegate when client failed to download participants
+ * list
+ */
+- (void)                     pubnubClient:(PubNub *)client
+didFailParticipantsListDownloadForChannel:(PNChannel *)channel
+                                withError:(PNError *)error;
+
 
 #pragma mark - Configuration override delegate methods
 

@@ -18,6 +18,8 @@
 #import "PNPresenceEvent.h"
 #import "PNMessage.h"
 #import "NSString+PNAddition.h"
+#import "PNHereNow.h"
+#import "PNHereNow+Protected.h"
 
 
 #pragma mark Static
@@ -35,6 +37,7 @@ struct PNObservationEventsStruct {
     __unsafe_unretained NSString *clientReceivedMessage;
     __unsafe_unretained NSString *clientReceivedPresenceEvent;
     __unsafe_unretained NSString *clientReceivedHistory;
+    __unsafe_unretained NSString *clientReceivedParticipantsList;
 };
 
 struct PNObservationObserverDataStruct {
@@ -51,7 +54,8 @@ static struct PNObservationEventsStruct PNObservationEvents = {
     .clientMessageSendCompletion = @"clientMessageSendCompletionEvent",
     .clientReceivedMessage = @"clientReceivedMessageEvent",
     .clientReceivedPresenceEvent = @"clientReceivedPresenceEvent",
-    .clientReceivedHistory = @"clientReceivedHistoryEvent"
+    .clientReceivedHistory = @"clientReceivedHistoryEvent",
+    .clientReceivedParticipantsList = @"clientReceivedParticipantsListEvent"
 };
 
 static struct PNObservationObserverDataStruct PNObservationObserverData = {
@@ -225,6 +229,16 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
                                                  selector:@selector(handleClientMessageHistoryProcess:)
                                                      name:kPNClientHistoryDownloadFailedWithErrorNotification
                                                    object:nil];
+
+        // Handle participants list arrival
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientHereNowProcess:)
+                                                     name:kPNClientDidReceiveParticipantsListNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientHereNowProcess:)
+                                                     name:kPNClientParticipantsListDownloadFailedWithErrorNotification
+                                                   object:nil];
         
         
     }
@@ -324,8 +338,8 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
 
 #pragma mark - Client channels action/event observation
-
 - (void)addClientChannelSubscriptionObserver:(id)observer
+
                            withCallbackBlock:(PNClientChannelSubscriptionHandlerBlock)callbackBlock {
 
     [self addObserver:observer
@@ -526,6 +540,44 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
     [self removeObserver:observer
                 forEvent:PNObservationEvents.clientReceivedHistory
+            oneTimeEvent:NO];
+}
+
+
+#pragma mark - Participants observer
+
+- (void)addClientAsParticipantsListDownloadObserverWithBlock:(PNClientParticipantsHandlingBlock)handleBlock {
+
+    [self addObserver:[PubNub sharedInstance]
+             forEvent:PNObservationEvents.clientReceivedParticipantsList
+         oneTimeEvent:YES
+            withBlock:handleBlock];
+
+}
+
+- (void)removeClientAsParticipantsListDownloadObserver {
+
+    [self removeObserver:[PubNub sharedInstance]
+                forEvent:PNObservationEvents.clientReceivedParticipantsList
+            oneTimeEvent:NO];
+}
+
+
+#pragma mark - Participants observing
+
+- (void)addChannelParticipantsListProcessingObserver:(id)observer
+                                           withBlock:(PNClientParticipantsHandlingBlock)handleBlock {
+
+    [self addObserver:observer
+             forEvent:PNObservationEvents.clientReceivedParticipantsList
+         oneTimeEvent:NO
+            withBlock:handleBlock];
+}
+
+- (void)removeChannelParticipantsListProcessingObserver:(id)observer {
+
+    [self removeObserver:observer
+                forEvent:PNObservationEvents.clientReceivedParticipantsList
             oneTimeEvent:NO];
 }
 
@@ -757,6 +809,38 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
 - (void)handleClientHereNowProcess:(NSNotification *)notification {
 
+    // Retrieve reference on participants object
+    PNHereNow *participants = nil;
+    PNChannel *channel = nil;
+    PNError *error = nil;
+    if ([notification.name isEqualToString:kPNClientDidReceiveParticipantsListNotification]) {
+
+        participants = (PNHereNow *)notification.userInfo;
+        channel = participants.channel;
+    }
+    else {
+
+        error = (PNError *)notification.userInfo;
+        channel = error.associatedObject;
+    }
+
+    // Retrieving list of observers (including one time and persistent observers)
+    NSArray *observers = [self observersForEvent:PNObservationEvents.clientReceivedParticipantsList];
+    [observers enumerateObjectsUsingBlock:^(NSDictionary *observerData,
+                                            NSUInteger observerDataIdx,
+                                            BOOL *observerDataEnumeratorStop) {
+
+        // Call handling blocks
+        PNClientParticipantsHandlingBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
+        if (block) {
+
+            block(participants.participants, channel, error);
+        }
+    }];
+
+
+    // Clean one time observers for specific event
+    [self removeOneTimeObserversForEvent:PNObservationEvents.clientReceivedParticipantsList];
 }
 
 - (void)handleClientCompletedTimeTokenProcessing:(NSNotification *)notification {

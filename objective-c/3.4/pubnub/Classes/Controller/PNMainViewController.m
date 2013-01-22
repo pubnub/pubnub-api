@@ -151,6 +151,39 @@
      }];
 
 
+
+    [[PNObservationCenter defaultCenter] addChannelParticipantsListProcessingObserver:self
+                                                                            withBlock:^(NSArray *participants,
+                                                                                        PNChannel *channel,
+                                                                                        PNError *fetchError) {
+
+            NSString *alertMessage = nil;
+            if (!fetchError) {
+
+                alertMessage = [NSString stringWithFormat:@"%@ participants:\n%@",
+                                channel,
+                                [participants componentsJoinedByString:@"\n"]];
+            }
+            else {
+
+                alertMessage = [NSString stringWithFormat:@"Participants list request failed with error: %@",
+                                fetchError];
+            }
+
+            if (!fetchError) {
+
+                [weakSelf.channelParticipantsTableView reloadData];
+            }
+
+
+            UIAlertView *timeTokenAlertView = [UIAlertView new];
+            timeTokenAlertView.title = @"Participants list";
+            timeTokenAlertView.message = alertMessage;
+            [timeTokenAlertView addButtonWithTitle:@"OK"];
+            [timeTokenAlertView show];
+        }];
+
+
     // Subscribe on data manager properties change
     [[PNDataManager sharedInstance] addObserver:self
                                      forKeyPath:@"currentChannel"
@@ -218,10 +251,11 @@
     // Check whether current category changed or not
     if ([keyPath isEqualToString:@"currentChannel"]) {
 
-        NSLog(@"UPDATE CHANNEL INFORMATION AND CHAT");
+        [self.channelParticipantsTableView reloadData];
     }
     // Looks like list of channels changed
     else {
+
         [self.channelsTableView reloadData];
     }
 
@@ -350,6 +384,11 @@ shouldChangeCharactersInRange:(NSRange)range
     return @"Unsubscribe";
 }
 
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    return [self.channelsTableView isEqual:tableView]?indexPath:nil;
+}
+
 /**
  * UITableView by calling this method notify delegate about that user selected
  * one of table rows
@@ -379,6 +418,10 @@ shouldChangeCharactersInRange:(NSRange)range
     if ([tableView isEqual:self.channelsTableView]) {
 
         numberOfRows = [[PNDataManager sharedInstance].subscribedChannelsList count];
+    }
+    else {
+
+        numberOfRows = [[PNDataManager sharedInstance].currentChannel.participants count];
     }
 
     return numberOfRows;
@@ -412,6 +455,15 @@ shouldChangeCharactersInRange:(NSRange)range
         PNChannel *channel = [[PNDataManager sharedInstance].subscribedChannelsList objectAtIndex:indexPath.row];
         cell.textLabel.text = channel.name;
     }
+    else {
+
+        NSString *clientIdentifier = [[PNDataManager sharedInstance].currentChannel.participants objectAtIndex:indexPath.row];
+        if (!PNIsUserGeneratedUUID(clientIdentifier)) {
+
+            clientIdentifier = @"anonymous";
+        }
+        cell.textLabel.text = clientIdentifier;
+    }
 
     return cell;
 }
@@ -423,6 +475,22 @@ shouldChangeCharactersInRange:(NSRange)range
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
 
     return [tableView isEqual:self.channelsTableView];
+}
+
+- (void)tableView:(UITableView *)tableView
+        commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+        forRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+
+        PNChannel *channel = [[PNDataManager sharedInstance].subscribedChannelsList objectAtIndex:indexPath.row];
+        if ([channel isEqual:[PNDataManager sharedInstance].currentChannel]) {
+
+            [PNDataManager sharedInstance].currentChannel = nil;
+        }
+
+        [PubNub unsubscribeFromChannel:channel];
+    }
 }
 
 

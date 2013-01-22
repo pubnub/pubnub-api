@@ -96,6 +96,7 @@ typedef void (^PNClientTimeTokenReceivingCompleteBlock)(NSNumber *, PNError *);
 typedef void (^PNClientMessageProcessingBlock)(PNMessageState, id);
 typedef void (^PNClientMessageHandlingBlock)(PNMessage *);
 typedef void (^PNClientHistoryLoadHandlingBlock)(NSArray *, PNChannel *, NSDate *, NSDate *, PNError *);
+typedef void (^PNClientParticipantsHandlingBlock)(NSArray *, PNChannel *, PNError *);
 typedef void (^PNClientPresenceEventHandlingBlock)(PNPresenceEvent *);
 
 #endif

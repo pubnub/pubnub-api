@@ -110,6 +110,12 @@ static NSString * const kPNClientDidReceiveMessagesHistoryNotification = @"PNCli
 static NSString * const kPNClientHistoryDownloadFailedWithErrorNotification = @"PNClientHistoryDownloadFailedWithErrorNotification";
 
 // Sent when PubNub client successfully downloaded 'here now'
-// (participants list) request for specific channel ()
+// (participants list) request for specific channel (
+// here now object will be passed in userInfo as PNHereNow instance)
+static NSString * const kPNClientDidReceiveParticipantsListNotification = @"PNClientDidReceiveParticipantsListNotification";
+
+// Sent when PubNub client failed to download 'here now'
+// (participants list) from remote service
+static NSString * const kPNClientParticipantsListDownloadFailedWithErrorNotification=@"PNClientParticipantsListDownloadFailedWithErrorNotification";
 
 #endif

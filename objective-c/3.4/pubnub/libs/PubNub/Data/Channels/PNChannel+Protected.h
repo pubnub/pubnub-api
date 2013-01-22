@@ -13,6 +13,7 @@
 
 @class PNChannelPresence;
 @class PNPresenceEvent;
+@class PNHereNow;
 
 
 #pragma mark Protected interface methods
@@ -24,6 +25,18 @@
 
 // Stores whether channel presence observation is required
 @property (nonatomic, assign, getter = shouldObservePresence) BOOL observePresence;
+
+// Stores number of participants for particular
+// channel (this number fetched from presence API
+// if it is used and updated when requested list
+// of participants)
+// INFO: it may differ in count from participants
+//       name because of nature of this value
+//       update logic
+@property (nonatomic, assign) NSUInteger participantsCount;
+
+// Last presence update date
+@property (nonatomic, strong) NSDate *presenceUpdateDate;
 
 
 #pragma mark - Class methods
@@ -64,6 +77,12 @@
  * from presence event
  */
 - (void)updateWithEvent:(PNPresenceEvent *)event;
+
+/**
+ * Updating cached channel data with participants list
+ * information
+ */
+- (void)updateWithParticipantsList:(PNHereNow *)hereNow;
 
 /**
  * Update channel update time token

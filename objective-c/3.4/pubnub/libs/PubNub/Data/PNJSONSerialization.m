@@ -62,7 +62,6 @@
         jsonString = [self JSONStringFromJSONPString:jsonString callbackMethodName:jsonCallbackMethodName];
     }
     
-    
     // Checking whether native JSONSerializer is available or not
     NSError *parsingError = nil;
     id result = nil;
@@ -102,7 +101,8 @@
     // Checking whether there are parenthesis in JSON 
     NSRange parenthesisRange = [jsonString rangeOfString:@"("];
     if (parenthesisRange.location != NSNotFound &&
-        [jsonString characterAtIndex:(parenthesisRange.location+parenthesisRange.length)] == '[') {
+          ([jsonString characterAtIndex:(parenthesisRange.location+parenthesisRange.length)] == '[' ||
+           [jsonString characterAtIndex:(parenthesisRange.location+parenthesisRange.length)] == '{')) {
         
         NSScanner *scanner = [NSScanner scannerWithString:jsonString];
         [scanner scanUpToString:@"(" intoString:callbackMethodName];
@@ -115,7 +115,7 @@
     [scanner scanUpToString:@"(" intoString:NULL];
     
     NSString *JSONWrappedInParens = [[scanner string] substringFromIndex:[scanner scanLocation]];
-    NSCharacterSet *parens = [NSCharacterSet characterSetWithCharactersInString:[NSString stringWithFormat:@"%@()",
+    NSCharacterSet *parens = [NSCharacterSet characterSetWithCharactersInString:[NSString stringWithFormat:@"%@();",
                                                                                  callbackMethodName?callbackMethodName:@""]];
     
     

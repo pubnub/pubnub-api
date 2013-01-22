@@ -95,6 +95,17 @@
 - (void)removeClientAsHistoryDownloadObserver;
 
 
+#pragma mark - Participants observer
+
+/**
+ * Add/remove observer for participants list download
+ * After event will be fired this observation request will be
+ * removed from queue.
+ */
+- (void)addClientAsParticipantsListDownloadObserverWithBlock:(PNClientParticipantsHandlingBlock)handleBlock;
+- (void)removeClientAsParticipantsListDownloadObserver;
+
+
 #pragma mark -
 
 

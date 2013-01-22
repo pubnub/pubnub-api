@@ -93,7 +93,7 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
 #pragma mark - Instance methods
 
 /**
- * Intialize response instance with response
+ * Initialize response instance with response
  * body content data, response size and status
  * code (HTTP status code)
  */

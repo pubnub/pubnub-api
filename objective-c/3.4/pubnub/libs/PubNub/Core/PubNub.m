@@ -26,6 +26,8 @@
 #import "PNMessage.h"
 #import "PNPresenceEvent+Protected.h"
 #import "PNMessagesHistory+Protected.h"
+#import "PNHereNowRequest.h"
+#import "PNHereNow+Protected.h"
 
 
 #pragma mark Static
@@ -171,6 +173,12 @@ shouldObserveProcessing:(BOOL)shouldObserveProcessing;
  * history loading error occurred
  */
 - (void)notifyDelegateAboutHistoryDownloadFailedWithError:(PNError *)error;
+
+/**
+ * This method will notify delegate about that
+ * participants list download error occurred
+ */
+- (void)notifyDelegateAboutParticipantsListDownloadFailedWithError:(PNError *)error;
 
 /**
  * This method allow to ensure that delegate can
@@ -511,7 +519,7 @@ shouldObserveProcessing:(BOOL)shouldObserveProcessing;
 
 + (NSArray *)subscribedChannels {
 
-    return [[[self sharedInstance].messagingChannel subscribedChannels] allObjects];
+    return [[self sharedInstance].messagingChannel subscribedChannels];
 }
 
 + (BOOL)isSubscribedOnChannel:(PNChannel *)channel {
@@ -901,7 +909,6 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
                                                                                                  to:endDate
                                                                                               limit:limit
                                                                                      reverseHistory:shouldReverseMessageHistory];
-
         [[self sharedInstance] sendRequest:request shouldObserveProcessing:YES];
     }
     // Looks like client can't send request because of some reasons
@@ -911,6 +918,41 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
         sendingError.associatedObject = channel;
 
         [[self sharedInstance] notifyDelegateAboutHistoryDownloadFailedWithError:sendingError];
+    }
+}
+
+
+#pragma mark - Participant methods
+
++ (void)requestParticipantsListForChannel:(PNChannel *)channel {
+
+    [self requestParticipantsListForChannel:channel withCompletionBlock:nil];
+}
+
++ (void)requestParticipantsListForChannel:(PNChannel *)channel
+                      withCompletionBlock:(PNClientParticipantsHandlingBlock)handleBlock {
+
+    // Check whether client is able to send request or not
+    NSInteger statusCode = [[self sharedInstance] requestExecutionPossibilityStatusCode];
+    if (statusCode == 0) {
+
+        [[PNObservationCenter defaultCenter] removeClientAsParticipantsListDownloadObserver];
+        if (handleBlock) {
+
+            [[PNObservationCenter defaultCenter] addClientAsParticipantsListDownloadObserverWithBlock:handleBlock];
+        }
+
+
+        PNHereNowRequest *request = [PNHereNowRequest whoNowRequestForChannel:channel];
+        [[self sharedInstance] sendRequest:request shouldObserveProcessing:YES];
+    }
+    // Looks like client can't send request because of some reasons
+    else {
+
+        PNError *sendingError = [PNError errorWithCode:statusCode];
+        sendingError.associatedObject = channel;
+
+        [[self sharedInstance] notifyDelegateAboutParticipantsListDownloadFailedWithError:sendingError];
     }
 }
 
@@ -1037,6 +1079,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
     if ([request isKindOfClass:[PNLeaveRequest class]] ||
         [request isKindOfClass:[PNTimeTokenRequest class]] ||
         [request isKindOfClass:[PNMessageHistoryRequest class]] ||
+        [request isKindOfClass:[PNHereNowRequest class]] ||
         [request isKindOfClass:[PNLatencyMeasureRequest class]]) {
         
         shouldSendOnMessageChannel = NO;
@@ -1337,6 +1380,20 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
     [self sendNotification:kPNClientHistoryDownloadFailedWithErrorNotification withObject:error];
 }
 
+- (void)notifyDelegateAboutParticipantsListDownloadFailedWithError:(PNError *)error {
+
+    // Check whether delegate us able to handle participants list
+    // download error or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didFailParticipantsListDownloadForChannel:withError:)]) {
+
+        [self.delegate       pubnubClient:self
+didFailParticipantsListDownloadForChannel:error.associatedObject
+                                withError:error];
+    }
+
+    [self sendNotification:kPNClientParticipantsListDownloadFailedWithErrorNotification withObject:error];
+}
+
 - (void)notifyDelegateAboutError:(PNError *)error {
         
     if ([self.delegate respondsToSelector:@selector(pubnubClient:error:)]) {
@@ -1523,7 +1580,7 @@ didReceiveNetworkLatency:(double)latency
     [self notifyDelegateAboutMessageSendingFailedWithError:error];
 }
 
-- (void)serviceChannel:(PNServiceChannel *)serviceChannel didReceivedMessagesHistory:(PNMessagesHistory *)history {
+- (void)serviceChannel:(PNServiceChannel *)serviceChannel didReceiveMessagesHistory:(PNMessagesHistory *)history {
 
     // Check whether delegate can response on history download event or not
     if ([self.delegate respondsToSelector:@selector(pubnubClient:didReceiveMessageHistory:forChannel:startingFrom:to:)]) {
@@ -1544,6 +1601,28 @@ didReceiveNetworkLatency:(double)latency
 
     error.associatedObject = channel;
     [self notifyDelegateAboutHistoryDownloadFailedWithError:error];
+}
+
+- (void)serviceChannel:(PNServiceChannel *)serviceChannel didReceiveParticipantsList:(PNHereNow *)participants {
+
+    // Check whether delegate can response on participants list download event or not
+    if ([self.delegate respondsToSelector:@selector(pubnubClient:didReceiveParticipantsLits:forChannel:)]) {
+
+        [self.delegate pubnubClient:self
+         didReceiveParticipantsLits:participants.participants
+                         forChannel:participants.channel];
+    }
+
+    [self sendNotification:kPNClientDidReceiveParticipantsListNotification withObject:participants];
+}
+
+- (void)               serviceChannel:(PNServiceChannel *)serviceChannel
+didFailParticipantsListLoadForChannel:(PNChannel *)channel
+                            withError:(PNError *)error {
+
+    error.associatedObject = channel;
+    [self notifyDelegateAboutParticipantsListDownloadFailedWithError:error];
+
 }
 
 #pragma mark -

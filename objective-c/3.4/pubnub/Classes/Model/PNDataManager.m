@@ -74,7 +74,15 @@ static PNDataManager *_sharedInstance = nil;
                         self.subscribedChannelsList = [unsortedList sortedArrayUsingDescriptors:@[nameSorting]];
                     }
                 }];
-    }
+
+        [[PNObservationCenter defaultCenter] addClientChannelUnsubscriptionObserver:self
+                                                                  withCallbackBlock:^(NSArray *channels,
+                                                                                      PNError *error) {
+                  NSArray *unsortedList = [PubNub subscribedChannels];
+                  NSSortDescriptor *nameSorting = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+                  self.subscribedChannelsList = [unsortedList sortedArrayUsingDescriptors:@[nameSorting]];
+              }];
+}
 
 
     return self;
@@ -95,6 +103,36 @@ static PNDataManager *_sharedInstance = nil;
                                         canIgnoreSecureConnectionRequirement:self.configuration.canIgnoreSecureConnectionRequirement];
 
     self.configuration = configuration;
+}
+
+- (void)setCurrentChannel:(PNChannel *)currentChannel {
+
+    [self willChangeValueForKey:@"currentChannel"];
+    _currentChannel = currentChannel;
+    [self didChangeValueForKey:@"currentChannel"];
+
+
+    // Checking whether participants list not updated
+    // for a while and send request to get participants list
+    // (updated date older than 30 seconds will mean that
+    // list should be updated)
+    BOOL shouldUpdate = NO;
+    if(_currentChannel.presenceUpdateDate != nil) {
+
+        if ([[NSDate date] timeIntervalSinceDate:_currentChannel.presenceUpdateDate] > 2.0f) {
+
+            shouldUpdate = YES;
+        }
+    } else if ([_currentChannel presenceObserver] != nil) {
+
+        shouldUpdate = YES;
+    }
+
+
+    if (shouldUpdate) {
+
+        [PubNub requestParticipantsListForChannel:_currentChannel];
+    }
 }
 
 

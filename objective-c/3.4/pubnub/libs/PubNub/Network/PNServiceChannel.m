@@ -20,18 +20,22 @@
 //
 
 #import "PNServiceChannel.h"
+#import "PNMessageHistoryRequest+Protected.h"
 #import "PNConnectionChannel+Protected.h"
 #import "PNOperationStatus+Protected.h"
+#import "PNHereNowRequest+Protected.h"
 #import "PNServiceChannelDelegate.h"
 #import "PNConnection+Protected.h"
 #import "PNMessage+Protected.h"
+#import "PNHereNow+Protected.h"
+#import "PNChannel+Protected.h"
+#import "PNError+Protected.h"
 #import "PNOperationStatus.h"
 #import "PubNub+Protected.h"
 #import "PNRequestsImport.h"
 #import "PNResponseParser.h"
 #import "PNRequestsQueue.h"
 #import "PNResponse.h"
-#import "PNMessageHistoryRequest+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -93,6 +97,7 @@
     return ([response.callbackMethod hasPrefix:PNServiceResponseCallbacks.latencyMeasureMessageCallback] ||
             [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.timeTokenCallback] ||
             [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.sendMessageCallback] ||
+            [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.channelParticipantsCallback] ||
             [response.callbackMethod hasPrefix:PNServiceResponseCallbacks.messageHistoryCallback]);
 }
 
@@ -171,7 +176,7 @@
                 PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" HISTORY HAS BEEN DOWNLOADED. SERVICE RESPONSE: %@",
                       parsedData);
 
-                [self.serviceDelegate serviceChannel:self didReceivedMessagesHistory:parsedData];
+                [self.serviceDelegate serviceChannel:self didReceiveMessagesHistory:parsedData];
             }
             else {
 
@@ -179,6 +184,30 @@
                       parsedData);
 
                 [self.serviceDelegate serviceChannel:self didFailHisoryDownloadForChannel:channel withError:parsedData];
+            }
+        }
+        // Check whether request was sent for participants list or not
+        else if ([request isKindOfClass:[PNHereNowRequest class]]) {
+
+            PNChannel *channel = ((PNHereNowRequest *)request).channel;
+
+            // Check whether there is no error while loading messages history
+            if (![parsedData isKindOfClass:[PNError class]]) {
+
+                ((PNHereNow *)parsedData).channel = channel;
+                [channel updateWithParticipantsList:parsedData];
+
+                PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" PARTICIPANTS LIST DOWNLOADED. SERVICE RESPONSE: %@",
+                      parsedData);
+
+                [self.serviceDelegate serviceChannel:self didReceiveParticipantsList:parsedData];
+            }
+            else {
+
+                PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" PARTICIPANTS LIST DOWNLOAD FAILED WITH ERROR: %@",
+                      parsedData);
+
+                [self.serviceDelegate serviceChannel:self didFailParticipantsListLoadForChannel:channel withError:parsedData];
             }
         }
         else {
@@ -351,6 +380,22 @@
             // Notify delegate about that message can't be send
             [self.serviceDelegate serviceChannel:self
                               didFailMessageSend:((PNMessagePostRequest *)request).message
+                                       withError:error];
+        }
+        // Check whether this is 'Message history' request or not
+        else if ([request isKindOfClass:[PNMessageHistoryRequest class]]) {
+
+            // Notify delegate about message history download failed
+            [self.serviceDelegate serviceChannel:self
+                 didFailHisoryDownloadForChannel:((PNMessageHistoryRequest *)request).channel
+                                       withError:error];
+        }
+        // Check whether this is 'Here now' request or not
+        else if ([request isKindOfClass:[PNHereNowRequest class]]) {
+
+            // Notify delegate about participants list can't be downloaded
+            [self.serviceDelegate serviceChannel:self
+           didFailParticipantsListLoadForChannel:((PNHereNowRequest *)request).channel
                                        withError:error];
         }
     }

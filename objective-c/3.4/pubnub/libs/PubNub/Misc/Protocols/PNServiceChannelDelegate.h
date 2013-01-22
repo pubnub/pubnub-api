@@ -15,6 +15,7 @@
 #pragma mark Class forward
 
 @class PNServiceChannel, PNMessagesHistory, PNResponse;
+@class PNHereNow;
 
 
 @protocol PNServiceChannelDelegate<NSObject>
@@ -68,7 +69,7 @@ didReceiveNetworkLatency:(double)latency
  * Sent to the delegate when PubNub service responded
  * on history download request
  */
-- (void)serviceChannel:(PNServiceChannel *)serviceChannel didReceivedMessagesHistory:(PNMessagesHistory *)history;
+- (void)serviceChannel:(PNServiceChannel *)serviceChannel didReceiveMessagesHistory:(PNMessagesHistory *)history;
 
 /**
  * Sent to the delegate when PubNub service refused to
@@ -77,5 +78,19 @@ didReceiveNetworkLatency:(double)latency
 - (void)serviceChannel:(PNServiceChannel *)serviceChannel
         didFailHisoryDownloadForChannel:(PNChannel *)channel
         withError:(PNError*)error;
+
+/**
+ * Sent to the delegate when PubNub service responded on
+ * participants list request
+ */
+- (void)serviceChannel:(PNServiceChannel *)serviceChannel didReceiveParticipantsList:(PNHereNow *)participants;
+
+/**
+ * Sent to the delegate when PubNub service failed to retrieve
+ * participants list for specified channel
+ */
+- (void)               serviceChannel:(PNServiceChannel *)serviceChannel
+didFailParticipantsListLoadForChannel:(PNChannel *)channel
+                            withError:(PNError *)error;
 
 @end

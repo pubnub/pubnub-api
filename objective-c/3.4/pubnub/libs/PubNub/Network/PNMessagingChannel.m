@@ -44,7 +44,7 @@
 
 // Stores list of channels (including presence)
 // on which this client is subscribed now
-@property (nonatomic, strong) NSMutableSet *subscribedChannels;
+@property (nonatomic, strong) NSMutableSet *subscribedChannelsSet;
 
 
 #pragma mark - Instance methods
@@ -166,7 +166,7 @@
     // Check whether initialization was successful or not
     if ((self = [super initWithType:PNConnectionChannelMessaging andDelegate:delegate])) {
 
-        self.subscribedChannels = [NSMutableSet set];
+        self.subscribedChannelsSet = [NSMutableSet set];
     }
 
 
@@ -213,7 +213,7 @@
     if (shouldResetCommunicationChannel) {
 
         // Clean up channels stack
-        [self.subscribedChannels removeAllObjects];
+        [self.subscribedChannelsSet removeAllObjects];
         [self purgeObservedRequestsPool];
         [self clearScheduledRequestsQueue];
     }
@@ -225,14 +225,14 @@
 
     // Check whether there some channels which
     // user can leave
-    if ([self.subscribedChannels count] > 0) {
+    if ([self.subscribedChannelsSet count] > 0) {
 
         // Reset last update time token for channels in list
-        [self.subscribedChannels makeObjectsPerformSelector:@selector(resetUpdateTimeToken)];
+        [self.subscribedChannelsSet makeObjectsPerformSelector:@selector(resetUpdateTimeToken)];
 
         // Schedule request to be processed as soon as
         // queue will be processed
-        [self scheduleRequest:[PNLeaveRequest leaveRequestForChannels:[self.subscribedChannels allObjects]
+        [self scheduleRequest:[PNLeaveRequest leaveRequestForChannels:[self.subscribedChannelsSet allObjects]
                                                         byUserRequest:isLeavingByUserRequest]
       shouldObserveProcessing:YES];
     }
@@ -243,9 +243,9 @@
     // Check whether specified channels set contains channels
     // on which client not subscribed
     NSSet *channelsSet = [self channelsWithPresenceFromList:channels];
-    if (![self.subscribedChannels intersectsSet:channelsSet]) {
+    if (![self.subscribedChannelsSet intersectsSet:channelsSet]) {
 
-        NSMutableSet *filteredChannels = [self.subscribedChannels mutableCopy];
+        NSMutableSet *filteredChannels = [self.subscribedChannelsSet mutableCopy];
         [filteredChannels intersectSet:channelsSet];
         channelsSet = filteredChannels;
     }
@@ -270,15 +270,20 @@
 
 #pragma mark - Channels management
 
+- (NSArray *)subscribedChannels {
+
+    return [self channelsWithOutPresenceFromList:[self.subscribedChannelsSet allObjects]];
+}
+
 - (BOOL)isSubscribedForChannel:(PNChannel *)channel {
 
-    return [self.subscribedChannels containsObject:channel];
+    return [self.subscribedChannelsSet containsObject:channel];
 }
 
 - (void)resubscribe {
 
     // Ensure that client connected to at least one channel
-    if ([self.subscribedChannels count] > 0) {
+    if ([self.subscribedChannelsSet count] > 0) {
 
         // Unsubscribe from all channels with 'leave' presence
         // event generation
@@ -291,7 +296,7 @@
 
 - (void)updateSubscription {
 
-    [self updateSubscriptionForChannels:[self.subscribedChannels allObjects]];
+    [self updateSubscriptionForChannels:[self.subscribedChannelsSet allObjects]];
 }
 
 - (void)updateSubscriptionForChannels:(NSArray *)channels {
@@ -317,9 +322,9 @@
     // Checking whether client already subscribed on one of
     // channels from set or not
     NSMutableSet *channelsSet = [[self channelsWithPresenceFromList:channels] mutableCopy];
-    if ([self.subscribedChannels intersectsSet:channelsSet]) {
+    if ([self.subscribedChannelsSet intersectsSet:channelsSet]) {
 
-        NSMutableSet *filteredChannels = [self.subscribedChannels mutableCopy];
+        NSMutableSet *filteredChannels = [self.subscribedChannelsSet mutableCopy];
         [filteredChannels intersectSet:channelsSet];
         [channelsSet minusSet:filteredChannels];
     }
@@ -353,7 +358,7 @@
 - (NSArray *)unsubscribeFromChannelsWithPresenceEvent:(BOOL)withPresenceEvent
                                         byUserRequest:(BOOL)isLeavingByUserRequest {
 
-    NSArray *subscribedChannels = [self.subscribedChannels allObjects];
+    NSArray *subscribedChannels = [self.subscribedChannelsSet allObjects];
 
     // Check whether should generate 'leave' presence event
     // or not
@@ -387,7 +392,7 @@
                   byUserRequest:(BOOL)isLeavingByUserRequest {
 
     // Retrieve list of channels which will left after unsubscription
-    NSMutableSet *currentlySubscribedChannels = [self.subscribedChannels mutableCopy];
+    NSMutableSet *currentlySubscribedChannels = [self.subscribedChannelsSet mutableCopy];
     [currentlySubscribedChannels minusSet:[self channelsWithPresenceFromList:channels]];
 
 
@@ -420,7 +425,7 @@
     PNChannelPresence *presenceObserver = [channel presenceObserver];
 
 
-    return presenceObserver != nil && [self.subscribedChannels containsObject:presenceObserver];;
+    return presenceObserver != nil && [self.subscribedChannelsSet containsObject:presenceObserver];;
 }
 
 - (void)enablePresenceObservationForChannels:(NSArray *)channels {
@@ -459,7 +464,7 @@
 
     if (shouldRemoveChannels) {
 
-        [self.subscribedChannels minusSet:[NSSet setWithArray:channels]];
+        [self.subscribedChannelsSet minusSet:[NSSet setWithArray:channels]];
     }
 
 
@@ -504,7 +509,7 @@
 
 
         // Update channels state update time token
-        [self.subscribedChannels makeObjectsPerformSelector:@selector(setUpdateTimeToken:) withObject:timeToken];
+        [self.subscribedChannelsSet makeObjectsPerformSelector:@selector(setUpdateTimeToken:) withObject:timeToken];
         [request.channels makeObjectsPerformSelector:@selector(setUpdateTimeToken:) withObject:timeToken];
 
 
@@ -512,11 +517,11 @@
         // (messages, presence)
         if ([events.events count] > 0) {
 
-            NSArray *channels = [self channelsWithOutPresenceFromList:[self.subscribedChannels allObjects]];
+            NSArray *channels = [self channelsWithOutPresenceFromList:[self.subscribedChannelsSet allObjects]];
             PNChannel *channel = nil;
             if ([channels count] == 0) {
 
-                channels = [self.subscribedChannels allObjects];
+                channels = [self.subscribedChannelsSet allObjects];
                 channel = [(PNChannelPresence *)[channels lastObject] observedChannel];
             }
             else if ([channels count] == 1) {
@@ -554,7 +559,7 @@
         }
 
         // Subscribe to the channels with new update time token
-        [self updateSubscriptionForChannels:(request != nil ? request.channels : [self.subscribedChannels allObjects])];
+        [self updateSubscriptionForChannels:(request != nil ? request.channels : [self.subscribedChannelsSet allObjects])];
     }
 }
 
@@ -572,7 +577,7 @@
     }
 
     // Store number of subscribed channels before updating it
-    NSArray *subscribedChannels = [self channelsWithOutPresenceFromList:[self.subscribedChannels allObjects]];
+    NSArray *subscribedChannels = [self channelsWithOutPresenceFromList:[self.subscribedChannelsSet allObjects]];
     NSUInteger oldChannelsCount = [subscribedChannels count];
 
 
@@ -585,12 +590,12 @@
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         // Updating list of subscribed channels
-        [self.subscribedChannels performSelector:dataUpdateSelector
-                                      withObject:[NSSet setWithArray:[request valueForKey:@"channels"]]];
+        [self.subscribedChannelsSet performSelector:dataUpdateSelector
+                                         withObject:[NSSet setWithArray:[request valueForKey:@"channels"]]];
         #pragma clang diagnostic pop
     }
 
-    subscribedChannels = [self channelsWithOutPresenceFromList:[self.subscribedChannels allObjects]];
+    subscribedChannels = [self channelsWithOutPresenceFromList:[self.subscribedChannelsSet allObjects]];
     NSUInteger newChannelsCount = [subscribedChannels count];
     if (newChannelsCount != oldChannelsCount) {
 
