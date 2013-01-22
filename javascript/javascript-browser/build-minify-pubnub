@@ -10,14 +10,65 @@ echo -e "  "
 echo -e "  USING: $googleminify TO MINIFY..."
 echo -e "  COMPILING PUBNUB JAVASCRIPT API..."
 
-cat ./json.js ./pubnub-3.4-common.js ./pubnub-3.4.js > ./pubnub.tmp
-echo "(function(){" > ./pubnub-3.4.min.js
-java -jar $googleminify --formatting=pretty_print --js=./pubnub.tmp --compilation_level=ADVANCED_OPTIMIZATIONS >> ./pubnub-3.4.min.js
-echo "})();" >> ./pubnub-3.4.min.js
+# 3.1
+echo -e "	Minifying 3.1"
 
+cat 3.1/pubnub-3.1.js  > ./pubnub.tmp
+echo "(function(){" > ./pubnub-3.1.min.js
+java -jar $googleminify --js=./pubnub.tmp --compilation_level=ADVANCED_OPTIMIZATIONS >> ./pubnub-3.1.min.js
+echo "})();" >> ./pubnub-3.1.min.js
+echo -e "  >>COMPRESSING<< PUBNUB JAVASCRIPT API..."
+cat ./pubnub-3.1.min.js | gzip -c9 > ./pubnub-3.1.min.js.gz
+rm ./pubnub.tmp
+
+# 3.2
+echo -e "	Minifying 3.2"
+
+cat 3.2/pubnub-3.2.js > ./pubnub.tmp
+echo "(function(){" > ./pubnub-3.2.min.js
+java -jar $googleminify --js=./pubnub.tmp --compilation_level=ADVANCED_OPTIMIZATIONS >> ./pubnub-3.2.min.js
+echo "})();" >> ./pubnub-3.4.min.js
+echo -e "  >>COMPRESSING<< PUBNUB JAVASCRIPT API..."
+cat ./pubnub-3.2.min.js | gzip -c9 > ./pubnub-3.2.min.js.gz
+rm ./pubnub.tmp
+
+
+# 3.3
+echo -e "	Minifying 3.3"
+
+cat 3.3/pubnub-3.3.js > ./pubnub.tmp
+echo "(function(){" > ./pubnub-3.3.min.js
+java -jar $googleminify --js=./pubnub.tmp --compilation_level=ADVANCED_OPTIMIZATIONS >> ./pubnub-3.3.min.js
+echo "})();" >> ./pubnub-3.3.min.js
+echo -e "  >>COMPRESSING<< PUBNUB JAVASCRIPT API..."
+cat ./pubnub-3.3.min.js | gzip -c9 > ./pubnub-3.3.min.js.gz
+rm ./pubnub.tmp
+
+
+# 3.3.1
+echo -e "	Minifying 3.3.1"
+
+cat 3.3.1/pubnub-3.3.1.js > ./pubnub.tmp
+echo "(function(){" > ./pubnub-3.4.min.js
+java -jar $googleminify --js=./pubnub.tmp --compilation_level=ADVANCED_OPTIMIZATIONS >> ./pubnub-3.3.1.min.js
+echo "})();" >> ./pubnub-3.4.min.js
+echo -e "  >>COMPRESSING<< PUBNUB JAVASCRIPT API..."
+cat ./pubnub-3.3.1.min.js | gzip -c9 > ./pubnub-3.3.1.min.js.gz
+rm ./pubnub.tmp
+
+
+# 3.4
+echo -e "	Minifying 3.4"
+
+cat 3.4/json.js ../pubnub-3.4-common.js 3.4/pubnub-3.4.js > ./pubnub.tmp
+echo "(function(){" > ./pubnub-3.4.min.js
+java -jar $googleminify --js=./pubnub.tmp --compilation_level=ADVANCED_OPTIMIZATIONS >> ./pubnub-3.4.min.js
+echo "})();" >> ./pubnub-3.4.min.js
 echo -e "  >>COMPRESSING<< PUBNUB JAVASCRIPT API..."
 cat ./pubnub-3.4.min.js | gzip -c9 > ./pubnub-3.4.min.js.gz
-
 rm ./pubnub.tmp
+
+
+
 echo -e "  "
 echo -e "  DONE!\n"
