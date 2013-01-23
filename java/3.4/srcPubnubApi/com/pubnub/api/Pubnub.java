@@ -190,12 +190,10 @@ public class Pubnub {
 
         if (simpleConnManager == null)
             simpleConnManager = new HttpManager("Simple");
-
         _headers = new Hashtable();
-        _headers.put("V", "3.3");
-        _headers.put("User-Agent", "J2ME");
-        _headers.put("Accept-Encoding", "gzip");
-        _headers.put("Connection", "close");
+	    _headers.put("V", "3.3");
+	    _headers.put("Accept-Encoding", "deflate");
+
     }
 
     /**
@@ -850,7 +848,7 @@ public class Pubnub {
             callErrorCallbacks(channelsArray, "Parsing Error");
             return;
         }
-
+        System.out.println("Called with timetoken : " + timetoken);
         String[] urlComponents = { Pubnub.this.ORIGIN, "subscribe",
                 Pubnub.this.SUBSCRIBE_KEY, channelString, "0", timetoken };
 
@@ -913,6 +911,7 @@ public class Pubnub {
                                 }
 
                             }
+                            System.out.println(_timetoken);
                             _subscribe_base(_timetoken);
                         } catch (JSONException e) {
                             _subscribe_base(_timetoken);
@@ -934,8 +933,8 @@ public class Pubnub {
      * @param connManager
      */
     private void _request(final PubnubRequest req, HttpManager connManager) {
-
         HttpRequest hreq = new HttpRequest(req.getUrl(), _headers, req.responseHandler);
+        System.out.println("_request : " + hreq + " : " + req.getUrl());
         connManager.queue(hreq);
     }
 }

@@ -8,10 +8,10 @@ public abstract class HttpClient {
 	private int connTimeout = 5000;
 
 	public static HttpClient getClient() {
-		return new HttpClientCore();
+			return new HttpClientCore();
 	}
 
-	public static HttpClient getClient(int requestTimeout, int connTimeout) {
+	public HttpClient getClient(int requestTimeout, int connTimeout) {
 		return new HttpClientCore(requestTimeout, connTimeout);
 	}
 

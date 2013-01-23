@@ -12,6 +12,7 @@ public class HttpManager {
 	private Vector _waiting = new Vector();
 	private Worker _workers[];
 	private static Network network;
+	private HttpClient httpclient;
 
 	private static class Network {
 		private boolean available = true;
@@ -52,6 +53,7 @@ public class HttpManager {
 		if (network == null) {
 			network = new Network();
 		}
+		httpclient = HttpClient.getClient();
 	}
 
 	public static void init() {
@@ -85,20 +87,22 @@ public class HttpManager {
 		private boolean runHeartbeat = true;
 		private String heartbeatUrl;
 		private int heartbeatInterval;
+		private HttpClient httpclient;
 
 		public Heartbeat(String url, int interval) {
 			this.heartbeatUrl = url;
 			this.heartbeatInterval = interval;
+			this.httpclient = HttpClient.getClient();
 		}
 
 		public void run() {
 			while (runHeartbeat) {
 				try {
-					HttpClient hcl = HttpClient.getClient();
-					HttpResponse hresp = hcl.fetch(heartbeatUrl);
+
+					HttpResponse hresp = httpclient.fetch(heartbeatUrl);
 
 					int rc = hresp.getStatusCode();
-					if (hcl.isOk(rc)) {
+					if (httpclient.isOk(rc)) {
 						network.available();
 					} else {
 						network.unavailable();
@@ -132,10 +136,10 @@ public class HttpManager {
 		}
 
 		private void process(HttpRequest hreq) {
-			HttpClient hcl = HttpClient.getClient();
 			HttpResponse hresp = null;
 			try {
-				hresp = hcl.fetch(hreq.getUrl(), hreq.getHeaders());
+				System.out.println("[process] : " + hreq + " : " + hreq.getUrl());
+				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
 			} catch (IOException e) {
 				hreq.getResponseHandler().handleError(e.toString());
 				return;
@@ -162,12 +166,13 @@ public class HttpManager {
 						}
 						if (_waiting.size() != 0) {
 							hreq = (HttpRequest) _waiting.firstElement();
+							System.out.println("pick hreq from queue " + hreq);
 							_waiting.removeElementAt(0);
 							break;
 						}
 
 						try {
-							_waiting.wait(5000);
+							_waiting.wait(1000);
 						} catch (InterruptedException e) {
 						}
 					}
