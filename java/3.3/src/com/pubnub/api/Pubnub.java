@@ -187,7 +187,10 @@ public class Pubnub {
 
         rb.addHeader("V", "3.3");
         rb.addHeader("User-Agent", "Java");
+
+        //Disabling gzip
         //rb.addHeader("Accept-Encoding", "gzip");
+
         rb.setUrl(url.toString());
 
         if (requestTimeout > 0) {
@@ -578,7 +581,7 @@ public class Pubnub {
                             callback.disconnectCallback(channel);
                         } else {
                             subscriptions.remove(it.channel);
-                            callback.errorCallback(channel,
+                            callback.errorCallback(channel, response.optString(1) + " " +
                             "Lost Network Connection");
                         }
                     }
@@ -618,6 +621,7 @@ public class Pubnub {
                         }
                     }
                 }
+
                 JSONArray messages = response.optJSONArray(0);
 
                 // Update TimeToken
@@ -663,7 +667,11 @@ public class Pubnub {
                         }
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (JSONException e) {
+            	e.printStackTrace();
+            }
+            catch (Exception e) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ie) {
@@ -966,7 +974,10 @@ public class Pubnub {
      */
     private JSONArray _request(PubnubHttpRequest phr) {
         String json = "";
-        System.out.println(phr.request());
+        System.out.println();
+        System.out.println("URL" );
+        System.out.println( phr.request());
+        System.out.println();
         try {
             // Execute Request
             Future<String> f = ahc.executeRequest(phr.request(),
@@ -974,6 +985,14 @@ public class Pubnub {
 
                 @Override
                 public String onCompleted(Response r) throws Exception {
+                	System.out.println();
+                	System.out.println("RAW RESPONSE");
+                	System.out.println("========");
+                	System.out.println(r.getStatusCode() + " " +  r.getStatusText());
+                	System.out.println(r.getHeaders());
+                	System.out.println(r.getResponseBody());
+                	System.out.println("========");
+                	System.out.println();
 
                     String ce = r.getHeader("Content-Encoding");
                     InputStream resulting_is = null;
@@ -1004,7 +1023,7 @@ public class Pubnub {
                     }
 
                     reader.close();
-                    System.out.println(json);
+                    System.out.println("Decompressed Response : " + json);
                     return json;
                 }
             });
@@ -1033,7 +1052,8 @@ public class Pubnub {
         try {
             return new JSONArray(json);
         } catch (JSONException e) {
-            return new JSONArray().put("Error: Failed JSON Parsing.");
+        	e.printStackTrace();
+            return new JSONArray().put("0").put("Error: Failed JSON Parsing.");
         }
     }
 
