@@ -855,7 +855,7 @@ public class Pubnub {
                 Pubnub.this.SUBSCRIBE_KEY, channelString, "0", timetoken };
 
         Hashtable params = new Hashtable();
-        params.put("uuid", uuid());
+        params.put("uuid", UUID);
 
         PubnubRequest req = new PubnubRequest(urlComponents, params, channelsArray,
                 new ResponseHandler() {
@@ -877,7 +877,7 @@ public class Pubnub {
                         JSONArray jsa;
                         try {
                             jsa = new JSONArray(response);
-                            String _timetoken = jsa.get(1).toString();
+                            _timetoken = jsa.get(1).toString();
                             JSONArray messages = new JSONArray(jsa.get(0)
                                     .toString());
 

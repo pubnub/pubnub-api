@@ -9,13 +9,14 @@ import java.util.Hashtable;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.ContentEncodingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 
 public class HttpClientCore extends HttpClient {
 	private int requestTimeout = 310000;
 	private int connTimeout = 5000;
-	private DefaultHttpClient httpclient = new DefaultHttpClient();
+	private DefaultHttpClient httpclient = new ContentEncodingHttpClient();
 	public HttpClientCore() {
 
 	}
