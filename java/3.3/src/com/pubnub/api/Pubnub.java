@@ -68,7 +68,7 @@ class PubnubHttpRequest {
 /**
  * Pubnub object facilitates querying channels for messages and listening on channels for presence/message events
  * @author Pubnub
- * 
+ *
  */
 
 public class Pubnub {
@@ -87,7 +87,7 @@ public class Pubnub {
     private int PUBNUB_WEBREQUEST_RETRY_INTERVAL = 10000;
     private int PUBNUB_FAST_WEBREQUEST_TIMEOUT = 5000;
     private int PUBNUB_DEFAULT_CONN_TIMEOUT = 10000;
-    
+
     /** Sets wait time for Presence/Subscribe API
      * @param interval Time interval in milliseconds for which the API's like Presence and Subscribe will block
      */
@@ -121,40 +121,40 @@ public class Pubnub {
     public void setConnectionTimeout(int timeout) {
         this.PUBNUB_DEFAULT_CONN_TIMEOUT = timeout;
     }
-    
-    
-    /** 
+
+
+    /**
      * Returns Time interval in milliseconds for which the API's like Presence and Subscribe will block
-     * @return Time interval in milliseconds for which the API's like Presence and Subscribe will block 
+     * @return Time interval in milliseconds for which the API's like Presence and Subscribe will block
      */
     public int getWebRequestCallbackInterval(){
         return this.PUBNUB_WEBREQUEST_CALLBACK_INTERVAL;
     }
-    /** 
+    /**
      * Returns No of times attempt will be made to check network availability
-     * @return No of times attempt will be made to check network availability 
-     */    
+     * @return No of times attempt will be made to check network availability
+     */
     public int getNetworkCheckRetriesCount() {
         return this.PUBNUB_NETWORK_CHECK_RETRIES;
     }
-    /** 
+    /**
      * Returns time interval in milliseconds between each attempt for network connectivity check
-     * @return Time interval in milliseconds between each attempt for network connectivity check 
+     * @return Time interval in milliseconds between each attempt for network connectivity check
      */
     public int getWebRequestRetryInterval() {
         return this.PUBNUB_WEBREQUEST_RETRY_INTERVAL;
     }
-    /** 
+    /**
      * Returns timeout value in milliseconds for api's publish, history, here_now, detailedHistory, uuid, time
      * @return timeout value in milliseconds for api's publish, history, here_now, detailedHistory, uuid, time
-     */    
+     */
     public int getFastWebRequestTimeout() {
         return this.PUBNUB_FAST_WEBREQUEST_TIMEOUT;
     }
-    /** 
+    /**
      * Returns the timeout value for TCP connections made by api
-     * @return the timeout value for TCP connections made by api 
-     */    
+     * @return the timeout value for TCP connections made by api
+     */
     public int getConnectionTimeout() {
         return this.PUBNUB_DEFAULT_CONN_TIMEOUT;
     }
@@ -162,7 +162,7 @@ public class Pubnub {
     private Request getRequest(List<String> url_components) {
         return getRequest(url_components, 0);
     }
-        
+
     @SuppressWarnings({ "deprecation"})
     private Request getRequest(List<String> url_components, int requestTimeout) {
         StringBuilder url = new StringBuilder();
@@ -182,14 +182,14 @@ public class Pubnub {
 
         if (request_for.equals("v2") && request_type.equals("history"))
             url.append(parameters);
-        
+
         rb = new RequestBuilder("GET");
-        
+
         rb.addHeader("V", "3.3");
         rb.addHeader("User-Agent", "Java");
-        rb.addHeader("Accept-Encoding", "gzip");
+        //rb.addHeader("Accept-Encoding", "gzip");
         rb.setUrl(url.toString());
-        
+
         if (requestTimeout > 0) {
                PerRequestConfig prc = new PerRequestConfig();
                prc.setRequestTimeoutInMs(requestTimeout);
@@ -197,7 +197,7 @@ public class Pubnub {
          }
         return rb.build();
     }
-    
+
     protected void finalize() {
         if (ahc != null)
             ahc.close();
@@ -215,9 +215,9 @@ public class Pubnub {
     private HashMap<String, ChannelStatus> subscriptions;
 
     /**
-     * 
+     *
      * Constructor for Pubnub Class
-     * 
+     *
      * @param publish_key Publish Key
      * @param subscribe_key Subscribe Key
      * @param secret_key Secret Key
@@ -230,9 +230,9 @@ public class Pubnub {
     }
 
     /**
-     * 
+     *
      * Constructor for Pubnub Class
-     * 
+     *
      * @param publish_key Publish Key
      * @param subscribe_key Subscribe Key
      * @param secret_key Secret Key
@@ -244,9 +244,9 @@ public class Pubnub {
     }
 
     /**
-     * 
+     *
      * Constructor for Pubnub Class
-     * 
+     *
      * @param publish_key Publish Key
      * @param subscribe_key Subscribe Key
      */
@@ -255,9 +255,9 @@ public class Pubnub {
     }
 
     /**
-     * 
+     *
      * Constructor for Pubnub Class
-     * 
+     *
      * @param publish_key Publish Key
      * @param subscribe_key Subscribe Key
      * @param secret_key Secret Key
@@ -269,7 +269,7 @@ public class Pubnub {
     /**
 
      * Initialize PubNub Object State.
-     * 
+     *
      * @param publish_key
      * @param subscribe_key
      * @param secret_key
@@ -282,7 +282,7 @@ public class Pubnub {
         this.SUBSCRIBE_KEY = subscribe_key;
         this.SECRET_KEY = secret_key;
         this.CIPHER_KEY = cipher_key;
-        this.SSL = ssl_on;
+        this.SSL = false;
 
         if (this.sessionUUID.equals(""))
             sessionUUID = UUID.randomUUID().toString();
@@ -300,10 +300,10 @@ public class Pubnub {
 
     /**
      * getResponseByUrl
-     * 
+     *
      * Get response by url.
-     * 
-     * @param phr PubnubHttpRequest 
+     *
+     * @param phr PubnubHttpRequest
      * @param decrypt Decryption enabled ?
      */
     private JSONArray getResponseByUrl(PubnubHttpRequest phr, boolean decrypt) {
@@ -312,10 +312,10 @@ public class Pubnub {
 
     /**
      * Get response by url.
-     * 
+     *
      * @param phr PubnubHttpRequest
      * @param index
-     * 
+     *
      */
     private JSONArray getResponseByUrl(PubnubHttpRequest phr, int index) {
         return _getResponseByUrl(phr, true, index);
@@ -331,8 +331,8 @@ public class Pubnub {
 
     /*
      * Get response by url.
-     * 
-     * @param phr PubnubHttpRequest 
+     *
+     * @param phr PubnubHttpRequest
      * @param decrypt Decryption enabled ?
      * @param index
      */
@@ -361,7 +361,7 @@ public class Pubnub {
 
     /**
      * Send a message to a channel.
-     * 
+     *
      * @param channel Channel name
      * @param message JSONObject to be published
      * @return JSONArray of response
@@ -372,10 +372,10 @@ public class Pubnub {
         args.put("message", message);
         return publish(args, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
-    
+
     /**
      * Send a message to a channel.
-     * 
+     *
      * @param channel Channel name
      * @param message JSONObject of message to be published
      * @param requestTimeout timeout value in milliseconds for this request
@@ -390,7 +390,7 @@ public class Pubnub {
 
     /**
      * Send a message to a channel.
-     * 
+     *
      * @param args HashMap of <String, Object> containing channel name, message.
      * @param requestTimeout timeout value in milliseconds for this request
      * @return JSONArray of response
@@ -456,14 +456,14 @@ public class Pubnub {
         // Build URL
         String[] urlargs = { "publish", this.PUBLISH_KEY, this.SUBSCRIBE_KEY,
                 signature, channel, "0", message.toString() };
-    
+
         return _request( new PubnubHttpRequest(getRequest( Arrays.asList(urlargs), requestTimeout), errorMessages));
     }
 
     /**
-     * 
+     *
      * Listen for a message on a channel.
-     * 
+     *
      * @param channel Channel name for subscribing
      * @param callback Callback
      * @exception PubnubException Throws PubnubException if Callback is null
@@ -477,9 +477,9 @@ public class Pubnub {
     }
 
     /**
-     * 
+     *
      * Listen for a message on a channel.
-     * 
+     *
      * @param args HashMap <String, Object> containing channel name, function callback.
      * @exception PubnubException Throws PubnubException if Callback is missing
      */
@@ -490,9 +490,9 @@ public class Pubnub {
 
     /**
      * Subscribe - Private Interface
-     * 
+     *
      * Patch provided by petereddy on GitHub
-     * 
+     *
      * @param args HashMap
      *            <String, Object> containing channel name, function callback,
      *            timetoken.
@@ -500,7 +500,7 @@ public class Pubnub {
     private void _subscribe(HashMap<String, Object> args)
     throws PubnubException {
 
-        String[] errorMessages = {"0", "0"}; 
+        String[] errorMessages = {"0", "0"};
         String channel = (String) args.get("channel");
         String timetoken = (String) args.get("timetoken");
         Callback callback;
@@ -673,11 +673,11 @@ public class Pubnub {
     }
 
     /**
-     * 
+     *
      * Listen for presence of subscribers on a channel
-     * 
+     *
      * @param channel Name of the channel on which to listen for join/leave i.e. presence events
-     * @param callback Callback 
+     * @param callback Callback
      * @exception PubnubException Throws PubnubException if Callback is null
      */
     public void presence(String channel, Callback callback)
@@ -688,7 +688,7 @@ public class Pubnub {
         subscribe(args);
     }
 
-    
+
     /**
      * Read presence information from a channel
      * @param channel
@@ -698,9 +698,9 @@ public class Pubnub {
         return here_now(channel, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     /**
-     * 
+     *
      * Read presence information from a channel
-     * 
+     *
      * @param channel Channel name
      * @param requestTimeout timeout in milliseconds for this request
      * @return Array of uuid's currently subscribing to a channel
@@ -714,9 +714,9 @@ public class Pubnub {
     }
 
     /**
-     * 
+     *
      * Read history from a channel.
-     * 
+     *
      * @param channel Channel Name
      * @param limit Upper limit on number of messages in response
      * @param requestTimeout timeout in milliseconds for this request
@@ -729,9 +729,9 @@ public class Pubnub {
         return history(args,requestTimeout);
     }
     /**
-     * 
+     *
      * Read history from a channel.
-     * 
+     *
      * @param channel Channel Name
      * @param limit Upper limit on number of messages in response.
      * @return JSONArray of message history on a channel.
@@ -741,9 +741,9 @@ public class Pubnub {
     }
 
     /**
-     * 
+     *
      * Read history from a channel.
-     * 
+     *
      * @param args HashMap of <String, Object> containing channel name, limit history count
      * @param requestTimeout timeout in milliseconds for this request
      * @return JSONArray of history.
@@ -761,10 +761,10 @@ public class Pubnub {
     }
 
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
-     * @param start Start time 
+     * @param start Start time
      * @param end End time
      * @param count Upper limit on number of messages to be returned
      * @param reverse True if messages need to be in reverse order
@@ -794,10 +794,10 @@ public class Pubnub {
         return getResponseByUrl(new PubnubHttpRequest(getRequest(Arrays.asList(urlargs), requestTimeout), errorMessages), 0);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
-     * @param start Start time 
+     * @param start Start time
      * @param end End time
      * @param count Upper limit on number of messages to be returned
      * @param reverse True if messages need to be in reverse order
@@ -808,10 +808,10 @@ public class Pubnub {
         return detailedHistory(channel, start, end, count, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
-     * @param start Start time 
+     * @param start Start time
      * @param reverse True if messages need to be in reverse order
      * @return JSONArray of detailed history.
      */
@@ -819,10 +819,10 @@ public class Pubnub {
         return detailedHistory(channel, start, -1, -1, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
-     * @param start Start time 
+     * @param start Start time
      * @param reverse True if messages need to be in reverse order
      * @param requestTimeout Timeout value in milliseconds for this request
      * @return JSONArray of detailed history.
@@ -831,25 +831,25 @@ public class Pubnub {
         return detailedHistory(channel, start, -1, -1, reverse, requestTimeout);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
-     * @param start Start time 
+     * @param start Start time
      * @param end End time
      * @return JSONArray of detailed history.
      */
     public JSONArray detailedHistory(String channel, long start, long end) {
         return detailedHistory(channel, start, end, -1, false, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
-    
+
     public JSONArray detailedHistory(String channel, long start, long end, int requestTime) {
         return detailedHistory(channel, start, end, -1, false, requestTime);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
-     * @param start Start time 
+     * @param start Start time
      * @param end End time
      * @param reverse True if messages need to be in reverse order
      * @return JSONArray of detailed history.
@@ -859,10 +859,10 @@ public class Pubnub {
         return detailedHistory(channel, start, end, -1, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
-     * @param start Start time 
+     * @param start Start time
      * @param end End time
      * @param reverse True if messages need to be in reverse order
      * @param requestTimeout Timeout value in milliseconds for this request
@@ -873,7 +873,7 @@ public class Pubnub {
         return detailedHistory(channel, start, end, -1, reverse, requestTimeout);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
      * @param count Upper limit on number of messages to be returned
@@ -884,7 +884,7 @@ public class Pubnub {
         return detailedHistory(channel, -1, -1, count, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
      * @param count Upper limit on number of messages to be returned
@@ -896,7 +896,7 @@ public class Pubnub {
         return detailedHistory(channel, -1, -1, count, reverse, requestTimeout);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
      * @param reverse True if messages need to be in reverse order
@@ -906,20 +906,20 @@ public class Pubnub {
         return detailedHistory(channel, -1, -1, -1, reverse, PUBNUB_FAST_WEBREQUEST_TIMEOUT);
     }
     /**
-     * 
+     *
      * Read DetailedHistory for a channel.
      * @param channel Channel name for which detailed history is required
      * @param reverse True if messages need to be in reverse order
      * @param requestTimeout Timeout value in milliseconds for this request
      * @return JSONArray of detailed history.
-     */    
+     */
     public JSONArray detailedHistory(String channel, boolean reverse, int requestTimeout) {
         return detailedHistory(channel, -1, -1, -1, reverse, requestTimeout);
     }
 
     /**
      * Read current time from PubNub Cloud.
-     * 
+     *
      * @return current timestamp.
      */
     public double time() {
@@ -935,7 +935,7 @@ public class Pubnub {
 
     /**
      * Get 32 digit UUID generation at client side.
-     * 
+     *
      * @return uuid.
      */
     public static String uuid() {
@@ -945,7 +945,7 @@ public class Pubnub {
 
     /**
      * Unsubscribe/Disconnect from channel.
-     * 
+     *
      * @param args HashMap of <String, Object> containing channel name.
      */
     public void unsubscribe(HashMap<String, Object> args) {
@@ -956,7 +956,7 @@ public class Pubnub {
             it.first = false;
         }
     }
-    
+
 
     /**
      * @param List
@@ -966,7 +966,7 @@ public class Pubnub {
      */
     private JSONArray _request(PubnubHttpRequest phr) {
         String json = "";
- 
+        System.out.println(phr.request());
         try {
             // Execute Request
             Future<String> f = ahc.executeRequest(phr.request(),
@@ -1004,6 +1004,7 @@ public class Pubnub {
                     }
 
                     reader.close();
+                    System.out.println(json);
                     return json;
                 }
             });
@@ -1097,7 +1098,7 @@ class Base64Encoder {
     /**
      * Encodes a string into Base64 format. No blanks or line breaks are
      * inserted.
-     * 
+     *
      * @param s
      *            a String to be encoded.
      * @return A String with the Base64 encoded data.
@@ -1109,7 +1110,7 @@ class Base64Encoder {
     /**
      * Encodes a byte array into Base64 format. No blanks or line breaks are
      * inserted.
-     * 
+     *
      * @param in
      *            an array containing the data bytes to be encoded.
      * @return A character array with the Base64 encoded data.
@@ -1121,7 +1122,7 @@ class Base64Encoder {
     /**
      * Encodes a byte array into Base64 format. No blanks or line breaks are
      * inserted.
-     * 
+     *
      * @param in
      *            an array containing the data bytes to be encoded.
      * @param iLen
@@ -1154,7 +1155,7 @@ class Base64Encoder {
 
     /**
      * Decodes a string from Base64 format.
-     * 
+     *
      * @param s
      *            a Base64 String to be decoded.
      * @return A String containing the decoded data.
@@ -1167,7 +1168,7 @@ class Base64Encoder {
 
     /**
      * Decodes a byte array from Base64 format.
-     * 
+     *
      * @param s
      *            a Base64 String to be decoded.
      * @return An array containing the decoded data bytes.
@@ -1181,7 +1182,7 @@ class Base64Encoder {
     /**
      * Decodes a byte array from Base64 format. No blanks or line breaks are
      * allowed within the Base64 encoded data.
-     * 
+     *
      * @param in
      *            a character array containing the Base64 encoded data.
      * @return An array containing the decoded data bytes.
@@ -1235,7 +1236,7 @@ class Base64Encoder {
 
 /**
  * PubNub 3.2 Cryptography
- * 
+ *
  */
 
 class PubnubCrypto {
@@ -1248,7 +1249,7 @@ class PubnubCrypto {
 
     /**
      * Encrypt
-     * 
+     *
      * @param JSONObject
      *            Message to encrypt
      * @return JSONObject as Encrypted message
@@ -1273,7 +1274,7 @@ class PubnubCrypto {
 
     /**
      * Decrypt
-     * 
+     *
      * @param JSONObject
      *            Encrypted message
      * @return JSONObject Message decrypted
@@ -1298,7 +1299,7 @@ class PubnubCrypto {
 
     /**
      * Encrypt JSONArray
-     * 
+     *
      * @param JSONArray
      *            - Encrypted JSONArray
      * @return JSONArray - Decrypted JSONArray
@@ -1329,7 +1330,7 @@ class PubnubCrypto {
 
     /**
      * Decrypt JSONArray
-     * 
+     *
      * @param JSONArray
      *            - Encrypted JSONArray
      * @return JSONArray - Decrypted JSONArray
@@ -1360,7 +1361,7 @@ class PubnubCrypto {
 
     /**
      * Encrypt
-     * 
+     *
      * @param String
      *            plain text to encrypt
      * @return String cipher text
@@ -1373,7 +1374,7 @@ class PubnubCrypto {
 
     /**
      * Decrypt
-     * 
+     *
      * @param String
      *            cipherText
      * @return String
@@ -1386,7 +1387,7 @@ class PubnubCrypto {
 
     /**
      * AES Encryption
-     * 
+     *
      * @param boolean encrypt_or_decrypt ENCRYPT/DECRYPT mode
      * @param ByteArray
      *            input_bytes
@@ -1423,7 +1424,7 @@ class PubnubCrypto {
 
     /**
      * Sign Message
-     * 
+     *
      * @param String
      *            input
      * @return String as HashText
@@ -1447,7 +1448,7 @@ class PubnubCrypto {
 
     /**
      * Get MD5
-     * 
+     *
      * @param string
      * @return
      */
