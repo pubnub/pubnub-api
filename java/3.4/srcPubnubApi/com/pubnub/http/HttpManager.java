@@ -3,6 +3,7 @@ package com.pubnub.http;
 import java.io.IOException;
 import java.util.Vector;
 
+import com.pubnub.api.PubnubException;
 import com.pubnub.httpclient.HttpClient;
 import com.pubnub.httpclient.HttpResponse;
 
@@ -65,6 +66,14 @@ public class HttpManager {
 		init();
 		initManager(_maxWorkers, name);
 	}
+	
+	public void abortAndQueue(HttpRequest hreq) {
+		httpclient.abortCurrentRequest();
+		synchronized(_waiting) {
+			_waiting.clear();
+		}
+		queue(hreq);
+	}
 
 	public void queue(HttpRequest hreq) {
 
@@ -111,6 +120,8 @@ public class HttpManager {
 				} catch (IOException e) {
 					network.unavailable();
 
+				} catch (PubnubException e) {
+
 				}
 				try {
 					Thread.sleep(heartbeatInterval);
@@ -138,10 +149,11 @@ public class HttpManager {
 		private void process(HttpRequest hreq) {
 			HttpResponse hresp = null;
 			try {
-				System.out.println("[process] : " + hreq + " : " + hreq.getUrl());
 				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
 			} catch (IOException e) {
 				hreq.getResponseHandler().handleError(e.toString());
+				return;
+			} catch (PubnubException e) {
 				return;
 			}
 			hreq.getResponseHandler().handleResponse(hresp.getResponse());
@@ -166,7 +178,6 @@ public class HttpManager {
 						}
 						if (_waiting.size() != 0) {
 							hreq = (HttpRequest) _waiting.firstElement();
-							System.out.println("pick hreq from queue " + hreq);
 							_waiting.removeElementAt(0);
 							break;
 						}

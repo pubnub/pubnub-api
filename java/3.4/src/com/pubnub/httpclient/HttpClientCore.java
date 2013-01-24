@@ -11,6 +11,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import com.pubnub.api.PubnubException;
 
 
 public class HttpClientCore extends HttpClient {
@@ -18,7 +19,12 @@ public class HttpClientCore extends HttpClient {
 	private int connTimeout = 5000;
 	private DecompressingHttpClient httpclient;
     private Hashtable _headers;
+    private HttpGet httpget;
 
+    public void abortCurrentRequest(){
+    	if (httpget != null)
+    		httpget.abort();
+    }
 	public HttpClientCore() {
 		httpclient = new DecompressingHttpClient(new DefaultHttpClient());
 		_headers = new Hashtable();
@@ -78,13 +84,12 @@ public class HttpClientCore extends HttpClient {
         return new String(out.toString());
     }
 
-	public HttpResponse fetch(String url) throws IOException {
+	public HttpResponse fetch(String url) throws IOException, PubnubException {
 		return fetch(url, null);
 	}
 
-	public synchronized HttpResponse fetch(String url, Hashtable headers) throws IOException {
-		System.out.println(url);
-		HttpGet httpget = new HttpGet(url);
+	public synchronized HttpResponse fetch(String url, Hashtable headers) throws IOException, PubnubException {
+		httpget = new HttpGet(url);
 		if (_headers != null) {
 			Enumeration en = _headers.keys();
 			while (en.hasMoreElements()) {
@@ -104,7 +109,9 @@ public class HttpClientCore extends HttpClient {
 		org.apache.http.HttpResponse response = httpclient.execute(httpget);
 		HttpEntity entity = response.getEntity();
         String page = readInput(entity.getContent());
-        System.out.println(page);
+		if (httpget.isAborted()) {
+			throw new PubnubException("Request Aborted");
+		}
 		return new HttpResponse(response.getStatusLine().getStatusCode(), page);
 	}
 

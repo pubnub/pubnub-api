@@ -848,7 +848,6 @@ public class Pubnub {
             callErrorCallbacks(channelsArray, "Parsing Error");
             return;
         }
-        System.out.println("Called with timetoken : " + timetoken);
         String[] urlComponents = { Pubnub.this.ORIGIN, "subscribe",
                 Pubnub.this.SUBSCRIBE_KEY, channelString, "0", timetoken };
 
@@ -911,7 +910,6 @@ public class Pubnub {
                                 }
 
                             }
-                            System.out.println(_timetoken);
                             _subscribe_base(_timetoken);
                         } catch (JSONException e) {
                             _subscribe_base(_timetoken);
@@ -925,16 +923,27 @@ public class Pubnub {
                     }
                 });
 
-        _request(req, longPollConnManager);
+        _request(req, longPollConnManager, true);
     }
 
     /**
      * @param req
      * @param connManager
+     * @param abortExisting
+     */
+    private void _request(final PubnubRequest req, HttpManager connManager, boolean abortExisting) {
+        HttpRequest hreq = new HttpRequest(req.getUrl(), _headers, req.responseHandler);
+        
+        if (abortExisting)
+        	connManager.abortAndQueue(hreq);
+        else 
+        	connManager.queue(hreq);
+    }
+    /**
+     * @param req
+     * @param connManager
      */
     private void _request(final PubnubRequest req, HttpManager connManager) {
-        HttpRequest hreq = new HttpRequest(req.getUrl(), _headers, req.responseHandler);
-        System.out.println("_request : " + hreq + " : " + req.getUrl());
-        connManager.queue(hreq);
+    	_request(req, connManager, false);
     }
 }

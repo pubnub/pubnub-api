@@ -2,6 +2,7 @@ package com.pubnub.httpclient;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import com.pubnub.api.PubnubException;
 
 public abstract class HttpClient {
 	private int requestTimeout = 310000;
@@ -40,14 +41,16 @@ public abstract class HttpClient {
 		this.connTimeout = connTimeout;
 	}
 
+	public abstract void abortCurrentRequest();
+	
 	public abstract boolean isRedirect(int rc);
 
 	public abstract boolean checkResponse(int rc);
 
 	public abstract boolean isOk(int rc);
 
-	public abstract HttpResponse fetch(String url) throws IOException;
+	public abstract HttpResponse fetch(String url) throws IOException, PubnubException;
 
 	public abstract HttpResponse fetch(String url, Hashtable headers)
-			throws IOException;
+			throws IOException, PubnubException;
 }
