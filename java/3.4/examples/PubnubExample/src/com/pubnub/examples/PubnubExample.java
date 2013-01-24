@@ -26,7 +26,7 @@ public class PubnubExample {
 	 */
 	public static void main(String[] params) {
 		PubnubExample pex = new PubnubExample();
-		//Pubnub.startHeartbeat(5000);
+		Pubnub.startHeartbeat(5000);
 		System.out.println("\nRunning publish()");
 		pex.publish();
 

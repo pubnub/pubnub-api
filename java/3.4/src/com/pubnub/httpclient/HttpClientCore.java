@@ -11,6 +11,8 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import com.pubnub.api.PubnubException;
 
 
@@ -109,6 +111,7 @@ public class HttpClientCore extends HttpClient {
 		org.apache.http.HttpResponse response = httpclient.execute(httpget);
 		HttpEntity entity = response.getEntity();
         String page = readInput(entity.getContent());
+        EntityUtils.consume(response.getEntity());	
 		if (httpget.isAborted()) {
 			throw new PubnubException("Request Aborted");
 		}
