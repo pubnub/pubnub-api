@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubnubNewsFeedClient", "PubnubNewsFeedClient\PubnubNewsFeedClient.csproj", "{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+		Ad-Hoc|iPhone = Ad-Hoc|iPhone
+		AppStore|iPhone = AppStore|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Debug|iPhone.Build.0 = Debug|iPhone
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Release|iPhone.ActiveCfg = Release|iPhone
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Release|iPhone.Build.0 = Release|iPhone
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{5E8BDFA2-DC19-4014-B182-14E9AFDDE1FC}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = PubnubNewsFeedClient\PubnubNewsFeedClient.csproj
+	EndGlobalSection
+EndGlobal

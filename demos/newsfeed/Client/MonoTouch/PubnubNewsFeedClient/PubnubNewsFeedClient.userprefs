@@ -1,0 +1,20 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubnubNewsFeedClient/NewsFeedMain.cs">
+    <Files>
+      <File FileName="PubnubNewsFeedClient/AppDelegate.cs" Line="42" Column="6" />
+      <File FileName="PubnubNewsFeedClient/NewsFeedMain.cs" Line="29" Column="63" />
+      <File FileName="PubnubNewsFeedClient/Rss.cs" Line="26" Column="1" />
+      <File FileName="PubnubNewsFeedClient/Pubnub.cs" Line="1388" Column="1" />
+      <File FileName="PubnubNewsFeedClient/NewsElement.cs" Line="158" Column="1" />
+      <File FileName="PubnubNewsFeedClient/Common.cs" Line="13" Column="25" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="PubnubNewsFeedClient/NewsFeedMain.cs" line="52" offsetX="425" offsetY="816" expression="result" liveUpdate="False" />
+    <Watch file="PubnubNewsFeedClient/NewsFeedMain.cs" line="53" offsetX="425" offsetY="832" expression="result" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
+</Properties>
