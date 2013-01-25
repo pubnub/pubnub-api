@@ -28,7 +28,7 @@ $(".media-option").click(function(){
     console.log($(this).data("name")+":"+$(this).data("toggled"));
 });
 
-// bind click handler on #search button
+// bind click handler on #search button·
 $("#search").click(function(){
     var selected = [];
     $(".media-option").each(function(){
