@@ -5,9 +5,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
+import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -37,8 +40,21 @@ public class PubnubCrypto {
     public static int blockSize = 16;
 
     public PubnubCrypto(String CIPHER_KEY) {
-        key = PubnubCrypto.md5(CIPHER_KEY);
-        IV = "0123456789012345".getBytes();
+    	
+    	try {
+    		
+    		//System.out.println(Hex.encodeHexString(sha256(CIPHER_KEY.getBytes("UTF-8"))));
+    		
+			byte[] k = Hex.encodeHexString(sha256(CIPHER_KEY.getBytes("UTF-8")))
+					.replace("-","").substring(0, 32).toLowerCase().getBytes("UTF-8");
+	        //System.out.println(new String(k));
+	        key = k;
+			IV = "0123456789012345".getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
         InitCiphers();
     }
 
@@ -69,11 +85,14 @@ public class PubnubCrypto {
     public String encrypt(String input) throws DataLengthException,
             IllegalStateException, InvalidCipherTextException {
         try {
-            InputStream st = new ByteArrayInputStream(input.getBytes());
+            InputStream st = new ByteArrayInputStream(input.getBytes("UTF-8"));
+            //System.out.println(base64Encode(input.getBytes("UTF-8")));
             ByteArrayOutputStream ou = new ByteArrayOutputStream();
             CBCEncrypt(st, ou);
-
-            return new String(Base64Encoder.encode(ou.toByteArray()));
+            String s = new String(Base64Encoder.encode(ou.toByteArray()));
+            //System.out.println(s);
+            //System.out.println(base64Encode(ou.toByteArray()));
+            return s;
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -149,127 +168,6 @@ public class PubnubCrypto {
                     .digit(s.charAt(i + 1), 16));
         }
         return data;
-    }
-
-    /**
-     * Encrypt
-     *
-     * @param JSONObject
-     *            Message to encrypt
-     * @return JSONObject as Encrypted message
-     * @throws JSONException
-     * @throws InvalidCipherTextException
-     * @throws IllegalStateException
-     * @throws DataLengthException
-     */
-    public JSONObject encrypt(JSONObject message) throws DataLengthException,
-            IllegalStateException, InvalidCipherTextException, JSONException {
-
-        JSONObject message_encrypted = new JSONObject();
-
-        Enumeration it = (Enumeration) message.keys();
-        while (it.hasMoreElements()) {
-            String key = (String) it.nextElement();
-            String val = message.getString(key);
-            message_encrypted.put(key, encrypt(val));
-        }
-
-        return message_encrypted;
-    }
-
-    /**
-     * Decrypt
-     *
-     * @param JSONObject
-     *            Encrypted message
-     * @return JSONObject Message decrypted
-     * @throws JSONException
-     * @throws IOException
-     * @throws InvalidCipherTextException
-     * @throws IllegalStateException
-     * @throws DataLengthException
-     */
-    public JSONObject decrypt(JSONObject message_encrypted)
-            throws JSONException, DataLengthException, IllegalStateException,
-            InvalidCipherTextException, IOException {
-
-        JSONObject message_decrypted = new JSONObject();
-        Enumeration it = (Enumeration) message_encrypted.keys();
-
-        while (it.hasMoreElements()) {
-            String key1 = (String) it.nextElement();
-            String encrypted_str = message_encrypted.getString(key1);
-            String decrypted_str;
-            decrypted_str = decrypt(encrypted_str);
-            message_decrypted.put(key1, decrypted_str);
-        }
-
-        return message_decrypted;
-    }
-
-    /**
-     * Encrypt JSONArray
-     *
-     * @param JSONArray
-     *            - Encrypted JSONArray
-     * @return JSONArray - Decrypted JSONArray
-     * @throws JSONException
-     * @throws InvalidCipherTextException
-     * @throws IllegalStateException
-     * @throws DataLengthException
-     */
-    public JSONArray encryptJSONArray(JSONArray jsona_arry)
-            throws JSONException, DataLengthException, IllegalStateException,
-            InvalidCipherTextException {
-
-        JSONArray jsona_decrypted = new JSONArray();
-        for (int i = 0; i < jsona_arry.length(); i++) {
-            Object o = jsona_arry.get(i);
-            if (o != null) {
-                if (o instanceof JSONObject) {
-                    jsona_decrypted.put(i, encrypt((JSONObject) o));
-                } else if (o instanceof JSONArray) {
-                    jsona_decrypted.put(i, encryptJSONArray((JSONArray) o));
-                } else if (o instanceof String) {
-                    jsona_decrypted.put(i, encrypt(o.toString()));
-                }
-            }
-        }
-
-        return jsona_decrypted;
-    }
-
-    /**
-     * Decrypt JSONArray
-     *
-     * @param JSONArray
-     *            - Encrypted JSONArray
-     * @return JSONArray - Decrypted JSONArray
-     * @throws JSONException
-     * @throws InvalidCipherTextException
-     * @throws IllegalStateException
-     * @throws DataLengthException
-     */
-    public JSONArray decryptJSONArray(JSONArray jsona_encrypted)
-            throws IOException, DataLengthException, IllegalStateException,
-            InvalidCipherTextException, JSONException {
-
-        JSONArray jsona_decrypted = new JSONArray();
-
-        for (int i = 0; i < jsona_encrypted.length(); i++) {
-            Object o = jsona_encrypted.get(i);
-            if (o != null) {
-                if (o instanceof JSONObject) {
-                    jsona_decrypted.put(i, decrypt((JSONObject) o));
-                } else if (o instanceof JSONArray) {
-                    jsona_decrypted.put(i, decryptJSONArray((JSONArray) o));
-                } else if (o instanceof String) {
-                    jsona_decrypted.put(i, decrypt(o.toString()));
-                }
-            }
-        }
-
-        return jsona_decrypted;
     }
 
     /**
@@ -372,4 +270,20 @@ public class PubnubCrypto {
         }
         return hexStringToByteArray(hex.toString());
     }
+    /**
+     * Get SHA256
+     *
+     * @param string
+     * @return
+     */
+    public static byte[] sha256(byte[] input) {
+        
+    	Digest  digest = new SHA256Digest();
+        byte[]  resBuf = new byte[digest.getDigestSize()];
+        byte[]  bytes = input;
+        digest.update(bytes, 0, bytes.length);
+        digest.doFinal(resBuf, 0);
+        return resBuf;
+    }
+    
 }

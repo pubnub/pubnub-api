@@ -1,7 +1,10 @@
 package com.pubnub.api;
 
+import java.io.IOException;
 import java.util.Hashtable;
 
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.util.SecureRandom;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -294,7 +297,7 @@ public class Pubnub {
                 // Encrypt Message
                 PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
                 try {
-                    message = pc.encrypt(obj);
+                    message = pc.encrypt(obj.toString());
                 } catch (Exception e) {
                     JSONArray jsarr;
                     jsarr = new JSONArray();
@@ -331,7 +334,7 @@ public class Pubnub {
                 // Encrypt Message
                 PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
                 try {
-                    message = pc.encryptJSONArray(obj);
+                    message = pc.encrypt(obj.toString());
                 } catch (Exception e) {
                     JSONArray jsarr;
                     jsarr = new JSONArray();
@@ -889,9 +892,30 @@ public class Pubnub {
                                 for (int i = 0; i < _channels.length; i++) {
                                     Channel _channel = (Channel) subscriptions
                                             .getChannel(_channels[i]);
-                                    if (_channel != null)
-                                        _channel.callback.successCallback(
-                                                _channels[i], messages.get(i));
+                                    if (_channel != null) {
+                                    	if (CIPHER_KEY != null) {
+                                        	PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
+                                            try {
+    											_channel.callback.successCallback(
+    											        _channel.name, pc.decrypt(messages.get(i).toString()));
+    										} catch (DataLengthException e) {
+    											// TODO Auto-generated catch block
+    											e.printStackTrace();
+    										} catch (IllegalStateException e) {
+    											// TODO Auto-generated catch block
+    											e.printStackTrace();
+    										} catch (InvalidCipherTextException e) {
+    											// TODO Auto-generated catch block
+    											e.printStackTrace();
+    										} catch (IOException e) {
+    											// TODO Auto-generated catch block
+    											e.printStackTrace();
+    										}
+                                            } else {
+                                            	_channel.callback.successCallback(
+                                                        _channel.name, messages.get(i));
+                                            }
+                                    }
                                 }
 
                             } else {
@@ -904,8 +928,29 @@ public class Pubnub {
 
                                 if (_channel != null) {
                                     for (int i = 0; i < messages.length(); i++) {
-                                        _channel.callback.successCallback(
-                                                _channel.name, messages.get(i));
+                                    	if (CIPHER_KEY != null) {
+                                    	PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
+                                        try {
+											_channel.callback.successCallback(
+											        _channel.name, pc.decrypt(messages.get(i).toString()));
+										} catch (DataLengthException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										} catch (IllegalStateException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										} catch (InvalidCipherTextException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										} catch (IOException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+                                        } else {
+                                        	_channel.callback.successCallback(
+                                                    _channel.name, messages.get(i));
+                                        }
+                                    	
                                     }
                                 }
 
