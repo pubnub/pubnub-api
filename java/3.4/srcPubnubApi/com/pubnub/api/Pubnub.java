@@ -43,6 +43,20 @@ public class Pubnub {
 	
 	private String PRESENCE_SUFFIX = "-pnpres";
 
+	public static Object stringToJSON(String str) {
+		Object obj = str;
+		try {
+			JSONArray jsarr = new JSONArray(str);
+			obj = jsarr;
+		} catch (JSONException e) {
+			try {
+				JSONObject jsobj = new JSONObject(str);
+				obj = jsobj;
+			} catch(JSONException ex) {
+			}
+		}
+		return obj;
+	}
 	/**
 	 * UUID
 	 *
@@ -306,9 +320,10 @@ public class Pubnub {
 		final String channel = (String) args.get("channel");
 		Object message = args.get("message");
 		final Callback callback = (Callback) args.get("callback");
-		String msgStr = "\"" + message.toString() + "\"";
+		String msgStr = message.toString();
 
 		if (this.CIPHER_KEY.length() > 0) {
+			msgStr = "\"" + msgStr + "\"";
 			// Encrypt Message
 			PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
 			try {
@@ -407,17 +422,29 @@ public class Pubnub {
 
 		PubnubRequest req = new PubnubRequest(urlargs, (String) null,
 				new ResponseHandler() {
-
 			public void handleResponse(String response) {
-				callback.successCallback(channel, response);
-
+				JSONObject jsobj;
+				try {
+					jsobj = new JSONObject(response);
+				} catch (JSONException e) {
+					handleError(response);
+					return;
+				}
+				callback.successCallback(channel, jsobj);
 			}
 
 			public void handleError(String response) {
-				callback.errorCallback(channel, response);
-
+				JSONArray jsarr;
+				try {
+					jsarr = new JSONArray(response);
+				} catch (JSONException e) {
+					jsarr = new JSONArray();
+					jsarr.put("0").put(
+							"Error: Failed JSON HTTP PubnubRequest");
+				}
+				callback.errorCallback(channel, jsarr);
+				return;
 			}
-
 		});
 
 		_request(req, simpleConnManager);
@@ -466,13 +493,27 @@ public class Pubnub {
 		PubnubRequest req = new PubnubRequest(urlargs, channel, new ResponseHandler() {
 
 			public void handleResponse(String response) {
-				callback.successCallback(channel, response);
-
+				JSONArray jsarr;
+				try {
+					jsarr = new JSONArray(response);
+				} catch (JSONException e) {
+					handleError(response);
+					return;
+				}
+				callback.successCallback(channel, jsarr);
 			}
 
 			public void handleError(String response) {
-				callback.errorCallback(channel, response);
-
+				JSONArray jsarr;
+				try {
+					jsarr = new JSONArray(response);
+				} catch (JSONException e) {
+					jsarr = new JSONArray();
+					jsarr.put("0").put(
+							"Error: Failed JSON HTTP PubnubRequest");
+				}
+				callback.errorCallback(channel, jsarr);
+				return;
 			}
 
 		});
@@ -517,13 +558,27 @@ public class Pubnub {
 				new ResponseHandler() {
 
 			public void handleResponse(String response) {
-				callback.successCallback(channel, response);
-
+				JSONArray jsarr;
+				try {
+					jsarr = new JSONArray(response);
+				} catch (JSONException e) {
+					handleError(response);
+					return;
+				}
+				callback.successCallback(channel, jsarr);
 			}
 
 			public void handleError(String response) {
-				callback.errorCallback(channel, response);
-
+				JSONArray jsarr;
+				try {
+					jsarr = new JSONArray(response);
+				} catch (JSONException e) {
+					jsarr = new JSONArray();
+					jsarr.put("0").put(
+							"Error: Failed JSON HTTP PubnubRequest");
+				}
+				callback.errorCallback(channel, jsarr);
+				return;
 			}
 
 		});
@@ -865,11 +920,13 @@ public class Pubnub {
 							Channel _channel = (Channel) subscriptions
 									.getChannel(_channels[i]);
 							if (_channel != null) {
-								if (CIPHER_KEY != null  && !_channel.name.endsWith(PRESENCE_SUFFIX)) {
+								JSONObject jsobj = null; 
+								if (CIPHER_KEY.length() > 0  && !_channel.name.endsWith(PRESENCE_SUFFIX)) {
 									PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
 									try {
+										String message = pc.decrypt(messages.get(i).toString());									
 										_channel.callback.successCallback(
-												_channel.name, pc.decrypt(messages.get(i).toString()));
+												_channel.name, stringToJSON(message));
 									} catch (Exception e) {
 										_channel.callback.errorCallback(
 												_channel.name, "Message Decryption Error : " + messages.get(i).toString());
@@ -891,7 +948,7 @@ public class Pubnub {
 
 						if (_channel != null) {
 							for (int i = 0; i < messages.length(); i++) {
-								if (CIPHER_KEY != null  && !_channel.name.endsWith(PRESENCE_SUFFIX)) {
+								if (CIPHER_KEY.length() > 0   && !_channel.name.endsWith(PRESENCE_SUFFIX)) {
 									PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
 									try {
 										_channel.callback.successCallback(

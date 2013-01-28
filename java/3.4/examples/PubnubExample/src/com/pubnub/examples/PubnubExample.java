@@ -19,7 +19,7 @@ public class PubnubExample {
 	public PubnubExample() {
 	}
 
-	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "demo", false);
+	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", false);
 
 	/**
 	 * @param params
@@ -62,20 +62,17 @@ public class PubnubExample {
 		try {
 			message.put("some_key", "Java says hello, world!");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		//String message = "Java says hello world";
 		Hashtable args = new Hashtable(2);
 		args.put("channel", channel); // Channel Name
 		args.put("message", message); // JSON Message
 		_pubnub.publish(args, new Callback() {
 			public void successCallback(String channel, Object message) {
-				notifyUser(message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 
 			public void errorCallback(String channel, Object message) {
-				notifyUser(channel + " : " + message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 		});
 	}
@@ -99,10 +96,10 @@ public class PubnubExample {
 				}
 
 				public void successCallback(String channel, Object message) {
-					notifyUser(channel + " " + message.toString());
+					notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 				}
 				public void errorCallback(String channel, Object message) {
-					notifyUser(channel + " " + message.toString());
+					notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 				}
 			});
 
@@ -121,11 +118,11 @@ public class PubnubExample {
 	public void time() {
 		_pubnub.time(new Callback() {
 			public void successCallback(String channel, Object message) {
-				notifyUser(message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 
 			public void errorCallback(String channel, Object message) {
-				notifyUser(channel + " : " + message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 		});
 	}
@@ -134,11 +131,11 @@ public class PubnubExample {
 
 		_pubnub.history(channel, 2, new Callback() {
 			public void successCallback(String channel, Object message) {
-				notifyUser(message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 
 			public void errorCallback(String channel, Object message) {
-				notifyUser(channel + " : " + message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 		});
 	}
@@ -146,11 +143,11 @@ public class PubnubExample {
 	private void hereNow() {
 		_pubnub.hereNow(channel, new Callback() {
 			public void successCallback(String channel, Object message) {
-				notifyUser(message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 
 			public void errorCallback(String channel, Object message) {
-				notifyUser(channel + " : " + message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 		});
 	}
@@ -159,11 +156,11 @@ public class PubnubExample {
 		try {
 			_pubnub.presence(channel, new Callback() {
 				public void successCallback(String channel, Object message) {
-					notifyUser(message.toString());
+					notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 				}
 
 				public void errorCallback(String channel, Object message) {
-					notifyUser(channel + " : " + message.toString());
+					notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 				}
 			});
 		} catch (PubnubException e) {
@@ -175,11 +172,11 @@ public class PubnubExample {
 
 		_pubnub.detailedHistory(channel, 2, new Callback() {
 			public void successCallback(String channel, Object message) {
-				notifyUser(message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 
 			public void errorCallback(String channel, Object message) {
-				notifyUser(channel + " : " + message.toString());
+				notifyUser(channel + " : " + message.getClass() + " : " + message.toString());
 			}
 		});
 	}
