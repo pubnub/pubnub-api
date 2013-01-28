@@ -43,6 +43,11 @@ public class Pubnub {
 	
 	private String PRESENCE_SUFFIX = "-pnpres";
 
+	public void shutdown() {
+		longPollConnManager.stop();
+		simpleConnManager.stop();
+	}
+	
 	/** Convert input String to JSONObject, JSONArray, or String
 	 * @param String str
 	 * @return Object
@@ -257,6 +262,9 @@ public class Pubnub {
 	public static void startHeartbeat(int interval) {
 		HttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0",
 				interval);
+	}
+	public static void stopHeartbeat() {
+		HttpManager.stopHeartbeat();
 	}
 
 	/**

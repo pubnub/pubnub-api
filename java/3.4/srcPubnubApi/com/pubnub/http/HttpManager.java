@@ -12,9 +12,13 @@ public class HttpManager {
 	private static int _maxWorkers = 1;
 	private Vector _waiting = new Vector();
 	private Worker _workers[];
+	private static Heartbeat heartbeat;
 	private static Network network;
 	private HttpClient httpclient;
 
+	public static void stopHeartbeat() {
+		heartbeat.stop();
+	}
 	private static class Network {
 		private boolean available = true;
 
@@ -34,7 +38,8 @@ public class HttpManager {
 
 	public static void startHeartbeat(String url, int interval) {
 		init();
-		new Thread(new Heartbeat(url, interval), "heartbeat").start();
+		heartbeat = new Heartbeat(url, interval);
+		new Thread(heartbeat, "heartbeat").start();
 	}
 
 	public static int getWorkerCount() {
@@ -114,7 +119,9 @@ public class HttpManager {
 			this.heartbeatInterval = interval;
 			this.httpclient = HttpClient.getClient();
 		}
-
+		public void stop() {
+			runHeartbeat = false;
+		}
 		public void run() {
 			while (runHeartbeat) {
 				try {

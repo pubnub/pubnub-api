@@ -156,6 +156,8 @@ public class PubnubDemoConsole {
 			System.out.println("Cipher Key = " + this.cipher_key);
 			pubnub = new Pubnub("demo", "demo", "demo", this.cipher_key, this.SSL);
 		}
+		
+		Pubnub.startHeartbeat(5000);
 
 		System.out.println("ENTER 1 FOR Subscribe");
 		System.out.println("ENTER 2 FOR Publish");
@@ -201,6 +203,9 @@ public class PubnubDemoConsole {
 			}
 		}
 		System.out.println("Exiting");
+		pubnub.shutdown();
+		Pubnub.stopHeartbeat();
+		
 	}
 	/**
 	 * @param args
