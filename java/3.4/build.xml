@@ -10,6 +10,7 @@
         <pathelement location="libs/httpclient-4.2.2.jar"/>
 		<pathelement location="libs/bouncycastle.jar"/>
         <pathelement location="libs/json.jar"/>
+        <pathelement location="libs/commons-codec-1.5.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
