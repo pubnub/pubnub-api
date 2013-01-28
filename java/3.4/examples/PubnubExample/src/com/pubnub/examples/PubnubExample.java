@@ -12,7 +12,7 @@ import com.pubnub.api.PubnubException;
 
 public class PubnubExample {
 
-	String channel = "hello_world";
+	String channel = "hello_world1";
 	String[] channels = { "hello_world1", "hello_world2", "hello_world3",
 			"hello_world4" };
 
@@ -48,43 +48,30 @@ public class PubnubExample {
 	}
 
 	private static void notifyUser(Object message) {
-		try {
-			if (message instanceof JSONObject) {
-				JSONObject obj = (JSONObject) message;
-				System.out.println("Received : " + obj.toString());
-			} else if (message instanceof String) {
-				String obj = (String) message;
-				System.out.println("Received : " + obj);
-			} else if (message instanceof JSONArray) {
-				JSONArray obj = (JSONArray) message;
-				System.out.println("Received : " + obj.toString());
-			}
-		} catch (Exception e) {
-
-		}
+		System.out.println("Received : " + message.toString());
 	}
 
 	public void publish() {
+		JSONObject message = new JSONObject();
 		try {
-			JSONObject message = new JSONObject();
 			message.put("some_key", "Java says hello, world!");
-
-			Hashtable args = new Hashtable(2);
-			args.put("channel", channel); // Channel Name
-			args.put("message", message); // JSON Message
-			_pubnub.publish(args, new Callback() {
-				public void successCallback(String channel, Object message) {
-					notifyUser(message.toString());
-				}
-
-				public void errorCallback(String channel, Object message) {
-					notifyUser(channel + " : " + message.toString());
-				}
-			});
-
-		} catch (JSONException ex) {
-
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		//String message = "Java says hello world";
+		Hashtable args = new Hashtable(2);
+		args.put("channel", channel); // Channel Name
+		args.put("message", message); // JSON Message
+		_pubnub.publish(args, new Callback() {
+			public void successCallback(String channel, Object message) {
+				notifyUser(message.toString());
+			}
+
+			public void errorCallback(String channel, Object message) {
+				notifyUser(channel + " : " + message.toString());
+			}
+		});
 	}
 
 	public void subscribe() {
@@ -106,6 +93,9 @@ public class PubnubExample {
 				}
 
 				public void successCallback(String channel, Object message) {
+					notifyUser(channel + " " + message.toString());
+				}
+				public void errorCallback(String channel, Object message) {
 					notifyUser(channel + " " + message.toString());
 				}
 			});
