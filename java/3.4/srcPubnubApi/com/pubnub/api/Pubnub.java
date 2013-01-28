@@ -39,6 +39,9 @@ public class Pubnub {
 	private HttpManager longPollConnManager;
 	private HttpManager simpleConnManager;
 	private PubnubCrypto pc;
+	private String _timetoken = "0";
+	
+	private String PRESENCE_SUFFIX = "-pnpres";
 
 	/**
 	 * UUID
@@ -195,10 +198,21 @@ public class Pubnub {
 
 		if (simpleConnManager == null)
 			simpleConnManager = new HttpManager("Simple");
+		
+		longPollConnManager.setRequestTimeout(31000);
+		simpleConnManager.setRequestTimeout(15000);
 		_headers = new Hashtable();
 		_headers.put("V", "3.3");
 		_headers.put("Accept-Encoding", "deflate");
 
+	}
+	
+	public void setSubscribeTimeout(int timeout) {
+		longPollConnManager.setRequestTimeout(timeout);
+	}
+	
+	public void setNonSubscribeTimeout(int timeout) {
+		simpleConnManager.setRequestTimeout(timeout);
 	}
 
 	/**
@@ -292,7 +306,6 @@ public class Pubnub {
 		final String channel = (String) args.get("channel");
 		Object message = args.get("message");
 		final Callback callback = (Callback) args.get("callback");
-		System.out.println(message.toString());
 		String msgStr = "\"" + message.toString() + "\"";
 
 		if (this.CIPHER_KEY.length() > 0) {
@@ -323,7 +336,6 @@ public class Pubnub {
 			// Sign Message
 			signature = Hex.encodeHexString(PubnubCrypto.md5(string_to_sign.toString()));
 		}
-		System.out.println(msgStr);
 		String[] urlComponents = { this.ORIGIN, "publish", PubnubUtil.urlEncode(this.PUBLISH_KEY),
 				PubnubUtil.urlEncode(this.SUBSCRIBE_KEY), PubnubUtil.urlEncode(signature),
 				PubnubUtil.urlEncode(channel), PubnubUtil.urlEncode("0"),
@@ -374,7 +386,7 @@ public class Pubnub {
 	public void presence(String channel, Callback callback)
 			throws PubnubException {
 		Hashtable args = new Hashtable(2);
-		args.put("channel", channel + "-pnpres");
+		args.put("channel", channel + PRESENCE_SUFFIX);
 		args.put("callback", callback);
 		subscribe(args);
 	}
@@ -820,7 +832,6 @@ public class Pubnub {
 
 		PubnubRequest req = new PubnubRequest(urlComponents, params, channelsArray,
 				new ResponseHandler() {
-			String _timetoken = "0";
 
 			public void handleResponse(String response) {
 
@@ -854,7 +865,7 @@ public class Pubnub {
 							Channel _channel = (Channel) subscriptions
 									.getChannel(_channels[i]);
 							if (_channel != null) {
-								if (CIPHER_KEY != null) {
+								if (CIPHER_KEY != null  && !_channel.name.endsWith(PRESENCE_SUFFIX)) {
 									PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
 									try {
 										_channel.callback.successCallback(
@@ -880,7 +891,7 @@ public class Pubnub {
 
 						if (_channel != null) {
 							for (int i = 0; i < messages.length(); i++) {
-								if (CIPHER_KEY != null) {
+								if (CIPHER_KEY != null  && !_channel.name.endsWith(PRESENCE_SUFFIX)) {
 									PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
 									try {
 										_channel.callback.successCallback(
@@ -921,7 +932,6 @@ public class Pubnub {
 	 */
 	private void _request(final PubnubRequest req, HttpManager connManager, boolean abortExisting) {
 		HttpRequest hreq = new HttpRequest(req.getUrl(), _headers, req.responseHandler);
-		System.out.println(req.getUrl());
 		if (abortExisting)
 			connManager.abortAndQueue(hreq);
 		else 

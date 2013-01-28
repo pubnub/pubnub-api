@@ -25,8 +25,14 @@ public class PubnubExample {
 	 * @param params
 	 */
 	public static void main(String[] params) {
+		
 		PubnubExample pex = new PubnubExample();
+		
+		pex._pubnub.setSubscribeTimeout(310000);
+		pex._pubnub.setNonSubscribeTimeout(15000);
 		Pubnub.startHeartbeat(5000);
+		
+		
 		System.out.println("\nRunning publish()");
 		pex.publish();
 

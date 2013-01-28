@@ -11,6 +11,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 import com.pubnub.api.PubnubException;
@@ -18,19 +21,29 @@ import com.pubnub.api.PubnubException;
 
 public class HttpClientCore extends HttpClient {
 	private int requestTimeout = 310000;
-	private int connTimeout = 5000;
-	private DecompressingHttpClient httpclient;
+	private int connectionTimeout = 5000;
+	private DecompressingHttpClient httpClient;
     private Hashtable _headers;
-    private HttpGet httpget;
+    private HttpGet httpGet;
+    private HttpParams httpParams;
 
     public void abortCurrentRequest(){
-    	if (httpget != null)
-    		httpget.abort();
+    	if (httpGet != null)
+    		httpGet.abort();
     }
 	public HttpClientCore() {
-		httpclient = new DecompressingHttpClient(new DefaultHttpClient());
+		DefaultHttpRequestRetryHandler retryHandler = new DefaultHttpRequestRetryHandler(0, false);
+		DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+	    defaultHttpClient.setHttpRequestRetryHandler(retryHandler);
+		httpClient = new DecompressingHttpClient(defaultHttpClient);
 		_headers = new Hashtable();
 	    _headers.put("User-Agent", "Java");
+	    httpParams = httpClient.getParams();
+	    HttpConnectionParams.setSoTimeout(httpParams, requestTimeout);
+	    HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
+	    
+	    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "error");
 	}
 
 	public void setHeader(String key, String value) {
@@ -40,26 +53,34 @@ public class HttpClientCore extends HttpClient {
 	public HttpClientCore(int requestTimeout, int connTimeout) {
 		this();
 		this.setRequestTimeout(requestTimeout);
-		this.setConnTimeout(connTimeout);
+		this.setConnectionTimeout(connTimeout);
+		HttpConnectionParams.setSoTimeout(httpParams, requestTimeout);
+		HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
 	}
 
+	public HttpClientCore(int requestTimeout) {
+		this();
+		this.setRequestTimeout(requestTimeout);
+		HttpConnectionParams.setSoTimeout(httpParams, requestTimeout);
+	}
+	
 	public int getRequestTimeout() {
 		return requestTimeout;
 	}
 
 	public void setRequestTimeout(int requestTimeout) {
 		this.requestTimeout = requestTimeout;
+		HttpConnectionParams.setSoTimeout(httpParams, requestTimeout);
 	}
 
-	public int getConnTimeout() {
-		return connTimeout;
+	public int getConnectionTimeout() {
+		return connectionTimeout;
 	}
 
-	public void setConnTimeout(int connTimeout) {
-		this.connTimeout = connTimeout;
+	public void setConnectionTimeout(int connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
+		HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
 	}
-
-
 
 	public boolean isRedirect(int rc) {
 		return (rc == HttpStatus.SC_MOVED_PERMANENTLY
@@ -91,13 +112,13 @@ public class HttpClientCore extends HttpClient {
 	}
 
 	public synchronized HttpResponse fetch(String url, Hashtable headers) throws IOException, PubnubException {
-		httpget = new HttpGet(url);
+		httpGet = new HttpGet(url);
 		if (_headers != null) {
 			Enumeration en = _headers.keys();
 			while (en.hasMoreElements()) {
 			String key = (String) en.nextElement();
 			String val = (String) _headers.get(key);
-			httpget.addHeader(key, val);
+			httpGet.addHeader(key, val);
 			}
 		}
 		if (headers != null) {
@@ -105,14 +126,14 @@ public class HttpClientCore extends HttpClient {
 			while (en.hasMoreElements()) {
 			String key = (String) en.nextElement();
 			String val = (String) headers.get(key);
-			httpget.addHeader(key, val);
+			httpGet.addHeader(key, val);
 			}
 		}
-		org.apache.http.HttpResponse response = httpclient.execute(httpget);
+		org.apache.http.HttpResponse response = httpClient.execute(httpGet);
 		HttpEntity entity = response.getEntity();
         String page = readInput(entity.getContent());
         EntityUtils.consume(response.getEntity());	
-		if (httpget.isAborted()) {
+		if (httpGet.isAborted()) {
 			throw new PubnubException("Request Aborted");
 		}
 		return new HttpResponse(response.getStatusLine().getStatusCode(), page);

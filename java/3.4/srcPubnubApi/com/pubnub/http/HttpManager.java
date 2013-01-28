@@ -66,7 +66,7 @@ public class HttpManager {
 		init();
 		initManager(_maxWorkers, name);
 	}
-	
+
 	public void abortAndQueue(HttpRequest hreq) {
 		httpclient.abortCurrentRequest();
 		synchronized(_waiting) {
@@ -78,7 +78,6 @@ public class HttpManager {
 	public void queue(HttpRequest hreq) {
 
 		if (!network.isAvailable()) {
-			hreq.getResponseHandler().handleError("[0,'Network Error']");
 			return;
 		}
 
@@ -90,6 +89,18 @@ public class HttpManager {
 
 	public static void setWorkerCount(int count) {
 		_maxWorkers = count;
+	}
+
+	public void setConnectionTimeout(int timeout) {
+		if (httpclient != null) {
+			httpclient.setConnectionTimeout(timeout);
+		}
+	}
+
+	public void setRequestTimeout(int timeout) {
+		if (httpclient != null) {
+			httpclient.setRequestTimeout(timeout);
+		}
 	}
 
 	private static class Heartbeat implements Runnable {
@@ -148,15 +159,19 @@ public class HttpManager {
 
 		private void process(HttpRequest hreq) {
 			HttpResponse hresp = null;
-			try {
-				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
-			} catch (IOException e) {
-				hreq.getResponseHandler().handleError(e.toString());
-				return;
-			} catch (PubnubException e) {
-				return;
+			if (network.isAvailable()) {
+				try {
+					hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
+				} catch (IOException e) {
+					hreq.getResponseHandler().handleError(e.toString());
+					return;
+				} catch (PubnubException e) {
+					return;
+				}
+				hreq.getResponseHandler().handleResponse(hresp.getResponse());
+			} else {
+				hreq.getResponseHandler().handleError("[0,'Network Error']");
 			}
-			hreq.getResponseHandler().handleResponse(hresp.getResponse());
 		}
 
 		public void run() {

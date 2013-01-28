@@ -5,8 +5,6 @@ import java.util.Hashtable;
 import com.pubnub.api.PubnubException;
 
 public abstract class HttpClient {
-	private int requestTimeout = 310000;
-	private int connTimeout = 5000;
 
 	public static HttpClient getClient() {
 			return new HttpClientCore();
@@ -15,31 +13,18 @@ public abstract class HttpClient {
 	public HttpClient getClient(int requestTimeout, int connTimeout) {
 		return new HttpClientCore(requestTimeout, connTimeout);
 	}
-
-	public HttpClient() {
-
+	
+	public HttpClient getClient(int requestTimeout) {
+		return new HttpClientCore(requestTimeout);
 	}
+	
+	public abstract int getRequestTimeout();
 
-	public HttpClient(int requestTimeout, int connTimeout) {
-		this.setRequestTimeout(requestTimeout);
-		this.setConnTimeout(connTimeout);
-	}
+	public abstract void setRequestTimeout(int requestTimeout);
 
-	public int getRequestTimeout() {
-		return requestTimeout;
-	}
+	public abstract int getConnectionTimeout();
 
-	public void setRequestTimeout(int requestTimeout) {
-		this.requestTimeout = requestTimeout;
-	}
-
-	public int getConnTimeout() {
-		return connTimeout;
-	}
-
-	public void setConnTimeout(int connTimeout) {
-		this.connTimeout = connTimeout;
-	}
+	public abstract void setConnectionTimeout(int connectionTimeout);
 
 	public abstract void abortCurrentRequest();
 	
