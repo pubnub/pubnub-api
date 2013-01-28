@@ -43,6 +43,10 @@ public class Pubnub {
 	
 	private String PRESENCE_SUFFIX = "-pnpres";
 
+	/** Convert input String to JSONObject, JSONArray, or String
+	 * @param String str
+	 * @return Object
+	 */
 	public static Object stringToJSON(String str) {
 		Object obj = str;
 		try {
@@ -159,6 +163,20 @@ public class Pubnub {
 
 	public Pubnub(String publish_key, String subscribe_key) {
 		this.init(publish_key, subscribe_key, "", "", false);
+	}
+	
+	/**
+	 *
+	 * Constructor for Pubnub Class
+	 *
+	 * @param publish_key
+	 *            Publish Key
+	 * @param subscribe_key
+	 *            Subscribe Key
+	 */
+
+	public Pubnub(String publish_key, String subscribe_key, boolean ssl) {
+		this.init(publish_key, subscribe_key, "", "", ssl);
 	}
 
 	/**
