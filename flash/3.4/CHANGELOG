@@ -1,0 +1,8 @@
+CHANGELOG
+
+01-29-2012 - 08fdd6698150bcc9a1fb18ebefe0ff7f7929e44e
+. added enhanced multiplexed subscribe support
+. better error handling added to example app
+. improved keep-alive handling
+. support for chunked responses
+. increased logging
