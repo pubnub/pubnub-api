@@ -2,6 +2,12 @@
 //  PNChannel+Protected.h
 //  pubnub
 //
+//  This header file used by library internal
+//  components which require to access to some
+//  methods and properties which shouldn't be
+//  visible to other application components
+//
+//
 //  Created by Sergey Mamontov on 12/23/12.
 //
 //

@@ -2,13 +2,12 @@
 //  PNMessage+Protected.h
 //  pubnub
 //
-//  This header help to hide protected methods of
-//  message data object so user will be unsable to
-//  use them directly (only PubNub client allowed to
-//  use them)
+//  This header file used by library internal
+//  components which require to access to some
+//  methods and properties which shouldn't be
+//  visible to other application components
 //
-//
-//  Created by Sergey Mamontov on 1/7/13.
+//  Created by Sergey Mamontov.
 //
 //
 

@@ -7,19 +7,18 @@
 //  (block will be provided by subscriber)
 //
 //
-//  Created by Sergey Mamontov on 12/5/12.
+//  Created by Sergey Mamontov.
 //
 //
 
 #import "PNObservationCenter+Protected.h"
 #import "PNMessagesHistory+Protected.h"
+#import "PNHereNow+Protected.h"
 #import "PNError+Protected.h"
 #import "PubNub+Protected.h"
 #import "PNPresenceEvent.h"
 #import "PNMessage.h"
-#import "NSString+PNAddition.h"
 #import "PNHereNow.h"
-#import "PNHereNow+Protected.h"
 
 
 #pragma mark Static
@@ -154,8 +153,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
         
         self.observers = [NSMutableDictionary dictionary];
         self.oneTimeObservers = [NSMutableDictionary dictionary];
-        
-        // TODO: SUBSCRIBE ON NOTIFICATIONS TO FORVARD THEM TO THE EVENT OBSERVERS WITH BLOCKS
+
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleClientConnectionStateChange:)
                                                      name:kPNClientDidConnectToOriginNotification
@@ -329,6 +327,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
             withBlock:callbackBlock];
 
 }
+
 - (void)removeClientConnectionStateObserver:(id)observer oneTimeEvent:(BOOL)isOneTimeEventObserver {
 
     [self removeObserver:observer
@@ -338,6 +337,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
 
 #pragma mark - Client channels action/event observation
+
 - (void)addClientChannelSubscriptionObserver:(id)observer
 
                            withCallbackBlock:(PNClientChannelSubscriptionHandlerBlock)callbackBlock {
@@ -366,7 +366,6 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
     [self removeObserver:observer forEvent:PNObservationEvents.clientUnsubscribeFromChannels oneTimeEvent:NO];
 }
-
 
 
 #pragma mark - Subscription observation
@@ -419,10 +418,6 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
             oneTimeEvent:YES];
 }
 
-/**
- * Add/remove observers which would like to know when PubNub service
- * will return requested time token
- */
 - (void)addTimeTokenReceivingObserver:(id)observer
                     withCallbackBlock:(PNClientTimeTokenReceivingCompleteBlock)callbackBlock {
 

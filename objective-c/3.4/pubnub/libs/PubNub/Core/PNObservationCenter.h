@@ -7,7 +7,7 @@
 //  (block will be provided by subscriber)
 //
 //
-//  Created by Sergey Mamontov on 12/5/12.
+//  Created by Sergey Mamontov.
 //
 //
 
@@ -111,8 +111,7 @@
                                            withBlock:(PNClientParticipantsHandlingBlock)handleBlock;
 - (void)removeChannelParticipantsListProcessingObserver:(id)observer;
 
-
-
 #pragma mark -
+
 
 @end

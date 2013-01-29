@@ -8,26 +8,23 @@
 //  and notifications.
 //
 //
-//  Created by Sergey Mamontov on 12/4/12.
+//  Created by Sergey Mamontov.
 //
 //
 
 #import "PubNub+Protected.h"
 #import "PNObservationCenter+Protected.h"
 #import "PNConnectionChannelDelegate.h"
+#import "PNPresenceEvent+Protected.h"
 #import "PNServiceChannelDelegate.h"
 #import "PNConnection+Protected.h"
-#import "PNChannel+Protected.h"
+#import "PNHereNow+Protected.h"
 #import "PNMessage+Protected.h"
 #import "PNMessagingChannel.h"
 #import "PNError+Protected.h"
 #import "PNServiceChannel.h"
 #import "PNRequestsImport.h"
-#import "PNMessage.h"
-#import "PNPresenceEvent+Protected.h"
-#import "PNMessagesHistory+Protected.h"
 #import "PNHereNowRequest.h"
-#import "PNHereNow+Protected.h"
 
 
 #pragma mark Static
@@ -72,7 +69,7 @@ static PubNub *_sharedInstance = nil;
 @property (nonatomic, strong) PNServiceChannel *serviceChannel;
 
 // Stores reference on configuration which was used to
-// perform intial PubNub client initialization
+// perform initial PubNub client initialization
 @property (nonatomic, strong) PNConfiguration *configuration;
 
 // Stores reference on service reachability monitoring
@@ -692,10 +689,6 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
 #pragma mark - Presence management
 
-/**
- * Checking whether user added presence observation on particular
- * channel or not
- */
 + (BOOL)isPresenceObservationEnabledForChannel:(PNChannel *)channel {
     
     BOOL observingPresence = NO;
@@ -1493,10 +1486,6 @@ didFailUnsubscribeOnChannels:(NSArray *)channels
     [self sendNotification:kPNClientDidReceiveMessageNotification withObject:message];
 }
 
-/**
- * Sent to delegate when client received presence event from channel
- * on which it subscribed
- */
 - (void)messagingChannel:(PNMessagingChannel *)messagingChannel didReceiveEvent:(PNPresenceEvent *)event {
 
     // Try to update cached channel data

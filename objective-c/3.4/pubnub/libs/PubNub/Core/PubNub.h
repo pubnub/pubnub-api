@@ -8,7 +8,7 @@
 //  and notifications.
 //
 //
-//  Created by Sergey Mamontov on 12/4/12.
+//  Created by Sergey Mamontov.
 //
 //
 

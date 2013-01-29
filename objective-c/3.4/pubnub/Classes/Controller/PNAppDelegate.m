@@ -13,6 +13,7 @@
 #import "PNError+Protected.h"
 #import "PNPresenceEvent.h"
 #import "PNMessage.h"
+#import "UIDevice+PNAdditions.h"
 
 
 #pragma mark Private interface methods
@@ -83,9 +84,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
+    NSLog(@"DEVICE IP ADDRESS: %@", [[UIDevice currentDevice] networkAddress]);
+
     // Configure application window and its content
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.rootViewController = [PNIdentificationViewController  new];
+    self.window.rootViewController = [PNIdentificationViewController new];
     [self.window makeKeyAndVisible];
     
     [self initializePubNubClient];

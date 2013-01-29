@@ -2,6 +2,13 @@
 //  PNWriteBuffer.m
 //  pubnub
 //
+//  Write buffer is objects which is used by
+//  connection instance to fetch portion of
+//  data which should be send and also used
+//  to check whether full packet has been
+//  sent or not.
+//
+//
 //  Created by Sergey Mamontov on 12/14/12.
 //
 //

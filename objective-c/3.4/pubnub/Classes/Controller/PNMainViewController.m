@@ -49,20 +49,21 @@
 // Stores reference on channels section background image
 @property (nonatomic, pn_desired_weak) IBOutlet UIImageView *channelsBackgroundImageView;
 
+// Stores reference on connection information section background image
+@property (nonatomic, pn_desired_weak) IBOutlet UIImageView *informationBackgroundImageView;
+
 // Stores reference on button which allow to subscribe on new channel
 @property (nonatomic, pn_desired_weak) IBOutlet UIButton *addChannelButton;
 
 // Stores reference on button which allow to disconnect client
 @property (nonatomic, pn_desired_weak) IBOutlet UIButton *disconnectButton;
 
-// Stores reference on button which allow to see information about client and
-// change some of the options
-@property (nonatomic, pn_desired_weak) IBOutlet UIButton *clientInformationButton;
-
 // Stores reference on button which allow to retrieve server time from PubNub service
 @property (nonatomic, pn_desired_weak) IBOutlet UIButton *serverTimeButton;
 
 @property (nonatomic, pn_desired_weak) IBOutlet UILabel *recentServerTimeLabel;
+@property (nonatomic, pn_desired_weak) IBOutlet UILabel *clientIdentifierLabel;
+@property (nonatomic, pn_desired_weak) IBOutlet UILabel *clientNetworkAddressLabel;
 
 // Stores reference on channel information holding view
 @property (nonatomic, pn_desired_weak) IBOutlet PNChannelInformationView *channelInformationView;
@@ -244,6 +245,7 @@
 
     self.participantsBackgroundImageView.image = stretchedLeftSectionImage;
     self.channelsBackgroundImageView.image = stretchedRightSectionImage;
+    self.informationBackgroundImageView.image = stretchedRightSectionImage;
 
 
 
@@ -256,13 +258,8 @@
     [self.sendMessageButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
     [self.disconnectButton setBackgroundImage:stretchedRightSingleEntryImage forState:UIControlStateNormal];
 
-    [self.clientInformationButton setBackgroundImage:stretchedRightSingleEntryImage forState:UIControlStateNormal];
-    NSString *clientIdentifier = [PubNub clientIdentifier];
-    if (!PNIsUserGeneratedUUID(clientIdentifier)) {
-
-        clientIdentifier = @"anonymous";
-    }
-    [self.clientInformationButton setTitle:clientIdentifier forState:UIControlStateNormal];
+    self.clientIdentifierLabel.text = [PubNub clientIdentifier];
+    self.clientNetworkAddressLabel.text = [[UIDevice currentDevice] networkAddress];
 
 
     self.channelInformationView.delegate = self;

@@ -8,7 +8,7 @@
 //  visible to other application components
 //
 //
-//  Created by Sergey Mamontov on 12/5/12.
+//  Created by Sergey Mamontov.
 //
 //
 
@@ -90,7 +90,6 @@ typedef enum _PNPubNubClientState {
  * track network state
  */
 - (PNReachability *)reachability;
-
 
 #pragma mark -
 

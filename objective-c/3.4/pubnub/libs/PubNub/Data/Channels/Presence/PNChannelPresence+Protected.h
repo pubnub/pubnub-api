@@ -2,10 +2,13 @@
 //  PNChannelPresence+Protected.h
 //  pubnub
 //
-//  This header helps to hide part of presencd
-//  channel implementation from public access
+//  This header file used by library internal
+//  components which require to access to some
+//  methods and properties which shouldn't be
+//  visible to other application components
 //
-//  Created by Sergey Mamontov on 12/25/12.
+//
+//  Created by Sergey Mamontov.
 //
 //
 

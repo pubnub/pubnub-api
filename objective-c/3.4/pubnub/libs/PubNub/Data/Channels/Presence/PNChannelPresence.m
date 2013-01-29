@@ -10,7 +10,7 @@
 //  channel.
 //
 //
-//  Created by Sergey Mamontov on 12/12/12.
+//  Created by Sergey Mamontov.
 //
 //
 

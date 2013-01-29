@@ -2,12 +2,12 @@
 //  PNBaseRequest+Protected.h
 //  pubnub
 //
-//  This header contains private methods and
-//  properties description which can be used
-//  internally by library.
+//  This header file used by library internal
+//  components which require to access to some
+//  methods and properties which shouldn't be
+//  visible to other application components
 //
-//
-//  Created by Sergey Mamontov on 12/14/12.
+//  Created by Sergey Mamontov.
 //
 //
 #import "PNBaseRequest.h"

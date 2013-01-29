@@ -10,6 +10,7 @@
 //
 //
 
+#import "UIDevice+PNAdditions.h"
 #import "PNJSONSerialization.h"
 #import "PNObservationCenter.h"
 #import "PNChannelPresence.h"
