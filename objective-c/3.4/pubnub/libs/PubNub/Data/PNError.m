@@ -156,7 +156,7 @@
             case kPNRequestExecutionFailedOnInternetFailureError:
             case kPNRequestExecutionFailedClientNotReadyError:
                 
-                errorDescription = @"PubNub client channel subscription failed";
+                errorDescription = @"PubNub client can't perform request";
                 break;
             case kPNConnectionErrorOnSetup:
                 
