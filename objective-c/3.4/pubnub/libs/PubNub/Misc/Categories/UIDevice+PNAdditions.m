@@ -70,6 +70,8 @@ static char * const kPNNetworkDefaultAddress = "0.0.0.0";
             interface = interface->ifa_next;
         }
     }
+
+    freeifaddrs(interfaces);
     
     
     return address;

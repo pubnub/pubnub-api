@@ -80,12 +80,8 @@
                                                         withCallbackBlock:^(NSString *origin,
                                                                             BOOL connected,
                                                                             PNError *connectionError) {
-                NSString *clientIdentifier = [PubNub clientIdentifier];
-                if (!PNIsUserGeneratedUUID(clientIdentifier)) {
 
-                    clientIdentifier = @"anonymous";
-                }
-                weakSelf.clientIdentifier.text = clientIdentifier;
+                weakSelf.clientIdentifier.text = [PubNub clientIdentifier];
 
                 weakSelf.clientIdentifier.userInteractionEnabled = !connected;
                 weakSelf.sslEnablingSwitch.enabled = !connected;
