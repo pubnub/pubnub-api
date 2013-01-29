@@ -110,8 +110,8 @@ public class PubnubDemoConsole {
 		pubnub.unsubscribe(this.channel);
 	}
 
-	private void presenceUnsubscribe() {
-
+	private void unsubscribePresence() {
+		pubnub.unsubscribePresence(this.channel);
 	}
 
 	private void time() {
@@ -165,7 +165,7 @@ public class PubnubDemoConsole {
 		System.out.println("ENTER 4 FOR Detailed History");
 		System.out.println("ENTER 5 FOR Here_Now");
 		System.out.println("ENTER 6 FOR Unsubscribe");
-		//System.out.println("ENTER 7 FOR Presence-Unsubscribe");
+		System.out.println("ENTER 7 FOR Presence-Unsubscribe");
 		System.out.println("ENTER 8 FOR Time");
 		System.out.println("ENTER 9 FOR EXIT OR QUIT");
 
@@ -192,9 +192,9 @@ public class PubnubDemoConsole {
 			case 6:
 				unsubscribe();
 				break;
-				/*case 7:
-				presenceUnsubscribe();
-				break;*/
+			case 7:
+				unsubscribePresence();
+				break;
 			case 8:
 				time();
 				break;

@@ -23,7 +23,11 @@ class Subscriptions {
     }
 
     public Channel getFirstChannel() {
-        return (Channel) channels.elements().nextElement();
+    	Channel ch = null;
+    	if (channels.size() > 0) {
+    		ch = (Channel) channels.elements().nextElement();
+    	}
+        return ch;
 
     }
 

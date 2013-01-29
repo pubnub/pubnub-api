@@ -761,7 +761,15 @@ public class Pubnub {
 			subscriptions.removeChannel(channels[i]);
 		}
 	}
-
+	/**
+	 * Unsubscribe/Disconnect from presence channel.
+	 *
+	 * @param channel
+	 *            channel name as String.
+	 */
+	public void unsubscribePresence(String channel) {
+		unsubscribe(new String[] { channel + PRESENCE_SUFFIX });
+	}
 	/**
 	 * Unsubscribe/Disconnect from channel.
 	 *
