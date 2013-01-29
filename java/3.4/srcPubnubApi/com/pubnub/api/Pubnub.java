@@ -1035,4 +1035,9 @@ public class Pubnub {
 	private void _request(final PubnubRequest req, HttpManager connManager) {
 		_request(req, connManager, false);
 	}
+	
+	public void disconnectAndResubscribe() {
+		subscriptions.invokeDisconnectCallbackOnChannels();
+		_subscribe_base("0");
+	}
 }

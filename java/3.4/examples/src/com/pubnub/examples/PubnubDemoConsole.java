@@ -125,6 +125,12 @@ public class PubnubDemoConsole {
 			}
 		});
 	}
+	
+	private void disconnectAndResubscribe() {
+		pubnub.disconnectAndResubscribe();
+		
+	}
+	
 	public void startDemo() {
 		reader = new Scanner(System.in);
 		System.out.println("HINT:\tTo test Re-connect and catch-up");
@@ -168,6 +174,7 @@ public class PubnubDemoConsole {
 		System.out.println("ENTER 7 FOR Presence-Unsubscribe");
 		System.out.println("ENTER 8 FOR Time");
 		System.out.println("ENTER 9 FOR EXIT OR QUIT");
+		
 
 		int command = 0;
 		while ((command = reader.nextInt()) != 9 ){
@@ -198,6 +205,9 @@ public class PubnubDemoConsole {
 			case 8:
 				time();
 				break;
+			case 10:
+				disconnectAndResubscribe();
+				break;
 			default: 
 				System.out.println("Invalid Input");
 			}
@@ -207,6 +217,7 @@ public class PubnubDemoConsole {
 		Pubnub.stopHeartbeat();
 		
 	}
+
 	/**
 	 * @param args
 	 */
