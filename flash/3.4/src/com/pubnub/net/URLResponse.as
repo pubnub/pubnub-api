@@ -46,7 +46,7 @@ package com.pubnub.net {
 			_isChunked = isChunked(_headers);
 			var lines:/*String*/Array = rawString.split(END_LINE);
 			var firstLine:String = lines[0];
-			
+
 			// Regex courtesy of ruby 1.8 Net::HTTP
 			// Example, HTTP/1.1 200 OK      
 			var matches:Array = firstLine.match(/\AHTTP(?:\/(\d+\.\d+))?\s+(\d\d\d)\s*(.*)\z/);
@@ -55,8 +55,8 @@ package com.pubnub.net {
 				_code = matches[2];
 				_message = matches[3];
 			}else {
-				Log.log("Invalid header: " + firstLine + ", matches: " + matches, Log.ERROR);
-				trace("Invalid header: " + firstLine + ", matches: " + matches);
+				Log.log(this + "Invalid header: " + firstLine + ", matches: " + matches, Log.ERROR);
+				trace(this + "Invalid header: " + firstLine + ", matches: " + matches);
 			}
 		}
 		
@@ -66,27 +66,35 @@ package com.pubnub.net {
 			var separator:String = END_LINE + END_LINE
 			var ind:int = _rawData.indexOf(separator);
 			var bodyRawStr:String = _rawData.substr(ind + separator.length, _rawData.length);
-			
+
+            Log.log(Log.DEBUG, "raw data:\n" + _rawData);
+
+            isChunked(headers);
+
 			if (_isChunked) {
 				var lines:/*String*/Array = bodyRawStr.split(END_LINE);
 				var len:int = lines.length;
 				var i:int = 0;
 				for (i; i < len; i++) {
-					var size:int= int(lines[i]);
+					var size:int= int("0x" + lines[i]);
 					var data:String = lines[i+1];
 					if (size > 0) {
 						_body += data;
 						i++;
 					}else {
 						// end of body data
-						break;
+                        Log.log(Log.DEBUG, "Parsing Body Chunked returning:\n" + _body);
+                        break;
 					}
 				}
 			}else {
-				_body = bodyRawStr;
+                Log.log(Log.DEBUG, "Parsing Body Content-length returning:\n" + bodyRawStr);
+                _body = bodyRawStr;
 			}
 		}
-		
+
+        //TODO: Refactor into URLLoader getEndSymbol
+
 		static public function isChunked(headers:Array):Boolean{
 			if (headers && headers.length > 1) {
 				for each(var o:Object  in headers) {
@@ -115,10 +123,12 @@ package com.pubnub.net {
 				if (ind != -1) {
 					var name:String = line.substring(0, ind);
 					var value:String = line.substring(ind + 1, line.length);
-					result.push( { name: name, value: value } );
-				} else {
-					trace("Invalid header: " + line);
-					Log.log("Invalid header: " + line, Log.ERROR);
+					result.push( { name: name, value: value.replace(/^ /,"") } );
+                    //result.add(name,value.replace(/^ /,""));
+
+                } else {
+					trace("[URLResponse] Invalid header: " + line);
+					Log.log("[URLResponse] Invalid header: " + line, Log.ERROR);
 				}
 			}
 			return result;

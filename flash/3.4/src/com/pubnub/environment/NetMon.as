@@ -69,7 +69,7 @@ package com.pubnub.environment {
 		}
 		
 		private function ping():void {
-            //trace('Ping!');
+            trace('Ping!');
             if (_isRunning == false) return;
 			clearTimeout(pingTimeout);
 			pingStartTime = getTimer();

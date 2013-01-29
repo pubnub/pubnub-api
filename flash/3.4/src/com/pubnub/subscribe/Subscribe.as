@@ -3,6 +3,7 @@ package com.pubnub.subscribe {
 	import com.pubnub.connection.*;
 	import com.pubnub.environment.*;
 	import com.pubnub.json.*;
+	import com.pubnub.log.Log;
 	import com.pubnub.net.*;
 	import com.pubnub.operation.*;
 	import flash.events.*;
@@ -16,10 +17,10 @@ package com.pubnub.subscribe {
 	 */
 	public class Subscribe extends EventDispatcher {
 		
-		static public const PNPRES_PREFIX:String = '-pnpres';
-		static public const SUBSCRIBE:String = 'subscribe';
+		static public const PNPRES_PREFIX:String = 	'-pnpres';
+		static public const SUBSCRIBE:String = 		'subscribe';
 		static public const INIT_SUBSCRIBE:String = 'init_subscribe';
-		static public const LEAVE:String = 'leave';
+		static public const LEAVE:String = 			'leave';
 		
 		public var subscribeKey:String;
 		public var sessionUUID:String;
@@ -209,7 +210,7 @@ package com.pubnub.subscribe {
 			}
 			_connected = true;
 			_lastToken = e.data[1];
-			trace('onSubscribeInit : ' + _lastToken);
+			//trace('onSubscribeInit : ' + _lastToken);
 			if (_reusedToken) {
 				_lastToken = _reusedToken;
 				_reusedToken = null;
@@ -228,7 +229,6 @@ package com.pubnub.subscribe {
 		
 		/*---------------------------SUBSCRIBE---------------------------*/
 		private function doSubscribe():void {
-			//trace('doSubscribe');
 			var operation:Operation = getOperation(SUBSCRIBE);
 			connection.sendOperation(operation);
 		}
@@ -237,52 +237,66 @@ package com.pubnub.subscribe {
 			
 			if (_networkEnabled == false) return;
 			
-			var responce:Object = e.data;
+			var RESPONSE:Object = e.data;
 			
+			//Log.log('RESPONSE : '
 			// something is wrong
-			if (responce == null) {
+			if (RESPONSE == null) {
 				doSubscribe();
 				return;
 			}
 			
-			var messages:Array = responce[0] as Array;
-		
-			_lastToken = responce[1];
-			var chStr:String = responce[2];
+			var messages:Array = RESPONSE[0] as Array;
+			
+			_lastToken = RESPONSE[1];
+			var chStr:String = RESPONSE[2];
+			
 			/*
 			 * MX (array.length = 3)
-			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
+			 * RESPONSE = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
 			 * 
 			 * ch1 - m1
 			 * ch2 - m2,m3
 			 * ch3 - m4
 			 * 
-			 * Single channel responce (array.length = 2)
-			 * responce = [['m1', 'm2', 'm3', 'm4'], lastToken];
+			 * Single channel RESPONSE (array.length = 2)
+			 * RESPONSE = [['m1', 'm2', 'm3', 'm4'], lastToken];
 			*/
 			
-			var multiplexResponce:Boolean = chStr && chStr.length > 0 && chStr.indexOf(',') > -1;
-			var presenceResponce:Boolean = chStr && chStr.indexOf(PNPRES_PREFIX) > -1;
+			var multiplexRESPONSE:Boolean = chStr && chStr.length > 0 && chStr.indexOf(',') > -1;
+			var presenceRESPONSE:Boolean = chStr && chStr.indexOf(PNPRES_PREFIX) > -1;
 			var channel:String;
 			
-			if (presenceResponce) {
-				dispatchEvent(new SubscribeEvent(SubscribeEvent.PRESENCE, {channel:chStr, message : messages}));
+			if (presenceRESPONSE) {
+				dispatchEvent(new SubscribeEvent(SubscribeEvent.PRESENCE, {channel:chStr, message : messages, timetoken: _lastToken}));
 			}else {
 				if (!messages) return;
 				decryptMessages(messages);
-				
-				if (multiplexResponce) {
+				var message:String;
+				if (multiplexRESPONSE) {
 					var chArray:Array = chStr.split(',');
 					for (var i:int = 0; i < messages.length; i++) {
 						channel = chArray[i];
-						var message:* = messages[i]
+						message = messages[i];
 						if (hasChannel(channel)) {
-							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : message}));
+							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
+								channel:channel, 
+								message : message,
+                                timetoken: _lastToken }));
 						}
 					}
 				}else {
 					channel = chStr || _channels[0];
-					dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {channel:channel, message : messages}));
+					for (var j:int = 0; j < messages.length; j++) {
+						message = messages[j];
+						var isValidMessage:Boolean = message && message.length > 0;
+						if (isValidMessage) {
+							dispatchEvent(new SubscribeEvent(SubscribeEvent.DATA, {
+								channel:channel, 
+								message : messages[j],
+                                timetoken: _lastToken }));
+						}
+					}
 				}
 			}
 			doSubscribe();

@@ -27,8 +27,10 @@
 			import utils.*;
 			
         [Bindable]
-        public var channel:String = 'a,b';
-        //public var channel:String = 'test_channel';
+
+        //public var channel:String = 'a,b';
+        public var channel:String = 'aa,bb';
+
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
@@ -98,7 +100,7 @@
 		}
 		
 		private function onPnShutdown(e:EnvironmentEvent):void {
-			callExternalInterface("console.log", ("Pn SHUTDOWN:" + JSON.stringify(e.data) ));
+			callExternalInterface("console.log", ("Pn SHUTDOWN:" + PnJSON.stringify(e.data) ));
 		}
 		
         private function onInit(e:PnEvent):void {
