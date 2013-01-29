@@ -165,15 +165,16 @@ public class PubnubDemoConsole {
 		
 		Pubnub.startHeartbeat(5000);
 
-		System.out.println("ENTER 1 FOR Subscribe");
-		System.out.println("ENTER 2 FOR Publish");
-		System.out.println("ENTER 3 FOR Presence");
-		System.out.println("ENTER 4 FOR Detailed History");
-		System.out.println("ENTER 5 FOR Here_Now");
-		System.out.println("ENTER 6 FOR Unsubscribe");
-		System.out.println("ENTER 7 FOR Presence-Unsubscribe");
-		System.out.println("ENTER 8 FOR Time");
-		System.out.println("ENTER 9 FOR EXIT OR QUIT");
+		System.out.println("ENTER 1  FOR Subscribe");
+		System.out.println("ENTER 2  FOR Publish");
+		System.out.println("ENTER 3  FOR Presence");
+		System.out.println("ENTER 4  FOR Detailed History");
+		System.out.println("ENTER 5  FOR Here_Now");
+		System.out.println("ENTER 6  FOR Unsubscribe");
+		System.out.println("ENTER 7  FOR Presence-Unsubscribe");
+		System.out.println("ENTER 8  FOR Time");
+		System.out.println("ENTER 9  FOR EXIT OR QUIT");
+		System.out.println("ENTER 10 FOR Disconnect-And-Resubscribe");
 		
 
 		int command = 0;

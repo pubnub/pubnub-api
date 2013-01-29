@@ -1038,6 +1038,6 @@ public class Pubnub {
 	
 	public void disconnectAndResubscribe() {
 		subscriptions.invokeDisconnectCallbackOnChannels();
-		_subscribe_base("0");
+		_subscribe_base(this._timetoken);
 	}
 }
