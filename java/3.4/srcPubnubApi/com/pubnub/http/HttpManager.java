@@ -3,6 +3,8 @@ package com.pubnub.http;
 import java.io.IOException;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import com.pubnub.api.PubnubException;
 import com.pubnub.httpclient.HttpClient;
 import com.pubnub.httpclient.HttpResponse;
@@ -12,9 +14,13 @@ public class HttpManager {
 	private static int _maxWorkers = 1;
 	private Vector _waiting = new Vector();
 	private Worker _workers[];
+	private Thread _threads[];
 	private static Heartbeat heartbeat;
 	private static Network network;
 	private HttpClient httpclient;
+
+	private static Logger log = Logger.getLogger(
+			HttpManager.class.getName());
 
 	public static void stopHeartbeat() {
 		heartbeat.stop();
@@ -51,10 +57,12 @@ public class HttpManager {
 			maxCalls = 1;
 		}
 		_workers = new Worker[maxCalls];
+		_threads = new Thread[maxCalls];
 		for (int i = 0; i < maxCalls; ++i) {
 			Worker w = new Worker();
 			_workers[i] = w;
-			new Thread(w, name).start();
+			_threads[i] = new Thread(w, name);
+			_threads[i].start();
 		}
 		if (network == null) {
 			network = new Network();
@@ -72,11 +80,31 @@ public class HttpManager {
 		initManager(_maxWorkers, name);
 	}
 
-	public void abortAndQueue(HttpRequest hreq) {
-		httpclient.abortCurrentRequest();
+	private void interruptWorkers() {
+		for (int i = 0; i < _threads.length; i++){
+			_threads[i].interrupt();
+		}
+	}
+
+	public void abortCurrent(){
+		//httpclient.reset();
+	}
+	public void abortCurrentAndClear() {
+		abortCurrent();
 		synchronized(_waiting) {
 			_waiting.clear();
 		}
+	}
+	private  void resetHttpClient() {
+		 httpclient = httpclient.reset();
+
+	}
+	public void resetHttpManager() {
+		abortCurrentAndClear();
+		resetHttpClient();
+	}
+	public void abortClearAndQueue(HttpRequest hreq) {
+		resetHttpManager();
 		queue(hreq);
 	}
 
@@ -166,38 +194,48 @@ public class HttpManager {
 
 		private void process(HttpRequest hreq) {
 			HttpResponse hresp = null;
-			if (network.isAvailable()) {
-				try {
-					hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
-				} catch (IOException e) {
-					hreq.getResponseHandler().handleError(e.toString());
-					return;
-				} catch (PubnubException e) {
-					return;
+
+				if (network.isAvailable()) {
+					try {
+						log.debug(hreq.getUrl());
+						try {
+							hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
+						} catch (NullPointerException e) {
+							hreq.getResponseHandler().handleError("[0,'Network Error']");
+							return;
+						}
+					} catch (IOException e) {
+						hreq.getResponseHandler().handleError(e.toString());
+						return;
+					} catch (PubnubException e) {
+						return;
+					}
+					hreq.getResponseHandler().handleResponse(hresp.getResponse());
+				} else {
+					hreq.getResponseHandler().handleError("[0,'Network Error']");
 				}
-				hreq.getResponseHandler().handleResponse(hresp.getResponse());
-			} else {
-				hreq.getResponseHandler().handleError("[0,'Network Error']");
-			}
+
 		}
 
 		public void run() {
 			do {
 				HttpRequest hreq = null;
 
-				synchronized (_waiting) {
 
-					while (!_die) {
 
-						if (!network.isAvailable()) {
-							synchronized (network) {
-								try {
-									network.wait(5000);
-								} catch (InterruptedException e1) {
+				while (!_die) {
 
-								}
+					if (!network.isAvailable()) {
+						synchronized (network) {
+							try {
+								network.wait(5000);
+							} catch (InterruptedException e1) {
+
 							}
 						}
+					}
+					synchronized (_waiting) {
+
 						if (_waiting.size() != 0) {
 							hreq = (HttpRequest) _waiting.firstElement();
 							_waiting.removeElementAt(0);

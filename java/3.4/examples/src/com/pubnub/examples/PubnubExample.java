@@ -2,6 +2,7 @@ package com.pubnub.examples;
 
 import java.util.Hashtable;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,13 +27,14 @@ public class PubnubExample {
 	 */
 	public static void main(String[] params) {
 		
+		int counter = 0;		
 		PubnubExample pex = new PubnubExample();
 		
 		pex._pubnub.setSubscribeTimeout(310000);
 		pex._pubnub.setNonSubscribeTimeout(15000);
 		Pubnub.startHeartbeat(5000);
 		
-		
+/*		
 		System.out.println("\nRunning publish()");
 		pex.publish();
 
@@ -46,10 +48,22 @@ public class PubnubExample {
 		pex.detailedHistory();
 
 		System.out.println("\nRunning presence()");
-		pex.presence();
+		pex.presence();*/
 
 		System.out.println("\nRunning subscribe()");
-		pex.subscribe();
+		pex.subscribe(new String[]{"hello_world" + "-" + String.valueOf(counter)});
+		
+		while (true) {
+			counter = (counter + 1) % 9;
+			try {
+				Thread.sleep((long) ((Math.random() % 9 ) * 1000));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			pex._pubnub.disconnectAndResubscribe();
+			pex.subscribe(new String[]{"hello_world" + "-" + String.valueOf(counter)});
+		}
 
 	}
 
@@ -77,7 +91,7 @@ public class PubnubExample {
 		});
 	}
 
-	public void subscribe() {
+	public void subscribe(String[] channels) {
 		Hashtable args = new Hashtable(6);
 		args.put("channels", channels);
 

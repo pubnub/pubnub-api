@@ -8,7 +8,7 @@ import java.util.Vector;
  *
  * @author Pubnub
  */
-class PubnubUtil {
+public class PubnubUtil {
 
     /**
      * Takes source and delimiter string as inputs and returns splitted string

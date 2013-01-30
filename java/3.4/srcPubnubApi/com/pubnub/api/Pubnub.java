@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.util.SecureRandom;
@@ -26,11 +27,16 @@ import com.pubnub.http.ResponseHandler;
 
 public class Pubnub {
 
-	private String ORIGIN = "pubsub.pubnub.com";
+	private String HOSTNAME = "pubsub";
+	private int HOSTNAME_SUFFIX = 1;
+	private String DOMAIN = "pubnub.com";
+	private String ORIGIN_STR = null;
 	private String PUBLISH_KEY = "";
 	private String SUBSCRIBE_KEY = "";
 	private String SECRET_KEY = "";
 	private String CIPHER_KEY = "";
+	private boolean resumeOnReconnect;
+
 	private boolean SSL = true;
 	private String UUID = null;
 	private Hashtable _headers;
@@ -40,14 +46,39 @@ public class Pubnub {
 	private HttpManager simpleConnManager;
 	private PubnubCrypto pc;
 	private String _timetoken = "0";
-	
+	private String _saved_timetoken = "0";
+
 	private String PRESENCE_SUFFIX = "-pnpres";
+	
+	private static Logger log = Logger.getLogger(
+            Pubnub.class.getName());
 
 	public void shutdown() {
 		longPollConnManager.stop();
 		simpleConnManager.stop();
 	}
-	
+
+	public boolean isResumeOnReconnect() {
+		return resumeOnReconnect;
+	}
+
+	private String getOrigin() {
+		if (ORIGIN_STR == null) {
+			// SSL On?
+			if (this.SSL) {
+				ORIGIN_STR = "https://" + HOSTNAME + "-" + String.valueOf(HOSTNAME_SUFFIX) + "." + DOMAIN;
+			} else {
+				ORIGIN_STR = "http://" + HOSTNAME + "-" + String.valueOf(HOSTNAME_SUFFIX) + "." + DOMAIN;
+			}
+		}
+		return ORIGIN_STR; 
+	}
+
+	public void setResumeOnReconnect(boolean resumeOnReconnect) {
+		this.resumeOnReconnect = resumeOnReconnect;
+	}
+
+
 	/** Convert input String to JSONObject, JSONArray, or String
 	 * @param String str
 	 * @return Object
@@ -217,13 +248,6 @@ public class Pubnub {
 		this.CIPHER_KEY = cipher_key;
 		this.SSL = ssl_on;
 
-		// SSL On?
-		if (this.SSL) {
-			this.ORIGIN = "https://" + this.ORIGIN;
-		} else {
-			this.ORIGIN = "http://" + this.ORIGIN;
-		}
-
 		if (UUID == null)
 			UUID = uuid();
 
@@ -243,11 +267,11 @@ public class Pubnub {
 		_headers.put("Accept-Encoding", "deflate");
 
 	}
-	
+
 	public void setSubscribeTimeout(int timeout) {
 		longPollConnManager.setRequestTimeout(timeout);
 	}
-	
+
 	public void setNonSubscribeTimeout(int timeout) {
 		simpleConnManager.setRequestTimeout(timeout);
 	}
@@ -362,7 +386,7 @@ public class Pubnub {
 				return;
 			}
 		}
-		
+
 
 		// Generate String to Sign
 		String signature = "0";
@@ -377,12 +401,12 @@ public class Pubnub {
 			// Sign Message
 			signature = Hex.encodeHexString(PubnubCrypto.md5(string_to_sign.toString()));
 		}
-		String[] urlComponents = { this.ORIGIN, "publish", PubnubUtil.urlEncode(this.PUBLISH_KEY),
+		String[] urlComponents = { getOrigin(), "publish", PubnubUtil.urlEncode(this.PUBLISH_KEY),
 				PubnubUtil.urlEncode(this.SUBSCRIBE_KEY), PubnubUtil.urlEncode(signature),
 				PubnubUtil.urlEncode(channel), PubnubUtil.urlEncode("0"),
 				PubnubUtil.urlEncode(msgStr)};
 
-		PubnubRequest req = new PubnubRequest(urlComponents, channel,
+		HttpRequest hreq = new HttpRequest(urlComponents, 
 				new ResponseHandler() {
 			public void handleResponse(String response) {
 				JSONArray jsarr;
@@ -409,7 +433,7 @@ public class Pubnub {
 			}
 		});
 
-		_request(req, simpleConnManager);
+		_request(hreq, simpleConnManager);
 	}
 
 	/**
@@ -443,10 +467,10 @@ public class Pubnub {
 	 */
 	public void hereNow(final String channel, final Callback callback) {
 
-		String[] urlargs = { this.ORIGIN, "v2", "presence", "sub_key",
+		String[] urlargs = { getOrigin(), "v2", "presence", "sub_key",
 				this.SUBSCRIBE_KEY, "channel", channel };
 
-		PubnubRequest req = new PubnubRequest(urlargs, (String) null,
+		HttpRequest hreq = new HttpRequest(urlargs,
 				new ResponseHandler() {
 			public void handleResponse(String response) {
 				JSONObject jsobj;
@@ -473,7 +497,7 @@ public class Pubnub {
 			}
 		});
 
-		_request(req, simpleConnManager);
+		_request(hreq, simpleConnManager);
 	}
 
 	/**
@@ -513,10 +537,10 @@ public class Pubnub {
 		String limit = (String) args.get("limit");
 		final Callback callback = (Callback) args.get("callback");
 
-		String[] urlargs = { this.ORIGIN, "history", this.SUBSCRIBE_KEY,
+		String[] urlargs = { getOrigin(), "history", this.SUBSCRIBE_KEY,
 				channel, "0", limit };
 
-		PubnubRequest req = new PubnubRequest(urlargs, channel, new ResponseHandler() {
+		HttpRequest hreq = new HttpRequest(urlargs, new ResponseHandler() {
 
 			public void handleResponse(String response) {
 				JSONArray jsarr;
@@ -543,7 +567,7 @@ public class Pubnub {
 			}
 
 		});
-		_request(req, simpleConnManager);
+		_request(hreq, simpleConnManager);
 	}
 
 	/**
@@ -577,10 +601,10 @@ public class Pubnub {
 		if (end != -1)
 			parameters.put("end", Long.toString(end).toLowerCase());
 
-		String[] urlargs = { this.ORIGIN, "v2", "history", "sub-key",
+		String[] urlargs = { getOrigin(), "v2", "history", "sub-key",
 				this.SUBSCRIBE_KEY, "channel", channel };
 
-		PubnubRequest req = new PubnubRequest(urlargs, parameters, channel,
+		HttpRequest hreq = new HttpRequest(urlargs, parameters, 
 				new ResponseHandler() {
 
 			public void handleResponse(String response) {
@@ -608,7 +632,7 @@ public class Pubnub {
 			}
 
 		});
-		_request(req, simpleConnManager);
+		_request(hreq, simpleConnManager);
 	}
 
 	/**
@@ -717,8 +741,8 @@ public class Pubnub {
 	 */
 	public void time(final Callback cb) {
 
-		String[] url = { this.ORIGIN, "time", "0" };
-		PubnubRequest req = new PubnubRequest(url, (String) null, new ResponseHandler() {
+		String[] url = { getOrigin(), "time", "0" };
+		HttpRequest hreq = new HttpRequest(url, new ResponseHandler() {
 
 			public void handleResponse(String response) {
 				cb.successCallback(null, response);
@@ -730,7 +754,7 @@ public class Pubnub {
 
 		});
 
-		_request(req, simpleConnManager);
+		_request(hreq, simpleConnManager);
 	}
 
 	private boolean inputsValid(Hashtable args) throws PubnubException {
@@ -898,14 +922,14 @@ public class Pubnub {
 				return;
 			}
 		}
-		_subscribe_base(timetoken);
+		_subscribe_base(true);
 	}
 
 	/**
 	 * @param timetoken
 	 *            , Timetoken to be used
 	 */
-	private void _subscribe_base(String timetoken) {
+	private void _subscribe_base(boolean fresh) {
 		String channelString = subscriptions.getChannelString();
 		String[] channelsArray = subscriptions.getChannelNames();
 
@@ -913,13 +937,14 @@ public class Pubnub {
 			callErrorCallbacks(channelsArray, "Parsing Error");
 			return;
 		}
-		String[] urlComponents = { Pubnub.this.ORIGIN, "subscribe",
-				Pubnub.this.SUBSCRIBE_KEY, channelString, "0", timetoken };
+		String[] urlComponents = { getOrigin(), "subscribe",
+				Pubnub.this.SUBSCRIBE_KEY, channelString, "0", _timetoken };
 
 		Hashtable params = new Hashtable();
 		params.put("uuid", UUID);
+		//System.out.println("Subscribing with timetoken : " + _timetoken);
 
-		PubnubRequest req = new PubnubRequest(urlComponents, params, channelsArray,
+		HttpRequest hreq = new HttpRequest(urlComponents, params, 
 				new ResponseHandler() {
 
 			public void handleResponse(String response) {
@@ -938,7 +963,9 @@ public class Pubnub {
 				JSONArray jsa;
 				try {
 					jsa = new JSONArray(response);
-					_timetoken = jsa.get(1).toString();
+					_timetoken = (!_saved_timetoken.equals("0") && isResumeOnReconnect())?
+							_saved_timetoken:jsa.get(1).toString();
+					_saved_timetoken = "0";
 					JSONArray messages = new JSONArray(jsa.get(0)
 							.toString());
 
@@ -1000,20 +1027,23 @@ public class Pubnub {
 						}
 
 					}
-					_subscribe_base(_timetoken);
+					_subscribe_base(false);
 				} catch (JSONException e) {
-					_subscribe_base(_timetoken);
+					_subscribe_base(false);
 				}
 
 			}
 
 			public void handleError(String response) {
 				subscriptions.invokeDisconnectCallbackOnChannels();
-				_subscribe_base(_timetoken);
+				_subscribe_base(true);
+			}
+			public String getTimetoken() {
+				return _timetoken;
 			}
 		});
 
-		_request(req, longPollConnManager, true);
+		_request(hreq, longPollConnManager, true);
 	}
 
 	/**
@@ -1021,23 +1051,31 @@ public class Pubnub {
 	 * @param connManager
 	 * @param abortExisting
 	 */
-	private void _request(final PubnubRequest req, HttpManager connManager, boolean abortExisting) {
-		HttpRequest hreq = new HttpRequest(req.getUrl(), _headers, req.responseHandler);
-		if (abortExisting)
-			connManager.abortAndQueue(hreq);
-		else 
-			connManager.queue(hreq);
+	private void _request(final HttpRequest hreq, HttpManager connManager, boolean abortExisting) {
+		if (abortExisting) 
+			connManager.resetHttpManager();
+		connManager.queue(hreq);
 	}
 	/**
 	 * @param req
 	 * @param connManager
 	 */
-	private void _request(final PubnubRequest req, HttpManager connManager) {
-		_request(req, connManager, false);
+	private void _request(final HttpRequest hreq, HttpManager connManager) {
+		_request(hreq, connManager, false);
 	}
-	
+
+	private void changeOrigin() {
+		this.ORIGIN_STR = null;
+		this.HOSTNAME_SUFFIX = (this.HOSTNAME_SUFFIX + 1) % 9 ;
+	}
+
 	public void disconnectAndResubscribe() {
+		log.trace("Received disconnectAndResubscribe");
+		log.trace("RESUME_ON_RECONNECT is : " + isResumeOnReconnect());
 		subscriptions.invokeDisconnectCallbackOnChannels();
-		_subscribe_base(this._timetoken);
+		changeOrigin();
+		_saved_timetoken = _timetoken;
+		_timetoken = "0";
+		_subscribe_base(true);
 	}
 }

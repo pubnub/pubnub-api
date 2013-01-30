@@ -18,6 +18,13 @@ public abstract class HttpClient {
 		return new HttpClientCore(requestTimeout);
 	}
 	
+	public synchronized HttpClient reset() {
+		int connTimeout = getConnectionTimeout();
+		int requestTimeout = getRequestTimeout();
+		shutdown();
+		return getClient(requestTimeout, connTimeout);
+		
+	}
 	public abstract int getRequestTimeout();
 
 	public abstract void setRequestTimeout(int requestTimeout);
@@ -33,8 +40,10 @@ public abstract class HttpClient {
 	public abstract boolean checkResponse(int rc);
 
 	public abstract boolean isOk(int rc);
+	
+	public abstract void shutdown();
 
-	public abstract HttpResponse fetch(String url) throws IOException, PubnubException;
+	public abstract  HttpResponse fetch(String url) throws IOException, PubnubException;
 
 	public abstract HttpResponse fetch(String url, Hashtable headers)
 			throws IOException, PubnubException;

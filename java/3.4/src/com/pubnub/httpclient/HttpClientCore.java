@@ -22,6 +22,7 @@ import com.pubnub.api.PubnubException;
 public class HttpClientCore extends HttpClient {
 	private int requestTimeout = 310000;
 	private int connectionTimeout = 5000;
+	private DefaultHttpClient defaultHttpClient;
 	private DecompressingHttpClient httpClient;
     private Hashtable _headers;
     private HttpGet httpGet;
@@ -33,7 +34,7 @@ public class HttpClientCore extends HttpClient {
     }
 	public HttpClientCore() {
 		DefaultHttpRequestRetryHandler retryHandler = new DefaultHttpRequestRetryHandler(0, false);
-		DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+		defaultHttpClient = new DefaultHttpClient();
 	    defaultHttpClient.setHttpRequestRetryHandler(retryHandler);
 		httpClient = new DecompressingHttpClient(defaultHttpClient);
 		_headers = new Hashtable();
@@ -141,5 +142,8 @@ public class HttpClientCore extends HttpClient {
 
 	public boolean isOk(int rc) {
 		return (rc == HttpStatus.SC_OK );
+	}
+	public void shutdown() {
+		defaultHttpClient.getConnectionManager().shutdown();
 	}
 }
