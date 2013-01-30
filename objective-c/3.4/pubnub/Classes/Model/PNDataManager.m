@@ -8,11 +8,9 @@
 
 
 #import "PNDataManager.h"
-#import "PNObservationCenter.h"
-#import "PNPresenceEvent.h"
-#import "PNMessage.h"
-#import "PNMessage+Protected.h"
 #import "PNPresenceEvent+Protected.h"
+#import "PNMessage+Protected.h"
+#import "PNChannel+Protected.h"
 
 
 #pragma mark Static

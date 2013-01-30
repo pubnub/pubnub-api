@@ -20,6 +20,7 @@
 #import "PNConnection+Protected.h"
 #import "PNHereNow+Protected.h"
 #import "PNMessage+Protected.h"
+#import "PNChannel+Protected.h"
 #import "PNMessagingChannel.h"
 #import "PNError+Protected.h"
 #import "PNServiceChannel.h"
@@ -974,7 +975,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
                 if (connected) {
                     
                     if (weakSelf.state == PNPubNubClientStateDisconnectedOnNetworkError) {
-                        
+
                         BOOL shouldRestoreConnection = weakSelf.configuration.shouldAutoReconnectClient;
                         if ([weakSelf.delegate respondsToSelector:@selector(shouldReconnectPubNubClient:)]) {
                             

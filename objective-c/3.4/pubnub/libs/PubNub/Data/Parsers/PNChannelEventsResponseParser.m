@@ -12,6 +12,7 @@
 #import "PNPresenceEvent+Protected.h"
 #import "PNChannelEvents+Protected.h"
 #import "PNMessage+Protected.h"
+#import "PNChannel+Protected.h"
 #import "PNResponse.h"
 
 

@@ -17,7 +17,7 @@
 #pragma mark Static
 
 // Stores reference on error domain which is used to specify
-// that this error arrived because of client inconsistence
+// that this error arrived because of client inconsistency
 // or some validation on the client
 static NSString * const kPNDefaultErrorDomain = @"com.pubnub.pubnub";
 

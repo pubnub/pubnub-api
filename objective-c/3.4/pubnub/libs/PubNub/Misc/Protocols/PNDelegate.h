@@ -36,7 +36,7 @@
 
 /**
  * Called on delegate when client successfully connected to the
- * origin and perfomed initial calls (time token requests to make
+ * origin and performed initial calls (time token requests to make
  * connection keep-alive)
  */
 - (void)pubnubClient:(PubNub *)client didConnectToOrigin:(NSString *)origin;

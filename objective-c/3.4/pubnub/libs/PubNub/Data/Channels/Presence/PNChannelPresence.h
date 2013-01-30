@@ -15,7 +15,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PNChannel+Protected.h"
+#import "PNChannel.h"
 
 
 @interface PNChannelPresence : PNChannel

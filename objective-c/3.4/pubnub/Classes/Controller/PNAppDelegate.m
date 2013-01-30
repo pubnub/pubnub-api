@@ -8,13 +8,9 @@
 
 #import "PNAppDelegate.h"
 #import "PNIdentificationViewController.h"
-#import "PNMainViewController.h"
 #import "PNObservationCenter.h"
-#import "PNError+Protected.h"
 #import "PNPresenceEvent.h"
 #import "PNMessage.h"
-#import "UIDevice+PNAdditions.h"
-#import "PNObservationCenter+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -108,7 +104,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-
     // Configure application window and its content
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = [PNIdentificationViewController new];
@@ -136,16 +131,6 @@
 - (void)pubnubClient:(PubNub *)client didConnectToOrigin:(NSString *)origin {
     
     PNLog(PNLogGeneralLevel, self, @"PubNub client successfully connected to PubNub origin at: %@", origin);
-
-
-    int64_t delayInSeconds = 1.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-
-        PNMainViewController *mainViewController = [PNMainViewController new];
-        mainViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-        [self.window.rootViewController presentModalViewController:mainViewController animated:YES];
-    });
 }
 
 - (void)pubnubClient:(PubNub *)client connectionDidFailWithError:(PNError *)error {

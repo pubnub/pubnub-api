@@ -14,6 +14,7 @@
 #import "PNIdentificationViewController.h"
 #import "PNDataManager.h"
 #import "PNMacro.h"
+#import "PNMainViewController.h"
 
 
 #pragma mark Private interface methods
@@ -129,6 +130,16 @@
 
         [weakSelf updateConnectionProgressMessage:[NSString stringWithFormat:@"Connected to '%@'",
                                                    [PNDataManager sharedInstance].configuration.origin]];
+
+
+        int64_t delayInSeconds = 1.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+
+            PNMainViewController *mainViewController = [PNMainViewController new];
+            mainViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+            [self presentModalViewController:mainViewController animated:YES];
+        });
     }
 
                          // In case of error you always can pull out error code and
