@@ -138,17 +138,31 @@
                          // localizedRecoverySuggestion)
                          errorBlock:^(PNError *connectionError) {
 
+                             BOOL isControlsEnabled = connectionError.code != kPNClientConnectionFailedOnInternetFailureError;
+
                              // Enable controls so user will be able to try again
-                             ((UIButton *)sender).enabled = YES;
-                             weakSelf.sslEnablingSwitch.enabled = YES;
-                             weakSelf.clientIdentifier.userInteractionEnabled = YES;
+                             ((UIButton *)sender).enabled = isControlsEnabled;
+                             weakSelf.sslEnablingSwitch.enabled = isControlsEnabled;
+                             weakSelf.clientIdentifier.userInteractionEnabled = isControlsEnabled;
 
                              [weakSelf updateConnectionProgressMessage:[NSString stringWithFormat:@"Connection to '%@' failed because of error: %@",
                                                                         [PNDataManager sharedInstance].configuration.origin,
                                                                         connectionError]];
 
+                             if (connectionError.code == kPNClientConnectionFailedOnInternetFailureError) {
+                                 
+                                 int64_t delayInSeconds = 1.0;
+                                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+                                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+
+                                     [weakSelf updateConnectionProgressMessage:@"Connection will be established as soon as internet connection will be restored"];
+                                 });
+                             }
+
                              UIAlertView *connectionErrorAlert = [UIAlertView new];
-                             connectionErrorAlert.title = [connectionError localizedDescription];
+                             connectionErrorAlert.title = [NSString stringWithFormat:@"%@(%@)",
+                                                                                     [connectionError localizedDescription],
+                                                                                     NSStringFromClass([self class])];
                              connectionErrorAlert.message = [NSString stringWithFormat:@"Reason:\n%@\n\nSuggestion:\n%@",
                                              [connectionError localizedFailureReason],
                                              [connectionError localizedRecoverySuggestion]];

@@ -14,6 +14,7 @@
 #import "PNPresenceEvent.h"
 #import "PNMessage.h"
 #import "UIDevice+PNAdditions.h"
+#import "PNObservationCenter+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -39,6 +40,29 @@
 - (void)initializePubNubClient {
 
     [PubNub setDelegate:self];
+
+
+    // Subscribe for client connection state change
+    // (observe when client will be disconnected)
+    [[PNObservationCenter defaultCenter] addClientConnectionStateObserver:self
+                                                        withCallbackBlock:^(NSString *origin,
+                                                                            BOOL connected,
+                                                                            PNError *error) {
+
+                if (!connected && error) {
+
+                    UIAlertView *infoAlertView = [UIAlertView new];
+                    infoAlertView.title = [NSString stringWithFormat:@"%@(%@)",
+                                                                     [error localizedDescription],
+                                                                     NSStringFromClass([self class])];
+                    infoAlertView.message = [NSString stringWithFormat:@"Reason:\n%@\nSuggestion:\n%@",
+                                                                       [error localizedFailureReason],
+                                                                       [error localizedRecoverySuggestion]];
+                    [infoAlertView addButtonWithTitle:@"OK"];
+                    [infoAlertView show];
+                }
+            }];
+
 
     // Subscribe application delegate on subscription updates
     // (events when client subscribe on some channel)
@@ -84,7 +108,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    NSLog(@"DEVICE IP ADDRESS: %@", [[UIDevice currentDevice] networkAddress]);
 
     // Configure application window and its content
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

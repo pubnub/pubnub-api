@@ -154,6 +154,21 @@
      }];
 
 
+    [[PNObservationCenter defaultCenter] addClientConnectionStateObserver:self
+                                                        withCallbackBlock:^(NSString *origin,
+                                                                            BOOL connected,
+                                                                            PNError *error) {
+
+                                                            NSString *identifier = [PubNub clientIdentifier];
+                                                            NSString *address = [[UIDevice currentDevice] networkAddress];
+                                                            if (!connected) {
+
+                                                                identifier = @"---";
+                                                                address = @"-.-.-.-";
+                                                            }
+                                                            weakSelf.clientNetworkAddressLabel.text = address;
+                                                            weakSelf.clientIdentifierLabel.text = identifier;
+                                                        }];
 
     [[PNObservationCenter defaultCenter] addChannelParticipantsListProcessingObserver:self
                                                                             withBlock:^(NSArray *participants,
@@ -547,7 +562,8 @@ shouldChangeCharactersInRange:(NSRange)range
 - (void)dealloc {
 
     [[PNObservationCenter defaultCenter] removeTimeTokenReceivingObserver:self];
-    [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:nil];
+    [[PNObservationCenter defaultCenter] removeClientConnectionStateObserver:self];
+    [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:self];
     [[PNObservationCenter defaultCenter] removePresenceEventObserver:self];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannel"];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannelChat"];

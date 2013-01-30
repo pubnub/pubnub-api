@@ -1166,7 +1166,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
             self.state = state;
             
             SEL selectorForCheck = @selector(pubnubClient:didDisconnectFromOrigin:);
-            if (self.state == PNPubNubClientStateDisconnectingOnNetworkError) {
+            if (state == PNPubNubClientStateDisconnectedOnNetworkError) {
                 
                 selectorForCheck = @selector(pubnubClient:didDisconnectFromOrigin:withError:);
             }
@@ -1252,7 +1252,12 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
     if (self.state == PNPubNubClientStateConnected && [self.configuration.origin isEqualToString:host]) {
         
         self.state = PNPubNubClientStateDisconnecting;
-        if (![self.reachability isServiceAvailable]) {
+        BOOL disconnectedOnNetworkError = ![self.reachability isServiceAvailable];
+        if(!disconnectedOnNetworkError) {
+
+            disconnectedOnNetworkError = error.code == kPNRequestExecutionFailedOnInternetFailureError;
+        }
+        if (disconnectedOnNetworkError) {
             
             self.state = PNPubNubClientStateDisconnectingOnNetworkError;
         }

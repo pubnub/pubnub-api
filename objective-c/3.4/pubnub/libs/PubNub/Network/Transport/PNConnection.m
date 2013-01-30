@@ -12,6 +12,7 @@
 //
 
 #import "PNConnection.h"
+#import <Security/SecureTransport.h>
 #import "NSMutableArray+PNAdditions.h"
 #import "PNResponseDeserialize.h"
 #import "PubNub+Protected.h"
@@ -247,6 +248,13 @@ static int const kPNStreamBufferSize = 32768;
 
 
 #pragma mark - Misc methods
+
+/**
+ * Check whether specified error is from POSIX domain
+ * and report that error is caused by connection failure
+ * or not
+ */
+- (BOOL)isConnectionIssuesError:(CFErrorRef)error;
 
 /**
  * Connection state retrieval
@@ -557,6 +565,36 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 - (BOOL)isDisconnected {
 
     return (self.readStreamState == PNSocketStreamNotConfigured && self.writeStreamState == PNSocketStreamNotConfigured);
+}
+
+- (BOOL)isConnectionIssuesError:(CFErrorRef)error {
+
+    BOOL isConnectionIssue = NO;
+
+
+    NSString *errorDomain = (__bridge NSString *)CFErrorGetDomain(error);
+
+    if ([errorDomain isEqualToString:(NSString *)kCFErrorDomainPOSIX]) {
+
+        switch (CFErrorGetCode(error)) {
+
+            case ENETDOWN:      // Network went down
+            case ENETUNREACH:   // Network is unreachable
+            case ECONNABORTED:  // Connection was aborted by software (OS)
+            case ENETRESET:     // Network dropped connection on reset
+            case ECONNRESET:    // Connection reset by peer
+            case ENOTCONN:      // Socket not connected or was disconnected
+            case ESHUTDOWN:     // Can't send after socket shutdown
+            case EHOSTDOWN:     // Host is down
+            case EHOSTUNREACH:  // Can't reach host
+
+                isConnectionIssue = YES;
+                break;
+        }
+    }
+
+
+    return isConnectionIssue;
 }
 
 
@@ -1153,7 +1191,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         BOOL isCriticalStreamError = NO;
 
         // Check whether error is caused by SSL issues or not
-        if (errorObject.code <= -9800 && errorObject.code >= -9818) {
+        if (errorObject.code <= errSSLProtocol && errorObject.code >= errSSLBadCipherSuite) {
 
             // Checking whether user allowed to decrease security options
             // and we can do it
@@ -1184,31 +1222,20 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
                 [self connect];
             }
         }
-        else if ([errorDomain isEqualToString:(NSString *)kCFErrorDomainPOSIX]){
+        else if ([errorDomain isEqualToString:(NSString *)kCFErrorDomainPOSIX]) {
 
             // Check whether connection should be reconnected
             // because of critical error
-            switch (errorObject.code) {
+            if ([self isConnectionIssuesError:error]) {
 
-                case ENETDOWN:      // Network went down
-                case ENETUNREACH:   // Network is unreachable
-                case ENETRESET:     // Network dropped connection on reset
-                case ECONNRESET:    // Connection reset by peer
-                case ESHUTDOWN:     // Can't send after socket shutdown
-                case EHOSTDOWN:     // Host is down
-                case EHOSTUNREACH:  // Can't reach host
+                // Mark that we should init streams close because
+                // of critical error
+                shouldCloseConnection = YES;
 
-                    // Mark that we should init streams close because
-                    // of critical error
-                    shouldCloseConnection = YES;
+                // Mark that further operation is impossible w/o
+                // reconnection
+                isCriticalStreamError = YES;
 
-                    // Mark that further operation is impossible w/o
-                    // reconnection
-                    isCriticalStreamError = YES;
-
-                    break;
-                default:
-                    break;
             }
         }
 
@@ -1331,7 +1358,16 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
     if (error) {
 
-        errorInstance = [PNError errorWithDomain:(id)CFErrorGetDomain(error) code:CFErrorGetCode(error) userInfo:nil];
+        NSString *errorDomain = (__bridge NSString *)CFErrorGetDomain(error);
+
+        if ([self isConnectionIssuesError:error]) {
+
+            errorInstance = [PNError errorWithCode:kPNRequestExecutionFailedOnInternetFailureError];
+        }
+        else {
+
+            errorInstance = [PNError errorWithDomain:errorDomain code:CFErrorGetCode(error) userInfo:nil];
+        }
     }
 
 
