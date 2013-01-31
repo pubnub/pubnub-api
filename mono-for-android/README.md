@@ -11,6 +11,8 @@ Run the project in the emulator to see a working example. The main functionality
 Please ensure that in order to run on Mono the constant in the pubnub.cs file should be set to "true"
 OVERRIDE_TCP_KEEP_ALIVE = true;
 
+When creating a new project or a new configuration please add a compiler flag by going into the "Options -> Compiler -> Define Symbols" and adding "MONODROID;" to it.
+
 Dev environment setup:
 - MAC OS X 10.7.4 (Lion)
 - MonoTouch 4.41 Evaluation
