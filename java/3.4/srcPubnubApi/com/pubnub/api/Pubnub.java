@@ -1035,7 +1035,7 @@ public class Pubnub {
 				subscriptions.invokeDisconnectCallbackOnChannels();
 				log.trace("Timeout Occurred, Calling error callbacks on the channels");
 				subscriptions.invokeErrorCallbackOnChannels("Network Timeout");
-
+				subscriptions.removeAllChannels();
 			}
 			
 			public String getTimetoken() {

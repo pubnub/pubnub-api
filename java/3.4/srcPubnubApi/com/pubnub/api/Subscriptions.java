@@ -21,6 +21,10 @@ class Subscriptions {
     public void removeChannel(String name) {
         channels.remove(name);
     }
+    
+    public void removeAllChannels() {
+    	channels.clear();
+    }
 
     public Channel getFirstChannel() {
     	Channel ch = null;
