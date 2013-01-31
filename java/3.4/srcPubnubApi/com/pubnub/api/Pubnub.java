@@ -38,12 +38,10 @@ public class Pubnub {
 
 	private boolean SSL = true;
 	private String UUID = null;
-	private Hashtable _headers;
 	private Subscriptions subscriptions;
 
-	private RequestManager longPollConnManager;
-	private RequestManager simpleConnManager;
-	private PubnubCrypto pc;
+	private RequestManager subscribeManager;
+	private RequestManager nonSubscribeManager;
 	private String _timetoken = "0";
 	private String _saved_timetoken = "0";
 
@@ -53,8 +51,8 @@ public class Pubnub {
             Pubnub.class.getName());
 
 	public void shutdown() {
-		longPollConnManager.stop();
-		simpleConnManager.stop();
+		nonSubscribeManager.stop();
+		subscribeManager.stop();
 	}
 
 	public boolean isResumeOnReconnect() {
@@ -253,28 +251,34 @@ public class Pubnub {
 		if (subscriptions == null)
 			subscriptions = new Subscriptions();
 
-		if (longPollConnManager == null)
-			longPollConnManager = new SubscribeManager("Subscribe Manager");
+		if (subscribeManager == null)
+			subscribeManager = new SubscribeManager("Subscribe Manager");
 
-		if (simpleConnManager == null)
-			simpleConnManager = new NonSubscribeManager("Non Subscribe Manager");
+		if (nonSubscribeManager == null)
+			nonSubscribeManager = new NonSubscribeManager("Non Subscribe Manager");
 		
-		longPollConnManager.setRequestTimeout(31000);
-		simpleConnManager.setRequestTimeout(15000);
-		_headers = new Hashtable();
-		_headers.put("V", "3.3");
-		_headers.put("Accept-Encoding", "deflate");
+		subscribeManager.setRequestTimeout(31000);
+		nonSubscribeManager.setRequestTimeout(15000);
+		
+		
+		subscribeManager.setHeader("V", "3.4");
+		subscribeManager.setHeader("Accept-Encoding", "deflate");
+		subscribeManager.setHeader("User-Agent", "JAVA");
+		
+		nonSubscribeManager.setHeader("V", "3.4");
+		nonSubscribeManager.setHeader("Accept-Encoding", "deflate");
+		nonSubscribeManager.setHeader("User-Agent", "JAVA");
 
 	}
 
 	public void setSubscribeTimeout(int timeout) {
-		longPollConnManager.setConnectionTimeout(10000);
-		longPollConnManager.setRequestTimeout(timeout);
+		subscribeManager.setConnectionTimeout(10000);
+		subscribeManager.setRequestTimeout(timeout);
 	}
 
 	public void setNonSubscribeTimeout(int timeout) {
-		simpleConnManager.setConnectionTimeout(10000);
-		simpleConnManager.setRequestTimeout(timeout);
+		nonSubscribeManager.setConnectionTimeout(10000);
+		nonSubscribeManager.setRequestTimeout(timeout);
 	}
 
 	
@@ -421,7 +425,7 @@ public class Pubnub {
 			}
 		});
 
-		_request(hreq, simpleConnManager);
+		_request(hreq, nonSubscribeManager);
 	}
 
 	/**
@@ -485,7 +489,7 @@ public class Pubnub {
 			}
 		});
 
-		_request(hreq, simpleConnManager);
+		_request(hreq, nonSubscribeManager);
 	}
 
 	/**
@@ -555,7 +559,7 @@ public class Pubnub {
 			}
 
 		});
-		_request(hreq, simpleConnManager);
+		_request(hreq, nonSubscribeManager);
 	}
 
 	/**
@@ -620,7 +624,7 @@ public class Pubnub {
 			}
 
 		});
-		_request(hreq, simpleConnManager);
+		_request(hreq, nonSubscribeManager);
 	}
 
 	/**
@@ -742,7 +746,7 @@ public class Pubnub {
 
 		});
 
-		_request(hreq, simpleConnManager);
+		_request(hreq, nonSubscribeManager);
 	}
 
 	private boolean inputsValid(Hashtable args) throws PubnubException {
@@ -1065,7 +1069,7 @@ public class Pubnub {
 			}
 		});
 
-		_request(hreq, longPollConnManager, fresh);
+		_request(hreq, subscribeManager, fresh);
 	}
 
 	/**

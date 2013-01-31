@@ -24,7 +24,6 @@ public class HttpClientCore extends HttpClient {
 	private int connectionTimeout = 5000;
 	private DefaultHttpClient defaultHttpClient;
 	private DecompressingHttpClient httpClient;
-    private Hashtable _headers;
     private HttpGet httpGet;
     private HttpParams httpParams;
 
@@ -38,8 +37,6 @@ public class HttpClientCore extends HttpClient {
 		defaultHttpClient = new DefaultHttpClient();
 	    defaultHttpClient.setHttpRequestRetryHandler(retryHandler);
 		httpClient = new DecompressingHttpClient(defaultHttpClient);
-		_headers = new Hashtable();
-	    _headers.put("User-Agent", "Java");
 	    httpParams = httpClient.getParams();
 	    HttpConnectionParams.setSoTimeout(httpParams, requestTimeout);
 	    HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
@@ -49,10 +46,6 @@ public class HttpClientCore extends HttpClient {
     }
 	public HttpClientCore() {
 		init();
-	}
-
-	public void setHeader(String key, String value) {
-		_headers.put(key, value);
 	}
 	
 	public HttpClientCore(int requestTimeout, int connTimeout) {

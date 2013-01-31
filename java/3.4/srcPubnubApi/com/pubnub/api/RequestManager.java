@@ -51,6 +51,10 @@ abstract class Worker implements Runnable {
 			httpclient.setConnectionTimeout(timeout);
 		}
 	}
+	
+	public void setHeader(String key, String value) {
+		httpclient.setHeader(key, value);
+	}
 
 	void setRequestTimeout(int timeout) {
 		if (httpclient != null) {
@@ -226,6 +230,12 @@ abstract class RequestManager {
 		}
 	}
 
+	public void setHeader(String key, String value){
+		for (int i = 0; i < _workers.length; i++){
+			_workers[i].setHeader(key, value);
+		}
+	}
+	
 	public void clearRequestQueue() {
 		_waiting.clear();
 	}

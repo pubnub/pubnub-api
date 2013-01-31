@@ -6,6 +6,7 @@ import com.pubnub.api.PubnubException;
 
 public abstract class HttpClient {
 
+	protected  Hashtable _headers;
 	public static HttpClient getClient() {
 			return new HttpClientCore();
 	}
@@ -16,6 +17,12 @@ public abstract class HttpClient {
 	
 	public HttpClient getClient(int requestTimeout) {
 		return new HttpClientCore(requestTimeout);
+	}
+	
+	public void setHeader(String key, String value) {
+		if (_headers == null)
+			_headers = new Hashtable();
+		_headers.put(key, value);
 	}
 	
 	public void reset() {
