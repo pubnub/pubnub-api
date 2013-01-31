@@ -819,14 +819,8 @@ public class Pubnub {
 	 */
 	public void subscribe(Hashtable args, Callback callback)
 			throws PubnubException {
-
 		args.put("callback", callback);
-
-		if (!inputsValid(args)) {
-			return;
-		}
-		args.put("timetoken", "0");
-		_subscribe(args);
+		subscribe(args);
 	}
 
 	/**
@@ -843,8 +837,6 @@ public class Pubnub {
 		if (!inputsValid(args)) {
 			return;
 		}
-
-		args.put("timetoken", "0");
 		_subscribe(args);
 	}
 
@@ -861,11 +853,28 @@ public class Pubnub {
 	 */
 	public void subscribe(String[] channelsArr, Callback callback)
 			throws PubnubException {
+		subscribe(channelsArr, callback, "0");
+	}
+	
+	/**
+	 *
+	 * Listen for a message on a channel.
+	 *
+	 * @param channelsArr
+	 *            Array of channel names (string) to listen on
+	 * @param callback
+	 *            Callback
+	 * @exception PubnubException
+	 *                Throws PubnubException if Callback is null
+	 */
+	public void subscribe(String[] channelsArr, Callback callback, String timetoken)
+			throws PubnubException {
 
 		Hashtable args = new Hashtable();
 
 		args.put("channels", channelsArr);
 		args.put("callback", callback);
+		args.put("timetoken", timetoken);
 		subscribe(args);
 	}
 
@@ -888,6 +897,8 @@ public class Pubnub {
 		}
 		Callback callback = (Callback) args.get("callback");
 		String timetoken = (String) args.get("timetoken");
+		
+		timetoken = (timetoken == null)?"0":timetoken;
 
 		/*
 		 * Scan through the channels array. If a channel does not exist in
@@ -921,6 +932,9 @@ public class Pubnub {
 		String channelString = subscriptions.getChannelString();
 		String[] channelsArray = subscriptions.getChannelNames();
 
+		if (channelsArray.length <= 0)
+			return;
+		
 		if (channelString == null) {
 			callErrorCallbacks(channelsArray, "Parsing Error");
 			return;
@@ -1032,9 +1046,17 @@ public class Pubnub {
 			}
 			
 			public void handleTimeout() {
+				JSONObject jsobj = new JSONObject();
 				subscriptions.invokeDisconnectCallbackOnChannels();
 				log.trace("Timeout Occurred, Calling error callbacks on the channels");
-				subscriptions.invokeErrorCallbackOnChannels("Network Timeout");
+				try {
+					jsobj.put("error", "Network Timeout");
+					jsobj.put("timetoken", _timetoken);
+					subscriptions.invokeErrorCallbackOnChannels(jsobj);
+				} catch (JSONException e) {
+					subscriptions.invokeErrorCallbackOnChannels("Network Timeout");
+				}
+				
 				subscriptions.removeAllChannels();
 			}
 			

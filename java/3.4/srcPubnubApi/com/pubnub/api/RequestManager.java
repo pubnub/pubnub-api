@@ -13,8 +13,8 @@ import com.pubnub.httpclient.HttpResponse;
 
 
 abstract class Worker implements Runnable {
-	private volatile Vector _requestQueue;
-	private  volatile boolean _die;
+	private Vector _requestQueue;
+	private volatile boolean _die;
 	private Thread thread;
 	protected HttpClient httpclient;
 
