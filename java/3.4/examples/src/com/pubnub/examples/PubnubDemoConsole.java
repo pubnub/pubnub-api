@@ -58,10 +58,10 @@ public class PubnubDemoConsole {
 				}
 
 				public void successCallback(String channel, Object message) {
-					notifyUser("SUBSCRIBE : " + message);
+					notifyUser("SUBSCRIBE : "  + channel + " : " + message.getClass() + " : " + message.toString());
 				}
 				public void errorCallback(String channel, Object message) {
-					notifyUser("SUBSCRIBE : Unsubscribed from " + channel + " : " + message.toString());
+					notifyUser("SUBSCRIBE : Unsubscribed from " + channel + " : " + message.getClass() + " : " + message.toString());
 				}
 			});
 
