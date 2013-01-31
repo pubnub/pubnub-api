@@ -621,8 +621,11 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
     
     NSArray *channels = nil;
     PNError *error = nil;
+    BOOL subscribed = NO;
     
     if ([notification.name isEqualToString:kPNClientSubscriptionDidCompleteNotification]) {
+
+        subscribed = YES;
         
         channels = (NSArray *)notification.userInfo;
     }
@@ -631,8 +634,6 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
         error = (PNError *)notification.userInfo;
         channels = error.associatedObject;
     }
-    
-    BOOL subscribed = YES;
 
 
     // Retrieving list of observers (including one time and persistent observers)

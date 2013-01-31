@@ -141,6 +141,20 @@ static PNDataManager *_sharedInstance = nil;
 
                 weakSelf.currentChannelChat = [weakSelf.messages valueForKey:weakSelf.currentChannel.name];
             }];
+
+        [[PNObservationCenter defaultCenter] addClientConnectionStateObserver:self
+                                                            withCallbackBlock:^(NSString *origin,
+                                                                                BOOL connected,
+                                                                                PNError *error) {
+
+                                                                // Check whether client disconnected and there is no
+                                                                // error (which means that user disconnected client)
+                                                                if (!connected && !error) {
+
+                                                                    weakSelf.messages = [NSMutableDictionary dictionary];
+                                                                    weakSelf.currentChannelChat = @"";
+                                                                }
+                                                            }];
 }
 
 
@@ -149,19 +163,7 @@ static PNDataManager *_sharedInstance = nil;
 
 - (void)updateSSLOption:(BOOL)shouldEnableSSL {
 
-    // This is very hard construction for configuration creation, better
-    // use PNDefaultConfiguration.h header file and [PNConfiguration defaultConfiguration]
-    PNConfiguration *configuration = [PNConfiguration configurationForOrigin:self.configuration.origin
-                                                                  publishKey:self.configuration.publishKey
-                                                                subscribeKey:self.configuration.subscriptionKey
-                                                                   secretKey:self.configuration.secretKey
-                                                                   cipherKey:self.configuration.cipherKey
-                                                         useSecureConnection:shouldEnableSSL
-                                                         shouldAutoReconnect:self.configuration.shouldAutoReconnectClient
-                                            shouldReduceSecurityLevelOnError:self.configuration.shouldReduceSecurityLevelOnError
-                                        canIgnoreSecureConnectionRequirement:self.configuration.canIgnoreSecureConnectionRequirement];
-
-    self.configuration = configuration;
+    self.configuration.useSecureConnection = shouldEnableSSL;
 }
 
 - (void)setCurrentChannel:(PNChannel *)currentChannel {

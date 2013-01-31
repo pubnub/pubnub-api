@@ -19,14 +19,38 @@
 #pragma mark Properties
 
 // Stores reference on services host name
-@property (nonatomic, copy) NSString *origin;
+@property (nonatomic, readonly, copy) NSString *origin;
 
 // Stores reference on keys which is required
 // to establish connection and send packets to it
-@property (nonatomic, copy) NSString *publishKey;
-@property (nonatomic, copy) NSString *subscriptionKey;
-@property (nonatomic, copy) NSString *secretKey;
-@property (nonatomic, copy) NSString *cipherKey;
+@property (nonatomic, readonly, copy) NSString *publishKey;
+@property (nonatomic, readonly, copy) NSString *subscriptionKey;
+@property (nonatomic, readonly, copy) NSString *secretKey;
+@property (nonatomic, readonly, copy) NSString *cipherKey;
+
+// Stores timeout which is used for non-subscription
+// requests to report that request failed
+@property (nonatomic, assign) NSTimeInterval nonSubscriptionRequestTimeout;
+
+// Stores timeout which is used for subscription
+// requests to report that request failed
+@property (nonatomic, assign) NSTimeInterval subscriptionRequestTimeout;
+
+// Stores whether client should restore subscription
+// on channels from same point where connection
+// has been lost or resubscribe on them
+// Set YES if you want to discard all events which occurred
+// while connection  went down
+@property (nonatomic, assign, getter = shouldResubscribeOnConnectionRestore) BOOL resubscribeOnConnectionRestore;
+
+// Stores whether client can ignore security
+// requirements and connection using plain HTTP
+// connection in case of SSL error
+@property (nonatomic, assign, getter = canIgnoreSecureConnectionRequirement) BOOL ignoreSecureConnectionRequirement;
+
+// Stores whether SSL security rules should be
+// lowered when connection error occurs or not
+@property (nonatomic, assign, getter = shouldReduceSecurityLevelOnError) BOOL reduceSecurityLevelOnError;
 
 // Stores whether connection should be established
 // with SSL support or not
@@ -35,15 +59,6 @@
 // Stores whether connection should be restored
 // if it failed in previuos sesion or not
 @property (nonatomic, assign, getter = shouldAutoReconnectClient) BOOL autoReconnectClient;
-
-// Stores whether SSL security rules should be
-// lowered when connection error occures or not
-@property (nonatomic, assign, getter = shouldReduceSecurityLevelOnError) BOOL reduceSecurityLevelOnError;
-
-// Stores whether client can ignore security
-// requirements and connection using plain HTTP
-// connection in case of SSL error
-@property (nonatomic, assign, getter = canIgnoreSecureConnectionRequirement) BOOL ignoreSecureConnectionRequirement;
 
 
 #pragma mark - Class methods
@@ -75,11 +90,7 @@
                                  publishKey:(NSString *)publishKey
                                subscribeKey:(NSString *)subscribeKey
                                   secretKey:(NSString *)secretKey
-                                  cipherKey:(NSString *)cipherKey
-                        useSecureConnection:(BOOL)shouldUseSecureConnection
-                        shouldAutoReconnect:(BOOL)shouldAutoReconnect
-           shouldReduceSecurityLevelOnError:(BOOL)shouldReduceSecurityLevelOnError
-       canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement;
+                                  cipherKey:(NSString *)cipherKey;
 
 
 #pragma mark - Instance methods
@@ -92,11 +103,7 @@
           publishKey:(NSString *)publishKey
         subscribeKey:(NSString *)subscribeKey
            secretKey:(NSString *)secretKey
-           cipherKey:(NSString *)cipherKey
- useSecureConnection:(BOOL)shouldUseSecureConnection
- shouldAutoReconnect:(BOOL)shouldAutoReconnect
-shouldReduceSecurityLevelOnError:(BOOL)shouldReduceSecurityLevelOnError
-canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement;
+           cipherKey:(NSString *)cipherKey;
 
 /**
  * Check whether PubNub client should reset connection

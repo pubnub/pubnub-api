@@ -75,9 +75,9 @@ didReceiveNetworkLatency:(double)latency
  * Sent to the delegate when PubNub service refused to
  * return history for specified channel
  */
-- (void)serviceChannel:(PNServiceChannel *)serviceChannel
-        didFailHisoryDownloadForChannel:(PNChannel *)channel
-        withError:(PNError*)error;
+- (void)         serviceChannel:(PNServiceChannel *)serviceChannel
+didFailHisoryDownloadForChannel:(PNChannel *)channel
+                      withError:(PNError *)error;
 
 /**
  * Sent to the delegate when PubNub service responded on

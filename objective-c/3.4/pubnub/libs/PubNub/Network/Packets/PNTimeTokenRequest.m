@@ -22,7 +22,19 @@
 @implementation PNTimeTokenRequest
 
 
-#pragma mark - Instance methods}
+#pragma mark - Instance methods
+
+- (id)init {
+
+    // Check whether initializarion successful or not
+    if((self = [super init])) {
+
+        self.sendingByUserRequest = YES;
+    }
+
+
+    return self;
+}
 
 - (NSString *)callbackMethodName {
 

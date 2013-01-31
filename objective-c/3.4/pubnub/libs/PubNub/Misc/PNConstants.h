@@ -49,6 +49,6 @@ static NSUInteger const kPNRequestMaximumRetryCount = 3;
 // This is the channel which is used by latency
 // meter to measure network latency (prefix from unique
 // client session will be added)
-static NSString * const kPNLatencyMeterChannel = @"ltyMeter";
+static NSString * const kPNLatencyMeterChannel = @"ltm";
 
 #endif // PNConstants_h

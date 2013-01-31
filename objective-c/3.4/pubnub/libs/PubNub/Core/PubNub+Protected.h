@@ -62,7 +62,7 @@ typedef enum _PNPubNubClientState {
 
 // Stores reference on configuration which was used to
 // perform initial PubNub client initialization
-@property (nonatomic, strong) PNConfiguration *configuration;
+@property (nonatomic, copy) PNConfiguration *configuration;
 
 // Stores reference on current client identifier
 @property (nonatomic, strong) NSString *clientIdentifier;

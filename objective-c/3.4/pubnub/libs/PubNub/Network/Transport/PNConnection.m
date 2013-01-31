@@ -587,6 +587,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
             case ESHUTDOWN:     // Can't send after socket shutdown
             case EHOSTDOWN:     // Host is down
             case EHOSTUNREACH:  // Can't reach host
+            case ETIMEDOUT:
 
                 isConnectionIssue = YES;
                 break;

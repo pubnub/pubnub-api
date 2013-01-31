@@ -70,6 +70,12 @@
 - (void)resubscribe;
 
 /**
+ * Will restore channels subscription if doesn't
+ * set that it should resubscribe
+ */
+- (void)restoreSubscription:(BOOL)shouldResubscribe;
+
+/**
  * Will resubscribe on channels to receive messages from
  * PubNub services (received time token which can be used
  * to wait in long poll mode)

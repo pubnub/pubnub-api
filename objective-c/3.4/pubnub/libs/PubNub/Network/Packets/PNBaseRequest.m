@@ -52,6 +52,11 @@
     return self;
 }
 
+- (NSTimeInterval)timeout {
+
+    return [PubNub sharedInstance].configuration.nonSubscriptionRequestTimeout;
+}
+
 - (NSString *)callbackMethodName {
 
     return @"0";

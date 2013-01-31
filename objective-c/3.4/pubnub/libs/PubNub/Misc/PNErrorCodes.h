@@ -38,25 +38,28 @@ static NSInteger const kPNRequestExecutionFailedOnInternetFailureError = 104;
 // not ready
 static NSInteger const kPNRequestExecutionFailedClientNotReadyError = 105;
 
+// PubNub client failed to execute request because of timeout
+static NSInteger const kPNRequestExecutionFailedByTimeoutError = 106;
+
 // PubNub client failed to use presence API because it
 // is not enabled in used account
-static NSInteger const kPNPresenceAPINotAvailableError = 106;
+static NSInteger const kPNPresenceAPINotAvailableError = 107;
 
 // PubNub service refuse to process request because it has
 // wrong JSON format
-static NSInteger const kPNInvalidJSONError = 107;
+static NSInteger const kPNInvalidJSONError = 108;
 
 // PubNub service refuse to process request because it has
 // wrong subscribe/publish key
-static NSInteger const kPNInvalidSubscribeOrPublishKeyError = 108;
+static NSInteger const kPNInvalidSubscribeOrPublishKeyError = 109;
 
 // PubNub service refuse to process message sending because
 // it is too long
-static NSInteger const kPNTooLongMessageError = 109;
+static NSInteger const kPNTooLongMessageError = 110;
 
 // PubNub service reported that restricted characters has been
 // used in channel name and request can't be processed
-static NSInteger const kPNRestrictedCharacterInChannelNameError = 110;
+static NSInteger const kPNRestrictedCharacterInChannelNameError = 111;
 
 
 
@@ -64,18 +67,18 @@ static NSInteger const kPNRestrictedCharacterInChannelNameError = 110;
 
 // Developer tries to submit empty (nil) request by passing
 // no message object to PubNub service
-static NSInteger const kPNMessageObjectError = 111;
+static NSInteger const kPNMessageObjectError = 112;
 
 // Developer tried to submit message w/o text to PubNub service
-static NSInteger const kPNMessageHasNoContentError = 112;
+static NSInteger const kPNMessageHasNoContentError = 113;
 
 // Developer tried to submit message w/o target channel to
 // PubNub service
-static NSInteger const kPNMessageHasNoChannelError = 113;
+static NSInteger const kPNMessageHasNoChannelError = 114;
 
 
 #pragma mark - Connection (transport layer) error codes
 
 // Was unable to configure connection because of some
 // errors
-static NSInteger const kPNConnectionErrorOnSetup = 114;
+static NSInteger const kPNConnectionErrorOnSetup = 115;

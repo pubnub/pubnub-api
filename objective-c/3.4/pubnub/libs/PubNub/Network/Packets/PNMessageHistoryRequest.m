@@ -84,6 +84,7 @@
     // Check whether initialization successful or not
     if ((self = [super init])) {
 
+        self.sendingByUserRequest = YES;
         self.channel = channel;
         self.startDate = startDate;
         self.endDate = endDate;

@@ -86,6 +86,11 @@
     return self;
 }
 
+- (NSTimeInterval)timeout {
+
+    return [PubNub sharedInstance].configuration.subscriptionRequestTimeout;
+}
+
 - (NSString *)callbackMethodName {
 
     return PNServiceResponseCallbacks.subscriptionCallback;

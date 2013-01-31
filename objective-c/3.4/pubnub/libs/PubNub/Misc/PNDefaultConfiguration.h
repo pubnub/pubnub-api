@@ -21,6 +21,10 @@ static NSString * const kPNSecretKey = nil;
 static NSString * const kPNCipherKey = nil;
 static BOOL const kPNSecureConnectionRequired = YES;
 static BOOL const kPNShouldAutoReconnectClient = YES;
+static BOOL const kPNShouldResubscribeOnConnectionRestore = YES;
+
+static NSTimeInterval const kPNNonSubscriptionRequestTimeout = 3.0f;
+static NSTimeInterval const kPNSubscriptionRequestTimeout = 2.0f;
 
 // This flag tells whether client should reduce SSL rules
 // when connecting to remote origin because of connection

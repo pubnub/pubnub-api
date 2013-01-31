@@ -15,6 +15,7 @@
 #import "PNConnection+Protected.h"
 #import "PubNub+Protected.h"
 #import "PNRequestsQueue.h"
+#import "PNResponse.h"
 
 
 #pragma mark Private interface methods
@@ -35,6 +36,28 @@
 // Stores reference on all requests on which we are waiting
 // for response
 @property (nonatomic, strong) NSMutableDictionary *observedRequests;
+
+@property (nonatomic, strong) NSTimer *timeoutTimer;
+
+
+#pragma mark - Instance methods
+
+/**
+ * Launch/stop request timeout timer which will be fired if
+ * no response will arrive from service along specified
+ * timeout in seconds
+ */
+- (void)startTimeoutTimerForRequest:(PNBaseRequest *)request;
+- (void)stopTimeoutTimerForRequest:(PNBaseRequest *)request;
+
+
+#pragma mark - Handler methods
+
+/**
+ * Called by timeout timer
+ * (template method)
+ */
+- (void)handleTimeoutTimer:(NSTimer *)timer;
 
 
 @end
@@ -158,6 +181,14 @@
 }
 
 
+#pragma mark - Handler methods
+
+- (void)handleTimeoutTimer:(NSTimer *)timer {
+
+    NSAssert1(0, @"%s SHOULD BE RELOADED IN SUBCLASSES", __PRETTY_FUNCTION__);
+}
+
+
 #pragma mark - Requests queue management methods
 
 - (void)scheduleRequest:(PNBaseRequest *)request shouldObserveProcessing:(BOOL)shouldObserveProcessing {
@@ -198,6 +229,30 @@
     [self.requestsQueue removeAllRequests];
 }
 
+- (void)startTimeoutTimerForRequest:(PNBaseRequest *)request {
+
+    self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:[request timeout]
+                                                         target:self
+                                                       selector:@selector(handleTimeoutTimer:)
+                                                       userInfo:request
+                                                        repeats:NO];
+}
+
+- (void)stopTimeoutTimerForRequest:(PNBaseRequest *)request {
+
+    // Stop timeout timer only for requests which is scheduled
+    // from the name of user
+    if ((request.isSendingByUserRequest && [self isWaitingRequestCompletion:request.shortIdentifier]) ||
+        request == nil) {
+
+        if ([self.timeoutTimer isValid]) {
+
+            [self.timeoutTimer invalidate];
+        }
+        self.timeoutTimer = nil;
+    }
+}
+
 
 #pragma mark - Connection delegate methods
 
@@ -214,8 +269,11 @@
 }
 
 - (void)connection:(PNConnection *)connection didReceiveResponse:(PNResponse *)response {
-    
-    NSAssert1(0, @"%s SHOULD BE RELOADED IN SUBCLASSES", __PRETTY_FUNCTION__);
+
+    // Retrieve reference on request for which this response was received
+    PNBaseRequest *request = [self observedRequestWithIdentifier:response.requestIdentifier];
+
+    [self stopTimeoutTimerForRequest:request];
 }
 
 - (void)connection:(PNConnection *)connection willDisconnectFromHost:(NSString *)host withError:(PNError *)error {
@@ -223,7 +281,9 @@
     if (self.state != PNConnectionChannelStateDisconnectingOnError) {
     
         self.state = PNConnectionChannelStateDisconnectingOnError;
-        
+
+
+        [self stopTimeoutTimerForRequest:nil];
         [self unscheduleNextRequest];
         [self.delegate connectionChannel:self willDisconnectFromOrigin:host withError:error];
     }
@@ -245,6 +305,7 @@
         }
 
 
+        [self stopTimeoutTimerForRequest:nil];
         [self unscheduleNextRequest];
         [self.delegate connectionChannel:self connectionDidFailToOrigin:hostName withError:error];
     }
@@ -257,6 +318,7 @@
         self.state = PNConnectionChannelStateDisconnected;
 
 
+        [self stopTimeoutTimerForRequest:nil];
         [self unscheduleNextRequest];
         [self.delegate connectionChannel:self didDisconnectFromOrigin:hostName];
     }
@@ -276,6 +338,14 @@
     // Updating request state
     request.processing = NO;
     request.processed = YES;
+
+
+    // Launching timeout timer only for requests which is scheduled
+    // from the name of user
+    if (request.isSendingByUserRequest && [self isWaitingRequestCompletion:request.shortIdentifier]) {
+
+        [self startTimeoutTimerForRequest:request];
+    }
 }
 
 - (void)requestsQueue:(PNRequestsQueue *)queue didFailRequestSend:(PNBaseRequest *)request withError:(PNError *)error {
@@ -289,6 +359,9 @@
         // Increase request retry count
         [request increaseRetryCount];
     }
+
+
+    [self stopTimeoutTimerForRequest:request];
 }
 
 - (void)requestsQueue:(PNRequestsQueue *)queue didCancelRequest:(PNBaseRequest *)request {
@@ -296,6 +369,9 @@
     // Updating request state
     request.processing = NO;
     [request resetRetryCount];
+
+
+    [self stopTimeoutTimerForRequest:request];
 }
 
 - (BOOL)shouldRequestsQueue:(PNRequestsQueue *)queue removeCompletedRequest:(PNBaseRequest *)request {
@@ -312,6 +388,7 @@
     // channel
     [self clearScheduledRequestsQueue];
 
+    [self stopTimeoutTimerForRequest:nil];
     self.connection.dataSource = nil;
     self.requestsQueue.delegate = nil;
     self.requestsQueue = nil;

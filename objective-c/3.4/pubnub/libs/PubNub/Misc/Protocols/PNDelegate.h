@@ -174,13 +174,24 @@ didFailParticipantsListDownloadForChannel:(PNChannel *)channel
 
 /**
  * This method allow to override value passed in configuration
- * during client initalization.
- * This method called when service reachabilty reported that 
+ * during client initialization.
+ * This method called when service reachabilty reported that
  * service are available and previous session is failed because
  * of network error or even not launched.
  * We can change client configuration, but it will trigger 
  * client hard reset (if connected)
  */
 - (NSNumber *)shouldReconnectPubNubClient:(PubNub *)client;
+
+/**
+ * This method allow to override value passed in configuration
+ * during client initialization.
+ * This method called when service reachabilty reported that
+ * service are available and previous session is failed because
+ * of network error or even not launched.
+ * It allow to specify whether client should restore subscription
+ * or completely resubscribe
+ */
+- (NSNumber *)shouldResubscribeOnConnectionRestore;
 
 @end

@@ -218,6 +218,10 @@
             
             failureReason = @"Looks like client lost connection";
             break;
+        case kPNRequestExecutionFailedByTimeoutError:
+
+            failureReason = @"Looks like there is some packets lost because of which request failed by timeout";
+            break;
         case kPNConnectionErrorOnSetup:
             
             failureReason = @"Connection can't be opened becuase of errors in configuration";
@@ -294,6 +298,10 @@
         case kPNRequestExecutionFailedClientNotReadyError:
 
             fixSuggestion = @"Ensure that PubNub client connected to the PubNub service and try again.";
+            break;
+        case kPNRequestExecutionFailedByTimeoutError:
+
+            fixSuggestion = @"Try send request again later.";
             break;
         case kPNPresenceAPINotAvailableError:
 

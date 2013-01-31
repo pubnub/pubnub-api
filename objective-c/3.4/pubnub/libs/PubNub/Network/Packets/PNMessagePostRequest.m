@@ -63,6 +63,7 @@
     // Check whether initialization was successful or not
     if ((self = [super init])) {
 
+        self.sendingByUserRequest = YES;
         self.message = message;
     }
 

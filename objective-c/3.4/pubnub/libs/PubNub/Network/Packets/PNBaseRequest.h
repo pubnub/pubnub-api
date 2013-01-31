@@ -39,8 +39,18 @@
 // or not
 @property (nonatomic, assign) BOOL processed;
 
+// Stores whether leave request was sent to subscribe
+// on new channels or as result of user request
+@property (nonatomic, assign, getter = isSendingByUserRequest) BOOL sendingByUserRequest;
+
 
 #pragma mark - Instance methods
+
+/**
+ * Retrieve default configuration for timeout value
+ * which is used for non-subscription requests
+ */
+- (NSTimeInterval)timeout;
 
 /**
  * Returns callback method name which should be

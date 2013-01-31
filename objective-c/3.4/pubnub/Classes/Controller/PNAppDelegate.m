@@ -240,6 +240,11 @@ didFailParticipantsListDownloadForChannel:(PNChannel *)channel
           channel, error);
 }
 
+- (NSNumber *)shouldResubscribeOnConnectionRestore {
+
+    return @(NO);
+}
+
 #pragma mark -
 
 

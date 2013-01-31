@@ -14,6 +14,7 @@
 #import <Foundation/Foundation.h>
 #import "PNConnectionChannelDelegate.h"
 #import "PNRequestsQueueDelegate.h"
+#import "PNConnectionDelegate.h"
 
 
 #pragma mark Structures
@@ -78,7 +79,7 @@ typedef enum _PNConnectionChannelState {
 @class PNBaseRequest;
 
 
-@interface PNConnectionChannel : NSObject <PNRequestsQueueDelegate>
+@interface PNConnectionChannel : NSObject <PNRequestsQueueDelegate, PNConnectionDelegate>
 
 
 #pragma mark - Properties

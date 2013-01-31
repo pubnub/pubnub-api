@@ -256,12 +256,62 @@
 
 #pragma mark - Handler methods
 
+- (void)handleTimeoutTimer:(NSTimer *)timer {
+
+    PNBaseRequest *request = (PNBaseRequest *)timer.userInfo;
+    NSInteger errorCode = kPNRequestExecutionFailedByTimeoutError;
+    NSString *errorMessage = @"Message sending failed by timeout";
+    if ([request isKindOfClass:[PNTimeTokenRequest class]]) {
+
+        errorMessage = @"Time token request failed by timeout";
+
+        [self.serviceDelegate serviceChannel:self
+            receiveTimeTokenDidFailWithError:[PNError errorWithMessage:errorMessage code:errorCode]];
+    }
+    else if ([request isKindOfClass:[PNMessageHistoryRequest class]]) {
+
+        errorMessage = @"Channel history request failed by timeout";
+
+        [self.serviceDelegate serviceChannel:self
+             didFailHisoryDownloadForChannel:((PNMessageHistoryRequest *)request).channel
+                                   withError:[PNError errorWithMessage:errorMessage code:errorCode]];
+    }
+    else if ([request isKindOfClass:[PNHereNowRequest class]]) {
+
+        errorMessage = @"\"Here now\" request failed by timeout";
+
+        [self.serviceDelegate serviceChannel:self
+       didFailParticipantsListLoadForChannel:((PNHereNowRequest *)request).channel
+                                   withError:[PNError errorWithMessage:errorMessage code:errorCode]];
+    }
+    else {
+
+        [self.serviceDelegate serviceChannel:self
+                          didFailMessageSend:((PNMessagePostRequest *)request).message
+                                   withError:[PNError errorWithMessage:errorMessage code:errorCode]];
+    }
+
+
+    [self destroyRequest:request];
+
+
+    // Check whether connection available or not
+    if ([self isConnected] && [[PubNub sharedInstance].reachability isServiceAvailable]) {
+
+        // Asking to schedule next request
+        [self scheduleNextRequest];
+    }
+}
+
 
 #pragma mark - Connection delegate methods
 
 - (void)connection:(PNConnection *)connection didReceiveResponse:(PNResponse *)response {
 
     if ([self shouldHandleResponse:response]) {
+
+        [super connection:connection didReceiveResponse:response];
+
 
         PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" RECIEVED RESPONSE: %@", response);
 

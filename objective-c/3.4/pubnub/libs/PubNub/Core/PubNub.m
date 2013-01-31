@@ -49,6 +49,10 @@ static PubNub *_sharedInstance = nil;
 // will be checked for reachability
 @property (nonatomic, assign, getter = shouldConnectOnServiceReachabilityCheck) BOOL connectOnServiceReachabilityCheck;
 
+// Stores whether client is restoring connection after
+// network failure or not
+@property (nonatomic, assign, getter = isRestoringConnection) BOOL restoringConnection;
+
 // Stores reference on configuration which was used to
 // perform initial PubNub client initialization
 @property (nonatomic, strong) PNConfiguration *temporaryConfiguration;
@@ -986,6 +990,8 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
                         
                         // Check whether should restore connection or not
                         if(shouldRestoreConnection) {
+
+                            self.restoringConnection = YES;
                             
                             [[weakSelf class] connect];
                         }
@@ -1108,6 +1114,19 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
 
         [self warmUpConnection];
+
+        if (self.isRestoringConnection) {
+
+            BOOL shouldResubscribe = self.configuration.shouldResubscribeOnConnectionRestore;
+            if ([self.delegate respondsToSelector:@selector(shouldResubscribeOnConnectionRestore)]) {
+
+                shouldResubscribe = [[self.delegate shouldResubscribeOnConnectionRestore] boolValue];
+            }
+
+            [self.messagingChannel restoreSubscription:shouldResubscribe];
+        }
+
+        self.restoringConnection = NO;
 
         [self notifyDelegateAboutConnectionToOrigin:host];
     }

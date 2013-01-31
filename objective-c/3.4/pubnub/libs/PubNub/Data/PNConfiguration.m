@@ -14,7 +14,28 @@
 #import "PNConstants.h"
 
 
-#pragma mark Public interface methods
+#pragma mark Private interface methods
+
+@interface PNConfiguration ()
+
+
+#pragma mark - Properties
+
+// Stores reference on services host name
+@property (nonatomic, copy) NSString *origin;
+
+// Stores reference on keys which is required
+// to establish connection and send packets to it
+@property (nonatomic, copy) NSString *publishKey;
+@property (nonatomic, copy) NSString *subscriptionKey;
+@property (nonatomic, copy) NSString *secretKey;
+@property (nonatomic, copy) NSString *cipherKey;
+
+
+@end
+
+
+#pragma mark - Public interface methods
 
 @implementation PNConfiguration
 
@@ -27,11 +48,7 @@
                              publishKey:kPNPublishKey
                            subscribeKey:kPNSubscriptionKey
                               secretKey:kPNSecretKey
-                              cipherKey:kPNCipherKey
-                    useSecureConnection:kPNSecureConnectionRequired
-                    shouldAutoReconnect:kPNShouldAutoReconnectClient
-       shouldReduceSecurityLevelOnError:kPNShouldReduceSecurityLevelOnError
-   canIgnoreSecureConnectionRequirement:kPNCanIgnoreSecureConnectionRequirement];
+                              cipherKey:kPNCipherKey];
 }
 
 + (PNConfiguration *)configurationWithPublishKey:(NSString *)publishKey
@@ -53,32 +70,20 @@
                              publishKey:publishKey
                            subscribeKey:subscribeKey
                               secretKey:secretKey
-                              cipherKey:nil
-                    useSecureConnection:kPNSecureConnectionByDefault
-                    shouldAutoReconnect:kPNShouldAutoReconnectClientByDefault
-       shouldReduceSecurityLevelOnError:kPNShouldReduceSecurityLevelOnErrorByDefault
-   canIgnoreSecureConnectionRequirement:kPNCanIgnoreSecureConnectionRequirementByDefault];
+                              cipherKey:kPNCipherKey];
 }
 
 + (PNConfiguration *)configurationForOrigin:(NSString *)originHostName
                                  publishKey:(NSString *)publishKey
                                subscribeKey:(NSString *)subscribeKey
                                   secretKey:(NSString *)secretKey
-                                  cipherKey:(NSString *)cipherKey
-                        useSecureConnection:(BOOL)shouldUseSecureConnection
-                        shouldAutoReconnect:(BOOL)shouldAutoReconnectClient
-           shouldReduceSecurityLevelOnError:(BOOL)shouldReduceSecurityLevelOnError
-       canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement {
+                                  cipherKey:(NSString *)cipherKey {
     
     return [[[self class] alloc] initWithOrigin:originHostName
                                      publishKey:publishKey
                                    subscribeKey:subscribeKey
                                       secretKey:secretKey
-                                      cipherKey:cipherKey
-                            useSecureConnection:shouldUseSecureConnection
-                            shouldAutoReconnect:shouldAutoReconnectClient
-               shouldReduceSecurityLevelOnError:shouldReduceSecurityLevelOnError
-           canIgnoreSecureConnectionRequirement:canIgnoreSecureConnectionRequirement];
+                                      cipherKey:cipherKey];
 }
 
 
@@ -89,11 +94,7 @@
           publishKey:(NSString *)publishKey
         subscribeKey:(NSString *)subscribeKey
            secretKey:(NSString *)secretKey
-           cipherKey:(NSString *)cipherKey
- useSecureConnection:(BOOL)shouldUseSecureConnection
- shouldAutoReconnect:(BOOL)shouldAutoReconnectClient
-shouldReduceSecurityLevelOnError:(BOOL)shouldReduceSecurityLevelOnError
-canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement {
+           cipherKey:(NSString *)cipherKey {
     
     // Checking whether initialization was successful or not
     if((self = [super init])) {
@@ -103,11 +104,14 @@ canIgnoreSecureConnectionRequirement:(BOOL)canIgnoreSecureConnectionRequirement 
         self.subscriptionKey = subscribeKey?subscribeKey:@"";
         self.secretKey = secretKey?secretKey:@"0";
         self.cipherKey = cipherKey?cipherKey:@"";
-        self.useSecureConnection = shouldUseSecureConnection;
-        self.autoReconnectClient = shouldAutoReconnectClient;
-        self.reduceSecurityLevelOnError = shouldReduceSecurityLevelOnError;
-        self.ignoreSecureConnectionRequirement = canIgnoreSecureConnectionRequirement;
-     
+        self.useSecureConnection = kPNSecureConnectionRequired;
+        self.autoReconnectClient = kPNShouldAutoReconnectClient;
+        self.reduceSecurityLevelOnError = kPNShouldReduceSecurityLevelOnError;
+        self.ignoreSecureConnectionRequirement = kPNCanIgnoreSecureConnectionRequirement;
+        self.resubscribeOnConnectionRestore = kPNShouldResubscribeOnConnectionRestore;
+        self.nonSubscriptionRequestTimeout = kPNNonSubscriptionRequestTimeout;
+        self.subscriptionRequestTimeout = kPNSubscriptionRequestTimeout;
+
         // Checking whether user changed origin host from default
         // or not
         if ([self.origin isEqualToString:kPNDefaultOriginHost]) {
