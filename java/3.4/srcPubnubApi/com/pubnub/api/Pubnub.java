@@ -13,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.pubnub.crypto.PubnubCrypto;
-import com.pubnub.http.HttpManager;
 import com.pubnub.http.HttpRequest;
 import com.pubnub.http.ResponseHandler;
 
@@ -42,8 +41,8 @@ public class Pubnub {
 	private Hashtable _headers;
 	private Subscriptions subscriptions;
 
-	private HttpManager longPollConnManager;
-	private HttpManager simpleConnManager;
+	private RequestManager longPollConnManager;
+	private RequestManager simpleConnManager;
 	private PubnubCrypto pc;
 	private String _timetoken = "0";
 	private String _saved_timetoken = "0";
@@ -255,10 +254,10 @@ public class Pubnub {
 			subscriptions = new Subscriptions();
 
 		if (longPollConnManager == null)
-			longPollConnManager = new HttpManager("Long Poll");
+			longPollConnManager = new SubscribeManager("Subscribe Manager");
 
 		if (simpleConnManager == null)
-			simpleConnManager = new HttpManager("Simple");
+			simpleConnManager = new NonSubscribeManager("Non Subscribe Manager");
 		
 		longPollConnManager.setRequestTimeout(31000);
 		simpleConnManager.setRequestTimeout(15000);
@@ -269,27 +268,16 @@ public class Pubnub {
 	}
 
 	public void setSubscribeTimeout(int timeout) {
+		longPollConnManager.setConnectionTimeout(10000);
 		longPollConnManager.setRequestTimeout(timeout);
 	}
 
 	public void setNonSubscribeTimeout(int timeout) {
+		simpleConnManager.setConnectionTimeout(10000);
 		simpleConnManager.setRequestTimeout(timeout);
 	}
 
-	/**
-	 * Start heartbeat thread to check connectivity to pubnub servers Calls to
-	 * pubnub api's will return network error, when heartbeat is on and pubnub
-	 * servers are not reachable
-	 *
-	 * @param interval
-	 */
-	public static void startHeartbeat(int interval) {
-		HttpManager.startHeartbeat("http://pubsub.pubnub.com/time/0",
-				interval);
-	}
-	public static void stopHeartbeat() {
-		HttpManager.stopHeartbeat();
-	}
+	
 
 	/**
 	 * Send a message to a channel.
@@ -942,7 +930,7 @@ public class Pubnub {
 
 		Hashtable params = new Hashtable();
 		params.put("uuid", UUID);
-		//System.out.println("Subscribing with timetoken : " + _timetoken);
+		log.trace("Subscribing with timetoken : " + _timetoken);
 
 		HttpRequest hreq = new HttpRequest(urlComponents, params, 
 				new ResponseHandler() {
@@ -1038,12 +1026,20 @@ public class Pubnub {
 				subscriptions.invokeDisconnectCallbackOnChannels();
 				_subscribe_base(true);
 			}
+			
+			public void handleTimeout() {
+				subscriptions.invokeDisconnectCallbackOnChannels();
+				log.trace("Timeout Occurred, Calling error callbacks on the channels");
+				subscriptions.invokeErrorCallbackOnChannels("Network Timeout");
+
+			}
+			
 			public String getTimetoken() {
 				return _timetoken;
 			}
 		});
 
-		_request(hreq, longPollConnManager, true);
+		_request(hreq, longPollConnManager, fresh);
 	}
 
 	/**
@@ -1051,17 +1047,17 @@ public class Pubnub {
 	 * @param connManager
 	 * @param abortExisting
 	 */
-	private void _request(final HttpRequest hreq, HttpManager connManager, boolean abortExisting) {
+	private void _request(final HttpRequest hreq, RequestManager connManager, boolean abortExisting) {
 		if (abortExisting) 
 			connManager.resetHttpManager();
 		connManager.queue(hreq);
 	}
 	/**
 	 * @param req
-	 * @param connManager
+	 * @param simpleConnManager2
 	 */
-	private void _request(final HttpRequest hreq, HttpManager connManager) {
-		_request(hreq, connManager, false);
+	private void _request(final HttpRequest hreq, RequestManager simpleConnManager) {
+		_request(hreq, simpleConnManager, false);
 	}
 
 	private void changeOrigin() {

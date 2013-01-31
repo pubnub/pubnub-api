@@ -32,9 +32,14 @@ public class PubnubExample {
 		
 		pex._pubnub.setSubscribeTimeout(310000);
 		pex._pubnub.setNonSubscribeTimeout(15000);
-		Pubnub.startHeartbeat(5000);
-		
-/*		
+		/*
+		while(true) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("\nRunning publish()");
 		pex.publish();
 
@@ -46,6 +51,7 @@ public class PubnubExample {
 
 		System.out.println("\nRunning detailedHistory()");
 		pex.detailedHistory();
+		}
 
 		System.out.println("\nRunning presence()");
 		pex.presence();*/
@@ -56,11 +62,13 @@ public class PubnubExample {
 		while (true) {
 			counter = (counter + 1) % 9;
 			try {
-				Thread.sleep((long) ((Math.random() % 9 ) * 1000));
+				//Thread.sleep((long) (Math.floor((Math.random())  % 17 ) * 1000));
+				Thread.sleep(20000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			System.out.println("Calling disconnect and resubscribe");
 			pex._pubnub.disconnectAndResubscribe();
 			pex.subscribe(new String[]{"hello_world" + "-" + String.valueOf(counter)});
 		}

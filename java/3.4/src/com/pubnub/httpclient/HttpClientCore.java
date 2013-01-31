@@ -32,8 +32,9 @@ public class HttpClientCore extends HttpClient {
     	if (httpGet != null)
     		httpGet.abort();
     }
-	public HttpClientCore() {
-		DefaultHttpRequestRetryHandler retryHandler = new DefaultHttpRequestRetryHandler(0, false);
+    
+    private void init() {
+    	DefaultHttpRequestRetryHandler retryHandler = new DefaultHttpRequestRetryHandler(0, false);
 		defaultHttpClient = new DefaultHttpClient();
 	    defaultHttpClient.setHttpRequestRetryHandler(retryHandler);
 		httpClient = new DecompressingHttpClient(defaultHttpClient);
@@ -45,6 +46,9 @@ public class HttpClientCore extends HttpClient {
 	    
 	    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
 		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "error");
+    }
+	public HttpClientCore() {
+		init();
 	}
 
 	public void setHeader(String key, String value) {
@@ -90,8 +94,11 @@ public class HttpClientCore extends HttpClient {
 	}
 
 	public boolean checkResponse(int rc) {
-
 		return (rc == HttpStatus.SC_OK || isRedirect(rc));
+	}
+	
+	public boolean checkResponseSuccess(int rc) {
+		return (rc == HttpStatus.SC_OK);
 	}
 
 	private static String readInput(InputStream in) throws IOException {
@@ -113,6 +120,7 @@ public class HttpClientCore extends HttpClient {
 	}
 
 	public synchronized HttpResponse fetch(String url, Hashtable headers) throws IOException, PubnubException {
+		
 		httpGet = new HttpGet(url);
 		if (_headers != null) {
 			Enumeration en = _headers.keys();
@@ -134,9 +142,7 @@ public class HttpClientCore extends HttpClient {
 		HttpEntity entity = response.getEntity();
         String page = readInput(entity.getContent());
         EntityUtils.consume(response.getEntity());	
-		if (httpGet.isAborted()) {
-			throw new PubnubException("Request Aborted");
-		}
+
 		return new HttpResponse(response.getStatusLine().getStatusCode(), page);
 	}
 
@@ -145,5 +151,6 @@ public class HttpClientCore extends HttpClient {
 	}
 	public void shutdown() {
 		defaultHttpClient.getConnectionManager().shutdown();
+		init();
 	}
 }

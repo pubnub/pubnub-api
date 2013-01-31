@@ -85,6 +85,19 @@ class Subscriptions {
             }
         }
     }
+    
+    public void invokeErrorCallbackOnChannels(String message) {
+        /*
+         * Iterate over all the channels and call error callback for channels
+         */
+        synchronized (channels) {
+            Enumeration ch = channels.elements();
+            while (ch.hasMoreElements()) {
+                Channel _channel = (Channel) ch.nextElement();
+                _channel.callback.errorCallback(_channel.name, message);
+            }
+        }
+    }
 
     public void invokeConnectCallbackOnChannels(String[] channels) {
     	for (int i = 0; i < channels.length; i++) {

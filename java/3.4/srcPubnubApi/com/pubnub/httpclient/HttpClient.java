@@ -18,12 +18,8 @@ public abstract class HttpClient {
 		return new HttpClientCore(requestTimeout);
 	}
 	
-	public synchronized HttpClient reset() {
-		int connTimeout = getConnectionTimeout();
-		int requestTimeout = getRequestTimeout();
+	public void reset() {
 		shutdown();
-		return getClient(requestTimeout, connTimeout);
-		
 	}
 	public abstract int getRequestTimeout();
 
@@ -38,6 +34,8 @@ public abstract class HttpClient {
 	public abstract boolean isRedirect(int rc);
 
 	public abstract boolean checkResponse(int rc);
+	
+	public abstract boolean checkResponseSuccess(int rc);
 
 	public abstract boolean isOk(int rc);
 	
