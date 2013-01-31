@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Vector;
 
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.log4j.Logger;
 
 import com.pubnub.http.HttpRequest;
@@ -119,7 +120,7 @@ class NonSubscribeWorker extends Worker {
 }
 
 class SubscribeWorker extends Worker {
-	private int MAX_RETRIES = 2;
+	private int MAX_RETRIES = 5;
 	
 	private int retryInterval = 5000;
 	SubscribeWorker(Vector _requestQueue) {
@@ -138,6 +139,10 @@ class SubscribeWorker extends Worker {
 					currentRetryAttempt = 1;
 					break;
 				}
+			}
+			catch (HttpHostConnectException e) {
+				log.trace("Retry Attempt : " + currentRetryAttempt + " Exception in Fetch : " + e.toString());
+				currentRetryAttempt++;
 			}
 			catch (IllegalStateException e) {
 				log.trace("Exception in Fetch : " + e.toString());
@@ -166,6 +171,7 @@ class SubscribeWorker extends Worker {
 				hreq.getResponseHandler().handleError("Network Error");
 			return;
 		}
+		log.debug(hresp.getResponse());
 		hreq.getResponseHandler().handleResponse(hresp.getResponse());
 
 	}

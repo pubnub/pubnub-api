@@ -951,8 +951,12 @@ public class Pubnub {
 				JSONArray jsa;
 				try {
 					jsa = new JSONArray(response);
+					log.trace("RESUME_ON_RECONNECT is : " + isResumeOnReconnect());
 					_timetoken = (!_saved_timetoken.equals("0") && isResumeOnReconnect())?
 							_saved_timetoken:jsa.get(1).toString();
+					log.trace("Saved Timetoken : " + _saved_timetoken);
+					log.trace("In sub 0 Response Timetoken : " + jsa.get(1).toString());
+					log.trace("Timetoken : " + _timetoken);
 					_saved_timetoken = "0";
 					JSONArray messages = new JSONArray(jsa.get(0)
 							.toString());
@@ -1067,11 +1071,14 @@ public class Pubnub {
 
 	public void disconnectAndResubscribe() {
 		log.trace("Received disconnectAndResubscribe");
-		log.trace("RESUME_ON_RECONNECT is : " + isResumeOnReconnect());
 		subscriptions.invokeDisconnectCallbackOnChannels();
 		changeOrigin();
 		_saved_timetoken = _timetoken;
+		log.trace("Timetoken saved : " + _saved_timetoken);
 		_timetoken = "0";
 		_subscribe_base(true);
+	}
+	public String[] getSubscribedChannelsArray() {
+		return subscriptions.getChannelNames();
 	}
 }
