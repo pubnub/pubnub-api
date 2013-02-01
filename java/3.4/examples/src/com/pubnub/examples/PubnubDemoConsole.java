@@ -158,74 +158,78 @@ public class PubnubDemoConsole {
 			System.out.println("Cipher Key = " + this.cipher_key);
 			pubnub = new Pubnub("demo", "demo", "demo", this.cipher_key, this.SSL);
 		}
-		
 
-		System.out.println("ENTER 1  FOR Subscribe");
-		System.out.println("ENTER 2  FOR Publish");
-		System.out.println("ENTER 3  FOR Presence");
-		System.out.println("ENTER 4  FOR Detailed History");
-		System.out.println("ENTER 5  FOR Here_Now");
-		System.out.println("ENTER 6  FOR Unsubscribe");
-		System.out.println("ENTER 7  FOR Presence-Unsubscribe");
-		System.out.println("ENTER 8  FOR Time");
-		System.out.println("ENTER 9  FOR EXIT OR QUIT");
-		System.out.println("ENTER 10 FOR Disconnect-And-Resubscribe");
-		System.out.println("ENTER 11 FOR Toggle Resume On Reconnect");
+
+        displayMenuOptions();
 		
 		String channelName = null;
 		int command = 0;
 		while ((command = reader.nextInt()) != 9 ){
 			reader.nextLine();
 			switch(command) {
+
+            case 0:
+                displayMenuOptions();
 			case 1:
 				System.out.println("Subscribe: Enter Channel name");
 				channelName = reader.nextLine();
 				subscribe(channelName);
 				System.out.println("Subscribed to following channels: ");
 				System.out.println(PubnubUtil.joinString(pubnub.getSubscribedChannelsArray(), " : "));
+                displayMenuOptions();
 				break;
 			case 2:
 				System.out.println("Publish: Enter Channel name");
 				channelName = reader.nextLine();
 				publish(channelName);
+                displayMenuOptions();
 				break;
 			case 3:
 				System.out.println("Presence: Enter Channel name");
 				channelName = reader.nextLine();
-				presence(channelName);	
+				presence(channelName);
+                displayMenuOptions();
 				break;
 			case 4:
 				System.out.println("Detailed History: Enter Channel name");
 				channelName = reader.nextLine();
 				detailedHistory(channelName);
+                displayMenuOptions();
 				break;
 			case 5:
 				System.out.println("Here Now : Enter Channel name");
 				channelName = reader.nextLine();
 				hereNow(channelName);
+                displayMenuOptions();
 				break;
 			case 6:
 				System.out.println("Unsubscribe: Enter Channel name");
 				channelName = reader.nextLine();
 				unsubscribe(channelName);
+                displayMenuOptions();
 				break;
 			case 7:
 				System.out.println("UnsubscribePresence : Enter Channel name");
 				channelName = reader.nextLine();
 				unsubscribePresence(channelName);
+                displayMenuOptions();
 				break;
 			case 8:
 				time();
+                displayMenuOptions();
 				break;
 			case 10:
 				disconnectAndResubscribe();
+                displayMenuOptions();
 				break;
 			case 11:
 				pubnub.setResumeOnReconnect(pubnub.isResumeOnReconnect()?false:true);
 				System.out.println("RESUME ON RECONNECT : " + pubnub.isResumeOnReconnect() );
+                displayMenuOptions();
 				break;
 			default: 
 				System.out.println("Invalid Input");
+                displayMenuOptions();
 			}
 		}
 		System.out.println("Exiting");
@@ -233,7 +237,22 @@ public class PubnubDemoConsole {
 
 	}
 
-	/**
+    private void displayMenuOptions() {
+        System.out.println("ENTER 1  FOR Subscribe " + "(Currently subscribed to " + this.pubnub.getCurrentlySubscribedChannelNames() + ")");
+        System.out.println("ENTER 2  FOR Publish");
+        System.out.println("ENTER 3  FOR Presence");
+        System.out.println("ENTER 4  FOR Detailed History");
+        System.out.println("ENTER 5  FOR Here_Now");
+        System.out.println("ENTER 6  FOR Unsubscribe");
+        System.out.println("ENTER 7  FOR Presence-Unsubscribe");
+        System.out.println("ENTER 8  FOR Time");
+        System.out.println("ENTER 9  FOR EXIT OR QUIT");
+        System.out.println("ENTER 10 FOR Disconnect-And-Resubscribe");
+        System.out.println("ENTER 11 FOR Toggle Resume On Reconnect");
+        System.out.println("\nENTER 0 to display this menu");
+    }
+
+    /**
 	 * @param args
 	 */
 	public static void main(String[] args) {

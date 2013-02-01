@@ -50,7 +50,7 @@ public class Pubnub {
 	private static Logger log = Logger.getLogger(
             Pubnub.class.getName());
 
-	public void shutdown() {
+    public void shutdown() {
 		nonSubscribeManager.stop();
 		subscribeManager.stop();
 	}
@@ -70,6 +70,11 @@ public class Pubnub {
 		}
 		return ORIGIN_STR; 
 	}
+
+    public String getCurrentlySubscribedChannelNames() {
+        String currentChannels = subscriptions.getChannelString();
+        return currentChannels.equals("") ? "no channels." : currentChannels;
+    }
 
 	public void setResumeOnReconnect(boolean resumeOnReconnect) {
 		this.resumeOnReconnect = resumeOnReconnect;
