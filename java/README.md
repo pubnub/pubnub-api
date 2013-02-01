@@ -28,7 +28,7 @@ $ cd jars
 $ java -jar PubnubDemoConsole.jar
 ```
 
-###Heres an example of running PubnubDemoConsolet:
+###Heres an example of running PubnubDemoConsole:
 
 ```
 $~/pubnub-api/java/3.4/jars$ java -jar PubnubDemoConsole.jar 
