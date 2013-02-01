@@ -36,7 +36,7 @@
 	
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+        <javac debug="true" destdir="bin" source="${source}" target="${target}">
             <src path="${srcPubnubApi.link}"/>
 			<src path="src"/>
 			<src path="examples/src"/>

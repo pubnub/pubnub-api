@@ -2,6 +2,7 @@ package com.pubnub.api;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Vector;
 
 import org.apache.http.NoHttpResponseException;
@@ -156,6 +157,11 @@ class SubscribeWorker extends Worker {
 			catch (SocketException e){
 				log.trace("Exception in Fetch : " + e.toString());
 				return;
+			}
+			catch (SocketTimeoutException e){
+				log.trace("Exception in Fetch : " + e.toString());
+				currentRetryAttempt = MAX_RETRIES + 1;
+				break;
 			}
 			catch (NoHttpResponseException e){
 				log.trace("Exception in Fetch : " + e.toString());

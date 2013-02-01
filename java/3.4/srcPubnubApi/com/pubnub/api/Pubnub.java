@@ -257,7 +257,7 @@ public class Pubnub {
 		if (nonSubscribeManager == null)
 			nonSubscribeManager = new NonSubscribeManager("Non Subscribe Manager");
 		
-		subscribeManager.setRequestTimeout(31000);
+		subscribeManager.setRequestTimeout(310000);
 		nonSubscribeManager.setRequestTimeout(15000);
 		
 		
@@ -1022,8 +1022,9 @@ public class Pubnub {
 								if (CIPHER_KEY.length() > 0   && !_channel.name.endsWith(PRESENCE_SUFFIX)) {
 									PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
 									try {
+										String message = pc.decrypt(messages.get(i).toString());
 										_channel.callback.successCallback(
-												_channel.name, pc.decrypt(messages.get(i).toString()));
+												_channel.name, stringToJSON(message));
 									} catch (Exception e) {
 										_channel.callback.errorCallback(
 												_channel.name, "Message Decryption Error : " + messages.get(i).toString());
