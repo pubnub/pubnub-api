@@ -196,9 +196,7 @@
         [self destroyRequest:request];
     }
     // Check whether 'Subscription'/'Presence'/'Events' request has been processed or not
-    else if (request == nil ||
-            ([request isKindOfClass:[PNSubscribeRequest class]] &&
-             [self isWaitingRequestCompletion:request.shortIdentifier])) {
+    else if (request == nil || [request isKindOfClass:[PNSubscribeRequest class]]) {
 
         // Process subscription on channels
         [self handleEventOnChannelsForRequest:(PNSubscribeRequest *)request withResponse:response];
