@@ -96,6 +96,13 @@
               withRange:(NSRange)searchRange
               dataRange:(NSRange*)searchedDataRange;
 
+/**
+ * Allow to compose response data object from chunked
+ * data by separating it on chink size markers and joining
+ * rest of data
+ */
+- (NSData *)joinedDataFromChunkedData:(NSData *)chunkedData;
+
 @end
 
 
@@ -262,6 +269,7 @@
 
                     contentSeparatorEndIndex = chunkedContentSizeRange.location + chunkedContentSizeRange.length;
                     contentSeparatorEndIndex += [self.endLineCharactersData length];
+                    contentSize = contentEndRangeIndex-contentSeparatorEndIndex;
                 }
             }
 
@@ -269,6 +277,10 @@
 
                 NSRange responseContentRange = NSMakeRange(contentSeparatorEndIndex, contentSize);
                 NSData *responseData = [data subdataWithRange:responseContentRange];
+                if (responseIsChunked) {
+
+                    responseData = [self joinedDataFromChunkedData:responseData];
+                }
                 PNLog(PNLogGeneralLevel, self, @"RAW DATA: %@", [[NSString alloc] initWithData:responseData
                                                                                       encoding:NSUTF8StringEncoding]);
                 response = [PNResponse responseWithContent:responseData size:responseRange.length code:statusCode];
@@ -310,7 +322,7 @@
 - (NSInteger)responseSizeFromData:(NSData *)data
                forChunkedResponse:(BOOL)isChunked
                           inRange:(NSRange)responseRange
-          chunkedContentSizeRange:(NSRange*)chunkedContentSizeRange{
+          chunkedContentSizeRange:(NSRange*)chunkedContentSizeRange {
     
     NSInteger contentSize = 0;
 
@@ -378,6 +390,37 @@
     
     
     return result;
+}
+
+- (NSData *)joinedDataFromChunkedData:(NSData *)chunkedData {
+
+    BOOL shuoldAppendData = YES;
+    NSMutableData *joinedData = [NSMutableData dataWithCapacity:[chunkedData length]];
+    NSRange rangeToSearchIn = NSMakeRange(0, [chunkedData length]);
+    NSRange chunkEndRange = [chunkedData rangeOfData:self.endLineCharactersData
+                                             options:(NSDataSearchOptions)0
+                                               range:rangeToSearchIn];
+    while (chunkEndRange.location != NSNotFound) {
+
+        NSUInteger chunkedDataLength = chunkEndRange.location - rangeToSearchIn.location;
+
+        if (shuoldAppendData) {
+
+            [joinedData appendData:[chunkedData subdataWithRange:NSMakeRange(rangeToSearchIn.location, chunkedDataLength)]];
+        }
+
+        rangeToSearchIn.length -= (chunkedDataLength + chunkEndRange.length);
+        rangeToSearchIn.location = chunkEndRange.location + chunkEndRange.length;
+
+        chunkEndRange = [chunkedData rangeOfData:self.endLineCharactersData
+                                         options:(NSDataSearchOptions)0
+                                           range:rangeToSearchIn];
+
+        shuoldAppendData = !shuoldAppendData;
+    }
+
+
+    return joinedData;
 }
 
 - (NSUInteger)nextResponseStartIndexForData:(NSData *)data inRange:(NSRange)responseRange {

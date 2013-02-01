@@ -333,6 +333,7 @@ static NSUInteger const inChatMessageLabelTag = 878;
         [self.channelParticipantsTableView reloadData];
         shouldUpdateChat = YES;
 
+        self.messageTextField.text = nil;
         [self updateMessageSendingInterfaceWithMessage:nil];
 
         if ([[change valueForKey:NSKeyValueChangeNewKey] isKindOfClass:[NSNull class]] &&
@@ -413,12 +414,14 @@ static NSUInteger const inChatMessageLabelTag = 878;
 
     [PubNub sendMessage:[NSString stringWithFormat:@"\"%@\"", self.messageTextField.text]
               toChannel:[PNDataManager sharedInstance].currentChannel];
+    self.messageTextField.text = nil;
     [self updateMessageSendingInterfaceWithMessage:nil];
     [self.view endEditing:YES];
 }
 
 - (IBAction)clearButtonTapped:(id)sender {
 
+    self.messageTextField.text = nil;
     [self updateMessageSendingInterfaceWithMessage:nil];
     [[PNDataManager sharedInstance] clearChatHistory];
 }
@@ -439,7 +442,6 @@ static NSUInteger const inChatMessageLabelTag = 878;
     BOOL isChannelSelected = [PNDataManager sharedInstance].currentChannel != nil;
     BOOL isEmptyMessage = message == nil || [message isEmptyString];
 
-    self.messageTextField.text = message;
     self.sendMessageButton.enabled = isSubscribed && !isEmptyMessage && isChannelSelected;
     self.messageTextField.enabled = isSubscribed && isChannelSelected;
 }

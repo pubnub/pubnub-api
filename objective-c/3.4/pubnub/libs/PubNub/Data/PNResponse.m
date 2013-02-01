@@ -113,12 +113,12 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
                                     
                                     if (isJSONP) {
                                         
-                                        NSArray *callbckMethodElements = [callbackMethodName componentsSeparatedByString:@"_"];
+                                        NSArray *callbackMethodElements = [callbackMethodName componentsSeparatedByString:@"_"];
                                         
-                                        if ([callbckMethodElements count] > 1) {
+                                        if ([callbackMethodElements count] > 1) {
                                             
-                                            self.callbackMethod = [callbckMethodElements objectAtIndex:kPNResponseCallbackMethodNameIndex];
-                                            self.requestIdentifier = [callbckMethodElements objectAtIndex:kPNResponseRequestIdentifierIndex];
+                                            self.callbackMethod = [callbackMethodElements objectAtIndex:kPNResponseCallbackMethodNameIndex];
+                                            self.requestIdentifier = [callbackMethodElements objectAtIndex:kPNResponseRequestIdentifierIndex];
                                         }
                                         else {
                                             
@@ -129,6 +129,8 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
                                     }
                                 }
                                      errorBlock:^(NSError *error) {
+
+                                         PNLog(PNLogGeneralLevel, self, @"ERROR: %@", error);
                                      }];
     }
     
@@ -139,7 +141,8 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
 - (NSString *)decodedResponse {
 
     NSString *encodedString = [[NSString alloc] initWithData:self.content encoding:NSUTF8StringEncoding];
-    return [encodedString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    encodedString = [encodedString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    return [encodedString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
 - (NSString *)description {
