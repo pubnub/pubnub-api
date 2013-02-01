@@ -902,7 +902,7 @@ public class Pubnub {
 		Callback callback = (Callback) args.get("callback");
 		String timetoken = (String) args.get("timetoken");
 		
-		timetoken = (timetoken == null)?"0":timetoken;
+		_timetoken = (timetoken == null)?"0":timetoken;
 
 		/*
 		 * Scan through the channels array. If a channel does not exist in

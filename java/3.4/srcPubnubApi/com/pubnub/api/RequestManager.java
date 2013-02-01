@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Vector;
 
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.log4j.Logger;
 
@@ -153,6 +154,10 @@ class SubscribeWorker extends Worker {
 				return;
 			}
 			catch (SocketException e){
+				log.trace("Exception in Fetch : " + e.toString());
+				return;
+			}
+			catch (NoHttpResponseException e){
 				log.trace("Exception in Fetch : " + e.toString());
 				return;
 			}
