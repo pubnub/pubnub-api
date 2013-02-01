@@ -28,20 +28,22 @@ namespace PubNubMessaging.Tests
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
-            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/0", "[[],\"13559007117760880\"]");
-            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 1}],\"13559011560379628\"]");
-            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
-            data.Add("/subscribe/demo/my%2Fchannel/0/0", "[[],\"13559006802662768\"]");
-            data.Add("/subscribe/demo/my%2Fchannel/0/13559006802662768", "[[\"demo test for stubs\"],\"13559014566792816\"]");
-            data.Add("/subscribe/demo/my%2Fchannel/0/13559014566792816", "[[],\"13559014566792816\"]");
-            data.Add("/v2/presence/sub_key/demo/channel/my%2Fchannel/leave", "{\"action\": \"leave\"}");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13596603179264912", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my%2Fchannel,my%2Fchannel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my%2Fchannel,my%2Fchannel-pnpres/0/13596603179264912", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 1}],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel,my%2Fchannel-pnpres/0/13559006802662768", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13559006802662768", "[[{\"action\": \"leave\", \"timestamp\": 1359660369, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 0}],\"13596603694444112\"]");
+            data.Add("/subscribe/demo/my%2Fchannel,my%2Fchannel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
+            data.Add("/v2/presence/sub_key/demo/channel/my%252Fchannel/leave", "{\"action\": \"leave\"}");
 #else
-            data.Add("/subscribe/demo/my/channel-pnpres/0/0", "[[],\"13559007117760880\"]");
-            data.Add("/subscribe/demo/my/channel-pnpres/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 1}],\"13559011560379628\"]");
-            data.Add("/subscribe/demo/my/channel-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
-            data.Add("/subscribe/demo/my/channel/0/0", "[[],\"13559006802662768\"]");
-            data.Add("/subscribe/demo/my/channel/0/13559006802662768", "[[\"demo test for stubs\"],\"13559014566792816\"]");
-            data.Add("/subscribe/demo/my/channel/0/13559014566792816", "[[],\"13559014566792816\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/13596603179264912", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13596603179264912", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 1}],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13559006802662768", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/13559006802662768", "[[{\"action\": \"leave\", \"timestamp\": 1359660369, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 0}],\"13596603694444112\"]");
+            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
             data.Add("/v2/presence/sub_key/demo/channel/my%252Fchannel/leave", "{\"action\": \"leave\"}");
 #endif
             return data;
@@ -51,20 +53,24 @@ namespace PubNubMessaging.Tests
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
-            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/0", "[[],\"13559007117760880\"]");
-            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 1}],\"13559011560379628\"]");
-            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
-            data.Add("/subscribe/demo/my%2Fchannel/0/0", "[[],\"13559006802662768\"]");
-            data.Add("/subscribe/demo/my%2Fchannel/0/13559006802662768", "[[\"demo test for stubs\"],\"13559014566792816\"]");
-            data.Add("/subscribe/demo/my%2Fchannel/0/13559014566792816", "[[],\"13559014566792816\"]");
-            data.Add("/v2/presence/sub_key/demo/channel/my%2Fchannel/leave", "{\"action\": \"leave\"}");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13596603179264912", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my%2Fchannel,my%2Fchannel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my%2Fchannel,my%2Fchannel-pnpres/0/13596603179264912", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 1}],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel,my%2Fchannel-pnpres/0/13559006802662768", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13559006802662768", "[[{\"action\": \"leave\", \"timestamp\": 1359660369, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 0}],\"13596603694444112\"]");
+            data.Add("/subscribe/demo/my%2Fchannel,my%2Fchannel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
+            data.Add("/subscribe/demo/my%2Fchannel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
+            data.Add("/v2/presence/sub_key/demo/channel/my%252Fchannel/leave", "{\"action\": \"leave\"}");
 #else
-            data.Add("/subscribe/demo/my/channel-pnpres/0/0", "[[],\"13559007117760880\"]");
-            data.Add("/subscribe/demo/my/channel-pnpres/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 1}],\"13559011560379628\"]");
-            data.Add("/subscribe/demo/my/channel-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
-            data.Add("/subscribe/demo/my/channel/0/0", "[[],\"13559006802662768\"]");
-            data.Add("/subscribe/demo/my/channel/0/13559006802662768", "[[\"demo test for stubs\"],\"13559014566792816\"]");
-            data.Add("/subscribe/demo/my/channel/0/13559014566792816", "[[],\"13559014566792816\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/13596603179264912", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13596603179264912", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 1}],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13559006802662768", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/13559006802662768", "[[{\"action\": \"leave\", \"timestamp\": 1359660369, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 0}],\"13596603694444112\"]");
+            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
+            data.Add("/subscribe/demo/my/channel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
             data.Add("/v2/presence/sub_key/demo/channel/my%252Fchannel/leave", "{\"action\": \"leave\"}");
 #endif
             return data;
@@ -195,7 +201,7 @@ namespace PubNubMessaging.Tests
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 #if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
-            data.Add("/v2/history/sub-key/demo/channel/my%252Fchannel", "[[\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 0\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 1\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 2\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 3\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 4\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 4\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 6\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 7\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 8\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 9\"],13559326456056557,13559327017296315]");
+            data.Add("/v2/history/sub-key/demo/channel/my%252Fchannel", "[[\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 0\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 1\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 2\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 3\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 4\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 5\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 6\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 7\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 8\",\"DetailedHistoryStartTimeWithReverseTrue 13559326410000000 9\"],13559326456056557,13559327017296315]");
             data.Add("/publish/demo/demo/0/my%2Fchannel/0/%22DetailedHistoryStartTimeWithReverseTrue%200%22", "[1,\"Sent\",\"13559014566792817\"]");
             data.Add("/publish/demo/demo/0/my%2Fchannel/0/%22DetailedHistoryStartTimeWithReverseTrue%201%22", "[1,\"Sent\",\"13559014566792817\"]");
             data.Add("/publish/demo/demo/0/my%2Fchannel/0/%22DetailedHistoryStartTimeWithReverseTrue%202%22", "[1,\"Sent\",\"13559014566792817\"]");

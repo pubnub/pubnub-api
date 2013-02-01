@@ -137,7 +137,7 @@ namespace PubNubMessaging.Core
                         pubnub.EndPendingRequests();
                         break;
                     case "1":
-                        Console.WriteLine("Enter CHANNEL name for subscribe");
+                        Console.WriteLine("Enter CHANNEL name for subscribe. Use comma to enter multiple channels.");
                         channel = Console.ReadLine();
 
                         Console.WriteLine(string.Format("Channel = {0}",channel));
@@ -148,9 +148,14 @@ namespace PubNubMessaging.Core
 
                         break;
                     case "2":
-                        Console.WriteLine("Running publish()");
+                        Console.WriteLine("Enter CHANNEL name for publish.");
+                        channel = Console.ReadLine();
+
                         Console.WriteLine("Enter the message for publish. To exit loop, enter QUIT");
                         string publishMsg = Console.ReadLine();
+                        
+                        Console.WriteLine("Running publish()");
+
                         double doubleData;
                         int intData;
                         if (int.TryParse(publishMsg, out intData)) //capture numeric data
@@ -187,7 +192,7 @@ namespace PubNubMessaging.Core
                         }
                         break;
                     case "3":
-                        Console.WriteLine("Enter CHANNEL name for presence");
+                        Console.WriteLine("Enter CHANNEL name for presence. Use comma to enter multiple channels.");
                         channel = Console.ReadLine();
 
                         Console.WriteLine(string.Format("Presence Channel = {0}",channel));
@@ -218,7 +223,7 @@ namespace PubNubMessaging.Core
                         pubnub.HereNow<string>(channel, DisplayReturnMessage);
                         break;
                     case "6":
-                        Console.WriteLine("Enter CHANNEL name for Unsubscribe");
+                        Console.WriteLine("Enter CHANNEL name for Unsubscribe. Use comma to enter multiple channels.");
                         channel = Console.ReadLine();
 
                         Console.WriteLine(string.Format("Channel = {0}",channel));
@@ -228,7 +233,7 @@ namespace PubNubMessaging.Core
                         pubnub.Unsubscribe<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage, DisplayDisconnectStatusMessage);
                         break;
                     case "7":
-                        Console.WriteLine("Enter CHANNEL name for Presence Unsubscribe");
+                        Console.WriteLine("Enter CHANNEL name for Presence Unsubscribe. Use comma to enter multiple channels.");
                         channel = Console.ReadLine();
 
                         Console.WriteLine(string.Format("Channel = {0}",channel));
