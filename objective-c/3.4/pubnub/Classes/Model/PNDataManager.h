@@ -45,6 +45,11 @@
  */
 - (void)updateSSLOption:(BOOL)shouldEnableSSL;
 
+/**
+ * Clear chat history for current channel
+ */
+- (void)clearChatHistory;
+
 
 #pragma mark -
 

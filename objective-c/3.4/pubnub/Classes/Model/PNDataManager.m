@@ -151,6 +151,7 @@ static PNDataManager *_sharedInstance = nil;
                                                                 // error (which means that user disconnected client)
                                                                 if (!connected && !error) {
 
+                                                                    weakSelf.subscribedChannelsList = [NSMutableArray array];
                                                                     weakSelf.messages = [NSMutableDictionary dictionary];
                                                                     weakSelf.currentChannelChat = @"";
                                                                 }
@@ -164,6 +165,15 @@ static PNDataManager *_sharedInstance = nil;
 - (void)updateSSLOption:(BOOL)shouldEnableSSL {
 
     self.configuration.useSecureConnection = shouldEnableSSL;
+}
+
+- (void)clearChatHistory {
+
+    if (self.currentChannel != nil) {
+
+        [self.messages removeObjectForKey:self.currentChannel.name];
+    }
+    self.currentChannelChat = nil;
 }
 
 - (void)setCurrentChannel:(PNChannel *)currentChannel {

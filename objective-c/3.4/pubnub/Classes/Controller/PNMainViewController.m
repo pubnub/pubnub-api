@@ -23,7 +23,20 @@
 #import "PNPresenceEvent+Protected.h"
 
 
-#pragma mark Private interface methods
+#pragma mark Static
+
+// Stores reference on in-channel table message
+// label size
+static CGSize const inChannelMessageSize = {.width=230.0f,.height=35.0f};
+
+// Stores reference on in-chat text view message
+// label size
+static CGSize const inChatMessageSize = {.width=524.0f,.height=669.0f};
+
+static NSUInteger const inChatMessageLabelTag = 878;
+
+
+#pragma mark - Private interface methods
 
 @interface PNMainViewController () <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,
                                     PNChannelCreationDelegate, PNChannelInformationDelegate>
@@ -51,6 +64,9 @@
 
 // Stores reference on connection information section background image
 @property (nonatomic, pn_desired_weak) IBOutlet UIImageView *informationBackgroundImageView;
+
+// Stores reference on collection of white buttons
+@property (nonatomic, strong) IBOutletCollection(UIButton) NSArray *whiteButtons;
 
 // Stores reference on button which allow to subscribe on new channel
 @property (nonatomic, pn_desired_weak) IBOutlet UIButton *addChannelButton;
@@ -85,10 +101,15 @@
 #pragma mark - Handler methods
 
 - (IBAction)disconnectButtonTapped:(id)sender;
-- (IBAction)clientInformationButtonTapper:(id)sender;
 - (IBAction)addChannelButtonTapped:(id)sender;
 - (IBAction)getServerTimeButtonTapped:(id)sender;
 - (IBAction)sendMessageButtonTapped:(id)sender;
+
+/**
+ * Handle "Clear" button tap to clear message input
+ * field as well as channel messages
+ */
+- (IBAction)clearButtonTapped:(id)sender;
 
 
 #pragma mark - Misc methods
@@ -102,6 +123,28 @@
  */
 - (void)updateMessageSendingInterfaceWithMessage:(NSString *)message;
 
+/**
+ * Will update interface to show current client connection
+ * identifier and client network address
+ */
+- (void)updateClientInformation;
+
+/**
+ * Allow to show/hide message which will ask user
+ * to add channel (if there is no channels on which
+ * user is subscribed)
+ */
+- (void)showNoChannelAddedMessage;
+- (void)hideNoChannelAddedMessage;
+
+/**
+ * Allow to show/hide message which will ask user
+ * to select one of the channels from right hand
+ * list (will be shown only if user subscribed on
+ * at least one channel)
+ */
+- (void)showNoChannelSelectedMessage;
+- (void)hideNoChannelSelectedMessage;
 
 @end
 
@@ -159,15 +202,7 @@
                                                                             BOOL connected,
                                                                             PNError *error) {
 
-                                                            NSString *identifier = [PubNub clientIdentifier];
-                                                            NSString *address = [[UIDevice currentDevice] networkAddress];
-                                                            if (!connected) {
-
-                                                                identifier = @"---";
-                                                                address = @"-.-.-.-";
-                                                            }
-                                                            weakSelf.clientNetworkAddressLabel.text = address;
-                                                            weakSelf.clientIdentifierLabel.text = identifier;
+                                                            [weakSelf updateClientInformation];
                                                         }];
 
     [[PNObservationCenter defaultCenter] addChannelParticipantsListProcessingObserver:self
@@ -268,17 +303,18 @@
     UIImage *stretchedWhiteButtonImageImage = [whiteButtonImage stretchableImageWithLeftCapWidth:5.0f
                                                                                     topCapHeight:10.0f];
 
-    [self.addChannelButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
-    [self.serverTimeButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
-    [self.sendMessageButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
+    [self.whiteButtons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger buttonIdx, BOOL *buttonsEnumerator) {
+
+        [button setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
+    }];
     [self.disconnectButton setBackgroundImage:stretchedRightSingleEntryImage forState:UIControlStateNormal];
 
-    self.clientIdentifierLabel.text = [PubNub clientIdentifier];
-    self.clientNetworkAddressLabel.text = [[UIDevice currentDevice] networkAddress];
+    [self updateClientInformation];
 
 
     self.channelInformationView.delegate = self;
     [self updateMessageSendingInterfaceWithMessage:nil];
+    [self showNoChannelAddedMessage];
 }
 
 
@@ -289,30 +325,71 @@
                         change:(NSDictionary *)change
                        context:(void *)context {
 
+    BOOL shouldUpdateChat = NO;
+
     // Check whether current category changed or not
     if ([keyPath isEqualToString:@"currentChannel"]) {
 
         [self.channelParticipantsTableView reloadData];
+        shouldUpdateChat = YES;
+
+        [self updateMessageSendingInterfaceWithMessage:nil];
+
+        if ([[change valueForKey:NSKeyValueChangeNewKey] isKindOfClass:[NSNull class]] &&
+            [[PubNub subscribedChannels] count]) {
+
+            [self showNoChannelSelectedMessage];
+        }
+        else {
+
+            [self hideNoChannelSelectedMessage];
+        }
+
     }
     // Looks like list of channels changed
-    else {
+    else if ([keyPath isEqualToString:@"subscribedChannelsList"]){
 
         [self.channelsTableView reloadData];
+
+        if ([[PubNub subscribedChannels] count]) {
+
+            [self hideNoChannelAddedMessage];
+            PNChannel *currentChannel = [[PNDataManager sharedInstance] currentChannel];
+
+            if (currentChannel == nil) {
+
+                [self showNoChannelSelectedMessage];
+            }
+            else {
+
+                NSInteger channelIdx = [[[PNDataManager sharedInstance] subscribedChannelsList] indexOfObject:currentChannel];
+                NSIndexPath *currentChannelPath = [NSIndexPath indexPathForRow:channelIdx inSection:0];
+                [self.channelsTableView selectRowAtIndexPath:currentChannelPath
+                                                    animated:NO
+                                              scrollPosition:UITableViewScrollPositionNone];
+            }
+        }
+        else {
+
+            [self showNoChannelAddedMessage];
+            [self hideNoChannelSelectedMessage];
+        }
+    }
+    else if ([keyPath isEqualToString:@"currentChannelChat"]){
+
+        shouldUpdateChat = YES;
     }
 
-    self.messageTextView.text = [PNDataManager sharedInstance].currentChannelChat;
+    if (shouldUpdateChat) {
 
-    [self updateMessageSendingInterfaceWithMessage:nil];
+        self.messageTextView.text = [PNDataManager sharedInstance].currentChannelChat;
+    }
 }
 
 - (IBAction)disconnectButtonTapped:(id)sender {
 
     [PubNub disconnect];
     [self dismissModalViewControllerAnimated:YES];
-}
-
-- (IBAction)clientInformationButtonTapper:(id)sender {
-
 }
 
 - (IBAction)addChannelButtonTapped:(id)sender {
@@ -336,8 +413,14 @@
 
     [PubNub sendMessage:[NSString stringWithFormat:@"\"%@\"", self.messageTextField.text]
               toChannel:[PNDataManager sharedInstance].currentChannel];
-    self.messageTextField.text = nil;
+    [self updateMessageSendingInterfaceWithMessage:nil];
     [self.view endEditing:YES];
+}
+
+- (IBAction)clearButtonTapped:(id)sender {
+
+    [self updateMessageSendingInterfaceWithMessage:nil];
+    [[PNDataManager sharedInstance] clearChatHistory];
 }
 
 
@@ -354,13 +437,63 @@
 
     BOOL isSubscribed = [[PNDataManager sharedInstance].subscribedChannelsList count] > 0;
     BOOL isChannelSelected = [PNDataManager sharedInstance].currentChannel != nil;
-    if (message == nil) {
+    BOOL isEmptyMessage = message == nil || [message isEmptyString];
 
-        message = self.messageTextField.text;
-    }
-
-    self.sendMessageButton.enabled = isSubscribed && ![message isEmptyString] && isChannelSelected;
+    self.messageTextField.text = message;
+    self.sendMessageButton.enabled = isSubscribed && !isEmptyMessage && isChannelSelected;
     self.messageTextField.enabled = isSubscribed && isChannelSelected;
+}
+
+- (void)updateClientInformation {
+
+    NSString *identifier = [PubNub clientIdentifier];
+    NSString *address = [[UIDevice currentDevice] networkAddress];
+    if (![[PubNub sharedInstance] isConnected]) {
+
+        identifier = @"---";
+        address = @"-.-.-.-";
+    }
+    self.clientNetworkAddressLabel.text = address;
+    self.clientIdentifierLabel.text = identifier;
+}
+
+- (void)showNoChannelAddedMessage {
+
+    UILabel *messageLabel = [[UILabel alloc] initWithFrame:(CGRect){.size=inChannelMessageSize}];
+    messageLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
+    messageLabel.textAlignment = UITextAlignmentCenter;
+    messageLabel.backgroundColor = [UIColor clearColor];
+    messageLabel.textColor = [UIColor whiteColor];
+    messageLabel.shadowColor = [UIColor blackColor];
+    messageLabel.shadowOffset = (CGSize){.height=-1.0f};
+    messageLabel.text = @"Please add channel";
+    self.channelsTableView.tableHeaderView = messageLabel;
+}
+
+- (void)hideNoChannelAddedMessage {
+
+    self.channelsTableView.tableHeaderView = nil;
+}
+
+- (void)showNoChannelSelectedMessage {
+
+    UILabel *messageLabel = [[UILabel alloc] initWithFrame:(CGRect){.size=inChatMessageSize}];
+    messageLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
+    messageLabel.tag = inChatMessageLabelTag;
+    messageLabel.textAlignment = UITextAlignmentCenter;
+    messageLabel.backgroundColor = [UIColor clearColor];
+    messageLabel.textColor = [UIColor darkGrayColor];
+    messageLabel.shadowColor = [UIColor colorWithWhite:0.0f alpha:0.3f];
+    messageLabel.shadowOffset = (CGSize){.height=1.0f};
+    messageLabel.text = @"Select a channel to publish to";
+    if ([self.messageTextView viewWithTag:inChatMessageLabelTag] == nil) {
+
+        [self.messageTextView addSubview:messageLabel];
+    }
+}
+- (void)hideNoChannelSelectedMessage {
+
+    [[self.messageTextView viewWithTag:inChatMessageLabelTag] removeFromSuperview];
 }
 
 
@@ -503,10 +636,6 @@ shouldChangeCharactersInRange:(NSRange)range
     else {
 
         NSString *clientIdentifier = [[PNDataManager sharedInstance].currentChannel.participants objectAtIndex:indexPath.row];
-        if (!PNIsUserGeneratedUUID(clientIdentifier)) {
-
-            clientIdentifier = @"anonymous";
-        }
         cell.textLabel.text = clientIdentifier;
     }
 
