@@ -137,6 +137,7 @@ namespace PubNubMessaging.Tests
             Thread.Sleep(2000);
 
             pubnub.DetailedHistory<string>(channel, startTimeWithReverseTrue, DetailedHistoryStartWithReverseTrueCallback, true);
+            Thread.Sleep(2000);
             mreMessageStartReverseTrue.WaitOne(310 * 1000);
             Assert.IsTrue(messageStartReverseTrue, "Detailed History with Start and Reverse True Failed");
         }

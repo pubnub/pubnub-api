@@ -37,15 +37,18 @@ namespace PubNubMessaging.Tests
 
             string channel = "my/channel";
 
-            pubnub.Subscribe<string>(channel, ReceivedMessageCallbackNoConnect);
+            pubnub.Subscribe<string>(channel, ReceivedMessageCallbackWhenSubscribed, SubscribeDummyMethodForConnectCallback);
 
             pubnub.Publish<string>(channel, "Test for WhenSubscribedToAChannel ThenItShouldReturnReceivedMessage", dummyPublishCallback);
             mePublish.WaitOne(310 * 1000);
 
             meSubscribeNoConnect.WaitOne(310 * 1000);
-            pubnub.Unsubscribe<string>(channel, dummyUnsubscribeCallback);
+            pubnub.Unsubscribe<string>(channel, dummyUnsubscribeCallback, SubscribeDummyMethodForConnectCallback, UnsubscribeDummyMethodForDisconnectCallback);
             
             meUnsubscribe.WaitOne(310 * 1000);
+            
+            pubnub.EndPendingRequests();
+
             Assert.IsTrue(receivedMessage,"WhenSubscribedToAChannel --> ThenItShouldReturnReceivedMessage Failed");
         }
 
@@ -67,13 +70,12 @@ namespace PubNubMessaging.Tests
             pubnub.Subscribe<string>(channel, ReceivedMessageCallbackYesConnect, ConnectStatusCallback);
             meSubscribeYesConnect.WaitOne(310 * 1000);
 
-            pubnub.Unsubscribe<string>(channel, dummyUnsubscribeCallback);
-            meUnsubscribe.WaitOne(310 * 1000);
+            pubnub.EndPendingRequests();
 
             Assert.IsTrue(receivedConnectMessage, "WhenSubscribedToAChannel --> ThenSubscribeShouldReturnConnectStatus Failed");
         }
 
-        private void ReceivedMessageCallbackNoConnect(string result)
+        private void ReceivedMessageCallbackWhenSubscribed(string result)
         {
             if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
             {
@@ -120,7 +122,17 @@ namespace PubNubMessaging.Tests
 
         private void dummyUnsubscribeCallback(string result)
         {
+            
+        }
+
+        void SubscribeDummyMethodForConnectCallback(string receivedMessage)
+        {
+        }
+
+        void UnsubscribeDummyMethodForDisconnectCallback(string receivedMessage)
+        {
             meUnsubscribe.Set();
         }
+
     }
 }
