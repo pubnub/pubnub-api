@@ -1,26 +1,17 @@
-## ---------------------------------------------------
-##
-## YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
-## http://www.pubnub.com/account
-##
-## ----------------------------------------------------
+#YOU MUST HAVE A PUBNUB ACCOUNT TO USE THE API.
+#http://www.pubnub.com/account
 
-## --------------------------------------------------
-## PubNub 3.3 Web Data Push Cloud-hosted API - PYTHON
-## --------------------------------------------------
-##
-## www.pubnub.com - PubNub Web Data Push Service in the Cloud. 
-## http://github.com/pubnub/pubnub-api/tree/master/python
-##
-## PubNub is a Massively Scalable Data Push Service for Web and Mobile Games.
-## This is a cloud-based service for broadcasting messages
-## to thousands of web and mobile clients simultaneously.
+PubNub 3.3 Web Data Push Cloud-hosted API - PYTHON
+www.pubnub.com - PubNub Web Data Push Service in the Cloud. 
+http://github.com/pubnub/pubnub-api/tree/master/python
 
-## ---------------
-## Python Push API
-## ---------------
+PubNub is a Massively Scalable Data Push Service for Web and Mobile Games.
+This is a cloud-based service for broadcasting messages
+to thousands of web and mobile clients simultaneously.
 
-### Check out additional tests and examples in the 3.3 directory!
+### Python Push API
+
+Check out additional tests and examples in the 3.3 directory!
 
 ```python
 pubnub = Pubnub(
@@ -31,10 +22,8 @@ pubnub = Pubnub(
 )
 ```
 
-# -------
-# PUBLISH
-# -------
-# Send Message
+### PUBLISH
+Send Message
 
 ```python
 info = pubnub.publish({
@@ -46,10 +35,8 @@ info = pubnub.publish({
 print(info)
 ```
 
-# ---------
-# SUBSCRIBE
-# ---------
-# Listen for Messages *BLOCKING*
+### SUBSCRIBE
+Listen for Messages *BLOCKING*
 
 ```python
 def receive(message) :
@@ -61,11 +48,8 @@ pubnub.subscribe({
     'callback' : receive 
 })
 ```
-
-# ---------
-# PRESENCE
-# ---------
-# Listen for Presence Event Messages *BLOCKING*
+### PRESENCE
+Listen for Presence Event Messages *BLOCKING*
 
 ```python
 def pres_event(message) :
@@ -78,10 +62,8 @@ pubnub.presence({
 })
 ```
 
-# ---------
-# HERE_NOW
-# ---------
-# Get info on who is here right now!
+### HERE_NOW
+Get info on who is here right now!
 
 ```python
 here_now = pubnub.here_now({
@@ -91,10 +73,8 @@ here_now = pubnub.here_now({
 print(here_now['occupancy'])
 print(here_now['uuids'])
 ```
-
-# ------------------
-## Channel Analytics
-# ------------------
+### Channel Analytics
+Get usage stats.
 
 ```python
 analytics = pubnub.analytics({
@@ -106,11 +86,13 @@ analytics = pubnub.analytics({
 print(analytics)
 ```
 
+### DETAILED HISTORY
+Load Previously Published Messages in Detail
+Optional Parameters:
 
-# -------
-# DETAILED HISTORY
-# -------
-# Load Previously Published Messages in Detail
+'start' - Start timestamp
+'end' - End timestamp
+'reverse' - Search from right to left (default is false)
 
 ```python
 history = pubnub.detailedHistory({
@@ -120,11 +102,3 @@ history = pubnub.detailedHistory({
 
 print(history)
 ```
-Optional parameters:
-
-'start' - Start timestamp
-'end' - End timestamp
-'reverse' - Search from right to left (default is false)
-
-
-
