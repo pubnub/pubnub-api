@@ -20,19 +20,23 @@
 ## Python Push API
 ## ---------------
 
-### Check out additional tests and examples in the 3.2 directory!
+### Check out additional tests and examples in the 3.3 directory!
 
+```python
 pubnub = Pubnub(
     "demo",  ## PUBLISH_KEY
     "demo",  ## SUBSCRIBE_KEY
     None,    ## SECRET_KEY
     False    ## SSL_ON?
 )
+```
 
 # -------
 # PUBLISH
 # -------
 # Send Message
+
+```python
 info = pubnub.publish({
     'channel' : 'hello_world',
     'message' : {
@@ -40,11 +44,14 @@ info = pubnub.publish({
     }
 })
 print(info)
+```
 
 # ---------
 # SUBSCRIBE
 # ---------
 # Listen for Messages *BLOCKING*
+
+```python
 def receive(message) :
     print(message)
     return True
@@ -53,12 +60,14 @@ pubnub.subscribe({
     'channel'  : 'hello_world',
     'callback' : receive 
 })
+```
 
 # ---------
 # PRESENCE
 # ---------
 # Listen for Presence Event Messages *BLOCKING*
 
+```python
 def pres_event(message) :
     print(message)
     return True
@@ -67,23 +76,27 @@ pubnub.presence({
     'channel'  : 'hello_world',
     'callback' : receive 
 })
+```
 
 # ---------
 # HERE_NOW
 # ---------
 # Get info on who is here right now!
 
+```python
 here_now = pubnub.here_now({
     'channel' : 'hello_world',
 })
 
 print(here_now['occupancy'])
 print(here_now['uuids'])
-
+```
 
 # ------------------
 ## Channel Analytics
 # ------------------
+
+```python
 analytics = pubnub.analytics({
     'channel'  : 'channel-name-here', ## Leave blank for all channels
     'limit'    : 100,                 ## aggregation range
@@ -91,33 +104,27 @@ analytics = pubnub.analytics({
     'duration' : 100                  ## minutes offset
 })
 print(analytics)
-
-# -------
-# HISTORY
-# -------
-# Load Previously Published Messages
-history = pubnub.history({
-    'channel' : 'hello_world',
-    'limit'   : 1
-})
-print(history)
+```
 
 
 # -------
 # DETAILED HISTORY
 # -------
 # Load Previously Published Messages in Detail
-	@param array args with 'channel', optional: 'start', 'end', 'reverse', 'count'
-	'channel'-Channel name
-	'start'-Start timestamp
-	'end'-End timestamp
-	'reverse'-Order of History
-	'count'-Number of History messages
-	
- 	NSInteger count = 3;
-    NSNumber * aCountInt = [NSNumber numberWithInteger:count];
-    [pubnub detailedHistory:[NSDictionary dictionaryWithObjectsAndKeys:
-                             aCountInt,@"count",
-                             @"hello_world",@"channel",
-                             nil]];
+
+```python
+history = pubnub.detailedHistory({
+    'channel' : 'hello_world',
+    'count'   : 5
+    })
+
+print(history)
+```
+Optional parameters:
+
+'start' - Start timestamp
+'end' - End timestamp
+'reverse' - Search from right to left (default is false)
+
+
 
