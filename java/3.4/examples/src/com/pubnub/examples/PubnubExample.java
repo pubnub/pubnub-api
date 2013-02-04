@@ -16,11 +16,12 @@ public class PubnubExample {
 	String channel = "hello_world1";
 	String[] channels = { "hello_world1", "hello_world2", "hello_world3",
 			"hello_world4" };
+	Pubnub _pubnub;
 
 	public PubnubExample() {
+		_pubnub = new Pubnub("demo", "demo",false);
 	}
 
-	Pubnub _pubnub = new Pubnub("demo", "demo",false);
 
 	/**
 	 * @param params

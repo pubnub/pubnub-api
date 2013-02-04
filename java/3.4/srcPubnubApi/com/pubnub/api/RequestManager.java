@@ -126,18 +126,28 @@ class NonSubscribeWorker extends Worker {
 }
 
 class SubscribeWorker extends Worker {
-	private int MAX_RETRIES = 5;
+	private volatile int maxRetries = 5;
+	private volatile int retryInterval = 5000;
 	
-	private int retryInterval = 5000;
-	SubscribeWorker(Vector _requestQueue) {
+	public SubscribeWorker(Vector _requestQueue) {
 		super(_requestQueue);
+	}
+	
+	public void setMaxRetries(int maxRetries) {
+		this.maxRetries = maxRetries;
+	}
+
+	public void setRetryInterval(int retryInterval) {
+		this.retryInterval = retryInterval;
 	}
 
 	@Override
 	void process(HttpRequest hreq) {
 		HttpResponse hresp = null;
 		int currentRetryAttempt = 1;
-		while (currentRetryAttempt <= MAX_RETRIES) {
+		log.trace("Max Retries : " + maxRetries);
+		log.trace("Retry interval : " + retryInterval);
+		while (currentRetryAttempt <= maxRetries) {
 			try {
 				log.debug(hreq.getUrl());
 				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
@@ -160,7 +170,7 @@ class SubscribeWorker extends Worker {
 			}
 			catch (SocketTimeoutException e){
 				log.trace("Exception in Fetch : " + e.toString());
-				currentRetryAttempt = MAX_RETRIES + 1;
+				currentRetryAttempt = maxRetries + 1;
 				break;
 			}
 			catch (NoHttpResponseException e){
@@ -179,7 +189,7 @@ class SubscribeWorker extends Worker {
 		}
 		if (hresp == null) {
 			log.debug("Error in fetching url : " + hreq.getUrl());
-			if (currentRetryAttempt > MAX_RETRIES) {
+			if (currentRetryAttempt > maxRetries) {
 				log.trace("Exhausted number of retries");
 				hreq.getResponseHandler().handleTimeout();
 			} else
@@ -198,7 +208,7 @@ abstract class RequestManager {
 
 	private static int _maxWorkers = 1;
 	protected Vector _waiting = new Vector();
-	private Worker _workers[];
+	protected Worker _workers[];
 
 	public static int getWorkerCount() {
 		return _maxWorkers;
@@ -294,6 +304,18 @@ abstract class RequestManager {
 }
 
 class SubscribeManager extends RequestManager {
+	
+	public void setMaxRetries(int maxRetries) {
+		for (int i = 0; i < _workers.length; i++){
+			((SubscribeWorker)_workers[i]).setMaxRetries(maxRetries);
+		}
+	}
+	
+	public void setRetryInterval(int retryInterval) {
+		for (int i = 0; i < _workers.length; i++){
+			((SubscribeWorker)_workers[i]).setRetryInterval(retryInterval);
+		}
+	}
 
 	public SubscribeManager(String name) {
 		super(name);
