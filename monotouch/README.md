@@ -10,6 +10,8 @@ Open 3.3.0.1/PubNub-Messaging/Pubnub-Messaging/PubNub-Messaging.csproj. Run the 
 Please ensure that in order to run on Mono the constant in the pubnub.cs file should be set to "true"
 OVERRIDE_TCP_KEEP_ALIVE = true;
 
+When creating a new project or a new configuration please add a compiler flag by going into the "Options -> Compiler -> Define Symbols" and adding "MONOTOUCH;" to it.
+
 Dev environment setup:
 - MAC OS X 10.7.4 (Lion)
 - MonoTouch 6.0.6 Evaluation
