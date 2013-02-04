@@ -390,6 +390,16 @@ static NSUInteger const inChatMessageLabelTag = 878;
 - (IBAction)disconnectButtonTapped:(id)sender {
 
     [PubNub disconnect];
+
+
+    [[PNObservationCenter defaultCenter] removeTimeTokenReceivingObserver:self];
+    [[PNObservationCenter defaultCenter] removeClientConnectionStateObserver:self];
+    [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:self];
+    [[PNObservationCenter defaultCenter] removePresenceEventObserver:self];
+    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannel"];
+    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannelChat"];
+    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"subscribedChannelsList"];
+
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -685,20 +695,6 @@ shouldChangeCharactersInRange:(NSRange)range
 
 
     return shouldAutorotate;
-}
-
-
-#pragma mark - Memory management
-
-- (void)dealloc {
-
-    [[PNObservationCenter defaultCenter] removeTimeTokenReceivingObserver:self];
-    [[PNObservationCenter defaultCenter] removeClientConnectionStateObserver:self];
-    [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:self];
-    [[PNObservationCenter defaultCenter] removePresenceEventObserver:self];
-    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannel"];
-    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannelChat"];
-    [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"subscribedChannelsList"];
 }
 
 #pragma mark -

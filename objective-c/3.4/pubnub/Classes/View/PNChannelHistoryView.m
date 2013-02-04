@@ -164,6 +164,7 @@
 
 - (IBAction)closeButtonTapped:(id)sender {
 
+    [[PNObservationCenter defaultCenter] removeMessageHistoryProcessingObserver:self];
     [self removeFromSuperview];
 }
 
@@ -271,14 +272,6 @@
 
 
     return YES;
-}
-
-
-#pragma mark - Memory management
-
-- (void)dealloc {
-
-    [[PNObservationCenter defaultCenter] removeMessageHistoryProcessingObserver:self];
 }
 
 #pragma mark -

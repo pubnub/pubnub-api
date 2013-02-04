@@ -23,8 +23,8 @@ static BOOL const kPNSecureConnectionRequired = YES;
 static BOOL const kPNShouldAutoReconnectClient = YES;
 static BOOL const kPNShouldResubscribeOnConnectionRestore = YES;
 
-static NSTimeInterval const kPNNonSubscriptionRequestTimeout = 3.0f;
-static NSTimeInterval const kPNSubscriptionRequestTimeout = 2.0f;
+static NSTimeInterval const kPNNonSubscriptionRequestTimeout = 15.0f;
+static NSTimeInterval const kPNSubscriptionRequestTimeout = 10.0f;
 
 // This flag tells whether client should reduce SSL rules
 // when connecting to remote origin because of connection
@@ -39,7 +39,7 @@ static BOOL const kPNShouldReduceSecurityLevelOnError = YES;
 // option and connect using plain HTTP connection or not
 // This option will be used only if client will fail to
 // connect with specified security rules
-static BOOL const kPNCanIgnoreSecureConnectionRequirement = NO;
+static BOOL const kPNCanIgnoreSecureConnectionRequirement = YES;
 
 
 #endif // PNDefaultConfiguration_h

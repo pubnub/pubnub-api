@@ -97,13 +97,13 @@ void PNLog(PNLogLevels level, id sender, ...) {
 }
 
 
-static void PNCFRelease(CFTypeRef CFObject);
-void PNCFRelease(CFTypeRef CFObject) {
+static void PNCFRelease(CFTypeRef *CFObject);
+void PNCFRelease(CFTypeRef *CFObject) {
 
-    if (CFObject != NULL) {
+    if (*CFObject != NULL) {
 
-        CFRelease(CFObject);
-        CFObject = NULL;
+        CFRelease(*CFObject);
+        *CFObject = NULL;
     }
 }
 

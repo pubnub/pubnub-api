@@ -50,6 +50,7 @@ typedef enum _PNReachabilityStatus {
 
 #pragma mark - Properties
 
+@property (nonatomic, assign) SCNetworkConnectionFlags reachabilityFlags;
 @property (nonatomic, assign) PNReachabilityStatus status;
 @property (nonatomic, assign) SCNetworkReachabilityRef serviceReachability;
 
@@ -152,7 +153,8 @@ void PNReachabilityCallback(SCNetworkReachabilityRef reachability, SCNetworkReac
     
     // Retrieve reference on reachability monitor and update it's state
     PNReachability *reachabilityMonitor = (__bridge PNReachability *)info;
-    reachabilityMonitor.status = PNReachabilityStatusForFlags(flags);
+    reachabilityMonitor.reachabilityFlags = flags;
+    reachabilityMonitor.status = PNReachabilityStatusForFlags(reachabilityMonitor.reachabilityFlags);
 }
 
 - (void)startServiceReachabilityMonitoring {
@@ -189,6 +191,9 @@ void PNReachabilityCallback(SCNetworkReachabilityRef reachability, SCNetworkReac
         SCNetworkReachabilityGetFlags(self.serviceReachability, &currentReachabilityStateFlags);
         self.status = PNReachabilityStatusForFlags(currentReachabilityStateFlags);
     }
+
+
+    PNLog(PNLogGeneralLevel, self, @"START REACHABILITY OBSERVATION");
 }
 
 - (void)stopServiceReachabilityMonitoring {
@@ -205,6 +210,9 @@ void PNReachabilityCallback(SCNetworkReachabilityRef reachability, SCNetworkReac
     
     // Reset reachability status
     self.status = PNReachabilityStatusUnknown;
+
+
+    PNLog(PNLogGeneralLevel, self, @"STOP REACHABILITY OBSERVATION");
 }
 
 

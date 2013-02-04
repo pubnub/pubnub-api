@@ -231,11 +231,12 @@
 
 - (void)startTimeoutTimerForRequest:(PNBaseRequest *)request {
 
-    self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:[request timeout]
-                                                         target:self
-                                                       selector:@selector(handleTimeoutTimer:)
-                                                       userInfo:request
-                                                        repeats:NO];
+    self.timeoutTimer = [NSTimer timerWithTimeInterval:[request timeout]
+                                                target:self
+                                              selector:@selector(handleTimeoutTimer:)
+                                              userInfo:request
+                                               repeats:NO];
+    [[NSRunLoop currentRunLoop] addTimer:self.timeoutTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void)stopTimeoutTimerForRequest:(PNBaseRequest *)request {
