@@ -439,12 +439,10 @@ class Pubnub():
             'V' : '3.1',
             'User-Agent' : 'Python-Tornado',
             'Accept-Encoding' : 'gzip'
-        }) ) 
+        }), connect_timeout=310, request_timeout=310 ) 
         
         http.fetch(
             request,
-            callback=complete,
-            connect_timeout=310,
-            request_timeout=310
+            callback=complete
         )
 
