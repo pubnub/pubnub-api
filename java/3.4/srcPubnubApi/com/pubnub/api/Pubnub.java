@@ -907,6 +907,7 @@ public class Pubnub {
 		Callback callback = (Callback) args.get("callback");
 		String timetoken = (String) args.get("timetoken");
 		
+		_saved_timetoken = _timetoken;
 		_timetoken = (timetoken == null)?"0":timetoken;
 
 		/*
@@ -1061,7 +1062,10 @@ public class Pubnub {
 				log.trace("Timeout Occurred, Calling error callbacks on the channels");
 				try {
 					jsobj.put("error", "Network Timeout");
-					jsobj.put("timetoken", _timetoken);
+					log.trace("timetoken : " + _timetoken);
+					log.trace("Saved Timetoken : " + _saved_timetoken);
+					String timeoutTimetoken = (isResumeOnReconnect())?(_timetoken.equals("0"))?_saved_timetoken: _timetoken:"0";
+					jsobj.put("timetoken", timeoutTimetoken);
 					subscriptions.invokeErrorCallbackOnChannels(jsobj);
 				} catch (JSONException e) {
 					subscriptions.invokeErrorCallbackOnChannels("Network Timeout");
