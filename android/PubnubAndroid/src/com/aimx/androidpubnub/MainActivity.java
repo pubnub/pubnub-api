@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
         startPushService(); //only really matters the first time you launch the app after you install.. otherwise, it will start on boot
-        
+
         if(isSubscribed){
             subscribe();
         }
@@ -83,14 +83,14 @@ public class MainActivity extends Activity {
     
     private void startPushService(){
         AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        
+
         Intent intent = new Intent(this, PushAlarm.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
                 intent, PendingIntent.FLAG_CANCEL_CURRENT);
         am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
                 (5 * 60 * 1000), pendingIntent); //wake up every 5 minutes to ensure service stays alive
     }
-    
+
     private void subscribe(){
         registerReceiver(messageReceiver, messageFilter);
         Intent messageservice = new Intent(this, MessageService.class);
@@ -124,17 +124,12 @@ public class MainActivity extends Activity {
             try {
                 message = (JSONObject) new JSONTokener(intent.getStringExtra("message")).nextValue();
                 if(message != null){
-                    Toast.makeText(getApplicationContext(), "Received a message", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Received a message " +message.toString() , Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-//            Object message = null;
-//            message=intent.getStringExtra("message");
-            if(message != null){
-              Toast.makeText(getApplicationContext(), "Received a message : \n"+message.toString(), Toast.LENGTH_LONG).show();
-            }
         }
     }
 }
