@@ -21,9 +21,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+
 public class MainActivity extends Activity {
     
-    String channel = "androidsample";
+    String channel = "bbb";
     IntentFilter messageFilter = new IntentFilter("com.aimx.androidpubnub.MESSAGE");
     MessageReceiver messageReceiver = new MessageReceiver();
     Button subscribe = null;
