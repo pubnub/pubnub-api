@@ -45,8 +45,8 @@
 /**
  * Help to present view and hide it
  */
-- (void)showAnimated:(BOOL)animated;
-- (void)hideAnimated:(BOOL)animated;
+//- (void)showAnimated:(BOOL)animated;
+//- (void)hideAnimated:(BOOL)animated;
 
 
 #pragma mark - Handler methods
@@ -116,8 +116,14 @@
 
     self.channelsInformationBackgroundImageView.image = stretchedRightSectionImage;
     [self.channelHistoryButton setBackgroundImage:stretchedWhiteButtonImageImage forState:UIControlStateNormal];
-
-    self.originalViewFrame = self.frame;
+    if (isPad()) {
+        self.originalViewFrame = self.frame;
+    }else{
+        CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+        self.originalViewFrame =  CGRectMake(self.frame.origin.x, screenSize.height - self.frame.size.height - 20, self.frame.size.width, self.frame.size.height);
+        self.frame = self.originalViewFrame;
+    }
+    
 }
 
 - (void)showAnimated:(BOOL)animated {

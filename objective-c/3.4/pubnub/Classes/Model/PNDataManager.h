@@ -14,6 +14,12 @@
 
 @class PNConfiguration, PNChannel;
 
+#pragma mark - Macro
+// iPad/iPhone detector
+#define isPad() \
+([[UIDevice currentDevice] respondsToSelector:@selector(userInterfaceIdiom)] && \
+[[UIDevice currentDevice] userInterfaceIdiom]==UIUserInterfaceIdiomPad)
+
 
 @interface PNDataManager : NSObject
 

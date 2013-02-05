@@ -53,7 +53,6 @@
 #pragma mark - Class methods
 
 + (id)viewFromNib {
-
     return [[[NSBundle mainBundle] loadNibNamed:NSStringFromClass([self class]) owner:nil options:nil] lastObject];
 }
 

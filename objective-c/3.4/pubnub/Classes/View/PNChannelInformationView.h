@@ -19,5 +19,10 @@
 
 #pragma mark -
 
+/**
+ * Help to present view and hide it
+ */
+- (void)showAnimated:(BOOL)animated;
+- (void)hideAnimated:(BOOL)animated;
 
 @end

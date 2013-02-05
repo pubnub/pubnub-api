@@ -49,6 +49,8 @@
 // time frame selection date picker
 @property (nonatomic, strong) UIPopoverController *datePickerPopoverController;
 
+@property (nonatomic, strong) UIViewController *datePickerViewController;
+
 // Stores reference on history time frame dates
 @property (nonatomic, strong) NSDate *startDate;
 @property (nonatomic, strong) NSDate *endDate;
@@ -133,6 +135,13 @@
                [alertView addButtonWithTitle:@"OK"];
                [alertView show];
            }];
+    
+    if (isPad() == NO) {
+        UITapGestureRecognizer *singleFingerTap =
+        [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                action:@selector(handleSingleTap:)];
+        [self addGestureRecognizer:singleFingerTap];
+    }
 }
 
 - (void)prepareInterface {
@@ -163,7 +172,7 @@
 #pragma mark - Handler methods
 
 - (IBAction)closeButtonTapped:(id)sender {
-
+    
     [[PNObservationCenter defaultCenter] removeMessageHistoryProcessingObserver:self];
     [self removeFromSuperview];
 }
@@ -215,30 +224,42 @@
     [self updateInterface];
 }
 
+- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
+    [self.datePickerViewController.view removeFromSuperview];
+}
 
 #pragma mark - Misc methods
 
 - (void)showDatePicker {
-
+    [self.datePickerViewController.view removeFromSuperview];
+    self.datePickerViewController = nil;
 
     UIDatePicker *datePicker = [[UIDatePicker alloc] init];
     datePicker.datePickerMode = UIDatePickerModeDateAndTime;
     [datePicker addTarget:self action:@selector(datePickerChangedValue:) forControlEvents:UIControlEventValueChanged];
 
 
-    UIViewController *datePickerViewController = [UIViewController new];
+    self.datePickerViewController = [UIViewController new];
     CGSize sizeInPopover = datePicker.bounds.size;
     sizeInPopover.height -= 44.0f;
-    datePickerViewController.view = datePicker;
-    datePickerViewController.contentSizeForViewInPopover = sizeInPopover;
+    self.datePickerViewController.view = datePicker;
+    self.datePickerViewController.contentSizeForViewInPopover = sizeInPopover;
 
     CGRect targetFrame = self.isConfiguringStartDate ? self.startDateTextField.frame : self.endDateTextField.frame;
-    self.datePickerPopoverController = [[UIPopoverController alloc] initWithContentViewController:datePickerViewController];
-    self.datePickerPopoverController.delegate = self;
-    [self.datePickerPopoverController presentPopoverFromRect:targetFrame
-                                       inView:self
-                     permittedArrowDirections:UIPopoverArrowDirectionUp
-                                     animated:YES];
+    
+    if (isPad()) {
+        self.datePickerPopoverController = [[UIPopoverController alloc] initWithContentViewController:self.datePickerViewController];
+        self.datePickerPopoverController.delegate = self;
+        [self.datePickerPopoverController presentPopoverFromRect:targetFrame
+                                                          inView:self
+                                        permittedArrowDirections:UIPopoverArrowDirectionUp
+                                                        animated:YES];
+    }else{
+        
+        self.datePickerViewController.view.frame = CGRectMake(targetFrame.origin.x, targetFrame.origin.y + 30, targetFrame.size.width, targetFrame.size.height);
+        [self addSubview:self.datePickerViewController.view];
+    }
+
 }
 
 
@@ -267,12 +288,14 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    
 
     [self endEditing:YES];
 
 
     return YES;
 }
+
 
 #pragma mark -
 

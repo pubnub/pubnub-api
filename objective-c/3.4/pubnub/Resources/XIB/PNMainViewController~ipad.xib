@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1536</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">11G63b</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
+		<string key="IBDocument.AppKitVersion">1138.51</string>
+		<string key="IBDocument.HIToolboxVersion">569.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">1930</string>
+			<string key="NS.object.0">1929</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBProxyObject</string>
@@ -145,7 +145,6 @@
 					<object class="IBUITableView" id="476789626">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">274</int>
-						<array class="NSMutableArray" key="NSSubviews"/>
 						<string key="NSFrame">{{774, 199}, {230, 336}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
@@ -168,10 +167,10 @@
 					<object class="IBUIView" id="58933458">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<array class="NSMutableArray" key="NSSubviews"/>
 						<string key="NSFrame">{{774, 543}, {230, 195}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">1</int>
@@ -1096,9 +1095,9 @@
 						<reference key="object" ref="1019145794"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="52657101"/>
-							<reference ref="655193854"/>
 							<reference ref="907459677"/>
 							<reference ref="760715815"/>
+							<reference ref="655193854"/>
 						</array>
 						<reference key="parent" ref="191373211"/>
 						<string key="objectName">Information section background</string>
@@ -1235,6 +1234,7 @@
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="addChannelButtonTapped:">id</string>
+						<string key="chattingDoneButtonTapped:">id</string>
 						<string key="clearButtonTapped:">id</string>
 						<string key="disconnectButtonTapped:">id</string>
 						<string key="getServerTimeButtonTapped:">id</string>
@@ -1243,6 +1243,10 @@
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="addChannelButtonTapped:">
 							<string key="name">addChannelButtonTapped:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="chattingDoneButtonTapped:">
+							<string key="name">chattingDoneButtonTapped:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="clearButtonTapped:">
@@ -1268,6 +1272,8 @@
 						<string key="channelParticipantsTableView">UITableView</string>
 						<string key="channelsBackgroundImageView">UIImageView</string>
 						<string key="channelsTableView">UITableView</string>
+						<string key="chattingDoneButton">UIButton</string>
+						<string key="chattingView">UIView</string>
 						<string key="clientIdentifierLabel">UILabel</string>
 						<string key="clientNetworkAddressLabel">UILabel</string>
 						<string key="disconnectButton">UIButton</string>
@@ -1299,6 +1305,14 @@
 						<object class="IBToOneOutletInfo" key="channelsTableView">
 							<string key="name">channelsTableView</string>
 							<string key="candidateClassName">UITableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="chattingDoneButton">
+							<string key="name">chattingDoneButton</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="chattingView">
+							<string key="name">chattingView</string>
+							<string key="candidateClassName">UIView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="clientIdentifierLabel">
 							<string key="name">clientIdentifierLabel</string>
@@ -1372,6 +1386,6 @@
 			<string key="NS.key.0">pubnub-large2.png</string>
 			<string key="NS.object.0">{157, 72}</string>
 		</object>
-		<string key="IBCocoaTouchPluginVersion">1930</string>
+		<string key="IBCocoaTouchPluginVersion">1929</string>
 	</data>
 </archive>

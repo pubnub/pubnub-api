@@ -102,6 +102,9 @@
 		79FFF67D167C919E008093F2 /* PNServiceChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 79FFF67B167C919E008093F2 /* PNServiceChannel.m */; };
 		79FFF696167E5C66008093F2 /* NSMutableArray+PNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 79FFF695167E5C66008093F2 /* NSMutableArray+PNAdditions.m */; };
 		79FFF697167E5C66008093F2 /* NSMutableArray+PNAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 79FFF695167E5C66008093F2 /* NSMutableArray+PNAdditions.m */; };
+		D91625C416BF5AA600B82CE6 /* PNChannelInformationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D91625C316BF5AA600B82CE6 /* PNChannelInformationView.xib */; };
+		D91625CB16BF952900B82CE6 /* PNChannelCreationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D91625CA16BF952800B82CE6 /* PNChannelCreationView.xib */; };
+		D91625CD16BF96C500B82CE6 /* PNChannelHistoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D91625CC16BF96C500B82CE6 /* PNChannelHistoryView.xib */; };
 		DD71B0D41C6F91C8F6B2814B /* PNChannelCreationView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD71B1B508470B43E7736E42 /* PNChannelCreationView.m */; };
 		DD71B0F1E730F603C87D37F2 /* PNChannelEventsResponseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = DD71B11B1A0A39CB79D9A732 /* PNChannelEventsResponseParser.m */; };
 		DD71B117970DB1A3EBD8C11D /* PNShadowEnableView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD71BBD22F323D67157AC023 /* PNShadowEnableView.m */; };
@@ -285,6 +288,9 @@
 		79FFF690167DC0E7008093F2 /* PNConnectionChannelDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNConnectionChannelDelegate.h; sourceTree = "<group>"; };
 		79FFF694167E5C66008093F2 /* NSMutableArray+PNAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+PNAdditions.h"; sourceTree = "<group>"; };
 		79FFF695167E5C66008093F2 /* NSMutableArray+PNAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+PNAdditions.m"; sourceTree = "<group>"; };
+		D91625C316BF5AA600B82CE6 /* PNChannelInformationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PNChannelInformationView.xib; sourceTree = "<group>"; };
+		D91625CA16BF952800B82CE6 /* PNChannelCreationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PNChannelCreationView.xib; sourceTree = "<group>"; };
+		D91625CC16BF96C500B82CE6 /* PNChannelHistoryView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PNChannelHistoryView.xib; sourceTree = "<group>"; };
 		DD71B11B1A0A39CB79D9A732 /* PNChannelEventsResponseParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PNChannelEventsResponseParser.m; sourceTree = "<group>"; };
 		DD71B14308BF96FAEB2EAEE2 /* UIDevice+PNAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+PNAdditions.h"; sourceTree = "<group>"; };
 		DD71B1626CEB819E2DCDAF5B /* PNOperationStatusResponseParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PNOperationStatusResponseParser.h; sourceTree = "<group>"; };
@@ -709,8 +715,11 @@
 				79DA9A3616AC0DC1000AE3A1 /* PNIdentificationViewController~ipad.xib */,
 				79EBCA2716AC578900E616E8 /* PNMainViewController.xib */,
 				79EBCA2A16AC579D00E616E8 /* PNMainViewController~ipad.xib */,
+				D91625C316BF5AA600B82CE6 /* PNChannelInformationView.xib */,
 				790E637916AD6AEB00CAD373 /* PNChannelInformationView~ipad.xib */,
+				D91625CA16BF952800B82CE6 /* PNChannelCreationView.xib */,
 				790E63BB16ADA98700CAD373 /* PNChannelCreationView~ipad.xib */,
+				D91625CC16BF96C500B82CE6 /* PNChannelHistoryView.xib */,
 				79EBCA7C16ADEC4400E616E8 /* PNChannelHistoryView~ipad.xib */,
 			);
 			path = XIB;
@@ -953,6 +962,9 @@
 				790E637A16AD6AEB00CAD373 /* PNChannelInformationView~ipad.xib in Resources */,
 				790E63BC16ADA98700CAD373 /* PNChannelCreationView~ipad.xib in Resources */,
 				79EBCA7D16ADEC4400E616E8 /* PNChannelHistoryView~ipad.xib in Resources */,
+				D91625C416BF5AA600B82CE6 /* PNChannelInformationView.xib in Resources */,
+				D91625CB16BF952900B82CE6 /* PNChannelCreationView.xib in Resources */,
+				D91625CD16BF96C500B82CE6 /* PNChannelHistoryView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

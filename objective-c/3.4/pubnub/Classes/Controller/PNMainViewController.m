@@ -90,6 +90,11 @@ static NSUInteger const inChatMessageLabelTag = 878;
 // Stores reference on message input text field
 @property (nonatomic, pn_desired_weak) IBOutlet UITextField *messageTextField;
 
+// Channel specific chatting view
+@property (nonatomic, pn_desired_weak) IBOutlet UIView *chattingView;
+
+// Chatting done button for iphone
+@property (nonatomic, pn_desired_weak) IBOutlet UIButton *chattingDoneButton;
 
 #pragma mark - Instance methods
 
@@ -104,6 +109,7 @@ static NSUInteger const inChatMessageLabelTag = 878;
 - (IBAction)addChannelButtonTapped:(id)sender;
 - (IBAction)getServerTimeButtonTapped:(id)sender;
 - (IBAction)sendMessageButtonTapped:(id)sender;
+- (IBAction)chattingDoneButtonTapped:(id)sender;
 
 /**
  * Handle "Clear" button tap to clear message input
@@ -275,11 +281,19 @@ static NSUInteger const inChatMessageLabelTag = 878;
                                         context:nil];
 }
 
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.channelInformationView hideAnimated:NO];
+}
+
 #pragma mark - Interface customization
 
 - (void)prepareInterface {
 
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"side-menu-background"]];
+    self.chattingView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"side-menu-background"]];
 
     UIImage *leftSectionImage = [UIImage imageNamed:@"left-section-header-background"];
     UIImage *stretchedLeftSectionImage = [leftSectionImage stretchableImageWithLeftCapWidth:10.0f
@@ -313,6 +327,7 @@ static NSUInteger const inChatMessageLabelTag = 878;
 
 
     self.channelInformationView.delegate = self;
+    
     [self updateMessageSendingInterfaceWithMessage:nil];
     [self showNoChannelAddedMessage];
 }
@@ -388,10 +403,10 @@ static NSUInteger const inChatMessageLabelTag = 878;
 }
 
 - (IBAction)disconnectButtonTapped:(id)sender {
-
+    
     [PubNub disconnect];
-
-
+    
+    
     [[PNObservationCenter defaultCenter] removeTimeTokenReceivingObserver:self];
     [[PNObservationCenter defaultCenter] removeClientConnectionStateObserver:self];
     [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:self];
@@ -399,8 +414,9 @@ static NSUInteger const inChatMessageLabelTag = 878;
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannel"];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannelChat"];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"subscribedChannelsList"];
-
+    
     [self dismissModalViewControllerAnimated:YES];
+
 }
 
 - (IBAction)addChannelButtonTapped:(id)sender {
@@ -434,6 +450,39 @@ static NSUInteger const inChatMessageLabelTag = 878;
     self.messageTextField.text = nil;
     [self updateMessageSendingInterfaceWithMessage:nil];
     [[PNDataManager sharedInstance] clearChatHistory];
+}
+
+- (void)accessoryButtonTapped:(UIButton *)button {
+    NSLog(@"accessoryBtn tapped");
+    
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    [UIView animateWithDuration:0.3f
+                          delay:0.0f
+                        options:UIViewAnimationOptionTransitionFlipFromLeft
+                     animations:^{
+                         [self.chattingView setFrame:CGRectMake(0.0f, 0.0f, screenSize.width, screenSize.height)];
+                     }
+                     completion:nil];
+}
+
+- (IBAction)chattingDoneButtonTapped:(id)sender
+{
+    if ([self.messageTextField isFirstResponder]) {
+        [self.messageTextField resignFirstResponder];
+    }
+    
+    if ([self.messageTextView isFirstResponder]) {
+        [self.messageTextView resignFirstResponder];
+    }
+    
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    [UIView animateWithDuration:0.3f
+                          delay:0.0f
+                        options:UIViewAnimationOptionTransitionFlipFromLeft
+                     animations:^{
+                         [self.chattingView setFrame:CGRectMake(screenSize.width, 0.0f, screenSize.width, screenSize.height)];
+                     }
+                     completion:nil];
 }
 
 
@@ -507,6 +556,7 @@ static NSUInteger const inChatMessageLabelTag = 878;
 
     [[self.messageTextView viewWithTag:inChatMessageLabelTag] removeFromSuperview];
 }
+
 
 
 #pragma mark - Channel subscription delegate methods
@@ -644,9 +694,19 @@ shouldChangeCharactersInRange:(NSRange)range
 
         PNChannel *channel = [[PNDataManager sharedInstance].subscribedChannelsList objectAtIndex:indexPath.row];
         cell.textLabel.text = channel.name;
+        
+        if (isPad() == NO) {
+            UIButton *accessoryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+            accessoryBtn.tag = indexPath.row;
+            accessoryBtn.frame = CGRectMake(self.channelsTableView.frame.size.width - 40, 0, 20, 20);
+            [accessoryBtn addTarget:self action:@selector(accessoryButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            [accessoryBtn setTitle:@">" forState:UIControlStateNormal];
+            [accessoryBtn setBackgroundColor:[UIColor clearColor]];
+            cell.accessoryView = accessoryBtn;
+        }
     }
-    else {
-
+    else if([tableView isEqual:self.channelParticipantsTableView]){
+        
         NSString *clientIdentifier = [[PNDataManager sharedInstance].currentChannel.participants objectAtIndex:indexPath.row];
         cell.textLabel.text = clientIdentifier;
     }
