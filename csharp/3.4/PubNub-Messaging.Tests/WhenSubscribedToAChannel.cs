@@ -19,9 +19,15 @@ namespace PubNubMessaging.Tests
         ManualResetEvent meSubscribeYesConnect = new ManualResetEvent(false);
         ManualResetEvent mePublish = new ManualResetEvent(false);
         ManualResetEvent meUnsubscribe = new ManualResetEvent(false);
+        ManualResetEvent meAlreadySubscribed = new ManualResetEvent(false);
+        ManualResetEvent meChannel1SubscribeConnect = new ManualResetEvent(false);
+        ManualResetEvent meChannel2SubscribeConnect = new ManualResetEvent(false);
 
         bool receivedMessage = false;
         bool receivedConnectMessage = false;
+        bool receivedAlreadySubscribedMessage = false;
+        bool receivedChannel1ConnectMessage = false;
+        bool receivedChannel2ConnectMessage = false;
 
         [Test]
         public void ThenSubscribeShouldReturnReceivedMessage()
@@ -73,6 +79,116 @@ namespace PubNubMessaging.Tests
             pubnub.EndPendingRequests();
 
             Assert.IsTrue(receivedConnectMessage, "WhenSubscribedToAChannel --> ThenSubscribeShouldReturnConnectStatus Failed");
+        }
+
+        [Test]
+        public void ThenMultiSubscribeShouldReturnConnectStatus()
+        {
+            receivedChannel1ConnectMessage = false;
+            receivedChannel2ConnectMessage = false;
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenSubscribedToAChannel";
+            unitTest.TestCaseName = "ThenMultiSubscribeShouldReturnConnectStatus";
+
+            pubnub.PubnubUnitTest = unitTest;
+
+
+            string channel1 = "my/channel1";
+            pubnub.Subscribe<string>(channel1, ReceivedChannelUserCallback, ReceivedChannel1ConnectCallback);
+            meChannel1SubscribeConnect.WaitOne(310 * 1000);
+
+            string channel2 = "my/channel2";
+            pubnub.Subscribe<string>(channel2, ReceivedChannelUserCallback, ReceivedChannel2ConnectCallback);
+            meChannel2SubscribeConnect.WaitOne(310 * 1000);
+
+            pubnub.EndPendingRequests();
+
+            Assert.IsTrue(receivedChannel1ConnectMessage && receivedChannel2ConnectMessage, "WhenSubscribedToAChannel --> ThenSubscribeShouldReturnConnectStatus Failed");
+        }
+
+        [Test]
+        public void ThenDuplicateChannelShouldReturnAlreadySubscribed()
+        {
+            receivedAlreadySubscribedMessage = false;
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenSubscribedToAChannel";
+            unitTest.TestCaseName = "ThenDuplicateChannelShouldReturnAlreadySubscribed";
+
+            pubnub.PubnubUnitTest = unitTest;
+
+
+            string channel = "my/channel";
+
+            pubnub.Subscribe<string>(channel, DummyMethodDuplicateChannelUserCallback1, DummyMethodDuplicateChannelConnectCallback);
+            Thread.Sleep(100);
+            
+            pubnub.Subscribe<string>(channel, DummyMethodDuplicateChannelUserCallback2, DummyMethodDuplicateChannelConnectCallback);
+            meAlreadySubscribed.WaitOne();
+
+            pubnub.EndPendingRequests();
+
+            Assert.IsTrue(receivedAlreadySubscribedMessage, "WhenSubscribedToAChannel --> ThenDuplicateChannelShouldReturnAlreadySubscribed Failed");
+        }
+
+        private void ReceivedChannelUserCallback(string result)
+        {
+        }
+
+        private void ReceivedChannel1ConnectCallback(string result)
+        {
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
+            {
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
+                {
+                    long statusCode = Int64.Parse(deserializedMessage[0].ToString());
+                    string statusMessage = (string)deserializedMessage[1];
+                    if (statusCode == 1 && statusMessage.ToLower() == "connected")
+                    {
+                        receivedChannel1ConnectMessage = true;
+                    }
+                }
+            }
+            meChannel1SubscribeConnect.Set();
+        }
+
+        private void ReceivedChannel2ConnectCallback(string result)
+        {
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
+            {
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
+                {
+                    long statusCode = Int64.Parse(deserializedMessage[0].ToString());
+                    string statusMessage = (string)deserializedMessage[1];
+                    if (statusCode == 1 && statusMessage.ToLower() == "connected")
+                    {
+                        receivedChannel2ConnectMessage = true;
+                    }
+                }
+            }
+            meChannel2SubscribeConnect.Set();
+        }
+
+        private void DummyMethodDuplicateChannelUserCallback1(string result)
+        {
+        }
+
+        private void DummyMethodDuplicateChannelUserCallback2(string result)
+        {
+            if (result.Contains("already subscribed"))
+            {
+                receivedAlreadySubscribedMessage = true;
+            }
+            meAlreadySubscribed.Set();
+        }
+
+        private void DummyMethodDuplicateChannelConnectCallback(string result)
+        {
         }
 
         private void ReceivedMessageCallbackWhenSubscribed(string result)

@@ -280,6 +280,51 @@ namespace PubNubMessaging.Tests
             return data;
         }
 
+        private Dictionary<string, string> LoadWhenSubscribedToAChannelThenMultiSubscribeShouldReturnConnectStatus()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+#if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
+            data.Add("/subscribe/demo/my%2Fchannel1/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel1/0/13559006802662768", "[[],\"13559006802662768\"]");
+
+            data.Add("/subscribe/demo/my%2Fchannel1,my%2Fchannel2/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel1,my%2Fchannel2/0/13559006802662768", "[[],\"13559006802662768\"]");
+#else
+            data.Add("/subscribe/demo/my/channel1/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel1/0/13559006802662768", "[[],\"13559006802662768\"]");
+
+            data.Add("/subscribe/demo/my/channel1,my/channel2/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel1,my/channel2/0/13559006802662768", "[[],\"13559006802662768\"]");
+#endif
+            return data;
+        }
+
+        private Dictionary<string, string> LoadWhenSubscribedToAChannelThenDuplicateChannelShouldReturnAlreadySubscribed()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+#if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
+            data.Add("/subscribe/demo/my%2Fchannel/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel/0/13559006802662768", "[[],\"13559006802662768\"]");
+#else
+            data.Add("/subscribe/demo/my/channel/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel/0/13559006802662768", "[[],\"13559006802662768\"]");
+#endif
+            return data;
+        }
+
+        private Dictionary<string, string> LoadWhenUnsubscribedToAChannelThenShouldReturnUnsubscribedMessage()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+#if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
+            data.Add("/subscribe/demo/my%2Fchannel/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my%2Fchannel/0/13559006802662768", "[[],\"13559006802662768\"]");
+#else
+            data.Add("/subscribe/demo/my/channel/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel/0/13559006802662768", "[[],\"13559006802662768\"]");
+#endif
+            return data;
+        }
+
         public string GetStubResponse(Uri request)
         {
             Dictionary<string, string> responseDictionary = null;
@@ -368,6 +413,22 @@ namespace PubNubMessaging.Tests
                             break;
                         case "ThenSubscribeShouldReturnConnectStatus":
                             responseDictionary = LoadWhenSubscribedToAChannelThenSubscribeShouldReturnConnectStatus();
+                            break;
+                        case "ThenMultiSubscribeShouldReturnConnectStatus":
+                            responseDictionary = LoadWhenSubscribedToAChannelThenMultiSubscribeShouldReturnConnectStatus();
+                            break;
+                        case "ThenDuplicateChannelShouldReturnAlreadySubscribed":
+                            responseDictionary = LoadWhenSubscribedToAChannelThenDuplicateChannelShouldReturnAlreadySubscribed();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case "WhenUnsubscribedToAChannel":
+                    switch (_testCaseName)
+                    {
+                        case "ThenShouldReturnUnsubscribedMessage":
+                            responseDictionary = LoadWhenUnsubscribedToAChannelThenShouldReturnUnsubscribedMessage();
                             break;
                         default:
                             break;

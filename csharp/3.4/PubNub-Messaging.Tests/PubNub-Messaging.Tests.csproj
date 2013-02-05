@@ -91,6 +91,7 @@
     <Compile Include="WhenDetailedHistoryIsRequested.cs" />
     <Compile Include="WhenGetRequestServerTime.cs" />
     <Compile Include="WhenSubscribedToAChannel.cs" />
+    <Compile Include="WhenUnsubscribedToAChannel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
