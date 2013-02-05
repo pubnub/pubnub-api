@@ -1,15 +1,18 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Pubnub-Messaging.Tests/PubnubUnitTest.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Pubnub-Messaging/GraphHeaderView.cs">
     <Files>
-      <File FileName="Pubnub-Messaging/Pubnub_MessagingSub.cs" Line="88" Column="58" />
-      <File FileName="Pubnub-Messaging/Pubnub_MessagingMain.cs" Line="13" Column="3" />
-      <File FileName="Pubnub-Messaging.Tests/PubnubUnitTest.cs" Line="9" Column="15" />
+      <File FileName="Pubnub-Messaging/Pubnub_MessagingMain.cs" Line="83" Column="56" />
+      <File FileName="Pubnub-Messaging/Pubnub_MessagingSub.cs" Line="77" Column="41" />
+      <File FileName="Pubnub-Messaging/GraphHeaderView.cs" Line="130" Column="14" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Pubnub-Messaging" expanded="True" selected="True" />
+          <Node name="Pubnub-Messaging" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="GraphHeaderView.cs" selected="True" />
+          </Node>
           <Node name="Pubnub-Messaging.Tests" expanded="True" />
         </State>
       </Pad>
@@ -20,6 +23,7 @@
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/MonoTouch/Pubnub-Messaging/Pubnub-Messaging/PubNub_Example.cs" line="77" />
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/MonoTouch/Pubnub-Messaging/Pubnub-Messaging/PubNub_Example.cs" line="143" />
       <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/MonoTouch/Pubnub-Messaging/Pubnub-Messaging/PubNub_Example.cs" line="154" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/MonoTouch/Pubnub-Messaging/Pubnub-Messaging/Pubnub_MessagingMain.cs" line="162" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

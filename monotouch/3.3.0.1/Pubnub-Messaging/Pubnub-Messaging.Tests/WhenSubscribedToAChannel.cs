@@ -1,14 +1,14 @@
 using System;
-using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Threading;
+using PubNubMessaging.Core;
 
 
-namespace PubNubTest
+namespace PubNubMessaging.Tests
 {
 	[TestFixture]
 	public class WhenSubscribedToAChannel
@@ -25,31 +25,28 @@ namespace PubNubTest
 				false);
 			string channel = "hello_world";
 			
-			Common cm = new Common();
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;
 			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenSubscribedToAChannel";
-			unitTest.TestCaseName = "ThenSubscribeShouldReturnReceivedMessage";
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenSubscribedToAChannel", "ThenSubscribeShouldReturnReceivedMessage");
 			
-			pubnub.PubnubUnitTest = unitTest;
-			
-			pubnub.subscribe (channel, cm.DisplayReturnMessage); 
+			pubnub.Subscribe (channel, common.DisplayReturnMessage); 
 			Thread.Sleep(3000);
-			string msg = "Test Message";
 			
-			pubnub.publish (channel, msg, cm.DisplayReturnMessageDummy);
+			string message = "Test Message";
+			
+			pubnub.Publish (channel, message, common.DisplayReturnMessageDummy);
 			//cm.deliveryStatus = false;
-			while (!cm.deliveryStatus);
-			if (cm.objResponse != null) {
-				IList<object> fields = cm.objResponse as IList<object>;
+			while (!common.DeliveryStatus);
+			if (common.Response != null) {
+				IList<object> fields = common.Response as IList<object>;
 				
 				if (fields [0] != null)
 				{
 					var myObjectArray = (from item in fields select item as object).ToArray ();
-					Console.WriteLine ("Resp:" + myObjectArray[0].ToString ());
-					Assert.AreEqual(msg, myObjectArray[0].ToString());
+					Console.WriteLine ("Response:" + myObjectArray[0].ToString ());
+					Assert.AreEqual(message, myObjectArray[0].ToString());
 				}
 				else
 				{
@@ -74,32 +71,29 @@ namespace PubNubTest
 				false);
 			string channel = "hello_world";
 			
-			Common cm = new Common();
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;
 			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenSubscribedToAChannel";
-			unitTest.TestCaseName = "ThenSubscribeShouldReturnReceivedMessageCipher";
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenSubscribedToAChannel", "ThenSubscribeShouldReturnReceivedMessageCipher");
 			
-			pubnub.PubnubUnitTest = unitTest;
-			
-			pubnub.subscribe (channel, cm.DisplayReturnMessage); 
+			pubnub.Subscribe (channel, common.DisplayReturnMessage); 
 			Thread.Sleep(3000);
-			string msg = "Test Message";
 			
-			pubnub.publish (channel, msg, cm.DisplayReturnMessageDummy);
+			string message = "Test Message";
 			
-			while (!cm.deliveryStatus);
+			pubnub.Publish (channel, message, common.DisplayReturnMessageDummy);
 			
-			if (cm.objResponse != null) {
-				IList<object> fields = cm.objResponse as IList<object>;
+			while (!common.DeliveryStatus);
+			
+			if (common.Response != null) {
+				IList<object> fields = common.Response as IList<object>;
 				
 				if (fields [0] != null)
 				{
 					var myObjectArray = (from item in fields select item as object).ToArray ();
-					Console.WriteLine ("Resp:" + myObjectArray[0].ToString ());
-					Assert.AreEqual(msg, myObjectArray[0].ToString());
+					Console.WriteLine ("Response:" + myObjectArray[0].ToString ());
+					Assert.AreEqual(message, myObjectArray[0].ToString());
 				}
 			}
 		}

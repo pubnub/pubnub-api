@@ -99,9 +99,15 @@
     <Compile Include="Pubnub.cs" />
     <Compile Include="Pubnub_MessagingMain.cs" />
     <Compile Include="Pubnub_MessagingSub.cs" />
-    <Compile Include="CustomMultilineElement.cs" />
     <Compile Include="InputAlertView.cs" />
     <Compile Include="DeviceHardware.cs" />
+    <Compile Include="Pubnub_MessagingSpeedTest.cs" />
+    <Compile Include="SdHeader.cs" />
+    <Compile Include="SdHeaderView.cs" />
+    <Compile Include="PerformanceHeader.cs" />
+    <Compile Include="PerformanceHeaderView.cs" />
+    <Compile Include="GraphHeader.cs" />
+    <Compile Include="GraphHeaderView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
