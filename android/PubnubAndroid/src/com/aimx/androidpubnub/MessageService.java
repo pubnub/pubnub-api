@@ -2,25 +2,26 @@ package com.aimx.androidpubnub;
 
 import java.util.HashMap;
 
+import android.app.NotificationManager;
+import android.os.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
 public class MessageService extends Service {
+
     Pubnub pubnub;
     MessageHandler mMessageHandler = new MessageHandler();
     MessageReceiver mMessageReceiver = new MessageReceiver();
     MessageListener mMessageListener = new MessageListener();
+    Integer serial = 1;
+    Boolean isForeground = true;
+
     private void broadcastMessage(Object message)//this method sends broadcast messages
     {
         Intent intent = new Intent("com.aimx.androidpubnub.MESSAGE");
@@ -39,9 +40,7 @@ public class MessageService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
     };
     
     // Callback Interface when a Message is Received
@@ -98,24 +97,47 @@ public class MessageService extends Service {
             return Boolean.TRUE;
         }
     }
-    
+
+    public class LocalBinder extends Binder {
+        MessageService getService() {
+            return MessageService.this;
+        }
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
+
+    private final IBinder mBinder = new LocalBinder();
+
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//        serial++;
+//        Log.e("onStartCommand", "Serial: " + serial.toString() + " Received start id " + startId + ": " + intent);
+//        // We want this service to continue running until it is explicitly
+//        // stopped, so return sticky.
+//        //return START_STICKY;
+//        return startId;
+//    }
     
     @Override
     public void onCreate() {
+        Log.e("onCreate", "Service created.");
         super.onCreate();
+
     }
 
     @Override
     public void onDestroy() {
+        Log.e("onDestroy", "Service destroyed.");
     }
     
     @Override
-    public void onStart(Intent intent, int startid) {
-        pubnub= ApplicationContext.getPubnub();
+    public void onStart(Intent intent, int startId) {
+        Log.e("onStart", "Serial: " + serial.toString() + " Received start id " + startId + ": " + intent);
+
+        pubnub = ApplicationContext.getPubnub();
         if(mMessageListener.getStatus() != Status.RUNNING){
                 mMessageListener.execute(intent.getStringExtra("channel"));
         }

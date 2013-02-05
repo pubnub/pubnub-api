@@ -24,12 +24,13 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     
-    String channel = "bbb";
+    String channel = "bb";
     IntentFilter messageFilter = new IntentFilter("com.aimx.androidpubnub.MESSAGE");
     MessageReceiver messageReceiver = new MessageReceiver();
     Button subscribe = null;
     Button unsubscribe = null;
     Boolean isSubscribed = false;
+    Boolean isForeground = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,13 +53,16 @@ public class MainActivity extends Activity {
             }
         });
 
-        subscribe();
+        if (isSubscribed == false) {
+            //subscribe();
+            isSubscribed = true;
+        }
     }
     
     @Override
     public void onPause() {
         if(isSubscribed){
-            //unsubscribe();
+            subscribe();
         }
         super.onPause();
     }
@@ -66,8 +70,14 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        startPushService(); //only really matters the first time you launch the app after you install.. otherwise, it will start on boot
+        if(isSubscribed){
+            subscribe();
+        }
+    }
 
+    @Override
+    public void onRestart() {
+        super.onResume();
         if(isSubscribed){
             subscribe();
         }
@@ -80,22 +90,14 @@ public class MainActivity extends Activity {
         }
         super.onDestroy();
     }
-    
-    private void startPushService(){
-        AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(this, PushAlarm.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
-                intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                (5 * 60 * 1000), pendingIntent); //wake up every 5 minutes to ensure service stays alive
-    }
 
     private void subscribe(){
         registerReceiver(messageReceiver, messageFilter);
-        Intent messageservice = new Intent(this, MessageService.class);
-        messageservice.putExtra("channel", channel);
-        ApplicationContext.getInstance().startService(messageservice);
+        Intent messageService = new Intent(this, MessageService.class);
+        messageService.putExtra("channel", channel);
+        messageService.putExtra("isForeground", isForeground);
+        ApplicationContext.getInstance().startService(messageService);
     }
     
     private void unsubscribe(){
@@ -114,6 +116,7 @@ public class MainActivity extends Activity {
 
         Intent messageservice = new Intent(this, MessageService.class);
         messageservice.putExtra("channel", channel);
+        messageservice.putExtra("isForeground", isForeground);
         stopService(messageservice);
     }
     
@@ -124,7 +127,9 @@ public class MainActivity extends Activity {
             try {
                 message = (JSONObject) new JSONTokener(intent.getStringExtra("message")).nextValue();
                 if(message != null){
-                    Toast.makeText(getApplicationContext(), "Received a message " +message.toString() , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "From the Foreground: "  + message.toString() , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Hey! Your PubNub app has received an update!  Switch back to it for all the latest goodness! But here is a sneak peak... "  + message.toString().substring(0,10) + "..." , Toast.LENGTH_LONG).show();
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
