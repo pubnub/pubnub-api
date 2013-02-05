@@ -51,12 +51,14 @@ public class MainActivity extends Activity {
                 isSubscribed = false;
             }
         });
+
+        subscribe();
     }
     
     @Override
     public void onPause() {
         if(isSubscribed){
-            unsubscribe();
+            //unsubscribe();
         }
         super.onPause();
     }
@@ -118,18 +120,18 @@ public class MainActivity extends Activity {
     public class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-//            JSONObject message = null;
-//            try {
-//                message = (JSONObject) new JSONTokener(intent.getStringExtra("message")).nextValue();
-//                if(message != null){
-//                    Toast.makeText(getApplicationContext(), "Received a message", Toast.LENGTH_LONG).show();
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+            JSONObject message = null;
+            try {
+                message = (JSONObject) new JSONTokener(intent.getStringExtra("message")).nextValue();
+                if(message != null){
+                    Toast.makeText(getApplicationContext(), "Received a message", Toast.LENGTH_LONG).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-            Object message = null;
-            message=intent.getStringExtra("message");
+//            Object message = null;
+//            message=intent.getStringExtra("message");
             if(message != null){
               Toast.makeText(getApplicationContext(), "Received a message : \n"+message.toString(), Toast.LENGTH_LONG).show();
             }
