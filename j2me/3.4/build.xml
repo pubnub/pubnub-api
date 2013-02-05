@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="PubnubApi">
+    <property environment="env"/>
+    <property name="srcPubnubApi.link" value="../../java/3.4/srcPubnubApi"/>
+    <property name="target" value="1.1"/>
+    <property name="source" value="1.3"/>
+    <path id="PubnubApi.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="libs/cldc_1.1.jar"/>
+        <pathelement location="libs/jsr177_1.0.jar"/>
+        <pathelement location="libs/midp_2.0.jar"/>
+        <pathelement location="libs/bouncycastle.jar"/>
+        <pathelement location="libs/jsonme.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="${srcPubnubApi.link}">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="create-jar, clean" name="build"/>
+	<target depends="build-project" name="create-jar">
+		<jar destfile="Pubnub-Microedition-3.4.jar"
+			basedir="bin"
+			includes="**/**"
+		/>
+	</target>
+	
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="${srcPubnubApi.link}"/>
+			<src path="src"/>
+            <classpath refid="PubnubApi.classpath"/>
+        </javac>
+    </target>
+</project>
