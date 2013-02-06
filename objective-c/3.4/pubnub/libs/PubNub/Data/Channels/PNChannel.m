@@ -99,9 +99,10 @@ static NSMutableDictionary *_channelsCache = nil;
     if (channel == nil) {
         
         channel = [[[self class] alloc] initWithName:channelName];
-        channel.observePresence = observePresence;
         [[[self class] channelsCache] setValue:channel forKey:channelName];
     }
+
+    channel.observePresence = observePresence;
     
     
     return channel;

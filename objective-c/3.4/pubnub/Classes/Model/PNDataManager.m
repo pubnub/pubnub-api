@@ -65,6 +65,7 @@ static PNDataManager *_sharedInstance = nil;
     // Check whether initialization successful or not
     if((self = [super init])) {
 
+        self.events = [NSMutableDictionary dictionary];
         self.messages = [NSMutableDictionary dictionary];
         self.configuration = [PNConfiguration defaultConfiguration];
         self.subscribedChannelsList = [NSMutableArray array];
@@ -110,6 +111,13 @@ static PNDataManager *_sharedInstance = nil;
 
 
                  weakSelf.currentChannelChat = [weakSelf.messages valueForKey:weakSelf.currentChannel.name];
+
+
+                 if (![channel isEqual:weakSelf.currentChannel]) {
+
+                     NSNumber *numberOfEvents = [weakSelf.events valueForKey:channel.name];
+                     [weakSelf.events setValue:@([numberOfEvents intValue]+1) forKey:channel.name];
+                 }
              }];
 
         [[PNObservationCenter defaultCenter] addPresenceEventObserver:self
@@ -140,6 +148,13 @@ static PNDataManager *_sharedInstance = nil;
 
 
                 weakSelf.currentChannelChat = [weakSelf.messages valueForKey:weakSelf.currentChannel.name];
+
+
+                if (![channel isEqual:weakSelf.currentChannel]) {
+
+                    NSNumber *numberOfEvents = [weakSelf.events valueForKey:channel.name];
+                    [weakSelf.events setValue:@([numberOfEvents intValue]+1) forKey:channel.name];
+                }
             }];
 
         [[PNObservationCenter defaultCenter] addClientConnectionStateObserver:self
@@ -167,6 +182,11 @@ static PNDataManager *_sharedInstance = nil;
     self.configuration.useSecureConnection = shouldEnableSSL;
 }
 
+- (NSUInteger)numberOfEventsForChannel:(PNChannel *)channel {
+
+    return [[self.events valueForKey:channel.name] intValue];
+}
+
 - (void)clearChatHistory {
 
     if (self.currentChannel != nil) {
@@ -177,6 +197,12 @@ static PNDataManager *_sharedInstance = nil;
 }
 
 - (void)setCurrentChannel:(PNChannel *)currentChannel {
+
+    if (currentChannel != nil) {
+
+        // Resetting events count on selected channel
+        [self.events removeObjectForKey:currentChannel.name];
+    }
 
     [self willChangeValueForKey:@"currentChannel"];
     _currentChannel = currentChannel;
@@ -190,6 +216,7 @@ static PNDataManager *_sharedInstance = nil;
 
         self.currentChannelChat = [self.messages valueForKey:self.currentChannel.name];
     }
+
 
     // Checking whether participants list not updated
     // for a while and send request to get participants list

@@ -21,6 +21,7 @@
 #import "PNChannelHistoryView.h"
 #import "PNPresenceEvent.h"
 #import "PNPresenceEvent+Protected.h"
+#import "PNChannelCell.h"
 
 
 #pragma mark Static
@@ -100,6 +101,7 @@ static NSUInteger const inChatMessageLabelTag = 878;
 
 #pragma mark - Handler methods
 
+- (IBAction)refreshButtonTapped:(id)sender;
 - (IBAction)disconnectButtonTapped:(id)sender;
 - (IBAction)addChannelButtonTapped:(id)sender;
 - (IBAction)getServerTimeButtonTapped:(id)sender;
@@ -124,10 +126,22 @@ static NSUInteger const inChatMessageLabelTag = 878;
 - (void)updateMessageSendingInterfaceWithMessage:(NSString *)message;
 
 /**
+ * Update subscribed channels list except current
+ */
+- (void)updateVisibleChannelsList;
+
+/**
+ * Update cells in specified table and exclude specified index path from it
+ */
+- (void)updateVisibleCellsInTable:(UITableView *)tableView excludingCellAtIndexPath:(NSIndexPath *)indexPath;
+
+/**
  * Will update interface to show current client connection
  * identifier and client network address
  */
 - (void)updateClientInformation;
+
+- (void)highlightCurrentChannel;
 
 /**
  * Allow to show/hide message which will ask user
@@ -205,59 +219,19 @@ static NSUInteger const inChatMessageLabelTag = 878;
                                                             [weakSelf updateClientInformation];
                                                         }];
 
-    [[PNObservationCenter defaultCenter] addChannelParticipantsListProcessingObserver:self
-                                                                            withBlock:^(NSArray *participants,
-                                                                                        PNChannel *channel,
-                                                                                        PNError *fetchError) {
-
-            NSString *alertMessage = nil;
-            if (!fetchError) {
-
-                alertMessage = [NSString stringWithFormat:@"%@ participants:\n%@",
-                                channel,
-                                [participants componentsJoinedByString:@"\n"]];
-            }
-            else {
-
-                alertMessage = [NSString stringWithFormat:@"Participants list request failed with error: %@",
-                                fetchError];
-            }
-
-            if (!fetchError) {
-
-                [weakSelf.channelParticipantsTableView reloadData];
-            }
-
-
-            UIAlertView *timeTokenAlertView = [UIAlertView new];
-            timeTokenAlertView.title = @"Participants list";
-            timeTokenAlertView.message = alertMessage;
-            [timeTokenAlertView addButtonWithTitle:@"OK"];
-            [timeTokenAlertView show];
-        }];
-
     [[PNObservationCenter defaultCenter] addPresenceEventObserver:self
                                                         withBlock:^(PNPresenceEvent *event) {
 
-            NSString *eventType = @"joined to";
-            if (event.type == PNPresenceEventLeave) {
+                    [weakSelf updateVisibleChannelsList];
+                    [weakSelf highlightCurrentChannel];
+                }];
 
-                eventType = @"leaved";
-            }
-            else if (event.type == PNPresenceEventTimeout) {
+    [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
+                                                         withBlock:^(PNMessage *message) {
 
-                eventType = @"kiked by timeout from";
-            }
-
-            UIAlertView *timeTokenAlertView = [UIAlertView new];
-            timeTokenAlertView.title = @"Presence event";
-            timeTokenAlertView.message = [NSString stringWithFormat:@"%@ %@ %@",
-                            event.uuid, eventType, event.channel.name];
-            [timeTokenAlertView addButtonWithTitle:@"OK"];
-            [timeTokenAlertView show];
-
-            [weakSelf.channelParticipantsTableView reloadData];
-        }];
+                                                             [weakSelf updateVisibleChannelsList];
+                                                             [weakSelf highlightCurrentChannel];
+                                                         }];
 
 
     // Subscribe on data manager properties change
@@ -330,6 +304,9 @@ static NSUInteger const inChatMessageLabelTag = 878;
     // Check whether current category changed or not
     if ([keyPath isEqualToString:@"currentChannel"]) {
 
+        [self updateVisibleChannelsList];
+        [self highlightCurrentChannel];
+
         [self.channelParticipantsTableView reloadData];
         shouldUpdateChat = YES;
 
@@ -363,11 +340,7 @@ static NSUInteger const inChatMessageLabelTag = 878;
             }
             else {
 
-                NSInteger channelIdx = [[[PNDataManager sharedInstance] subscribedChannelsList] indexOfObject:currentChannel];
-                NSIndexPath *currentChannelPath = [NSIndexPath indexPathForRow:channelIdx inSection:0];
-                [self.channelsTableView selectRowAtIndexPath:currentChannelPath
-                                                    animated:NO
-                                              scrollPosition:UITableViewScrollPositionNone];
+                [self highlightCurrentChannel];
             }
         }
         else {
@@ -387,6 +360,14 @@ static NSUInteger const inChatMessageLabelTag = 878;
     }
 }
 
+- (IBAction)refreshButtonTapped:(id)sender {
+
+    if ([[PNDataManager sharedInstance] currentChannel]) {
+
+        [PubNub requestParticipantsListForChannel:[[PNDataManager sharedInstance] currentChannel]];
+    }
+}
+
 - (IBAction)disconnectButtonTapped:(id)sender {
 
     [PubNub disconnect];
@@ -395,6 +376,8 @@ static NSUInteger const inChatMessageLabelTag = 878;
     [[PNObservationCenter defaultCenter] removeTimeTokenReceivingObserver:self];
     [[PNObservationCenter defaultCenter] removeClientConnectionStateObserver:self];
     [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:self];
+    [[PNObservationCenter defaultCenter] removePresenceEventObserver:self];
+    [[PNObservationCenter defaultCenter] removeMessageReceiveObserver:self];
     [[PNObservationCenter defaultCenter] removePresenceEventObserver:self];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannel"];
     [[PNDataManager sharedInstance] removeObserver:self forKeyPath:@"currentChannelChat"];
@@ -456,6 +439,27 @@ static NSUInteger const inChatMessageLabelTag = 878;
     self.messageTextField.enabled = isSubscribed && isChannelSelected;
 }
 
+- (void)updateVisibleChannelsList {
+
+    NSArray *channels = [[PNDataManager sharedInstance] subscribedChannelsList];
+    NSArray *visibleCells = [self.channelsTableView visibleCells];
+    [visibleCells enumerateObjectsUsingBlock:^(PNChannelCell *cell,
+                                               NSUInteger cellIdx,
+                                               BOOL *cellsEnumeratorStop) {
+
+        [cell updateForChannel:[channels objectAtIndex:cellIdx]];
+    }];
+}
+
+- (void)updateVisibleCellsInTable:(UITableView *)tableView excludingCellAtIndexPath:(NSIndexPath *)indexPath {
+
+    // Retrieving list of visible cells
+    NSMutableArray *visibleCellsIndexPath = [[tableView indexPathsForVisibleRows] mutableCopy];
+    [visibleCellsIndexPath removeObject:indexPath];
+
+    [tableView reloadRowsAtIndexPaths:visibleCellsIndexPath withRowAnimation:UITableViewRowAnimationNone];
+}
+
 - (void)updateClientInformation {
 
     NSString *identifier = [PubNub clientIdentifier];
@@ -467,6 +471,15 @@ static NSUInteger const inChatMessageLabelTag = 878;
     }
     self.clientNetworkAddressLabel.text = address;
     self.clientIdentifierLabel.text = identifier;
+}
+
+- (void)highlightCurrentChannel {
+
+    PNChannel *currentChannel = [[PNDataManager sharedInstance] currentChannel];
+    NSInteger channelIdx = [[[PNDataManager sharedInstance] subscribedChannelsList] indexOfObject:currentChannel];
+    NSIndexPath *currentChannelPath = [NSIndexPath indexPathForRow:channelIdx inSection:0];
+    [self.channelsTableView selectRowAtIndexPath:currentChannelPath
+                                        animated:NO scrollPosition:UITableViewScrollPositionNone];
 }
 
 - (void)showNoChannelAddedMessage {
@@ -624,32 +637,46 @@ shouldChangeCharactersInRange:(NSRange)range
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     // Initialize possible cell identifiers
-    static NSString *cellIdentifier = @"simpleCell";
+    static NSString *channelCellIdentifier = @"channelCell";
+    static NSString *participantCellIdentifier = @"participantCell";
+
+    NSString *targetCellIdentifier = channelCellIdentifier;
+    if ([tableView isEqual:self.channelParticipantsTableView]) {
+
+        targetCellIdentifier = participantCellIdentifier;
+    }
 
     // Try retrieve reference on cached instance
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    id cell = [tableView dequeueReusableCellWithIdentifier:targetCellIdentifier];
 
     // Check whether cached instance copy retrieved or not
     if(cell == nil) {
 
+        Class cellClass = [UITableViewCell class];
+        if ([targetCellIdentifier isEqualToString:channelCellIdentifier]) {
+
+            cellClass = [PNChannelCell class];
+        }
+
         // Create new cell instance copy
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier: cellIdentifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleGray;
-        cell.textLabel.textColor = [UIColor whiteColor];
-        cell.textLabel.shadowColor = [UIColor blackColor];
-        cell.textLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
+        cell = [[cellClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:targetCellIdentifier];
+        ((UITableViewCell *)cell).selectionStyle = UITableViewCellSelectionStyleGray;
+        ((UITableViewCell *)cell).textLabel.textColor = [UIColor whiteColor];
+        ((UITableViewCell *)cell).textLabel.shadowColor = [UIColor blackColor];
+        ((UITableViewCell *)cell).textLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
     }
 
     if ([tableView isEqual:self.channelsTableView]) {
 
         PNChannel *channel = [[PNDataManager sharedInstance].subscribedChannelsList objectAtIndex:indexPath.row];
-        cell.textLabel.text = channel.name;
+        [((PNChannelCell *)cell) updateForChannel:channel];
     }
     else {
 
         NSString *clientIdentifier = [[PNDataManager sharedInstance].currentChannel.participants objectAtIndex:indexPath.row];
-        cell.textLabel.text = clientIdentifier;
+        ((UITableViewCell *)cell).textLabel.text = clientIdentifier;
     }
+
 
     return cell;
 }
