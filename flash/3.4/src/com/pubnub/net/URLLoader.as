@@ -121,16 +121,19 @@ public class URLLoader extends EventDispatcher {
     protected function onSocketData(e:ProgressEvent):void {
         //trace('------onSocketData------' + socket.bytesAvailable);
         temp.clear();
+        Log.log("onSocketData start", Log.DEBUG);
         while (socketHasData()) {
             try {
                 // Load data from socket
                 socket.readBytes(temp);
                 temp.readBytes(answer, answer.bytesAvailable);
             } catch (e:Error) {
-                Log.log("onSocketData: " + e, Log.WARNING);
+                Log.log("onSocketData error: " + e, Log.DEBUG);
                 break;
             }
         }
+
+        Log.log("onSocketData end", Log.DEBUG);
 
         temp.position = 0;
         var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
@@ -301,8 +304,8 @@ public class URLLoader extends EventDispatcher {
                 //result.push({ name: name, value: value.replace(/^ /,"") });
                 result.add(name,value.replace(/^ /,""));
             } else {
-                trace("[(loader)URLResponse] Invalid header: " + line);
-                Log.log("[(loader)URLResponse] Invalid header: " + line, Log.ERROR);
+
+                Log.log("urlloader invalid header: " + line, Log.ERROR);
             }
         }
         return result;

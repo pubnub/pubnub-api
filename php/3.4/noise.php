@@ -55,8 +55,7 @@ $t = time();
 
 $publish_success = $pubnub->publish(array(
     'channel' => $channel,
-    #'message' => $t + ' Hello from PHP!'
-    'message' => serialize($message)
+    'message' => $t . " " . $message
 ));
 echo($t . " " .  $publish_success[0] . " " . $publish_success[1]);
 echo "\r\n";
