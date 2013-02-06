@@ -30,15 +30,26 @@ public class MessageService extends Service {
     }
     
     class MessageHandler extends Handler {
+
         @Override
         public void handleMessage(Message msg) {
-            try {
-                String m = msg.getData().getString("message");
-//                JSONObject message = new JSONObject(m);// (JSONObject) new JSONTokener(m).nextValue();
-//                System.out.println("message::"+message.toString());
-                broadcastMessage(m);
-            } catch (Exception e) {
-                e.printStackTrace();
+
+
+            Bundle data = msg.getData();
+
+            String dataString = data.getString("MyString");
+            String pnMessage = data.getString("message");
+
+            if (dataString == null) {
+                isForeground = false;
+            } else {
+                isForeground = true;
+            }
+
+            Log.e("MessageHandler", "isForeground: " + isForeground.toString() + " dataString : " + dataString + " pnMessage: " + pnMessage);
+
+            if (pnMessage != null) {
+                broadcastMessage(pnMessage);
             }
         }
     };
@@ -98,28 +109,13 @@ public class MessageService extends Service {
         }
     }
 
-    public class LocalBinder extends Binder {
-        MessageService getService() {
-            return MessageService.this;
-        }
-    }
+
+    final Messenger myMessenger = new Messenger(new MessageHandler());
 
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return myMessenger.getBinder();
     }
-
-    private final IBinder mBinder = new LocalBinder();
-
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId) {
-//        serial++;
-//        Log.e("onStartCommand", "Serial: " + serial.toString() + " Received start id " + startId + ": " + intent);
-//        // We want this service to continue running until it is explicitly
-//        // stopped, so return sticky.
-//        //return START_STICKY;
-//        return startId;
-//    }
     
     @Override
     public void onCreate() {
@@ -133,15 +129,31 @@ public class MessageService extends Service {
         Log.e("onDestroy", "Service destroyed.");
     }
     
-    @Override
-    public void onStart(Intent intent, int startId) {
-        Log.e("onStart", "Serial: " + serial.toString() + " Received start id " + startId + ": " + intent);
+//    @Override
+//    public void onStart(Intent intent, int startId) {
+//        serial++;
+//        Log.e("onStart", "Serial: " + serial.toString() + " Received start id " + startId + ": " + intent);
+//
+//        pubnub = ApplicationContext.getPubnub();
+//        if(mMessageListener.getStatus() != Status.RUNNING){
+//                mMessageListener.execute(intent.getStringExtra("channel"));
+//        }
+//    }
 
-        pubnub = ApplicationContext.getPubnub();
-        if(mMessageListener.getStatus() != Status.RUNNING){
-                mMessageListener.execute(intent.getStringExtra("channel"));
-        }
-            
-        
+     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        serial++;
+        Log.e("onStartCommand", "Serial: " + serial.toString() + " Received start id " + startId + ": " + intent);
+        // We want this service to continue running until it is explicitly
+        // stopped, so return sticky.
+
+         pubnub = ApplicationContext.getPubnub();
+         if (mMessageListener.getStatus() != Status.RUNNING) {
+             mMessageListener.execute(intent.getStringExtra("channel"));
+         }
+
+         return START_STICKY;
+        //return startId;
     }
+
 }

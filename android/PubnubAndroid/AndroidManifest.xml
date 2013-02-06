@@ -26,6 +26,13 @@
                 <action android:name="com.aimx.androidpubnub.MESSAGE"/>
             </intent-filter>
         </activity>
-        <service android:name=".MessageService"/>
+        <service android:name=".MessageService"
+                 android:process=":my_process" android:permission="">
+            <intent-filter>
+                <action android:name="com.aimx.androidpubnub.MessageService" >
+                </action>
+            </intent-filter>
+
+        </service>
     </application>
 </manifest>

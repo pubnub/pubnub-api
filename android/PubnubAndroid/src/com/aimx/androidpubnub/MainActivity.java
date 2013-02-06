@@ -3,6 +3,9 @@ package com.aimx.androidpubnub;
 import java.util.HashMap;
 import java.util.List;
 
+import android.content.*;
+import android.os.*;
+import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -12,11 +15,6 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -30,7 +28,11 @@ public class MainActivity extends Activity {
     Button subscribe = null;
     Button unsubscribe = null;
     Boolean isSubscribed = false;
-    Boolean isForeground = null;
+    Boolean isForeground = true;
+
+    Messenger myService = null;
+    boolean isBound;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,26 +55,54 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (isSubscribed == false) {
-            //subscribe();
-            isSubscribed = true;
-        }
+        Intent intent = new Intent("com.aimx.androidpubnub.MessageService");
+        bindService(intent, myConnection, Context.BIND_AUTO_CREATE);
+
     }
-    
+
+    private ServiceConnection myConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            myService = new Messenger(service);
+            isBound = true;
+            Log.e("ServiceConnection", "Service Established.");
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            myService = null;
+            isBound = false;
+            Log.e("ServiceConnection", "Service Disconnected.");
+        }
+    };
+
     @Override
     public void onPause() {
         if(isSubscribed){
             subscribe();
         }
+
+        Message msg = Message.obtain();
+        Bundle bundle = new Bundle();
+
+        bundle.putString("MyString", "onPause");
+        msg.setData(bundle);
+
+        try {
+            Log.e("MessageReceiver", "Sending Message!");
+            myService.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         super.onPause();
+
+        ApplicationContext.activityPaused();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(isSubscribed){
-            subscribe();
-        }
+
+        ApplicationContext.activityResumed();
     }
 
     @Override
@@ -123,12 +153,17 @@ public class MainActivity extends Activity {
     public class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+
             JSONObject message = null;
             try {
                 message = (JSONObject) new JSONTokener(intent.getStringExtra("message")).nextValue();
-                if(message != null){
-                        Toast.makeText(getApplicationContext(), "From the Foreground: "  + message.toString() , Toast.LENGTH_LONG).show();
-                        Toast.makeText(getApplicationContext(), "Hey! Your PubNub app has received an update!  Switch back to it for all the latest goodness! But here is a sneak peak... "  + message.toString().substring(0,10) + "..." , Toast.LENGTH_LONG).show();
+                if (message != null) {
+                    if (ApplicationContext.isActivityVisible()) {
+                        Toast.makeText(getApplicationContext(), "Foreground Message received: " + message.toString(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Background Message received: " + message.toString(), Toast.LENGTH_LONG).show();
+                    }
 
                 }
             } catch (JSONException e) {
