@@ -28,7 +28,6 @@ public class MainActivity extends Activity {
     Button subscribe = null;
     Button unsubscribe = null;
     Boolean isSubscribed = false;
-    Boolean isForeground = true;
 
     Messenger myService = null;
     boolean isBound;
@@ -80,19 +79,6 @@ public class MainActivity extends Activity {
             subscribe();
         }
 
-        Message msg = Message.obtain();
-        Bundle bundle = new Bundle();
-
-        bundle.putString("MyString", "onPause");
-        msg.setData(bundle);
-
-        try {
-            Log.e("MessageReceiver", "Sending Message!");
-            myService.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
         super.onPause();
 
         ApplicationContext.activityPaused();
@@ -126,7 +112,6 @@ public class MainActivity extends Activity {
         registerReceiver(messageReceiver, messageFilter);
         Intent messageService = new Intent(this, MessageService.class);
         messageService.putExtra("channel", channel);
-        messageService.putExtra("isForeground", isForeground);
         ApplicationContext.getInstance().startService(messageService);
     }
     
@@ -146,7 +131,6 @@ public class MainActivity extends Activity {
 
         Intent messageservice = new Intent(this, MessageService.class);
         messageservice.putExtra("channel", channel);
-        messageservice.putExtra("isForeground", isForeground);
         stopService(messageservice);
     }
     

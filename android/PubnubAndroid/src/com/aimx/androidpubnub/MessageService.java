@@ -19,8 +19,6 @@ public class MessageService extends Service {
     MessageHandler mMessageHandler = new MessageHandler();
     MessageReceiver mMessageReceiver = new MessageReceiver();
     MessageListener mMessageListener = new MessageListener();
-    Integer serial = 1;
-    Boolean isForeground = true;
 
     private void broadcastMessage(Object message)//this method sends broadcast messages
     {
@@ -34,19 +32,8 @@ public class MessageService extends Service {
         @Override
         public void handleMessage(Message msg) {
 
-
             Bundle data = msg.getData();
-
-            String dataString = data.getString("MyString");
             String pnMessage = data.getString("message");
-
-            if (dataString == null) {
-                isForeground = false;
-            } else {
-                isForeground = true;
-            }
-
-            Log.e("MessageHandler", "isForeground: " + isForeground.toString() + " dataString : " + dataString + " pnMessage: " + pnMessage);
 
             if (pnMessage != null) {
                 broadcastMessage(pnMessage);
@@ -128,32 +115,16 @@ public class MessageService extends Service {
     public void onDestroy() {
         Log.e("onDestroy", "Service destroyed.");
     }
-    
-//    @Override
-//    public void onStart(Intent intent, int startId) {
-//        serial++;
-//        Log.e("onStart", "Serial: " + serial.toString() + " Received start id " + startId + ": " + intent);
-//
-//        pubnub = ApplicationContext.getPubnub();
-//        if(mMessageListener.getStatus() != Status.RUNNING){
-//                mMessageListener.execute(intent.getStringExtra("channel"));
-//        }
-//    }
 
-     @Override
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        serial++;
-        Log.e("onStartCommand", "Serial: " + serial.toString() + " Received start id " + startId + ": " + intent);
-        // We want this service to continue running until it is explicitly
-        // stopped, so return sticky.
+        Log.e("onStartCommand", "Received start id " + startId + ": " + intent);
 
          pubnub = ApplicationContext.getPubnub();
          if (mMessageListener.getStatus() != Status.RUNNING) {
              mMessageListener.execute(intent.getStringExtra("channel"));
          }
-
-         return START_STICKY;
-        //return startId;
+         return startId;
     }
-
 }

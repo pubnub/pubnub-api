@@ -10,6 +10,9 @@ import android.util.Log;
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e("OnBootReceiver", "Hi, Mom!");
+        Log.e("OnBootReceiver", "BootReceiver is Running!");
+        Intent myIntent = new Intent(context, MainActivity.class);
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(myIntent);
     }
 }
