@@ -4,13 +4,8 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <Button android:text="Subscribe"
+    <Button android:text="Click to Start Listening For New Messages"
         android:id="@+id/subscribe"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-    
-    <Button android:text="Unsubscribe"
-        android:id="@+id/unsubscribe"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 

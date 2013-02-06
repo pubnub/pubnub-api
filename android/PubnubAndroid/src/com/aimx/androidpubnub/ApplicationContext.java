@@ -6,6 +6,14 @@ import android.util.Log;
 public class ApplicationContext extends Application
 {
 
+    public static boolean isSubscribed() {
+        return subscribed;
+    }
+
+    public static void justSubscribed() {
+        subscribed = true;
+    }
+
     public static boolean isActivityVisible() {
         return activityVisible;
     }
@@ -19,6 +27,8 @@ public class ApplicationContext extends Application
     }
 
     private static boolean activityVisible;
+    private static boolean subscribed = false;
+
 
     private static ApplicationContext instance = null;
     private static Pubnub pubnub = null;

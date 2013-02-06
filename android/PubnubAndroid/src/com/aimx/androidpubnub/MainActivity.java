@@ -22,11 +22,10 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     
-    String channel = "bb";
+    String channel = "string_demo";
     IntentFilter messageFilter = new IntentFilter("com.aimx.androidpubnub.MESSAGE");
     MessageReceiver messageReceiver = new MessageReceiver();
     Button subscribe = null;
-    Button unsubscribe = null;
     Boolean isSubscribed = false;
 
     Messenger myService = null;
@@ -43,14 +42,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 subscribe();
                 isSubscribed = true;
-            }
-        });
-        
-        unsubscribe = (Button) findViewById(R.id.unsubscribe);
-        unsubscribe.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                unsubscribe();
-                isSubscribed = false;
+                Toast.makeText(getApplicationContext(), "Subscribed messages will now appear regardless if application is in foreground or background.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -75,10 +67,6 @@ public class MainActivity extends Activity {
 
     @Override
     public void onPause() {
-        if(isSubscribed){
-            subscribe();
-        }
-
         super.onPause();
 
         ApplicationContext.activityPaused();
@@ -94,25 +82,27 @@ public class MainActivity extends Activity {
     @Override
     public void onRestart() {
         super.onResume();
-        if(isSubscribed){
-            subscribe();
-        }
     }
 
     @Override
     public void onDestroy() {
-        if(isSubscribed){
+        Log.e("onDestroy", "Destroying PubNub Example app.");
+        if(ApplicationContext.isSubscribed()){
             unsubscribe();
         }
+
         super.onDestroy();
     }
 
-
     private void subscribe(){
-        registerReceiver(messageReceiver, messageFilter);
-        Intent messageService = new Intent(this, MessageService.class);
-        messageService.putExtra("channel", channel);
-        ApplicationContext.getInstance().startService(messageService);
+
+        if (!ApplicationContext.isSubscribed()) {
+            registerReceiver(messageReceiver, messageFilter);
+            Intent messageService = new Intent(this, MessageService.class);
+            messageService.putExtra("channel", channel);
+            ApplicationContext.getInstance().startService(messageService);
+            ApplicationContext.justSubscribed();
+        }
     }
     
     private void unsubscribe(){
@@ -120,7 +110,7 @@ public class MainActivity extends Activity {
         try {
             unregisterReceiver(messageReceiver);
         } catch (Exception ex){
-            //just eat it
+            // Do something better
         }
     }
     
@@ -138,22 +128,28 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
+            StringBuilder displayText;
+            displayText = new StringBuilder();
 
-            JSONObject message = null;
+            String message = "";
+            String rawData = intent.getStringExtra("message");
+
             try {
-                message = (JSONObject) new JSONTokener(intent.getStringExtra("message")).nextValue();
-                if (message != null) {
-                    if (ApplicationContext.isActivityVisible()) {
-                        Toast.makeText(getApplicationContext(), "Foreground Message received: " + message.toString(), Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Background Message received: " + message.toString(), Toast.LENGTH_LONG).show();
-                    }
-
-                }
+                message = new JSONTokener(rawData).nextValue().toString();
             } catch (JSONException e) {
-                e.printStackTrace();
+                message = (String)rawData;
             }
 
+            if (message != null) {
+                if (ApplicationContext.isActivityVisible()) {
+                    displayText.append("Foreground Message received: ").append(message);
+                } else {
+                    displayText.append("Background Message received: ").append(message);
+                }
+
+                Toast.makeText(getApplicationContext(), displayText.toString(), Toast.LENGTH_LONG).show();
+
+            }
         }
     }
 }

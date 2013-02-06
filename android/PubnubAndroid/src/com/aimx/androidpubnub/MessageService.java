@@ -76,6 +76,12 @@ public class MessageService extends Service {
         public void disconnectCallback(String channel) {
              Log.e("DisconnectCallback","Disconnected to channel :" + channel);
         }
+
+        @Override
+        public boolean presenceCallback(String channel, Object data) {
+            Log.e("PresenceCallback","Presented to channel :" + channel);
+            return false;
+        }
     }
     
     class MessageListener extends AsyncTask<String, Void, Boolean> {
