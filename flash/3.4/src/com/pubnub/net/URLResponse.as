@@ -13,9 +13,6 @@ package com.pubnub.net {
 		private var _message:String;
 		private var _body:String;
 		private var _headers:Array;
-		private var _isChunked:Boolean;
-
-        private var _responseInProgress:Boolean;
 
 		public static const END_LINE:String = '\r\n';
         public static const RESPONSE_END_LINE:String = '\r\n\r\n';
@@ -46,71 +43,56 @@ package com.pubnub.net {
 			var ind:int = _rawData.indexOf(END_LINE + END_LINE);
 			var rawString:String = _rawData.substr(0, ind);
 
-            if (this._responseInProgress == false) {
-                _headers = getHeaders(rawString);
-            }
-
             var lines:/*String*/Array = rawString.split(END_LINE);
 			var firstLine:String = lines[0];
 
-			// Regex courtesy of ruby 1.8 Net::HTTP
-			// Example, HTTP/1.1 200 OK      
+            _headers = getHeaders(rawString);
+
+            // Regex courtesy of ruby 1.8 Net::HTTP
+			// Example, HTTP/1.1 200 OK
 
             trace("lines length " + lines.length);
             var matches:Array = firstLine.match(/\AHTTP(?:\/(\d+\.\d+))?\s+(\d\d\d)\s*(.*)\z/);
 
+            Log.log("*** Parsing response header ***", Log.DEBUG);
+
             if (matches) {
-
-                // This is a new response stream. So set inProgess, and whether its chunked.
-
-                _responseInProgress = true;
-                _isChunked = isChunked(_headers);
-
-                Log.log("*** HTTP Response started ***, isChunked = " + _isChunked.toString(), Log.DEBUG);
-
-
                 _version = matches[1];
                 _code = matches[2];
                 _message = matches[3];
 
             } else {
-
-                _version = matches[1];
-                _code = matches[2];
-                _message = matches[3];
-
-                Log.log("Continued response chunk: " + firstLine, Log.DEBUG);
+                try {
+                    _version = matches[1];
+                    _code = matches[2];
+                    _message = matches[3];
+                } catch (err:Error) {
+                    _version = "ERROR";
+                    _code = "ERROR";
+                    _message = firstLine;
+                }
             }
 
-            if (firstLine.match(RESPONSE_END_LINE)) {
-                _responseInProgress = false;
-                Log.log("*** HTTP Response ended ***", Log.DEBUG);
-
-
+                // Need to throw an error here
             }
-        }
+
 		
 		public function parseBody():void {
 
             if (isSuccess == false) {
 
-                Log.log("*** Bad error code received. code: " + _code + " body: " + _body + " headers: " + _headers, Log.DEBUG);
+                Log.log("*** Bad responses received. code: " + _code + " _version: " + _version + " _message: " + _message, Log.DEBUG);
                 return; // TODO: Need to add more logic to this.
             }
 
             _body = '';
-			var separator:String = RESPONSE_END_LINE;
-			var ind:int = _rawData.indexOf(separator);
-			var bodyRawStr:String = _rawData.substr(ind + separator.length, _rawData.length);
+
+            var ind:int = _rawData.indexOf(RESPONSE_END_LINE);
+			var bodyRawStr:String = _rawData.substr(ind + RESPONSE_END_LINE.length, _rawData.length);
 
             Log.log(Log.DEBUG, "raw data:\n" + _rawData);
 
-            if (bodyRawStr.match(RESPONSE_END_LINE)) {
-                _responseInProgress == false;
-                Log.log("*** HTTP Response ended ***", Log.DEBUG);
-            }
-
-			if (_isChunked) {
+			if (isChunked(_headers)) {
 
 				var lines:/*String*/Array = bodyRawStr.split(END_LINE);
 				var len:int = lines.length;
@@ -124,21 +106,20 @@ package com.pubnub.net {
 						i++;
 					}else {
 						// end of body data
-                        Log.log("Parsing Body Chunked returning:\n" + _body, Log.DEBUG);
+                        //Log.log("Parsing Body Chunked returning:\n" + _body, Log.DEBUG);
                         break;
 					}
 				}
 			}else {
                 Log.log("Parsing Body Content-length returning:\n" + bodyRawStr);
                 _body = bodyRawStr;
-                _responseInProgress == false;
                 Log.log("*** HTTP Response ended ***", Log.DEBUG);
             }
 		}
 
         //TODO: Refactor into URLLoader getEndSymbol
 
-		public function isChunked(headers:Array):Boolean{
+		static function isChunked(headers:Array):Boolean{
 			if (headers && headers.length > 1) {
 				for each(var o:Object  in headers) {
 					var name:String = String(o.name).toLowerCase();
@@ -151,14 +132,14 @@ package com.pubnub.net {
 			return false;
 		}
 		
-		public function getHeaders(str:String):Array {
+		static function getHeaders(str:String):Array {
 			var result:Array = [];
 			var ind:int = str.indexOf(END_LINE + END_LINE);
-			if (ind > -1) {
-				return null;
-			}
+//			if (ind > -1) {
+//				return null;
+//			}
 			var headerString:String = str.substr(0, ind);
-			var lines:/*String*/Array = str.split(END_LINE);
+			var lines:/*String*/Array = headerString.split(END_LINE);
 			var line:String;
 			for (var i:Number = 1; i < lines.length; i++) {
 				line = lines[i];
