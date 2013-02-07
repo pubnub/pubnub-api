@@ -166,6 +166,7 @@ static PNDataManager *_sharedInstance = nil;
                                                                 // error (which means that user disconnected client)
                                                                 if (!connected && !error) {
 
+                                                                    weakSelf.currentChannel = nil;
                                                                     weakSelf.subscribedChannelsList = [NSMutableArray array];
                                                                     weakSelf.messages = [NSMutableDictionary dictionary];
                                                                     weakSelf.currentChannelChat = @"";

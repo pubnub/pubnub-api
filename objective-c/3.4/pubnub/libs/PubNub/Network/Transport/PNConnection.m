@@ -13,7 +13,6 @@
 
 #import "PNConnection.h"
 #import <Security/SecureTransport.h>
-#import "NSMutableArray+PNAdditions.h"
 #import "PNResponseDeserialize.h"
 #import "PubNub+Protected.h"
 #import "PNWriteBuffer.h"
@@ -587,7 +586,8 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
             case ESHUTDOWN:     // Can't send after socket shutdown
             case EHOSTDOWN:     // Host is down
             case EHOSTUNREACH:  // Can't reach host
-            case ETIMEDOUT:
+            case ETIMEDOUT:     // Socket timeout
+            case EPIPE:         // Something went wrong and pipe was dameged
 
                 isConnectionIssue = YES;
                 break;
@@ -638,7 +638,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         [self configureReadStream:self.socketReadStream];
         [self configureWriteStream:self.socketWriteStream];
 
-        // Check whether sream successfully configured or configuration
+        // Check whether stream successfully configured or configuration
         // failed
         if (self.readStreamState != PNSocketStreamReady || self.writeStreamState != PNSocketStreamReady) {
 
