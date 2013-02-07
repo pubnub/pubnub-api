@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 
-import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -21,9 +20,10 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.BigInteger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.bouncycastle.util.encoders.Hex;
+import org.json.me.JSONArray;
+import org.json.me.JSONException;
+import org.json.me.JSONObject;
 
 /**
  * PubNub 3.1 Cryptography
@@ -43,13 +43,13 @@ public class PubnubCrypto {
 	public PubnubCrypto(String CIPHER_KEY) {
 		this.CIPHER_KEY = CIPHER_KEY;
 	}
-	
+
 	public void InitCiphers() throws UnsupportedEncodingException {
-		
-		key = Hex.encodeHexString(sha256(this.CIPHER_KEY.getBytes("UTF-8")))
-				.replace("-","").substring(0, 32).toLowerCase().getBytes("UTF-8");
+
+		key = new String(Hex.encode(sha256(this.CIPHER_KEY.getBytes("UTF-8"))), "UTF-8").
+				substring(0, 32).toLowerCase().getBytes("UTF-8");
 		IV = "0123456789012345".getBytes("UTF-8");
-		
+
 		encryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(
 				new AESEngine()));
 

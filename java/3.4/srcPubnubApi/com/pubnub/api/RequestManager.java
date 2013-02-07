@@ -1,13 +1,6 @@
 package com.pubnub.api;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.Vector;
-
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.log4j.Logger;
 
 import com.pubnub.http.HttpRequest;
 import com.pubnub.httpclient.HttpClient;
@@ -20,8 +13,8 @@ abstract class Worker implements Runnable {
 	private Thread thread;
 	protected HttpClient httpclient;
 
-	protected static Logger log = Logger.getLogger(
-			RequestManager.class.getName());
+	protected static Logger log = new Logger(
+			RequestManager.class);
 
 	public Thread getThread() {
 		return thread;
@@ -36,6 +29,7 @@ abstract class Worker implements Runnable {
 	}
 
 	void interruptWorker() {
+		System.out.println("Interrupting : " + thread.getName() + " : " + thread.hashCode() );
 		thread.interrupt();
 	}
 
@@ -53,7 +47,7 @@ abstract class Worker implements Runnable {
 			httpclient.setConnectionTimeout(timeout);
 		}
 	}
-	
+
 	public void setHeader(String key, String value) {
 		httpclient.setHeader(key, value);
 	}
@@ -76,7 +70,7 @@ abstract class Worker implements Runnable {
 			while (!_die) {
 
 				synchronized (_requestQueue) {
-					
+
 					if (_requestQueue.size() != 0) {
 						hreq = (HttpRequest) _requestQueue.firstElement();
 						_requestQueue.removeElementAt(0);
@@ -103,10 +97,11 @@ class NonSubscribeWorker extends Worker {
 		super(_requestQueue);
 	}
 
-	@Override
 	void process(HttpRequest hreq) {
 		HttpResponse hresp = null;
 			try {
+				System.out.println(hreq.getUrl());
+				String s = hreq.getUrl();
 				log.debug(hreq.getUrl());
 				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
 			} catch (Exception e) {
@@ -114,8 +109,9 @@ class NonSubscribeWorker extends Worker {
 				hreq.getResponseHandler().handleError("Network Error " + e.toString());
 				return;
 			}
-		
-		if (hresp == null || !httpclient.checkResponseSuccess(hresp.getStatusCode())) {
+
+		//if (hresp == null || !httpclient.checkResponseSuccess(hresp.getStatusCode())) {
+		if (hresp == null) {
 			log.debug("Error in fetching url : " + hreq.getUrl());
 			hreq.getResponseHandler().handleError("Network Error");
 			return;
@@ -125,80 +121,15 @@ class NonSubscribeWorker extends Worker {
 
 }
 
-class SubscribeWorker extends Worker {
-	private int MAX_RETRIES = 5;
-	
-	private int retryInterval = 5000;
-	SubscribeWorker(Vector _requestQueue) {
-		super(_requestQueue);
-	}
 
-	@Override
-	void process(HttpRequest hreq) {
-		HttpResponse hresp = null;
-		int currentRetryAttempt = 1;
-		while (currentRetryAttempt <= MAX_RETRIES) {
-			try {
-				log.debug(hreq.getUrl());
-				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
-				if (hresp != null && httpclient.checkResponseSuccess(hresp.getStatusCode())) {
-					currentRetryAttempt = 1;
-					break;
-				}
-			}
-			catch (HttpHostConnectException e) {
-				log.trace("Retry Attempt : " + currentRetryAttempt + " Exception in Fetch : " + e.toString());
-				currentRetryAttempt++;
-			}
-			catch (IllegalStateException e) {
-				log.trace("Exception in Fetch : " + e.toString());
-				return;
-			}
-			catch (SocketException e){
-				log.trace("Exception in Fetch : " + e.toString());
-				return;
-			}
-			catch (SocketTimeoutException e){
-				log.trace("Exception in Fetch : " + e.toString());
-				currentRetryAttempt = MAX_RETRIES + 1;
-				break;
-			}
-			catch (NoHttpResponseException e){
-				log.trace("Exception in Fetch : " + e.toString());
-				return;
-			}
-			catch (Exception e) {
-				log.trace("Retry Attempt : " + currentRetryAttempt + " Exception in Fetch : " + e.toString());
-				currentRetryAttempt++;
-			}
-			
-			try {
-				Thread.sleep(retryInterval);
-			} catch (InterruptedException e) {
-			}
-		}
-		if (hresp == null) {
-			log.debug("Error in fetching url : " + hreq.getUrl());
-			if (currentRetryAttempt > MAX_RETRIES) {
-				log.trace("Exhausted number of retries");
-				hreq.getResponseHandler().handleTimeout();
-			} else
-				hreq.getResponseHandler().handleError("Network Error");
-			return;
-		}
-		log.debug(hresp.getResponse());
-		hreq.getResponseHandler().handleResponse(hresp.getResponse());
-
-	}
-
-}
 
 
 abstract class RequestManager {
 
 	private static int _maxWorkers = 1;
 	protected Vector _waiting = new Vector();
-	private Worker _workers[];
+	protected Worker _workers[];
+	protected String name;
 
 	public static int getWorkerCount() {
 		return _maxWorkers;
@@ -210,6 +141,7 @@ abstract class RequestManager {
 		if (maxCalls < 1) {
 			maxCalls = 1;
 		}
+		this.name = name;
 		_workers = new Worker[maxCalls];
 
 		for (int i = 0; i < maxCalls; ++i) {
@@ -235,7 +167,7 @@ abstract class RequestManager {
 		}
 	}
 
-	private void resetWorkersConnections() {
+	public void resetWorkersConnections() {
 		for (int i = 0; i < _workers.length; i++){
 			_workers[i].resetConnection();
 		}
@@ -246,10 +178,8 @@ abstract class RequestManager {
 			_workers[i].setHeader(key, value);
 		}
 	}
-	
-	public void clearRequestQueue() {
-		_waiting.clear();
-	}
+
+	public abstract void clearRequestQueue();
 
 
 	public void resetHttpManager() {
@@ -293,27 +223,25 @@ abstract class RequestManager {
 	}
 }
 
-class SubscribeManager extends RequestManager {
 
-	public SubscribeManager(String name) {
+abstract class  AbstractSubscribeManager extends RequestManager {
+
+	public AbstractSubscribeManager(String name) {
 		super(name);
 	}
 
-	@Override
 	public Worker getWorker() {
 		return new SubscribeWorker(_waiting);
 	}
 
 }
 
-class NonSubscribeManager extends RequestManager {
-	public NonSubscribeManager(String name) {
+abstract class AbstractNonSubscribeManager extends RequestManager {
+	public AbstractNonSubscribeManager(String name) {
 		super(name);
 	}
 
-	@Override
 	public Worker getWorker() {
 		return new NonSubscribeWorker(_waiting);
 	}
-
 }

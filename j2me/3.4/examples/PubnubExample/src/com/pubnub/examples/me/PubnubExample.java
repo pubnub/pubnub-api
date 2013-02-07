@@ -9,6 +9,7 @@ import com.pubnub.api.PubnubException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.microedition.lcdui.*;
+
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
@@ -27,6 +28,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	private Command detailedHistoryCommand;
 	private Form form;
 	private StringItem stringItem;
+	private int count;
 	String channel = "hello_world";
 	String[] channels = { "hello_world1", "hello_world2", "hello_world3",
 			"hello_world4" };
@@ -34,13 +36,17 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	public PubnubExample() {
 	}
 
-	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", "demo", false);
+	Pubnub _pubnub = new Pubnub("demo", "demo", "demo", false);
+	private Command disconnectAndResubscribeCommand;
+	private Command toggleResumeOnReconnectCommand;
+
 
 	/**
 	 * Performs an action assigned to the Mobile Device - MIDlet Started point.
 	 */
 	public void startMIDlet() {
 		switchDisplayable(null, getForm());
+		_pubnub.setResumeOnReconnect(true);
 	}
 
 	/**
@@ -87,9 +93,15 @@ public class PubnubExample extends MIDlet implements CommandListener {
 				presence();
 			} else if (command == detailedHistoryCommand) {
 				detailedHistory();
+			} else if (command == disconnectAndResubscribeCommand) {
+				disconnectAndResubscribe();
+			} else if (command == toggleResumeOnReconnectCommand) {
+				toggleResumeOnReconnect();
 			}
 		}
 	}
+
+
 
 	/**
 	 * Returns an initiliazed instance of exitCommand component.
@@ -120,9 +132,27 @@ public class PubnubExample extends MIDlet implements CommandListener {
 			form.addCommand(getHereNowCommand());
 			form.addCommand(getPresenceCommand());
 			form.addCommand(getDetailedHistoryCommand());
+			form.addCommand(getDisconnectAndResubscribe());
+			form.addCommand(getToggleResumeOnReconnect());
 			form.setCommandListener(this);
 		}
 		return form;
+	}
+
+	private Command getToggleResumeOnReconnect() {
+		if (toggleResumeOnReconnectCommand == null) {
+			toggleResumeOnReconnectCommand = new Command("ToggleResumeOnReconnect",
+					Command.ITEM, 0);
+		}
+		return toggleResumeOnReconnectCommand;
+	}
+
+	private Command getDisconnectAndResubscribe() {
+		if (disconnectAndResubscribeCommand == null) {
+			disconnectAndResubscribeCommand = new Command("DisconnectAndResubscribe",
+					Command.ITEM, 0);
+		}
+		return disconnectAndResubscribeCommand;
 	}
 
 	/**
@@ -257,7 +287,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	 * already started and initialize/starts or resumes the MIDlet.
 	 */
 	public void startApp() {
-		Pubnub.startHeartbeat(5000);
+
 		if (midletPaused) {
 			resumeMIDlet();
 		} else {
@@ -310,6 +340,16 @@ public class PubnubExample extends MIDlet implements CommandListener {
 		} catch (Exception e) {
 
 		}
+
+	}
+
+
+	public void disconnectAndResubscribe() {
+		_pubnub.disconnectAndResubscribe();
+	}
+
+	public void toggleResumeOnReconnect() {
+		_pubnub.setResumeOnReconnect(_pubnub.isResumeOnReconnect()?false:true);
 	}
 
 	public void publish() {
@@ -337,7 +377,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	public void subscribe() {
 		Hashtable args = new Hashtable(6);
-		args.put("channels", channels);
+		args.put("channel", channel + String.valueOf(++count));
 
 		try {
 			_pubnub.subscribe(args, new Callback() {
@@ -354,6 +394,9 @@ public class PubnubExample extends MIDlet implements CommandListener {
 				}
 
 				public void successCallback(String channel, Object message) {
+					notifyUser(channel + " " + message.toString());
+				}
+				public void errorCallback(String channel, Object message) {
 					notifyUser(channel + " " + message.toString());
 				}
 			});

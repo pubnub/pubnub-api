@@ -12,6 +12,7 @@ import javax.microedition.io.HttpConnection;
 public class HttpClientCore extends HttpClient {
 	private int requestTimeout = 310000;
 	private int connTimeout = 5000;
+	private HttpConnection  hc;
 
 	public HttpClientCore() {
 
@@ -20,6 +21,10 @@ public class HttpClientCore extends HttpClient {
 	public HttpClientCore(int requestTimeout, int connTimeout) {
 		this.setRequestTimeout(requestTimeout);
 		this.setConnTimeout(connTimeout);
+	}
+
+	public HttpClientCore(int requestTimeout) {
+		this.setRequestTimeout(requestTimeout);
 	}
 
 	public int getRequestTimeout() {
@@ -99,7 +104,7 @@ public class HttpClientCore extends HttpClient {
 
 		int follow = 5;
 		int rc = 0;
-		HttpConnection hc = null;
+		hc = null;
 		String response = null;
 
 		while (follow-- > 0) {
@@ -153,5 +158,37 @@ public class HttpClientCore extends HttpClient {
 		response = readResponse(hc);
 		hc.close();
 		return new HttpResponse(rc, response);
+	}
+
+	public int getConnectionTimeout() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void setConnectionTimeout(int connectionTimeout) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void abortCurrentRequest() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public boolean checkResponseSuccess(int rc) {
+		return (rc == HttpConnection.HTTP_OK);
+	}
+
+	public void shutdown() {
+		try {
+			if (hc != null) {
+				System.out.println("hc close");
+				hc.close();
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

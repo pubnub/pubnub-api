@@ -18,8 +18,6 @@ public class PubnubExample extends UiApplication
     public static void main(String[] args)
     {
 
-    	Pubnub.startHeartbeat(5000);
-
         // Create a new instance of the application and make the currently
         // running thread the application's event dispatch thread.
         PubnubExample theApp = new PubnubExample();
