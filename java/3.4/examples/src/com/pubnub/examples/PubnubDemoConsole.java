@@ -21,7 +21,7 @@ public class PubnubDemoConsole {
 	}
 	private void publish(String channel) {
 		System.out.println("Enter the message for publish. To exit loop enter QUIT");
-		String message ; 
+		String message ;
 		while (!(message = reader.nextLine()).equalsIgnoreCase("QUIT")) {
 			Hashtable args = new Hashtable(2);
 			args.put("channel", channel); // Channel Name
@@ -126,12 +126,12 @@ public class PubnubDemoConsole {
 			}
 		});
 	}
-	
+
 	private void disconnectAndResubscribe() {
 		pubnub.disconnectAndResubscribe();
-		
+
 	}
-	
+
 	public void startDemo() {
 		reader = new Scanner(System.in);
 		System.out.println("HINT:\tTo test Re-connect and catch-up");
@@ -161,7 +161,7 @@ public class PubnubDemoConsole {
 
 
         displayMenuOptions();
-		
+
 		String channelName = null;
 		int command = 0;
 		while ((command = reader.nextInt()) != 9 ){
@@ -176,65 +176,75 @@ public class PubnubDemoConsole {
 				subscribe(channelName);
 				System.out.println("Subscribed to following channels: ");
 				System.out.println(PubnubUtil.joinString(pubnub.getSubscribedChannelsArray(), " : "));
-                displayMenuOptions();
 				break;
 			case 2:
 				System.out.println("Publish: Enter Channel name");
 				channelName = reader.nextLine();
 				publish(channelName);
-                displayMenuOptions();
 				break;
 			case 3:
 				System.out.println("Presence: Enter Channel name");
 				channelName = reader.nextLine();
 				presence(channelName);
-                displayMenuOptions();
 				break;
 			case 4:
 				System.out.println("Detailed History: Enter Channel name");
 				channelName = reader.nextLine();
 				detailedHistory(channelName);
-                displayMenuOptions();
 				break;
 			case 5:
 				System.out.println("Here Now : Enter Channel name");
 				channelName = reader.nextLine();
 				hereNow(channelName);
-                displayMenuOptions();
 				break;
 			case 6:
 				System.out.println("Unsubscribe: Enter Channel name");
 				channelName = reader.nextLine();
 				unsubscribe(channelName);
-                displayMenuOptions();
 				break;
 			case 7:
 				System.out.println("UnsubscribePresence : Enter Channel name");
 				channelName = reader.nextLine();
 				unsubscribePresence(channelName);
-                displayMenuOptions();
 				break;
 			case 8:
 				time();
-                displayMenuOptions();
 				break;
 			case 10:
 				disconnectAndResubscribe();
-                displayMenuOptions();
 				break;
 			case 11:
 				pubnub.setResumeOnReconnect(pubnub.isResumeOnReconnect()?false:true);
 				System.out.println("RESUME ON RECONNECT : " + pubnub.isResumeOnReconnect() );
-                displayMenuOptions();
 				break;
-			default: 
+			case 12:
+				System.out.println("Set Max Retries: Enter max retries");
+				int maxRetries = reader.nextInt();
+				reader.nextLine();
+				setMaxRetries(maxRetries);
+				break;
+			case 13:
+				System.out.println("Set Retry Interval: Enter retry interval");
+				int retryInterval = reader.nextInt();
+				reader.nextLine();
+				setRetryInterval(retryInterval);
+				break;
+			default:
 				System.out.println("Invalid Input");
-                displayMenuOptions();
 			}
+			displayMenuOptions();
 		}
 		System.out.println("Exiting");
 		pubnub.shutdown();
 
+	}
+
+	private void setMaxRetries(int maxRetries) {
+		pubnub.setMaxRetries(maxRetries);
+	}
+
+	private void setRetryInterval(int retryInterval) {
+		pubnub.setRetryInterval(retryInterval);
 	}
 
     private void displayMenuOptions() {
@@ -249,6 +259,8 @@ public class PubnubDemoConsole {
         System.out.println("ENTER 9  FOR EXIT OR QUIT");
         System.out.println("ENTER 10 FOR Disconnect-And-Resubscribe");
         System.out.println("ENTER 11 FOR Toggle Resume On Reconnect");
+        System.out.println("ENTER 12 FOR Setting MAX Retries");
+        System.out.println("ENTER 13 FOR Setting Retry Interval");
         System.out.println("\nENTER 0 to display this menu");
     }
 

@@ -40,8 +40,8 @@ public class Pubnub {
 	private String UUID = null;
 	private Subscriptions subscriptions;
 
-	private RequestManager subscribeManager;
-	private RequestManager nonSubscribeManager;
+	private SubscribeManager subscribeManager;
+	private NonSubscribeManager nonSubscribeManager;
 	private String _timetoken = "0";
 	private String _saved_timetoken = "0";
 
@@ -57,6 +57,14 @@ public class Pubnub {
 
 	public boolean isResumeOnReconnect() {
 		return resumeOnReconnect;
+	}
+
+	public void setRetryInterval(int retryInterval) {
+		subscribeManager.setRetryInterval(retryInterval);
+	}
+
+	public void setMaxRetries(int maxRetries) {
+		subscribeManager.setMaxRetries(maxRetries);
 	}
 
 	private String getOrigin() {
