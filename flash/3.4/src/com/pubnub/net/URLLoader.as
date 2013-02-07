@@ -25,7 +25,7 @@ public class URLLoader extends EventDispatcher {
     public static const END_LINE:String = '\r\n';
 
 
-    public static const END_SYMBOL_CHUNKED:String = '0\r\n';
+    public static const END_SYMBOL_CHUNKED:RegExp = /0\r\n\r\n/;
     public static const END_SYMBOL:String = '\r\n';
     static private const pattern:RegExp = new RegExp("(https):\/\/");
 
@@ -41,7 +41,7 @@ public class URLLoader extends EventDispatcher {
     protected var _contentEncoding:String;
     private var _isChunked:Boolean;
     private var _responseInProgress:Boolean;
-    private var _socketStarted:Boolean;
+    private var _alreadyCheckedForHeaders:Boolean;
 
     protected var answer:ByteArray = new ByteArray();
     protected var temp:ByteArray = new ByteArray();
@@ -127,78 +127,80 @@ public class URLLoader extends EventDispatcher {
 
     protected function onSocketData(e:ProgressEvent):void {
 
+        Log.log("********************************************************************* ", Log.DEBUG);
         Log.log("Entering onSocketData: " + e, Log.DEBUG);
 
         //trace('------onSocketData------' + socket.bytesAvailable);
         temp.clear();
         Log.log("onSocketData start", Log.DEBUG);
 
-        while (socketHasData()) {
+        _responseInProgress = true;
+        _alreadyCheckedForHeaders = false;
+
+        while (socketHasData() && _responseInProgress) {
             try {
                 // Load data from socket
                 socket.readBytes(temp);
                 temp.readBytes(answer, answer.bytesAvailable);
+
+                temp.position = 0;
+                var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
+
+                Log.log("THE DATA: " + tempStr, Log.DEBUG);
+
+                if ( _headers == null) {
+                    Log.log("Headers don't exist -- getting headers:", Log.DEBUG);
+                    _headers = URLResponse.getHeaders(tempStr);
+                }
+
+                if (_headers && (_headers != []) && (!_alreadyCheckedForHeaders)) {
+                    Log.log("Headers are present:", Log.DEBUG);
+                    Log.log(_headers.toString(), Log.DEBUG);
+
+                    if (URLResponse.isChunked(_headers)) {
+                        _contentEncoding = "chunked";
+                        Log.log("Setting to chunked", Log.DEBUG);
+                    } else {
+                        _contentEncoding = "cl";
+                        Log.log("Setting to CL", Log.DEBUG);
+                    }
+                } else if (!_alreadyCheckedForHeaders) {
+                    Log.log("Headers are not present.", Log.DEBUG);
+                }
+
+                // 2. Based on the headers, do we have the start and the end?
+
+                Log.log("Checking for EOF", Log.DEBUG);
+
+                if (_contentEncoding == "chunked") {
+                    if (tempStr.match(END_SYMBOL_CHUNKED)) {
+                        Log.log("Transfer completed: CHUNKED", Log.DEBUG);
+                        _responseInProgress = false;
+                    }
+                } else if (_contentEncoding == "cl") {
+                    if (tempStr.match(END_SYMBOL)) {   // Be sure to match on content-length size
+                        Log.log("Transfer completed: CL", Log.DEBUG);
+                        _responseInProgress = false;
+                    }
+                }
+
+
             } catch (e:Error) {
                 Log.log("onSocketData error: " + e, Log.DEBUG);
                 break;
             }
-
-            _socketStarted = true;
         }
 
         Log.log("onSocketData end", Log.DEBUG);
-
-        temp.position = 0;
-        var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
-
-        Log.log("THE DATA: " + tempStr, Log.DEBUG);
-
-        if (_responseInProgress == false) {
-            Log.log("Getting headers", Log.DEBUG);
-            _headers = URLResponse.getHeaders(tempStr);
-            Log.log("Setting responseInProgress to TRUE", Log.DEBUG);
-            _responseInProgress = true;
-
-        }
-
-        if (_headers && (_headers != [])) {
-            Log.log("Headers are present:", Log.DEBUG);
-            Log.log(_headers.toString(), Log.DEBUG);
-            _responseInProgress = true;
-
-            if (URLResponse.isChunked(_headers)) {
-                _contentEncoding = "chunked";
-                Log.log("Setting to chunked", Log.DEBUG);
-            } else {
-                _contentEncoding = "cl";
-                Log.log("Setting to CL", Log.DEBUG);
-            }
-        } else {
-            Log.log("Headers are not present.", Log.DEBUG);
-        }
-
-        // 2. Based on the headers, do we have the start and the end?
-
-        if (_contentEncoding == "chunked") {
-            if (tempStr.match(END_SYMBOL_CHUNKED)) {
-                Log.log("Transfer completed: CHUNKED", Log.DEBUG);
-                _responseInProgress = false;
-            }
-        } else if (_contentEncoding == "cl") {
-            if (tempStr.match(END_SYMBOL)) {   // Be sure to match on content-length size
-                Log.log("Transfer completed: CL", Log.DEBUG);
-                _responseInProgress = false;
-            }
-        }
 
         if (!_responseInProgress) {
             Log.log("Firing onResponse!", Log.DEBUG);
             onRESPONSE(answer)
             answer.clear();
+            _headers = null;
         } else {
             Log.log("Transfer in progress.", Log.DEBUG);
         }
-
     }
 
 

@@ -51,11 +51,12 @@ function getRandom()
 
 while (1) {
 $message = getRandom();
+#$message = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
 $t = time();
 
 $publish_success = $pubnub->publish(array(
     'channel' => $channel,
-    'message' => $t . " " . $message
+    'message' => $t . " " . $message . " END"
 ));
 echo($t . " " .  $publish_success[0] . " " . $publish_success[1]);
 echo "\r\n";
