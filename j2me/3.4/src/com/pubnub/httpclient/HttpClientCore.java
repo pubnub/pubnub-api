@@ -11,16 +11,16 @@ import javax.microedition.io.HttpConnection;
 
 public class HttpClientCore extends HttpClient {
 	private int requestTimeout = 310000;
-	private int connTimeout = 5000;
+	private int connectionTimeout = 5000;
 	private HttpConnection  hc;
 
 	public HttpClientCore() {
 
 	}
 
-	public HttpClientCore(int requestTimeout, int connTimeout) {
+	public HttpClientCore(int requestTimeout, int connectionTimeout) {
 		this.setRequestTimeout(requestTimeout);
-		this.setConnTimeout(connTimeout);
+		this.setConnectionTimeout(connectionTimeout);
 	}
 
 	public HttpClientCore(int requestTimeout) {
@@ -33,14 +33,6 @@ public class HttpClientCore extends HttpClient {
 
 	public void setRequestTimeout(int requestTimeout) {
 		this.requestTimeout = requestTimeout;
-	}
-
-	public int getConnTimeout() {
-		return connTimeout;
-	}
-
-	public void setConnTimeout(int connTimeout) {
-		this.connTimeout = connTimeout;
 	}
 
 	private String readResponse(HttpConnection hconn) {

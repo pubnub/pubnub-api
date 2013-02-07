@@ -15,7 +15,7 @@ class SubscribeWorker extends AbstractSubscribeWorker {
 	void process(HttpRequest hreq) {
 		HttpResponse hresp = null;
 		int currentRetryAttempt = 1;
-		while (currentRetryAttempt <= maxRetries) {
+		while (currentRetryAttempt <= maxRetries && !_die) {
 			try {
 				log.debug(hreq.getUrl());
 				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
@@ -29,12 +29,11 @@ class SubscribeWorker extends AbstractSubscribeWorker {
 				return;
 			}
 			catch (InterruptedIOException e) {
-				e.printStackTrace();
-				log.trace("IO Exception. Returning");
+				log.trace("Exception in Fetch : " + e.toString());
 				return;
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				log.trace("Exception in Fetch : " + e.toString());
 				log.trace("Retry Attempt : " + currentRetryAttempt + " Exception in Fetch : " + e.toString());
 				currentRetryAttempt++;
 			}
@@ -44,17 +43,18 @@ class SubscribeWorker extends AbstractSubscribeWorker {
 			} catch (InterruptedException e) {
 			}
 		}
-		if (hresp == null) {
-			log.debug("Error in fetching url : " + hreq.getUrl());
-			if (currentRetryAttempt > maxRetries) {
-				log.trace("Exhausted number of retries");
-				hreq.getResponseHandler().handleTimeout();
-			} else
-				hreq.getResponseHandler().handleError("Network Error");
-			return;
+		if (!_die) {
+			if (hresp == null) {
+				log.debug("Error in fetching url : " + hreq.getUrl());
+				if (currentRetryAttempt > maxRetries) {
+					log.trace("Exhausted number of retries");
+					hreq.getResponseHandler().handleTimeout();
+				} else
+					hreq.getResponseHandler().handleError("Network Error");
+				return;
+			}
+			log.debug(hresp.getResponse());
+			hreq.getResponseHandler().handleResponse(hresp.getResponse());
 		}
-		log.debug(hresp.getResponse());
-		hreq.getResponseHandler().handleResponse(hresp.getResponse());
-
 	}
 }

@@ -29,6 +29,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	private Form form;
 	private StringItem stringItem;
 	private int count;
+	private int recvCount;
 	String channel = "hello_world";
 	String[] channels = { "hello_world1", "hello_world2", "hello_world3",
 			"hello_world4" };
@@ -394,7 +395,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 				}
 
 				public void successCallback(String channel, Object message) {
-					notifyUser(channel + " " + message.toString());
+					notifyUser(recvCount++ + " " + channel + " " + message.toString());
 				}
 				public void errorCallback(String channel, Object message) {
 					notifyUser(channel + " " + message.toString());
