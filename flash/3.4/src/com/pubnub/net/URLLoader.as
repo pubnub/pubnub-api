@@ -146,7 +146,7 @@ public class URLLoader extends EventDispatcher {
                 temp.position = 0;
                 var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
 
-                Log.log("THE DATA: " + tempStr, Log.DEBUG);
+                //Log.log("THE DATA: " + tempStr, Log.DEBUG);
 
                 if ( _headers == null) {
                     Log.log("Headers don't exist -- getting headers:", Log.DEBUG);
