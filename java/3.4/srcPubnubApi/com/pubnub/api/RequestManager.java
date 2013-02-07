@@ -234,6 +234,18 @@ abstract class  AbstractSubscribeManager extends RequestManager {
 		return new SubscribeWorker(_waiting);
 	}
 
+	public void setMaxRetries(int maxRetries) {
+		for (int i = 0; i < _workers.length; i++){
+			((SubscribeWorker)_workers[i]).setMaxRetries(maxRetries);
+		}
+	}
+
+	public void setRetryInterval(int retryInterval) {
+		for (int i = 0; i < _workers.length; i++){
+			((SubscribeWorker)_workers[i]).setRetryInterval(retryInterval);
+		}
+	}
+
 }
 
 abstract class AbstractNonSubscribeManager extends RequestManager {
@@ -244,4 +256,23 @@ abstract class AbstractNonSubscribeManager extends RequestManager {
 	public Worker getWorker() {
 		return new NonSubscribeWorker(_waiting);
 	}
+}
+
+abstract class AbstractSubscribeWorker extends Worker {
+	protected int maxRetries = 5;
+	protected int retryInterval = 5000;
+
+	AbstractSubscribeWorker(Vector _requestQueue) {
+		super(_requestQueue);
+	}
+
+	public void setMaxRetries(int maxRetries) {
+		this.maxRetries = maxRetries;
+	}
+
+	public void setRetryInterval(int retryInterval) {
+		this.retryInterval = retryInterval;
+	}
+
+
 }

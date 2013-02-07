@@ -1,24 +1,27 @@
 package com.pubnub.api;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class Logger {
 	private Class _class;
-	private Logger log;
+	private Log log ;
 
 	public Logger(Class _class) {
 		this._class = _class;
-
+		log = LogFactory.getLog(this._class);
 	}
 
 	public void debug(String s) {
-		System.out.println(s);
+		log.debug(s);
 	}
 	public void trace(String s) {
-		System.out.println(s);
+		log.trace(s);
 	}
 	public void error(String s) {
-		System.out.println(s);
+		log.error(s);
 	}
 	public void info(String s) {
-		System.out.println(s);
+		log.info(s);
 	}
 }

@@ -109,7 +109,6 @@ public class HttpClientCore extends HttpClient {
 
 		while (follow-- > 0) {
 
-			System.out.println(url);
 			hc = (HttpConnection) Connector.open(url, Connector.READ_WRITE,
 					true);
 			hc.setRequestMethod(HttpConnection.GET);
@@ -187,8 +186,7 @@ public class HttpClientCore extends HttpClient {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 	}
 }

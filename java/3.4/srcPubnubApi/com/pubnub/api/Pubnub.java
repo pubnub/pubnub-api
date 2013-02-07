@@ -8,9 +8,9 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.util.SecureRandom;
 import org.bouncycastle.util.encoders.Hex;
-import org.json.me.JSONArray;
-import org.json.me.JSONException;
-import org.json.me.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.pubnub.crypto.PubnubCrypto;
 import com.pubnub.http.HttpRequest;
