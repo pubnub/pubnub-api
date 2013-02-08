@@ -22,12 +22,16 @@ namespace PubNubMessaging.Tests
         ManualResetEvent meAlreadySubscribed = new ManualResetEvent(false);
         ManualResetEvent meChannel1SubscribeConnect = new ManualResetEvent(false);
         ManualResetEvent meChannel2SubscribeConnect = new ManualResetEvent(false);
+        ManualResetEvent meSubscriberManyMessages = new ManualResetEvent(false);
 
         bool receivedMessage = false;
         bool receivedConnectMessage = false;
         bool receivedAlreadySubscribedMessage = false;
         bool receivedChannel1ConnectMessage = false;
         bool receivedChannel2ConnectMessage = false;
+        bool receivedManyMessages = false;
+
+        int numberOfReceivedMessages = 0;
 
         [Test]
         public void ThenSubscribeShouldReturnReceivedMessage()
@@ -132,6 +136,43 @@ namespace PubNubMessaging.Tests
             pubnub.EndPendingRequests();
 
             Assert.IsTrue(receivedAlreadySubscribedMessage, "WhenSubscribedToAChannel --> ThenDuplicateChannelShouldReturnAlreadySubscribed Failed");
+        }
+
+        [Test]
+        public void ThenSubscriberShouldBeAbleToReceiveManyMessages()
+        {
+            receivedManyMessages = false;
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenSubscribedToAChannel";
+            unitTest.TestCaseName = "ThenSubscriberShouldBeAbleToReceiveManyMessages";
+            pubnub.PubnubUnitTest = unitTest;
+
+            string channel = "my/channel";
+
+            pubnub.Subscribe<string>(channel, SubscriberDummyMethodForManyMessagesUserCallback, SubscribeDummyMethodForManyMessagesConnectCallback);
+            Thread.Sleep(1000);
+            meSubscriberManyMessages.WaitOne(310 * 1000);
+
+            pubnub.EndPendingRequests();
+
+            Assert.IsTrue(receivedManyMessages, "WhenSubscribedToAChannel --> ThenSubscriberShouldBeAbleToReceiveManyMessages Failed");
+        }
+
+        private void SubscriberDummyMethodForManyMessagesUserCallback(string result)
+        {
+            numberOfReceivedMessages = numberOfReceivedMessages + 1;
+            if (numberOfReceivedMessages >= 10)
+            {
+                receivedManyMessages = true;
+                meSubscriberManyMessages.Set();
+            }
+            
+        }
+
+        private void SubscribeDummyMethodForManyMessagesConnectCallback(string result)
+        {
         }
 
         private void ReceivedChannelUserCallback(string result)

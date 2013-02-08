@@ -1,4 +1,4 @@
-﻿//Build Date: Feb 05, 2013
+﻿//Build Date: Feb 08, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -1887,7 +1887,7 @@ namespace PubNubMessaging.Core
                         {
                             for (int messageIndex = 0; messageIndex < messageList.Count; messageIndex++)
                             {
-                                string currentChannel = (string)messageChannels[messageIndex];
+                                string currentChannel = (messageChannels.Length == 1) ? (string)messageChannels[0] : (string)messageChannels[messageIndex];
                                 List<object> itemMessage = new List<object>();
                                 if (currentChannel.Contains("-pnpres"))
                                 {

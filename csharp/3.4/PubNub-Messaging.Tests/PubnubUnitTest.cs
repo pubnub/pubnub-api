@@ -153,6 +153,20 @@ namespace PubNubMessaging.Tests
             return data;
         }
 
+        private Dictionary<string, string> LoadWhenAMessageIsPublishedThenComplexMessageObjectShouldReturnSuccessCodeAndInfo()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+#if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
+            data.Add("/publish/demo/demo/0/my%2Fchannel/0/%7B%22VersionID%22%3A3%2E4%2C%22Timetoken%22%3A13601488652764619%2C%22OperationName%22%3A%22Publish%22%2C%22Channels%22%3A%5B%22ch1%22%5D%2C%22DemoMessage%22%3A%7B%22DefaultMessage%22%3A%22%7E%21%40%23%24%25%5E%26%2A%28%29_%2B%20%601234567890-%3D%20qwertyuiop%5B%5D%5C%5C%20%7B%7D%7C%20asdfghjkl%3B%27%20%3A%5C%22%20zxcvbnm%2C%2E%2F%20%3C%3E%3F%20%22%7D%2C%22CustomMessage%22%3A%7B%22DefaultMessage%22%3A%22Welcome%20to%20the%20world%20of%20Pubnub%20for%20Publish%20and%20Subscribe%2E%20Hah%21%22%7D%2C%22SampleXml%22%3A%7B%22DemoRoot%22%3A%7B%22Person%22%3A%5B%7B%22%40ID%22%3A%22ABCD123%22%2C%22Name%22%3A%7B%22First%22%3A%22John%22%2C%22Middle%22%3A%22P%2E%22%2C%22Last%22%3A%22Doe%22%7D%2C%22Address%22%3A%7B%22Street%22%3A%22123%20Duck%20Street%22%2C%22City%22%3A%22New%20City%22%2C%22State%22%3A%22New%20York%22%2C%22Country%22%3A%22United%20States%22%7D%7D%2C%7B%22%40ID%22%3A%22ABCD456%22%2C%22Name%22%3A%7B%22First%22%3A%22Peter%22%2C%22Middle%22%3A%22Z%2E%22%2C%22Last%22%3A%22Smith%22%7D%2C%22Address%22%3A%7B%22Street%22%3A%2212%20Hollow%20Street%22%2C%22City%22%3A%22Philadelphia%22%2C%22State%22%3A%22Pennsylvania%22%2C%22Country%22%3A%22United%20States%22%7D%7D%5D%7D%7D%7D", "[1,\"Sent\",\"13602210467298480\"]");
+            data.Add("/v2/history/sub-key/demo/channel/my%252Fchannel", "[[{\"VersionID\":3.4,\"Timetoken\":13601488652764619,\"OperationName\":\"Publish\",\"Channels\":[\"ch1\"],\"DemoMessage\":{\"DefaultMessage\":\"~!@#$%^&*()_+ `1234567890-= qwertyuiop[]\\\\ {}| asdfghjkl;' :\\\" zxcvbnm,./ <>? \"},\"CustomMessage\":{\"DefaultMessage\":\"Welcome to the world of Pubnub for Publish and Subscribe. Hah!\"},\"SampleXml\":{\"DemoRoot\":{\"Person\":[{\"@ID\":\"ABCD123\",\"Name\":{\"First\":\"John\",\"Middle\":\"P.\",\"Last\":\"Doe\"},\"Address\":{\"Street\":\"123 Duck Street\",\"City\":\"New City\",\"State\":\"New York\",\"Country\":\"United States\"}},{\"@ID\":\"ABCD456\",\"Name\":{\"First\":\"Peter\",\"Middle\":\"Z.\",\"Last\":\"Smith\"},\"Address\":{\"Street\":\"12 Hollow Street\",\"City\":\"Philadelphia\",\"State\":\"Pennsylvania\",\"Country\":\"United States\"}}]}}}],13602274270564989,13602274270564989]");
+#else
+            data.Add("/publish/demo/demo/0/my/channel/0/%7B%22VersionID%22%3A3%2E4%2C%22Timetoken%22%3A13601488652764619%2C%22OperationName%22%3A%22Publish%22%2C%22Channels%22%3A%5B%22ch1%22%5D%2C%22DemoMessage%22%3A%7B%22DefaultMessage%22%3A%22%7E%21%40%23%24%25%5E%26%2A%28%29_%2B%20%601234567890-%3D%20qwertyuiop%5B%5D%5C%5C%20%7B%7D%7C%20asdfghjkl%3B%27%20%3A%5C%22%20zxcvbnm%2C%2E%2F%20%3C%3E%3F%20%22%7D%2C%22CustomMessage%22%3A%7B%22DefaultMessage%22%3A%22Welcome%20to%20the%20world%20of%20Pubnub%20for%20Publish%20and%20Subscribe%2E%20Hah%21%22%7D%2C%22SampleXml%22%3A%7B%22DemoRoot%22%3A%7B%22Person%22%3A%5B%7B%22%40ID%22%3A%22ABCD123%22%2C%22Name%22%3A%7B%22First%22%3A%22John%22%2C%22Middle%22%3A%22P%2E%22%2C%22Last%22%3A%22Doe%22%7D%2C%22Address%22%3A%7B%22Street%22%3A%22123%20Duck%20Street%22%2C%22City%22%3A%22New%20City%22%2C%22State%22%3A%22New%20York%22%2C%22Country%22%3A%22United%20States%22%7D%7D%2C%7B%22%40ID%22%3A%22ABCD456%22%2C%22Name%22%3A%7B%22First%22%3A%22Peter%22%2C%22Middle%22%3A%22Z%2E%22%2C%22Last%22%3A%22Smith%22%7D%2C%22Address%22%3A%7B%22Street%22%3A%2212%20Hollow%20Street%22%2C%22City%22%3A%22Philadelphia%22%2C%22State%22%3A%22Pennsylvania%22%2C%22Country%22%3A%22United%20States%22%7D%7D%5D%7D%7D%7D", "[1,\"Sent\",\"13602210467298480\"]");
+            data.Add("/v2/history/sub-key/demo/channel/my%252Fchannel", "[[{\"VersionID\":3.4,\"Timetoken\":13601488652764619,\"OperationName\":\"Publish\",\"Channels\":[\"ch1\"],\"DemoMessage\":{\"DefaultMessage\":\"~!@#$%^&*()_+ `1234567890-= qwertyuiop[]\\\\ {}| asdfghjkl;' :\\\" zxcvbnm,./ <>? \"},\"CustomMessage\":{\"DefaultMessage\":\"Welcome to the world of Pubnub for Publish and Subscribe. Hah!\"},\"SampleXml\":{\"DemoRoot\":{\"Person\":[{\"@ID\":\"ABCD123\",\"Name\":{\"First\":\"John\",\"Middle\":\"P.\",\"Last\":\"Doe\"},\"Address\":{\"Street\":\"123 Duck Street\",\"City\":\"New City\",\"State\":\"New York\",\"Country\":\"United States\"}},{\"@ID\":\"ABCD456\",\"Name\":{\"First\":\"Peter\",\"Middle\":\"Z.\",\"Last\":\"Smith\"},\"Address\":{\"Street\":\"12 Hollow Street\",\"City\":\"Philadelphia\",\"State\":\"Pennsylvania\",\"Country\":\"United States\"}}]}}}],13602274270564989,13602274270564989]");
+#endif
+
+            return data;
+        }
+
         private Dictionary<string, string> LoadWhenAMessageIsPublishedThenOptionalSecretKeyShouldBeProvidedInConstructor()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
@@ -312,6 +326,24 @@ namespace PubNubMessaging.Tests
             return data;
         }
 
+        private Dictionary<string, string> LoadWhenSubscribedToAChannelThenSubscriberShouldBeAbleToReceiveManyMessages()
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+#if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
+            data.Add("/subscribe/demo/my%2Fchannel/0/0", "[[],\"13602645380839594\"]");
+            data.Add("/subscribe/demo/my%2Fchannel/0/13602645380839594", "[[742730406,1853970548,1899616327,1043229779,1270838952,788288787,627599385,1517373321,1202317119,184893837],\"13602645382888692\"]");
+            data.Add("/subscribe/demo/my%2Fchannel/0/13602645382888692", "[[],\"13602645382888692\"]");
+            data.Add("/v2/presence/sub_key/demo/channel/my%2Fchannel/leave", "{\"action\": \"leave\"}");
+#else
+            data.Add("/subscribe/demo/my/channel/0/0", "[[],\"13602645380839594\"]");
+            data.Add("/subscribe/demo/my/channel/0/13602645380839594", "[[742730406,1853970548,1899616327,1043229779,1270838952,788288787,627599385,1517373321,1202317119,184893837],\"13602645382888692\"]");
+            data.Add("/subscribe/demo/my/channel/0/13602645382888692", "[[],\"13602645382888692\"]");
+            data.Add("/v2/presence/sub_key/demo/channel/my%252Fchannel/leave", "{\"action\": \"leave\"}");
+#endif
+            return data;
+        }
+
+
         private Dictionary<string, string> LoadWhenUnsubscribedToAChannelThenShouldReturnUnsubscribedMessage()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
@@ -366,6 +398,9 @@ namespace PubNubMessaging.Tests
                         case "ThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo":
                             responseDictionary = LoadWhenAMessageIsPublishedThenSecretKeyWithEncryptPublishShouldReturnSuccessCodeAndInfo();
                             break;
+                        case "ThenComplexMessageObjectShouldReturnSuccessCodeAndInfo":
+                            responseDictionary = LoadWhenAMessageIsPublishedThenComplexMessageObjectShouldReturnSuccessCodeAndInfo();
+                            break;
                         case "ThenOptionalSecretKeyShouldBeProvidedInConstructor":
                             responseDictionary = LoadWhenAMessageIsPublishedThenOptionalSecretKeyShouldBeProvidedInConstructor();
                             break;
@@ -419,6 +454,9 @@ namespace PubNubMessaging.Tests
                             break;
                         case "ThenDuplicateChannelShouldReturnAlreadySubscribed":
                             responseDictionary = LoadWhenSubscribedToAChannelThenDuplicateChannelShouldReturnAlreadySubscribed();
+                            break;
+                        case "ThenSubscriberShouldBeAbleToReceiveManyMessages":
+                            responseDictionary = LoadWhenSubscribedToAChannelThenSubscriberShouldBeAbleToReceiveManyMessages();
                             break;
                         default:
                             break;

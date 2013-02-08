@@ -12,6 +12,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using System.Xml;
 
 namespace PubNubMessaging.Tests
 {
@@ -27,6 +28,38 @@ namespace PubNubMessaging.Tests
     {
         public string foo = "hello!";
         public int[] bar = { 10, 20, 30, 40, 50 };
+    }
+
+    class PubnubDemoObject
+    {
+        public double VersionID = 3.4;
+        public long Timetoken = 13601488652764619;
+        public string OperationName = "Publish";
+        public string[] Channels = { "ch1" };
+        public PubnubDemoMessage DemoMessage = new PubnubDemoMessage();
+        public PubnubDemoMessage CustomMessage = new PubnubDemoMessage("Welcome to the world of Pubnub for Publish and Subscribe. Hah!");
+        public XmlDocument SampleXml = new PubnubDemoMessage().TryXmlDemo();
+    }
+
+    class PubnubDemoMessage
+    {
+        public string DefaultMessage = "~!@#$%^&*()_+ `1234567890-= qwertyuiop[]\\ {}| asdfghjkl;' :\" zxcvbnm,./ <>? ";
+
+        public PubnubDemoMessage()
+        {
+        }
+
+        public PubnubDemoMessage(string message)
+        {
+            DefaultMessage = message;
+        }
+
+        public XmlDocument TryXmlDemo()
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml("<DemoRoot><Person ID='ABCD123'><Name><First>John</First><Middle>P.</Middle><Last>Doe</Last></Name><Address><Street>123 Duck Street</Street><City>New City</City><State>New York</State><Country>United States</Country></Address></Person><Person ID='ABCD456'><Name><First>Peter</First><Middle>Z.</Middle><Last>Smith</Last></Name><Address><Street>12 Hollow Street</Street><City>Philadelphia</City><State>Pennsylvania</State><Country>United States</Country></Address></Person></DemoRoot>");
+            return xmlDocument;
+        }
     }
 
     [TestFixture]

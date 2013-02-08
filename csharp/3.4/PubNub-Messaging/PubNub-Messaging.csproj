@@ -159,8 +159,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Pubnub.cs" />
     <Compile Include="PubnubExample.cs" />
+    <Compile Include="Pubnub.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="v4.0\" />

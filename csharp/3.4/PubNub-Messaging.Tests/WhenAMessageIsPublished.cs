@@ -23,11 +23,14 @@ namespace PubNubMessaging.Tests
         ManualResetEvent mreEncryptObjectPublish = new ManualResetEvent(false);
         ManualResetEvent mreEncryptPublish = new ManualResetEvent(false);
         ManualResetEvent mreSecretEncryptPublish = new ManualResetEvent(false);
+        ManualResetEvent mreComplexObjectPublish = new ManualResetEvent(false);
+
         ManualResetEvent mreEncryptDetailedHistory = new ManualResetEvent(false);
         ManualResetEvent mreSecretEncryptDetailedHistory = new ManualResetEvent(false);
         ManualResetEvent mreUnencryptDetailedHistory = new ManualResetEvent(false);
         ManualResetEvent mreUnencryptObjectDetailedHistory = new ManualResetEvent(false);
         ManualResetEvent mreEncryptObjectDetailedHistory = new ManualResetEvent(false);
+        ManualResetEvent mreComplexObjectDetailedHistory = new ManualResetEvent(false);
 
         bool isPublished2 = false;
         bool isPublished3 = false;
@@ -42,18 +45,22 @@ namespace PubNubMessaging.Tests
         bool isSecretEncryptPublished = false;
         bool isEncryptDetailedHistory = false;
         bool isSecretEncryptDetailedHistory = false;
+        bool isComplexObjectPublished = false;
+        bool isComplexObjectDetailedHistory = false;
 
         long unEncryptPublishTimetoken = 0;
         long unEncryptObjectPublishTimetoken = 0;
         long encryptObjectPublishTimetoken = 0;
         long encryptPublishTimetoken = 0;
         long secretEncryptPublishTimetoken = 0;
+        long complexObjectPublishTimetoken = 0;
 
         const string messageForUnencryptPublish = "Pubnub Messaging API 1";
         const string messageForEncryptPublish = "漢語";
         const string messageForSecretEncryptPublish = "Pubnub Messaging API 2";
         string messageObjectForUnencryptPublish = "";
         string messageObjectForEncryptPublish = "";
+        string messageComplexObjectForPublish = "";
 
         [Test]
         public void ThenUnencryptPublishShouldReturnSuccessCodeAndInfo()
@@ -198,6 +205,34 @@ namespace PubNubMessaging.Tests
                 pubnub.DetailedHistory<string>(channel, -1, secretEncryptPublishTimetoken, -1, false, CaptureSecretEncryptDetailedHistoryCallback);
                 mreSecretEncryptDetailedHistory.WaitOne(310 * 1000);
                 Assert.IsTrue(isSecretEncryptDetailedHistory, "Unable to decrypt the successful Secret key Publish");
+            }
+        }
+
+        [Test]
+        public void ThenComplexMessageObjectShouldReturnSuccessCodeAndInfo()
+        {
+            isComplexObjectPublished = false;
+            Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+            PubnubUnitTest unitTest = new PubnubUnitTest();
+            unitTest.TestClassName = "WhenAMessageIsPublished";
+            unitTest.TestCaseName = "ThenComplexMessageObjectShouldReturnSuccessCodeAndInfo";
+            pubnub.PubnubUnitTest = unitTest;
+            string channel = "my/channel";
+            object message = new PubnubDemoObject();
+            messageComplexObjectForPublish = JsonConvert.SerializeObject(message);
+
+            pubnub.Publish<string>(channel, message, ReturnSuccessComplexObjectPublishCodeCallback);
+            mreComplexObjectPublish.WaitOne(310 * 1000);
+
+            if (!isComplexObjectPublished)
+            {
+                Assert.IsTrue(isComplexObjectPublished, "Complex Object Publish Failed");
+            }
+            else
+            {
+                pubnub.DetailedHistory<string>(channel, -1, complexObjectPublishTimetoken, -1, false, CaptureComplexObjectDetailedHistoryCallback);
+                mreComplexObjectDetailedHistory.WaitOne(310 * 1000);
+                Assert.IsTrue(isComplexObjectDetailedHistory, "Unable to match the successful unencrypt object Publish");
             }
         }
 
@@ -384,6 +419,45 @@ namespace PubNubMessaging.Tests
             }
 
             mreSecretEncryptDetailedHistory.Set();
+        }
+
+        private void ReturnSuccessComplexObjectPublishCodeCallback(string result)
+        {
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
+            {
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
+                {
+                    long statusCode = Int64.Parse(deserializedMessage[0].ToString());
+                    string statusMessage = (string)deserializedMessage[1];
+                    if (statusCode == 1 && statusMessage.ToLower() == "sent")
+                    {
+                        isComplexObjectPublished = true;
+                        complexObjectPublishTimetoken = Convert.ToInt64(deserializedMessage[2].ToString());
+                    }
+                }
+            }
+
+            mreComplexObjectPublish.Set();
+
+        }
+
+        private void CaptureComplexObjectDetailedHistoryCallback(string result)
+        {
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(result.Trim()))
+            {
+                object[] deserializedMessage = JsonConvert.DeserializeObject<object[]>(result);
+                if (deserializedMessage is object[])
+                {
+                    JArray message = deserializedMessage[0] as JArray;
+                    if (message != null && message[0].ToString(Formatting.None) == messageComplexObjectForPublish)
+                    {
+                        isComplexObjectDetailedHistory = true;
+                    }
+                }
+            }
+
+            mreComplexObjectDetailedHistory.Set();
         }
 
         [Test]
