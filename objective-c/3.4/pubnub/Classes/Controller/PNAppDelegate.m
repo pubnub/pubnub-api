@@ -17,6 +17,13 @@
 @interface PNAppDelegate ()
 
 
+#pragma mark - Properties
+
+// Stores whether client disconnected on network error
+// or not
+@property (nonatomic, assign, getter = isDisconnectedOnNetworkError) BOOL disconnectedOnNetworkError;
+
+
 #pragma mark - Instance methods
 
 - (void)initializePubNubClient;
@@ -125,16 +132,43 @@
 - (void)pubnubClient:(PubNub *)client willConnectToOrigin:(NSString *)origin {
     
     PNLog(PNLogGeneralLevel, self, @"PubNub client is about to connect to PubNub origin at: %@", origin);
+
+    if (self.isDisconnectedOnNetworkError) {
+
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Restoring connection"
+                                                        message:[NSString stringWithFormat:
+                                                                @"PubNub client will restore connection to %@ this will take some time",
+                                                                        origin]
+                                                       delegate:nil
+                                              cancelButtonTitle:nil
+                                              otherButtonTitles:@"OK", nil];
+        [alert show];
+    }
 }
 
 - (void)pubnubClient:(PubNub *)client didConnectToOrigin:(NSString *)origin {
     
     PNLog(PNLogGeneralLevel, self, @"PubNub client successfully connected to PubNub origin at: %@", origin);
+
+    if (self.isDisconnectedOnNetworkError) {
+
+        self.disconnectedOnNetworkError = NO;
+
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Connection restored"
+                                                        message:[NSString stringWithFormat:
+                                                                @"PubNub client restored connection to %@", origin]
+                                                       delegate:nil
+                                              cancelButtonTitle:nil
+                                              otherButtonTitles:@"OK", nil];
+        [alert show];
+    }
 }
 
 - (void)pubnubClient:(PubNub *)client connectionDidFailWithError:(PNError *)error {
     
     PNLog(PNLogGeneralLevel, self, @"PubNub client was unable to connect because of error: %@", error);
+
+    self.disconnectedOnNetworkError = error.code == kPNClientConnectionFailedOnInternetFailureError;
 }
 
 - (void)pubnubClient:(PubNub *)client willDisconnectWithError:(PNError *)error {
@@ -142,9 +176,11 @@
     PNLog(PNLogGeneralLevel, self, @"PubNub clinet will close connection because of error: %@", error);
 }
 
-- (void)pubnubClient:(PubNub *)client didDisconnectWithError:(PNError *)error {
-    
+- (void)pubnubClient:(PubNub *)client didDisconnectFromOrigin:(NSString *)origin withError:(PNError *)error {
+
     PNLog(PNLogGeneralLevel, self, @"PubNub client closed connection because of error: %@", error);
+
+    self.disconnectedOnNetworkError = error.code == kPNClientConnectionClosedOnInternetFailureError;
 }
 
 - (void)pubnubClient:(PubNub *)client didDisconnectFromOrigin:(NSString *)origin {

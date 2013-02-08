@@ -987,9 +987,9 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
                     if (weakSelf.state == PNPubNubClientStateDisconnectedOnNetworkError) {
                         
                         // Check whether should restore connection or not
-                        if([self shouldRestoreConnection]) {
+                        if([weakSelf shouldRestoreConnection]) {
 
-                            self.restoringConnection = YES;
+                            weakSelf.restoringConnection = YES;
                             
                             [[weakSelf class] connect];
                         }

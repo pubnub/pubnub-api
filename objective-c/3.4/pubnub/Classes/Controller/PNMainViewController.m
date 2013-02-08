@@ -219,6 +219,14 @@ static NSUInteger const inChatMessageLabelTag = 878;
                                                             [weakSelf updateClientInformation];
                                                         }];
 
+    [[PNObservationCenter defaultCenter] addChannelParticipantsListProcessingObserver:self
+                                                                                    withBlock:^(NSArray *participants,
+                                                                                                PNChannel *channel,
+                                                                                                PNError *fetchError) {
+
+                                                        [weakSelf.channelParticipantsTableView reloadData];
+                                                    }];
+
     [[PNObservationCenter defaultCenter] addPresenceEventObserver:self
                                                         withBlock:^(PNPresenceEvent *event) {
 
@@ -357,6 +365,15 @@ static NSUInteger const inChatMessageLabelTag = 878;
     if (shouldUpdateChat) {
 
         self.messageTextView.text = [PNDataManager sharedInstance].currentChannelChat;
+
+        CGRect targetRect = self.messageTextView.bounds;
+        targetRect.origin.y = self.messageTextView.contentSize.height - targetRect.size.height;
+        if (targetRect.size.height < self.messageTextView.contentSize.height) {
+
+            [self.messageTextView flashScrollIndicators];
+        }
+
+        [self.messageTextView scrollRectToVisible:targetRect animated:YES];
     }
 }
 
@@ -372,7 +389,7 @@ static NSUInteger const inChatMessageLabelTag = 878;
 
     [PubNub disconnect];
 
-
+    [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:self];
     [[PNObservationCenter defaultCenter] removeTimeTokenReceivingObserver:self];
     [[PNObservationCenter defaultCenter] removeClientConnectionStateObserver:self];
     [[PNObservationCenter defaultCenter] removeChannelParticipantsListProcessingObserver:self];
