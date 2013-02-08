@@ -378,7 +378,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 
 	public void subscribe() {
 		Hashtable args = new Hashtable(6);
-		args.put("channel", channel + String.valueOf(++count));
+		args.put("channel", channel + ++count);
 
 		try {
 			_pubnub.subscribe(args, new Callback() {

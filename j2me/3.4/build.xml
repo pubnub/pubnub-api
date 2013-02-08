@@ -12,7 +12,17 @@
         <pathelement location="libs/bouncycastle.jar"/>
         <pathelement location="libs/jsonme.jar"/>
     </path>
-    <target name="init">
+	<target name="setJsonMeJar" >
+		<replace dir="${srcPubnubApi.link}" token="org.json" value="org.json.me">
+			<include name="**/*.java"/>
+		</replace>
+	</target>
+	<target name="unsetJsonMeJar" >
+		<replace dir="${srcPubnubApi.link}" token="org.json.me" value="org.json">
+			<include name="**/*.java"/>
+		</replace>
+	</target>
+    <target depends="setJsonMeJar" name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="${srcPubnubApi.link}">
@@ -21,7 +31,7 @@
             </fileset>
         </copy>
     </target>
-    <target name="clean">
+    <target depends="unsetJsonMeJar" name="clean">
         <delete dir="bin"/>
     </target>
     <target depends="clean" name="cleanall"/>

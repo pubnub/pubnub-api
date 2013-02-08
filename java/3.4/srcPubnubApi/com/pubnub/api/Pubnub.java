@@ -376,9 +376,9 @@ public class Pubnub {
 		Object message = args.get("message");
 		final Callback callback = (Callback) args.get("callback");
 		String msgStr = message.toString();
-		msgStr = "\"" + msgStr + "\"";
-		if (this.CIPHER_KEY.length() > 0) {
 
+		if (this.CIPHER_KEY.length() > 0) {
+			msgStr = "\"" + msgStr + "\"";
 			// Encrypt Message
 			PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
 			try {

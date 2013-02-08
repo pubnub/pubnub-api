@@ -21,9 +21,8 @@ import com.pubnub.api.PubnubException;
 public class MainActivity extends Activity {
 	Pubnub pubnub = new Pubnub("demo", "demo", "demo", false);
 	String channel = "hello_world";
-	String[] channels = { "hello_world1", "hello_world2", "hello_world3",
-			"hello_world4" };
 	EditText ed;
+	protected int count;
 
 	private void notifyUser(Object message) {
 		try {
@@ -65,7 +64,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		Button publishBtn = (Button) findViewById(R.id.buttonPublish);
+		Button publishBtn = (Button) findViewById(R.id.btnPublish);
 		publishBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -96,13 +95,13 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		Button subscribeBtn = (Button) findViewById(R.id.ButtonSubscribe);
+		Button subscribeBtn = (Button) findViewById(R.id.btnSubscribe);
 		subscribeBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Hashtable args = new Hashtable(1);
-				args.put("channels", channels);
+				args.put("channel", channel + ++count);
 
 				try {
 					pubnub.subscribe(args, new Callback() {
@@ -131,7 +130,7 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		Button presenceBtn = (Button) findViewById(R.id.ButtonPresence);
+		Button presenceBtn = (Button) findViewById(R.id.btnPresence);
 		presenceBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -154,7 +153,7 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		Button historyBtn = (Button) findViewById(R.id.ButtonHistory);
+		Button historyBtn = (Button) findViewById(R.id.btnHistory);
 		historyBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -171,7 +170,26 @@ public class MainActivity extends Activity {
 
 			}
 		});
-		Button detailedHistoryBtn = (Button) findViewById(R.id.ButtonDetailedHistory);
+
+		Button toggleRoRBtn = (Button) findViewById(R.id.btnToggleRoR);
+		toggleRoRBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				pubnub.setResumeOnReconnect(pubnub.isResumeOnReconnect()?false:true);
+
+			}
+		});
+
+		Button disconnectAndResubButton = (Button) findViewById(R.id.btnDisconnectAndResubscribe);
+		disconnectAndResubButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				pubnub.disconnectAndResubscribe();
+
+			}
+		});
+
+		Button detailedHistoryBtn = (Button) findViewById(R.id.btnDetailedHistory);
 		detailedHistoryBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -188,7 +206,7 @@ public class MainActivity extends Activity {
 
 			}
 		});
-		Button hereNowBtn = (Button) findViewById(R.id.buttonHereNow);
+		Button hereNowBtn = (Button) findViewById(R.id.btnHereNow);
 		hereNowBtn.setOnClickListener(new OnClickListener() {
 
 			@Override

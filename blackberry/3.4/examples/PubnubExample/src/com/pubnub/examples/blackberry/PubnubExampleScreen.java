@@ -45,6 +45,8 @@ public final class PubnubExampleScreen extends MainScreen
         addMenuItem(new SubscribeMenuItem());
         addMenuItem(new UnsubscribeMenuItem());
         addMenuItem(new PresenceMenuItem());
+        addMenuItem(new ToggleRoRMenuItem());
+        addMenuItem(new DisconnectAndResubMenuItem());
     }
 
 
@@ -65,6 +67,32 @@ public final class PubnubExampleScreen extends MainScreen
         				PubnubExample.alertDialog(message.toString());
         			}
         		});
+                }
+            }));
+        }
+    }
+    private class DisconnectAndResubMenuItem extends MenuItem
+    {
+        public DisconnectAndResubMenuItem()
+        {
+            super(new StringProvider("Disconnect and Resubscribe"), 0x230010, 0);
+            this.setCommand(new Command(new CommandHandler()
+            {
+                public void execute(ReadOnlyCommandMetadata metadata, Object context)
+                {   _pubnub.disconnectAndResubscribe();
+                }
+            }));
+        }
+    }
+    private class ToggleRoRMenuItem extends MenuItem
+    {
+        public ToggleRoRMenuItem()
+        {
+            super(new StringProvider("Toggle Resume on Reconnect"), 0x230010, 0);
+            this.setCommand(new Command(new CommandHandler()
+            {
+                public void execute(ReadOnlyCommandMetadata metadata, Object context)
+                {   _pubnub.setResumeOnReconnect(_pubnub.isResumeOnReconnect()?false:true);
                 }
             }));
         }

@@ -1,12 +1,8 @@
 package com.pubnub.api;
 
-import java.io.InterruptedIOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Vector;
-
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.conn.HttpHostConnectException;
 
 import com.pubnub.http.HttpRequest;
 import com.pubnub.httpclient.HttpResponse;
@@ -29,10 +25,6 @@ class SubscribeWorker extends AbstractSubscribeWorker {
 					break;
 				}
 			}
-			catch (HttpHostConnectException e) {
-				log.trace("Retry Attempt : " + currentRetryAttempt + " Exception in Fetch : " + e.toString());
-				currentRetryAttempt++;
-			}
 			catch (IllegalStateException e) {
 				log.trace("Exception in Fetch : " + e.toString());
 				return;
@@ -45,10 +37,6 @@ class SubscribeWorker extends AbstractSubscribeWorker {
 				log.trace("Exception in Fetch : " + e.toString());
 				currentRetryAttempt = maxRetries + 1;
 				break;
-			}
-			catch (NoHttpResponseException e){
-				log.trace("Exception in Fetch : " + e.toString());
-				return;
 			}
 			catch (Exception e) {
 				log.trace("Retry Attempt : " + currentRetryAttempt + " Exception in Fetch : " + e.toString());
