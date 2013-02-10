@@ -116,7 +116,7 @@ function xdr( setup ) {
     if (setup.data) {
         var params = [];
         url += "?";
-        for (key in setup.data) {
+        for (var key in setup.data) {
              params.push(key+"="+setup.data[key]);
         }
         url += params.join(PARAMSBIT);
