@@ -58,11 +58,16 @@
 #pragma mark - Instance methods
 
 /**
- * Intialize response instance with response
+ * Initialize response instance with response
  * body content data, response size and status
  * code (HTTP status code)
  */
 - (id)initWithContent:(NSData *)content size:(NSUInteger)responseSize code:(NSUInteger)statusCode;
+
+/**
+ * Return whether request has been processed correctly or not
+ */
+- (BOOL)isCorrectResponse;
 
 #pragma mark -
 

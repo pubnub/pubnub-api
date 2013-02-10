@@ -97,15 +97,22 @@
 }
 
 + (void)getCallbackMethodName:(NSString **)callbackMethodName fromJSONString:(NSString *)jsonString {
-    
-    // Checking whether there are parenthesis in JSON 
-    NSRange parenthesisRange = [jsonString rangeOfString:@"("];
-    if (parenthesisRange.location != NSNotFound &&
-          ([jsonString characterAtIndex:(parenthesisRange.location+parenthesisRange.length)] == '[' ||
-           [jsonString characterAtIndex:(parenthesisRange.location+parenthesisRange.length)] == '{')) {
-        
-        NSScanner *scanner = [NSScanner scannerWithString:jsonString];
-        [scanner scanUpToString:@"(" intoString:callbackMethodName];
+
+    if (jsonString) {
+
+        // Checking whether there are parenthesis in JSON
+        NSRange parenthesisRange = [jsonString rangeOfString:@"("];
+        if (parenthesisRange.location != NSNotFound &&
+                ([jsonString characterAtIndex:(parenthesisRange.location+parenthesisRange.length)] == '[' ||
+                        [jsonString characterAtIndex:(parenthesisRange.location+parenthesisRange.length)] == '{')) {
+
+            NSScanner *scanner = [NSScanner scannerWithString:jsonString];
+            [scanner scanUpToString:@"(" intoString:callbackMethodName];
+        }
+    }
+    else {
+
+        PNLog(PNLogGeneralLevel, self, @"JSON string is empty");
     }
 }
 

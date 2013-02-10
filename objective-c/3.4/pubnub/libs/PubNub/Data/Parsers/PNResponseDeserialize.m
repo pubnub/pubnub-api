@@ -149,7 +149,7 @@
             // Try construct response instance
             PNResponse *response = [self responseInRange:contentRange ofData:data];
             if(response) {
-                
+
                 [parsedData addObject:response];
             }
             else {
@@ -173,9 +173,9 @@
                 // Try construct response instance
                 PNResponse *response = [self responseInRange:contentRange ofData:data];
                 if(response) {
-                    
+
                     [parsedData addObject:response];
-                    
+
                     
                     // Update content search range
                     responseRange.location = responseRange.location + contentRange.length;
