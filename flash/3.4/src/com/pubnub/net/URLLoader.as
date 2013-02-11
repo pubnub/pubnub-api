@@ -197,7 +197,9 @@ public class URLLoader extends EventDispatcher {
             Log.log("Firing onResponse!", Log.DEBUG);
             onRESPONSE(answer)
             answer.clear();
+            temp.clear();
             _headers = null;
+            tempStr = "";
         } else {
             Log.log("Transfer in progress.", Log.DEBUG);
         }
