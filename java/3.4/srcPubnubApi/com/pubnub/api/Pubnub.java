@@ -413,9 +413,9 @@ public class Pubnub {
 
 			}
 		}
-		String[] urlComponents = { getOrigin(), "publish", PubnubUtil.urlEncode(this.PUBLISH_KEY),
-				PubnubUtil.urlEncode(this.SUBSCRIBE_KEY), PubnubUtil.urlEncode(signature),
-				PubnubUtil.urlEncode(channel), PubnubUtil.urlEncode("0"),
+		String[] urlComponents = { getOrigin(), "publish", this.PUBLISH_KEY,
+				this.SUBSCRIBE_KEY, PubnubUtil.urlEncode(signature),
+				PubnubUtil.urlEncode(channel), "0",
 				PubnubUtil.urlEncode(msgStr)};
 
 		HttpRequest hreq = new HttpRequest(urlComponents,
@@ -550,7 +550,7 @@ public class Pubnub {
 		final Callback callback = (Callback) args.get("callback");
 
 		String[] urlargs = { getOrigin(), "history", this.SUBSCRIBE_KEY,
-				channel, "0", limit };
+				PubnubUtil.urlEncode(channel), "0", limit };
 
 		HttpRequest hreq = new HttpRequest(urlargs, new ResponseHandler() {
 
@@ -614,7 +614,7 @@ public class Pubnub {
 			parameters.put("end", Long.toString(end).toLowerCase());
 
 		String[] urlargs = { getOrigin(), "v2", "history", "sub-key",
-				this.SUBSCRIBE_KEY, "channel", channel };
+				this.SUBSCRIBE_KEY, "channel", PubnubUtil.urlEncode(channel) };
 
 		HttpRequest hreq = new HttpRequest(urlargs, parameters,
 				new ResponseHandler() {
@@ -964,7 +964,7 @@ public class Pubnub {
 			return;
 		}
 		String[] urlComponents = { getOrigin(), "subscribe",
-				Pubnub.this.SUBSCRIBE_KEY, channelString, "0", _timetoken };
+				Pubnub.this.SUBSCRIBE_KEY, PubnubUtil.urlEncode(channelString), "0", _timetoken };
 
 		Hashtable params = new Hashtable();
 		params.put("uuid", UUID);
