@@ -1,6 +1,8 @@
 Ruby2::Application.routes.draw do
 
   match 'examples/pub/:channel/:message' => 'examples#pub'
+  match 'examples/blocking_pub/:channel/:message' => 'examples#blocking_pub'
+
   match 'examples/time' => 'examples#time'
   match 'examples/here_now/:channel' => 'examples#here_now'
   match 'examples/uuid' => 'examples#uuid'

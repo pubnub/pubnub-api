@@ -12,6 +12,15 @@ class ExamplesController < ApplicationController
 
   end
 
+  def blocking_pub
+
+    #def self.publish!(channel, message, publish_key, subscribe_key, channel)
+    init_vars
+
+    BlockingPub.publish!
+    render :text => @out
+  end
+
   # PubNub Server Time (Get TimeToken)
   def time
 
