@@ -89,9 +89,7 @@ public class HttpClientCore extends HttpClient {
 	}
 
 	public synchronized HttpResponse fetch(String url, Hashtable headers) throws IOException, PubnubException {
-
 		URL urlobj = new URL(url);
-		 System.out.println(url);
 		 connection = (HttpURLConnection) urlobj.openConnection();
 		 connection.setRequestMethod("GET");
 		if (_headers != null) {

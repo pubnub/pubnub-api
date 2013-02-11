@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -221,6 +222,81 @@ public class MainActivity extends Activity {
 					}
 				});
 
+			}
+		});
+
+		Button pubSubBtn = (Button) findViewById(R.id.btnPubSubTest);
+		pubSubBtn.setOnClickListener(new OnClickListener() {
+			private int sub_succ = 0;
+			private int sub_fail = 0;
+			private int pub_succ = 0;
+			private int pub_fail = 0;
+			private int total = 100;
+			private String channel = "3.3-noise";
+
+
+
+			@Override
+			public void onClick(View v) {
+				Hashtable args = new Hashtable(1);
+				args.put("channel", channel);
+				System.out.println("debug PubSubTest");
+				notifyUser(channel);
+
+				try {
+					pubnub.subscribe(args, new Callback() {
+						public void successCallback(String channel,
+								Object message) {
+							sub_succ++;
+							notifyUser(" " + sub_succ);
+							Log.d("Received count : ", String.valueOf(sub_succ));
+						}
+						public void errorCallback(String channel,
+								Object message) {
+							System.out.println(message);
+							notifyUser("failed");
+							sub_fail++;
+						}
+					});
+					notifyUser("subscribed");
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				for (int i = 0; i < total; i++) {
+					// Publish Message
+					Hashtable args1 = new Hashtable(2);
+					args1.put("channel", channel); // Channel Name
+					JSONObject message = new JSONObject();
+					try {
+							message.put("Message", "Testing Android Pub/Sub");
+					} catch (org.json.JSONException jsonError) {
+					}
+					args1.put("message", message ); // JSON Message
+					pubnub.publish(args1, new Callback() {
+						public void successCallback(String channel, Object message) {
+							pub_succ++;
+						}
+
+						public void errorCallback(String channel, Object message) {
+							System.out.println(message);
+							pub_fail++;
+						}
+					});
+				}
+				try {
+					Thread.sleep(60000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String result = "Publish Success : " + pub_succ + " , " +
+						   "Publish Failure : " + pub_fail + " , " +
+						   "Subscribe Success : " + sub_succ + " , " +
+						   "Subscribe Failure : " + sub_fail ;
+				System.out.println(result);
+				notifyUser(result);
+				pub_succ = pub_fail = sub_succ = sub_fail = 0;
 			}
 		});
 

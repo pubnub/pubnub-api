@@ -1,0 +1,125 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout2"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|fill_horizontal|center|fill"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/paddingTop"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="308dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/editTextHint"
+            android:text="@string/editTextHint" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|fill_horizontal" >
+
+        <Button
+            android:id="@+id/btnPublish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="@dimen/btn2"
+            android:text="@string/btnPublishText" />
+
+        <Button
+            android:id="@+id/btnHereNow"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.39"
+            android:minWidth="@dimen/btn2"
+            android:text="@string/btnHereNowText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|fill_horizontal" >
+
+        <Button
+            android:id="@+id/btnHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="@dimen/btn2"
+            android:text="@string/btnHistoryText" />
+
+        <Button
+            android:id="@+id/btnDetailedHistory"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.39"
+            android:minWidth="@dimen/btn2"
+            android:text="@string/btnDetailedHistoryText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|fill_horizontal" >
+
+        <Button
+            android:id="@+id/btnPresence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="@dimen/btn2"
+            android:text="@string/btnPresenceText" />
+
+        <Button
+            android:id="@+id/btnSubscribe"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.39"
+            android:minWidth="@dimen/btn2"
+            android:text="@string/btnSubscribeText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btnDisconnectAndResubscribe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnDisconnectAndResubText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btnToggleRoR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnToggleRoRText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btnPubSubTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnPubSubText" />
+
+    </LinearLayout>
+
+</LinearLayout>

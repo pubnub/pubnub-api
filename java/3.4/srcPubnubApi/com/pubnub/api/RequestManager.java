@@ -29,7 +29,6 @@ abstract class Worker implements Runnable {
 	}
 
 	void interruptWorker() {
-		System.out.println("Interrupting : " + thread.getName() + " : " + thread.hashCode() );
 		thread.interrupt();
 	}
 
@@ -100,7 +99,6 @@ class NonSubscribeWorker extends Worker {
 	void process(HttpRequest hreq) {
 		HttpResponse hresp = null;
 			try {
-				System.out.println(hreq.getUrl());
 				String s = hreq.getUrl();
 				log.debug(hreq.getUrl());
 				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());

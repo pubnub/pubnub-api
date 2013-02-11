@@ -378,7 +378,6 @@ public class Pubnub {
 		String msgStr = message.toString();
 
 		if (this.CIPHER_KEY.length() > 0) {
-			msgStr = "\"" + msgStr + "\"";
 			// Encrypt Message
 			PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
 			try {
@@ -389,6 +388,10 @@ public class Pubnub {
 				jsarr.put("0").put("Error: Encryption Failure");
 				callback.errorCallback(channel, jsarr);
 				return;
+			}
+		} else {
+			if (message instanceof String) {
+				msgStr = "\"" + msgStr + "\"";
 			}
 		}
 
@@ -953,7 +956,6 @@ public class Pubnub {
 	private void _subscribe_base(boolean fresh) {
 		String channelString = subscriptions.getChannelString();
 		String[] channelsArray = subscriptions.getChannelNames();
-		System.out.println("in _subscribe_base " + _timetoken);
 		if (channelsArray.length <= 0)
 			return;
 
@@ -1101,7 +1103,6 @@ public class Pubnub {
 	 */
 	private void _request(final HttpRequest hreq, RequestManager connManager, boolean abortExisting) {
 		if (abortExisting) {
-			System.out.println("Abort Existing");
 			connManager.resetHttpManager();
 		}
 		connManager.queue(hreq);

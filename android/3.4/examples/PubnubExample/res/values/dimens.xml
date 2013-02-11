@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="btn1">300dip</dimen>
+    <dimen name="btn2">150dip</dimen>
+    <dimen name="paddingTop">100dip</dimen>
+</resources>
