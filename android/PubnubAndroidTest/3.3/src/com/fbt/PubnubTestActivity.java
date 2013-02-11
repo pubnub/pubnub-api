@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import com.example.Android.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -21,7 +22,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import android.content.Context;
 /**
  * PubnubTestActivity
