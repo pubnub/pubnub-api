@@ -482,7 +482,7 @@ public class Pubnub {
 							if (callback != null)
 								returnval=callback.subscribeCallback(channel, arr);
 						} else {
-							String msgs = messages.getString(0);
+							String msgs = messages.getString(i);
 							if (this.CIPHER_KEY.length() > 0) {
 								PubnubCrypto pc = new PubnubCrypto(
 										this.CIPHER_KEY);
