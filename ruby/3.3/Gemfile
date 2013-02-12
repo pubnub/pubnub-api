@@ -17,6 +17,7 @@ gem 'ruby_core_source'
 gem 'ruby-debug19'
 gem 'ruby-debug-base19'
 gem 'httparty'
+gem 'passenger'
 
 
 # Gems used only for assets and not required
