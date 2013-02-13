@@ -17,8 +17,8 @@
             android:layout_width="308dp"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|center_horizontal"
-            android:hint="@string/editTextHint"
-            android:text="@string/editTextHint" />
+            android:hint="@string/editTextHint" />
+
     </LinearLayout>
 
     <LinearLayout
