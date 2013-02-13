@@ -24,9 +24,11 @@ public class MainActivity extends Activity {
     // Noise Test
     //Pubnub pubnub = new Pubnub("pub-c-87f96934-8c44-4f8d-a35f-deaa2753f083", "sub-c-3a693cf8-7401-11e2-8b02-12313f022c90", "", false);
     //String channel = "noise";
+    String channel = "a";
+
 
     Pubnub pubnub = new Pubnub("demo", "demo", "", false);
-    String channel = "hello_world";
+    //String channel = "hello_world";
     EditText ed;
     protected int count;
 
@@ -168,7 +170,9 @@ public class MainActivity extends Activity {
         toggleRoRBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Boolean previousState = pubnub.isResumeOnReconnect();
                 pubnub.setResumeOnReconnect(pubnub.isResumeOnReconnect() ? false : true);
+                Log.i("Resume on reconnect: ", String.format("Setting from: %s to %s", String.valueOf(previousState), String.valueOf(pubnub.isResumeOnReconnect())));
 
             }
         });
