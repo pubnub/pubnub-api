@@ -10,15 +10,15 @@ public class Logger {
 	}
 
 	public void debug(String s) {
-		System.out.println(s);
+		//System.out.println(s);
 	}
 	public void trace(String s) {
-		System.out.println(s);
+		//System.out.println(s);
 	}
 	public void error(String s) {
-		System.out.println(s);
+		//System.out.println(s);
 	}
 	public void info(String s) {
-		System.out.println(s);
+		//System.out.println(s);
 	}
 }
