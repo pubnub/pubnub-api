@@ -48,13 +48,6 @@
         android:gravity="center_horizontal|fill_horizontal" >
 
         <Button
-            android:id="@+id/btnHistory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="@dimen/btn2"
-            android:text="@string/btnHistoryText" />
-
-        <Button
             android:id="@+id/btnDetailedHistory"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
