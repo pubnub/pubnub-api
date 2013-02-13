@@ -1,4 +1,4 @@
-# Pubnub 3.3
+# Pubnub 3.4
 ---
 
 Pubnub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime messaging service [Pubnub.com](http://www.pubnub.com/).
