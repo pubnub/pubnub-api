@@ -339,4 +339,10 @@ Also with high throughput applications with many messages per second,
 a long enough window will all the right amount of time for the PubNub Network
 to order the messsage delivery.
 
-
+```javascript
+var pubnub = PUBNUB.init({
+    windowing     : 1000,    // MILLISECONDS
+    publish_key   : 'demo',
+    subscribe_key : 'demo'
+});
+```
