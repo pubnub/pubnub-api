@@ -38,11 +38,11 @@ public class MainActivity extends Activity {
     // Noise Test
     //Pubnub pubnub = new Pubnub("pub-c-87f96934-8c44-4f8d-a35f-deaa2753f083", "sub-c-3a693cf8-7401-11e2-8b02-12313f022c90", "", false);
     //String channel = "noise";
-    String channel = "a";
+    //String channel = "a";
 
 
     Pubnub pubnub = new Pubnub("demo", "demo", "", false);
-    //String channel = "hello_world";
+    String channel = "hello_world";
     EditText ed;
     protected int count;
 
@@ -231,20 +231,51 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View arg0) {
+                Hashtable args = new Hashtable(2);
                 ed = (EditText) findViewById(R.id.editText1);
+                
+                String message = ed.getText().toString();
+                
+                if (args.get("message") == null ) {
+    				try {
+    					Integer i = Integer.parseInt(message);
+    					args.put("message", i);
+    				} catch (Exception e) {
 
-                JSONObject message = new JSONObject();
-                try {
-                    if (ed.getText().toString() != null
-                            && !ed.getText().toString().equals(""))
-                        message.put("Message", ed.getText().toString());
-                } catch (org.json.JSONException jsonError) {
-                }
+    				}
+    			}
+    			if (args.get("message") == null ) {
+    				try {
+    					Double d = Double.parseDouble(message);
+    					args.put("message", d);
+    				} catch (Exception e) {
+
+    				}
+    			}
+    			if (args.get("message") == null ) {
+    				try {
+    					JSONArray js = new JSONArray(message);
+    					args.put("message", js);
+    				} catch (Exception e) {
+
+    				}
+    			}
+    			if (args.get("message") == null ) {
+    				try {
+    					JSONObject js = new JSONObject(message);
+    					args.put("message", js);
+    				} catch (Exception e) {
+
+    				}
+    			}
+    			if (args.get("message") == null ) {
+    				args.put("message", message);
+    			}
 
                 // Publish Message
-                Hashtable args = new Hashtable(2);
+
                 args.put("channel", channel); // Channel Name
-                args.put("message", message); // JSON Message
+
                 pubnub.publish(args, new Callback() {
                     public void successCallback(String channel, Object message) {
                         notifyUser(message.toString());
