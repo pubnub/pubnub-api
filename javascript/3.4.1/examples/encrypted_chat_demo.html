@@ -1,0 +1,90 @@
+<head xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<h1>AES256 Encryption Demo for JavaScript</h1>
+
+<style>
+    #chat_input {
+        margin: 10px;
+        width: 90%;
+    }
+
+    div.scroll {
+        margin: 10px;
+        padding: 10px;
+        height: 200px;
+        width: 800px;
+        overflow: auto;
+        border: 1px solid #666;
+        background: rgb(232,232,232);
+        padding: 8px;
+    }
+
+</style>
+
+<div class='scroll' id='chat_box'></div>
+<form id="chat_form">
+    <input type="text" id='chat_input'/>
+    <input type="submit" value='Send Encrypted Message' id='send'/>
+</form>
+
+<button onclick='$("#chat_box").html("")'>Clear All</button>
+
+
+<script src="../pubnub-3.4.1.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="../crypto/gibberish-aes.js"></script>
+<script src="../crypto/encrypt-pubnub.js"></script>
+
+<script>(function(){
+
+    // Encryption Key
+    // For the optimal way to deliver encryption keys to your PubNub JavaScript app
+    // Checkout http://blog.pubnub.com/wp-content/uploads/2012/07/PubNubACLForPublishAndSubscribeRealTimeSystems-6.png
+
+    var cipher_key = "enigma";
+
+    // Create Secure Connection
+    var secure_pubnub = PUBNUB.secure({
+        publish_key   : "demo",
+        subscribe_key : "demo",
+        cipher_key    : cipher_key
+    });
+
+    // Secure Connection
+    secure_pubnub.subscribe({
+        channel    : "hello_world",
+        callback   : display_output
+    });
+
+    // Send Message on Submit
+    $('#chat_form').submit(function (e) {
+        secure_pubnub.publish({
+            channel: "hello_world",
+            message: $("#chat_input").val(),
+            callback: function (info) {
+                // Clear Successfully Sent Message
+                $("#chat_input").val("");
+            }
+        });
+
+        e.preventDefault();
+        return false;
+    });
+
+     function display_output(message){
+         time = new Date;
+         h = time.getHours();
+         m = time.getMinutes();
+         s = time.getSeconds();
+         ms = time.getMilliseconds();
+
+         formatted_time = "<span style='color:blue;'>" + h + ":" + m + ":" + s + ":" + ms + "</span>";
+
+         $('#chat_box').append("Received at " + formatted_time + "<br/>" + message + "</p>");
+         $("#chat_box").scrollTop($("#chat_box")[0].scrollHeight);
+     }
+
+})();
+</script>
