@@ -346,3 +346,29 @@ var pubnub = PUBNUB.init({
     subscribe_key : 'demo'
 });
 ```
+
+## BEST PRACTICES
+
+#### MESSAGE DELIVERY 
+
+The PubNub Network is a high throughput and reliable messaging services.
+Note however that PubNub is not a guaranteed delivery with full Read Receipt Transactions.
+You can however use improved designs and best practices to ensure you increase reliability.
+One method includes *High Windowing Length* which provides slight improvements.
+
+>**NOTE:** Higher windowing lengths allow improved message delivery from 99.999% to 99.9999%.
+
+We recommend following a few best practices to achieve high frequency of message delivery.
+First ensure you are checking the publish response code and re-sending 
+the publish if an error code is returned.
+
+There is an easy way to make sure you do not run into undelivered
+messages due to high frequency of published.
+Actually there are a few easy ways.
+The first option is to make sure you don't publish too quickly.
+Do this by limiting to one concurrent publish per channel.
+This is achievable by waiting for the publish response before sending another message.
+
+Use our Elastic Message options.
+You should instead send a single large message rather than segement
+messages into small packets you manually reassymble.
