@@ -52,25 +52,44 @@ public class MainActivity extends Activity {
             = new BroadcastReceiver() {
 
         @Override
-        public void onReceive(Context arg0, Intent arg1) {
-            // TODO Auto-generated method stub
-            int newRssi = arg1.getIntExtra(WifiManager.EXTRA_NEW_RSSI, 0);
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            NetworkInfo.State mState;
+            NetworkInfo mNetworkInfo;
+            NetworkInfo mOtherNetworkInfo;
+            String mReason;
+            Boolean mIsFailover;
 
 
-            //textRssi.setText(String.valueOf(newRssi));
-        }
-    };
 
-    private BroadcastReceiver myWifiReceiver
-            = new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(Context arg0, Intent arg1) {
-            // TODO Auto-generated method stub
-            NetworkInfo networkInfo = (NetworkInfo) arg1.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                DisplayWifiState();
+            if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ) {
+                Log.e("******* NET: ", "onReceived() called with " + intent);
+                return;
             }
+
+            boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+
+            if (noConnectivity) {
+                mState = NetworkInfo.State.DISCONNECTED;
+            } else {
+                mState = NetworkInfo.State.CONNECTED;
+            }
+
+            mNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            mOtherNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
+
+            mReason = intent.getStringExtra(ConnectivityManager.EXTRA_REASON);
+            mIsFailover = intent.getBooleanExtra(ConnectivityManager.EXTRA_IS_FAILOVER, false);
+
+
+            Log.e("******* NET: ", "onReceive(): mNetworkInfo=" + mNetworkInfo + " mOtherNetworkInfo = "
+                        + (mOtherNetworkInfo == null ? "[none]" : mOtherNetworkInfo + " noConn=" + noConnectivity)
+                        + " mState=" + mState.toString() + " reason: " + mReason + " failover: " + mIsFailover);
+
+            TextView ipText = (TextView) findViewById(R.id.ip);
+            ipText.setText(getIPAddress(true));
+
         }
     };
 
@@ -200,7 +219,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.registerReceiver(this.myWifiReceiver,
+        this.registerReceiver(this.myRssiChangeReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         TextView ipText = (TextView) findViewById(R.id.ip);
