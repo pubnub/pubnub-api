@@ -372,3 +372,15 @@ This is achievable by waiting for the publish response before sending another me
 Use our Elastic Message options.
 You should instead send a single large message rather than segement
 messages into small packets you manually reassymble.
+
+>**NOTE:** Turn on Elastic Message Sizes in your Customer Account: 
+https://admin.pubnub.com/
+
+#### GUARANTEED MESSAGE DELIVERY
+
+Is it possible to ensure 100% messages are delivered?  **YES!**
+The way to do this includes a Read Receipt Design Pattern.
+You must allow the Receiver of a message to ACKNOWLEDGE that
+a message was successfully received.
+The Sender will continously re-send the message; with a delay between each re-send.
+This continues until an ACKNOWLEDGEMENT is received from the receiver.
