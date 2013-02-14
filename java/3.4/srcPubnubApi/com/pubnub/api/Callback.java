@@ -4,7 +4,7 @@ package com.pubnub.api;
  * Interface to be implemented by objects to be passed to subscribe/presence as
  * callback
  *
- * @author Pubnub
+ * @author PubnubCore
  *
  */
 public abstract class Callback {

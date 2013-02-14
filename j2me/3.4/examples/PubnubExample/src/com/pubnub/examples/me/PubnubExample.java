@@ -163,7 +163,7 @@ public class PubnubExample extends MIDlet implements CommandListener {
 	 */
 	public StringItem getStringItem() {
 		if (stringItem == null) {
-			stringItem = new StringItem("Pubnub", "Hello Pubnub!", Item.PLAIN);
+			stringItem = new StringItem("PubnubCore", "Hello PubnubCore!", Item.PLAIN);
 		}
 		return stringItem;
 	}
