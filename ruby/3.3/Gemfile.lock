@@ -73,7 +73,7 @@ GEM
       rack
       rake (>= 0.8.1)
     polyglot (0.3.3)
-    pubnub (3.3.0.1)
+    pubnub (3.3.0.3)
       activesupport
       em-http-request
       eventmachine

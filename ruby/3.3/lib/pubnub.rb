@@ -39,10 +39,7 @@ class Pubnub
 
   attr_accessor :publish_key, :subscribe_key, :secret_key, :cipher_key, :ssl, :channel, :origin, :session_uuid
 
-
-  #ORIGINS = %w(newcloud-virginia.pubnub.com newcloud-california.pubnub.com newcloud-ireland.pubnub.com newcloud-tokyo.pubnub.com)
   ORIGIN_HOST = 'pubsub.pubnub.com'
-  #ORIGIN_HOST = 'newcloud-california.pubnub.com'
   #ORIGIN_HOST = 'test.pubnub.com'
 
   def initialize(*args)
@@ -85,6 +82,7 @@ class Pubnub
     #TODO: refactor into initializer code on request instantiation
 
     publish_request.ssl = @ssl
+    publish_request.set_origin(options)
     publish_request.set_channel(options)
     publish_request.set_callback(options)
     publish_request.set_cipher_key(options, self.cipher_key)

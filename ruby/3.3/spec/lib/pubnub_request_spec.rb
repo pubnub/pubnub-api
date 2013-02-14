@@ -102,6 +102,13 @@ describe PubnubRequest do
         @pubnub_request.format_url!
         @pubnub_request.query.should == %^/publish/demo/demo/0/hello_world/0/%22hello%20from%20ruby%21%22^
       end
+
+      it "should set the origin" do
+        @pubnub_request.set_origin(:origin => "foo.pubnub.com")
+        @pubnub_request.format_url!
+        @pubnub_request.url.should == %^http://foo.pubnub.com/publish/demo/demo/0/hello_world/0/%22hello%20from%20ruby%21%22^
+      end
+
     end
 
     context "when it is a time operation" do
