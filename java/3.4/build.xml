@@ -7,7 +7,7 @@
     <path id="PubnubApi.classpath">
         <pathelement location="bin"/>
         <pathelement location="libs/bcprov-jdk15on-1.47.jar"/>
-        <pathelement location="libs/json.jar"/>
+        <pathelement location="libs/json-20090211.jar"/>
 	<pathelement location="libs/commons-logging-1.1.1.jar"/>
     </path>
     <target name="init">
@@ -72,7 +72,7 @@
 				<attribute name="Company" value="Pubnub" />
 				<attribute name="Project" value="pubnub-api" />
 				<attribute name="Java-Version" value="${java.version}" />
-				<attribute name="Rsrc-Class-Path" value="./ log4j-1.2.17.jar httpcore-4.2.2.jar httpclient-4.2.2.jar bouncycastle.jar json.jar commons-logging-1.1.1.jar commons-codec-1.5.jar " />
+				<attribute name="Rsrc-Class-Path" value="./ bcprov-jdk15on-1.47.jar json-20090211.jar commons-logging-1.1.1.jar " />
 				<attribute name="Class-Path" value="." />
 				<attribute name="Rsrc-Main-Class" value="@{jar.classname}" />
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
