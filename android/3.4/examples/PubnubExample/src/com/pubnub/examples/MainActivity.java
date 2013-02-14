@@ -6,6 +6,14 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.widget.TextView;
 import com.example.PubnubExample.R;
 import org.apache.http.conn.util.InetAddressUtils;
@@ -38,6 +46,88 @@ public class MainActivity extends Activity {
     EditText ed;
     protected int count;
 
+
+
+    private BroadcastReceiver myRssiChangeReceiver
+            = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            // TODO Auto-generated method stub
+            int newRssi = arg1.getIntExtra(WifiManager.EXTRA_NEW_RSSI, 0);
+
+
+            //textRssi.setText(String.valueOf(newRssi));
+        }
+    };
+
+    private BroadcastReceiver myWifiReceiver
+            = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            // TODO Auto-generated method stub
+            NetworkInfo networkInfo = (NetworkInfo) arg1.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                DisplayWifiState();
+            }
+        }
+    };
+
+
+
+    private void DisplayWifiState() {
+
+        ConnectivityManager myConnManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo myNetworkInfo = myConnManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        WifiManager myWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo myWifiInfo = myWifiManager.getConnectionInfo();
+
+        // textMac.setText(myWifiInfo.getMacAddress());
+
+        TextView ipText = (TextView) findViewById(R.id.ip);
+
+        if (myNetworkInfo.isConnected()) {
+            int myIp = myWifiInfo.getIpAddress();
+
+            // textConnected.setText("--- CONNECTED ---");
+
+            int intMyIp3 = myIp / 0x1000000;
+            int intMyIp3mod = myIp % 0x1000000;
+
+            int intMyIp2 = intMyIp3mod / 0x10000;
+            int intMyIp2mod = intMyIp3mod % 0x10000;
+
+            int intMyIp1 = intMyIp2mod / 0x100;
+            int intMyIp0 = intMyIp2mod % 0x100;
+
+
+
+            ipText.setText(String.valueOf(intMyIp0)
+                    + "." + String.valueOf(intMyIp1)
+                    + "." + String.valueOf(intMyIp2)
+                    + "." + String.valueOf(intMyIp3)
+            );
+
+//            textSsid.setText(myWifiInfo.getSSID());
+//            textBssid.setText(myWifiInfo.getBSSID());
+//
+//            textSpeed.setText(String.valueOf(myWifiInfo.getLinkSpeed()) + " " + WifiInfo.LINK_SPEED_UNITS);
+//            textRssi.setText(String.valueOf(myWifiInfo.getRssi()));
+        } else {
+//            textConnected.setText("--- DIS-CONNECTED! ---");
+            ipText.setText("---");
+//            textSsid.setText("---");
+//            textBssid.setText("---");
+//            textSpeed.setText("---");
+//            textRssi.setText("---");
+        }
+
+    }
+
+
+
+
     private void notifyUser(Object message) {
         try {
             if (message instanceof JSONObject) {
@@ -47,7 +137,7 @@ public class MainActivity extends Activity {
                         Toast.makeText(getApplicationContext(), obj.toString(),
                                 Toast.LENGTH_LONG).show();
 
-                        Log.i("Received msg : ", String.valueOf(obj));
+                        Log.e("Received msg : ", String.valueOf(obj));
                     }
                 });
 
@@ -57,7 +147,8 @@ public class MainActivity extends Activity {
                     public void run() {
                         Toast.makeText(getApplicationContext(), obj,
                                 Toast.LENGTH_LONG).show();
-                        Log.i("Received msg : ", obj.toString());                    }
+                        Log.e("Received msg : ", obj.toString());
+                    }
                 });
 
             } else if (message instanceof JSONArray) {
@@ -66,7 +157,8 @@ public class MainActivity extends Activity {
                     public void run() {
                         Toast.makeText(getApplicationContext(), obj.toString(),
                                 Toast.LENGTH_LONG).show();
-                        Log.i("Received msg : ", obj.toString());                    }
+                        Log.e("Received msg : ", obj.toString());
+                    }
                 });
             }
 
@@ -91,13 +183,14 @@ public class MainActivity extends Activity {
                         } else {
                             if (!isIPv4) {
                                 int delim = sAddr.indexOf('%'); // drop ip6 port suffix
-                                return delim<0 ? sAddr : sAddr.substring(0, delim);
+                                return delim < 0 ? sAddr : sAddr.substring(0, delim);
                             }
                         }
                     }
                 }
             }
-        } catch (Exception ex) { } // for now eat exceptions
+        } catch (Exception ex) {
+        } // for now eat exceptions
         return "";
     }
 
@@ -106,6 +199,9 @@ public class MainActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.registerReceiver(this.myWifiReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         TextView ipText = (TextView) findViewById(R.id.ip);
         ipText.setText(getIPAddress(true));
@@ -207,7 +303,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Boolean previousState = pubnub.isResumeOnReconnect();
                 pubnub.setResumeOnReconnect(pubnub.isResumeOnReconnect() ? false : true);
-                Log.i("Resume on reconnect: ", String.format("Setting from: %s to %s", String.valueOf(previousState), String.valueOf(pubnub.isResumeOnReconnect())));
+                Log.e("Resume on reconnect: ", String.format("Setting from: %s to %s", String.valueOf(previousState), String.valueOf(pubnub.isResumeOnReconnect())));
 
             }
         });
@@ -279,7 +375,7 @@ public class MainActivity extends Activity {
                                                     Object message) {
                             sub_succ++;
                             notifyUser(" " + sub_succ);
-                            Log.d("Received count : ", String.valueOf(sub_succ));
+                            Log.e("Received count : ", String.valueOf(sub_succ));
                         }
 
                         public void errorCallback(String channel,
