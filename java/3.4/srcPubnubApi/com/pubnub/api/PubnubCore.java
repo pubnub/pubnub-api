@@ -270,7 +270,7 @@ abstract class PubnubCore {
 	 * @param channel
 	 *            Channel name
 	 * @param message
-	 *            JSONObject to be published
+	 *            JSONOArray to be published
 	 * @param callback
 	 *            Callback
 	 */
@@ -288,7 +288,7 @@ abstract class PubnubCore {
 	 * @param channel
 	 *            Channel name
 	 * @param message
-	 *            JSONObject to be published
+	 *            String to be published
 	 * @param callback
 	 *            Callback
 	 */
@@ -306,7 +306,7 @@ abstract class PubnubCore {
 	 * @param channel
 	 *            Channel name
 	 * @param message
-	 *            JSONObject to be published
+	 *            Integer to be published
 	 * @param callback
 	 *            Callback
 	 */
