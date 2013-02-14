@@ -1,13 +1,13 @@
 package com.pubnub.api;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.util.SecureRandom;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,15 +40,15 @@ public class Pubnub {
 	private String UUID = null;
 	private Subscriptions subscriptions;
 
-	private RequestManager subscribeManager;
-	private RequestManager nonSubscribeManager;
+	private SubscribeManager subscribeManager;
+	private NonSubscribeManager nonSubscribeManager;
 	private String _timetoken = "0";
 	private String _saved_timetoken = "0";
 
 	private String PRESENCE_SUFFIX = "-pnpres";
-	
-	private static Logger log = Logger.getLogger(
-            Pubnub.class.getName());
+
+	private static Logger log = new Logger(
+            Pubnub.class);
 
     public void shutdown() {
 		nonSubscribeManager.stop();
@@ -57,6 +57,14 @@ public class Pubnub {
 
 	public boolean isResumeOnReconnect() {
 		return resumeOnReconnect;
+	}
+
+	public void setRetryInterval(int retryInterval) {
+		subscribeManager.setRetryInterval(retryInterval);
+	}
+
+	public void setMaxRetries(int maxRetries) {
+		subscribeManager.setMaxRetries(maxRetries);
 	}
 
 	private String getOrigin() {
@@ -68,7 +76,7 @@ public class Pubnub {
 				ORIGIN_STR = "http://" + HOSTNAME + "-" + String.valueOf(HOSTNAME_SUFFIX) + "." + DOMAIN;
 			}
 		}
-		return ORIGIN_STR; 
+		return ORIGIN_STR;
 	}
 
     public String getCurrentlySubscribedChannelNames() {
@@ -202,7 +210,7 @@ public class Pubnub {
 	public Pubnub(String publish_key, String subscribe_key) {
 		this.init(publish_key, subscribe_key, "", "", false);
 	}
-	
+
 	/**
 	 *
 	 * Constructor for Pubnub Class
@@ -261,15 +269,15 @@ public class Pubnub {
 
 		if (nonSubscribeManager == null)
 			nonSubscribeManager = new NonSubscribeManager("Non Subscribe Manager");
-		
+
 		subscribeManager.setRequestTimeout(310000);
 		nonSubscribeManager.setRequestTimeout(15000);
-		
-		
+
+
 		subscribeManager.setHeader("V", "3.4");
 		subscribeManager.setHeader("Accept-Encoding", "deflate");
 		subscribeManager.setHeader("User-Agent", "JAVA");
-		
+
 		nonSubscribeManager.setHeader("V", "3.4");
 		nonSubscribeManager.setHeader("Accept-Encoding", "deflate");
 		nonSubscribeManager.setHeader("User-Agent", "JAVA");
@@ -286,7 +294,7 @@ public class Pubnub {
 		nonSubscribeManager.setRequestTimeout(timeout);
 	}
 
-	
+
 
 	/**
 	 * Send a message to a channel.
@@ -370,7 +378,6 @@ public class Pubnub {
 		String msgStr = message.toString();
 
 		if (this.CIPHER_KEY.length() > 0) {
-			msgStr = "\"" + msgStr + "\"";
 			// Encrypt Message
 			PubnubCrypto pc = new PubnubCrypto(this.CIPHER_KEY);
 			try {
@@ -381,6 +388,10 @@ public class Pubnub {
 				jsarr.put("0").put("Error: Encryption Failure");
 				callback.errorCallback(channel, jsarr);
 				return;
+			}
+		} else {
+			if (message instanceof String) {
+				msgStr = "\"" + msgStr + "\"";
 			}
 		}
 
@@ -396,14 +407,18 @@ public class Pubnub {
 			.append('/').append(msgStr);
 
 			// Sign Message
-			signature = Hex.encodeHexString(PubnubCrypto.md5(string_to_sign.toString()));
+			try {
+				signature = new String(Hex.encode(PubnubCrypto.md5(string_to_sign.toString())), "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+
+			}
 		}
-		String[] urlComponents = { getOrigin(), "publish", PubnubUtil.urlEncode(this.PUBLISH_KEY),
-				PubnubUtil.urlEncode(this.SUBSCRIBE_KEY), PubnubUtil.urlEncode(signature),
-				PubnubUtil.urlEncode(channel), PubnubUtil.urlEncode("0"),
+		String[] urlComponents = { getOrigin(), "publish", this.PUBLISH_KEY,
+				this.SUBSCRIBE_KEY, PubnubUtil.urlEncode(signature),
+				PubnubUtil.urlEncode(channel), "0",
 				PubnubUtil.urlEncode(msgStr)};
 
-		HttpRequest hreq = new HttpRequest(urlComponents, 
+		HttpRequest hreq = new HttpRequest(urlComponents,
 				new ResponseHandler() {
 			public void handleResponse(String response) {
 				JSONArray jsarr;
@@ -535,7 +550,7 @@ public class Pubnub {
 		final Callback callback = (Callback) args.get("callback");
 
 		String[] urlargs = { getOrigin(), "history", this.SUBSCRIBE_KEY,
-				channel, "0", limit };
+				PubnubUtil.urlEncode(channel), "0", limit };
 
 		HttpRequest hreq = new HttpRequest(urlargs, new ResponseHandler() {
 
@@ -599,9 +614,9 @@ public class Pubnub {
 			parameters.put("end", Long.toString(end).toLowerCase());
 
 		String[] urlargs = { getOrigin(), "v2", "history", "sub-key",
-				this.SUBSCRIBE_KEY, "channel", channel };
+				this.SUBSCRIBE_KEY, "channel", PubnubUtil.urlEncode(channel) };
 
-		HttpRequest hreq = new HttpRequest(urlargs, parameters, 
+		HttpRequest hreq = new HttpRequest(urlargs, parameters,
 				new ResponseHandler() {
 
 			public void handleResponse(String response) {
@@ -864,7 +879,7 @@ public class Pubnub {
 			throws PubnubException {
 		subscribe(channelsArr, callback, "0");
 	}
-	
+
 	/**
 	 *
 	 * Listen for a message on a channel.
@@ -906,7 +921,8 @@ public class Pubnub {
 		}
 		Callback callback = (Callback) args.get("callback");
 		String timetoken = (String) args.get("timetoken");
-		
+
+		_saved_timetoken = _timetoken;
 		_timetoken = (timetoken == null)?"0":timetoken;
 
 		/*
@@ -940,22 +956,21 @@ public class Pubnub {
 	private void _subscribe_base(boolean fresh) {
 		String channelString = subscriptions.getChannelString();
 		String[] channelsArray = subscriptions.getChannelNames();
-
 		if (channelsArray.length <= 0)
 			return;
-		
+
 		if (channelString == null) {
 			callErrorCallbacks(channelsArray, "Parsing Error");
 			return;
 		}
 		String[] urlComponents = { getOrigin(), "subscribe",
-				Pubnub.this.SUBSCRIBE_KEY, channelString, "0", _timetoken };
+				Pubnub.this.SUBSCRIBE_KEY, PubnubUtil.urlEncode(channelString), "0", _timetoken };
 
 		Hashtable params = new Hashtable();
 		params.put("uuid", UUID);
-		log.trace("Subscribing with timetoken : " + _timetoken);
+		//log.trace("Subscribing with timetoken : " + _timetoken);
 
-		HttpRequest hreq = new HttpRequest(urlComponents, params, 
+		HttpRequest hreq = new HttpRequest(urlComponents, params,
 				new ResponseHandler() {
 
 			public void handleResponse(String response) {
@@ -996,11 +1011,11 @@ public class Pubnub {
 							Channel _channel = (Channel) subscriptions
 									.getChannel(_channels[i]);
 							if (_channel != null) {
-								JSONObject jsobj = null; 
+								JSONObject jsobj = null;
 								if (CIPHER_KEY.length() > 0  && !_channel.name.endsWith(PRESENCE_SUFFIX)) {
 									PubnubCrypto pc = new PubnubCrypto(CIPHER_KEY);
 									try {
-										String message = pc.decrypt(messages.get(i).toString());									
+										String message = pc.decrypt(messages.get(i).toString());
 										_channel.callback.successCallback(
 												_channel.name, stringToJSON(message));
 									} catch (Exception e) {
@@ -1054,22 +1069,25 @@ public class Pubnub {
 				subscriptions.invokeDisconnectCallbackOnChannels();
 				_subscribe_base(true);
 			}
-			
+
 			public void handleTimeout() {
 				JSONObject jsobj = new JSONObject();
 				subscriptions.invokeDisconnectCallbackOnChannels();
 				log.trace("Timeout Occurred, Calling error callbacks on the channels");
 				try {
 					jsobj.put("error", "Network Timeout");
-					jsobj.put("timetoken", _timetoken);
+					log.trace("timetoken : " + _timetoken);
+					log.trace("Saved Timetoken : " + _saved_timetoken);
+					String timeoutTimetoken = (isResumeOnReconnect())?(_timetoken.equals("0"))?_saved_timetoken: _timetoken:"0";
+					jsobj.put("timetoken", timeoutTimetoken);
 					subscriptions.invokeErrorCallbackOnChannels(jsobj);
 				} catch (JSONException e) {
 					subscriptions.invokeErrorCallbackOnChannels("Network Timeout");
 				}
-				
+
 				subscriptions.removeAllChannels();
 			}
-			
+
 			public String getTimetoken() {
 				return _timetoken;
 			}
@@ -1084,8 +1102,9 @@ public class Pubnub {
 	 * @param abortExisting
 	 */
 	private void _request(final HttpRequest hreq, RequestManager connManager, boolean abortExisting) {
-		if (abortExisting) 
+		if (abortExisting) {
 			connManager.resetHttpManager();
+		}
 		connManager.queue(hreq);
 	}
 	/**
@@ -1103,6 +1122,7 @@ public class Pubnub {
 
 	public void disconnectAndResubscribe() {
 		log.trace("Received disconnectAndResubscribe");
+
 		subscriptions.invokeDisconnectCallbackOnChannels();
 		changeOrigin();
 		_saved_timetoken = _timetoken;

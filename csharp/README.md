@@ -1,7 +1,7 @@
-# PubNub 3.3.0.1 Web Data Push Cloud-Hosted API
+# PubNub 3.4 Web Data Push Cloud-Hosted API
 # C# for .net 4 and 3.5
 
-Open 3.3.0.1/PubNub-Messaging/PubNub-Messaging.sln, and the example Pubnub_Example.cs should demonstrate all functionality, asyncronously using delegates.
+Open 3.4/PubNub-Messaging/PubNub-Messaging.sln, and the example Pubnub_Example.cs should demonstrate all functionality, asyncronously using delegates.
 You can also view and inspect the tests for additional insight. 
 
 NuGet usage and example screencast is also available here: https://vimeo.com/pubnub/videos/search:.net/sort:date/format:detail
