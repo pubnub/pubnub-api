@@ -173,9 +173,6 @@ The following example opens a `new WebSocket` in
 <!-- Import PubNub Core Lib -->
 <script src="https://pubnub.a.ssl.fastly.net/pubnub-3.4.1.min.js"></script>
 
-<!-- Import WebSocket Emulation Lib -->
-<script src="websocket.js"></script>
-
 <!-- Use WebSocket Constructor for a New Socket Connection -->
 <script>(function() {
 
