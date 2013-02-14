@@ -334,10 +334,10 @@ PubNub JavaScript library includes a `windowing` feature that will
 automatically allow the PubNub Network the window time needed
 to bundle, compress and optimize messages for high-throughput.
 This means that if you specify a long window, you will be able to
-receive significant performance imporvements and optimized performance.
+receive significant performance improvements and optimized performance.
 Also with high throughput applications with many messages per second,
 a long enough window will all the right amount of time for the PubNub Network
-to order the messsage delivery.
+to order the message delivery.
 
 ```javascript
 var pubnub = PUBNUB.init({
@@ -370,8 +370,8 @@ Do this by limiting to one concurrent publish per channel.
 This is achievable by waiting for the publish response before sending another message.
 
 Use our Elastic Message options.
-You should instead send a single large message rather than segement
-messages into small packets you manually reassymble.
+You should instead send a single large message rather than segment
+messages into small packets you manually assemble them on the receiving client.
 
 >**NOTE:** Turn on Elastic Message Sizes in your Customer Account: 
 https://admin.pubnub.com/
@@ -382,5 +382,5 @@ Is it possible to ensure 100% messages are delivered?  **YES!**
 The way to do this includes a Read Receipt Design Pattern.
 You must allow the Receiver of a message to ACKNOWLEDGE that
 a message was successfully received.
-The Sender will continously re-send the message; with a delay between each re-send.
+The Sender will continuously re-send the message; with a delay between each re-send.
 This continues until an ACKNOWLEDGEMENT is received from the receiver.
