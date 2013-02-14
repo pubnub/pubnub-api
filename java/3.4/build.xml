@@ -6,13 +6,9 @@
     <property name="source" value="1.5"/>
     <path id="PubnubApi.classpath">
         <pathelement location="bin"/>
-        <pathelement location="libs/httpcore-4.2.2.jar"/>
-        <pathelement location="libs/httpclient-4.2.2.jar"/>
-		<pathelement location="libs/bouncycastle.jar"/>
+        <pathelement location="libs/bcprov-jdk15on-1.47.jar"/>
         <pathelement location="libs/json.jar"/>
-        <pathelement location="libs/commons-codec-1.5.jar"/>
-		<pathelement location="libs/commons-logging-1.1.1.jar"/>
-        <pathelement location="libs/log4j-1.2.17.jar"/>
+	<pathelement location="libs/commons-logging-1.1.1.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
