@@ -6,6 +6,13 @@ which take 1-5 seconds to complete on the server side.
 That's around 10+ seconds in the worst case.  Eeeek.
 You must reduce DOM/CSS parse time to < 1 second.
 
+## Responsive Design:
+
+Required to auto changing to screen size and mobile devices.
+So for example, Mobile devices will show the content
+that is best for the smaller screens.
+While larger screens will show the full experience.
+
 ## New CSS/HTML5 Requirement Additions:
 
  1. All Selectors must use `.class-name` or `#id-name`.
