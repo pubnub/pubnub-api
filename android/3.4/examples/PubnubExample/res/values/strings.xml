@@ -4,14 +4,14 @@
     <string name="app_name">PubnubExample</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    <string name="btnDetailedHistoryText">Detailed History</string>
+    <string name="btnDetailedHistoryText">History</string>
     <string name="btnPresenceText">Presence</string>
     <string name="btnSubscribeText">Subscribe</string>
     <string name="btnPublishText">Publish</string>
     <string name="btnHistoryText">History</string>
     <string name="btnDisconnectAndResubText">Disconnect and Resubscribe</string>
     <string name="btnTimeText">History</string>
-    <string name="btnToggleRoRText">Toggle Resume on Reconnect</string>
+    <string name="btnToggleRoRText">Toggle Catchup</string>
     <string name="btnHereNowText">Here Now</string>
     <string name="editTextHint">Message to Publish</string>
     <string name="btnPubSubText">Publish/Subscribe Test</string>

@@ -12,12 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
+
         <EditText
             android:id="@+id/editText1"
-            android:layout_width="308dp"
+            android:layout_width="221dp"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|center_horizontal"
-            android:hint="@string/editTextHint" />
+            android:hint="@string/editTextHint" android:layout_weight="0.69"/>
 
     </LinearLayout>
 
@@ -42,38 +43,31 @@
             android:text="@string/btnHereNowText" />
     </LinearLayout>
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|fill_horizontal" >
 
         <Button
-            android:id="@+id/btnDetailedHistory"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.39"
-            android:minWidth="@dimen/btn2"
-            android:text="@string/btnDetailedHistoryText" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|fill_horizontal" >
+                android:id="@+id/btnDetailedHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.39"
+                android:text="@string/btnDetailedHistoryText" />
 
         <Button
             android:id="@+id/btnPresence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="@dimen/btn2"
             android:text="@string/btnPresenceText" />
 
         <Button
             android:id="@+id/btnSubscribe"
-            android:layout_width="0dip"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.39"
-            android:minWidth="@dimen/btn2"
             android:text="@string/btnSubscribeText" />
     </LinearLayout>
 
@@ -90,29 +84,41 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+            android:layout_width="wrap_content"
+            android:layout_height="86dp"
+            android:gravity="center_horizontal|fill_horizontal">
 
         <Button
-            android:id="@+id/btnToggleRoR"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btnToggleRoRText" />
+                android:id="@+id/btnToggleRoR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btnToggleRoRText"/>
+
+        <Button
+                android:id="@+id/btnPubSubTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btnPubSubText"/>
+
+
     </LinearLayout>
+
 
     <LinearLayout
-        android:id="@+id/LinearLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/btnPubSubTest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btnPubSubText" />
+            android:gravity="center_horizontal|fill_horizontal" >
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:gravity="center_horizontal|fill_horizontal"
+                android:id="@+id/ip"/>
+
 
     </LinearLayout>
+
+
+
 
 </LinearLayout>
