@@ -40,7 +40,7 @@
         public var pub_key:String = 'demo';
 
         [Bindable]
-        public var sub_key:String = 'demo';
+        public var sub_key:String = 'sub-c-3a693cf8-7401-11e2-8b02-12313f022c90';
 
         [Bindable]
         public var secret_key:String = '';
@@ -53,7 +53,7 @@
         //public var publishMessageText:String = '{"text":"hey"}';
 		
 		[Bindable]
-        public var ssl:Boolean = false;
+        public var ssl:Boolean = true;
 		
 		[Bindable]
 		private var channelsDataProvider:ArrayCollection;
@@ -188,6 +188,10 @@
                 ExternalInterface.call(functionName, rest);
             }
             consoleArea.appendText((consoleCounter++) +'. '+ rest + '\n');
+            if (consoleCounter == 10) {
+                consoleArea.text = "";
+                consoleCounter = 0;
+            }
         }
 
 		private var startPublishTime:Number;
@@ -380,7 +384,7 @@
 					  click="getLogBtn_clickHandler(event)"/>
 		</s:NavigatorContent>
     </mx:TabNavigator>
-    <s:TextArea id="consoleArea" left="10" right="100" bottom="10" height="120"/>
+    <s:TextArea id="consoleArea" left="10" right="100" bottom="10" height="120" maxChars="10"/>
     <s:Button id="clearConsoleBtn" right="10" bottom="110" width="80" height="21" label="Clear"
 			  click="OnClearConsoleBtnClick(event)"/>
     <s:Label x="343" y="67" color="#4D4C4C" fontStyle="italic" text="sub_key" textAlign="right"/>

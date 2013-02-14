@@ -127,12 +127,12 @@ public class URLLoader extends EventDispatcher {
 
     protected function onSocketData(e:ProgressEvent):void {
 
-        Log.log("********************************************************************* ", Log.DEBUG);
-        Log.log("Entering onSocketData: " + e, Log.DEBUG);
+        // Log.log("********************************************************************* ", Log.DEBUG);
+        // Log.log("Entering onSocketData: " + e, Log.DEBUG);
 
         //trace('------onSocketData------' + socket.bytesAvailable);
         temp.clear();
-        Log.log("onSocketData start", Log.DEBUG);
+        //Log.log("onSocketData start", Log.DEBUG);
 
         _responseInProgress = true;
         _alreadyCheckedForHeaders = false;
@@ -146,7 +146,7 @@ public class URLLoader extends EventDispatcher {
                 temp.position = 0;
                 var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
 
-                //Log.log("THE DATA: " + tempStr, Log.DEBUG);
+                Log.log("THE DATA: " + tempStr, Log.DEBUG);
 
                 if ( _headers == null) {
                     Log.log("Headers don't exist -- getting headers:", Log.DEBUG);
@@ -154,32 +154,32 @@ public class URLLoader extends EventDispatcher {
                 }
 
                 if (_headers && (_headers != []) && (!_alreadyCheckedForHeaders)) {
-                    Log.log("Headers are present:", Log.DEBUG);
-                    Log.log(_headers.toString(), Log.DEBUG);
+                    //Log.log("Headers are present:", Log.DEBUG);
+                    Log.log("Headers are present: "+ _headers.toString(), Log.DEBUG);
 
                     if (URLResponse.isChunked(_headers)) {
                         _contentEncoding = "chunked";
-                        Log.log("Setting to chunked", Log.DEBUG);
+                        //Log.log("Setting to chunked", Log.DEBUG);
                     } else {
                         _contentEncoding = "cl";
-                        Log.log("Setting to CL", Log.DEBUG);
+                        //Log.log("Setting to CL", Log.DEBUG);
                     }
                 } else if (!_alreadyCheckedForHeaders) {
-                    Log.log("Headers are not present.", Log.DEBUG);
+                    //Log.log("Headers are not present.", Log.DEBUG);
                 }
 
                 // 2. Based on the headers, do we have the start and the end?
 
-                Log.log("Checking for EOF", Log.DEBUG);
+                //Log.log("Checking for EOF", Log.DEBUG);
 
                 if (_contentEncoding == "chunked") {
                     if (tempStr.match(END_SYMBOL_CHUNKED)) {
-                        Log.log("Transfer completed: CHUNKED", Log.DEBUG);
+                        //Log.log("Transfer completed: CHUNKED", Log.DEBUG);
                         _responseInProgress = false;
                     }
                 } else if (_contentEncoding == "cl") {
                     if (tempStr.match(END_SYMBOL)) {   // Be sure to match on content-length size
-                        Log.log("Transfer completed: CL", Log.DEBUG);
+                        //Log.log("Transfer completed: CL", Log.DEBUG);
                         _responseInProgress = false;
                     }
                 }
@@ -191,17 +191,17 @@ public class URLLoader extends EventDispatcher {
             }
         }
 
-        Log.log("onSocketData end", Log.DEBUG);
+        //Log.log("onSocketData end", Log.DEBUG);
 
         if (!_responseInProgress) {
-            Log.log("Firing onResponse!", Log.DEBUG);
+            //Log.log("Firing onResponse!", Log.DEBUG);
             onRESPONSE(answer)
             answer.clear();
             temp.clear();
             _headers = null;
             tempStr = "";
         } else {
-            Log.log("Transfer in progress.", Log.DEBUG);
+            //Log.log("Transfer in progress.", Log.DEBUG);
         }
     }
 
@@ -302,7 +302,7 @@ public class URLLoader extends EventDispatcher {
         // Debug
         var hStr:String = "Header:\n" + requestBytes.readUTFBytes(requestBytes.length);
         //trace('socket.connected : ' + socket.connected);
-        Log.log(Log.DEBUG, "Request Header:\n" + hStr);
+        //Log.log(Log.DEBUG, "Request Header:\n" + hStr);
         socket.writeBytes(requestBytes);
         socket.flush();
     }
