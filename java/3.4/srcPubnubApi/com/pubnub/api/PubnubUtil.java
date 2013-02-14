@@ -6,7 +6,7 @@ import java.util.Vector;
 
 /**
  *
- * @author Pubnub
+ * @author PubnubCore
  */
 public class PubnubUtil {
 

@@ -1,5 +1,9 @@
 CHANGELOG
 
+02-14-2013 - 190a310c2b86e740fd7cb296b22dfa96174591e9
+. better type support
+. misc refactoring
+
 02-13-2013 - 9ca6edf7a1c8a0089fc5db8121fc4be75f5a3b2e
 . fixing encoding bug on publish
 

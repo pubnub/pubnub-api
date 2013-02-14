@@ -2,10 +2,10 @@ package com.pubnub.api;
 
 /**
  *
- * @author Pubnub
+ * @author PubnubCore
  */
 public class PubnubException extends Exception {
-    private String errormsg = "Pubnub Exception Occurred";
+    private String errormsg = "PubnubCore Exception Occurred";
 
     /**
      * Constructor for PubnubException Class with error message as argument

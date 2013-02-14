@@ -1,7 +1,7 @@
 package com.pubnub.http;
 
 /**
- * @author Pubnub
+ * @author PubnubCore
  */
 
 public abstract class ResponseHandler {

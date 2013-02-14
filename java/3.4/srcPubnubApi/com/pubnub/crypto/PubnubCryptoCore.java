@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
 
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.Digest;
@@ -14,22 +13,17 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.util.BigInteger;
 import org.bouncycastle.util.encoders.Hex;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * PubNub 3.1 Cryptography
  *
  */
-public class PubnubCrypto {
+public abstract class PubnubCryptoCore {
 
 	PaddedBufferedBlockCipher encryptCipher = null;
 	PaddedBufferedBlockCipher decryptCipher = null;
@@ -40,7 +34,7 @@ public class PubnubCrypto {
 	public static int blockSize = 16;
 	String CIPHER_KEY;
 
-	public PubnubCrypto(String CIPHER_KEY) {
+	public PubnubCryptoCore(String CIPHER_KEY) {
 		this.CIPHER_KEY = CIPHER_KEY;
 	}
 
@@ -139,35 +133,6 @@ public class PubnubCrypto {
 					.digit(s.charAt(i + 1), 16));
 		}
 		return data;
-	}
-
-	/**
-	 * Sign Message
-	 *
-	 * @param String
-	 *            input
-	 * @return String as HashText
-	 */
-	public static String getHMacSHA256(String secret_key, String input) {
-
-		String signature = "0";
-		try {
-			HMac m = new HMac(new SHA256Digest());
-			m.init(new KeyParameter(secret_key.getBytes("UTF-8")));
-			byte[] bytes = input.getBytes("UTF-8");
-			m.update(bytes, 0, bytes.length);
-			byte[] mac = new byte[m.getMacSize()];
-			m.doFinal(mac, 0);
-			BigInteger number = new BigInteger(1, mac);
-			String hashtext = number.toString(16);
-			signature = hashtext;
-		} catch (java.io.UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return signature;
 	}
 
 	/**
