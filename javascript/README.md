@@ -302,14 +302,16 @@ being that the message traffic is now encrypted.
 
 #### KEEPALIVE
 
-The JavaScript library will automatically detect disconnects
-in near real-time.
-However there are extra rare cases where `keepalives` are used
-to detect disconnections of the network connection.
+>**NOTE:** The JavaScript library will automatically detect disconnects
+in near real-time regardless of `keepalaive`.
+
+There exists extra rare cases where `keepalives` are used
+to detect disconnections of the network connection;
+situations where a network cable was unplugged for example.
 Optionally you may sacrafice bandwidth and reduce battery life
 by lowering the `keepalive` value.
 By reducing the `keepalive` you receive
-greater percision to detect rare edge-case drops.
+greater precision to detect rare edge-case drops.
 The Default `keepalive` is *60 seconds*.
 **Reducing this value to 30 seconds will help detect 
 only the rare edge-case network problems
@@ -335,9 +337,14 @@ automatically allow the PubNub Network the window time needed
 to bundle, compress and optimize messages for high-throughput.
 This means that if you specify a long window, you will be able to
 receive significant performance improvements and optimized performance.
-Also with high throughput applications with many messages per second,
-a long enough window will all the right amount of time for the PubNub Network
-to order the message delivery.
+With high throughput applications 
+(Apps that send many messages per second)
+a long enough window will benefit in performance and will allow
+the needed period for the PubNub Network
+to order the message delivery and compress the response efficiently.
+
+>**NOTE:** Windowing is a in favor of battery savings
+and throughput. The effect is fewer unbundled messages.
 
 ```javascript
 var pubnub = PUBNUB.init({
@@ -347,16 +354,19 @@ var pubnub = PUBNUB.init({
 });
 ```
 
+>**NOTE:** Windowing 1000ms will allow 100 messages
+in a second to be bundled and compressed at optimal speeds.
+
 ## BEST PRACTICES
 
-#### MESSAGE DELIVERY 
+#### MESSAGE DELIVERY vs. GUARANTEED MESSAGE DELIVERY
 
 The PubNub Network is a high throughput and reliable messaging services.
 Note however that PubNub is not a guaranteed delivery with full Read Receipt Transactions.
 You can however use improved designs and best practices to ensure you increase reliability.
 One method includes *High Windowing Length* which provides slight improvements.
 
->**NOTE:** Higher windowing lengths allow improved message delivery from 99.999% to 99.9999%.
+>**NOTE:** Higher windowing lengths allow improved message delivery.
 
 We recommend following a few best practices to achieve high frequency of message delivery.
 First ensure you are checking the publish response code and re-sending 
@@ -375,8 +385,6 @@ messages into small packets you manually assemble them on the receiving client.
 
 >**NOTE:** Turn on Elastic Message Sizes in your Customer Account: 
 https://admin.pubnub.com/
-
-#### GUARANTEED MESSAGE DELIVERY
 
 Is it possible to ensure 100% messages are delivered?  **YES!**
 The way to do this includes a Read Receipt Design Pattern.
