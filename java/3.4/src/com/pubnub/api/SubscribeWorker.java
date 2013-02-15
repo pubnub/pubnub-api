@@ -25,19 +25,6 @@ class SubscribeWorker extends AbstractSubscribeWorker {
 					break;
 				}
 			}
-			catch (IllegalStateException e) {
-				log.trace("Exception in Fetch : " + e.toString());
-				return;
-			}
-			catch (SocketException e){
-				log.trace("Exception in Fetch : " + e.toString());
-				return;
-			}
-			catch (SocketTimeoutException e){
-				log.trace("Exception in Fetch : " + e.toString());
-				currentRetryAttempt = maxRetries + 1;
-				break;
-			}
 			catch (Exception e) {
 				log.trace("Retry Attempt : " + currentRetryAttempt + " Exception in Fetch : " + e.toString());
 				currentRetryAttempt++;
@@ -48,17 +35,19 @@ class SubscribeWorker extends AbstractSubscribeWorker {
 			} catch (InterruptedException e) {
 			}
 		}
-		if (hresp == null) {
-			log.debug("Error in fetching url : " + hreq.getUrl());
-			if (currentRetryAttempt > maxRetries) {
-				log.trace("Exhausted number of retries");
-				hreq.getResponseHandler().handleTimeout();
-			} else
-				hreq.getResponseHandler().handleError("Network Error");
-			return;
+		if (!_die) {
+			if (hresp == null) {
+				log.debug("Error in fetching url : " + hreq.getUrl());
+				if (currentRetryAttempt > maxRetries) {
+					log.trace("Exhausted number of retries");
+					hreq.getResponseHandler().handleTimeout();
+				} else
+					hreq.getResponseHandler().handleError("Network Error");
+				return;
+			}
+			log.debug(hresp.getResponse());
+			hreq.getResponseHandler().handleResponse(hresp.getResponse());
 		}
-		log.debug(hresp.getResponse());
-		hreq.getResponseHandler().handleResponse(hresp.getResponse());
 
 	}
 }

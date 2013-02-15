@@ -98,23 +98,24 @@ class NonSubscribeWorker extends Worker {
 
 	void process(HttpRequest hreq) {
 		HttpResponse hresp = null;
-			try {
-				String s = hreq.getUrl();
-				log.debug(hreq.getUrl());
-				hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
-			} catch (Exception e) {
-				log.debug("Exception in Fetch : " + e.toString());
-				hreq.getResponseHandler().handleError("Network Error " + e.toString());
-				return;
-			}
-
-		//if (hresp == null || !httpclient.checkResponseSuccess(hresp.getStatusCode())) {
-		if (hresp == null) {
-			log.debug("Error in fetching url : " + hreq.getUrl());
-			hreq.getResponseHandler().handleError("Network Error");
+		try {
+			String s = hreq.getUrl();
+			log.debug(hreq.getUrl());
+			hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
+		} catch (Exception e) {
+			log.debug("Exception in Fetch : " + e.toString());
+			hreq.getResponseHandler().handleError("Network Error " + e.toString());
 			return;
 		}
-		hreq.getResponseHandler().handleResponse(hresp.getResponse());
+
+		if (!_die) {
+			if (hresp == null) {
+				log.debug("Error in fetching url : " + hreq.getUrl());
+				hreq.getResponseHandler().handleError("Network Error");
+				return;
+			}
+			hreq.getResponseHandler().handleResponse(hresp.getResponse());
+		}
 	}
 
 }

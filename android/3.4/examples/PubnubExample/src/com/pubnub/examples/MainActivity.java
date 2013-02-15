@@ -35,117 +35,19 @@ import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubException;
 
 public class MainActivity extends Activity {
-    // Noise Test
-    //Pubnub pubnub = new Pubnub("pub-c-87f96934-8c44-4f8d-a35f-deaa2753f083", "sub-c-3a693cf8-7401-11e2-8b02-12313f022c90", "", false);
-    //String channel = "noise";
-    //String channel = "a";
+    /*//Noise Test
+    Pubnub pubnub = new Pubnub("pub-c-87f96934-8c44-4f8d-a35f-deaa2753f083", "sub-c-3a693cf8-7401-11e2-8b02-12313f022c90", "", false);
+    String channel = "noise";
+    
+    String channel = "a";*/
 
 
     Pubnub pubnub = new Pubnub("demo", "demo", "", false);
     String channel = "hello_world";
     EditText ed;
     protected int count;
-
-
-
-    private BroadcastReceiver myRssiChangeReceiver
-            = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            NetworkInfo.State mState;
-            NetworkInfo mNetworkInfo;
-            NetworkInfo mOtherNetworkInfo;
-            String mReason;
-            Boolean mIsFailover;
-
-
-
-
-            if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ) {
-                Log.e("******* NET: ", "onReceived() called with " + intent);
-                return;
-            }
-
-            boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-
-            if (noConnectivity) {
-                mState = NetworkInfo.State.DISCONNECTED;
-            } else {
-                mState = NetworkInfo.State.CONNECTED;
-            }
-
-            mNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-            mOtherNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-
-            mReason = intent.getStringExtra(ConnectivityManager.EXTRA_REASON);
-            mIsFailover = intent.getBooleanExtra(ConnectivityManager.EXTRA_IS_FAILOVER, false);
-
-
-            Log.e("******* NET: ", "onReceive(): mNetworkInfo=" + mNetworkInfo + " mOtherNetworkInfo = "
-                        + (mOtherNetworkInfo == null ? "[none]" : mOtherNetworkInfo + " noConn=" + noConnectivity)
-                        + " mState=" + mState.toString() + " reason: " + mReason + " failover: " + mIsFailover);
-
-            TextView ipText = (TextView) findViewById(R.id.ip);
-            ipText.setText(getIPAddress(true));
-
-        }
-    };
-
-
-
-    private void DisplayWifiState() {
-
-        ConnectivityManager myConnManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo myNetworkInfo = myConnManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        WifiManager myWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo myWifiInfo = myWifiManager.getConnectionInfo();
-
-        // textMac.setText(myWifiInfo.getMacAddress());
-
-        TextView ipText = (TextView) findViewById(R.id.ip);
-
-        if (myNetworkInfo.isConnected()) {
-            int myIp = myWifiInfo.getIpAddress();
-
-            // textConnected.setText("--- CONNECTED ---");
-
-            int intMyIp3 = myIp / 0x1000000;
-            int intMyIp3mod = myIp % 0x1000000;
-
-            int intMyIp2 = intMyIp3mod / 0x10000;
-            int intMyIp2mod = intMyIp3mod % 0x10000;
-
-            int intMyIp1 = intMyIp2mod / 0x100;
-            int intMyIp0 = intMyIp2mod % 0x100;
-
-
-
-            ipText.setText(String.valueOf(intMyIp0)
-                    + "." + String.valueOf(intMyIp1)
-                    + "." + String.valueOf(intMyIp2)
-                    + "." + String.valueOf(intMyIp3)
-            );
-
-//            textSsid.setText(myWifiInfo.getSSID());
-//            textBssid.setText(myWifiInfo.getBSSID());
-//
-//            textSpeed.setText(String.valueOf(myWifiInfo.getLinkSpeed()) + " " + WifiInfo.LINK_SPEED_UNITS);
-//            textRssi.setText(String.valueOf(myWifiInfo.getRssi()));
-        } else {
-//            textConnected.setText("--- DIS-CONNECTED! ---");
-            ipText.setText("---");
-//            textSsid.setText("---");
-//            textBssid.setText("---");
-//            textSpeed.setText("---");
-//            textRssi.setText("---");
-        }
-
-    }
-
-
-
+    
+    private boolean networkConnected = true;;
 
     private void notifyUser(Object message) {
         try {
@@ -186,31 +88,14 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
     }
+    
+    
+    public boolean haveInternet(Context ctx) {
 
-    public static String getIPAddress(boolean useIPv4) {
-        try {
-            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface intf : interfaces) {
-                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
-                for (InetAddress addr : addrs) {
-                    if (!addr.isLoopbackAddress()) {
-                        String sAddr = addr.getHostAddress().toUpperCase();
-                        boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
-                        if (useIPv4) {
-                            if (isIPv4)
-                                return sAddr;
-                        } else {
-                            if (!isIPv4) {
-                                int delim = sAddr.indexOf('%'); // drop ip6 port suffix
-                                return delim < 0 ? sAddr : sAddr.substring(0, delim);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-        } // for now eat exceptions
-        return "";
+        NetworkInfo info = (NetworkInfo) ((ConnectivityManager) ctx
+                .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        
+        return ( info != null && info.isConnected());
     }
 
     @Override
@@ -218,13 +103,26 @@ public class MainActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        pubnub.setSubscribeTimeout(15000);
+        
+        this.registerReceiver(new BroadcastReceiver() {
 
-        this.registerReceiver(this.myRssiChangeReceiver,
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-
-        TextView ipText = (TextView) findViewById(R.id.ip);
-        ipText.setText(getIPAddress(true));
-
+			@Override
+			public void onReceive(Context arg0, Intent intent) {
+				boolean haveInternet = haveInternet(arg0);
+				
+				if ( haveInternet != networkConnected)
+					Log.d("Receiver 1", "Network state changed from " + networkConnected + " to " + haveInternet);
+				
+				if (haveInternet && !networkConnected ) {
+					pubnub.disconnectAndResubscribe();
+				}
+				networkConnected = haveInternet;
+				
+			} 
+        	
+        }, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION  ));
 
         Button publishBtn = (Button) findViewById(R.id.btnPublish);
         publishBtn.setOnClickListener(new OnClickListener() {
@@ -313,6 +211,10 @@ public class MainActivity extends Activity {
                         public void successCallback(String channel,
                                                     Object message) {
                             notifyUser(channel + " " + message.toString());
+                        }
+                        public void errorCallback(String channel,
+                                Object message) {
+                        	notifyUser(channel + " " + message.toString());
                         }
                     });
 

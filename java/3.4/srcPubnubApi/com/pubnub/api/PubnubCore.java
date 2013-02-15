@@ -1071,7 +1071,7 @@ abstract class PubnubCore {
 					subscriptions.invokeErrorCallbackOnChannels("Network Timeout");
 				}
 
-				subscriptions.removeAllChannels();
+				//subscriptions.removeAllChannels();
 			}
 
 			public String getTimetoken() {
