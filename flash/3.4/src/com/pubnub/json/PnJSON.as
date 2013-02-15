@@ -1,5 +1,7 @@
 package com.pubnub.json {
-	/**
+import com.pubnub.log.Log;
+
+/**
 	 * Note: here uses univeral solution for fp 10- versions
 	 * try/catch consruction is more slow! 
 	 * you can choose native or 3d party JSON libs for optimization.
@@ -12,7 +14,7 @@ package com.pubnub.json {
 			try {
 				return JSONNative.parse(text, reviver);
 			}catch (err:Error) {
-				// native JSON works with error here
+				Log.log("PARSE ERROR!", Log.DEBUG);
 			}
 			return JSON3dParty.parse(text);
 		}
