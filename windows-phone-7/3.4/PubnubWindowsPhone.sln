@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubnubWindowsPhone", "PubnubWindowsPhone\PubnubWindowsPhone.csproj", "{282DA561-8612-4382-B34B-F8BC7BFB212C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubnubWindowsPhone.Test", "PubnubWindowsPhone.Test\PubnubWindowsPhone.Test.csproj", "{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{282DA561-8612-4382-B34B-F8BC7BFB212C}.Release|x86.ActiveCfg = Release|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{9B519CB9-2E72-45DA-A9D5-B76C59BBE017}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
