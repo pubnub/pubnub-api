@@ -213,10 +213,12 @@ namespace PubNubMessaging.Tests
         {
             isComplexObjectPublished = false;
             Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+
             PubnubUnitTest unitTest = new PubnubUnitTest();
             unitTest.TestClassName = "WhenAMessageIsPublished";
             unitTest.TestCaseName = "ThenComplexMessageObjectShouldReturnSuccessCodeAndInfo";
             pubnub.PubnubUnitTest = unitTest;
+
             string channel = "my/channel";
             object message = new PubnubDemoObject();
             messageComplexObjectForPublish = JsonConvert.SerializeObject(message);

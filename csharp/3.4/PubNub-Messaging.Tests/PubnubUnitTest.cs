@@ -39,11 +39,11 @@ namespace PubNubMessaging.Tests
 #else
             data.Add("/subscribe/demo/my/channel-pnpres/0/0", "[[],\"13596603179264912\"]");
             data.Add("/subscribe/demo/my/channel-pnpres/0/13596603179264912", "[[],\"13596603179264912\"]");
-            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/0", "[[],\"13596603179264912\"]");
-            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13596603179264912", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 1}],\"13559006802662768\"]");
-            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13559006802662768", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel,my/channel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my/channel,my/channel-pnpres/0/13596603179264912", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 1}],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel,my/channel-pnpres/0/13559006802662768", "[[],\"13559006802662768\"]");
             data.Add("/subscribe/demo/my/channel-pnpres/0/13559006802662768", "[[{\"action\": \"leave\", \"timestamp\": 1359660369, \"uuid\": \"eb4c1645-1319-4425-865f-008563009d67\", \"occupancy\": 0}],\"13596603694444112\"]");
-            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
+            data.Add("/subscribe/demo/my/channel,my/channel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
             data.Add("/v2/presence/sub_key/demo/channel/my%252Fchannel/leave", "{\"action\": \"leave\"}");
 #endif
             return data;
@@ -65,11 +65,10 @@ namespace PubNubMessaging.Tests
 #else
             data.Add("/subscribe/demo/my/channel-pnpres/0/0", "[[],\"13596603179264912\"]");
             data.Add("/subscribe/demo/my/channel-pnpres/0/13596603179264912", "[[],\"13596603179264912\"]");
-            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/0", "[[],\"13596603179264912\"]");
-            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13596603179264912", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 1}],\"13559006802662768\"]");
-            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13559006802662768", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel,my/channel-pnpres/0/0", "[[],\"13596603179264912\"]");
+            data.Add("/subscribe/demo/my/channel,my/channel-pnpres/0/13596603179264912", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 1}],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel,my/channel-pnpres/0/13559006802662768", "[[],\"13559006802662768\"]");
             data.Add("/subscribe/demo/my/channel-pnpres/0/13559006802662768", "[[{\"action\": \"leave\", \"timestamp\": 1359660369, \"uuid\": \"mylocalmachine.mydomain.com\", \"occupancy\": 0}],\"13596603694444112\"]");
-            data.Add("/subscribe/demo/my/channel,my%2Fchannel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
             data.Add("/subscribe/demo/my/channel-pnpres/0/13596603694444112", "[[],\"13596603694444112\"]");
             data.Add("/v2/presence/sub_key/demo/channel/my%252Fchannel/leave", "{\"action\": \"leave\"}");
 #endif
@@ -307,8 +306,8 @@ namespace PubNubMessaging.Tests
             data.Add("/subscribe/demo/my/channel1/0/0", "[[],\"13559006802662768\"]");
             data.Add("/subscribe/demo/my/channel1/0/13559006802662768", "[[],\"13559006802662768\"]");
 
-            data.Add("/subscribe/demo/my/channel1,my/channel2/0/0", "[[],\"13559006802662768\"]");
-            data.Add("/subscribe/demo/my/channel1,my/channel2/0/13559006802662768", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel2,my/channel1/0/0", "[[],\"13559006802662768\"]");
+            data.Add("/subscribe/demo/my/channel2,my/channel1/0/13559006802662768", "[[],\"13559006802662768\"]");
 #endif
             return data;
         }
@@ -361,7 +360,7 @@ namespace PubNubMessaging.Tests
         {
             Dictionary<string, string> responseDictionary = null;
             string stubResponse = "!! Stub Response Not Assigned !!";
-
+            System.Diagnostics.Debug.WriteLine(string.Format("{0} - {1}",_testClassName,_testCaseName));
             switch (_testClassName)
             {
                 case "WhenAClientIsPresented":

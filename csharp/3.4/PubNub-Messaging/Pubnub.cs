@@ -1,4 +1,4 @@
-﻿//Build Date: Feb 08, 2013
+﻿//Build Date: Feb 15, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -1298,7 +1298,6 @@ namespace PubNubMessaging.Core
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine(ex.ToString());
                 return false;
             }
         }
@@ -1363,7 +1362,7 @@ namespace PubNubMessaging.Core
 #if (__MonoCS__)
                     if (!asyncResult.AsyncWaitHandle.WaitOne(GetTimeoutInSecondsForResponseType(pubnubRequestState.Type) * 1000))
                     {
-                        OnPubnubWebRequestTimeout(pubnubRequestState, true);
+                        OnPubnubWebRequestTimeout<T>(pubnubRequestState, true);
                     }
 #elif (SILVERLIGHT || WINDOWS_PHONE)
                 Timer webRequestTimer = new Timer(OnPubnubWebRequestTimeout<T>, pubnubRequestState, GetTimeoutInSecondsForResponseType(pubnubRequestState.Type) * 1000, Timeout.Infinite);
@@ -1457,7 +1456,7 @@ namespace PubNubMessaging.Core
             catch (WebException webEx)
             {
                 bool reconnect = false;
-                LoggingMethod.WriteToLog(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.ToString(), asynchRequestState.Request.RequestUri.ToString()), LoggingMethod.LevelInfo);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.ToString(), asynchRequestState.Request.RequestUri.ToString()), LoggingMethod.LevelError);
 
                 if (asynchRequestState.Response != null) asynchRequestState.Response.Close();
                 if (asynchRequestState.Request != null) asynchRequestState.Request.Abort();
@@ -1540,19 +1539,30 @@ namespace PubNubMessaging.Core
                 if (_channelHeartbeatTimer.ContainsKey(requestUri))
                 {
                     Timer requestHeatbeatTimer = _channelHeartbeatTimer[requestUri];
-                    requestHeatbeatTimer.Change(
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000,
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
-                    requestHeatbeatTimer.Dispose();
-                    Timer removedTimer = null;
-                    bool removed = _channelHeartbeatTimer.TryRemove(requestUri, out removedTimer);
-                    if (removed)
+                    if (requestHeatbeatTimer != null)
                     {
-                        LoggingMethod.WriteToLog(string.Format("DateTime {0} Remove heartbeat reference from collection for {1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
-                    }
-                    else
-                    {
-                        LoggingMethod.WriteToLog(string.Format("DateTime {0} Unable to remove heartbeat reference from collection for {1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
+                        try
+                        {
+                            requestHeatbeatTimer.Change(
+                                (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000,
+                                (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                            requestHeatbeatTimer.Dispose();
+                        }
+                        catch (ObjectDisposedException ex)
+                        {
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0} Error while accessing requestHeatbeatTimer object in TerminateHeartbeatTimer {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelInfo);
+                        }
+                        
+                        Timer removedTimer = null;
+                        bool removed = _channelHeartbeatTimer.TryRemove(requestUri, out removedTimer);
+                        if (removed)
+                        {
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0} Remove heartbeat reference from collection for {1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
+                        }
+                        else
+                        {
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0} Unable to remove heartbeat reference from collection for {1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
+                        }
                     }
                 }
             }
@@ -1898,14 +1908,11 @@ namespace PubNubMessaging.Core
                                     //decrypt the subscriber message if cipherkey is available
                                     if (this.cipherKey.Length > 0)
                                     {
-                                        List<object> receivedMsg = new List<object>();
-
                                         PubnubCrypto aes = new PubnubCrypto(this.cipherKey);
                                         string decryptMessage = aes.Decrypt(messageList[messageIndex].ToString());
                                         object decodeMessage = (decryptMessage == "**DECRYPT ERROR**") ? decryptMessage : JsonConvert.DeserializeObject<object>(decryptMessage);
-                                        receivedMsg.Add(decodeMessage);
 
-                                        itemMessage.Add(receivedMsg);
+                                        itemMessage.Add(decodeMessage);
                                     }
                                     else
                                     {
@@ -3192,7 +3199,7 @@ namespace PubNubMessaging.Core
             }
             catch (Exception ex)
             {
-                LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelVerbose);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelError);
                 callback(false);
             }
             mres.Set();
