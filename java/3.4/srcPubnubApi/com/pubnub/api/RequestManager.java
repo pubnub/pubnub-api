@@ -99,7 +99,6 @@ class NonSubscribeWorker extends Worker {
 	void process(HttpRequest hreq) {
 		HttpResponse hresp = null;
 		try {
-			String s = hreq.getUrl();
 			log.debug(hreq.getUrl());
 			hresp = httpclient.fetch(hreq.getUrl(), hreq.getHeaders());
 		} catch (Exception e) {
