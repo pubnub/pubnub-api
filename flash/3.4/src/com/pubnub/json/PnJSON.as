@@ -8,14 +8,32 @@ import com.pubnub.log.Log;
 	 * 
 	 * @author firsoff maxim, support@pubnub.com
 	 */
-	public class PnJSON {
-		
-		static public function parse(text:String, reviver:Function = null):Object {
+
+public class PnJSON {
+
+    //static var ticker:int;
+
+    static public function parse(text:String, reviver:Function = null):Object {
+        //ticker ||= 0;
+        //ticker++;
+
+        //Log.log(ticker.toString(), Log.DEBUG);
+
+        /// Debug blowup
+
+//        if (ticker == 5) {
+//            Log.log("**** PNJSON SPLAT!****", Log.DEBUG);
+//            trace(new Date() + "**** PnJSON SPLAT!****", Log.DEBUG);
+//            var badParse:Object = JSON3dParty.parse('"{:');
+//            return badParse;
+//        }
+
 			try {
 				return JSONNative.parse(text, reviver);
 			}catch (err:Error) {
-				Log.log("PARSE ERROR!", Log.DEBUG);
+				// Log.log("Unable to do native parse.", Log.DEBUG);
 			}
+
 			return JSON3dParty.parse(text);
 		}
 		

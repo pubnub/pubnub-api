@@ -34,13 +34,13 @@
 
         [Bindable]
         public var origin:String = 'pubsub.pubnub.com';
-        //public var origin:String = 'multiplexing.pubnub.com';
 
         [Bindable]
         public var pub_key:String = 'demo';
 
         [Bindable]
         public var sub_key:String = 'sub-c-3a693cf8-7401-11e2-8b02-12313f022c90';
+        //public var sub_key:String = 'demo';
 
         [Bindable]
         public var secret_key:String = '';

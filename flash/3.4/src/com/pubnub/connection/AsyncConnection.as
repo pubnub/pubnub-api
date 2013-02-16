@@ -44,7 +44,7 @@ package com.pubnub.connection {
 		}
 		
 		private function doSendOperation(operation:Operation):void {
-			trace('doSendOperation');
+			//trace('doSendOperation');
 			clearTimeout(timeout);
 			timeout = setTimeout(onTimeout, Settings.OPERATION_TIMEOUT, operation);
 			this.operation = operation;

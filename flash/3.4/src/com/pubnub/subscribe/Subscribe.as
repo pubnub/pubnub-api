@@ -30,7 +30,7 @@ package com.pubnub.subscribe {
 		protected var _connected:Boolean;
 		
 		protected var _connectionUID:String;
-		protected var _lastToken:String;
+        protected var _lastToken:String;
 		protected var _reusedToken:String
 		protected var factory:Dictionary;
 		protected var _destroyed:Boolean;
@@ -245,12 +245,16 @@ package com.pubnub.subscribe {
 				doSubscribe();
 				return;
 			}
-			
-			var messages:Array = RESPONSE[0] as Array;
-			
-			_lastToken = RESPONSE[1];
-			var chStr:String = RESPONSE[2];
-			
+
+            try {
+                var messages:Array = RESPONSE[0] as Array;
+                _lastToken = RESPONSE[1];
+                var chStr:String = RESPONSE[2];
+            } catch (e) {
+                Log.log("error parsing response: " + e,  Log.DEBUG);
+                doSubscribe();
+            }
+
 			/*
 			 * MX (array.length = 3)
 			 * RESPONSE = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
