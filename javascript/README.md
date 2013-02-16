@@ -361,7 +361,7 @@ in a second to be bundled and compressed at optimal speeds.
 
 #### MESSAGE DELIVERY vs. GUARANTEED MESSAGE DELIVERY
 
-The PubNub Network is a high throughput and reliable messaging services.
+The PubNub Network is a high throughput and reliable messaging service.
 Note however that PubNub is not a guaranteed delivery with full Read Receipt Transactions.
 You can however use improved designs and best practices to ensure you increase reliability.
 One method includes *High Windowing Length* which provides slight improvements.
