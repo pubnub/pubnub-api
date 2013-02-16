@@ -120,6 +120,12 @@ business collaborative solutions, and more.
 
 
 ## REPLAY
+
+Replay is an API that allows you to "replay" the events of a channel
+as they happened before in the past.
+
+>**NOTE:** You must have Storage/Playback enabled on your Account.
+
 ```html
 <div id=pubnub></div>
 <script src=http://pubnub.a.ssl.fastly.net/pubnub-3.4.1.min.js></script>
