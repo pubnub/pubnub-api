@@ -1,8 +1,5 @@
 CHANGELOG
 
-02-13-2013 - 9ca6edf7a1c8a0089fc5db8121fc4be75f5a3b2e
-. fixing encoding bug on publish
-
 02-01-2013 - 8a686c91cb546787a6be7810b96b806c33cf96e7
 . client is now fully asyncronous
 . added enhanced multiplexed subscribe support

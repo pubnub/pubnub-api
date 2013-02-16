@@ -1,7 +1,7 @@
 package com.pubnub.api;
 
 /**
- * @author Pubnub
+ * @author PubnubCore
  *
  */
 class Channel {

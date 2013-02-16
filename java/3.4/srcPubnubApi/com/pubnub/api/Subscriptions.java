@@ -4,7 +4,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
- * @author Pubnub
+ * @author PubnubCore
  * 
  */
 class Subscriptions {

@@ -3,6 +3,9 @@ package com.pubnub.examples;
 import java.util.Hashtable;
 import java.util.Scanner;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubException;
@@ -21,11 +24,53 @@ public class PubnubDemoConsole {
 	}
 	private void publish(String channel) {
 		System.out.println("Enter the message for publish. To exit loop enter QUIT");
-		String message ;
-		while (!(message = reader.nextLine()).equalsIgnoreCase("QUIT")) {
+		String message = "";
+
+		while (true) {
 			Hashtable args = new Hashtable(2);
+			message = reader.nextLine();
+			if (message.equalsIgnoreCase("QUIT")) {
+				break;
+			}
+			if (args.get("message") == null ) {
+				try {
+					Integer i = Integer.parseInt(message);
+					args.put("message", i);
+				} catch (Exception e) {
+					
+				}
+			}
+			if (args.get("message") == null ) {
+				try {
+					Double d = Double.parseDouble(message);
+					args.put("message", d);
+				} catch (Exception e) {
+					
+				}
+			}
+			if (args.get("message") == null ) {
+				try {
+					JSONArray js = new JSONArray(message);
+					args.put("message", js);
+				} catch (Exception e) {
+					
+				}
+			}
+			if (args.get("message") == null ) {
+				try {
+					JSONObject js = new JSONObject(message);
+					args.put("message", js);
+				} catch (Exception e) {
+					
+				}
+			}
+			if (args.get("message") == null ) {
+				args.put("message", message);
+			}
+			
+			
+			
 			args.put("channel", channel); // Channel Name
-			args.put("message", message); // JSON Message
 			pubnub.publish(args, new Callback() {
 				public void successCallback(String channel, Object message) {
 					notifyUser("PUBLISH : " + message);

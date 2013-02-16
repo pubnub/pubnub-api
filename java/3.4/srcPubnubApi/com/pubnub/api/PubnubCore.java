@@ -1,12 +1,9 @@
 package com.pubnub.api;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 
-import org.bouncycastle.crypto.DataLengthException;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.util.SecureRandom;
+import java.security.*;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,14 +14,14 @@ import com.pubnub.http.HttpRequest;
 import com.pubnub.http.ResponseHandler;
 
 /**
- * Pubnub object facilitates querying channels for messages and listening on
+ * PubnubCore object facilitates querying channels for messages and listening on
  * channels for presence/message events
  *
- * @author Pubnub
+ * @author PubnubCore
  *
  */
 
-public class Pubnub {
+abstract class PubnubCore {
 
 	private String HOSTNAME = "pubsub";
 	private int HOSTNAME_SUFFIX = 1;
@@ -48,7 +45,7 @@ public class Pubnub {
 	private String PRESENCE_SUFFIX = "-pnpres";
 
 	private static Logger log = new Logger(
-            Pubnub.class);
+            PubnubCore.class);
 
     public void shutdown() {
 		nonSubscribeManager.stop();
@@ -107,59 +104,12 @@ public class Pubnub {
 		}
 		return obj;
 	}
-	/**
-	 * UUID
-	 *
-	 * 32 digit UUID generation at client side.
-	 *
-	 * @return String uuid.
-	 */
-	public static String uuid() {
-		String valueBeforeMD5;
-		String valueAfterMD5;
-		SecureRandom mySecureRand = new SecureRandom();
-		String s_id = String.valueOf(Pubnub.class.hashCode());
-		StringBuffer sbValueBeforeMD5 = new StringBuffer();
-		try {
-			long time = System.currentTimeMillis();
-			long rand = 0;
-			rand = mySecureRand.nextLong();
-			sbValueBeforeMD5.append(s_id);
-			sbValueBeforeMD5.append(":");
-			sbValueBeforeMD5.append(Long.toString(time));
-			sbValueBeforeMD5.append(":");
-			sbValueBeforeMD5.append(Long.toString(rand));
-			valueBeforeMD5 = sbValueBeforeMD5.toString();
-			byte[] array = PubnubCrypto.md5(valueBeforeMD5);
-			StringBuffer sb = new StringBuffer();
-			for (int j = 0; j < array.length; ++j) {
-				int b = array[j] & 0xFF;
-				if (b < 0x10) {
-					sb.append('0');
-				}
-				sb.append(Integer.toHexString(b));
-			}
-			valueAfterMD5 = sb.toString();
-			String raw = valueAfterMD5.toUpperCase();
-			sb = new StringBuffer();
-			sb.append(raw.substring(0, 8));
-			sb.append("-");
-			sb.append(raw.substring(8, 12));
-			sb.append("-");
-			sb.append(raw.substring(12, 16));
-			sb.append("-");
-			sb.append(raw.substring(16, 20));
-			sb.append("-");
-			sb.append(raw.substring(20));
-			return sb.toString();
-		} catch (Exception e) {
-			return null;
-		}
-	}
+
+	public abstract String uuid() ;
 
 	/**
 	 *
-	 * Constructor for Pubnub Class
+	 * Constructor for PubnubCore Class
 	 *
 	 * @param publish_key
 	 *            Publish Key
@@ -173,14 +123,14 @@ public class Pubnub {
 	 *            SSL enabled ?
 	 */
 
-	public Pubnub(String publish_key, String subscribe_key, String secret_key,
+	public PubnubCore(String publish_key, String subscribe_key, String secret_key,
 			String cipher_key, boolean ssl_on) {
 		this.init(publish_key, subscribe_key, secret_key, cipher_key, ssl_on);
 	}
 
 	/**
 	 *
-	 * Constructor for Pubnub Class
+	 * Constructor for PubnubCore Class
 	 *
 	 * @param publish_key
 	 *            Publish Key
@@ -192,14 +142,14 @@ public class Pubnub {
 	 *            SSL enabled ?
 	 */
 
-	public Pubnub(String publish_key, String subscribe_key, String secret_key,
+	public PubnubCore(String publish_key, String subscribe_key, String secret_key,
 			boolean ssl_on) {
 		this.init(publish_key, subscribe_key, secret_key, "", ssl_on);
 	}
 
 	/**
 	 *
-	 * Constructor for Pubnub Class
+	 * Constructor for PubnubCore Class
 	 *
 	 * @param publish_key
 	 *            Publish Key
@@ -207,13 +157,13 @@ public class Pubnub {
 	 *            Subscribe Key
 	 */
 
-	public Pubnub(String publish_key, String subscribe_key) {
+	public PubnubCore(String publish_key, String subscribe_key) {
 		this.init(publish_key, subscribe_key, "", "", false);
 	}
 
 	/**
 	 *
-	 * Constructor for Pubnub Class
+	 * Constructor for PubnubCore Class
 	 *
 	 * @param publish_key
 	 *            Publish Key
@@ -221,13 +171,13 @@ public class Pubnub {
 	 *            Subscribe Key
 	 */
 
-	public Pubnub(String publish_key, String subscribe_key, boolean ssl) {
+	public PubnubCore(String publish_key, String subscribe_key, boolean ssl) {
 		this.init(publish_key, subscribe_key, "", "", ssl);
 	}
 
 	/**
 	 *
-	 * Constructor for Pubnub Class
+	 * Constructor for PubnubCore Class
 	 *
 	 * @param publish_key
 	 *            Publish Key
@@ -236,7 +186,7 @@ public class Pubnub {
 	 * @param secret_key
 	 *            Secret Key
 	 */
-	public Pubnub(String publish_key, String subscribe_key, String secret_key) {
+	public PubnubCore(String publish_key, String subscribe_key, String secret_key) {
 		this.init(publish_key, subscribe_key, secret_key, "", false);
 	}
 
@@ -320,7 +270,7 @@ public class Pubnub {
 	 * @param channel
 	 *            Channel name
 	 * @param message
-	 *            JSONObject to be published
+	 *            JSONOArray to be published
 	 * @param callback
 	 *            Callback
 	 */
@@ -338,11 +288,47 @@ public class Pubnub {
 	 * @param channel
 	 *            Channel name
 	 * @param message
-	 *            JSONObject to be published
+	 *            String to be published
 	 * @param callback
 	 *            Callback
 	 */
 	public void publish(String channel, String message, Callback callback) {
+		Hashtable args = new Hashtable();
+		args.put("channel", channel);
+		args.put("message", message);
+		args.put("callback", callback);
+		publish(args);
+	}
+
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel
+	 *            Channel name
+	 * @param message
+	 *            Integer to be published
+	 * @param callback
+	 *            Callback
+	 */
+	public void publish(String channel, Integer message, Callback callback) {
+		Hashtable args = new Hashtable();
+		args.put("channel", channel);
+		args.put("message", message);
+		args.put("callback", callback);
+		publish(args);
+	}
+
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel
+	 *            Channel name
+	 * @param message
+	 *            JSONObject to be published
+	 * @param callback
+	 *            Callback
+	 */
+	public void publish(String channel, Double message, Callback callback) {
 		Hashtable args = new Hashtable();
 		args.put("channel", channel);
 		args.put("message", message);
@@ -964,7 +950,7 @@ public class Pubnub {
 			return;
 		}
 		String[] urlComponents = { getOrigin(), "subscribe",
-				Pubnub.this.SUBSCRIBE_KEY, PubnubUtil.urlEncode(channelString), "0", _timetoken };
+				PubnubCore.this.SUBSCRIBE_KEY, PubnubUtil.urlEncode(channelString), "0", _timetoken };
 
 		Hashtable params = new Hashtable();
 		params.put("uuid", UUID);
@@ -1085,7 +1071,7 @@ public class Pubnub {
 					subscriptions.invokeErrorCallbackOnChannels("Network Timeout");
 				}
 
-				subscriptions.removeAllChannels();
+				//subscriptions.removeAllChannels();
 			}
 
 			public String getTimetoken() {
