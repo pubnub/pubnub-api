@@ -6,10 +6,10 @@ http://www.pubnub.com - PubNub Real-time Push Service in the Cloud.
 http://www.pubnub.com/tutorial/javascript-push-api
 
 The PubNub Network is a blazingly fast Global Messaging Service for building
-real-time web and mobile apps. Hundreds of apps and thousands of developers
+real-time web and mobile apps. Thousands of apps and developers
 rely on PubNub for delivering human-perceptive real-time
 experiences that scale to millions of users worldwide. PubNub delivers
-the infrastructure needed to build amazing MMO games, social apps,
+the infrastructure needed to build amazing Mobile, MMO games, social apps,
 business collaborative solutions, and more.
 
 ## SIMPLE EXAMPLE
@@ -123,6 +123,8 @@ business collaborative solutions, and more.
 
 Replay is an API that allows you to "replay" the events of a channel
 as they happened before in the past.
+Replay will repeat the message delivery sequence in sync with
+the timeline as they occured.
 
 >**NOTE:** You must have Storage/Playback enabled on your Account.
 
@@ -164,7 +166,10 @@ Support for WebSocket Client Specification.
 PubNub WebSockets enables any browser (modern or not) to support
 the HTML5 WebSocket standard APIs.
 Use the WebSocket Client Directly in your Browser that
-Now you can use `new WebSocket` anywhere!
+Now you can use `new WebSocket` any time!
+
+You will need to hit the right resource URLs.
+Make sure to follow the examples below.
 
 Here is a quick example:
 
@@ -173,7 +178,7 @@ var socket = new WebSocket('wss://pubsub.pubnub.com/PUB/SUB/CHANNEL')
 ```
 
 The following example opens a `new WebSocket` in
-**WSS Secure Socket Mode** with full **2048 Bit SSL** Encryption.
+**WSS Secure Socket Mode** with **2048 Bit SSL** Encryption.
 
 ```html
 <!-- Import PubNub Core Lib -->
@@ -239,8 +244,7 @@ var socket = new WebSocket('ws://pubsub.pubnub.com/demo/demo/my_channel')
 
 ## Using the PUBNUB init() Function
 
-Sometimes you want to use create a PubNub Instance directly in JavaScript
-and pass the PubNub API Keys without using a DOM element.
+How to create a new instance of the PubNub Object directly in JavaScript.
 To do this, simply follow this `init` example:
 
 ```html
@@ -270,16 +274,21 @@ To do this, simply follow this `init` example:
 })();</script>
 ```
 
+>**NOTE:** You do not need to use the `<div id=pubnub>` DIV with this method!
+
 ## Using with AES256 Encryption
+
 This client now supports AES256 encryption out of the box!
 And its super-easy to use! Check out the
-file encrypted_chat_demo.html for a working example of
-using encryption between this and other PubNub clients.
+file `encrypted_chat_demo.html` for a working example of
+using encryption between JavaScript and other PubNub clients.
 
 ##### Important Highlights
 
-1. Be sure to include the base pubnub.js,
-gibberish, and encryption adapter:
+Be sure to include the following JavaScript Files:
+1. pubnub.js, 
+2. gibberish, and 
+3. encryption adapter:
 
 ```html
 <script src="http://cdn.pubnub.com/pubnub-3.4.1.min.js"></script>
@@ -334,6 +343,8 @@ var pubnub = PUBNUB.init({
     subscribe_key : 'demo'
 });
 ```
+
+Windowing is a good idea! Please use it for improved network efficiency.
 
 #### KEEPALIVE
 
