@@ -338,6 +338,11 @@ var pubnub = PUBNUB.init({
 
 #### WINDOWING AND MESSAGE ORDERING
 
+>**NOTE:** Windowing is in favor of battery savings
+and throughput. The effect is more bundled messages
+better compression and faster response times.
+Windowing is a good idea most of the time.
+
 PubNub JavaScript library includes a `windowing` feature that will
 automatically allow the PubNub Network the window time needed
 to bundle, compress and optimize messages for high-throughput.
@@ -349,8 +354,8 @@ a long enough window will benefit in performance and will allow
 the needed period for the PubNub Network
 to order the message delivery and compress the response efficiently.
 
->**NOTE:** Windowing is a in favor of battery savings
-and throughput. The effect is fewer unbundled messages.
+>**NOTE:** Windowing 1000ms will allow 100 messages
+in a second to be bundled and compressed at optimal speeds.
 
 ```javascript
 var pubnub = PUBNUB.init({
@@ -360,8 +365,6 @@ var pubnub = PUBNUB.init({
 });
 ```
 
->**NOTE:** Windowing 1000ms will allow 100 messages
-in a second to be bundled and compressed at optimal speeds.
 
 ## BEST PRACTICES
 
