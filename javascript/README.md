@@ -5,7 +5,7 @@ http://www.pubnub.com/account
 http://www.pubnub.com - PubNub Real-time Push Service in the Cloud. 
 http://www.pubnub.com/tutorial/javascript-push-api
 
-PubNub is a blazingly fast cloud-hosted messaging service for building
+The PubNub Network is a blazingly fast Global Messaging Service for building
 real-time web and mobile apps. Hundreds of apps and thousands of developers
 rely on PubNub for delivering human-perceptive real-time
 experiences that scale to millions of users worldwide. PubNub delivers
