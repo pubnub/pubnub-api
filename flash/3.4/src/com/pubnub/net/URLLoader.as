@@ -132,7 +132,7 @@ public class URLLoader extends EventDispatcher {
 
         //trace('------onSocketData------' + socket.bytesAvailable);
         temp.clear();
-        //Log.log("onSocketData start", Log.DEBUG);
+        Log.log("onSocketData start", Log.DEBUG);
 
         _responseInProgress = true;
         _alreadyCheckedForHeaders = false;
@@ -174,12 +174,12 @@ public class URLLoader extends EventDispatcher {
 
                 if (_contentEncoding == "chunked") {
                     if (tempStr.match(END_SYMBOL_CHUNKED)) {
-                        //Log.log("Transfer completed: CHUNKED", Log.DEBUG);
+                        Log.log("Transfer completed: CHUNKED", Log.DEBUG);
                         _responseInProgress = false;
                     }
                 } else if (_contentEncoding == "cl") {
                     if (tempStr.match(END_SYMBOL)) {   // Be sure to match on content-length size
-                        //Log.log("Transfer completed: CL", Log.DEBUG);
+                        Log.log("Transfer completed: CL", Log.DEBUG);
                         _responseInProgress = false;
                     }
                 }

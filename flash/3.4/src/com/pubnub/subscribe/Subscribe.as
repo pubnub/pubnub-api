@@ -242,7 +242,8 @@ package com.pubnub.subscribe {
 			//Log.log('RESPONSE : '
 			// something is wrong
 			if (RESPONSE == null) {
-				doSubscribe();
+				Log.log("SubConnect: notOK: is null. TT: " + _lastToken, Log.DEBUG);
+                doSubscribe();
 				return;
 			}
 
@@ -251,7 +252,7 @@ package com.pubnub.subscribe {
                 _lastToken = RESPONSE[1];
                 var chStr:String = RESPONSE[2];
             } catch (e) {
-                Log.log("error parsing response: " + e,  Log.DEBUG);
+                Log.log("SubConnect: notOK: broken response: " + e + " , TT: " + _lastToken,  Log.DEBUG);
                 doSubscribe();
             }
 
@@ -303,6 +304,7 @@ package com.pubnub.subscribe {
 					}
 				}
 			}
+            Log.log("SubConnect: ok, TT: " + _lastToken);
 			doSubscribe();
         }
 		

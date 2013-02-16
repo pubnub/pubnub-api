@@ -4,7 +4,7 @@ package com.pubnub.log {
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class Log {
-		public static const MAX_RECORDS:Number = 2000;
+		public static const MAX_RECORDS:Number = 1000;
 		
 		public static const RETRY_LOGGING:Boolean = 	true;
 		public static const URL_LOGGING:Boolean = 		true;
