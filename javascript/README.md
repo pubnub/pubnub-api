@@ -306,36 +306,6 @@ being that the message traffic is now encrypted.
 
 ## SUPER ADVANCED SETTINGS
 
-#### KEEPALIVE
-
->**NOTE:** The JavaScript library will automatically detect disconnects
-in near real-time regardless of `keepalaive`.
-
-There exists extra rare cases where `keepalives` are used
-to detect disconnections of the network connection;
-situations where a network cable was unplugged for example.
-Optionally you may sacrafice bandwidth and reduce battery life
-by lowering the `keepalive` value.
-By reducing the `keepalive` you receive
-greater precision to detect rare edge-case drops.
-The Default `keepalive` is *60 seconds*.
-**Reducing this value to 30 seconds will help detect 
-only the rare edge-case network problems
-sooner under rare network disruption situations.**
-It is not a good idea to reduce this value lower.
-If you need it lower more, you must contact PubNub first.
-Again, the JavaScript library will automatically
-detect disconnects in near real-time anyway,
-so it is not necessary to reduce this value further.
-
-```javascript
-var pubnub = PUBNUB.init({
-    keepalive     : 30,
-    publish_key   : 'demo',
-    subscribe_key : 'demo'
-});
-```
-
 #### WINDOWING AND MESSAGE ORDERING
 
 >**NOTE:** Windowing is in favor of battery savings
@@ -365,6 +335,35 @@ var pubnub = PUBNUB.init({
 });
 ```
 
+#### KEEPALIVE
+
+>**NOTE:** The JavaScript library will automatically detect disconnects
+in near real-time regardless of `keepalaive`.
+
+There exists extra rare cases where `keepalives` are used
+to detect disconnections of the network connection;
+situations where a network cable was unplugged for example.
+Optionally you may sacrafice bandwidth and reduce battery life
+by lowering the `keepalive` value.
+By reducing the `keepalive` you receive
+greater precision to detect rare edge-case drops.
+The Default `keepalive` is *60 seconds*.
+**Reducing this value to 30 seconds will help detect 
+only the rare edge-case network problems
+sooner under rare network disruption situations.**
+It is not a good idea to reduce this value lower.
+If you need it lower more, you must contact PubNub first.
+Again, the JavaScript library will automatically
+detect disconnects in near real-time anyway,
+so it is not necessary to reduce this value further.
+
+```javascript
+var pubnub = PUBNUB.init({
+    keepalive     : 30,
+    publish_key   : 'demo',
+    subscribe_key : 'demo'
+});
+```
 
 ## BEST PRACTICES
 
