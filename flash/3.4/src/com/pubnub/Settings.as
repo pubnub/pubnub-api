@@ -14,13 +14,13 @@ package com.pubnub {
          // ie, 100 times, every 3 seconds for a network connection
 
          // time in millseconds to wait for web server to return a response. DO NOT CHANGE unless requested by support
-         public static const OPERATION_TIMEOUT:uint = 310000;
+         public static const OPERATION_TIMEOUT:uint = 5000;
 
          // for wait a response of a ping operation with [PING_OPERATION_URL], ms
-         public static const PING_OPERATION_TIMEOUT:uint = 30000;
+         public static const PING_OPERATION_TIMEOUT:uint = 5000;
 
          // check for network down every [PING_OPERATION_INTERVAL],ms.
-         public static const PING_OPERATION_INTERVAL:uint = 60000;
+         public static const PING_OPERATION_INTERVAL:uint = 1000;
 
          // chck a network status uses URL
          public static const PING_OPERATION_URL:String = 'http://pubsub.pubnub.com/time/0';
