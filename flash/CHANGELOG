@@ -1,0 +1,6 @@
+02-17-13 - 5928dbbea25c95f7c978fde2ca9db14e4fc79428
+. improved handling of chunked responses under high load
+. adding test framework
+. more efficient json parser detection
+. more sane heartbeat settings
+
