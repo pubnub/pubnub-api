@@ -21,6 +21,9 @@ package com.pubnub {
 
          // check for network down every [PING_OPERATION_INTERVAL],ms.
          public static const PING_OPERATION_INTERVAL:uint = 1000;
+		 
+		 // check for network down every [PING_OPERATION_RETRY_INTERVAL],ms when the network disabled
+		 public static const PING_OPERATION_RETRY_INTERVAL:uint = 1000;
 
          // chck a network status uses URL
          public static const PING_OPERATION_URL:String = 'http://pubsub.pubnub.com/time/0';
