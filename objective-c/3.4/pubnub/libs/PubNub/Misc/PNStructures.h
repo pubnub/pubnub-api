@@ -77,20 +77,43 @@ typedef enum _PNPresenceEventType {
 } PNPresenceEventType;
 
 // This enum represent list of possible
-// events which can occurre during requests
+// events which can occur during requests
 // execution
 typedef enum _PNOperationResultEvent {
 
-   // Stores unknown event
-   PNOperationResultUnknown,
-   PNOperationResultLeave = PNPresenceEventLeave
+    // Stores unknown event
+    PNOperationResultUnknown,
+    PNOperationResultLeave = PNPresenceEventLeave
 } PNOperationResultEvent;
+
+
+// This enum represents list of possible
+// subscription states which can occur while
+// client subscribing/restoring
+typedef enum _PNSubscriptionProcessState {
+
+    // Not subscribed state (maybe some error
+    // occurred while tried to subscribe)
+    PNSubscriptionProcessNotSubscribedState,
+
+    // Subscribed state
+    PNSubscriptionProcessSubscribedState,
+
+    // Will restore subscription
+    // (called right after connection
+    // restored)
+    PNSubscriptionProcessWillRestoreState,
+
+    // Restored subscription after connection
+    // restored
+    PNSubscriptionProcessRestoredState
+} PNSubscriptionProcessState;
 
 
 typedef void (^PNClientConnectionSuccessBlock)(NSString *);
 typedef void (^PNClientConnectionFailureBlock)(PNError *);
 typedef void (^PNClientConnectionStateChangeBlock)(NSString *, BOOL, PNError *);
-typedef void (^PNClientChannelSubscriptionHandlerBlock)(NSArray *, BOOL, PNError *);
+typedef void (^PNClientChannelSubscriptionHandlerBlock)(PNSubscriptionProcessState state, NSArray *, PNError *);
 typedef void (^PNClientChannelUnsubscriptionHandlerBlock)(NSArray *, PNError *);
 typedef void (^PNClientTimeTokenReceivingCompleteBlock)(NSNumber *, PNError *);
 typedef void (^PNClientMessageProcessingBlock)(PNMessageState, id);

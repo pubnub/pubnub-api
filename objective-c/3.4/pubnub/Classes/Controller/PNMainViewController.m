@@ -543,13 +543,13 @@ static NSUInteger const inChatMessageLabelTag = 878;
 
 - (void)creationView:(PNChannelCreationView*)view subscribeOnChannel:(PNChannel *)channel {
 
-    [PubNub subscribeOnChannel:channel withCompletionHandlingBlock:^(NSArray *channels,
-                                                                     BOOL subscribed,
+    [PubNub subscribeOnChannel:channel withCompletionHandlingBlock:^(PNSubscriptionProcessState state,
+                                                                     NSArray *channels,
                                                                      PNError *subscriptionError) {
 
         NSString *alertMessage = [NSString stringWithFormat:@"Subscribed on channel: %@\nTo be able to send messages, select channel from righthand list",
                                                             channel.name];
-        if (!subscribed) {
+        if (state == PNSubscriptionProcessNotSubscribedState) {
 
             alertMessage = [NSString stringWithFormat:@"Failed to subscribe on: %@", channel.name];
         }

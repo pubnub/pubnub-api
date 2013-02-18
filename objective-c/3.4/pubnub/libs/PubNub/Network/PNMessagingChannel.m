@@ -43,6 +43,10 @@
 // on which this client is subscribed now
 @property (nonatomic, strong) NSMutableSet *subscribedChannelsSet;
 
+// Stores flag on whether messaging channel is restoring
+// subscription on previous channels or not
+@property (nonatomic, assign, getter = isRestoringSubscription) BOOL restoringSubscription;
+
 
 #pragma mark - Instance methods
 
@@ -56,13 +60,6 @@
 
 
 #pragma mark - Channels management
-
-/**
- * Same as -resubscribe but allow to specify whether
- * action was called by user request or not
- * (affect on notification chain)
- */
-- (void)resubscribeByUserRequest:(BOOL)resubscribeByUserRequest;
 
 /**
  * Same function as -unsubscribeFromChannelsWithPresenceEvent:
@@ -210,6 +207,8 @@
     // Forward to the super class
     [super disconnect];
 
+    self.restoringSubscription = NO;
+
 
     // Check whether communication channel should reset state or not
     if (shouldResetCommunicationChannel) {
@@ -266,6 +265,7 @@
         [self scheduleRequest:[PNLeaveRequest leaveRequestForChannels:channelsForUnsubscribe
                                                         byUserRequest:isLeavingByUserRequest]
       shouldObserveProcessing:YES];
+
     }
 }
 
@@ -284,6 +284,8 @@
 
 - (void)resubscribe {
 
+    self.restoringSubscription = NO;
+
     // Ensure that client connected to at least one channel
     if ([self.subscribedChannelsSet count] > 0) {
 
@@ -296,20 +298,23 @@
     }
 }
 
-- (void)resubscribeByUserRequest:(BOOL)resubscribeByUserRequest {
-}
-
 - (void)restoreSubscription:(BOOL)shouldResubscribe {
 
-    if (shouldResubscribe) {
+    if ([self.subscribedChannelsSet count]) {
 
-        // Reset last update time token for channels in list
-        [self.subscribedChannelsSet makeObjectsPerformSelector:@selector(resetUpdateTimeToken)];
+        if (shouldResubscribe) {
+
+            // Reset last update time token for channels in list
+            [self.subscribedChannelsSet makeObjectsPerformSelector:@selector(resetUpdateTimeToken)];
+        }
+
+        self.restoringSubscription = YES;
+
+
+        [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[self.subscribedChannelsSet allObjects]
+                                                                byUserRequest:YES]
+      shouldObserveProcessing:shouldResubscribe];
     }
-
-    [self scheduleRequest:[PNSubscribeRequest subscribeRequestForChannels:[self.subscribedChannelsSet allObjects]
-                                                            byUserRequest:YES]
-  shouldObserveProcessing:YES];
 }
 
 - (void)updateSubscription {
@@ -318,6 +323,8 @@
 }
 
 - (void)updateSubscriptionForChannels:(NSArray *)channels {
+
+    self.restoringSubscription = NO;
 
     // Ensure that client connected to at least one channel
     if ([channels count] > 0) {
@@ -336,6 +343,8 @@
 }
 
 - (void)subscribeOnChannels:(NSArray *)channels withPresenceEvent:(BOOL)withPresenceEvent {
+
+    self.restoringSubscription = NO;
 
     // Checking whether client already subscribed on one of
     // channels from set or not
@@ -376,6 +385,7 @@
 - (NSArray *)unsubscribeFromChannelsWithPresenceEvent:(BOOL)withPresenceEvent
                                         byUserRequest:(BOOL)isLeavingByUserRequest {
 
+    self.restoringSubscription = NO;
     NSArray *subscribedChannels = [self.subscribedChannelsSet allObjects];
 
     // Check whether should generate 'leave' presence event
@@ -589,6 +599,17 @@
 
 - (void)handleSubscribeUnsubscribeRequestCompletion:(PNBaseRequest *)request {
 
+    // Check whether channel is restoring subscription on previously
+    // subscribed channels or not
+    if (self.isRestoringSubscription) {
+
+        self.restoringSubscription = NO;
+
+        [self.messagingDelegate performSelector:@selector(messagingChannel:didRestoreSubscriptionOnChannels:)
+                                     withObject:self
+                                     withObject:[self subscribedChannels]];
+    }
+
     // Prepare selectors which will be pulled on delegate and
     // list of subscribed channels
     SEL delegateSelector = @selector(messagingChannel:didSubscribeOnChannels:);
@@ -746,7 +767,6 @@
           request.resourcePath);
 
 
-    // Check whether this is 'Leave' request or not
     if ([request isKindOfClass:[PNLeaveRequest class]]) {
 
         // Check whether connection should be closed for resubscribe

@@ -24,6 +24,10 @@
 // Stores reference on services host name
 @property (nonatomic, copy) NSString *origin;
 
+// Stores reference on original origin host address
+// (this property is used when DNS killer is required)
+@property (nonatomic, copy) NSString *realOrigin;
+
 // Stores reference on keys which is required
 // to establish connection and send packets to it
 @property (nonatomic, copy) NSString *publishKey;
@@ -100,6 +104,7 @@
     if((self = [super init])) {
         
         self.origin = ([originHostName length] > 0)?originHostName:kPNDefaultOriginHost;
+        self.realOrigin = self.origin;
         self.publishKey = publishKey?publishKey:@"";
         self.subscriptionKey = subscribeKey?subscribeKey:@"";
         self.secretKey = secretKey?secretKey:@"0";
@@ -139,6 +144,22 @@
     }
 
     return shouldReset;
+}
+
+- (void)shouldKillDNSCache:(BOOL)shouldKillDNSCache {
+
+    if (shouldKillDNSCache) {
+
+        NSString *subDomain = [self.realOrigin stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@",
+                                                                                     kPNServiceMainDomain]
+                                                                         withString:@""];
+
+        self.origin = [NSString stringWithFormat:@"%@-%d.%@", subDomain, PNRandomInteger(), kPNServiceMainDomain];
+    }
+    else {
+
+        self.origin = self.realOrigin;
+    }
 }
 
 - (BOOL)isValid {

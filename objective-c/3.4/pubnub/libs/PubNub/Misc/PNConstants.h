@@ -32,6 +32,9 @@ static NSString * const kPNClientName = @"Obj-C-MacOS";
 // API version on the flight
 static NSString * const kPNRequestAPIVersionPrefix = @"";
 
+// Stores reference on PubNub service domain
+static NSString * const kPNServiceMainDomain = @"pubnub.com";
+
 #if __IPHONE_OS_VERSION_MIN_REQUIRED
 static NSString * const kPNDefaultOriginHost = @"ios.pubnub.com";
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED

@@ -48,9 +48,9 @@
  * Add/remove observer which would like to know when PubNub client
  * subscribes/unsubscribe on/from channel
  */
-- (void)addClientChannelSubscriptionObserver:(id)observer
-                           withCallbackBlock:(PNClientChannelSubscriptionHandlerBlock)callbackBlock;
-- (void)removeClientChannelSubscriptionObserver:(id)observer;
+- (void)addClientChannelSubscriptionStateObserver:(id)observer
+                                withCallbackBlock:(PNClientChannelSubscriptionHandlerBlock)callbackBlock;
+- (void)removeClientChannelSubscriptionStateObserver:(id)observer;
 - (void)addClientChannelUnsubscriptionObserver:(id)observer
                              withCallbackBlock:(PNClientChannelUnsubscriptionHandlerBlock)callbackBlock;
 - (void)removeClientChannelUnsubscriptionObserver:(id)observer;

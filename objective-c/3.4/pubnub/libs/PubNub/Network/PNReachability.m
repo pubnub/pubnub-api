@@ -263,6 +263,22 @@ void PNReachabilityCallback(SCNetworkReachabilityRef reachability, SCNetworkReac
     
 }
 
+- (void)updateReachabilityFromError:(PNError *)error {
+
+    if ([self isServiceAvailable]) {
+
+        switch (error.code) {
+
+            case kPNClientConnectionFailedOnInternetFailureError:
+            case kPNClientConnectionClosedOnInternetFailureError:
+            case kPNRequestExecutionFailedOnInternetFailureError:
+
+                self.status = PNReachabilityStatusNotReachable;
+                break;
+        }
+    }
+}
+
 
 #pragma mark - Memory management
 

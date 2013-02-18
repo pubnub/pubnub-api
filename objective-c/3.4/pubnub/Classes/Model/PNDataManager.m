@@ -71,12 +71,12 @@ static PNDataManager *_sharedInstance = nil;
         self.subscribedChannelsList = [NSMutableArray array];
 
         PNDataManager *weakSelf = self;
-        [[PNObservationCenter defaultCenter] addClientChannelSubscriptionObserver:self
-                                                                withCallbackBlock:^(NSArray *channels,
-                                                                                    BOOL subscribed,
-                                                                                    PNError *subscriptionError) {
+        [[PNObservationCenter defaultCenter] addClientChannelSubscriptionStateObserver:self
+                                                                     withCallbackBlock:^(PNSubscriptionProcessState state,
+                                                                                         NSArray *channels,
+                                                                                         PNError *subscriptionError) {
 
-                    if (subscribed) {
+                    if (state == PNSubscriptionProcessSubscribedState || state == PNSubscriptionProcessRestoredState) {
 
                         NSArray *unsortedList = [PubNub subscribedChannels];
                         NSSortDescriptor *nameSorting = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];

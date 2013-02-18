@@ -14,6 +14,7 @@
 #import <CommonCrypto/CommonCryptor.h>
 #import <CommonCrypto/CommonHMAC.h>
 #import "NSData+PNAdditions.h"
+#include <stdlib.h>
 
 
 #ifndef PNMacro_h
@@ -214,6 +215,12 @@ BOOL PNIsUserGeneratedUUID(NSString *uuid) {
 
 
     return ![generatedUUIDCheckPredicate evaluateWithObject:uuid];
+}
+
+static NSInteger PNRandomInteger();
+NSInteger PNRandomInteger() {
+
+    return (arc4random() %(INT32_MAX)-1);
 }
 
 
