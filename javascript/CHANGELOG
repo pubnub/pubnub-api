@@ -1,0 +1,1268 @@
+
+ALERT! This repository has moved!
+https://github.com/pubnub/javascript
+
+commit ebfb9fae11d235b509eb592c944b46fe81474108
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Fri Feb 15 20:20:47 2013 -0800
+
+    many small updates to README in JavaScript.
+
+commit b703fd17b0751f5e5c5026870c9ef681a15ffc9d
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Fri Feb 15 19:50:35 2013 -0800
+
+    reduced keepalive description in the readme.
+
+commit 09196772be90d2ea5face2799f635d3ad6a0090b
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Fri Feb 15 19:49:20 2013 -0800
+
+    added more detail to Windowing.
+
+commit b966edff0a337379c3d12e2743b8129b2086ed21
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Fri Feb 15 19:45:58 2013 -0800
+
+    added Replay description.
+
+commit 7b8890f3168f6d0087909c3d5b1b942d59d2d71f
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Fri Feb 15 19:44:24 2013 -0800
+
+    Updated introduction on README.
+
+commit e826e980334f5088aef8f3d7449a38a1a3106719
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Fri Feb 15 19:43:26 2013 -0800
+
+    fixed Typo in readme doc for JavaScript 3.4.1
+
+commit 79f1afd94e4c8e18793db820b2025ec61f5750d4
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Feb 14 18:52:18 2013 -0800
+
+    updated README.md for JavaScript typos and filling in missing details.
+
+commit 2216190f98f4751d65608b863f23ba5cf4e9d477
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Feb 14 15:13:43 2013 -0800
+
+    fixed typos in README.md
+
+commit 5bd6ead5417a9ccc6c3fcfe182c10a62a01193dc
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Thu Feb 14 11:58:08 2013 -0800
+
+    added Elastic Message section.
+
+commit e2cf948d3078bb5671ff75c17a4c318f3ad517bd
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Thu Feb 14 11:53:46 2013 -0800
+
+    added best practices to JS section.
+
+commit 63ac3e38f9656e6afece476b0ef928691dc76927
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Wed Feb 13 21:21:44 2013 -0800
+
+    added windowing example source code.
+
+commit 896c5b07f96f1e36e5fdd13cb59092b0c83e8c29
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Wed Feb 13 21:20:05 2013 -0800
+
+    Update javascript/README.md
+
+commit 6fe955398f4f4e3b5959b3bc92280088ca90dc64
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Wed Feb 13 21:08:53 2013 -0800
+
+    removed old depenancy.
+
+commit 5bd1edb735e47483b43228b2a038ebc5ab557ec1
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Feb 13 18:35:15 2013 -0800
+
+    added new JavaScript 3.4.1 with enhanced disconnect detect and reporting.
+
+commit 6f2e0149ad1611e5b02a1a192d68abf0412a5cb1
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Wed Jan 23 15:31:41 2013 -0800
+
+    Update javascript/README.md
+
+commit ca368e5b07294a3bbb6f1d945072e9323b91d3e9
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Wed Jan 23 15:12:55 2013 -0800
+
+    Update javascript/README.md
+    
+    Adding UUID override documentation in init object example in README
+
+commit 0aa7ab5584ee41d2cdb159b8648c4b683e9ece60
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 17 16:27:36 2013 -0800
+
+    removed nexto on time requests in JS.
+
+commit b4d51a232568c0c2ea3f58d21dea1037a0af8039
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 17 11:47:50 2013 -0800
+
+    added "stringtoken" param for javascript bigint work-around.
+
+commit eb7290134e0fb60238eb911dba701be929ca263b
+Merge: 359b42a 998fa6a
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Jan 16 21:27:41 2013 -0800
+
+    Merge branch 'master' of github.com:pubnub/pubnub-api
+
+commit 359b42aa24ba2737046bd59def1c261125666adc
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Jan 16 21:26:52 2013 -0800
+
+    added Message Windowing to PubNub JavaScript 3.4 API.
+    removed depricated 'error' callback.
+
+commit 7c0e397dac04ec497e896abebe18bdabbce19ab4
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Fri Jan 11 12:32:58 2013 -0800
+
+    Copying unit tests to root of JS dir.
+
+commit c44b4d5e3d262b9ae6cfbcbf4768ec39f381aae2
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Fri Jan 11 12:31:06 2013 -0800
+
+    Adding back missing unit tests.
+
+commit bccf02347f32eb60b2a4fbe39bdadd0761fd798a
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Jan 9 15:28:18 2013 -0800
+
+    added fix to 3.4 with sub/unsub presenece events, added fastly and an auto-here-now sync command.
+
+commit f713d108b732fbdf220ceecb4893a3bbdc8c3356
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Fri Dec 21 17:05:50 2012 -0800
+
+    updated 3.4 with new REPLAY function.
+
+commit 89779955a58a0526e77e4aa910059b5dbc9c9ec1
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Dec 20 16:08:03 2012 -0800
+
+    update pubnub 3.4 javascript API with a channel close fix.
+
+commit bffbc8a99d9c2cf9f45c198acaa3b15fe6314442
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 19 11:10:16 2012 -0800
+
+    restored console log compatibility layer to provide support to non-console enabled browsers.
+
+commit c2fc18f8231a5cc819d9cf701e641e94b97b8290
+Merge: 052b350 bd28e1f
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Mon Dec 17 20:27:35 2012 -0800
+
+    Merge branch 'master' of https://github.com/pubnub/pubnub-api
+
+commit 052b350e5c6569a28cb3c9d8de173c1027979a30
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Mon Dec 17 20:27:21 2012 -0800
+
+    added tests from javascript 3.4 directory.
+    also added ie publishing test.
+
+commit bd28e1f42a09ecd453c8f52f3df636d26a94c450
+Merge: a69b723 bfa182b
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Mon Dec 17 18:49:05 2012 -0800
+
+    Merge branch 'master' of https://github.com/pubnub/pubnub-api
+
+commit bfa182b979394e8de4ae23571a367e49b1130699
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Mon Dec 17 18:48:26 2012 -0800
+
+    Update javascript/README.md
+    
+    Adding AES documentation.
+
+commit a69b723aedb4bbd65d8151f7dd4cc52b33f3de0d
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Mon Dec 17 18:39:55 2012 -0800
+
+    adding encrypted files to root
+
+commit 8019cae0d67476ae4f097e190e8c41c628af2400
+Merge: d5bf894 198e5dd
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Mon Dec 17 17:13:17 2012 -0800
+
+    Merge branch 'CL-218'
+
+commit 198e5dd580e0344e608d0c83c2e40de8b98e776b
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Mon Dec 17 16:53:17 2012 -0800
+
+    Minor bug fixes.
+
+commit 465e6b734b5d525b5533e4ea8b255994dbbaae9a
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Sun Dec 16 21:50:09 2012 -0800
+
+    Tests working for encryption.
+
+commit e609bea52a23aabc932e79aa66e9f436e32085a4
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Sun Dec 16 19:56:49 2012 -0800
+
+    Implemented decrypted history functionality.
+
+commit 94f2fb78c8f9094f88154930c2411a54ab5c79ec
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Fri Dec 14 17:13:34 2012 -0800
+
+    added advanced and simple examples for PubNub JavaScript.
+
+commit 50e1fe7d6f9d02a64df92af20d118d9c17f46de9
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Fri Dec 14 16:36:12 2012 -0800
+
+    upgraded socket.io to 3.4 plus added fixes to javascript 3.4 with bugs on minified version.
+
+commit bc6a2a025781684cc558997177eb40a758cb4dd5
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Thu Dec 13 22:42:53 2012 -0800
+
+    WIP: about to implement history and pub/sub integration tests
+
+commit 57a553239867f234baf1212ac70d1e1f5183633a
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Thu Dec 13 20:57:53 2012 -0800
+
+    moved encryption tests into their own method
+
+commit c5c65d8d08c4317bd823c2b19b95877e6fd553d0
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Thu Dec 13 20:53:46 2012 -0800
+
+    encryption unit tests passing
+
+commit 9a73c51ea85fca906572bd94779f7e5765ec611f
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Thu Dec 13 13:59:42 2012 -0800
+
+    Streamlining demo for simplicity
+
+commit 882ffd94b5038bb3e1eb51654feb4a015e2fe08b
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Thu Dec 13 13:28:53 2012 -0800
+
+    Basic chat functionality.
+
+commit 4327b0a89a691da48abbda04d6bb280868a7da29
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Dec 12 22:48:32 2012 -0800
+
+    Decryption working. Exposed rawDecrypt as a class method.
+
+commit 9724ee000ff4d397d43ee691f0009a80fcdd7361
+Merge: cdcc356 e44776f
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 12 21:25:40 2012 -0800
+
+    Merge branch 'master' of https://github.com/pubnub/pubnub-api
+    
+    Conflicts:
+    	javascript/3.4/pubnub-3.4.min.js
+    	javascript/3.4/pubnub-3.4.min.js.gz
+
+commit cdcc356cb6103ab867a3b3be49cac230f694a00e
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 12 21:24:12 2012 -0800
+
+    fixed $ override in 3.4 JavaScript API.
+
+commit 5fa963193185d4a264374a061f6410a9d8d66b11
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Dec 12 20:23:27 2012 -0800
+
+    Encryption working.
+
+commit e8022ce1ace5af2807d458429255d2f431459583
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Dec 12 19:30:03 2012 -0800
+
+    adding first run of encrypted demo
+
+commit 1ccd6c3ffefedd4837e5cee879ea5810efbca8d4
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Dec 12 16:07:30 2012 -0800
+
+    adding gibberish
+
+commit a273a9fd704fa221904c705bc4dc5310b327940b
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Dec 12 16:02:30 2012 -0800
+
+    removed readme
+
+commit ffec3a25aa00c7c76f740354564ed57ef542f815
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Mon Dec 10 14:16:33 2012 -0800
+
+    Update javascript/README.md
+    
+    updating URLs in README
+
+commit 2e20b5231e65fec9301ad3e4944e9b93d941fa69
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Mon Dec 10 13:49:21 2012 -0800
+
+    fixing build script
+
+commit ac6ea917000b26f9f4db96b706feae78aab0bfa6
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Fri Dec 7 15:01:36 2012 -0800
+
+    added presence here_now to unit test.
+
+commit 038699c28397cf3c1ff207cc8a699120d6f03b8b
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Fri Dec 7 09:14:02 2012 -0800
+
+    updated nextorigin usage by reducing on uneeded calls.
+
+commit 13a7c5285e7e30bfc810836e0f0385b951393e50
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Dec 6 20:41:33 2012 -0800
+
+    removed old pubnub min file.
+
+commit f68552abbbdcd2ef822d5bbefbfbaff3ce6dd8ce
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Dec 6 17:50:00 2012 -0800
+
+    updated mp 3.4 JavaScript usage example.
+
+commit 70179631065b8eed7f5d77cc932ea6ebb08d5e5c
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Dec 6 12:54:02 2012 -0800
+
+    added minification build script and ADVANCED_OPTIMIZATION compatibility to 3.4 JavaScript API.
+
+commit c06d2e56d0f61b337614d0dcc41a8e87f302bd30
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Dec 6 12:05:16 2012 -0800
+
+    added evented example in javascript and removed older files in JavaScript 3.4 API.
+
+commit c41c1e1e6c1d33e550037ec95f7b6fe35364f2e1
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 22:58:10 2012 -0800
+
+    added race condition message delivery before unsubscribe can occur.
+
+commit 6a9262deb73ec814eb4a4f7b1e6eeb58a44d1d5f
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 21:20:33 2012 -0800
+
+    updated 3.4 JavaScript with persisted publish connection.
+
+commit 3fa005f06229793e3efe410c48ebfcc50b1f8b3c
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 21:10:47 2012 -0800
+
+    added improved channel management and better error reporting plus restored leave events on page change.
+
+commit 1f1f9e8a4277ae39c856093c57e742e2612e0c05
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 20:28:05 2012 -0800
+
+    finalized multi-mode connectivity in 3.4 JavaScript API.
+
+commit 18304f18ebcf1eeb8e70853ab14070810b21f653
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 19:07:58 2012 -0800
+
+    added single channel default fix to 3.4 JavaScript.
+
+commit 938dcbe2b1273d4ed050e20653ea945a85bb3f42
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 18:18:50 2012 -0800
+
+    simplified channel generation and iteration on JavaScript 3.4 API.
+
+commit 8aed9839e056f914e60c926b985e6e786ddfd5d8
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 16:59:55 2012 -0800
+
+    fixed early leave on js 3.4 api.
+
+commit d13d52a0b9aba7e4d3382626de257e624851c243
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 16:23:43 2012 -0800
+
+    fixed mp restore mode.
+
+commit f96c98b215e385ff7120a044595e3b4ac5d05825
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 5 16:05:31 2012 -0800
+
+    channel tracking upgrade for 3.4 in JavaScript.
+
+commit 2ec1e8e1ff936c8fa1390113976f9ea2cc77542c
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Dec 4 12:07:41 2012 -0800
+
+    added persisted domain connections on subscribe and auto-rotate on failure.
+
+commit e564f50189b90222f9ec354c6a427821e53959a2
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Dec 4 11:59:21 2012 -0800
+
+    added channel source param to javascript callback.
+
+commit 077427202623bb211d3c5cb9dd08c60c0666b3db
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Dec 4 11:45:32 2012 -0800
+
+    upadted JavaScript client with auto-sync presence.
+
+commit 453a2745fc1e96e54b7412f3a37833b67ed2d28a
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Mon Dec 3 23:09:09 2012 -0800
+
+    added unsubscribe fix for 3.4 multiplexing.
+
+commit e30344f151087757d1bc9646c491d3f75919c9fa
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Mon Dec 3 22:45:58 2012 -0800
+
+    added JavaScript 3.4 with FULL Multiplexing.
+
+commit cd9879e07e623bef34e9594a3fe2cac3f2811b81
+Merge: d551a83 b473f29
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Tue Nov 27 10:41:47 2012 -0800
+
+    Merge pull request #147 from mintrigue/patch-1
+    
+    Update javascript/pubnub-3.3.1.js
+
+commit 69eaef47409e17fbe9444c8bef1cf6452d73684d
+Author: James Halliday <mail@substack.net>
+Date:   Mon Nov 26 15:44:30 2012 -0800
+
+    plan out the correct number of tests
+
+commit 29ee7250c612b83d1fdd103114a8bb6d820fcd82
+Author: James Halliday <mail@substack.net>
+Date:   Mon Nov 26 15:43:04 2012 -0800
+
+    fix the test runner by just using cat
+
+commit b473f29305502159e741d761e8de6b704f1e2ebc
+Author: mintrigue <millermichaelx@gmail.com>
+Date:   Mon Nov 19 00:24:56 2012 -0800
+
+    Update javascript/pubnub-3.3.1.js
+    
+    Modified to call ready() if the page has already been loaded when this script is added to the page.
+    
+    Without this change, apps (like GWT w/ ScriptInjector) will not be able to subscribe to a channel because ready will never be called.
+     
+
+commit a287a6895a2d9263964feb6fa83e05ef75c090bd
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Mon Nov 12 15:05:04 2012 -0800
+
+    Update javascript/3.3.1/README.md
+    
+    Better examples
+
+commit 750219b477045d04e046ad645b61037610fe1d40
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Mon Nov 12 15:04:04 2012 -0800
+
+    Update javascript/README.md
+    
+    Fixed README
+
+commit 215e498172f70f327e870c326d4ab7a418d51bbf
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Mon Nov 12 14:31:02 2012 -0800
+
+    adding 3.3.1 release
+
+commit 31b2a280e7b36da6dee1144fe587e9c5e9d4c6c5
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Nov 7 12:28:57 2012 -0800
+
+    added support to Presence Leave Events for Safari in SSL Mode.
+
+commit 5e17a0f9d656bc622bb28309ad338dd07482845b
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Nov 6 17:26:11 2012 -0800
+
+    removed timeout test in presence SSL fix test.
+
+commit 7091681970932fe235b914f577c910e323413d0e
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Nov 6 17:05:15 2012 -0800
+
+    added edge case disconnect event for presence detection and upgraded the patch for Presence JavaScript.
+
+commit a105402cfc6dbd011fce468f86c35441205a1343
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Nov 6 16:29:25 2012 -0800
+
+    applied upgrade patches to JavaScript API in PubNub For Enhanced Presence Capabilities in SSL plus auto SSL Mode Detection and bugfix for here_now() function.
+
+commit a097ca4f4c5640933fb11348ba79966c0fa03128
+Merge: a995365 91099fc
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Oct 31 11:11:14 2012 -0700
+
+    Merge branch 'CL-178'
+
+commit 684f17accd3852050658f7bb0c2ce26075801b18
+Author: Stephen L. Blum <stephen@pubnub.com>
+Date:   Thu Oct 18 12:01:49 2012 -0700
+
+    added documentation fix provided by Austin for SSL
+
+commit d6fe1dbf41e4533b3a34b2adee049bad21507dc8
+Author: Devendra <devendra@udgama.com>
+Date:   Tue Sep 25 15:43:56 2012 +0530
+
+    adding history (detailedHistory) to socket.io api
+
+commit 31738acc88e28b51af2641747ed7a6783bc01d21
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Sep 5 15:00:47 2012 -0700
+
+    Set default message history count to 5 in demo.
+
+commit c593c484eb82c10f41aed9a2bcee0276c04fa5be
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Sep 5 14:48:27 2012 -0700
+
+    Setting up new JS files.
+
+commit 7f53923aeb8bf0f86a9d739c2c04abc5d9ed8544
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Sep 5 14:18:52 2012 -0700
+
+    Add detailedHistory example and 3.3 version bump to README.
+
+commit c73668bc40e5c647172d8b446290c8b30ee3017c
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Sep 5 13:55:38 2012 -0700
+
+    Added meta tag for index. Set channels to hello_world. Fix typos.
+
+commit b906b66f157943a482ea3140b0be7cdff4c0e3f7
+Merge: 9149c35 b9ec3b2
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Sep 5 12:05:35 2012 -0700
+
+    Merge branch 'master' into CL-159a
+
+commit 9149c35bc52915f829423273b923d77042b4da05
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Sep 5 10:54:45 2012 -0700
+
+    Cleaned up html file
+
+commit bcd73efeb2f90605c655f450ce712ceb9ac56ff5
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Wed Sep 5 10:45:53 2012 -0700
+
+    Adding channel textfield to detailedHistory() example
+
+commit 58542db282c2bebcb7c1a0041a8a7a08112a767f
+Merge: 0e1043c 267130b
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Tue Sep 4 15:17:54 2012 -0700
+
+    Merge branch '090412_js_32_fix'
+
+commit 267130b74423fe99cc92eca7828b04791d2f6e34
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Tue Sep 4 15:17:19 2012 -0700
+
+    fixing 3.2 files
+
+commit 0e1043cf8dae9c4d38cd51dee03a5958322d55dd
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Tue Sep 4 13:47:08 2012 -0700
+
+    Update javascript/README.md
+    
+    readme typo
+
+commit e2f11eb9d5bd5d7fd45952fcb37bd9bbc1af7541
+Author: Devendra <devendra@udgama.com>
+Date:   Mon Sep 3 17:43:08 2012 +0530
+
+    changing api version to 3.3 in files, committing new version of minified pubnub.js
+
+commit 090ee16976cc754d564ddada370455f7cbe56dd7
+Merge: 19d6895 daa59c5
+Author: Devendra <devendra@udgama.com>
+Date:   Mon Sep 3 17:04:42 2012 +0530
+
+    Merge branch 'master' into CL-159
+
+commit 19d6895926b27e80d25f10becb26456e62de0aca
+Author: Devendra <devendra@udgama.com>
+Date:   Mon Sep 3 17:01:33 2012 +0530
+
+    adding detailedHistory support in pubnub.js and and example webpage to test detailedHistory
+
+commit c81080538eea46c57edda3aca0c702b728136828
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Fri Aug 31 13:36:42 2012 -0700
+
+    Update javascript/README.md
+    
+    Use CDN version of JS
+
+commit 18a2efe0473ced1b8ccf4d9cd114bf1873f0d0ec
+Author: Geremy Cohen <gcohen@pubnub.com>
+Date:   Fri Aug 31 13:34:52 2012 -0700
+
+    Update javascript/README.md
+    
+    updating README for here_now and presence
+
+commit 467bea63afbd301fbc40bbb50c4ea4600a3adc69
+Author: geremy cohen <geremy@pubnub.com>
+Date:   Thu Aug 30 18:28:53 2012 -0700
+
+    created 3.3 dir
+
+commit b8f1f457cae2c89095b3b02d29df4990e48065bc
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Aug 29 19:24:09 2012 -0700
+
+    version bump in README.md to 3.2 for JavaScript.
+
+commit a8c091e0deaba6784dfd61487c6474628e0ad466
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Wed Aug 29 19:22:19 2012 -0700
+
+    upgraded PubNub JavaScript API to version 3.2 in main JavaScript directory.
+
+commit 24ab1b63a58bf1b37d7e165ee94aa20e5f40e7e0
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Fri Aug 17 17:25:07 2012 -0700
+
+    added unsubscribe for "-pnpres" channels.
+
+commit 96524bb8c687778df908655cf8de49b2a0e928dd
+Author: Zac Witte <zacwitte@gmail.com>
+Date:   Fri Aug 10 12:40:48 2012 -0700
+
+    moved javascript presence updates to 3.2 and reverted 3.1 to pre-presence state
+
+commit 3b7f1316bc1b2c6369b2a2ca33b8b5f1458df8c1
+Author: Zac Witte <zacwitte@gmail.com>
+Date:   Thu Aug 2 13:20:04 2012 -0700
+
+    fixed javascript ssl test
+
+commit 55e96f6e46d86bcbfefcdb37e8aedb428256f585
+Author: Zac Witte <zacwitte@gmail.com>
+Date:   Thu Aug 2 13:12:17 2012 -0700
+
+    re-minified javascript
+
+commit 1dd303293965062fbbf17ead26fd1493e72a38bc
+Author: Zac Witte <zacwitte@gmail.com>
+Date:   Thu Aug 2 12:58:54 2012 -0700
+
+    updated presence to use channel on same sub key
+
+commit 93a9e13bc943116a4a93ef5749564b2ee86b4aeb
+Author: Zac Witte <zacwitte@gmail.com>
+Date:   Tue Jul 31 20:34:23 2012 -0700
+
+    minified js
+
+commit bdfb55fb5b905e58f6554eb1ada5dda1050671b1
+Author: Zac Witte <zacwitte@gmail.com>
+Date:   Tue Jul 31 20:26:36 2012 -0700
+
+    updated the javascript API for presence
+
+commit 1ca6ebf647c3f0d28221b3e12aca5136b88002f3
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Fri Jul 27 19:37:25 2012 -0700
+
+    Update javascript/README.md
+    
+    Added PubNub init Function Example.
+
+commit 1cf64829c6ed3cd1e8375be7791e1a1cf44c3d69
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Jun 5 13:41:23 2012 -0700
+
+    updated pubnub javascript api with improved on-reconnect callback.
+
+commit 3a8f497b338d9060f01148793da2cbdcc0a87787
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue May 22 12:15:32 2012 -0700
+
+    updated JavaScript Unit Test to support New Demo Key response.
+
+commit 8323d16830ca3207efb976d217faf0d70193ddfd
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue May 22 10:54:25 2012 -0700
+
+    upgraded JavaScript APIs to support new 5 minute KeepAlives.
+
+commit a85a7de693530113ca14d443274dc9d0db7b57a7
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Apr 24 17:20:44 2012 -0700
+
+    added Fastly CDN URL for recommended SSL JavaScript loading.
+
+commit 360c088f8c80a5e2c93d93fa8824f8bd053969b9
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Apr 24 15:54:33 2012 -0700
+
+    added SSL MODE config to JavaScript Doc.
+
+commit 74b027efc42720fb1e25f208e02452c4b7833d02
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Sat Mar 3 03:10:48 2012 -0800
+
+    added Publish and Subscribe Pseudocode Requirments for a PubNub API.
+
+commit 9c74d6877f355f22d8f0100e438a23cc0d323658
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Fri Mar 2 18:46:35 2012 -0800
+
+    updated Socket.IO Docs to include SSL connection guide.
+
+commit 2a014b9baa0fd7fedc7116a45237b7ba912917ea
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Mon Feb 20 15:38:54 2012 -0800
+
+    updated PubNub JavaScript Unit Tests and One-off Tests and moved to a new directory.
+
+commit 9cdf21de7b6c2c3b534b99c8bbba86ed09694f73
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Mon Feb 13 12:16:00 2012 -0800
+
+    updated JS Unit Tests for Testling usage.
+
+commit 799751980dd52858db70945503bc917728f48753
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Sat Feb 11 17:53:42 2012 -0800
+
+    upgraded to latest Google Closure Compilre 1741.
+
+commit 061ad0a57ab255cb267960fde2edd2330b95bf39
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Sat Feb 11 16:49:43 2012 -0800
+
+    updated PubNub Minified Script removing Generated Anonymous Function which causes a global to appare.
+
+commit 5b12c0697f96376bedc56f624fb3b73479c1440d
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Fri Feb 10 22:41:15 2012 -0800
+
+    update provided by @gavinuhma - CTO/Founder of @goinstant - PubNub JavaScript API with special case for iPhone Private Browsing Mode.
+
+commit 56668a13d659392d0d6d7bee0731e7ec872bac4e
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Feb 7 16:44:36 2012 -0800
+
+    added new PubNub Cloud description to the JavaScript README.
+
+commit e3ded79d8d4e028ff26916380a1dba53e1a57f4c
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Feb 7 16:41:24 2012 -0800
+
+    updated PubNub JavaScript Docs with notes on usage and optoinal items.
+
+commit 61d18cfe61ec1dd5b1fb10953f0e5a4fe88c3c17
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Tue Feb 7 16:37:55 2012 -0800
+
+    updated PubNub JavaScript README with Markdown Formatting.
+
+commit 209866397b15fce9107b7283db6b204c11ea56ef
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Mon Feb 6 19:25:03 2012 -0800
+
+    Removed depricated Analytics API from JS Libs.
+
+commit 89c94b6ba7d478643e07cf68a931b07f71b67492
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Mon Feb 6 18:32:44 2012 -0800
+
+    Updated PubNub JavaScript API with customer requests and new Disconnect & Reconnect events.
+
+commit 27e7025e09cf143e89766b8cac7fb387c9bb7ff7
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Sat Feb 4 16:41:57 2012 -0800
+
+    applied MAILTO patch for PubNub JavaScript API discovered by Jon Wu @jon_wu today.
+    added Disconnect and Reconnect events to PubNub JavaScript API.
+
+commit 99a36a933862343edb0c6db1d438fbfd13a2c655
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 26 15:24:21 2012 -0800
+
+    updated PubNub JavaScript and ActionScript API with upgrade provided by Mike Slemmer of @Spreecast for many open connections.
+
+commit 6f8e14550ffcb7daa2eba96807e4a5c7c15bf74e
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 12 22:46:02 2012 -0800
+
+    added PubNub JavaScript API minified file update.
+
+commit aba3eb2caac646fc84e35b3577409db2f430529a
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 12 22:45:21 2012 -0800
+
+    updated PubNub JavaScript Push API Library with option to Force Flash ON (Flash is OFF by default).
+
+commit a150a0e68b11605a4d092e0cf1f3a9534ae97573
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 12 22:37:50 2012 -0800
+
+    improved SSL Primer logic for IE and Enhanced Loading State for All Browsers in the PubNub JavaScript Push API Library.
+
+commit ea685ee7a27ac03b81a874a6d351a58fbb9689e2
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 12 20:16:49 2012 -0800
+
+    updated unit-test for PubNub JavaScript API lib to test for connection restoration (even if web browser is closed and re-opened) and many connections test.
+
+commit e9d2175cf271b783002a90b9e0a7e737be8d04e3
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 12 18:57:16 2012 -0800
+
+    increased max connection limit by 10x for web browsers.
+
+commit cd795ec41d8b6e42ec3246e52795d09cf16411a8
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 12 17:44:05 2012 -0800
+
+    major upgrade to PubNub JS Lib with improved SSL Support for IE.
+    no more Flash! except for Opera.
+    new Restore Connection feature for Page-changes and Browser Closes to keep connection state alive even if the user closes the browser tab or clicks a link to go to another page.
+
+commit 0c5e584d9a85193f809ba928c2585dc607bb73d9
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Dec 15 17:09:41 2011 -0800
+
+    added PHP benchmark script and updated Python Twisted and Python Tornado Benchmark Scripts.
+
+commit bf6f73523c6d5cc544b115d14d3b6f1684907852
+Author: Stephen Blum <blum.stephen@gmail.com>
+Date:   Thu Nov 17 14:58:21 2011 -0800
+
+    updated PubNub JavaScript with patch for Chrome/Safari on Mac OSX.
+
+commit 3a82ba5a14343407c9c2e60e7c992f610b526881
+Author: Stephen Blum <stephen@pubnub.com>
+Date:   Thu Oct 27 16:14:39 2011 -0700
+
+    updated README info for Testling Cloud Unit Test and test.sh usage.
+
+commit 1809b68c0d43e2de64f22972b68737b49e8c17cd
+Author: Stephen Blum <stephen@pubnub.com>
+Date:   Thu Oct 27 15:48:22 2011 -0700
+
+    added Testling.js Unit Test for PubNub JavaScript Web Browser API.
+
+commit b613cd6eb0a77da1e0ddeddecd48260b07029520
+Author: Stephen Blum <stephen@pubnub.com>
+Date:   Wed Oct 19 13:45:56 2011 -0700
+
+    added "audio mosaic" renamed from "audio rotate" which provides good Presence Detection practices.
+
+commit 9556fea234a154941ad7e62cb1b16e98e787ef9a
+Author: Stephen Blum <stephen@pubnub.com>
+Date:   Thu Oct 13 15:00:34 2011 -0700
+
+    renamed event members in PubNub JavaScript data Push API to maintain name structure on closure compiler.
+
+commit 51b55df511a55a0574c815d55f0beb699a3886de
+Merge: ab0aa14 a083c51
+Author: Stephen Blum <stephen@pubnub.com>
+Date:   Mon Sep 19 17:22:00 2011 -0700
+
+    Merge branch 'master' of https://github.com/pubnub/pubnub-api
+
+commit ab0aa148202980763af0038a6f215a86b8c24976
+Author: Stephen Blum <stephen@pubnub.com>
+Date:   Mon Sep 19 17:21:05 2011 -0700
+
+    added CDN url for conditional flash sockets on HTTPS contributed by jjb!
+
+commit 655dc2ce0810dfbfba080ac284700286ef18ecb8
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Sep 15 18:14:14 2011 -0700
+
+    updated PubNub Real-time JavaScript API with embedded event processor, less than 20 new lines.
+
+commit 45ef4144e486a5208475bb5c3705a3688b1f8a31
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Jul 6 15:21:29 2011 -0700
+
+    updated PubNub Realtime Communications API for JavaScript adding IE6 patch Without Flash.
+
+commit fa8b90ab899a73d97b67c95b8ab414f7d3093df5
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun May 29 10:02:43 2011 -0700
+
+    added patch to PubNub Web Data Push JavaScript Channel Analytics API recommended by Bouke van der Bijl.
+
+commit 8c4e7bb43d9bb0194a7c4d3cb9f752e8ce304fd0
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Apr 27 20:15:19 2011 -0700
+
+    added IE9 updates with latest IE9 release for PubNub JavaScript API.
+
+commit c9df15a4a6c286489e1cc619c119de914f380d34
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun Apr 10 09:57:44 2011 -0700
+
+    added new Connection Ready Callback for subscribe method on JavaScript PubNub Cloud-hosted Real-time Message Broadcasting Service.
+
+commit f6f309ed0129d1d00a0e7a6a383dff042f23cfa4
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Mar 31 18:42:09 2011 -0700
+
+    updated README link for each API.
+
+commit 939476791224ee32a70ec04c804ff8bcd2a2c0ec
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Mon Mar 28 00:24:48 2011 -0700
+
+    fixed override forEach function in the PubNub JavaScript Real-time Cloud-hosted Broadcasting API.
+
+commit 8c2319be02923667d21b394959fd7ad0519b85d2
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun Mar 27 23:29:48 2011 -0700
+
+    updated message limit length detection for PubNub JavaScript Real-time Cloud-Hosted Message API.
+
+commit db0407cb8ee4156e5438fcb871caa67ce6b95c57
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Mon Feb 21 15:57:06 2011 -0800
+
+    updated JavaScript PubNub Cloud-Hosted Real-time Push API with fix flash socket debug mode.
+
+commit 6d73aef16d67164788b7825d8edfac0b866eecf8
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Mon Feb 14 19:29:35 2011 -0800
+
+    updated JavaScript PubNub Cloud-Hosted Real-time API with white lable hooks.
+
+commit c51fe07fb8b5f74b65838e7580bd5ef9c8e6abe6
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Feb 10 20:41:39 2011 -0800
+
+    updated JavaScript 3.1 Directory and README.
+
+commit 6ba5d459562e02ba27f56d12793d50c7485aab12
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Feb 9 20:28:27 2011 -0800
+
+    upgraded PubNub Real-time Cloud Hosted Messaging Servers to version 3.1 with faster speeds.
+
+commit d692b71753030d975eb1de92c50a1a06ce3194d1
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Feb 9 20:24:10 2011 -0800
+
+    upgraded PubNub JavaScript Real-time Cloud-Hosted Push API to version 3.1 with improvements in performance.
+
+commit eff81c14624ecaaa91da14b4bb92bbeae3996229
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Feb 3 18:29:09 2011 -0800
+
+    updated PubNub JavaScript Cloud-Hosted Real-time Push API by adding new No-Confilct PUBNUB.clean() API and PUBNUB.init() API which offeres multi-account interfaces.
+
+commit a9bd16df052f10e2bcd836445216d71b2746558e
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Jan 27 22:23:07 2011 -0800
+
+    updated PubNub JavaScript API with improved style support.
+
+commit 73f06131a2438839c67dfa30044e3923cc21a779
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun Jan 9 16:13:57 2011 -0800
+
+    updated CDN link for PubNub 3.0 JavaScript Real-time Cloud Push API include file.
+
+commit c6bf4f19e6bdbe2a96068358a7b8369227e09019
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sat Dec 11 17:55:21 2010 -0800
+
+    increased max connection in PubNub 3.0 JavaScript Real-time Cloud Push API.
+
+commit 72470feed4486f673d458a7b8c2d42d6439e12a3
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Dec 9 20:50:38 2010 -0800
+
+    updated documentation for the PubNub JavaScript Real-time Cloud Push API.
+
+commit 84dea919c2f26fe9039031a0d454f5aca96fc3d7
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Dec 1 20:44:32 2010 -0800
+
+    updated PubNub 3.0 Real-time JavaScript Cloud Push API with latest improved XHR CORS disconnection detects and publish/subscribe restore for various edge cases.
+
+commit befa551f94f33b1f4d198b13bf59b3e91c3e78c5
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Nov 17 21:14:00 2010 -0800
+
+    added JavaScript include tag examples with working "demo" keys for the PubNub 3.0 Real-time JavaScript Cloud Push API.
+
+commit b63324c303f5578b4f8f7eddd7645a6ac96e2db0
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Nov 16 20:27:29 2010 -0800
+
+    updated PubNub 3.0 Real-time JavaScript Push API README file with example Include File methods.
+
+commit 8799f3f24d3e085656bb1395ea27d9cd3682be22
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun Nov 14 14:57:49 2010 -0800
+
+    applied network disconnected patch for PubNub 3.0 JavaScript Real-time Cloud Push API.
+
+commit f1e5bc26974c3960069edee84a40842fa33fe0cd
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sat Nov 13 23:26:23 2010 -0800
+
+    reduced extra recursion in completed request state for PubNub 3.0 JavaScript Real-time Cloud Push API.
+
+commit 3c7c2e7b5bebbdab7b4048502ef60784e87a25f3
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Fri Nov 12 23:11:01 2010 -0800
+
+    rewrite of ajax and xdr functions for PubNub 3.0 JavaScript Real-time Cloud Push API.
+
+commit 0f00b2b7a6074d9ef5be0c4528423e16dc12a7a3
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Mon Nov 8 19:40:46 2010 -0800
+
+    updated JavaScript README.
+
+commit 0652f1d49701e3602fb51f8003bc8f0241ba6c6f
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun Nov 7 17:53:00 2010 -0800
+
+    updated PubNub 3.0 JavaScript Cloud Push API with improved request encoding.
+
+commit 4914322038ceffda24a84358eee82eac5e1ed62c
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun Nov 7 09:59:18 2010 -0800
+
+    updated PubNub 3.0 JavaScript Cloud Push API with improved compressions payload delivery on lib download.
+
+commit e9042943b474cd4fd091e432d4480155fd65329e
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Fri Nov 5 21:01:56 2010 -0700
+
+    fixed double recursive callback in PubNub JavaScript 3.0 Cloud Push API for the Subscribe() Function.
+
+commit 221b3a0f0867a304b93df4c55f8231f9114b0a6d
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Fri Nov 5 20:09:16 2010 -0700
+
+    updated PubNub JavaScript 3.0 Cloud Push API with proper url encoding.
+
+commit b570d7edb509066a395d101c41dc2fe821274fa3
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Nov 4 20:19:25 2010 -0700
+
+    updated UUID method in PUBNUB JavaScript Push API 3.0 with new address pointer.
+
+commit 22c287d0463eb75cc4533df1b5d03b86df22aa53
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Nov 3 21:32:04 2010 -0700
+
+    updated PubNub JavaScript Push API 3.0 with security patch in CORS component.
+
+commit 5716ddc12dbc9b5c8eaec9c6f326a81a115d97ad
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Nov 2 23:59:26 2010 -0700
+
+    added PubNub JavaScript Push API 3.0 release.
+
+commit deceee68f6df327984a91e1394fe2baf6a14ac92
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Nov 2 23:57:55 2010 -0700
+
+    removed old JSONP response interface and updated CORS Parsing.
+
+commit 4f63281f6bd72c1db069beaaf82a4b0ca610a46d
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Sep 28 21:33:46 2010 -0700
+
+    updated PubNub JavaScript Push API with new and improved DOM Bind() function.
+
+commit b307d1a735c669da020fa402dd9a4bb53b745768
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Sep 23 18:46:07 2010 -0700
+
+    added Real-time Multi-touch in the games directory.
+
+commit d05e7e33f700d1d21eb0ba9ad7a6a130848f8f68
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Fri Sep 17 19:26:58 2010 -0700
+
+    added MooTools compatibility updated to PubNub JS Push API.
+
+commit 412f9643255add7a27ee48a78693d3f6c7f7aadb
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Fri Aug 13 21:00:14 2010 -0700
+
+    fixed PubNub JavaScript Push API external calls to XDR JSONP function.
+
+commit 0cf7b3e31b82fcda8dd3ee7f2358586cadc0606b
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun Aug 8 21:27:32 2010 -0700
+
+    fixed history limit default to 100 instead of 10.
+
+commit 0365d842e6a28f8f2e0b1ce028a7c777fd6a549b
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Aug 5 19:54:26 2010 -0700
+
+    updated MMO Pong game with better ball location tranmission algo with changable masters.
+    fixed many bugs related to data transmission priority.
+
+commit 2833e66fd0f89505845edc4413137f662e94409a
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Aug 5 19:52:54 2010 -0700
+
+    fixed player module bug.
+
+commit 38b3f6df038ae33e066757f927554341be714aab
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Aug 3 19:45:14 2010 -0700
+
+    fixed PubNub JavaScript Sprite Module width association based on cell count.
+
+commit 22569c235120e70a96f168a0469bcb32e59d930b
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Aug 3 19:34:02 2010 -0700
+
+    updated PubNub JavaScript Push API core with improved performance with fixed FireFox status flicker.
+
+commit d893a5b6265d8290de2ffcb0ed1e95debf123b60
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Aug 3 19:33:10 2010 -0700
+
+    added javascript modules Sprite, Utility and Player for the beggining of the PubNub gaming API.
+
+commit 00da71fd3bb1267ac8fb5ba749f8071bcfe17ee8
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Mon Jul 26 22:11:06 2010 -0700
+
+    updated PubNub JavaScript Push API supplant function to allow optoinal dollars in template placehodlers.
+
+commit 3a842b8bccdaf1278aa2f4c685b8e761f2baa72e
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Fri Jul 23 21:06:00 2010 -0700
+
+    updated subscribe client logic with fix for PubNub JavaScript Push API.
+
+commit 8d41c0487880e388fa0a8a6b9f481fd4159ecfe0
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Mon Jul 19 21:43:50 2010 -0700
+
+    disabled websocket temporarily until protocal stabilizes.
+
+commit 45ac5c3f6a83330be3f1d47a52ec5e53e603d661
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Mon Jul 12 20:50:41 2010 -0700
+
+    updated JSON parse method to accept PubNub server side validation rather than client validation over secured JSON messages.
+
+commit 7a99e22fd759ffb060527ac5c3a927e6b4973ae6
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Jul 8 20:47:47 2010 -0700
+
+    restored websocket interface for devices which support the transport.
+
+commit e3a7f0df505bf71d817d8778188403b4bb2ee6ac
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Jul 1 20:34:30 2010 -0700
+
+    fixed history overlap messages on page load to prevent messiness with time token with JavaScript Push API.
+
+commit 6ea068557d5c7f67b1a42d810350cc4a97af497d
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Jun 30 20:25:25 2010 -0700
+
+    fixed IE annoying errors with missing event and updating impossible CSS attributes.
+
+commit 57929453a4fc96509b4d974bb5e53f064903c1cc
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Jun 29 19:25:08 2010 -0700
+
+    updated JavaScript Push API with truthy async attribute value.
+
+commit 33076115b794126035e7ea5c00ba5e36d513bfa3
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Thu Jun 24 22:01:04 2010 -0700
+
+    added callback register option in the args to match the other PHP and Ruby interfaces.
+
+commit 413ace0fb4167dc88e0d65409aa3f2f1ea663372
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Jun 22 20:49:13 2010 -0700
+
+    updated PubNub JavaScript Push API Header Comment.
+
+commit 2f29f0805478bfe53d233946855082830bb741f9
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Jun 22 20:31:46 2010 -0700
+
+    added PubNub JavaScript Push API.
+
+commit fa4350b5bfbc86e48682205c168a449e2fcd2840
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sun Jun 20 19:11:15 2010 -0700
+
+    updated simple chat javascript example.
+
+commit b88ab199fc9e6f0d34a4a085ee8944257aa94430
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Wed Jun 16 21:39:13 2010 -0700
+
+    updated PHP Client Library to PubNub PHP Push API 2.0 version.
+
+commit 12f093e173c2683624e0fbcafa926172934f37d9
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Sat Jun 5 00:40:11 2010 -0700
+
+    added javascript README file and updaged simple chat example.
+
+commit a8a6336694d118c858840e4d5066f52745d731fb
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Fri Jun 4 20:24:08 2010 -0700
+
+    updated simple chat javascript example to use styles in the standard way.
+
+commit 4860bc08563ac3a7c546fd5e36a4461ce07f6e23
+Author: Stephen L. Blum <blum.stephen@gmail.com>
+Date:   Tue Jun 1 15:14:42 2010 -0700
+
+    added simple-chat example to javascript.
+    started python and ruby twisted and eventmachine starting points.
