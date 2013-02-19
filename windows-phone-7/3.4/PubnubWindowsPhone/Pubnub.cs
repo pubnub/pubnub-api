@@ -1,4 +1,4 @@
-﻿//Build Date: Feb 15, 2013
+﻿//Build Date: Feb 18, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -350,6 +350,7 @@ namespace PubNubMessaging.Core
         {
             RemoveChannelDictionary<object>(null);
         }
+        
         private void RemoveChannelDictionary<T>(RequestState<T> state)
         {
             if (state != null && state.Request != null)
@@ -545,7 +546,7 @@ namespace PubNubMessaging.Core
             requestState.UserCallback = userCallback;
             requestState.Reconnect = false;
 
-            return UrlProcessRequest<T>(request, requestState); //connectCallback = null
+            return UrlProcessRequest<T>(request, requestState); 
         }
 
         private string JsonEncodePublishMsg(object originalMessage)
@@ -618,7 +619,6 @@ namespace PubNubMessaging.Core
         /// <param name="channel"></param>
         /// <param name="userCallback"></param>
         /// <param name="connectCallback"></param>
-        /// <param name="disconnectCallback"></param>
         public void Subscribe(string channel, Action<object> userCallback, Action<object> connectCallback)
         {
             Subscribe<object>(channel, userCallback, connectCallback);
@@ -956,12 +956,15 @@ namespace PubNubMessaging.Core
             }
         }
 
+
         /// <summary>
         /// Check the response of the REST API and call for re-subscribe
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="subscribeResult"></param>
+        /// <param name="type"></param>
+        /// <param name="multiplexResult"></param>
         /// <param name="userCallback"></param>
+        /// <param name="connectCallback"></param>
         private void MultiplexInternalCallback<T>(ResponseType type, object multiplexResult, Action<T> userCallback, Action<T> connectCallback)
         {
             List<object> message = multiplexResult as List<object>;
@@ -989,12 +992,13 @@ namespace PubNubMessaging.Core
             }
         }
 
-
         /// <summary>
         /// To unsubscribe a channel
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="userCallback"></param>
+        /// <param name="connectCallback"></param>
+        /// <param name="disconnectCallback"></param>
         public void Unsubscribe(string channel, Action<object> userCallback, Action<object> connectCallback, Action<object> disconnectCallback)
         {
             Unsubscribe<object>(channel, userCallback, connectCallback, disconnectCallback);
@@ -1006,6 +1010,8 @@ namespace PubNubMessaging.Core
         /// <typeparam name="T"></typeparam>
         /// <param name="channel"></param>
         /// <param name="userCallback"></param>
+        /// <param name="connectCallback"></param>
+        /// <param name="disconnectCallback"></param>
         public void Unsubscribe<T>(string channel, Action<T> userCallback, Action<T> connectCallback, Action<T> disconnectCallback)
         {
             if (string.IsNullOrEmpty(channel) || string.IsNullOrEmpty(channel.Trim()))
@@ -1031,10 +1037,11 @@ namespace PubNubMessaging.Core
         }
 
         /// <summary>
-        /// SubscribeRequest private method for Subscribe
+        /// Multi-Channel Subscribe Request - private method for Subscribe
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="channel"></param>
+        /// <param name="type"></param>
+        /// <param name="channels"></param>
         /// <param name="timetoken"></param>
         /// <param name="userCallback"></param>
         /// <param name="connectCallback"></param>
@@ -1054,8 +1061,6 @@ namespace PubNubMessaging.Core
                 return;
             }
 
-
-            //TODO:check the logic for internet status for multi-channel
             if (_channelInternetStatus.ContainsKey(multiChannel) && (!_channelInternetStatus[multiChannel]) && _pubnetSystemActive)
             {
                 if (_channelInternetRetry.ContainsKey(multiChannel) && (_channelInternetRetry[multiChannel] >= pubnubNetworkCheckRetries))
@@ -1084,7 +1089,6 @@ namespace PubNubMessaging.Core
             // Begin recursive subscribe
             try
             {
-
                 long lastTimetoken = 0;
                 long minimumTimetoken = _multiChannelSubscribe.Min(token => token.Value);
                 long maximumTimetoken = _multiChannelSubscribe.Max(token => token.Value);
@@ -1127,13 +1131,13 @@ namespace PubNubMessaging.Core
             }
         }
 
-
         /// <summary>
         /// Presence
-        /// Listen for a presence message on a channel
+        /// Listen for a presence message on a channel or comma delimited channels
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="userCallback"></param>
+        /// <param name="connectCallback"></param>
         public void Presence(string channel, Action<object> userCallback, Action<object> connectCallback)
         {
             Presence<object>(channel, userCallback, connectCallback);
