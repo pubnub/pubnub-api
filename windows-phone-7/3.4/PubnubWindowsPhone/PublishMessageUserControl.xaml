@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="PubnubWindowsPhone.PublishMessageUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    d:DesignHeight="250" d:DesignWidth="250">
+    
+    <Grid x:Name="LayoutRoot" Height="470" Width="451">
+        <StackPanel HorizontalAlignment="Stretch" Margin="12,12,216,246" Name="stackPanel1" VerticalAlignment="Stretch">
+            <TextBox Height="76" Name="txtPublish" Text="" Width="229" Background="#8BEFDFDF" Foreground="Black" HorizontalContentAlignment="Center" />
+            <Button Content="Send" Height="71" Name="btnOK" Width="157" HorizontalContentAlignment="Center" />
+            <Button Content="Cancel" Height="70" Name="btnCancel" Width="159" HorizontalContentAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</UserControl>

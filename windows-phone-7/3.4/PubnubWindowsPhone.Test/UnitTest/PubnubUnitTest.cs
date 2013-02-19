@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using PubNubMessaging.Core;
 
-namespace PubNubMessaging.Tests
+namespace PubnubWindowsPhone.Test.UnitTest
 {
     public class PubnubUnitTest : IPubnubUnitTest
     {
