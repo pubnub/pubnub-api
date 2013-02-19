@@ -425,7 +425,7 @@ typedef enum {
 }
 
 - (void)hereNow:(NSString *)channel {
-    if(channel == nil || channel == @"")
+    if(channel == nil || [channel isEqualToString: @""])
     {
         NSLog(@"Missing channel");
         return;
@@ -448,7 +448,7 @@ typedef enum {
 
 - (void)presence:(NSString *)channel
 {
-    if(channel == nil || channel ==@"")
+    if(channel == nil || [channel isEqualToString: @""])
     {
         NSLog(@"Missing channel");
         return;
@@ -458,7 +458,7 @@ typedef enum {
 
 -(void)leave:(NSString *)channel
 {
-    if(channel == nil || channel ==@"")
+    if(channel == nil || [channel isEqualToString: @""])
     {
         NSLog(@"Missing channel");
         return;
