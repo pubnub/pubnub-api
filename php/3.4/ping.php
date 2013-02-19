@@ -35,15 +35,15 @@ echo "Running publish\r\n";
 
 while (1) {
 
-$t = time();
+$t = time() . "";
+$m = array("serial" => $t, "message" => "Hello from PHP! " . $t);
 
 $publish_success = $pubnub->publish(array(
     'channel' => $channel,
-    'message' => $t + 'Hello from PHP!'
-));
+    'message' => $m));
+
 echo($t . " " .  $publish_success[0] . " " . $publish_success[1]);
 echo "\r\n";
-
 sleep(1);
 }
 

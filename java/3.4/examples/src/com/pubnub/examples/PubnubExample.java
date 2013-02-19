@@ -2,7 +2,6 @@ package com.pubnub.examples;
 
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,10 +25,10 @@ public class PubnubExample {
 	 * @param params
 	 */
 	public static void main(String[] params) {
-		
-		int counter = 0;		
+
+		int counter = 0;
 		PubnubExample pex = new PubnubExample();
-		
+
 		pex._pubnub.setSubscribeTimeout(310000);
 		pex._pubnub.setNonSubscribeTimeout(15000);
 		/*
@@ -58,7 +57,7 @@ public class PubnubExample {
 
 		System.out.println("\nRunning subscribe()");
 		pex.subscribe(new String[]{"hello_world" + "-" + String.valueOf(counter)});
-		
+
 		while (true) {
 			counter = (counter + 1) % 9;
 			try {
