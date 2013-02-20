@@ -1,9 +1,0 @@
-CHANGELOG
-
-02-01-2013 - 8a686c91cb546787a6be7810b96b806c33cf96e7
-. client is now fully asyncronous
-. added enhanced multiplexed subscribe support
-. better error handling added to example app
-. improved keep-alive handling
-. support for chunked responses
-. improved logging
