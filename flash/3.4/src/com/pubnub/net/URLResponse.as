@@ -53,7 +53,7 @@ public class URLResponse {
         // Regex courtesy of ruby 1.8 Net::HTTP
         // Example, HTTP/1.1 200 OK
 
-        Log.log("Header length: " + lines.length);
+        //Log.log("Header length: " + lines.length);
         var matches:Array = firstLine.match(/\AHTTP(?:\/(\d+\.\d+))?\s+(\d\d\d)\s*(.*)\z/);
 
         //Log.log("*** Parsing response header ***", Log.DEBUG);
@@ -76,7 +76,7 @@ public class URLResponse {
 
                 // Need to throw an error here
                 Log.log("Bad header data received: " + firstLine, Log.DEBUG);
-                trace("Bad header data received: " + firstLine, Log.DEBUG);
+                //trace("Bad header data received: " + firstLine, Log.DEBUG);
             }
         }
 

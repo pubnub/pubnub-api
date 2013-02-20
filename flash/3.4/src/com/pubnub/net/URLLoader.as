@@ -132,7 +132,7 @@ public class URLLoader extends EventDispatcher {
 
         //trace('------onSocketData------' + socket.bytesAvailable);
         temp.clear();
-        Log.log("onSocketData start", Log.DEBUG);
+        //Log.log("onSocketData start", Log.DEBUG);
 
         _responseInProgress = true;
         _alreadyCheckedForHeaders = false;
@@ -146,16 +146,16 @@ public class URLLoader extends EventDispatcher {
                 temp.position = 0;
                 var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
 
-                Log.log("THE DATA: " + tempStr, Log.DEBUG);
+                //Log.log("THE DATA: " + tempStr, Log.DEBUG);
 
                 if ( _headers == null) {
-                    Log.log("Headers don't exist -- getting headers:", Log.DEBUG);
+                    //Log.log("Headers don't exist -- getting headers:", Log.DEBUG);
                     _headers = URLResponse.getHeaders(tempStr);
                 }
 
                 if (_headers && (_headers != []) && (!_alreadyCheckedForHeaders)) {
                     //Log.log("Headers are present:", Log.DEBUG);
-                    Log.log("Headers are present: "+ _headers.toString(), Log.DEBUG);
+                    //Log.log("Headers are present: "+ _headers.toString(), Log.DEBUG);
 
                     if (URLResponse.isChunked(_headers)) {
                         _contentEncoding = "chunked";

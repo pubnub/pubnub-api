@@ -305,7 +305,7 @@ package com.pubnub.subscribe {
 					}
 				}
 			}
-            Log.log("SubConnect: ok, TT: " + _lastToken);
+            //Log.log("SubConnect: ok, TT: " + _lastToken);
 			doSubscribe();
         }
 		
