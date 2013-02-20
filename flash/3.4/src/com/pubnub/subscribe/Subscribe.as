@@ -59,7 +59,7 @@ package com.pubnub.subscribe {
 		}
 		
 		private function onTimeout(e:OperationEvent):void {
-			var operation:Operation = e.data as Operation;
+			/*var operation:Operation = e.data as Operation;
 			if (_networkEnabled) {
 				var tkn:String = Settings.RESUME_ON_RECONNECT ? _lastToken : '0';
 				var chs:Array = _channels.concat();
@@ -67,7 +67,8 @@ package com.pubnub.subscribe {
 				if (chs && chs.length > 0) {
 					subcribe(chs.join(','), tkn);
 				}
-			}
+			}*/
+			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
 		}
 		
 		/**
