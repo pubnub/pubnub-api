@@ -14,18 +14,24 @@ package com.pubnub {
          // ie, 100 times, every 3 seconds for a network connection
 
          // time in millseconds to wait for web server to return a response. DO NOT CHANGE unless requested by support
-         public static const OPERATION_TIMEOUT:uint = 5000;
+         public static const OPERATION_TIMEOUT:uint = 10000;
 
-         // for wait a response of a ping operation with [PING_OPERATION_URL], ms
-         public static const PING_OPERATION_TIMEOUT:uint = 5000;
+         /////////////////////////////////////////////////////////////////////////////
 
-         // check for network down every [PING_OPERATION_INTERVAL],ms.
-         public static const PING_OPERATION_INTERVAL:uint = 1000;
+         // First level net test before subscribe is on, Using below POT as timeout
+         // Do not exceed 15000 !!!!
+
+         public static const PING_OPERATION_INTERVAL:uint = 15000;
+
+         // Timeout, in ms, for above POI
+         public static const PING_OPERATION_TIMEOUT:uint = 10000;
+
+         ////////////////////////////////////////////////////////////////////////////
 		 
-		 // check for network down every [PING_OPERATION_RETRY_INTERVAL],ms when the network disabled
+		 // When in subscribe recovery mode, try to hit POU endpoint every PORI ms
 		 public static const PING_OPERATION_RETRY_INTERVAL:uint = 1000;
 
-         // chck a network status uses URL
+         // URL Endpoint for recovery mode net detection
          public static const PING_OPERATION_URL:String = 'http://pubsub.pubnub.com/time/0';
      }
 }
