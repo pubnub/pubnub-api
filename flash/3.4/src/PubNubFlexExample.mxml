@@ -28,8 +28,8 @@
 			
         [Bindable]
 
-        //public var channel:String = 'a,b';
-        public var channel:String = 'rand_seq';
+        public var channel:String = 'hello_world,a,b';
+        //public var channel:String = 'rand_seq';
 
 
         [Bindable]
@@ -39,8 +39,8 @@
         public var pub_key:String = 'demo';
 
         [Bindable]
-        public var sub_key:String = 'sub-c-3a693cf8-7401-11e2-8b02-12313f022c90';
-        //public var sub_key:String = 'demo';
+        //public var sub_key:String = 'sub-c-3a693cf8-7401-11e2-8b02-12313f022c90';
+        public var sub_key:String = 'demo';
 
         [Bindable]
         public var secret_key:String = '';
