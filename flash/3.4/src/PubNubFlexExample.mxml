@@ -188,7 +188,7 @@
                 ExternalInterface.call(functionName, rest);
             }
 
-            if (consoleCounter == 10) {
+            if (consoleCounter == 50) {
                 consoleArea.text = "";
                 consoleCounter = 0;
             }
