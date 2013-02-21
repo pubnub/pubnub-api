@@ -4,7 +4,7 @@ package com.pubnub.log {
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
 	 */
 	public class Log {
-		public static const MAX_RECORDS:Number = 100000;
+		public static const MAX_RECORDS:Number = 1000;
 		
 		public static const RETRY_LOGGING:Boolean = 	true;
 		public static const URL_LOGGING:Boolean = 		true;
@@ -35,8 +35,8 @@ package com.pubnub.log {
 		}
 		
 		static public function log(message:String, level:String = NORMAL, type:String = ''):void{
-			trace(new Date() + " " + message);
-			var record:LogRecord = new LogRecord(message, type, level, instance.recodrs.length); 
+			//trace(new Date() + " " + message);
+			var record:LogRecord = new LogRecord(message, type, level, instance.recodrs.length);
 			if (instance.recodrs.length > MAX_RECORDS) {
 				// flush log
 				instance.recodrs.length = 0;

@@ -61,10 +61,12 @@ package com.pubnub.environment {
 				onComplete(null);
 			}
 			
-			if (pingEndTime >= Settings.PING_OPERATION_INTERVAL) {
+			var pingOperationInterval:uint = lastStatus == NetMonEvent.HTTP_ENABLE ? Settings.PING_OPERATION_INTERVAL : Settings.PING_OPERATION_RETRY_INTERVAL;
+			
+			if (pingEndTime >= pingOperationInterval) {
 				ping();
 			}else {
-				pingDelayTimeout = setTimeout(ping,  Settings.PING_OPERATION_INTERVAL - pingEndTime);
+				pingDelayTimeout = setTimeout(ping, pingOperationInterval - pingEndTime);
 			}
 		}
 		

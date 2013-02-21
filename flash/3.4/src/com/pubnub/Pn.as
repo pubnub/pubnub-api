@@ -158,6 +158,18 @@ package com.pubnub {
 			subscribeConnection.subscribeKey = _subscribeKey;
 			subscribeConnection.sessionUUID = _sessionUUID;
 			subscribeConnection.cipherKey = cipherKey;
+			
+			
+			subscribeConnection.addEventListener(NetMonEvent.HTTP_DISABLE,	onSubscribeTimeout);
+		}
+		
+		private function onSubscribeTimeout(e:NetMonEvent):void {
+			_checkReconnect = true;
+			if (subscribeConnection) {
+				subscribeConnection.networkEnabled = false;
+			}
+			subscribeConnection.networkEnabled = true;
+			dispatchEvent(e);
 		}
 		
 		private function createInitOperation(args:Object = null):Operation {
@@ -198,6 +210,8 @@ package com.pubnub {
 			switch (e.type) {
 				case SubscribeEvent.CONNECT:
 					status = OperationStatus.CONNECT;
+					subscribe.networkEnabled = true;
+					dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_ENABLE));
 				break;
 			
 				case SubscribeEvent.DATA:

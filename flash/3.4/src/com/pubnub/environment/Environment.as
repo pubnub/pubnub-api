@@ -58,7 +58,7 @@ package com.pubnub.environment {
 			sysMon = new SysMon();
 			sysMon.addEventListener(SysMonEvent.RESTORE_FROM_SLEEP, onRestoreFromSleep);
 			
-			maxTimeout = Settings.MAX_RECONNECT_RETRIES * Settings.PING_OPERATION_INTERVAL;
+			maxTimeout = Settings.MAX_RECONNECT_RETRIES * Math.max(Settings.PING_OPERATION_RETRY_INTERVAL, Settings.PING_OPERATION_INTERVAL);
 		}
 		
 		private function onMaxRetries(e:NetMonEvent):void {

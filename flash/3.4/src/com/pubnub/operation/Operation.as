@@ -1,13 +1,15 @@
 package com.pubnub.operation {
+
 	import com.pubnub.json.PnJSON;
-	import com.pubnub.net.URLRequest;
+import com.pubnub.log.Log;
+import com.pubnub.net.URLRequest;
 	import com.pubnub.net.URLRequestHeader;
 	import com.pubnub.Settings;
 	import flash.events.IEventDispatcher;
 	import flash.net.URLRequestMethod;
 	import flash.utils.getTimer;
 	import org.casalib.events.RemovableEventDispatcher;
-	
+
 	/**
 	 * ...
 	 * @author firsoff maxim, firsoffmaxim@gmail.com, icq : 235859730
@@ -64,12 +66,16 @@ package com.pubnub.operation {
 				try {
 					result = PnJSON.parse(String(data));
 				}catch (err:Error) {
-					error = true;
+                    Log.log("*** Received bad json: " + data, Log.DEBUG);
+                    //trace(new Date() + "*** Received bad json: " + data, Log.DEBUG);
+                    error = true;
 				}
 			}
 			
 			if (error) {
-				dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:'Error JSON parse', id:'-1' } ));
+                    Log.log("**** Bad JSON Received! ****", Log.DEBUG);
+                dispatchEvent(new OperationEvent(OperationEvent.RESULT, result));
+				//dispatchEvent(new OperationEvent(OperationEvent.FAULT, { message:'Error JSON parse', id:'-1' } ));
 			}else {
 				dispatchEvent(new OperationEvent(OperationEvent.RESULT, result));
 			}

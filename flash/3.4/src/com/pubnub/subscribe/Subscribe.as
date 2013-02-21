@@ -30,7 +30,7 @@ package com.pubnub.subscribe {
 		protected var _connected:Boolean;
 		
 		protected var _connectionUID:String;
-		protected var _lastToken:String;
+        protected var _lastToken:String;
 		protected var _reusedToken:String
 		protected var factory:Dictionary;
 		protected var _destroyed:Boolean;
@@ -59,7 +59,7 @@ package com.pubnub.subscribe {
 		}
 		
 		private function onTimeout(e:OperationEvent):void {
-			var operation:Operation = e.data as Operation;
+			/*var operation:Operation = e.data as Operation;
 			if (_networkEnabled) {
 				var tkn:String = Settings.RESUME_ON_RECONNECT ? _lastToken : '0';
 				var chs:Array = _channels.concat();
@@ -67,7 +67,8 @@ package com.pubnub.subscribe {
 				if (chs && chs.length > 0) {
 					subcribe(chs.join(','), tkn);
 				}
-			}
+			}*/
+			dispatchEvent(new NetMonEvent(NetMonEvent.HTTP_DISABLE));
 		}
 		
 		/**
@@ -242,15 +243,20 @@ package com.pubnub.subscribe {
 			//Log.log('RESPONSE : '
 			// something is wrong
 			if (RESPONSE == null) {
-				doSubscribe();
+				Log.log("SubConnect: notOK: is null. TT: " + _lastToken, Log.DEBUG);
+                doSubscribe();
 				return;
 			}
-			
-			var messages:Array = RESPONSE[0] as Array;
-			
-			_lastToken = RESPONSE[1];
-			var chStr:String = RESPONSE[2];
-			
+
+            try {
+                var messages:Array = RESPONSE[0] as Array;
+                _lastToken = RESPONSE[1];
+                var chStr:String = RESPONSE[2];
+            } catch (e) {
+                Log.log("SubConnect: notOK: broken response: " + e + " , TT: " + _lastToken,  Log.DEBUG);
+                doSubscribe();
+            }
+
 			/*
 			 * MX (array.length = 3)
 			 * RESPONSE = [['m1', 'm2', 'm3', 'm4'], lastToken, ['ch1', 'ch2', 'ch2', 'ch3']];
@@ -299,6 +305,7 @@ package com.pubnub.subscribe {
 					}
 				}
 			}
+            //Log.log("SubConnect: ok, TT: " + _lastToken);
 			doSubscribe();
         }
 		

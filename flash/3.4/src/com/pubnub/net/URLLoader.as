@@ -2,6 +2,7 @@ package com.pubnub.net {
 import com.adobe.net.*;
 import com.hurlant.crypto.tls.TLSSocket;
 import com.pubnub.log.Log;
+import com.pubnub.net.URLResponse;
 
 import flash.errors.IOError;
 import flash.events.*;
@@ -24,7 +25,7 @@ public class URLLoader extends EventDispatcher {
     public static const END_LINE:String = '\r\n';
 
 
-    public static const END_SYMBOL_CHUNKED:String = '0\r\n';
+    public static const END_SYMBOL_CHUNKED:RegExp = /0\r\n\r\n/;
     public static const END_SYMBOL:String = '\r\n';
     static private const pattern:RegExp = new RegExp("(https):\/\/");
 
@@ -33,8 +34,14 @@ public class URLLoader extends EventDispatcher {
     protected var normalSocket:Socket;
     protected var uri:URI;
     protected var request:URLRequest;
+
     protected var _response:URLResponse;
-    protected var _headers:HttpHeader;
+    protected var _headers:Array;
+
+    protected var _contentEncoding:String;
+    private var _isChunked:Boolean;
+    private var _responseInProgress:Boolean;
+    private var _alreadyCheckedForHeaders:Boolean;
 
     protected var answer:ByteArray = new ByteArray();
     protected var temp:ByteArray = new ByteArray();
@@ -119,51 +126,86 @@ public class URLLoader extends EventDispatcher {
     // We determine if its complete by either Content-size or Chunked strategies.
 
     protected function onSocketData(e:ProgressEvent):void {
+
+        // Log.log("********************************************************************* ", Log.DEBUG);
+        // Log.log("Entering onSocketData: " + e, Log.DEBUG);
+
         //trace('------onSocketData------' + socket.bytesAvailable);
         temp.clear();
-        while (socketHasData()) {
+        //Log.log("onSocketData start", Log.DEBUG);
+
+        _responseInProgress = true;
+        _alreadyCheckedForHeaders = false;
+
+        while (socketHasData() && _responseInProgress) {
             try {
                 // Load data from socket
                 socket.readBytes(temp);
                 temp.readBytes(answer, answer.bytesAvailable);
+
+                temp.position = 0;
+                var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
+
+                //Log.log("THE DATA: " + tempStr, Log.DEBUG);
+
+                if ( _headers == null) {
+                    //Log.log("Headers don't exist -- getting headers:", Log.DEBUG);
+                    _headers = URLResponse.getHeaders(tempStr);
+                }
+
+                if (_headers && (_headers != []) && (!_alreadyCheckedForHeaders)) {
+                    //Log.log("Headers are present:", Log.DEBUG);
+                    //Log.log("Headers are present: "+ _headers.toString(), Log.DEBUG);
+
+                    if (URLResponse.isChunked(_headers)) {
+                        _contentEncoding = "chunked";
+                        //Log.log("Setting to chunked", Log.DEBUG);
+                    } else {
+                        _contentEncoding = "cl";
+                        //Log.log("Setting to CL", Log.DEBUG);
+                    }
+                } else if (!_alreadyCheckedForHeaders) {
+                    //Log.log("Headers are not present.", Log.DEBUG);
+                }
+
+                // 2. Based on the headers, do we have the start and the end?
+
+                //Log.log("Checking for EOF", Log.DEBUG);
+
+                if (_contentEncoding == "chunked") {
+                    if (tempStr.match(END_SYMBOL_CHUNKED)) {
+                        Log.log("Transfer completed: CHUNKED", Log.DEBUG);
+                        _responseInProgress = false;
+                    }
+                } else if (_contentEncoding == "cl") {
+                    if (tempStr.match(END_SYMBOL)) {   // Be sure to match on content-length size
+                        Log.log("Transfer completed: CL", Log.DEBUG);
+                        _responseInProgress = false;
+                    }
+                }
+
+
             } catch (e:Error) {
-                Log.log("onSocketData: " + e, Log.WARNING);
+                Log.log("onSocketData error: " + e, Log.DEBUG);
                 break;
             }
         }
 
-        temp.position = 0;
-        var tempStr:String = temp.readUTFBytes(temp.bytesAvailable);
-        var endSymbol:String = getEndSymbol(tempStr);
-        //trace('tempStr: ' + tempStr);
+        //Log.log("onSocketData end", Log.DEBUG);
 
-        // Are we done receiving data?
-        if (endSymbol && tempStr.indexOf(endSymbol) != -1) {
+        if (!_responseInProgress) {
+            //Log.log("Firing onResponse!", Log.DEBUG);
             onRESPONSE(answer)
             answer.clear();
+            temp.clear();
+            _headers = null;
+            tempStr = "";
         } else {
-            Log.log("Waiting for end of response...", Log.DEBUG);
+            //Log.log("Transfer in progress.", Log.DEBUG);
         }
     }
 
-    protected function getEndSymbol(tcpStr:String):String {
-        _headers = getHeaders(tcpStr);
 
-        //TODO: Refactor from URLResponse isChunked
-
-        if (_headers) {
-
-            if (_headers.contains("Transfer-Encoding", "chunked")) {
-                Log.log(Log.DEBUG, "Received chunked server response.");
-                return END_SYMBOL_CHUNKED;
-            } else {
-                Log.log(Log.DEBUG, "Received Content-length server response.");
-                return END_SYMBOL;
-            }
-        }
-
-        return null;
-    }
 
     protected function onRESPONSE(bytes:ByteArray):void {
         try {
@@ -260,7 +302,7 @@ public class URLLoader extends EventDispatcher {
         // Debug
         var hStr:String = "Header:\n" + requestBytes.readUTFBytes(requestBytes.length);
         //trace('socket.connected : ' + socket.connected);
-        Log.log(Log.DEBUG, "Request Header:\n" + hStr);
+        //Log.log(Log.DEBUG, "Request Header:\n" + hStr);
         socket.writeBytes(requestBytes);
         socket.flush();
     }
@@ -274,39 +316,6 @@ public class URLLoader extends EventDispatcher {
         return _response;
     }
 
-    static public function getHeaders(str:String):HttpHeader {
-
-        var result:HttpHeader = new HttpHeader;
-        var ind:int = str.indexOf(END_LINE + END_LINE);
-
-//        if (ind > -1) {
-//            return null;
-//        }
-
-        var headerString:String = str.substr(0, ind);
-        var lines:/*String*/Array = str.split(END_LINE);
-        var line:String;
-        for (var i:Number = 1; i < lines.length; i++) {
-            line = lines[i];
-            ind = line.indexOf(":");
-
-            if (line == "") {
-                return result;
-            }
-
-            if (ind != -1) {
-                var name:String = line.substring(0, ind);
-                var value:String = line.substring(ind + 1, line.length);
-
-                //result.push({ name: name, value: value.replace(/^ /,"") });
-                result.add(name,value.replace(/^ /,""));
-            } else {
-                trace("[(loader)URLResponse] Invalid header: " + line);
-                Log.log("[(loader)URLResponse] Invalid header: " + line, Log.ERROR);
-            }
-        }
-        return result;
-    }
 
 }
 }

@@ -1,5 +1,6 @@
 package com.pubnub.connection {
-	import com.pubnub.net.URLLoaderEvent;
+import com.pubnub.log.Log;
+import com.pubnub.net.URLLoaderEvent;
 	import com.pubnub.operation.Operation;
 	import com.pubnub.operation.OperationEvent;
 	import com.pubnub.Settings;
@@ -25,6 +26,7 @@ package com.pubnub.connection {
 			if (ready) {
 				doSendOperation(operation);
 			}else {
+                Log.log("sendOperation: connection not ready for op: " + operation.toString(), Log.DEBUG);
 				loader.connect(operation.request);
 				queue.push(operation);
 			}
@@ -44,7 +46,7 @@ package com.pubnub.connection {
 		}
 		
 		private function doSendOperation(operation:Operation):void {
-			trace('doSendOperation');
+			//trace('doSendOperation');
 			clearTimeout(timeout);
 			timeout = setTimeout(onTimeout, Settings.OPERATION_TIMEOUT, operation);
 			this.operation = operation;
