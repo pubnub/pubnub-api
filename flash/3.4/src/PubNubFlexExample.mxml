@@ -54,8 +54,11 @@
 		
 		[Bindable]
         public var ssl:Boolean = true;
-		
-		[Bindable]
+
+        [Bindable]
+        public var noisy:Boolean = false;
+
+        [Bindable]
 		private var channelsDataProvider:ArrayCollection;
 
         private var consoleCounter:int = 1;
@@ -145,12 +148,24 @@
 			 channelsDataProvider = new ArrayCollection(Pn.getSubscribeChannels());
 		}
 
-        protected function OnClearConsoleBtnClick(event:MouseEvent):void{
-            consoleCounter = 1;
-            consoleArea.text = '';
+        protected function OnCustomClick(event:MouseEvent):void{
+            if (noisy == true) {
+                channelTxt.text = 'hello_world,a,b';
+                subKeyTxt.text = "demo"
+                noisy = false;
+            } else {
+                channelTxt.text = 'rand_seq,noise';
+                subKeyTxt.text = "sub-c-3a693cf8-7401-11e2-8b02-12313f022c90"
+                noisy = true;
+            }
         }
 
-        private function onDetHistoryClick(e:MouseEvent):void {
+            protected function OnClearConsoleBtnClick(event:MouseEvent):void{
+                consoleCounter = 1;
+                consoleArea.text = '';
+            }
+
+            private function onDetHistoryClick(e:MouseEvent):void {
             var args:Object = { };
             args.start = startTimeTxt.enabled ? startTimeTxt.text: null ;
             args.end = endTimeTxt.enabled ? endTimeTxt.text : null;
@@ -395,6 +410,8 @@
     <s:Label x="324" y="38" color="#4D4C4C" fontStyle="italic" text="publish_key" textAlign="right"/>
     <s:TextInput id="publishKeyTxt" x="397" y="34" width="246" text="@{pub_key}"/>
 	<s:CheckBox id="sslCheckBox" x="656" y="35" label="SSL" selected="@{ssl}"/>
+    <s:CheckBox id="customChannel" x="656" y="67" label="Noisy Test Config" selected="false"
+            click="OnCustomClick(event)"/>
 	<s:BorderContainer id="connectionStatus" x="114" y="90" width="53" height="13"
 					   backgroundColor="#FC0000">
 	</s:BorderContainer>
