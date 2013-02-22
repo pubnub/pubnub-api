@@ -20,6 +20,18 @@
  */
 - (void)shouldKillDNSCache:(BOOL)shouldKillDNSCache;
 
+/**
+ * Check whether PubNub client should reset connection
+ * because new configuration instance changed critical
+ * parts of configuration or not
+ */
+- (BOOL)requiresConnectionResetWithConfiguration:(PNConfiguration *)configuration;
+
+/**
+ * Check whether configuration is valid or not
+ */
+- (BOOL)isValid;
+
 #pragma mark -
 
 
