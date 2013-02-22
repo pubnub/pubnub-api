@@ -153,6 +153,10 @@
                 
                 errorDescription = @"PubNub client connection failed";
                 break;
+            case kPNClientConnectionClosedOnInternetFailureError:
+
+                errorDescription = @"PubNub client connection lost connection";
+                break;
             case kPNRequestExecutionFailedOnInternetFailureError:
             case kPNRequestExecutionFailedClientNotReadyError:
                 
@@ -215,6 +219,7 @@
             failureReason = @"Looks like client lost connection while trying to connect to remote PubNub service";
             break;
         case kPNRequestExecutionFailedOnInternetFailureError:
+        case kPNClientConnectionClosedOnInternetFailureError:
             
             failureReason = @"Looks like client lost connection";
             break;

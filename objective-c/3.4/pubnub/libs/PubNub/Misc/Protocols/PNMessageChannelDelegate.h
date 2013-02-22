@@ -27,6 +27,12 @@
 - (void)messagingChannel:(PNMessagingChannel *)messagingChannel didSubscribeOnChannels:(NSArray *)channels;
 
 /**
+ * Sent to the delegate when client successfully
+ * restored subscription on previous set of channels
+ */
+- (void)messagingChannel:(PNMessagingChannel *)messagingChannel didRestoreSubscriptionOnChannels:(NSArray *)channels;
+
+/**
  * Sent to the delegate when client failed to subscribe
  * on channels because of error
  */

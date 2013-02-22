@@ -44,6 +44,16 @@ static NSString * const kPNClientConnectionDidFailWithErrorNotification = @"PNCl
 // in userInfo like plain NSArray)
 static NSString * const kPNClientSubscriptionDidCompleteNotification = @"PNClientSubscriptionDidCompleteNotification";
 
+// Sent when PubNub client is about to restore subscription on
+// specified channel(s) (channel(s) will be passed
+// in userInfo like plain NSArray)
+static NSString * const kPNClientSubscriptionWillRestoreNotification = @"PNClientSubscriptionWillRestoreNotification";
+
+// Sent when PubNub client was able to restore subscription on
+// specified channel(s) (channel(s) will be passed
+// in userInfo like plain NSArray)
+static NSString * const kPNClientSubscriptionDidRestoreNotification = @"PNClientSubscriptionDidRestoreNotification";
+
 // Sent when PubNub client was unable to subscribe on
 // specified channel(s) (error will be passed in
 // userInfo and channel(s) will be passed in associatedObject

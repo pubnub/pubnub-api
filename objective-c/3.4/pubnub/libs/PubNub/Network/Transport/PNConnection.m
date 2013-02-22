@@ -72,6 +72,9 @@ static int const kPNStreamBufferSize = 32768;
 // request from queue or not
 @property (nonatomic, assign, getter = shouldProcessNextRequest) BOOL processNextRequest;
 
+// Stores flag on whether connecion is closing or not
+@property (nonatomic, assign, getter = isClosingConnection) BOOL closingConnection;
+
 // Stores whether connection instance is reconnecting at
 // this moment (which will mean that it should automatically
 // open connection after full close)
@@ -593,6 +596,17 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
                 break;
         }
     }
+    else if ([errorDomain isEqualToString:(NSString *)kCFErrorDomainCFNetwork]) {
+
+        switch (CFErrorGetCode(error)) {
+
+            case kCFHostErrorHostNotFound:
+            case kCFHostErrorUnknown:
+
+                isConnectionIssue = YES;
+                break;
+        }
+    }
 
 
     return isConnectionIssue;
@@ -653,6 +667,8 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 }
 
 - (void)closeStreams {
+
+    self.closingConnection = YES;
 
     // Clean up cached data
     [self unscheduleRequestsExecution];
@@ -1228,7 +1244,8 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
                 [self reconnect];
             }
         }
-        else if ([errorDomain isEqualToString:(NSString *)kCFErrorDomainPOSIX]) {
+        else if ([errorDomain isEqualToString:(NSString *)kCFErrorDomainPOSIX] ||
+                [errorDomain isEqualToString:(NSString *)kCFErrorDomainCFNetwork]) {
 
             // Check whether connection should be reconnected
             // because of critical error
@@ -1258,9 +1275,12 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
             if (shouldCloseConnection) {
 
-                [self.delegate connection:self willDisconnectFromHost:self.configuration.origin withError:errorObject];
+                if (!self.isClosingConnection) {
 
-                [self closeStreams];
+                    [self.delegate connection:self willDisconnectFromHost:self.configuration.origin withError:errorObject];
+
+                    [self closeStreams];
+                }
             }
             else {
 
@@ -1368,7 +1388,13 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
 
         if ([self isConnectionIssuesError:error]) {
 
-            errorInstance = [PNError errorWithCode:kPNRequestExecutionFailedOnInternetFailureError];
+            int errorCode = kPNClientConnectionClosedOnInternetFailureError;
+            if (self.writeBuffer != nil && [self.writeBuffer hasData] && self.writeBuffer.isSendingBytes) {
+
+                errorCode = kPNRequestExecutionFailedOnInternetFailureError;
+            }
+
+            errorInstance = [PNError errorWithCode:errorCode];
         }
         else {
 

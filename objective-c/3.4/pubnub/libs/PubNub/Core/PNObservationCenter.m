@@ -175,6 +175,14 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
                                                    object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleClientSubscriptionProcess:)
+                                                     name:kPNClientSubscriptionWillRestoreNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientSubscriptionProcess:)
+                                                     name:kPNClientSubscriptionDidRestoreNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleClientSubscriptionProcess:)
                                                      name:kPNClientSubscriptionDidFailNotification
                                                    object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -338,7 +346,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 
 #pragma mark - Client channels action/event observation
 
-- (void)addClientChannelSubscriptionObserver:(id)observer
+- (void)addClientChannelSubscriptionStateObserver:(id)observer
 
                            withCallbackBlock:(PNClientChannelSubscriptionHandlerBlock)callbackBlock {
 
@@ -348,7 +356,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
             withBlock:callbackBlock];
 }
 
-- (void)removeClientChannelSubscriptionObserver:(id)observer {
+- (void)removeClientChannelSubscriptionStateObserver:(id)observer {
 
     [self removeObserver:observer forEvent:PNObservationEvents.clientSubscriptionOnChannels oneTimeEvent:NO];
 }
@@ -618,21 +626,34 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 }
 
 - (void)handleClientSubscriptionProcess:(NSNotification *)notification {
-    
+
+
     NSArray *channels = nil;
     PNError *error = nil;
-    BOOL subscribed = NO;
-    
-    if ([notification.name isEqualToString:kPNClientSubscriptionDidCompleteNotification]) {
+    PNSubscriptionProcessState state = PNSubscriptionProcessNotSubscribedState;
 
-        subscribed = YES;
-        
-        channels = (NSArray *)notification.userInfo;
-    }
-    else {
-        
+    // Check whether arrived notification that subscription failed or not
+    if ([notification.name isEqualToString:kPNClientSubscriptionDidFailNotification]) {
+
         error = (PNError *)notification.userInfo;
         channels = error.associatedObject;
+    }
+    else {
+
+        // Retrieve list of channels on which event is occurred
+        channels = (NSArray *)notification.userInfo;
+        state = PNSubscriptionProcessSubscribedState;
+
+        // Check whether arrived notification that subscription will be restored
+        if ([notification.name isEqualToString:kPNClientSubscriptionWillRestoreNotification]) {
+
+            state = PNSubscriptionProcessWillRestoreState;
+        }
+        // Check whether arrived notification that subscription restored
+        else if ([notification.name isEqualToString:kPNClientSubscriptionDidRestoreNotification]) {
+
+            state = PNSubscriptionProcessRestoredState;
+        }
     }
 
 
@@ -646,7 +667,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
         PNClientChannelSubscriptionHandlerBlock block = [observerData valueForKey:PNObservationObserverData.observerCallbackBlock];
         if (block) {
 
-            block(channels, subscribed, error);
+            block(state, channels, error);
         }
     }];
 

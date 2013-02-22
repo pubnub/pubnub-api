@@ -74,6 +74,18 @@
 - (void)pubnubClient:(PubNub *)client didSubscribeOnChannels:(NSArray *)channels;
 
 /**
+ * Called on delegate when client is about to init resubscribe on
+ * previous set of channels
+ */
+- (void)pubnubClient:(PubNub *)client willRestoreSubscriptionOnChannels:(NSArray *)channels;
+
+/**
+ * Called on delegate when client successfully restored subscription on
+ * previous set of channels
+ */
+- (void)pubnubClient:(PubNub *)client didRestoreSubscriptionOnChannels:(NSArray *)channels;
+
+/**
  * Called on delegate when some kind of error occurred during 
  * subscription creation
  * error - returned error will contain information about channel
@@ -99,8 +111,8 @@
  * Called on delegate when PubNub client retrieved time
  * token from PubNub service
  */
-- (void)pubnubClient:(PubNub *)client didReceiveTimeToken:(NSNumber *)timeToken;
 
+- (void)pubnubClient:(PubNub *)client didReceiveTimeToken:(NSNumber *)timeToken;
 /**
  * Called on delegate when PubNub client failed to
  * retrieve time token from PubNub service because

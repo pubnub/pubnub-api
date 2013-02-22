@@ -8,9 +8,7 @@
 
 
 #import "PNChannelInformationView.h"
-#import "PNMacro.h"
 #import "PNDataManager.h"
-#import "PNChannelInformationDelegate.h"
 
 
 #pragma mark Private interface methods

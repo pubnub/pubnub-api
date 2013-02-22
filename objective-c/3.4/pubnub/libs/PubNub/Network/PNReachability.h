@@ -56,6 +56,13 @@
  */
 - (BOOL)isServiceAvailable;
 
+/**
+ * Allow to update current reachability state according to the
+ * error object (there is some situation when sockets may go down
+ * on network error long before reachability will notice this)
+ */
+- (void)updateReachabilityFromError:(PNError *)error;
+
 #pragma mark -
 
 

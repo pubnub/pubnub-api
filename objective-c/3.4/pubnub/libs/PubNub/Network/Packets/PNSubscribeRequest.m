@@ -100,7 +100,7 @@
     
     return [NSString stringWithFormat:@"%@/subscribe/%@/%@/%@_%@/%@?uuid=%@",
             kPNRequestAPIVersionPrefix,
-            [PubNub sharedInstance].configuration.subscriptionKey,
+            [PubNub sharedInstance].configuration.publishKey,
             [[self.channels valueForKey:@"escapedName"] componentsJoinedByString:@","],
             [self callbackMethodName],
             self.shortIdentifier,
