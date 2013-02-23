@@ -1,33 +1,36 @@
-# PubNub 3.4  
+# PubNub 3.4 for iOS (iPhone and iPad)
 ---  
 
-PubNub is an iOS ARC support Objective-C library wrapper for the Pubnub realtime messaging service [PubNub.com](http://www.pubnub.com/).  
-PubNub client uses sockets to communicate with remote server. Each request on server is asynchronous and handled by callback blocks (also blocks from observation centre), delegate methods and notifications.  
-Detailed information on method/constant/notification can be found in corresponding header file.  
+PubNub 3.4 for iOS provides iOS ARC support in Objective-C for the PubNub real-time messaging network [PubNub.com](http://www.pubnub.com/).  
+All requests made by the client are asynchronous, and handled by callback blocks (also blocks from observation centre), delegate methods and notifications.  
+Detailed information on methods, constants, and notifications can be found in the corresponding header files.
   
   
 ## Adding PubNub in your project  
 
-1. Add JSONKit supported files in your project (they are stored in pubnub/libs/JSONKit)  
-2. Add PubNub library folder (whole folder) in your project (library folder is stored in pubnub/libs)  
-3. Add PNImports in your project precompile header (.pch)  
+1. Add the JSONKit suppor files to your project (pubnub/libs/JSONKit)  
+2. Add the PubNub library folder to your project (pubnub/libs)  
+3. Add PNImports to your project precompile header (.pch)  
 
         #import "PNImports.h"
 
-4. Thats it, now you can start using PubNub library with your application.  
+***Its just that easy to start using PubNub real-time within your application!***
 
 ## Client configuration
 
-PubNub client can be used right __"out-of-box"__ to check features right away without any additional settings.  Before you will go production you will have to update default settings.  
-Client is configured with instance of [__PNConfiguration__](3.4/pubnub/libs/PubNub/Data/PNConfiguration.h) class. All default configuration is stored in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h) under appropriate keys.  
-Data from [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h) is used when some of configuration value wasn't configured during initialisation.  
+You can test-drive the PubNub client out-of-the-box without additional configuration changes. As you get a feel for it, you can fine tune it's behaviour by tweaking the available settings.
+
+The client is configured via an instance of the [__PNConfiguration__](3.4/pubnub/libs/PubNub/Data/PNConfiguration.h) class. All default configuration data is stored in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h) under appropriate keys.  
+
+Data from [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h) override any settings not explicitly set during initialisation.  
+
 You can use few class methods to intialise and update instance properties:  
 
 1. Retrieve reference on default client configuration (all values taken from [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))  
   
        + (PNConfiguration *)defaultConfiguration;  
   
-2. Retrieve reference on configuration instance created with provided set of methods:  
+2. Retrieve the reference on the configuration instance via these methods:  
   
        + (PNConfiguration *)configurationWithPublishKey:(NSString *)publishKey  
                                            subscribeKey:(NSString *)subscribeKey  
@@ -43,65 +46,65 @@ You can use few class methods to intialise and update instance properties:
 		                                 cipherKey:(NSString *)cipherKey;  
 
   
-3. Update configuration instance using next set of parameters:  
+3. Update the configuration instance using this next set of parameters:  
 
-    1.  Timeout after which library will report non subscription request (here now, leave, message history, message post, time token) execution failure.  
+    1.  Timeout after which the library will report any ***non-subscription-related*** request (here now, leave, message history, message post, time token) or execution failure.  
   
-           nonSubscriptionRequestTimeout  
+            nonSubscriptionRequestTimeout  
         __Default:__ 15 seconds (_kPNNonSubscriptionRequestTimeout_ key in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))  
         
-    2.  Timeout after which library will report subscription request (subscribe on channel(s)) execution failure. For default configuration creation way this value is stored inside [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h) under __kPNSubscriptionRequestTimeout__ key.  
+    2.  Timeout after which the library will report ***subscription-related*** request (subscribe on channel(s)) execution failure.
+        The default configuration value is stored inside [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h) under __kPNSubscriptionRequestTimeout__ key.
       
-           subscriptionRequestTimeout  
-        __Default:__ 10 seconds (_kPNSubscriptionRequestTimeout_ key in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))  
+            subscriptionRequestTimeout  
+        __Default:__ 310 seconds (_kPNSubscriptionRequestTimeout_ key in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))
+        ***Please consult with PubNub support before setting this value lower than the default to avoid incurring additional charges.***
     
-    3.  Whether PubNub client should restore connection (if was connected) after network connection has been restored or not.  
+    3.  After experiencing network connectivity loss, if network access is restored, should the client reconnect to PubNub, or stay disconnected?
       
-           (getter = shouldAutoReconnectClient) autoReconnectClient  
+            (getter = shouldAutoReconnectClient) autoReconnectClient  
         __Default:__ YES (_kPNShouldResubscribeOnConnectionRestore_ key in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))  
     
-    3.  Whether PubNub client should restore subscription on previously subscribed channels or should subscribe on the with __"0"__ time token.  
+    4.  If autoReconnectClient == YES, after experiencing network connectivity loss and subsequent reconnect, should the client resume (aka  "catchup") to where it left off before the disconnect?
       
-           (getter = shouldResubscribeOnConnectionRestore) resubscribeOnConnectionRestore  
+            (getter = shouldResubscribeOnConnectionRestore) resubscribeOnConnectionRestore  
         __Default:__ YES (_kPNShouldResubscribeOnConnectionRestore_ key in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))  
     
-    4.  Whether PubNub client should establish connection to remote origin using SSL or not.  
+    5.  Should the PubNub client establish the connection to PubNub using SSL?
       
-           (getter = shouldUseSecureConnection) useSecureConnection  
+            (getter = shouldUseSecureConnection) useSecureConnection  
         __Default:__ YES (_kPNSecureConnectionRequired__ key in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))  
     
-    5.  Whether PubNub client is able to reduce security level (SSL settings adjustment) if server at this moment poses issue with SSL certificate and client because of settings won't allow connection to insecure host.  
+    6.  When SSL is enabled, should PubNub client ignore all SSL certificate-handshake issues and still continue in SSL mode if it experiences issues handshaking across local proxies, firewalls, etc?
       
-           (getter = shouldReduceSecurityLevelOnError) reduceSecurityLevelOnError  
+            (getter = shouldReduceSecurityLevelOnError) reduceSecurityLevelOnError  
         __Default:__ YES (_kPNShouldReduceSecurityLevelOnError_ key in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))  
     
-    6.  Whether PubNub client is able to disable SSL requirement (secure connection) in case if remote origin closed connection because of issue caused by SSL connection configuration.  
+    6.  When SSL is enabled, should the client fallback to a non-SSL connection if it experiences issues handshaking across local proxies, firewalls, etc?
       
            (getter = canIgnoreSecureConnectionRequirement) ignoreSecureConnectionRequirement  
         __Default:__ YES (_kPNCanIgnoreSecureConnectionRequirement_ key in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h))  
   
-Also if you are using `+defaultConfiguration` method to create configuration instance, than you will need to update:  _kPNPublishKey_, _kPNSubscriptionKey_ and _kPNOriginHost_ keys in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h).  
+***NOTE: If you are using the `+defaultConfiguration` method to create your configuration instance, than you will need to update:  _kPNPublishKey_, _kPNSubscriptionKey_ and _kPNOriginHost_ keys in [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h).***
   
-PubNub client configuration as fast as this record:  
+PubNub client configuration is then set via:
   
     [PubNub setConfiguration:[PNConfiguration defaultConfiguration]];  
         
-After this record, your PubNub client is configured with default values taken from [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h) and ready to be connected right now.  
+After this call, your PubNub client will be configured with the default values taken from [__PNDefaultConfiguration.h__](3.4/pubnub/libs/PubNub/Misc/PNDefaultConfiguration.h) and is now ready to connect to the PubNub real-time network!
   
-There are few methods which allow to adjust client configuration:  
+Other methods which allow you to adjust the client configuration are:  
   
     + (void)setConfiguration:(PNConfiguration *)configuration;  
     + (void)setupWithConfiguration:(PNConfiguration *)configuration andDelegate:(id<PNDelegate>)delegate;  
     + (void)setDelegate:(id<PNDelegate>)delegate;  
     + (void)setClientIdentifier:(NSString *)identifier;  
     
-Two methods which update client configuration may require __hard state reset__ if client already connected. What does it mean "__hard state reset__"? It means that client will close connection without sending `leave` request on subscribed channels and reconnect using new configuration.  
-Client identifier change may require __soft state reset__ if client already connected. What does it mean "__soft state reset__"? It means that client will send `leave` request on subscribed channels and resubscribe with new identifier. All channels which can accept presence events will show chain of event:  
-  
-    > user 'xxxx' leaved  
-    > user 'yyyy' joined 
-    
-Also you can pull out some information about client state and some of the properties with next methods:  
+The above first two methods (which update client configuration) may require a __hard state reset__ if the client is already connected. A "__hard state reset__" is when the client closes all connections to the server and reconnects back using the new configuration (including previous channel list).
+
+Changing the UUID mid-connection requires a "__soft state reset__".  A "__soft state reset__" is when the client sends an explicit `leave` request on any subscribed channels, and then resubscribes with its new UUID.
+
+To access the client configuration and state, the following methods are provided:  
     
     + (PubNub *)sharedInstance;  
     + (NSString *)clientIdentifier;  
@@ -114,11 +117,11 @@ Also you can pull out some information about client state and some of the proper
 
 ## PubNub client methods  
 
-### Connect/disconnect to/from remote PubNub service  
+### Connecting and Disconnecting from the PubNub Network
 
-You can use callback-less connection methods `+connect` to establish connection to remote PubNub service or method with state callback blocks `+connectWithSuccessBlock:errorBlock:`.  
+You can use the callback-less connection methods `+connect` to establish a connection to the remote PubNub service, or the method with state callback blocks `+connectWithSuccessBlock:errorBlock:`.  
 
-For example you can use provided method in the form which you like the most:  
+For example, you can use the provided method in the form that best suits your needs:
     
     // Configure client (we will use client generated identifier)  
     [PubNub setConfiguration:[PNConfiguration defaultConfiguration]];  
@@ -141,39 +144,38 @@ or
                              // establish connection with remote service
                          }];
                                           
-Disconnection as simple as call `[PubNub disconnect]` and client will close connection and clean up all caches (client cache some data for performance reason).  
+Disconnecting is as simple as calling `[PubNub disconnect]`.  The client will close the connection and clean up memory.
 
 ### Channels representation  
 
-Client uses [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) instance instead of string literals to identify channel.  
-So when you need to send message to the channel, than you have to specify corresponding [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) instance in message sending methods.  
+The client uses the [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) instance instead of string literals to identify the channel.  When you need to send a message to the channel, specify the corresponding [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) instance in the message sending methods.  
 
-[__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) interface provide few methods for channels instantiation (inside it will use cached data, so instance in fact will be created only if they wasn't created before):  
+The [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) interface provides methods for channel instantiation (instance is only created if it doesn't already exist):  
     
     + (NSArray *)channelsWithNames:(NSArray *)channelsName;  
     
     + (id)channelWithName:(NSString *)channelName;  
     + (id)channelWithName:(NSString *)channelName shouldObservePresence:(BOOL)observePresence;  
 
-You can use first method if you want to receive set of [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) instances from list of channel identifiers.  
-`observePresence` property is used to mark whether client should observe presence events on specified channel or not.  
-As for name you can use any characters you want except ',' because it is reserved by PubNub service.  
+You can use the first method if you want to receive a set of [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) instances from the list of channel identifiers.  The `observePresence` property is used to set whether or not the client should observe presence events on the specified channel.
 
-Also [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) instance can provide you with usable information about itself (properties):  
+As for the channel name, you can use any characters you want except ',' and '/', as they are reserved.
+
+The [__PNChannel__](3.4/pubnub/libs/PubNub/Data/Channels/PNChannel.h) instance can provide information about itself:  
     
 * `name` - channel name  
-* `updateTimeToken` - time token when last update occurred on this channel  
+* `updateTimeToken` - time token of last update on this channel  
 * `presenceUpdateDate` - date when last presence update arrived to this channel  
-* `participantsCount` - number of participants in this channel (is subscribed on presence event or manyally pulled out presence information)  
+* `participantsCount` - number of participants in this channel
 * `participants` - list of participant UUIDs  
   
-Lets say we want to receive reference on list of channel instances:  
+For example, to receive a reference on a list of channel instances:  
   
     NSArray *channels = [PNChannel channelsWithNames:@[@"iosdev", @"andoirddev", @"wpdev", @"ubuntudev"]];  
 
-### Subscribe/unsubscribe to/from channels
+### Subscribing and Unsubscribing from Channels
 
-There is set of methods which allow you to subscribe on desired channel(s):  
+The client provides a set of methods which allow you to subscribe to channel(s):  
     
     + (void)subscribeOnChannel:(PNChannel *)channel;  
     + (void) subscribeOnChannel:(PNChannel *)channel  
@@ -193,15 +195,14 @@ There is set of methods which allow you to subscribe on desired channel(s):
               withPresenceEvent:(BOOL)withPresenceEvent  
      andCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBlock;  
 
-As you can see, each subscription method has designated methods (one to add presence observing flag and another add handling block).  
-If `withPresenceEvent` is set to `YES` than before subscribe on new channel(s) library will send `leave` request to already subscribed channels and `join` presence event will be triggers on all channels after client will subscribe on new one.  
+Each subscription method has designated methods, one to add a presence flag, and another to add a handling block.  If `withPresenceEvent` is set to `YES`, the client will explictly send 'join' and 'leave' presence events as it adds and removes channels to its PNChannel list.
 
-Lets see how we can use some of this methods to subscribe on channel(s):  
-    
-    // Simply subscribe on channel  
+Here are some subscribe examples:
+
+    // Simply subscribe to a channel  
     [PubNub subscribeOnChannel:[PNChannel channelWithName:@"iosdev" shouldObservePresence:YES]];  
 
-    // Subscribe on set of channels with subscription state handling block (won't observe presence)  
+    // Subscribe on set of channels with subscription state handling block
     [PubNub subscribeOnChannels:[PNChannel channelsWithNames:@[@"iosdev", @"andoirddev", @"wpdev", @"ubuntudev"]]  
     withCompletionHandlingBlock:^(PNSubscriptionProcessState state, NSArray *channels, PNError *subscriptionError) {  
         
@@ -226,7 +227,7 @@ Lets see how we can use some of this methods to subscribe on channel(s):
         }  
     }];  
 
-There is same count of methods (as for subscription) to unsubscribe from channels(s):  
+The client of course also provides a set of methods which allow you to unsubscribe from channels:  
     
     + (void)unsubscribeFromChannel:(PNChannel *)channel;  
     + (void)unsubscribeFromChannel:(PNChannel *)channel  
@@ -246,12 +247,11 @@ There is same count of methods (as for subscription) to unsubscribe from channel
 	              withPresenceEvent:(BOOL)withPresenceEvent  
 	     andCompletionHandlingBlock:(PNClientChannelUnsubscriptionHandlerBlock)handlerBlock;  
 	     
-Same as for subscription there is a set of designated methods (with extended set of parameters) which allow to perform unsubscribe request with less code if you like default parameters.  
-In unsubscribe set of methods `withPresenceEvent` parameter set to `YES` will mean that client should send `leave` message to channels from which we unsubscribe.  
+As for the subscription methods, there are a set of methods which perform unsubscribe requests.  The `withPresenceEvent` parameter set to `YES` when unsubscribing will mean that the client will send a `leave` message to channels when unsubscribed.
 
-Lets see how we can use some of this methods to unsubscribe from channel(s):  
+Lets see how we can use some of this methods to unsubscribe from channel(s):
     
-    // Unsubscribe from set of channels and notify everyone that we are leaved  
+    // Unsubscribe from set of channels and notify everyone that we are left
     [PubNub unsubscribeFromChannels:[PNChannel channelsWithNames:@[@"iosdev/networking", @"andoirddev", @"wpdev", @"ubuntudev"]]  
                  withPresenceEvent:YES   
         andCompletionHandlingBlock:^(NSArray *channels, PNError *unsubscribeError) {  
@@ -259,22 +259,46 @@ Lets see how we can use some of this methods to unsubscribe from channel(s):
             // Check whether "unsubscribeError" is nil or not (if not, than handle error)  
         }];  
 
-### Channels presence observing
+### Presence
 
-If your account is suitable for presence event handling, than you can use this feature to receive updates about channel presence changes: join, leave, timeout.  
+If you've enabled the Presence feature for your account, then the client can be used to also receive real-time updates about a particual UUID's presence events, such as join, leave, and timeout.  
 
-To manage presence observing you can use set of methods with straightforward names:  
+To use the Presence feature in your app, the follow methods are provided:
     
     + (void)enablePresenceObservationForChannel:(PNChannel *)channel;  
     + (void)enablePresenceObservationForChannels:(NSArray *)channels;  
     + (void)disablePresenceObservationForChannel:(PNChannel *)channel;  
-    + (void)disablePresenceObservationForChannels:(NSArray *)channels;  
+    + (void)disablePresenceObservationForChannels:(NSArray *)channels;
+    
+### Who is "Here Now" ?
 
-### Time token
+As Presence provides a way to receive occupancy information in real-time, the ***Here Now** feature allows you enumerate current channel occupancy inforamtion on-demand.
 
-You can always retrieve from PubNub service current time token (GMT+0). It is usable to track real time and date (not based on local device time) and escape from 0-day vulnerability on client side.  
+Two methods are provided for this:
+  
+    + (void)requestParticipantsListForChannel:(PNChannel *)channel;  
+    + (void)requestParticipantsListForChannel:(PNChannel *)channel  
+                      withCompletionBlock:(PNClientParticipantsHandlingBlock)handleBlock;  
+                      
+Example:  
+  
+    [PubNub requestParticipantsListForChannel:[PNChannel channelWithName:@"iosdev"]  
+                          withCompletionBlock:^(NSArray *udids,  
+                                                PNChannel *channel,  
+                                                PNError *error) {  
+        if (error == nil) {  
+        
+            // Handle participants UDIDs retrival  
+        }  
+        else {  
+            
+            // Handle participants request error  
+        }  
+    }];      
 
-You can use set of methods to request time token:  
+### Timetoken
+
+You can fetch the current PubNub timetoken by using the following methods:  
   
     + (void)requestServerTimeToken;  
     + (void)requestServerTimeTokenWithCompletionBlock:(PNClientTimeTokenReceivingCompleteBlock)success;  
@@ -293,12 +317,12 @@ Usage is very simple:
         }  
     }];  
 
-### Messaging
+### Publishing Messages
 
-Messaging is the core PubNub functionality for which it was designed. User is able to send any messages to the channel and it will be distributed amont channel subscribers.  
-Messages should be serialised into JSON string before sending it, in other case service will respond with error.  
+All messages should be serialised into JSON string before sending. Since JSON serialisation converts the object into a string,
+all of the message-sending methods need only take a string as an argument.
 
-Here is the set of methods which you can use to send messages to the channel:  
+You can use the following methods to send messages:  
   
     + (PNMessage *)sendMessage:(NSString *)message toChannel:(PNChannel *)channel;   
     + (PNMessage *)sendMessage:(NSString *)message  
@@ -308,7 +332,7 @@ Here is the set of methods which you can use to send messages to the channel:
     + (void)sendMessage:(PNMessage *)message;  
     + (void)sendMessage:(PNMessage *)message withCompletionBlock:(PNClientMessageProcessingBlock)success;  
 
-As you can see two first methods exchange your message sending request into [__PNMessage__](3.4/pubnub/libs/PubNub/Data/PNMessage.h) instance. You can save this instance elsewhere and in case of some kind of error or maybe because of your application functionality you can pass that object to last two methods and they will be sent (channel already specified inside of this object).  
+The first two methods return a [__PNMessage__](3.4/pubnub/libs/PubNub/Data/PNMessage.h) instance. If there is a need to re-publish this message for any reason, (for example, the publish request timed-out due to lack of Internet connection), it can be passed back to the last two methods to easily re-publish.
   
     PNMessage *helloMessage = [PubNub sendMessage:@"\"Hello PubNub\""  
                                         toChannel:[PNChannel channelWithName:@"iosdev"]  
@@ -335,9 +359,7 @@ As you can see two first methods exchange your message sending request into [__P
 
 ### History
 
-PubNub client allow you to pull out history for any particular channel. Channel feature should be enabled in your account and by default it will be stored for 24-72h.  
-
-There is a set of designated methods to fetch history:  
+If you have enabled the history feature for your account, the following methods can be used to fetch message history:  
   
     + (void)requestFullHistoryForChannel:(PNChannel *)channel;  
     + (void)requestFullHistoryForChannel:(PNChannel *)channel   
@@ -371,11 +393,9 @@ There is a set of designated methods to fetch history:
 	                  reverseHistory:(BOOL)shouldReverseMessageHistory  
 	             withCompletionBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;  
 	             
-There is a group of methods, in each group there is one for simple request (it's progress available via notifications and delegate callbacks) and second allow to handle right in place.  
-Each new group adds more parameter to help specify time frame for history, whether should traverse from latests and specify limit of messages which will be returned at once.  
-First two methods allow to receive full history for specified channel.  
+The first two methods will receive the full message history for a specified channel.  ***Be careful, this could be a lot of messages, and consequently, a very long process!***
   
-This example allow to pull history for `iosdev` channel with specified time frame, last 34 messages will be returned.  
+In the following example, we pull history for the `iosdev` channel within the specified time frame, limiting the maximum number of messages returned to 34:
     
     NSDate *startDate;  
     NSDate *endDate;  
@@ -401,51 +421,27 @@ This example allow to pull history for `iosdev` channel with specified time fram
                      }  
                  }];  
 
-### Channel presence
-
-PubNub client also allow to pull out list of channel participants.  
-As always there is two methods: one notification based and one with block callback:  
-  
-    + (void)requestParticipantsListForChannel:(PNChannel *)channel;  
-    + (void)requestParticipantsListForChannel:(PNChannel *)channel  
-                      withCompletionBlock:(PNClientParticipantsHandlingBlock)handleBlock;  
-                      
-Example:  
-  
-    [PubNub requestParticipantsListForChannel:[PNChannel channelWithName:@"iosdev"]  
-                          withCompletionBlock:^(NSArray *udids,  
-                                                PNChannel *channel,  
-                                                PNError *error) {  
-        if (error == nil) {  
-        
-            // Handle participants UDIDs retrival  
-        }  
-        else {  
-            
-            // Handle participants request error  
-        }  
-    }];  
 
 ## Error handling
 
-In case of error client will generate instance of PNError which include error code (error codes is stored in PNErrorCodes.h) and additional information which is available via methods: `localizedDescription`, `localizedFailureReason`, `localizedRecoverySuggestion`.  
-Also in some cases error object contains context instance with which error is occurred (value stored in `associatedObject`).  
-  
+In the event of an error, the client will generate an instance of ***PNError***, which will include the error code (defined in PNErrorCodes.h), as well as additional information which is available via the `localizedDescription`,`localizedFailureReason`, and `localizedRecoverySuggestion` methods.  
+
+In some cases, the error object will contain the "context instance object" via the `associatedObject` attribute.  This is the object  (such as a PNMessage) which is directly related to the error at hand.
   
 ## Event handling
 
-PubNub client provide few methods to handle difference events:  
+The client provides different methods of handling different events:  
 
-1. delegate callbacks  
-2. block callback from used methods  
-3. observation center ([__PNObservationCenter__](3.4/pubnub/libs/PubNub/Core/PNObservationCenter.h))  
-4. notifications  
+1. Delegate callback methods  
+2. Block callbacks
+3. Observation center
+4. Notifications  
 
 ### Delegate callback methods  
 
-At one time there can be only one PubNub client delegate. Delegate class should conform to [__PNDelegate__](pubnub/libs/PubNub/Misc/Protocols/PNDelegate.h) protocol to be able receive callbacks.  
+At any given time, there can be only one PubNub client delegate. The delegate class must conform to the [__PNDelegate__](pubnub/libs/PubNub/Misc/Protocols/PNDelegate.h) protocol in order to receive callbacks.  
 
-Here is full set of callbacks which is available in current version:  
+Here is full set of callbacks which are available:
   
     - (void)pubnubClient:(PubNub *)client error:(PNError *)error;  
     
@@ -483,56 +479,65 @@ Here is full set of callbacks which is available in current version:
     - (void)      pubnubClient:(PubNub *)client  
     didReceiveParticipantsLits:(NSArray *)participantsList  
                     forChannel:(PNChannel *)channel;  
-	- (void)                     pubnubClient:(PubNub *)client  
-	didFailParticipantsListDownloadForChannel:(PNChannel *)channel  
-	                                withError:(PNError *)error;  
+    
+    - (void)                         pubnubClient:(PubNub *)client
+        didFailParticipantsListDownloadForChannel:(PNChannel *)channel  
+                                        withError:(PNError *)error;  
 	                                
-	- (NSNumber *)shouldReconnectPubNubClient:(PubNub *)client;  
-	- (NSNumber *)shouldResubscribeOnConnectionRestore;  
+    - (NSNumber *)shouldReconnectPubNubClient:(PubNub *)client;  
+    - (NSNumber *)shouldResubscribeOnConnectionRestore;  
 	
-### Block callback
+### Block callbacks
 
-As was told, most of designated methods contain callback block in it, so events can be handled right away. For each method only last block callback will be triggered (in case if you sent few same requests with handling block, only last one will be triggered).  
+Many of the client methods support callback blocks as a way to handle events in lieu of a delegate. For each method, only the last block callback will be triggered -- that is, in the case you send many identical requests via a handling block, only last one will register.  
 
 ### Observation center
 
-[__PNObservationCenter__](3.4/pubnub/libs/PubNub/Core/PNObservationCenter.h) is used in the same way as NSNotificationCenter, but instead of observing with selectors it allow to specify callback block for particular events.  
-Blocks described in [__PNStructures.h__](3.4/pubnub/libs/PubNub/Misc/PNStructures.h).  
+[__PNObservationCenter__](3.4/pubnub/libs/PubNub/Core/PNObservationCenter.h) is used in the same way as NSNotificationCenter, but instead of observing with selectors it allows you to specify a callback block for particular events.  
+
+These blocks are described in [__PNStructures.h__](3.4/pubnub/libs/PubNub/Misc/PNStructures.h).  
 
 This is the set of methods which can be used to handle events:  
   
     - (void)addClientConnectionStateObserver:(id)observer  
-                           withCallbackBlock:(PNClientConnectionStateChangeBlock)callbackBlock;  
-	- (void)removeClientConnectionStateObserver:(id)observer;  
+                           withCallbackBlock:(PNClientConnectionStateChangeBlock)callbackBlock;
+                           
+    - (void)removeClientConnectionStateObserver:(id)observer;  
 	
-	- (void)addClientChannelSubscriptionStateObserver:(id)observer  
+    - (void)addClientChannelSubscriptionStateObserver:(id)observer  
                                     withCallbackBlock:(PNClientChannelSubscriptionHandlerBlock)callbackBlock;  
-	- (void)removeClientChannelSubscriptionStateObserver:(id)observer;  
-	- (void)addClientChannelUnsubscriptionObserver:(id)observer  
+    
+    - (void)removeClientChannelSubscriptionStateObserver:(id)observer;  
+
+    - (void)addClientChannelUnsubscriptionObserver:(id)observer  
 	                             withCallbackBlock:(PNClientChannelUnsubscriptionHandlerBlock)callbackBlock;  
-	- (void)removeClientChannelUnsubscriptionObserver:(id)observer;  
+
+    - (void)removeClientChannelUnsubscriptionObserver:(id)observer;  
 	
-	- (void)addTimeTokenReceivingObserver:(id)observer  
+    - (void)addTimeTokenReceivingObserver:(id)observer  
                         withCallbackBlock:(PNClientTimeTokenReceivingCompleteBlock)callbackBlock;  
-	- (void)removeTimeTokenReceivingObserver:(id)observer;  
+
+    - (void)removeTimeTokenReceivingObserver:(id)observer;  
 	
-	- (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageProcessingBlock)handleBlock;  
-	- (void)removeMessageProcessingObserver:(id)observer;  
+    - (void)addMessageProcessingObserver:(id)observer withBlock:(PNClientMessageProcessingBlock)handleBlock;  
+    - (void)removeMessageProcessingObserver:(id)observer;  
 	
-	- (void)addMessageReceiveObserver:(id)observer withBlock:(PNClientMessageHandlingBlock)handleBlock;  
-	- (void)removeMessageReceiveObserver:(id)observer;  
+    - (void)addMessageReceiveObserver:(id)observer withBlock:(PNClientMessageHandlingBlock)handleBlock;  
+    - (void)removeMessageReceiveObserver:(id)observer;  
 	
-	- (void)addPresenceEventObserver:(id)observer withBlock:(PNClientPresenceEventHandlingBlock)handleBlock;  
-	- (void)removePresenceEventObserver:(id)observer;  
+    - (void)addPresenceEventObserver:(id)observer withBlock:(PNClientPresenceEventHandlingBlock)handleBlock;  
+    - (void)removePresenceEventObserver:(id)observer;  
 	
-	- (void)addMessageHistoryProcessingObserver:(id)observer withBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;  
-	- (void)removeMessageHistoryProcessingObserver:(id)observer;  
+    - (void)addMessageHistoryProcessingObserver:(id)observer withBlock:(PNClientHistoryLoadHandlingBlock)handleBlock;  
+    - (void)removeMessageHistoryProcessingObserver:(id)observer;  
 	
-	- (void)addChannelParticipantsListProcessingObserver:(id)observer  
+    - (void)addChannelParticipantsListProcessingObserver:(id)observer  
                                                withBlock:(PNClientParticipantsHandlingBlock)handleBlock;  
-	- (void)removeChannelParticipantsListProcessingObserver:(id)observer;  
+    
+    - (void)removeChannelParticipantsListProcessingObserver:(id)observer;  
 	
 ### Notifications
 
-PubNub client also triggers notifications with user information in it, so from any place in your application you can listen for notifications and perform appropriate actions.  
-Full list of notifications stored in [__PNNotifications.h__](3.4/pubnub/libs/PubNub/Misc/PNNotifications.h) along with their description and what kind of parameters is sent with them and how to treat them.  
+The client also triggers notifications with custom user information, so from any place in your application you can listen for notifications and perform appropriate actions.
+
+A full list of notifications are stored in [__PNNotifications.h__](3.4/pubnub/libs/PubNub/Misc/PNNotifications.h) along with their description, their parameters, and how to handle them.  
