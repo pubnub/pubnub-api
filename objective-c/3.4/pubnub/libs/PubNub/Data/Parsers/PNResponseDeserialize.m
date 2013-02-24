@@ -16,6 +16,7 @@
 #import "PNResponseDeserialize.h"
 #import "NSData+PNAdditions.h"
 #import "PNResponse.h"
+#import "PNMacro.h"
 
 
 #pragma mark Private interface methods
@@ -43,6 +44,11 @@
 // to mark chunked content end in HTTP response
 // body
 @property (nonatomic, strong) NSData *httpChunkedContentEndData;
+
+// Store reference on data object which is used
+// to find HTTP header which tells us if the response
+// is Gzipped
+@property (nonatomic, strong) NSData *httpContentEncodingGzip;
 
 // Stores reference on data object which is used
 // to find HTTP headers and content separator
@@ -123,6 +129,7 @@
         self.httpChunkedTransferEncodingData = [@"Transfer-Encoding: chunked" dataUsingEncoding:NSUTF8StringEncoding];
         self.httpChunkedContentEndData = [@"0\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.httpContentSeparatorData = [@"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding];
+        self.httpContentEncodingGzip = [@"Content-Encoding: gzip" dataUsingEncoding:NSUTF8StringEncoding];
         self.endLineCharacterData = [@"\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.endLineCharactersData = [@"\r\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.spaceCharacterData = [@" " dataUsingEncoding:NSUTF8StringEncoding];
@@ -281,6 +288,11 @@
 
                     responseData = [self joinedDataFromChunkedData:responseData];
                 }
+
+                if ([self isGzippedResponse:data inRange:responseRange]) {
+                    responseData = [responseData gzipInflate];
+                }
+
                 PNLog(PNLogGeneralLevel, self, @"RAW DATA: %@", [[NSString alloc] initWithData:responseData
                                                                                       encoding:NSUTF8StringEncoding]);
                 response = [PNResponse responseWithContent:responseData size:responseRange.length code:statusCode];
@@ -308,6 +320,15 @@
     
     
     return statusCode;
+}
+
+- (BOOL)isGzippedResponse:(NSData *)data inRange:(NSRange)responseRange {
+
+    NSRange contentEncodingGzipRange = [data rangeOfData:self.httpContentEncodingGzip
+                                                 options:(NSDataSearchOptions)0
+                                                   range:responseRange];
+
+    return contentEncodingGzipRange.location != NSNotFound;
 }
 
 - (BOOL)isChunkedResponse:(NSData *)data inRange:(NSRange)responseRange {

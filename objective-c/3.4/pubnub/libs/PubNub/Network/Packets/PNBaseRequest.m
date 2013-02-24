@@ -95,12 +95,13 @@
 }
 
 - (NSString *)HTTPPayload {
-    
-    return [NSString stringWithFormat:@"GET %@ HTTP/1.1\r\nHost: %@\r\nV: %@\r\nUser-Agent: %@\r\nAccept: */*\r\n\r\n",
+
+    return [NSString stringWithFormat:@"GET %@ HTTP/1.1\r\nHost: %@\r\nV: %@\r\nUser-Agent: %@\r\nAccept: */*\r\n%@\r\n",
             [self resourcePath],
             [[PubNub sharedInstance] configuration].origin,
             kPNClientVersion,
-            kPNClientName];
+            kPNClientName,
+            [[PubNub sharedInstance] configuration].shouldUseGzip ? @"Accept-Encoding: gzip, deflate\r\n" : @""];
 }
 
 #pragma mark -

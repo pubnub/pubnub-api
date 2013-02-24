@@ -27,6 +27,8 @@
  */
 - (NSString *)HEXString;
 
+- (NSData *)gzipInflate;
+
 #pragma mark -
 
 
