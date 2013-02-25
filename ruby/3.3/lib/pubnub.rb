@@ -276,40 +276,25 @@ class Pubnub
         req = conn.get()
 
         req.errback{
-          if req.response.blank?
-            puts("#{Time.now}: Reconnecting from timeout.")
-
-            EM::Timer.new(1) do
-              _request(request, is_reactor_running)
-            end
-          else
-            error_message = "Unknown Error: #{req.response.to_s}"
-            puts(error_message)
-            request.callback.call([0, error_message])
-
-            EM.stop unless is_reactor_running
-          end
+          logAndRetryGeneralError(is_reactor_running, req, request)
         }
 
         req.callback {
-          request.package_response!(req.response)
-          cycle = request.callback.call(request.response)
 
-          only_success_status_is_acceptable = 200
+          jsonError = false
 
-          if (req.response_header.http_status.to_i != only_success_status_is_acceptable)
+          begin
+            JSON.parse(req.response)
+          rescue => e
+            jsonError = true
+          end
 
-            error_message = "Server Error, status: #{req.response_header.http_status}, extended info: #{req.response}"
-            puts(error_message)
-            EM.stop unless is_reactor_running
+          if jsonError == true
+
+            logAndRetryBadJSON(is_reactor_running, req, request)
+
           else
-
-            if %w(subscribe presence).include?(request.operation) && (cycle != false || request.first_request?)
-              _request(request, is_reactor_running)
-            else
-              EM.stop unless is_reactor_running
-            end
-
+            processGoodResponse(is_reactor_running, req, request)
           end
         }
 
@@ -321,6 +306,51 @@ class Pubnub
     }
   end
 
+  def logAndRetryGeneralError(is_reactor_running, req, request)
+    errMsg = "#{Time.now}: Retrying from error: #{req.response.to_s}"
+    logError(errMsg)
+    retryRequest(is_reactor_running, request, 1)
+  end
+
+  def retryRequest(is_reactor_running, request, delay)
+    EM::Timer.new(delay) do
+      _request(request, is_reactor_running)
+    end
+  end
+
+  def logAndRetryBadJSON(is_reactor_running, req, request)
+    errMsg = "#{Time.now}: Retrying from bad JSON: #{req.response.to_s}"
+    logError(errMsg)
+    retryRequest(is_reactor_running, request, 0.5)
+  end
+
+  def logError(errMsg)
+    errorLogger = Logger.new("/tmp/pubnubError.log")
+    errorLogger.level = Logger::DEBUG
+    errorLogger.debug(errMsg)
+  end
+
+  def processGoodResponse(is_reactor_running, req, request)
+    request.package_response!(req.response)
+    cycle = request.callback.call(request.response)
+
+    only_success_status_is_acceptable = 200
+
+    if (req.response_header.http_status.to_i != only_success_status_is_acceptable)
+
+      error_message = "Server Error, status: #{req.response_header.http_status}, extended info: #{req.response}"
+      puts(error_message)
+      EM.stop unless is_reactor_running
+    else
+
+      if %w(subscribe presence).include?(request.operation) && (cycle != false || request.first_request?)
+        _request(request, is_reactor_running)
+      else
+        EM.stop unless is_reactor_running
+      end
+
+    end
+  end
 
 
 end

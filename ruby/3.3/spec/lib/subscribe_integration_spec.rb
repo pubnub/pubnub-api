@@ -15,6 +15,20 @@ describe "Subscribe Integration Test" do
 
         context "with basic subscribe config" do
 
+          it "should retry on a bad json response" do
+            my_response = [[], "13617737325885516"]
+            mock(@my_callback).call(my_response) {EM.stop}
+
+            any_instance_of(Pubnub) do |p|
+              mock.proxy(p).retryRequest(false, anything, 0.5)
+            end
+
+            VCR.use_cassette("integration_subscribe_4", :record => :none) do
+              @pn.subscribe(:channel => :hello_world, :callback => @my_callback)
+            end
+
+          end
+
           it "should sub without ssl" do
             my_response = [[], "13451632748083262"]
             mock(@my_callback).call(my_response) {EM.stop}
