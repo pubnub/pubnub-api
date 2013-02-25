@@ -28,6 +28,12 @@ require 'active_support/core_ext/object/blank'
 
 class Pubnub
 
+  SUCCESS_RESPONSE = 200
+
+  TIMEOUT_BAD_RESPONSE_CODE = 1
+  TIMEOUT_BAD_JSON_RESPONSE = 0.5
+  TIMEOUT_GENERAL_ERROR = 1
+
   class PresenceError < RuntimeError;
   end
   class PublishError < RuntimeError;
@@ -268,7 +274,6 @@ class Pubnub
   
   def _request(request, is_reactor_running = false)
     request.format_url!
-    #puts("- Fetching #{request.url}")
     Thread.new{
       begin
 
@@ -308,7 +313,7 @@ class Pubnub
   def logAndRetryGeneralError(is_reactor_running, req, request)
     errMsg = "#{Time.now}: Retrying from error: #{req.response.to_s}"
     logError(errMsg)
-    retryRequest(is_reactor_running, request, 1)
+    retryRequest(is_reactor_running, request, TIMEOUT_GENERAL_ERROR)
   end
 
   def retryRequest(is_reactor_running, request, delay)
@@ -320,7 +325,7 @@ class Pubnub
   def logAndRetryBadJSON(is_reactor_running, req, request)
     errMsg = "#{Time.now}: Retrying from bad JSON: #{req.response.to_s}"
     logError(errMsg)
-    retryRequest(is_reactor_running, request, 0.5)
+    retryRequest(is_reactor_running, request, TIMEOUT_BAD_JSON_RESPONSE)
   end
 
   def logError(errMsg)
@@ -331,12 +336,8 @@ class Pubnub
 
   def processGoodResponse(is_reactor_running, req, request)
 
-    only_success_status_is_acceptable = 200
-
-    if (req.response_header.http_status.to_i != only_success_status_is_acceptable)
-
+    if (req.response_header.http_status.to_i != SUCCESS_RESPONSE)
       logAndRetryBadResponseCode(is_reactor_running, req, request)
-
     else
 
       request.package_response!(req.response)
@@ -350,10 +351,11 @@ class Pubnub
     end
   end
 
+
   def logAndRetryBadResponseCode(is_reactor_running, req, request)
     errMsg = "#{Time.now}: Retrying from bad server response code: (#{req.response_header.http_status.to_i}) #{req.response.to_s}"
     logError(errMsg)
-    retryRequest(is_reactor_running, request, 1)
+    retryRequest(is_reactor_running, request, TIMEOUT_BAD_RESPONSE_CODE)
   end
 
 
