@@ -310,30 +310,6 @@ class Pubnub
     jsonError
   end
 
-  def logAndRetryGeneralError(is_reactor_running, req, request)
-    errMsg = "#{Time.now}: Retrying from error: #{req.response.to_s}"
-    logError(errMsg)
-    retryRequest(is_reactor_running, request, TIMEOUT_GENERAL_ERROR)
-  end
-
-  def retryRequest(is_reactor_running, request, delay)
-    EM::Timer.new(delay) do
-      _request(request, is_reactor_running)
-    end
-  end
-
-  def logAndRetryBadJSON(is_reactor_running, req, request)
-    errMsg = "#{Time.now}: Retrying from bad JSON: #{req.response.to_s}"
-    logError(errMsg)
-    retryRequest(is_reactor_running, request, TIMEOUT_BAD_JSON_RESPONSE)
-  end
-
-  def logError(errMsg)
-    errorLogger = Logger.new("/tmp/pubnubError.log")
-    errorLogger.level = Logger::DEBUG
-    errorLogger.debug(errMsg)
-  end
-
   def processGoodResponse(is_reactor_running, req, request)
 
     if (req.response_header.http_status.to_i != SUCCESS_RESPONSE)
@@ -351,6 +327,17 @@ class Pubnub
     end
   end
 
+  def logAndRetryGeneralError(is_reactor_running, req, request)
+    errMsg = "#{Time.now}: Retrying from error: #{req.response.to_s}"
+    logError(errMsg)
+    retryRequest(is_reactor_running, request, TIMEOUT_GENERAL_ERROR)
+  end
+
+  def logAndRetryBadJSON(is_reactor_running, req, request)
+    errMsg = "#{Time.now}: Retrying from bad JSON: #{req.response.to_s}"
+    logError(errMsg)
+    retryRequest(is_reactor_running, request, TIMEOUT_BAD_JSON_RESPONSE)
+  end
 
   def logAndRetryBadResponseCode(is_reactor_running, req, request)
     errMsg = "#{Time.now}: Retrying from bad server response code: (#{req.response_header.http_status.to_i}) #{req.response.to_s}"
@@ -358,5 +345,23 @@ class Pubnub
     retryRequest(is_reactor_running, request, TIMEOUT_BAD_RESPONSE_CODE)
   end
 
+  def logError(errMsg)
+    errorLogger = Logger.new("/tmp/pubnubError.log")
+    errorLogger.level = Logger::DEBUG
+    errorLogger.debug(errMsg)
+  end
+
+  def retryRequest(is_reactor_running, request, delay)
+
+    if %w(subscribe presence).include?(request.operation)
+      EM::Timer.new(delay) do
+        _request(request, is_reactor_running)
+      end
+    else
+      request.package_response!(req.response)
+      EM.stop unless is_reactor_running
+    end
+
+  end
 
 end

@@ -436,6 +436,23 @@ describe PubnubRequest do
     end
   end
 
+
+  describe "#set_error" do
+    it "should set the error" do
+      @pubnub_request.error.should == nil
+
+      options = {:error => true}
+
+      @pubnub_request.set_error(options)
+      @pubnub_request.error.should == true
+    end
+
+    it "should should be not true by default" do
+      @pubnub_request.error.should_not == true
+    end
+
+  end
+
   describe "#set_callback" do
 
     it "should set the callback" do

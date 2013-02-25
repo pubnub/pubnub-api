@@ -1,6 +1,6 @@
 class PubnubRequest
   attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl, :port
-  attr_accessor :history_limit, :history_count, :history_start, :history_end, :history_reverse, :session_uuid, :last_timetoken, :origin
+  attr_accessor :history_limit, :history_count, :history_start, :history_end, :history_reverse, :session_uuid, :last_timetoken, :origin, :error
 
   class RequestError < RuntimeError;
   end
@@ -38,6 +38,15 @@ class PubnubRequest
   def ==(another)
     self.operation == another.operation && self.callback == another.callback &&
         self.channel == another.channel && self.message == another.message
+  end
+
+  def set_error(options)
+    options = HashWithIndifferentAccess.new(options)
+
+    if options[:error].present?
+      self.error = true
+    end
+    self
   end
 
   def set_origin(options)
