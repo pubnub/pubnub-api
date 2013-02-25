@@ -77,8 +77,19 @@ static NSInteger const kPNMessageHasNoContentError = 113;
 static NSInteger const kPNMessageHasNoChannelError = 114;
 
 
+#pragma mark - Service error (caused by remote server)
+
+// Server provided response which can't be decoded with UTF8
+static NSInteger const kPNResponseEncodingError = 115;
+
+// Server provided response with malformed JSON in it
+// (in such casses library will try to resend request to
+// remote origin)
+static NSInteger const kPNResponseMalformedJSONError = 116;
+
+
 #pragma mark - Connection (transport layer) error codes
 
 // Was unable to configure connection because of some
 // errors
-static NSInteger const kPNConnectionErrorOnSetup = 115;
+static NSInteger const kPNConnectionErrorOnSetup = 117;

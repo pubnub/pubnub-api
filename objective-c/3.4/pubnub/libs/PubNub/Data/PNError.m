@@ -189,6 +189,14 @@
 
                 errorDescription = @"PubNub client can't submit message";
                 break;
+            case kPNResponseEncodingError:
+
+                errorDescription = @"PubNub client can't decode response";
+                break;
+            case kPNResponseMalformedJSONError:
+
+                errorDescription = @"PubNub client can't parse response";
+                break;
             default:
 
                 errorDescription = @"Unknown error.";
@@ -267,6 +275,14 @@
 
             failureReason = @"Looks like message is too large and can't be processed";
             break;
+        case kPNResponseEncodingError:
+
+            failureReason = @"Looks like remote service send message with encoding which is other than UTF8";
+            break;
+        case kPNResponseMalformedJSONError:
+
+            failureReason = @"Looks like remote service send response with malformed JSON in it (maybe truncated)";
+            break;
         default:
 
             failureReason = @"Unknown error reason.";
@@ -339,6 +355,14 @@
         case kPNMessageObjectError:
 
             fixSuggestion = @"Ensure that you provide correct message object to be used for sending request";
+            break;
+        case kPNResponseEncodingError:
+
+            fixSuggestion = @"Ensure that you use UTF8 character table to send messages to the PubNub service";
+            break;
+        case kPNResponseMalformedJSONError:
+
+            fixSuggestion = @"Try resend request which caused this error";
             break;
         default:
 

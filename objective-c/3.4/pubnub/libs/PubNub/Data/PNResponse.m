@@ -47,6 +47,10 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
 // fields)
 @property (nonatomic, assign) NSUInteger size;
 
+// Stores reference on error object which will hold
+// any information about parsing error
+@property (nonatomic, strong) PNError *error;
+
 // Stores reference on request small identifier
 // hash which will be used to find request
 // which sent this request
@@ -63,11 +67,31 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
 
 #pragma mark - Instance methods
 
+#pragma mark - Handler methods
+
+/**
+ * Handle JSON encoding error and try perform additional tasks
+ * to silently fallback this error
+ */
+- (void)handleJSONDecodeErrorWithCode:(NSUInteger)errorCode;
+
+
+#pragma mark - Misc methods
+
 /**
  * If user is using cypher key to send request
  * than it will be used to decode server response
  */
 - (NSString *)decodedResponse;
+
+/**
+ * In case of JSON parsing error, this method will
+ * allow to pull out information about request and
+ * callback function from partial response
+ */
+- (void)getCallbackFunction:(NSString **)callback
+          requestIdentifier:(NSString **)identifier
+                   fromData:(NSData *)responseData;
 
 
 @end
@@ -134,6 +158,7 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
                                            errorBlock:^(NSError *error) {
 
                                                PNLog(PNLogGeneralLevel, self, @"ERROR: %@", error);
+                                               [self handleJSONDecodeErrorWithCode:kPNResponseMalformedJSONError];
                                            }];
         }
         // Looks like message can't be decoded event from RAW response
@@ -142,37 +167,7 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
         else {
 
             PNLog(PNLogGeneralLevel, self, @"FAILED TO DECODE DATA");
-
-            // Mark that request is failed to be processed correctly
-            self.statusCode = 404;
-            self.size = 0;
-
-            // Trying to extract callback method and request identifier
-            NSString *responseString = [[NSString alloc] initWithData:self.content encoding:NSUTF8StringEncoding];
-            if (responseString) {
-
-                NSRange openingBracketRange = [responseString rangeOfString:@"("];
-                if (openingBracketRange.location != NSNotFound) {
-
-                    NSString *callbackMethod = [responseString substringToIndex:openingBracketRange.location];
-                    NSArray *callbackMethodElements = [callbackMethod componentsSeparatedByString:@"_"];
-
-                    if ([callbackMethodElements count] > 1) {
-
-                        self.callbackMethod = [callbackMethodElements objectAtIndex:kPNResponseCallbackMethodNameIndex];
-                        self.requestIdentifier = [callbackMethodElements objectAtIndex:kPNResponseRequestIdentifierIndex];
-                    }
-                    else {
-
-                        self.callbackMethod = callbackMethod;
-                    }
-                }
-            }
-            else {
-
-                // Assign 'subscription' callback method
-                self.callbackMethod = PNServiceResponseCallbacks.subscriptionCallback;
-            }
+            [self handleJSONDecodeErrorWithCode:kPNResponseEncodingError];
         }
     }
     
@@ -185,11 +180,77 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
     return (self.size > 0 && self.statusCode == 200);
 }
 
+#pragma mark - Handler methods
+
+- (void)handleJSONDecodeErrorWithCode:(NSUInteger)errorCode {
+
+    // Mark that request is failed to be processed correctly
+    self.statusCode = errorCode;
+    self.size = 0;
+
+    self.error = [PNError errorWithCode:errorCode];
+
+    NSString *callbackMethod;
+    NSString *requestIdentifier;
+    [self getCallbackFunction:&callbackMethod requestIdentifier:&requestIdentifier fromData:self.content];
+    self.callbackMethod = callbackMethod;
+    self.requestIdentifier = requestIdentifier;
+}
+
+
+#pragma mark - Misc methods
+
 - (NSString *)decodedResponse {
 
     NSString *encodedString = [[NSString alloc] initWithData:self.content encoding:NSUTF8StringEncoding];
     encodedString = [encodedString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     return [encodedString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+}
+
+- (void)getCallbackFunction:(NSString **)callback
+          requestIdentifier:(NSString **)identifier
+                   fromData:(NSData *)responseData {
+
+
+    // Trying to extract callback method and request identifier
+    NSString *responseString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+    if (responseString) {
+
+        NSRange openingBracketRange = [responseString rangeOfString:@"("];
+        if (openingBracketRange.location != NSNotFound) {
+
+            NSString *callbackMethod = [responseString substringToIndex:openingBracketRange.location];
+            NSArray *callbackMethodElements = [callbackMethod componentsSeparatedByString:@"_"];
+
+            if ([callbackMethodElements count] > 1) {
+
+                if (callback != NULL) {
+
+                    *callback = [callbackMethodElements objectAtIndex:kPNResponseCallbackMethodNameIndex];
+                }
+
+                if (identifier != NULL) {
+
+                    *identifier = [callbackMethodElements objectAtIndex:kPNResponseRequestIdentifierIndex];
+                }
+            }
+            else {
+
+                if (callback != NULL) {
+
+                    *callback = callbackMethod;
+                }
+            }
+        }
+    }
+    else {
+
+        if (callback != NULL) {
+
+            // Assign 'subscription' callback method
+            *callback = PNServiceResponseCallbacks.subscriptionCallback;
+        }
+    }
 }
 
 - (NSString *)description {
