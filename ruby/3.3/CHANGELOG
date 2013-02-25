@@ -1,3 +1,7 @@
+02-25-13
+. graceful recover on bad json
+. graceful recover on non-200 response code
+. graceful recover on general EM errors
 
-02-14-12 - 03d34f3d69a59469f6ff13bdc4fb36e0fc539eed
-. adding the ability for custom origin on a per-publish basis
+02-12-13
+. subscribe can take an origin argument
