@@ -134,6 +134,9 @@ static NSUInteger const kPNResponseRequestIdentifierIndex = 1;
                                            errorBlock:^(NSError *error) {
 
                                                PNLog(PNLogGeneralLevel, self, @"ERROR: %@", error);
+                                               self.statusCode = 404;
+                                               self.size = 0;
+                                               self.callbackMethod = PNServiceResponseCallbacks.subscriptionCallback;
                                            }];
         }
         // Looks like message can't be decoded event from RAW response
