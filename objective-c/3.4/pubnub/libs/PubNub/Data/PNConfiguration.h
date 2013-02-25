@@ -60,6 +60,9 @@
 // if it failed in previuos sesion or not
 @property (nonatomic, assign, getter = shouldAutoReconnectClient) BOOL autoReconnectClient;
 
+// Stores whether responses should be sent with
+// Gzip compression
+@property (nonatomic, assign, getter = shouldUseGzip) BOOL useGzip;
 
 #pragma mark - Class methods
 
