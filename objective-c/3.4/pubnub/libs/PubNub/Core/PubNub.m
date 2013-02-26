@@ -1345,7 +1345,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
 - (void)handleConnectionErrorOnNetworkFailure {
 
-    // Check whether client is connectig currently or not
+    // Check whether client is connecting currently or not
     if (self.state = PNPubNubClientStateConnecting) {
 
         PNError *networkError = [PNError errorWithCode:kPNClientConnectionFailedOnInternetFailureError];
