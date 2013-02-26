@@ -33,6 +33,11 @@ class Pubnub
   TIMEOUT_BAD_RESPONSE_CODE = 1
   TIMEOUT_BAD_JSON_RESPONSE = 0.5
   TIMEOUT_GENERAL_ERROR = 1
+  TIMEOUT_SUBSCRIBE = 310
+  TIMEOUT_NON_SUBSCRIBE = 5
+
+  PUBNUB_LOGGER = Logger.new("/tmp/pubnubError.log")
+  PUBNUB_LOGGER.level = Logger::DEBUG
 
   class PresenceError < RuntimeError;
   end
@@ -271,13 +276,14 @@ class Pubnub
   end
 
   private
-  
+
   def _request(request, is_reactor_running = false)
     request.format_url!
     Thread.new{
       begin
 
-        conn = EM::HttpRequest.new(request.url, :inactivity_timeout => 310)#client times out in 310s unless the server returns or timeout first
+        operation_timeout = %w(subscribe presence).include?(request.operation) ? TIMEOUT_SUBSCRIBE : TIMEOUT_NON_SUBSCRIBE
+        conn = EM::HttpRequest.new(request.url, :inactivity_timeout => operation_timeout) #client times out in 310s unless the server returns or timeout first
         req = conn.get()
 
         req.errback{
@@ -328,7 +334,7 @@ class Pubnub
   end
 
   def logAndRetryGeneralError(is_reactor_running, req, request)
-    errMsg = "#{Time.now}: Retrying from error: #{req.response.to_s}"
+    errMsg = "#{Time.now}: Network connectivity issue while attempting to reach #{request.url}"
     logError(errMsg)
     retryRequest(is_reactor_running, req, request, TIMEOUT_GENERAL_ERROR)
   end
@@ -346,9 +352,7 @@ class Pubnub
   end
 
   def logError(errMsg)
-    errorLogger = Logger.new("/tmp/pubnubError.log")
-    errorLogger.level = Logger::DEBUG
-    errorLogger.debug(errMsg)
+    PUBNUB_LOGGER.debug(errMsg)
   end
 
   def retryRequest(is_reactor_running, req, request, delay)
@@ -358,8 +362,13 @@ class Pubnub
         _request(request, is_reactor_running)
       end
     else
+      error_msg = [0, "Request to #{request.url} failed."]
+
       request.set_error(true)
-      request.package_response!(req.response)
+      request.callback.call(error_msg)
+
+      PUBNUB_LOGGER.debug(error_msg)
+
       EM.stop unless is_reactor_running
     end
 
