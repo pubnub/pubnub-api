@@ -49,14 +49,20 @@ describe Pubnub do
 
     it "should not retry the request if its a publish call" do
       @pn_request.operation = "publish"
+      @pn_request.url = "somewhere"
+      my_callback = lambda { |x| x }
+      @pn_request.callback = my_callback
+
+      callback_msg = [0, "Request to somewhere failed."]
+
 
       dont_allow(EM::Timer).new(Pubnub::TIMEOUT_GENERAL_ERROR).yields {}
       dont_allow(@pn)._request(@retryArgs[1], @retryArgs[0]) {}
 
       mock(@pn_request).set_error(true) {}
-      mock(@pn_request).package_response!(anything) {}
+      mock(my_callback).call(callback_msg) {}
 
-      @pn.send(:retryRequest, *@retryArgs)
+      @pn.send(:retryRequest, @retryArgs[0], @retryArgs[1], @retryArgs[2], @retryArgs[3])
     end
 
   end
