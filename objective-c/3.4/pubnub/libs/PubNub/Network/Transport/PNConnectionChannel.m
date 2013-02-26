@@ -235,6 +235,9 @@
 - (BOOL)shouldStoreRequest:(PNBaseRequest *)request {
 
     NSAssert1(0, @"%s SHOULD BE RELOADED IN SUBCLASSES", __PRETTY_FUNCTION__);
+    
+    
+    return YES;
 }
 
 

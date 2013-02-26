@@ -627,8 +627,8 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
 
         if(handlerBlock) {
-
-            handlerBlock(channels, NO, subscriptionError);
+            
+            handlerBlock(PNSubscriptionProcessNotSubscribedState, channels, subscriptionError);
         }
     }
 }
@@ -1346,7 +1346,7 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 - (void)handleConnectionErrorOnNetworkFailure {
 
     // Check whether client is connecting currently or not
-    if (self.state = PNPubNubClientStateConnecting) {
+    if (self.state == PNPubNubClientStateConnecting) {
 
         PNError *networkError = [PNError errorWithCode:kPNClientConnectionFailedOnInternetFailureError];
 
