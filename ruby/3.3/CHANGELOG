@@ -2,6 +2,7 @@
 . errors logged to /tmp/pubnubError.log by default
 . selectively retry based on operation type
 . adjust request timeouts based on operation type
+. publish and subscribe both take origin argument
 
 02-25-13
 . graceful recover on bad json

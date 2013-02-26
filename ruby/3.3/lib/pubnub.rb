@@ -118,6 +118,7 @@ class Pubnub
     #TODO: refactor into initializer code on request instantiation
 
     subscribe_request.ssl = @ssl
+    subscribe_request.set_origin(options)
     subscribe_request.set_channel(options)
     subscribe_request.set_callback(options)
     subscribe_request.set_cipher_key(options, self.cipher_key) unless subscribe_request.operation == "presence"

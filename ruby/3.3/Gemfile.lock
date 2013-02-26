@@ -73,7 +73,7 @@ GEM
       rack
       rake (>= 0.8.1)
     polyglot (0.3.3)
-    pubnub (3.3.0.4)
+    pubnub (3.3.0.5)
       activesupport
       em-http-request
       eventmachine
@@ -156,7 +156,7 @@ DEPENDENCIES
   httparty
   linecache19
   passenger
-  pubnub
+  pubnub (= 3.3.0.5)
   rails (= 3.2.6)
   rr (= 1.0.4)
   rspec-rails (~> 2.0)

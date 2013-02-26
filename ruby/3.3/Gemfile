@@ -11,7 +11,7 @@ gem 'sqlite3'
 gem 'em-http-request'
 gem "uuid", "~> 2.3.5"
 gem 'yajl-ruby'
-gem 'pubnub'
+gem 'pubnub', "3.3.0.5"
 gem 'linecache19'
 gem 'ruby_core_source'
 gem 'ruby-debug19'
