@@ -1,0 +1,13 @@
+02-26-13
+. errors logged to /tmp/pubnubError.log by default
+. selectively retry based on operation type
+. adjust request timeouts based on operation type
+. publish and subscribe both take origin argument
+
+02-25-13
+. graceful recover on bad json
+. graceful recover on non-200 response code
+. graceful recover on general EM errors
+
+02-12-13
+. subscribe can take an origin argument

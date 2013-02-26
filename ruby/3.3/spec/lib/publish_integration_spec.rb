@@ -22,6 +22,15 @@ describe "Publish Integration Test" do
         end
       end
 
+      it "should publish without ssl with custom origin" do
+        my_response = [1, "Sent", "13619174360247577"]
+        mock(@my_callback).call(my_response) {}
+
+        VCR.use_cassette("integration_publish_10", :record => :none) do
+          @pn.publish(:origin => "a.pubnub.com", :channel => :hello_world, :message => "hi", :callback => @my_callback)
+        end
+      end
+
       it "should publish with ssl" do
 
         my_response = [1, "Sent", "13451428018571368"]

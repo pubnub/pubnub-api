@@ -35,6 +35,7 @@ GEM
     columnize (0.3.6)
     cookiejar (0.3.0)
     crack (0.3.1)
+    daemon_controller (1.1.1)
     diff-lcs (1.1.3)
     em-http-request (1.0.3)
       addressable (>= 2.2.3)
@@ -46,8 +47,12 @@ GEM
       eventmachine (>= 1.0.0.beta.4)
     erubis (2.7.0)
     eventmachine (1.0.0)
+    fastthread (1.0.7)
     hike (1.2.1)
     http_parser.rb (0.5.3)
+    httparty (0.10.2)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     i18n (0.6.1)
     journey (1.0.4)
     json (1.7.5)
@@ -61,8 +66,14 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.19)
     multi_json (1.3.6)
+    multi_xml (0.5.3)
+    passenger (3.0.19)
+      daemon_controller (>= 1.0.0)
+      fastthread (>= 1.0.1)
+      rack
+      rake (>= 0.8.1)
     polyglot (0.3.3)
-    pubnub (3.3.0.1)
+    pubnub (3.3.0.5)
       activesupport
       em-http-request
       eventmachine
@@ -111,6 +122,10 @@ GEM
       columnize (>= 0.3.1)
       linecache19 (>= 0.5.11)
       ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
     ruby_core_source (0.1.5)
       archive-tar-minitar (>= 0.5.2)
     sprockets (2.1.3)
@@ -138,11 +153,16 @@ PLATFORMS
 
 DEPENDENCIES
   em-http-request
-  pubnub
+  httparty
+  linecache19
+  passenger
+  pubnub (= 3.3.0.5)
   rails (= 3.2.6)
   rr (= 1.0.4)
   rspec-rails (~> 2.0)
   ruby-debug-base19
+  ruby-debug19
+  ruby_core_source
   sqlite3
   uuid (~> 2.3.5)
   vcr (= 2.2.4)

@@ -1,6 +1,6 @@
 class PubnubRequest
   attr_accessor :cipher_key, :host, :query, :response, :timetoken, :url, :operation, :callback, :publish_key, :subscribe_key, :secret_key, :channel, :jsonp, :message, :ssl, :port
-  attr_accessor :history_limit, :history_count, :history_start, :history_end, :history_reverse, :session_uuid, :last_timetoken
+  attr_accessor :history_limit, :history_count, :history_start, :history_end, :history_reverse, :session_uuid, :last_timetoken, :origin, :error
 
   class RequestError < RuntimeError;
   end
@@ -38,6 +38,24 @@ class PubnubRequest
   def ==(another)
     self.operation == another.operation && self.callback == another.callback &&
         self.channel == another.channel && self.message == another.message
+  end
+
+  def set_error(options)
+    options = HashWithIndifferentAccess.new(options)
+
+    if options[:error].present?
+      self.error = true
+    end
+    self
+  end
+
+  def set_origin(options)
+    options = HashWithIndifferentAccess.new(options)
+
+    if options[:origin].present?
+      self.origin = options[:origin].to_s
+      self
+    end
   end
 
   def set_channel(options)
@@ -186,10 +204,10 @@ class PubnubRequest
     raise(Pubnub::PublishError, "Missing .operation in PubnubRequest object") if self.operation.blank?
 
     if @ssl.present?
-      origin = 'https://' + Pubnub::ORIGIN_HOST
+      origin = 'https://' + (self.origin.present? ? self.origin : Pubnub::ORIGIN_HOST)
       @port = 443
     else
-      origin = 'http://' + Pubnub::ORIGIN_HOST
+      origin = 'http://' + (self.origin.present? ? self.origin : Pubnub::ORIGIN_HOST)
       @port = 80
     end
 
