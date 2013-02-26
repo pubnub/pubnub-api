@@ -1,4 +1,5 @@
 02-26-13
+. errors logged to /tmp/pubnubError.log by default
 . selectively retry based on operation type
 . adjust request timeouts based on operation type
 
