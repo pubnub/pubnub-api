@@ -268,7 +268,7 @@ static struct PNObservationObserverDataStruct PNObservationObserverData = {
 }
 
 - (void)addObserver:(id)observer forEvent:(NSString *)eventName oneTimeEvent:(BOOL)isOneTimeEvent withBlock:(id)block {
-
+    
     NSDictionary *observerData = @{PNObservationObserverData.observer:observer,
                       PNObservationObserverData.observerCallbackBlock:block};
 
