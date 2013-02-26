@@ -11,6 +11,56 @@ describe Pubnub do
     end
   end
 
+  describe "#retry_request" do
+
+    before do
+      @pn = Pubnub.new("demo_pub_key", "demo_sub_key", "demo_md5_key", "demo_cipher_key", false)
+      @pn_request = PubnubRequest.new
+      @req_mock = Object.new
+      stub(@req_mock).response {}
+      @retryArgs = [true, @req_mock, @pn_request, Pubnub::TIMEOUT_GENERAL_ERROR]
+
+
+    end
+
+    it "should retry the request if its a presence call" do
+      @pn_request.operation = "presence"
+
+      mock(EM::Timer).new(Pubnub::TIMEOUT_GENERAL_ERROR).yields {}
+      mock(@pn)._request(@retryArgs[2], @retryArgs[0]) {}
+      dont_allow(@pn_request).send(:set_error, true)
+      dont_allow(@pn_request).send(:package_response!, anything)
+
+      @pn.send(:retryRequest, @retryArgs[0], @retryArgs[1], @retryArgs[2], @retryArgs[3])
+
+    end
+
+
+    it "should retry the request if its a subscribe call" do
+      @pn_request.operation = "subscribe"
+
+      mock(EM::Timer).new(Pubnub::TIMEOUT_GENERAL_ERROR).yields {}
+      mock(@pn)._request(@retryArgs[2], @retryArgs[0]) {}
+      dont_allow(@pn_request).send(:set_error, true)
+      dont_allow(@pn_request).send(:package_response!, anything)
+
+      @pn.send(:retryRequest, @retryArgs[0], @retryArgs[1], @retryArgs[2], @retryArgs[3])
+    end
+
+    it "should not retry the request if its a publish call" do
+      @pn_request.operation = "publish"
+
+      dont_allow(EM::Timer).new(Pubnub::TIMEOUT_GENERAL_ERROR).yields {}
+      dont_allow(@pn)._request(@retryArgs[1], @retryArgs[0]) {}
+
+      mock(@pn_request).set_error(true) {}
+      mock(@pn_request).package_response!(anything) {}
+
+      @pn.send(:retryRequest, *@retryArgs)
+    end
+
+  end
+
   describe "#UUID" do
     it "should return a UUID" do
 

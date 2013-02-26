@@ -330,19 +330,19 @@ class Pubnub
   def logAndRetryGeneralError(is_reactor_running, req, request)
     errMsg = "#{Time.now}: Retrying from error: #{req.response.to_s}"
     logError(errMsg)
-    retryRequest(is_reactor_running, request, TIMEOUT_GENERAL_ERROR)
+    retryRequest(is_reactor_running, req, request, TIMEOUT_GENERAL_ERROR)
   end
 
   def logAndRetryBadJSON(is_reactor_running, req, request)
     errMsg = "#{Time.now}: Retrying from bad JSON: #{req.response.to_s}"
     logError(errMsg)
-    retryRequest(is_reactor_running, request, TIMEOUT_BAD_JSON_RESPONSE)
+    retryRequest(is_reactor_running, req, request, TIMEOUT_BAD_JSON_RESPONSE)
   end
 
   def logAndRetryBadResponseCode(is_reactor_running, req, request)
     errMsg = "#{Time.now}: Retrying from bad server response code: (#{req.response_header.http_status.to_i}) #{req.response.to_s}"
     logError(errMsg)
-    retryRequest(is_reactor_running, request, TIMEOUT_BAD_RESPONSE_CODE)
+    retryRequest(is_reactor_running, req, request, TIMEOUT_BAD_RESPONSE_CODE)
   end
 
   def logError(errMsg)
@@ -351,13 +351,14 @@ class Pubnub
     errorLogger.debug(errMsg)
   end
 
-  def retryRequest(is_reactor_running, request, delay)
+  def retryRequest(is_reactor_running, req, request, delay)
 
     if %w(subscribe presence).include?(request.operation)
       EM::Timer.new(delay) do
         _request(request, is_reactor_running)
       end
     else
+      request.set_error(true)
       request.package_response!(req.response)
       EM.stop unless is_reactor_running
     end

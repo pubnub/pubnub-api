@@ -20,7 +20,7 @@ describe "Subscribe Integration Test" do
             mock(@my_callback).call(my_response) {EM.stop}
 
             any_instance_of(Pubnub) do |p|
-              mock.proxy(p).retryRequest(false, anything, 0.5)
+              mock.proxy(p).retryRequest(false, anything, anything, 0.5)
             end
 
             VCR.use_cassette("integration_subscribe_4", :record => :none) do
@@ -34,7 +34,7 @@ describe "Subscribe Integration Test" do
             mock(@my_callback).call(my_response) {EM.stop}
 
             any_instance_of(Pubnub) do |p|
-              mock.proxy(p).retryRequest(false, anything, 1)
+              mock.proxy(p).retryRequest(false, anything, anything, 1)
             end
 
             VCR.use_cassette("integration_subscribe_5", :record => :none) do
