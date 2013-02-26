@@ -1,3 +1,7 @@
+02-26-13
+. selectively retry based on operation type
+. adjust request timeouts based on operation type
+
 02-25-13
 . graceful recover on bad json
 . graceful recover on non-200 response code
