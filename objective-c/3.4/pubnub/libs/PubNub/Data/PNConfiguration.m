@@ -114,6 +114,7 @@
         self.reduceSecurityLevelOnError = kPNShouldReduceSecurityLevelOnError;
         self.ignoreSecureConnectionRequirement = kPNCanIgnoreSecureConnectionRequirement;
         self.resubscribeOnConnectionRestore = kPNShouldResubscribeOnConnectionRestore;
+        self.acceptCompressedResponse = kPNShouldAcceptCompressedResponse;
         self.nonSubscriptionRequestTimeout = kPNNonSubscriptionRequestTimeout;
         self.subscriptionRequestTimeout = kPNSubscriptionRequestTimeout;
 

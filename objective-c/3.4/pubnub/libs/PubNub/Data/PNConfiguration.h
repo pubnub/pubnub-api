@@ -57,8 +57,12 @@
 @property (nonatomic, assign, getter = shouldUseSecureConnection) BOOL useSecureConnection;
 
 // Stores whether connection should be restored
-// if it failed in previuos sesion or not
+// if it failed in previous session or not
 @property (nonatomic, assign, getter = shouldAutoReconnectClient) BOOL autoReconnectClient;
+
+// Stores whether client should accept GZIP responses
+// from remote origin or not
+@property (nonatomic, assign, getter = shouldAcceptCompressedResponse) BOOL acceptCompressedResponse;
 
 
 #pragma mark - Class methods
