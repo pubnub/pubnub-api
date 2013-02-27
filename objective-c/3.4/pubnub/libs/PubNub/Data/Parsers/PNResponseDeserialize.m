@@ -16,6 +16,7 @@
 #import "PNResponseDeserialize.h"
 #import "NSData+PNAdditions.h"
 #import "PNResponse.h"
+#import "PNMacro.h"
 
 
 #pragma mark Private interface methods
@@ -43,6 +44,11 @@
 // to mark chunked content end in HTTP response
 // body
 @property (nonatomic, strong) NSData *httpChunkedContentEndData;
+
+// Store reference on data object which is used
+// to find HTTP header which tells us if the response
+// is Gzipped
+@property (nonatomic, strong) NSData *httpContentEncodingGzip;
 
 // Stores reference on data object which is used
 // to find HTTP headers and content separator
@@ -123,6 +129,7 @@
         self.httpChunkedTransferEncodingData = [@"Transfer-Encoding: chunked" dataUsingEncoding:NSUTF8StringEncoding];
         self.httpChunkedContentEndData = [@"0\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.httpContentSeparatorData = [@"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding];
+        self.httpContentEncodingGzip = [@"Content-Encoding: gzip" dataUsingEncoding:NSUTF8StringEncoding];
         self.endLineCharacterData = [@"\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.endLineCharactersData = [@"\r\n" dataUsingEncoding:NSUTF8StringEncoding];
         self.spaceCharacterData = [@" " dataUsingEncoding:NSUTF8StringEncoding];
@@ -279,8 +286,18 @@
                 NSData *responseData = [data subdataWithRange:responseContentRange];
                 if (responseIsChunked) {
 
-                    responseData = [self joinedDataFromChunkedData:responseData];
+                    if ([self isGzippedResponse:data inRange:responseRange]) {
+                        responseData = [self joinedDataFromChunkedDataUsingOctets:data inRange:responseRange];
+                    }
+                    else {
+                        responseData = [self joinedDataFromChunkedData:responseData];
+                    }
                 }
+
+                if ([self isGzippedResponse:data inRange:responseRange]) {
+                    responseData = [responseData gzipInflate];
+                }
+
                 PNLog(PNLogGeneralLevel, self, @"RAW DATA: %@", [[NSString alloc] initWithData:responseData
                                                                                       encoding:NSUTF8StringEncoding]);
                 response = [PNResponse responseWithContent:responseData size:responseRange.length code:statusCode];
@@ -308,6 +325,15 @@
     
     
     return statusCode;
+}
+
+- (BOOL)isGzippedResponse:(NSData *)data inRange:(NSRange)responseRange {
+
+    NSRange contentEncodingGzipRange = [data rangeOfData:self.httpContentEncodingGzip
+                                                 options:(NSDataSearchOptions)0
+                                                   range:responseRange];
+
+    return contentEncodingGzipRange.location != NSNotFound;
 }
 
 - (BOOL)isChunkedResponse:(NSData *)data inRange:(NSRange)responseRange {
@@ -419,6 +445,66 @@
         shuoldAppendData = !shuoldAppendData;
     }
 
+
+    return joinedData;
+}
+
+// If you are joining chunks from a gzipped HTTP response, you can't scan
+// for the endLineCharactersData token because the binary gzipped data might
+// have that byte sequence and it doesn't necessarily signify the end of the
+// chunk. Instead, you have to actually parse the octet value that precedes
+// a chunk and tells you how large the chunk is.
+- (NSData *)joinedDataFromChunkedDataUsingOctets:(NSData *)chunkedData inRange:(NSRange)searchRange {
+    NSMutableData *joinedData = [NSMutableData data];
+    BOOL parsingChunkOctet = NO, parsingChunk = NO;
+    int chunkStart = 0;
+    NSRange cursor = [chunkedData rangeOfData:self.endLineCharactersData options:(NSDataSearchOptions)0 range:searchRange];
+
+    while (cursor.location != NSNotFound) {
+        // When the loop starts chunkStart points to the first byte of the chunk
+        // we are processing, and cursor points to byte that signifies the end
+        // of the chunk (which is always \r\n).
+        // The chunk NSData can be a header, a chunk octet, or an actual chunk.
+        NSData *chunk = [chunkedData subdataWithRange:NSMakeRange(chunkStart, cursor.location - chunkStart)];
+
+        // The next chunk starts after the cursor.
+        chunkStart = cursor.location + cursor.length;
+        NSRange nextSearchRange = NSMakeRange(chunkStart, searchRange.length - chunkStart);
+
+        if (parsingChunk) {
+            parsingChunk = NO;
+            parsingChunkOctet = YES;
+//            NSLog(@"[CHUNK] %d bytes (cursor = %d %d)", [chunk length], cursor.location, cursor.length);
+            [joinedData appendData:chunk];
+            cursor = [chunkedData rangeOfData:self.endLineCharactersData options:(NSDataSearchOptions)0 range:nextSearchRange];
+        }
+        else if (parsingChunkOctet) {
+            parsingChunkOctet = NO;
+            parsingChunk = YES;
+            NSString *octet = [[NSString alloc] initWithData:chunk encoding:NSUTF8StringEncoding];
+            NSScanner *scanner = [NSScanner scannerWithString:octet];
+            unsigned int chunkSize = 0;
+            [scanner scanHexInt:&chunkSize];
+//            NSLog(@"[CHUNK OCTET] %@ (%d) (cursor = %d %d)", octet, chunkSize, cursor.location, cursor.length);
+
+            if (chunkSize == 0) { // A zero byte chunk means we're done.
+                break;
+            }
+
+            cursor = NSMakeRange(chunkStart + chunkSize, [self.endLineCharactersData length]);
+        }
+        else {
+            if ([chunk length] > 0) {
+//                NSString *header = [[NSString alloc] initWithData:chunk encoding:NSUTF8StringEncoding];
+//                NSLog(@"[HEADER] %@ (cursor = %d %d)", header, cursor.location, cursor.length);
+            }
+            else {
+                parsingChunkOctet = YES;
+            }
+
+            cursor = [chunkedData rangeOfData:self.endLineCharactersData options:(NSDataSearchOptions)0 range:nextSearchRange];
+        }
+    }
 
     return joinedData;
 }
