@@ -27,6 +27,11 @@
  */
 - (NSString *)HEXString;
 
+/**
+ * Retrieve uncompressed GZIP data
+ */
+- (NSData *)GZIPInflate;
+
 #pragma mark -
 
 
