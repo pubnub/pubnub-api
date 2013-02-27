@@ -1,4 +1,17 @@
-# Socket.IO on PubNub
+# The latest PubNub for Socket.IO can be Found: 
+https://github.com/pubnub/javascript/tree/master/socket.io
+
+## The README.md for Socket.IO can be Found: 
+https://github.com/pubnub/javascript/blob/master/socket.io/README.md
+
+If you'd like access to earlier versions,
+you can access them on this repo at fb7aaad821c86219e67025649f91547e4b9185af.
+
+## The docs here in this Repository are DEPRECATED.
+
+Please visit the new location of this repository as described above.
+
+## Socket.IO on PubNub (older docs below)
 
 Get a faster Socket.IO with PubNub! Take advantage of the Socket.IO API 
 leveraging Human Perceptive Real-time on PubNub Infrastructure.
