@@ -103,7 +103,10 @@ void PNCFRelease(void *CFObject) {
 
     if (CFObject != NULL) {
 
-        CFRelease(*((CFTypeRef*)CFObject));
+        if (*((CFTypeRef*)CFObject) != NULL) {
+
+            CFRelease(*((CFTypeRef*)CFObject));
+        }
         *((CFTypeRef*)CFObject) = NULL;
     }
 }

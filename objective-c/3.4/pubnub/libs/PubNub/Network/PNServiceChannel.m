@@ -322,6 +322,7 @@
 
         // Retrieve reference on observer request
         PNBaseRequest *request = [self observedRequestWithIdentifier:response.requestIdentifier];
+        BOOL shouldObserveExecution = request != nil;
 
         // Check whether response is valid or not
         if (shouldResendRequest) {
@@ -331,8 +332,8 @@
             if (request == nil) {
 
                 request = [super storedRequestWithIdentifier:response.requestIdentifier];
-                [request reset];
             }
+            [request reset];
 
             PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" RESCHEDULING REQUEST: %@", request);
         }
@@ -348,9 +349,16 @@
 
         // Check whether connection available or not
         if ([self isConnected] && [[PubNub sharedInstance].reachability isServiceAvailable]) {
-
-            // Asking to schedule next request
-            [self scheduleNextRequest];
+            
+            if (shouldResendRequest) {
+                
+                [self scheduleRequest:request shouldObserveProcessing:shouldObserveExecution];
+            }
+            else {
+                
+                // Asking to schedule next request
+                [self scheduleNextRequest];
+            }
         }
     }
 }
