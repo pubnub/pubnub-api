@@ -8,7 +8,7 @@ namespace PubNubMessaging.Tests
 {
     public class PubnubUnitTest : IPubnubUnitTest
     {
-        private bool enableStubTest = false;
+        private bool enableStubTest = true;
         private string testClassName = "";
         private string testCaseName = "";
 
@@ -188,6 +188,13 @@ namespace PubNubMessaging.Tests
           return data;    
         }
 
+        Dictionary<string, string> LoadWhenAMessageIsPublishedThenItShouldReturnSuccessCodeAndInfoForComplexMessage2WithSsl()
+        {
+          Dictionary<string, string> data = new Dictionary<string, string>();
+          data.Add("/publish/demo/demo/73b3782110165adcecf3712fb382a2f8/hello_world/0/\"5c69IWbJmfgAF18380MRmWe+1V3gHYH4Wxnlzm4l0RM=\"", "[1,\"Sent\",\"13559014566792817\"]");
+          return data;    
+        }
+
         Dictionary<string, string> LoadWhenAMessageIsPublishedThenItShouldReturnSuccessCodeAndInfoForEncryptedComplexMessage2()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
@@ -274,7 +281,7 @@ namespace PubNubMessaging.Tests
         private Dictionary<string, string> LoadWhenDetailedHistoryIsRequestedItShouldReturnDetailedHistory()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
-            data.Add("/v2/history/sub-key/demo/channel/hello_world", "[[\"Test message\"],13561916644576302,13561916644576302]");
+            data.Add("/v2/history/sub-key/demo/channel/hello_world", "[[\"Test Message\"],13561916644576302,13561916644576302]");
             return data;
         }
 
@@ -513,6 +520,9 @@ namespace PubNubMessaging.Tests
                         case "ThenItShouldReturnSuccessCodeAndInfoForComplexMessage2":
                             responseDictionary = LoadWhenAMessageIsPublishedThenItShouldReturnSuccessCodeAndInfoForComplexMessage2();
                             break;
+                        case "ThenItShouldReturnSuccessCodeAndInfoForComplexMessage2WithSsl":
+                            responseDictionary = LoadWhenAMessageIsPublishedThenItShouldReturnSuccessCodeAndInfoForComplexMessage2WithSsl();
+                             break;
                         case "ThenItShouldReturnSuccessCodeAndInfoForComplexMessage":
                             responseDictionary = LoadWhenAMessageIsPublishedThenItShouldReturnSuccessCodeAndInfoForComplexMessage();
                             break;
