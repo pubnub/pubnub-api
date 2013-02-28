@@ -14,10 +14,11 @@
 
 #import "PNMessagePostRequest.h"
 #import "PNServiceResponseCallbacks.h"
+#import "NSString+PNAddition.h"
 #import "PNMessage+Protected.h"
+#import "PNChannel+Protected.h"
 #import "PubNub+Protected.h"
 #import "PNConstants.h"
-#import "PNChannel+Protected.h"
 
 
 #pragma mark Private interface methods
@@ -80,7 +81,7 @@
 
     // Encode message with % so it will be delivered w/o damages to
     // the PubNub service
-    NSString *escapedMessage = [self.message.message stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *escapedMessage = [self.message.message percentEscapedString];
 
     return [NSString stringWithFormat:@"%@/publish/%@/%@/%@/%@/%@_%@/%@?uuid=%@",
                     kPNRequestAPIVersionPrefix,

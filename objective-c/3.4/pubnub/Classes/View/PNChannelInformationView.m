@@ -50,7 +50,6 @@
 #pragma mark - Handler methods
 
 - (IBAction)historyButtonTapped:(id)sender;
-- (IBAction)presenceModeChanged:(id)sender;
 
 
 #pragma mark - Misc methods
@@ -168,11 +167,6 @@
 - (IBAction)historyButtonTapped:(id)sender {
 
     [self.delegate showHistoryRequestParameters];
-}
-
-- (IBAction)presenceModeChanged:(id)sender {
-
-    BOOL enabled = ((UISwitch *)sender).isOn;
 }
 
 

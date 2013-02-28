@@ -31,6 +31,10 @@
 // fields)
 @property (nonatomic, readonly, assign) NSUInteger size;
 
+// Stores reference on error object which will hold
+// any information about parsing error
+@property (nonatomic, readonly, strong) PNError *error;
+
 // Stores reference on request small identifier
 // hash which will be used to find request
 // which sent this request

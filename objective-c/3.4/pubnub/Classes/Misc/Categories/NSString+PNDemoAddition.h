@@ -1,5 +1,5 @@
 //
-//  NSString(PNAddition).h
+//  NSString(PNDemoAddition).h
 // 
 //
 //  Created by moonlight on 1/21/13.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSString (PNAddition)
+@interface NSString (PNDemoAddition)
 
 
 #pragma mark Instance methods

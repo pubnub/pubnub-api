@@ -37,6 +37,11 @@
 // for response
 @property (nonatomic, strong) NSMutableDictionary *observedRequests;
 
+// Stores reference on all requests which was required to be stored
+// because of some resons (for example re-schedule request in case
+// of error)
+@property (nonatomic, strong) NSMutableDictionary *storedRequests;
+
 @property (nonatomic, strong) NSTimer *timeoutTimer;
 
 
@@ -58,6 +63,25 @@
  * (template method)
  */
 - (void)handleTimeoutTimer:(NSTimer *)timer;
+
+/**
+ * Called when new request is scheduled on
+ * queue and specify whether request should
+ * be stored for some time or not
+ * (template method)
+ */
+- (BOOL)shouldStoreRequest:(PNBaseRequest *)request;
+
+
+#pragma mark - Misc methods
+
+/**
+ * Allow to manipulate with requests in specific storages by their
+ * identifiers
+ */
+- (PNBaseRequest *)requestFromStorage:(NSMutableDictionary *)storage withIdentifier:(NSString *)identifier;
+
+- (void)removeRequest:(PNBaseRequest *)request fromStorage:(NSMutableDictionary *)storage;
 
 
 @end
@@ -88,7 +112,8 @@
         self.delegate = delegate;
         self.state = PNConnectionChannelStateCreated;
         self.observedRequests = [NSMutableDictionary dictionary];
-        
+        self.storedRequests = [NSMutableDictionary dictionary];
+
         
         // Retrieve connection identifier based on connection channel type
         NSString *connectionIdentifier = PNConnectionIdentifiers.messagingConnection;
@@ -138,15 +163,7 @@
 
 - (BOOL)isWaitingRequestCompletion:(NSString *)requestIdentifier {
     
-    BOOL isWaitingRequestCompletion = NO;
-    
-    if(requestIdentifier != nil) {
-        
-        isWaitingRequestCompletion = [self.observedRequests objectForKey:requestIdentifier] != nil;
-    }
-    
-    
-    return isWaitingRequestCompletion;
+    return [self observedRequestWithIdentifier:requestIdentifier] != nil;
 }
 
 - (void)purgeObservedRequestsPool {
@@ -154,29 +171,56 @@
     [self.observedRequests removeAllObjects];
 }
 
-- (PNBaseRequest *)observedRequestWithIdentifier:(NSString *)identifier {
-    
+- (PNBaseRequest *)requestFromStorage:(NSMutableDictionary *)storage withIdentifier:(NSString *)identifier {
+
     PNBaseRequest *request = nil;
     if(identifier != nil) {
-        
-        request = [self.observedRequests valueForKey:identifier];
+
+        request = [storage valueForKey:identifier];
     }
-    
-    
+
+
     return request;
 }
 
-- (void)removeObservationFromRequest:(PNBaseRequest *)request {
-    
+- (void)removeRequest:(PNBaseRequest *)request fromStorage:(NSMutableDictionary *)storage {
+
     if(request != nil) {
-        
-        [self.observedRequests removeObjectForKey:request.shortIdentifier];
+
+        [storage removeObjectForKey:request.shortIdentifier];
     }
+}
+
+- (PNBaseRequest *)observedRequestWithIdentifier:(NSString *)identifier {
+
+    return [self requestFromStorage:self.observedRequests withIdentifier:identifier];
+}
+
+- (void)removeObservationFromRequest:(PNBaseRequest *)request {
+
+    [self removeRequest:request fromStorage:self.observedRequests];
+}
+
+- (void)purgeStoredRequestsPool {
+
+    [self.storedRequests removeAllObjects];
+}
+
+- (PNBaseRequest *)storedRequestWithIdentifier:(NSString *)identifier {
+
+    return [self requestFromStorage:self.storedRequests withIdentifier:identifier];
+
+}
+
+- (void)removeStoredRequest:(PNBaseRequest *)request {
+
+    [self removeRequest:request fromStorage:self.storedRequests];
 }
 
 - (void)destroyRequest:(PNBaseRequest *)request {
 
     [self unscheduleRequest:request];
+    [self removeStoredRequest:request];
     [self removeObservationFromRequest:request];
 }
 
@@ -188,6 +232,14 @@
     NSAssert1(0, @"%s SHOULD BE RELOADED IN SUBCLASSES", __PRETTY_FUNCTION__);
 }
 
+- (BOOL)shouldStoreRequest:(PNBaseRequest *)request {
+
+    NSAssert1(0, @"%s SHOULD BE RELOADED IN SUBCLASSES", __PRETTY_FUNCTION__);
+    
+    
+    return YES;
+}
+
 
 #pragma mark - Requests queue management methods
 
@@ -196,8 +248,13 @@
     if([self.requestsQueue enqueueRequest:request]) {
         
         if (shouldObserveProcessing) {
-            
+
             [self.observedRequests setValue:request forKey:request.shortIdentifier];
+        }
+
+        if ([self shouldStoreRequest:request]) {
+
+            [self.storedRequests setValue:request forKey:request.shortIdentifier];
         }
         
         [self scheduleNextRequest];

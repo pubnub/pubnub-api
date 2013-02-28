@@ -218,6 +218,11 @@
     }
 }
 
+- (BOOL)shouldStoreRequest:(PNBaseRequest *)request {
+
+    return YES;
+}
+
 
 #pragma mark - Messages processing methods
 
@@ -313,20 +318,47 @@
         [super connection:connection didReceiveResponse:response];
 
 
-        PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" RECIEVED RESPONSE: %@", response);
+        BOOL shouldResendRequest = response.error.code == kPNResponseMalformedJSONError;
 
         // Retrieve reference on observer request
         PNBaseRequest *request = [self observedRequestWithIdentifier:response.requestIdentifier];
-        [self destroyRequest:request];
+        BOOL shouldObserveExecution = request != nil;
 
-        [self processResponse:response forRequest:request];
+        // Check whether response is valid or not
+        if (shouldResendRequest) {
+
+            PNLog(PNLogCommunicationChannelLayerErrorLevel, self, @" RECEIVED MALFORMED RESPONSE: %@", response);
+
+            if (request == nil) {
+
+                request = [super storedRequestWithIdentifier:response.requestIdentifier];
+            }
+            [request reset];
+
+            PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" RESCHEDULING REQUEST: %@", request);
+        }
+        // Looks like response is valid (continue)
+        else {
+
+            PNLog(PNLogCommunicationChannelLayerInfoLevel, self, @" RECIEVED RESPONSE: %@", response);
+
+            [self destroyRequest:request];
+            [self processResponse:response forRequest:request];
+        }
 
 
         // Check whether connection available or not
         if ([self isConnected] && [[PubNub sharedInstance].reachability isServiceAvailable]) {
-
-            // Asking to schedule next request
-            [self scheduleNextRequest];
+            
+            if (shouldResendRequest) {
+                
+                [self scheduleRequest:request shouldObserveProcessing:shouldObserveExecution];
+            }
+            else {
+                
+                // Asking to schedule next request
+                [self scheduleNextRequest];
+            }
         }
     }
 }

@@ -868,7 +868,7 @@ void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType type, void *
         }
         // Looks like there is no data or error occurred while tried
         // to read out stream content
-        else if (readedBytesCount <= 0) {
+        else if (readedBytesCount < 0) {
 
             CFErrorRef error = CFReadStreamCopyError(self.socketReadStream);
             [self handleStreamError:error];

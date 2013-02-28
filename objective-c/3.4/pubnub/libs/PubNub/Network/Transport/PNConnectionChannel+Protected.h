@@ -42,6 +42,19 @@
 - (void)removeObservationFromRequest:(PNBaseRequest *)request;
 
 /**
+ * Clean up stored requests stack
+ */
+- (void)purgeStoredRequestsPool;
+
+/**
+ * Retrieve reference on request which was stored by communication
+ * channel by it's identifier
+ */
+- (PNBaseRequest *)storedRequestWithIdentifier:(NSString *)identifier;
+
+- (void)removeStoredRequest:(PNBaseRequest *)request;
+
+/**
  * Completely destroys request by removing it from queue and
  * requests observation list
  */
