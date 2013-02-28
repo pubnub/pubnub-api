@@ -16,7 +16,7 @@
 #import "PNChannelCreationDelegate.h"
 #import "PNChannelInformationView.h"
 #import "PNChannelCreationView.h"
-#import "NSString+PNAddition.h"
+#import "NSString+PNDemoAddition.h"
 #import "PNDataManager.h"
 #import "PNChannelHistoryView.h"
 #import "PNPresenceEvent.h"
@@ -543,9 +543,8 @@ static NSUInteger const inChatMessageLabelTag = 878;
 
 - (void)creationView:(PNChannelCreationView*)view subscribeOnChannel:(PNChannel *)channel {
 
-    [PubNub subscribeOnChannel:channel withCompletionHandlingBlock:^(PNSubscriptionProcessState state,
-                                                                     NSArray *channels,
-                                                                     PNError *subscriptionError) {
+    [PubNub subscribeOnChannel:channel
+   withCompletionHandlingBlock:^(PNSubscriptionProcessState state, NSArray *channels, PNError *subscriptionError) {
 
         NSString *alertMessage = [NSString stringWithFormat:@"Subscribed on channel: %@\nTo be able to send messages, select channel from righthand list",
                                                             channel.name];

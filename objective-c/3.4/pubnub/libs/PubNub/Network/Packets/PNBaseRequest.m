@@ -74,6 +74,13 @@
     return [PNWriteBuffer writeBufferForRequest:self];
 }
 
+- (void)reset {
+
+    self.retryCount = 0;
+    self.processing = NO;
+    self.processed = NO;
+}
+
 - (void)resetRetryCount {
 
     self.retryCount = 0;

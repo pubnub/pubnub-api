@@ -627,8 +627,8 @@ withCompletionHandlingBlock:(PNClientChannelSubscriptionHandlerBlock)handlerBloc
 
 
         if(handlerBlock) {
-
-            handlerBlock(channels, NO, subscriptionError);
+            
+            handlerBlock(PNSubscriptionProcessNotSubscribedState, channels, subscriptionError);
         }
     }
 }

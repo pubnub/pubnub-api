@@ -18,6 +18,13 @@
 
 #pragma mark - Instance methods
 
+/**
+ * Perform request state reset so it can be reused
+ * and scheduled again on connection channel
+ */
+- (void)reset;
+
+
 #pragma mark - Processing retry
 
 /**

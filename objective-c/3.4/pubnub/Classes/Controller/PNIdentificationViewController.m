@@ -126,7 +126,7 @@
     PNIdentificationViewController *weakSelf = self;
     [PubNub connectWithSuccessBlock:^(NSString *origin) {
 
-        PNLog(PNLogGeneralLevel, self, @"{BLOCK} PubNub client connected to: %@", origin);
+        PNLog(PNLogGeneralLevel, weakSelf, @"{BLOCK} PubNub client connected to: %@", origin);
 
         [weakSelf updateConnectionProgressMessage:[NSString stringWithFormat:@"Connected to '%@'",
                                                    [PNDataManager sharedInstance].configuration.origin]];
@@ -139,7 +139,7 @@
             [weakSelf updateConnectionProgressMessage:@""];
             PNMainViewController *mainViewController = [PNMainViewController new];
             mainViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-            [self presentModalViewController:mainViewController animated:YES];
+            [weakSelf presentModalViewController:mainViewController animated:YES];
         });
     }
 

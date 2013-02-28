@@ -12,8 +12,9 @@
 
 #import "PNChannel+Protected.h"
 #import "PNChannelPresence+Protected.h"
-#import "PNPresenceEvent.h"
 #import "PNHereNow+Protected.h"
+#import "NSString+PNAddition.h"
+#import "PNPresenceEvent.h"
 
 
 #pragma mark Static
@@ -197,10 +198,8 @@ static NSMutableDictionary *_channelsCache = nil;
 }
 
 - (NSString *)escapedName {
-
-    NSString *escapedName = [self.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-
-    return [escapedName stringByReplacingOccurrencesOfString:@"/" withString:@"%2f"];
+    
+    return [self.name percentEscapedString];
 }
 
 - (NSString *)description {
