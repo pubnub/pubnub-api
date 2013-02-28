@@ -102,12 +102,20 @@
 }
 
 - (NSString *)HTTPPayload {
+
+    NSString *acceptEncoding = @"";
+    if ([PubNub sharedInstance].configuration.shouldAcceptCompressedResponse) {
+
+        acceptEncoding = @"Accept-Encoding: gzip, deflate\r\n";
+    }
+
     
-    return [NSString stringWithFormat:@"GET %@ HTTP/1.1\r\nHost: %@\r\nV: %@\r\nUser-Agent: %@\r\nAccept: */*\r\n\r\n",
+    return [NSString stringWithFormat:@"GET %@ HTTP/1.1\r\nHost: %@\r\nV: %@\r\nUser-Agent: %@\r\nAccept: */*\r\n%@\r\n",
             [self resourcePath],
-            [[PubNub sharedInstance] configuration].origin,
+            [PubNub sharedInstance].configuration.origin,
             kPNClientVersion,
-            kPNClientName];
+            kPNClientName,
+            acceptEncoding];
 }
 
 #pragma mark -
