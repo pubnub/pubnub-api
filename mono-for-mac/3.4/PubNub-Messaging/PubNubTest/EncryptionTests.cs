@@ -471,6 +471,11 @@ namespace PubNubMessaging.Tests
     public int [] bar = {1, 2, 3, 4, 5};
   }
 
+  class CustomClass2
+  {
+    public string foo = @"hi!"""; 
+  }
+
   class PubnubDemoObject
   {
     public double VersionID = 3.4;
@@ -485,7 +490,7 @@ namespace PubNubMessaging.Tests
   class PubnubDemoMessage
   {
     public string DefaultMessage = "~!@#$%^&*()_+ `1234567890-= qwertyuiop[]\\ {}| asdfghjkl;' :\" zxcvbnm,./ <>? ";
-    
+    //public string DefaultMessage = "\"";
     public PubnubDemoMessage()
     {
     }

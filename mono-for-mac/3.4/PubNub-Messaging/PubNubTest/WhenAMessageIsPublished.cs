@@ -4,6 +4,12 @@ using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Net;
+using System.IO;
+using System.Diagnostics;
+using System.Text;
+using Mono.Mozilla;
+using System.Net.Sockets;
 
 namespace PubNubMessaging.Tests
 {
@@ -65,22 +71,24 @@ namespace PubNubMessaging.Tests
           Assert.AreEqual("1", one);
         }
 
-        /*[Test]
-        public void ThenItShouldReturnSuccessCodeAndInfoForComplexMessage2()
+        [Test]
+        public void ThenItShouldReturnSuccessCodeAndInfoForComplexMessage2WithSsl()
         {
           Pubnub pubnub = new Pubnub(
             "demo",
             "demo",
             "",
             "",
-            false
+            true
             );
           string channel = "hello_world";
           object message = new PubnubDemoObject();
+          //object message = new CustomClass2();
+          
           string json = JsonConvert.SerializeObject(message);
           Common common = new Common();
           
-          pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenAMessageIsPublished", "ThenItShouldReturnSuccessCodeAndInfoForComplexMessage2");
+          pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenAMessageIsPublished", "ThenItShouldReturnSuccessCodeAndInfoForComplexMessage2WithSsl");
           
           common.DeliveryStatus = false;
           common.Response = null;
@@ -93,7 +101,39 @@ namespace PubNubMessaging.Tests
           string one = fields[0].ToString();
           Assert.AreEqual("Sent", sent);
           Assert.AreEqual("1", one);
-        }*/
+        }
+
+        [Test]
+        public void ThenItShouldReturnSuccessCodeAndInfoForComplexMessage2()
+        {
+            Pubnub pubnub = new Pubnub(
+              "demo",
+              "demo",
+              "",
+              "",
+              false
+              );
+            string channel = "hello_world";
+            object message = new PubnubDemoObject();
+            //object message = new CustomClass2();
+
+            string json = JsonConvert.SerializeObject(message);
+            Common common = new Common();
+
+            pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenAMessageIsPublished", "ThenItShouldReturnSuccessCodeAndInfoForComplexMessage2");
+
+            common.DeliveryStatus = false;
+            common.Response = null;
+
+            pubnub.Publish(channel, message, common.DisplayReturnMessage);
+            //wait till the response is received from the server
+            while (!common.DeliveryStatus);
+            IList<object> fields = common.Response as IList<object>;
+            string sent = fields[1].ToString();
+            string one = fields[0].ToString();
+            Assert.AreEqual("Sent", sent);
+            Assert.AreEqual("1", one);
+        }
 
         [Test]
         public void ThenItShouldReturnSuccessCodeAndInfoForComplexMessage()

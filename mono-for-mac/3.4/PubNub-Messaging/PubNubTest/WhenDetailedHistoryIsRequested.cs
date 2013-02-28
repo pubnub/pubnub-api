@@ -22,7 +22,7 @@ namespace PubNubMessaging.Tests
         false
         );
       string channel = "hello_world";
-      string message = "Test message";
+      string message = "Test Message";
       
       Common common = new Common();
       common.DeliveryStatus = false;
