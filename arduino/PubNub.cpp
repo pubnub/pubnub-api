@@ -2,6 +2,16 @@
 #include <Ethernet.h>
 #include "PubNub.h"
 
+// #define PUBNUB_DEBUG 1
+
+#ifdef PUBNUB_DEBUG
+#define DBGprint(x...) Serial.print(x)
+#define DBGprintln(x...) Serial.println(x)
+#else
+#define DBGprint(x...)
+#define DBGprintln(x...)
+#endif
+
 class PubNub PubNub;
 
 bool PubNub::begin(char *publish_key_, char *subscribe_key_, char *origin_)
@@ -21,6 +31,7 @@ retry:
 	/* connect() timeout is about 30s, much lower than our usual
 	 * timeout is. */
 	if (!client.connect(origin, 80)) {
+		DBGprintln("Connection error");
 		client.stop();
 		return NULL;
 	}
@@ -82,6 +93,7 @@ retry:
 	/* connect() timeout is about 30s, much lower than our usual
 	 * timeout is. */
 	if (!client.connect(origin, 80)) {
+		DBGprintln("Connection error");
 		client.stop();
 		return NULL;
 	}
@@ -103,6 +115,7 @@ retry:
 		    || !client.connected()
 		    || client.read() != '[') {
 			/* Something unexpected. */
+			DBGprintln("Unexpected body in subscribe");
 			client.stop();
 			return NULL;
 		}
@@ -133,6 +146,7 @@ EthernetClient *PubNub::history(char *channel, int limit, int timeout)
 retry:
 	t_start = millis();
 	if (!client.connect(origin, 80)) {
+		DBGprintln("Connection error");
 		client.stop();
 		return NULL;
 	}
@@ -144,7 +158,7 @@ retry:
 	client.print("/0/");
 	client.print(limit, DEC);
 
-	enum PubNub_BH ret = this->_request_bh(client, t_start, timeout, false);
+	enum PubNub_BH ret = this->_request_bh(client, t_start, timeout);
 	switch (ret) {
 	case PubNub_BH_OK:
 		/* Success and reached body, return handle to the client
@@ -161,7 +175,7 @@ retry:
 	}
 }
 
-enum PubNub_BH PubNub::_request_bh(EthernetClient &client, unsigned long t_start, int timeout, bool chunked)
+enum PubNub_BH PubNub::_request_bh(EthernetClient &client, unsigned long t_start, int timeout)
 {
 	/* Finish the first line of the request. */
 	client.print(" HTTP/1.1\r\n");
@@ -174,11 +188,13 @@ enum PubNub_BH PubNub::_request_bh(EthernetClient &client, unsigned long t_start
 	while (client.connected() && !client.available()) { \
 		/* wait, just check for timeout */ \
 		if (millis() - t_start > (unsigned long) timeout * 1000) { \
+			DBGprintln("Timeout in bottom half"); \
 			return PubNub_BH_TIMEOUT; \
 		} \
 	} \
 	if (!client.connected()) { \
 		/* Oops, connection interrupted. */ \
+		DBGprintln("Connection reset in bottom half"); \
 		return PubNub_BH_ERROR; \
 	} \
 } while (0)
@@ -194,37 +210,68 @@ enum PubNub_BH PubNub::_request_bh(EthernetClient &client, unsigned long t_start
 	if (c != '2') {
 		/* HTTP code that is NOT 2xx means trouble.
 		 * kthxbai */
+		DBGprint("Wrong HTTP status first digit ");
+		DBGprint((int) c, DEC);
+		DBGprintln(" in bottom half");
 		return PubNub_BH_ERROR;
 	}
 
-	/* Skip the rest of headers. */
+	/* Now, we enter in a state machine that shall guide us through
+	 * the remaining headers to the beginning of the body. */
+	enum {
+		RS_SKIPLINE, /* Skip the rest of this line. */
+		RS_LOADLINE, /* Try loading the line in a buffer. */
+	} request_state = RS_SKIPLINE; /* Skip the rest of status line first. */
+	bool chunked = false;
+
 	while (client.connected()) {
-		/* Wait until we get "\r\n\r\n" sequence (i.e., empty line
-		 * that separates HTTP header and body). */
-		WAIT();
-		if (client.read() != '\r') continue;
-		WAIT();
-		if (client.read() != '\n') continue;
-		WAIT();
-		if (client.read() != '\r') continue;
-		WAIT();
-		if (client.read() != '\n') continue;
-		if (chunked) {
-			/* There is one extra line due to
-			 * Transfer-encoding: chunked.
-			 * Skip this line. */
+		/* Let's hope there is no stray LF without CR. */
+		if (request_state == RS_SKIPLINE) {
 			do {
 				WAIT();
-			} while (client.read() != '\r');
-			WAIT();
-			client.read(); /* '\n' */
-		}
+			} while (client.read() != '\n');
+			request_state = RS_LOADLINE;
 
-		/* Good! Body begins now. */
-		return PubNub_BH_OK;
+		} else { /* request_state == RS_LOADLINE */
+			/* line[] must be enough to hold
+			 * Transfer-Encoding: chunked (or \r\n) */
+			const static char chunked_str[] = "Transfer-Encoding: chunked\r\n";
+			char line[sizeof(chunked_str)]; /* Not NUL-terminated! */
+			int linelen = 0;
+			char ch = 0;
+			do {
+				WAIT();
+				ch = client.read();
+				line[linelen++] = ch;
+				if (linelen == sizeof(chunked_str)
+				    && !strncasecmp(line, chunked_str, linelen)) {
+					/* Chunked encoding header. */
+					chunked = true;
+					break;
+				}
+			} while (ch != '\n' && linelen < sizeof(line));
+			if (ch != '\n') {
+				/* We are not at the end of the line yet.
+				 * Skip the rest of the line. */
+				request_state = RS_SKIPLINE;
+			} else if (linelen == 2 && line[0] == '\r') {
+				/* Empty line. This means headers end. */
+				break;
+			}
+		}
 	}
-	/* No body means error. */
-	return PubNub_BH_ERROR;
+
+	if (chunked) {
+		/* There is one extra line due to Transfer-encoding: chunked.
+		 * Our minimalistic support means that we hope for just
+		 * a single chunk, just skip the first line after header. */
+		do {
+			WAIT();
+		} while (client.read() != '\n');
+	}
+
+	/* Body begins now. */
+	return PubNub_BH_OK;
 }
 
 
