@@ -2,6 +2,16 @@
 #include <Ethernet.h>
 #include "PubNub.h"
 
+// #define PUBNUB_DEBUG 1
+
+#ifdef PUBNUB_DEBUG
+#define DBGprint(x...) Serial.print(x)
+#define DBGprintln(x...) Serial.println(x)
+#else
+#define DBGprint(x...)
+#define DBGprintln(x...)
+#endif
+
 class PubNub PubNub;
 
 bool PubNub::begin(char *publish_key_, char *subscribe_key_, char *origin_)
@@ -21,6 +31,7 @@ retry:
 	/* connect() timeout is about 30s, much lower than our usual
 	 * timeout is. */
 	if (!client.connect(origin, 80)) {
+		DBGprintln("Connection error");
 		client.stop();
 		return NULL;
 	}
@@ -82,6 +93,7 @@ retry:
 	/* connect() timeout is about 30s, much lower than our usual
 	 * timeout is. */
 	if (!client.connect(origin, 80)) {
+		DBGprintln("Connection error");
 		client.stop();
 		return NULL;
 	}
@@ -103,6 +115,7 @@ retry:
 		    || !client.connected()
 		    || client.read() != '[') {
 			/* Something unexpected. */
+			DBGprintln("Unexpected body in subscribe");
 			client.stop();
 			return NULL;
 		}
@@ -133,6 +146,7 @@ EthernetClient *PubNub::history(char *channel, int limit, int timeout)
 retry:
 	t_start = millis();
 	if (!client.connect(origin, 80)) {
+		DBGprintln("Connection error");
 		client.stop();
 		return NULL;
 	}
@@ -174,11 +188,13 @@ enum PubNub_BH PubNub::_request_bh(EthernetClient &client, unsigned long t_start
 	while (client.connected() && !client.available()) { \
 		/* wait, just check for timeout */ \
 		if (millis() - t_start > (unsigned long) timeout * 1000) { \
+			DBGprintln("Timeout in bottom half"); \
 			return PubNub_BH_TIMEOUT; \
 		} \
 	} \
 	if (!client.connected()) { \
 		/* Oops, connection interrupted. */ \
+		DBGprintln("Connection reset in bottom half"); \
 		return PubNub_BH_ERROR; \
 	} \
 } while (0)
@@ -194,6 +210,9 @@ enum PubNub_BH PubNub::_request_bh(EthernetClient &client, unsigned long t_start
 	if (c != '2') {
 		/* HTTP code that is NOT 2xx means trouble.
 		 * kthxbai */
+		DBGprint("Wrong HTTP status first digit ");
+		DBGprint((int) c, DEC);
+		DBGprintln(" in bottom half");
 		return PubNub_BH_ERROR;
 	}
 
