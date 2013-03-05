@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="enableproxy">Enable Proxy</string>
+	<string name="proxy">Proxy</string>
+	<string name="setProxy">Set</string>
+	<string name="proxyOn">On</string>
+	<string name="proxyOff">Off</string>
+	<string name="proxyServer">Server</string>
+	<string name="proxyPort">Port</string>
+	<string name="proxyUsername">Username</string>	
+	<string name="proxyPassword">Password</string>	
+	<string name="proxySave">Save</string>
+	<string name="proxyCancel">Cancel</string>
 	<string name="cancel">Cancel</string>
 	<string name="subscribe">Subscribe</string>
 	<string name="subscribeConnCallback">Subscribe - Connect Callback</string>

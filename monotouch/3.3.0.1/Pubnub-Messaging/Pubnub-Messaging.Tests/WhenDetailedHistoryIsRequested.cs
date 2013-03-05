@@ -1,13 +1,13 @@
 using System;
-using PubNub_Messaging;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using PubNubMessaging.Core;
 
 
-namespace PubNubTest
+namespace PubNubMessaging.Tests
 {
 	[TestFixture]
 	public class WhenDetailedHistoryIsRequested
@@ -23,653 +23,277 @@ namespace PubNubTest
 				false
 				);
 			string channel = "hello_world";
+			string message = "Test message";
 			
-			Common cm = new Common();
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;
 			
 			//publish a test message. 
-			pubnub.publish(channel, "Test message", cm.DisplayReturnMessage);
+			pubnub.Publish(channel, message, common.DisplayReturnMessage);
 			
-			while (!cm.deliveryStatus); 
+			while (!common.DeliveryStatus); 
 			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "ItShouldReturnDetailedHistory";
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"ItShouldReturnDetailedHistory");
 			
-			pubnub.PubnubUnitTest = unitTest;
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, 1, common.DisplayReturnMessage);
+			while (!common.DeliveryStatus);
 			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, 1, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus);
+			ParseResponse(common.Response, 0, 0, message);
+		}
+		
+		public void SendMultipleIntMessages(int messageStart, int messageEnd, string channel, Pubnub pubnub)
+		{
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;   
 			
-			string strResponse = "";
-			if (cm.objResponse.Equals(null))
+			for (int i = messageStart; i < messageEnd; i++)
 			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				foreach (object item in fields)
-				{
-					strResponse = item.ToString();
-					Console.WriteLine(strResponse);
-					Assert.IsNotNull(strResponse);
-				}             
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							Console.WriteLine("Resp:" + element.ToString());
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}
+				common.DeliveryStatus = false;
+				string msg = i.ToString();
+				pubnub.Publish(channel, msg, common.DisplayReturnMessage);
+				
+				while (!common.DeliveryStatus) ;
+				
+				Console.WriteLine("Message # " + i.ToString() + " published");
 			}
 		}
 		
-		[Test]
-		public static void TestEncryptedDetailedHistoryParams()
+		public void ParseResponse(object commonResponse, int messageStart, int messageEnd, string message)
 		{
-			Pubnub pubnub = new Pubnub(
-				"demo",
-				"demo",
-				"",
-				"enigma",
-				false);
-			
-			string channel = "hello_world";
-			
-			//pubnub.CIPHER_KEY = "enigma";
-			int total_msg = 10;
-			
-			Common cm = new Common();
-			cm.deliveryStatus = false;
-			cm.objResponse = null;        
-			
-			long starttime = cm.Timestamp(pubnub);
-			
-			for (int i = 0; i < total_msg / 2; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
-			
-			long midtime = cm.Timestamp(pubnub);
-			for (int i = total_msg / 2; i < total_msg; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				//Console.WriteLine("Message # " + i.ToString() + " published");
-			}
-			
-			long endtime = cm.Timestamp(pubnub);
-			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "TestEncryptedDetailedHistoryParams1";
-			
-			pubnub.PubnubUnitTest = unitTest;
-			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			Console.WriteLine("DetailedHistory with start & end");
-			pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, cm.DisplayReturnMessage);
-			
-			while (!cm.deliveryStatus) ;
-			
-			Console.WriteLine("DetailedHistory with start & reverse = true");
-			string strResponse = "";
-			if (cm.objResponse.Equals(null))
+			if (commonResponse.Equals(null))
 			{
 				Assert.Fail("Null response");
 			} 
 			else
 			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg/2)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}
-			}         
-			
-			
-			PubnubUnitTest unitTest2 = new PubnubUnitTest();
-			unitTest2.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest2.TestCaseName = "TestEncryptedDetailedHistoryParams2";
-			
-			pubnub.PubnubUnitTest = unitTest2;
-			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, cm.DisplayReturnMessage);
-			
-			while (!cm.deliveryStatus) ;
-			
-			Console.WriteLine("DetailedHistory with start & reverse = false");
-			strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = total_msg / 2;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}
-			}  
-			
-			
-			PubnubUnitTest unitTest3 = new PubnubUnitTest();
-			unitTest3.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest3.TestCaseName = "TestEncryptedDetailedHistoryParams3";
-			
-			pubnub.PubnubUnitTest = unitTest3;
-			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, cm.DisplayReturnMessage);
-			
-			while (!cm.deliveryStatus) ;
-			//Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
-			strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg/2)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}            
-			}  
-		}
-		
-		[Test]
-		public static void TestUnencryptedDetailedHistory()
-		{
-			Pubnub pubnub = new Pubnub(
-				"demo",
-				"demo",
-				"",
-				"",
-				false);
-			string channel = "hello_world";
-			//pubnub.CIPHER_KEY = "";
-			int total_msg = 10;
-			
-			Common cm = new Common();
-			long starttime = cm.Timestamp(pubnub);
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			Dictionary<long, string> inputs = new Dictionary<long,string>();
-			for (int i = 0; i < total_msg / 2; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
-			
-			long midtime = cm.Timestamp(pubnub);
-			for (int i = total_msg / 2; i < total_msg; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
-			
-			long endtime = cm.Timestamp(pubnub);
-			while (!cm.deliveryStatus) ;
-			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "TestUnencryptedDetailedHistory";
-			
-			pubnub.PubnubUnitTest = unitTest;
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			
-			pubnub.detailedHistory(channel, total_msg, cm.DisplayReturnMessage);
-			cm.deliveryStatus = false;
-			while (!cm.deliveryStatus) ;
-			
-			Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
-			
-			string strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}            
-			}  
-		} 
-		
-		[Test]
-		public static void TestEncryptedDetailedHistory()
-		{
-			Pubnub pubnub = new Pubnub(
-				"demo",
-				"demo",
-				"",
-				"enigma",
-				false);
-			string channel = "hello_world";
-			//pubnub.CIPHER_KEY = "enigma";
-			
-			int total_msg = 10;
-			Common cm = new Common();
-			long starttime = cm.Timestamp(pubnub);
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			
-			Dictionary<long, string> inputs = new Dictionary<long, string>();
-			for (int i = 0; i < total_msg / 2; i++)
-			{
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
-			
-			long midtime = cm.Timestamp(pubnub);
-			for (int i = total_msg / 2; i < total_msg; i++)
-			{
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
-			
-			long endtime = cm.Timestamp(pubnub);
-			while (!cm.deliveryStatus) ;
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "TestEncryptedDetailedHistory";
-			
-			pubnub.PubnubUnitTest = unitTest;
-			
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, total_msg, cm.DisplayReturnMessage);
-			cm.deliveryStatus = false;
-			while (!cm.deliveryStatus) ;
-			Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
-			string strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}          
-			}  
-		}
-		
-		[Test]
-		public static void TestUnencryptedDetailedHistoryParams()
-		{
-			Pubnub pubnub = new Pubnub(
-				"demo",
-				"demo",
-				"",
-				"",
-				false);
-			string channel = "hello_world";
-			
-			int total_msg = 10;
-			
-			Common cm = new Common();
-			long starttime = cm.Timestamp(pubnub);
-			cm.deliveryStatus = false;
-			cm.objResponse = null;          
-			
-			for (int i = 0; i < total_msg / 2; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
-			
-			long midtime = cm.Timestamp(pubnub);
-			for (int i = total_msg / 2; i < total_msg; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
-			
-			
-			long endtime = cm.Timestamp(pubnub);
-			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "TestUnencryptedDetailedHistoryParams1";
-			
-			pubnub.PubnubUnitTest = unitTest;
-			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			Console.WriteLine("DetailedHistory with start & end");
-			pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
-			
-			Console.WriteLine("DetailedHistory with start & reverse = true");
-			string strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg/2)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}            
-			}  
-			
-			PubnubUnitTest unitTest2 = new PubnubUnitTest();
-			unitTest2.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest2.TestCaseName = "TestUnencryptedDetailedHistoryParams2";
-			
-			pubnub.PubnubUnitTest = unitTest2;
-			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
-			
-			Console.WriteLine("DetailedHistory with start & reverse = false");
-			strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = total_msg / 2;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}            
-			}  
-			
-			PubnubUnitTest unitTest3 = new PubnubUnitTest();
-			unitTest3.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest3.TestCaseName = "TestUnencryptedDetailedHistoryParams3";
-			
-			pubnub.PubnubUnitTest = unitTest3;
-			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
-			Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
-			strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg/2)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}           
-			}  
-		}
-		
-		[Test]
-		public static void DetailedHistory_Example()
-		{
-			Pubnub pubnub = new Pubnub(
-				"demo",
-				"demo",
-				"",
-				"",
-				false);
-			string channel = "hello_world";
-			//pubnub.CIPHER_KEY = "";
-			string msg = "Test Message";
-			Common cm = new Common();
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			
-			pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
-			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "DetailHistoryCount10ReturnsRecords";
-			
-			pubnub.PubnubUnitTest = unitTest;
-			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			
-			pubnub.detailedHistory(channel, 10, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
-			Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
-			
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
+				IList<object> fields = commonResponse as IList<object>;
 				
 				if (fields [0] != null)
 				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
+					ParseFields(fields, messageStart, messageEnd, message);
+				}
+			}        
+		}
+		
+		public void ParseFields(IList<object> fields, int messageStart, int messageEnd, string message)
+		{
+			string response = "";
+			
+			var myObjectArray = (from item in fields select item as object).ToArray();
+			IList<object> enumerable = myObjectArray [0] as IList<object>;
+			if ((enumerable != null) && (enumerable.Count > 0))
+			{
+				int j = messageStart;
+				foreach (object element in enumerable)
+				{
+					response = element.ToString();
+					if(messageStart != messageEnd)
 					{
-						foreach (object element in enumerable)
-						{
-							string strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0}", strResponse));
-							Assert.IsNotNull(strResponse);
-						}
+						Console.WriteLine(String.Format("response :{0} :: j: {1}", response, j));
+						if(j < messageEnd)
+							Assert.AreEqual(j.ToString(), response);
+						j++;
+					}
+					else if(!message.Equals(""))
+					{
+						Console.WriteLine("Response:" + response);
+						Assert.AreEqual(message, response);
 					}
 					else
 					{
-						Assert.Fail("No response");
+						Console.WriteLine("Response:" + response);
+						Assert.IsNotNull(response);
 					}
 				}
-			}  
+			}
+			else
+			{
+				Assert.Fail("No response");
+			}
 		}
 		
 		[Test]
-		public static void DetailedHistory_Decrypted_Example()
+		public void TestUnencryptedDetailedHistoryParams()
+		{
+			Pubnub pubnub = new Pubnub(
+				"demo",
+				"demo",
+				"",
+				"",
+				false);
+			
+			string channel = "hello_world";
+			
+			int totalMessages = 10;
+			
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;        
+			
+			long starttime = common.Timestamp(pubnub);
+			
+			SendMultipleIntMessages(0, totalMessages/2, channel, pubnub);
+			
+			long midtime = common.Timestamp(pubnub);
+			
+			SendMultipleIntMessages(totalMessages/2, totalMessages, channel, pubnub);
+			
+			long endtime = common.Timestamp(pubnub);
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestUnencryptedDetailedHistoryParams1");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			Console.WriteLine("DetailedHistory with start & end");
+			
+			pubnub.DetailedHistory(channel, starttime, midtime, totalMessages / 2, true, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			
+			Console.WriteLine("DetailedHistory with start & reverse = true");
+			
+			ParseResponse(common.Response, 0, totalMessages/2, "");
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestUnencryptedDetailedHistoryParams2");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, midtime, -1, totalMessages / 2, true, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			
+			Console.WriteLine("DetailedHistory with start & reverse = false");
+			
+			ParseResponse(common.Response, totalMessages/2, totalMessages, "");
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestUnencryptedDetailedHistoryParams3");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, midtime, -1, totalMessages / 2, false, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			
+			Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
+			
+			ParseResponse(common.Response, 0, totalMessages/2, "");
+		}
+		
+		[Test]
+		public void TestEncryptedDetailedHistoryParams()
+		{
+			Pubnub pubnub = new Pubnub(
+				"demo",
+				"demo",
+				"",
+				"enigma",
+				false);
+			
+			string channel = "hello_world";
+			
+			int totalMessages = 10;
+			
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;        
+			
+			long starttime = common.Timestamp(pubnub);
+			
+			SendMultipleIntMessages(0, totalMessages/2, channel, pubnub);
+			
+			long midtime = common.Timestamp(pubnub);
+			
+			SendMultipleIntMessages(totalMessages/2, totalMessages, channel, pubnub);
+			
+			long endtime = common.Timestamp(pubnub);
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestEncryptedDetailedHistoryParams1");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			Console.WriteLine("DetailedHistory with start & end");
+			
+			pubnub.DetailedHistory(channel, starttime, midtime, totalMessages / 2, true, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			
+			Console.WriteLine("DetailedHistory with start & reverse = true");
+			
+			ParseResponse(common.Response, 0, totalMessages/2, "");
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestEncryptedDetailedHistoryParams2");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, midtime, -1, totalMessages / 2, true, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			
+			Console.WriteLine("DetailedHistory with start & reverse = false");
+			
+			ParseResponse(common.Response, totalMessages/2, totalMessages, "");
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestEncryptedDetailedHistoryParams3");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, midtime, -1, totalMessages / 2, false, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			
+			Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
+			
+			ParseResponse(common.Response, 0, totalMessages/2, "");
+			
+		}
+		
+		[Test]
+		public void TestUnencryptedDetailedHistory()
+		{
+			Pubnub pubnub = new Pubnub(
+				"demo",
+				"demo",
+				"",
+				"",
+				false);
+			
+			string channel = "hello_world";
+			int totalMessages = 10;
+			
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;
+			
+			long starttime = common.Timestamp(pubnub);
+			
+			SendMultipleIntMessages(0, totalMessages/2, channel, pubnub);
+			
+			long midtime = common.Timestamp(pubnub);
+			
+			SendMultipleIntMessages(totalMessages/2, totalMessages, channel, pubnub);
+			
+			long endtime = common.Timestamp(pubnub);
+			while (!common.DeliveryStatus) ;
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested", "TestUnencryptedDetailedHistory");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			
+			pubnub.DetailedHistory(channel, totalMessages, common.DisplayReturnMessage);
+			while (!common.DeliveryStatus) ;
+			
+			Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
+			
+			ParseResponse(common.Response, 0, totalMessages, "");
+		} 
+		
+		[Test]
+		public void TestEncryptedDetailedHistory()
 		{
 			Pubnub pubnub = new Pubnub(
 				"demo",
@@ -678,54 +302,105 @@ namespace PubNubTest
 				"enigma",
 				false);
 			string channel = "hello_world";
-			//pubnub.CIPHER_KEY = "enigma";
-			string msg = "Test Message";
-			Common cm = new Common();
 			
+			int totalMessages = 10;
 			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;
 			
-			pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "DetailedHistory_Decrypted_Example";
+			long starttime = common.Timestamp(pubnub);
 			
-			pubnub.PubnubUnitTest = unitTest;
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, 1, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
+			SendMultipleIntMessages(0, totalMessages, channel, pubnub);
+			
+			long midtime = common.Timestamp(pubnub);
+			
+			SendMultipleIntMessages(totalMessages, totalMessages/2, channel, pubnub);
+			
+			long endtime = common.Timestamp(pubnub);
+			while (!common.DeliveryStatus) ;
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested", "TestEncryptedDetailedHistory");
+			
+			common.Response = null;
+			common.DeliveryStatus = false;
+			
+			pubnub.DetailedHistory(channel, totalMessages, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
 			Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
 			
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					
-					IList<object> myObjectList = myObjectArray[0] as IList<object>;
-					if (fields [0] != null)
-					{
-						Console.WriteLine("myObjectList[0]: " + myObjectList[0]);
-						Assert.AreEqual(msg, myObjectList[0]);
-					}
-					else
-					{
-						Assert.Fail("NULL response");
-					}
-				}
-			}  
+			ParseResponse(common.Response, 0, totalMessages, "");
 		}
 		
 		[Test]
-		public static void TestEncryptedSecretDetailedHistoryParams()
+		public void DetailedHistoryExample()
+		{
+			Pubnub pubnub = new Pubnub(
+				"demo",
+				"demo",
+				"",
+				"",
+				false);
+			string channel = "hello_world";
+			
+			string message = "Test Message";
+			
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;
+			
+			pubnub.Publish(channel, message, common.DisplayReturnMessage);
+			while (!common.DeliveryStatus) ;
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested", "DetailHistoryCount10ReturnsRecords");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			
+			pubnub.DetailedHistory(channel, 10, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
+			
+			ParseResponse(common.Response, 0,  0, "");
+		}
+		
+		[Test]
+		public void DetailedHistoryDecryptedExample()
+		{
+			Pubnub pubnub = new Pubnub(
+				"demo",
+				"demo",
+				"",
+				"enigma",
+				false);
+			string channel = "hello_world";
+			
+			string message = "Test Message";
+			
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;
+			
+			pubnub.Publish(channel, message, common.DisplayReturnMessage);
+			while (!common.DeliveryStatus) ;
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested", "DetailedHistoryDecryptedExample");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			
+			pubnub.DetailedHistory(channel, 1, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			Console.WriteLine("\n*********** DetailedHistory Messages Received*********** ");
+			
+			ParseResponse(common.Response, 0, 0, message);
+		}
+		
+		[Test]
+		public void TestEncryptedSecretDetailedHistoryParams()
 		{
 			Pubnub pubnub = new Pubnub(
 				"demo",
@@ -733,171 +408,67 @@ namespace PubNubTest
 				"secretkey",
 				"enigma",
 				false);
+			
 			string channel = "hello_world";
 			
-			//pubnub.CIPHER_KEY = "enigma";
-			int total_msg = 10;
+			int totalMessages = 10;
 			
-			Common cm = new Common();
-			long starttime = cm.Timestamp(pubnub);
-			cm.deliveryStatus = false;
-			cm.objResponse = null;          
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;        
 			
-			for (int i = 0; i < total_msg / 2; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
+			long starttime = common.Timestamp(pubnub);
 			
-			long midtime = cm.Timestamp(pubnub);
-			for (int i = total_msg / 2; i < total_msg; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
+			SendMultipleIntMessages(0, totalMessages/2, channel, pubnub);
 			
-			long endtime = cm.Timestamp(pubnub);
+			long midtime = common.Timestamp(pubnub);
 			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "TestEncryptedSecretDetailedHistoryParams1";
+			SendMultipleIntMessages(totalMessages/2, totalMessages, channel, pubnub);
 			
-			pubnub.PubnubUnitTest = unitTest;
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
+			long endtime = common.Timestamp(pubnub);
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestEncryptedSecretDetailedHistoryParams1");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
 			Console.WriteLine("DetailedHistory with start & end");
-			pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
+			
+			pubnub.DetailedHistory(channel, starttime, midtime, totalMessages / 2, true, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
 			
 			Console.WriteLine("DetailedHistory with start & reverse = true");
-			string strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg/2)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}             
-			}  
 			
-			PubnubUnitTest unitTest2 = new PubnubUnitTest();
-			unitTest2.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest2.TestCaseName = "TestEncryptedSecretDetailedHistoryParams2";
+			ParseResponse(common.Response, 0, totalMessages/2, "");
 			
-			pubnub.PubnubUnitTest = unitTest2;
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestEncryptedSecretDetailedHistoryParams2");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, midtime, -1, totalMessages / 2, true, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
 			
 			Console.WriteLine("DetailedHistory with start & reverse = false");
-			strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = total_msg / 2;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}            
-			}  
 			
-			PubnubUnitTest unitTest3 = new PubnubUnitTest();
-			unitTest3.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest3.TestCaseName = "TestEncryptedSecretDetailedHistoryParams3";
+			ParseResponse(common.Response, totalMessages/2, totalMessages, "");
 			
-			pubnub.PubnubUnitTest = unitTest3;
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestEncryptedSecretDetailedHistoryParams3");
 			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, midtime, -1, totalMessages / 2, false, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
+			
 			Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
-			strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg/2)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}             
-			}  
+			
+			ParseResponse(common.Response, 0, totalMessages/2, "");
+			
 		}
 		
 		[Test]
-		public static void TestUnencryptedSecretDetailedHistoryParams()
+		public void TestUnencryptedSecretDetailedHistoryParams()
 		{
 			Pubnub pubnub = new Pubnub(
 				"demo",
@@ -905,169 +476,62 @@ namespace PubNubTest
 				"secretkey",
 				"",
 				false);
+			
 			string channel = "hello_world";
 			
-			//pubnub.CIPHER_KEY = "enigma";
-			int total_msg = 10;
-			Common cm = new Common();
-			long starttime = cm.Timestamp(pubnub);
-			cm.deliveryStatus = false;
-			cm.objResponse = null;          
+			int totalMessages = 10;
 			
-			for (int i = 0; i < total_msg / 2; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
+			Common common = new Common();
+			common.DeliveryStatus = false;
+			common.Response = null;        
 			
-			long midtime = cm.Timestamp(pubnub);
-			for (int i = total_msg / 2; i < total_msg; i++)
-			{
-				cm.deliveryStatus = false;
-				string msg = i.ToString();
-				pubnub.publish(channel, msg, cm.DisplayReturnMessage);
-				while (!cm.deliveryStatus) ;
-				//long t = Timestamp();
-				//inputs.Add(t, msg);
-				Console.WriteLine("Message # " + i.ToString() + " published");
-			}
+			long starttime = common.Timestamp(pubnub);
 			
-			long endtime = cm.Timestamp(pubnub);
+			SendMultipleIntMessages(0, totalMessages/2, channel, pubnub);
 			
-			PubnubUnitTest unitTest = new PubnubUnitTest();
-			unitTest.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest.TestCaseName = "TestUnencryptedSecretDetailedHistoryParams1";
+			long midtime = common.Timestamp(pubnub);
 			
-			pubnub.PubnubUnitTest = unitTest;
+			SendMultipleIntMessages(totalMessages/2, totalMessages, channel, pubnub);
 			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
+			long endtime = common.Timestamp(pubnub);
+			
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestUnencryptedSecretDetailedHistoryParams1");
+			
+			common.DeliveryStatus = false;
+			common.Response = null;
 			Console.WriteLine("DetailedHistory with start & end");
-			pubnub.detailedHistory(channel, starttime, midtime, total_msg / 2, true, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
+			
+			pubnub.DetailedHistory(channel, starttime, midtime, totalMessages / 2, true, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
 			
 			Console.WriteLine("DetailedHistory with start & reverse = true");
-			string strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg/2)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}            
-			}  
 			
-			PubnubUnitTest unitTest2 = new PubnubUnitTest();
-			unitTest2.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest2.TestCaseName = "TestUnencryptedSecretDetailedHistoryParams2";
+			ParseResponse(common.Response, 0, totalMessages/2, "");
 			
-			pubnub.PubnubUnitTest = unitTest2;
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestUnencryptedSecretDetailedHistoryParams2");
 			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, true, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, midtime, -1, totalMessages / 2, true, common.DisplayReturnMessage);
+			
+			while (!common.DeliveryStatus) ;
 			
 			Console.WriteLine("DetailedHistory with start & reverse = false");
-			strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = total_msg / 2;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}             
-			}  
 			
+			ParseResponse(common.Response, totalMessages/2, totalMessages, "");
 			
-			PubnubUnitTest unitTest3 = new PubnubUnitTest();
-			unitTest3.TestClassName = "WhenDetailedHistoryIsRequested";
-			unitTest3.TestCaseName = "TestUnencryptedSecretDetailedHistoryParams3";
+			pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenDetailedHistoryIsRequested" ,"TestUnencryptedSecretDetailedHistoryParams3");
 			
-			pubnub.PubnubUnitTest = unitTest3;
+			common.DeliveryStatus = false;
+			common.Response = null;
+			pubnub.DetailedHistory(channel, midtime, -1, totalMessages / 2, false, common.DisplayReturnMessage);
 			
-			cm.deliveryStatus = false;
-			cm.objResponse = null;
-			pubnub.detailedHistory(channel, midtime, -1, total_msg / 2, false, cm.DisplayReturnMessage);
-			while (!cm.deliveryStatus) ;
+			while (!common.DeliveryStatus) ;
+			
 			Console.WriteLine("\n******* DetailedHistory Messages Received ******* ");
-			strResponse = "";
-			if (cm.objResponse.Equals(null))
-			{
-				Assert.Fail("Null response");
-			} 
-			else
-			{
-				IList<object> fields = cm.objResponse as IList<object>;
-				int j = 0;
-				if (fields [0] != null)
-				{
-					var myObjectArray = (from item in fields select item as object).ToArray();
-					IList<object> enumerable = myObjectArray [0] as IList<object>;
-					if ((enumerable != null) && (enumerable.Count > 0))
-					{
-						foreach (object element in enumerable)
-						{
-							strResponse = element.ToString();
-							Console.WriteLine(String.Format("resp:{0} :: j: {1}", strResponse, j));
-							if(j<total_msg/2)
-								Assert.AreEqual(j.ToString(), strResponse);
-							j++;
-						}
-					}
-					else
-					{
-						Assert.Fail("No response");
-					}
-				}             
-			}  
+			
+			ParseResponse(common.Response, 0, totalMessages/2, "");
 		}
 	}
 }

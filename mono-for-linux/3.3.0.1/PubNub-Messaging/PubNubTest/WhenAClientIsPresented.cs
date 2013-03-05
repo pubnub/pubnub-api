@@ -1,11 +1,11 @@
 using System;
-using PubNub_Messaging;
+using PubNubMessaging.Core;
 using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
 
 
-namespace PubNubTest
+namespace PubNubMessaging.Tests
 {
     [TestFixture]
     public class WhenAClientIsPresented 
@@ -21,35 +21,32 @@ namespace PubNubTest
                 false
             );
             string channel = "hello_world";
-            Common cm = new Common();
-            cm.deliveryStatus = false;
-            cm.objResponse = null;
+            Common common = new Common();
+            common.DeliveryStatus = false;
+            common.Response = null;
 
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenAClientIsPresented";
-            unitTest.TestCaseName = "ThenPresenceShouldReturnReceivedMessage";
-            pubnub.PubnubUnitTest = unitTest;
+            pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenAClientIsPresented", "ThenPresenceShouldReturnReceivedMessage");
 
-            pubnub.presence(channel, cm.DisplayReturnMessage);
+            pubnub.Presence(channel, common.DisplayReturnMessage);
             //while (!cm.deliveryStatus) ;
-            //cm.objResponse = null;
-            pubnub.subscribe(channel, cm.DisplayReturnMessageDummy);
-            while (!cm.deliveryStatus) ;
+            //cm.response = null;
+            pubnub.Subscribe(channel, common.DisplayReturnMessageDummy);
+            while (!common.DeliveryStatus) ;
 
-            string strResponse = "";
-            if (cm.objResponse.Equals (null)) {
+            string response = "";
+            if (common.Response.Equals (null)) {
                 Assert.Fail("Null response");
             }
             else
             {
-                IList<object> fields = cm.objResponse as IList<object>;
-                foreach (object item in fields)
+                IList<object> responseFields = common.Response as IList<object>;
+                foreach (object item in responseFields)
                 {
-                    strResponse = item.ToString();
-                    Console.WriteLine("Resp:" + strResponse);
+                    response = item.ToString();
+                    Console.WriteLine("Response:" + response);
                     //Assert.IsNotEmpty(strResponse);
                 }
-                Assert.AreEqual("hello_world", fields[2]);
+                Assert.AreEqual("hello_world", responseFields[2]);
             }
         }
 
@@ -63,45 +60,57 @@ namespace PubNubTest
                "",
                false
            );
-            string channel = "hello_world";
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenAClientIsPresented";
-            unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
-            pubnub.PubnubUnitTest = unitTest;
+            Common common = new Common();
+            common.DeliveryStatus = false;
+            common.Response = null;
+            
+            HereNow(pubnub, "IfHereNowIsCalledThenItShouldReturnInfo", common.DisplayReturnMessage);
+            while (!common.DeliveryStatus) ;
 
-            Common cm = new Common();
-            cm.deliveryStatus = false;
-            cm.objResponse = null;
-            pubnub.here_now(channel, cm.DisplayReturnMessage);
-            while (!cm.deliveryStatus) ;
+            ParseResponse(common.Response);
+        }
 
-            string strResponse = "";
-            if (cm.objResponse.Equals (null)) {
-                Assert.Fail("Null response");
-            }
-            else
+        void HereNow(Pubnub pubnub, string unitTestCaseName, 
+                                            Action<object> userCallback)
+        {
+          string channel = "hello_world";
+
+          PubnubUnitTest unitTest = new PubnubUnitTest();
+          unitTest.TestClassName = "WhenAClientIsPresented";
+          unitTest.TestCaseName = unitTestCaseName;
+          pubnub.PubnubUnitTest = unitTest;
+
+          pubnub.HereNow(channel, userCallback);
+        }
+
+        public void ParseResponse(object commonResponse)
+        {
+          string response = "";
+          if (commonResponse.Equals (null)) {
+            Assert.Fail("Null response");
+          }
+          else
+          {
+            IList<object> responseFields = commonResponse as IList<object>;
+            foreach(object item in responseFields)
             {
-                IList<object> fields = cm.objResponse as IList<object>;
-                foreach(object lst in fields)
-                {
-                    strResponse = lst.ToString();
-                    Console.WriteLine("Resp:" + strResponse);
-                    Assert.IsNotEmpty(strResponse);
-                }
-                Dictionary<string, object> message = (Dictionary<string, object>)fields[0];
-                foreach(KeyValuePair<String, object> entry in message)
-                {
-                    Console.WriteLine("value:" + entry.Value + "  " + "key:" + entry.Key);
-                }
-
-                /*object[] objUuid = (object[])message["uuids"];
-                foreach (object obj in objUuid)
-                {
-                    Console.WriteLine(obj.ToString()); 
-                }*/
-                //Assert.AreNotEqual(0, message["occupancy"]);
+              response = item.ToString();
+              Console.WriteLine("Response:" + response);
+              Assert.IsNotEmpty(response);
             }
-
+            Dictionary<string, object> message = (Dictionary<string, object>)responseFields[0];
+            foreach(KeyValuePair<String, object> entry in message)
+            {
+              Console.WriteLine("value:" + entry.Value + "  " + "key:" + entry.Key);
+            }
+            
+            /*object[] objUuid = (object[])message["uuids"];
+                    foreach (object obj in objUuid)
+                    {
+                        Console.WriteLine(obj.ToString()); 
+                    }*/
+            //Assert.AreNotEqual(0, message["occupancy"]);
+          }
         }
 
         [Test]
@@ -113,47 +122,15 @@ namespace PubNubTest
                "",
                "enigma",
                false
-           );
-            string channel = "hello_world";
-            PubnubUnitTest unitTest = new PubnubUnitTest();
-            unitTest.TestClassName = "WhenAClientIsPresented";
-            unitTest.TestCaseName = "IfHereNowIsCalledThenItShouldReturnInfo";
-            pubnub.PubnubUnitTest = unitTest;
+            );
+            Common common = new Common();
+            common.DeliveryStatus = false;
+            common.Response = null;
+            
+            HereNow(pubnub, "IfHereNowIsCalledThenItShouldReturnInfo", common.DisplayReturnMessage);
+            while (!common.DeliveryStatus) ;
 
-            Common cm = new Common();
-            cm.deliveryStatus = false;
-            cm.objResponse = null;
-
-            pubnub.here_now(channel, cm.DisplayReturnMessage);
-            while (!cm.deliveryStatus) ;
-
-            string strResponse = "";
-            if (cm.objResponse.Equals (null)) {
-                Assert.Fail("Null response");
-            }
-            else
-            {
-                IList<object> fields = cm.objResponse as IList<object>;
-                foreach(object lst in fields)
-                {
-                    strResponse = lst.ToString();
-                    Console.WriteLine("resp:" + strResponse);
-                    Assert.IsNotEmpty(strResponse);
-                }
-                Dictionary<string, object> message = (Dictionary<string, object>)fields[0];
-                foreach(KeyValuePair<String, object> entry in message)
-                {
-                    Console.WriteLine("value:" + entry.Value + "  " + "key:" + entry.Key);
-                }
-
-                /*object[] objUuid = (object[])message["uuids"];
-                foreach (object obj in objUuid)
-                {
-                    Console.WriteLine(obj.ToString()); 
-                }*/
-                //Assert.AreNotEqual(0, message["occupancy"]);
-            }
-
+            ParseResponse(common.Response);
         }
     }
 }
