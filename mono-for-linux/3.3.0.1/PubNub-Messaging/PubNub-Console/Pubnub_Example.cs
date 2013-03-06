@@ -60,6 +60,21 @@ namespace PubNubMessaging.Core
 			pubnub = new Pubnub("demo", "demo", "", cipheryKey,
 			                    (enableSSL.Trim().ToLower() == "y") ? true : false);
 
+			Console.WriteLine("Use Custom Session UUID? ENTER Y for Yes, else N");
+			string enableCustomUUID = Console.ReadLine();
+			if (enableCustomUUID.Trim().ToLower() == "y")
+			{
+				Console.WriteLine("ENTER Session UUID.");
+				string sessionUUID = Console.ReadLine();
+				pubnub.SessionUUID = sessionUUID;
+				Console.WriteLine("Accepted Custom Session UUID.");
+			}
+			else
+			{
+				Console.WriteLine("Default Session UUID opted.");
+			}
+			Console.WriteLine();
+
 			Console.WriteLine("Proxy Server exists? ENTER Y for Yes, else N");
 			string enableProxy = Console.ReadLine();
 			if (enableProxy.Trim().ToLower() == "y")

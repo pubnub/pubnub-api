@@ -2,16 +2,13 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Pubnub-Messaging/Pubnub_MessagingMain.cs">
     <Files>
-      <File FileName="Pubnub-Messaging/Pubnub_MessagingMain.cs" Line="35" Column="70" />
-      <File FileName="../../mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/PubnubExample.cs" Line="96" Column="7" />
+      <File FileName="Pubnub-Messaging/Pubnub_MessagingMain.cs" Line="18" Column="26" />
       <File FileName="Pubnub-Messaging/Pubnub_MessagingSub.cs" Line="89" Column="58" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Pubnub-Messaging" expanded="True">
-            <Node name="Pubnub_MessagingMain.cs" selected="True" />
-          </Node>
+          <Node name="Pubnub-Messaging" expanded="True" selected="True" />
           <Node name="Pubnub-Messaging.Tests" expanded="True" />
         </State>
       </Pad>

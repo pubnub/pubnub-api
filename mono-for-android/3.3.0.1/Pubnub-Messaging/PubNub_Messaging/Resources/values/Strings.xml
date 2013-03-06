@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="customUuid">Enter custom UUID or leave blank to use the default UUID</string>
 	<string name="enableproxy">Enable Proxy</string>
 	<string name="proxy">Proxy</string>
 	<string name="setProxy">Set</string>

@@ -320,6 +320,28 @@ namespace PubNubMessaging.Tests
 			return data;
 		}
 		
+		private Dictionary<string, string> LoadWhenAClientIsPresentedThenPresenceShouldReturnCustomUUID()
+		{
+			Dictionary<string, string> data = new Dictionary<string, string>();
+#if ((!__MonoCS__) && (!SILVERLIGHT) && (!WINDOWS_PHONE))
+			data.Add("/subscribe/demo/hello_world-pnpres/0/0", "[[],\"13559007117760880\"]");
+			data.Add("/subscribe/demo/testChannel/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"CustomSessionUUIDTest\", \"occupancy\": 1}],\"13559011560379628\"]");
+			data.Add("/subscribe/demo/hello_world-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
+			data.Add("/subscribe/demo/hello_world/0/0", "[[],\"13559006802662768\"]");
+			data.Add("/subscribe/demo/hello_world/0/13559006802662768", "[[\"f7wNXpx8Ys8pVJNR5ZHT9g==\"],\"13559014566792816\"]");
+			data.Add("/subscribe/demo/hello_world/0/13559014566792816", "[[],\"13559014566792816\"]");              
+#else
+			data.Add("/subscribe/demo/hello_world-pnpres/0/0", "[[],\"13559007117760880\"]");
+			data.Add("/subscribe/demo/hello_world-pnpres/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"CustomSessionUUIDTest\", \"occupancy\": 1}],\"13559011560379628\"]");
+			data.Add("/subscribe/demo/hello_world-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
+			data.Add("/subscribe/demo/hello_world/0/0", "[[],\"13559006802662768\"]");
+			data.Add("/subscribe/demo/hello_world/0/13559006802662768", "[[\"demo test for stubs\"],\"13559014566792816\"]");
+			data.Add("/subscribe/demo/hello_world/0/13559014566792816", "[[],\"13559014566792816\"]");
+#endif
+			data.Add("/v2/presence/sub_key/demo/channel/hello_world/leave", "{\"action\": \"leave\"}");
+			return data;
+		}
+		
 		public string GetStubResponse(Uri request)
 		{
 			Dictionary<string,string> responseDictionary = null;
@@ -340,6 +362,9 @@ namespace PubNubMessaging.Tests
 					break;
 				case "IfHereNowIsCalledThenItShouldReturnInfo":
 					responseDictionary = LoadWhenAClientIsPresentedIfHereNowIsCalledThenItShouldReturnInfo();
+					break;
+				case "ThenPresenceShouldReturnCustomUUID":
+					responseDictionary = LoadWhenAClientIsPresentedThenPresenceShouldReturnCustomUUID();
 					break;
 				default:
 					break;

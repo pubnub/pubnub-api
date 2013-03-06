@@ -24,13 +24,28 @@ namespace PubnubMessaging
 			Pubnub pubnub = null;
 
 			EntryElement entryChannelName = new EntryElement("Channel Name", "Enter Channel Name", "");
+			entryChannelName.AutocapitalizationType = UITextAutocapitalizationType.None;
+			entryChannelName.AutocorrectionType = UITextAutocorrectionType.No;
+
 			EntryElement entryCipher = new EntryElement("Cipher", "Enter Cipher", "");
+			entryCipher.AutocapitalizationType = UITextAutocapitalizationType.None;
+			entryCipher.AutocorrectionType = UITextAutocorrectionType.No;
 
 			EntryElement entryProxyServer = new EntryElement("Server", "Enter Server", "");
+			entryProxyServer.AutocapitalizationType = UITextAutocapitalizationType.None;
+			entryProxyServer.AutocorrectionType = UITextAutocorrectionType.No;
+
 			EntryElement entryProxyPort = new EntryElement("Port", "Enter Port", "");
 
 			EntryElement entryProxyUser = new EntryElement("Username", "Enter Username", "");
+			entryProxyUser.AutocapitalizationType = UITextAutocapitalizationType.None;
+			entryProxyUser.AutocorrectionType = UITextAutocorrectionType.No;
+
 			EntryElement entryProxyPassword = new EntryElement("Password", "Enter Password", "", true);
+
+			EntryElement entryCustonUuid = new EntryElement("CustomUuid", "Enter Custom UUID", "");
+			entryCustonUuid.AutocapitalizationType = UITextAutocapitalizationType.None;
+			entryCustonUuid.AutocorrectionType = UITextAutocorrectionType.No;
 
 			BooleanElement proxyEnabled = new BooleanElement ("Proxy", false);
 
@@ -44,6 +59,10 @@ namespace PubnubMessaging
 				new Section ("Enter cipher key for encryption. Leave blank for unencrypted transfer.")
 				{
 					entryCipher
+				},
+				new Section ("Enter custom UUID or leave blank to use the default UUID")
+				{
+					entryCustonUuid
 				},
 				new Section()
 				{
@@ -72,6 +91,10 @@ namespace PubnubMessaging
 						if(errorFree)
 						{
 							pubnub = new Pubnub ("demo", "demo", "", entryCipher.Value, sslEnabled.Value);
+							if(!String.IsNullOrWhiteSpace (entryCustonUuid.Value.Trim()))
+							{
+								pubnub.SessionUUID = entryCustonUuid.Value.Trim();
+							}
 						}
 
 						if ((errorFree) && (proxyEnabled.Value))

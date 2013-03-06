@@ -1,14 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub_Messaging/LaunchScreen.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Andr.Unit-master/Andr.Unit/WhenDetailedHistoryIsRequested.cs">
     <Files>
-      <File FileName="PubNub_Messaging/Resources/values/Strings.xml" Line="13" Column="44" />
-      <File FileName="PubNub_Messaging/LaunchScreen.cs" Line="166" Column="40" />
+      <File FileName="PubNub_Messaging/Resources/values/Strings.xml" Line="3" Column="28" />
+      <File FileName="PubNub_Messaging/LaunchScreen.cs" Line="232" Column="45" />
+      <File FileName="Andr.Unit-master/Andr.Unit/PubnubUnitTest.cs" Line="14" Column="3" />
+      <File FileName="Andr.Unit-master/Andr.Unit/WhenAClientIsPresented.cs" Line="13" Column="9" />
+      <File FileName="Andr.Unit-master/Andr.Unit/WhenDetailedHistoryIsRequested.cs" Line="6" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Andr.Unit" expanded="True" />
+          <Node name="Andr.Unit" expanded="True">
+            <Node name="WhenDetailedHistoryIsRequested.cs" selected="True" />
+          </Node>
           <Node name="PubNubMessaging" expanded="True">
             <Node name="Resources" expanded="True">
               <Node name="drawable" expanded="True" />
@@ -16,7 +21,6 @@
               <Node name="layout-large" expanded="True" />
               <Node name="values" expanded="True" />
             </Node>
-            <Node name="LaunchScreen.cs" selected="True" />
           </Node>
         </State>
       </Pad>
@@ -37,6 +41,6 @@
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.PubNubMessaging AndroidDeviceId-Debug="emulator-5554" />
   <MonoDevelop.Ide.ItemProperties.Andr.Unit AndroidDeviceId-Debug="emulator-5554" />
+  <MonoDevelop.Ide.ItemProperties.PubNubMessaging AndroidDeviceId-Debug="emulator-5554" />
 </Properties>

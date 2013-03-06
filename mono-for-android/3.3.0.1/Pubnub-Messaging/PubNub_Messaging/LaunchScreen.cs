@@ -210,6 +210,7 @@ namespace PubNubMessaging.Core
 
 				ToggleButton tbSsl = FindViewById<ToggleButton> (Resource.Id.tbSsl);
 				EditText txtCipher = FindViewById<EditText> (Resource.Id.txtCipher);
+				EditText txtCustomUuid = FindViewById<EditText> (Resource.Id.txtCustomUuid);
 
 				var mainActivity = new Intent(this, typeof(MainActivity));
 
@@ -226,6 +227,10 @@ namespace PubNubMessaging.Core
 				mainActivity.PutExtra("Cipher", txtCipher.Text.Trim());
 
 				pubnub = new Pubnub ("demo", "demo", "", txtCipher.Text.Trim(), tbSsl.Checked);
+				if(!String.IsNullOrWhiteSpace (txtCustomUuid.Text.Trim()))
+				{
+					pubnub.SessionUUID = txtCustomUuid.Text.Trim();
+				}
 
 				bool errorFree = true;
 

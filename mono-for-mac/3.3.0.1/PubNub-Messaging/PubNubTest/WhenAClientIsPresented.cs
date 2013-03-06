@@ -132,6 +132,49 @@ namespace PubNubMessaging.Tests
 
             ParseResponse(common.Response);
         }
+
+        [Test]
+        public void ThenPresenceShouldReturnCustomUUID()
+        {
+          Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
+          
+          Common common = new Common();
+          common.DeliveryStatus = false;
+          common.Response = null;
+
+          pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenAClientIsPresented", "ThenPresenceShouldReturnCustomUUID");;
+          pubnub.SessionUUID = "CustomSessionUUIDTest";
+          
+          string channel = "hello_world";
+
+          pubnub.Presence(channel, common.DisplayReturnMessage);
+          
+          pubnub.Subscribe(channel, common.DisplayReturnMessageDummy);
+
+          while (!common.DeliveryStatus) ;
+          
+          string response = "";
+          if (common.Response.Equals (null)) {
+            Assert.Fail("Null response");
+          }
+          else
+          {
+            IList<object> responseFields = common.Response as IList<object>;
+            if(responseFields != null)
+            {
+                foreach (object item in responseFields)
+                {
+                  response = item.ToString();
+                  Console.WriteLine("Response:" + response);
+                }
+                Assert.True((responseFields[0].ToString()).Contains(pubnub.SessionUUID));
+            }
+            else
+            {
+                Assert.Fail("null response");
+            }
+          }          
+        }
     }
 }
 

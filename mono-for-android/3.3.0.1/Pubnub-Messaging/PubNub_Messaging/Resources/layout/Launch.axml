@@ -53,6 +53,23 @@
     <TableRow>
         <TextView
             android:layout_column="0"
+            android:layout_span="2"
+            android:text="@string/customUuid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </TableRow>
+    <TableRow>
+        <EditText
+            android:layout_column="0"
+            android:layout_span="2"
+            android:id="@+id/txtCustomUuid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:layout_column="0"
             android:text="@string/proxy"
             android:id="@+id/tvProxy"
             android:layout_width="wrap_content"

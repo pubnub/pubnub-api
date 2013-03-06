@@ -1,4 +1,4 @@
-//Build Date: Jan 08, 2013
+//Build Date: Jan 15, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -129,6 +129,18 @@ namespace PubNubMessaging.Core
 		private string sessionUUID = "";
 		private string parameters = "";
 		
+		public string SessionUUID
+		{
+			get
+			{
+				return sessionUUID;
+			}
+			set
+			{
+				sessionUUID = value;
+			}
+		}
+		
 		/**
          * Pubnub instance initialization function
          * 
@@ -159,8 +171,8 @@ namespace PubNubMessaging.Core
 			this.secretKey = secretKey;
 			this.cipherKey = cipherKey;
 			this.ssl = sslOn;
-			if (this.sessionUUID == "")
-				this.sessionUUID = Guid.NewGuid().ToString();
+			
+			VerifyOrSetSessionUUID();
 			
 			// SSL is ON?
 			if (this.ssl)
@@ -1136,6 +1148,7 @@ namespace PubNubMessaging.Core
 				url.Append(EncodeUricomponent(url_bit, type));
 			}
 			
+			VerifyOrSetSessionUUID();
 			if (type == ResponseType.Presence || type == ResponseType.Subscribe)
 			{
 				url.Append("?uuid=");
@@ -1181,6 +1194,14 @@ namespace PubNubMessaging.Core
 			{
 				Console.WriteLine(ex.ToString());
 				return false;
+			}
+		}
+		
+		private void VerifyOrSetSessionUUID()
+		{
+			if (string.IsNullOrEmpty(this.sessionUUID) || string.IsNullOrEmpty(this.sessionUUID.Trim()))
+			{
+				this.sessionUUID = Guid.NewGuid().ToString();
 			}
 		}
 		
@@ -1653,6 +1674,7 @@ namespace PubNubMessaging.Core
 				url.Append(EncodeUricomponent(urlBit, type));
 			}
 			
+			VerifyOrSetSessionUUID();
 			if (type == ResponseType.Presence || type == ResponseType.Subscribe || type == ResponseType.Leave)
 			{
 				url.Append("?uuid=");
@@ -1662,6 +1684,18 @@ namespace PubNubMessaging.Core
 			if (type == ResponseType.DetailedHistory)
 				url.Append(parameters);
 			
+#if (WINDOWS_PHONE)
+			if (type == ResponseType.Presence || type == ResponseType.Subscribe || type == ResponseType.Leave || type == ResponseType.DetailedHistory)
+			{
+				url.Append("&nocache=");
+				url.Append(Guid.NewGuid().ToString());
+			}
+			else
+			{
+				url.Append("?nocache=");
+				url.Append(Guid.NewGuid().ToString());
+			}
+#endif
 			
 			Uri requestUri = new Uri(url.ToString());
 			

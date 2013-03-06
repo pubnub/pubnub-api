@@ -1,15 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub-Console/Pubnub.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub-Console/PubnubExample.cs">
     <Files>
-      <File FileName="PubNub-Console/PubnubExample.cs" Line="76" Column="49" />
-      <File FileName="PubNub-Console/Pubnub.cs" Line="2110" Column="1" />
+      <File FileName="PubNub-Console/Pubnub.cs" Line="3500" Column="3" />
+      <File FileName="PubNubTest/WhenAClientIsPresented.cs" Line="177" Column="10" />
+      <File FileName="PubNubTest/PubnubUnitTest.cs" Line="533" Column="1" />
+      <File FileName="PubNub-Console/PubnubExample.cs" Line="212" Column="48" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="PubNub-Messaging" expanded="True">
-            <Node name="Pubnub.cs" selected="True" />
+            <Node name="PubnubExample.cs" selected="True" />
           </Node>
           <Node name="PubNub-Messaging.Tests" expanded="True">
             <Node name="References" expanded="True" />
@@ -46,8 +48,10 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="1171" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="2110" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/Common.cs" line="29" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAClientIsPresented.cs" line="162" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAClientIsPresented.cs" line="152" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAClientIsPresented.cs" line="36" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
