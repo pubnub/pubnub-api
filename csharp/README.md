@@ -23,7 +23,7 @@ NuGet usage and example screencast is also available here: https://vimeo.com/pub
 ## Switching between .net 3.5 and 4
 
 1. Open up the solution file
-2. Right click on PubNub-x (where x is Messaging or Messaging.Tests), and set as Startup Projet
+2. Right click on PubNub-x (where x is Messaging or Messaging.Tests), and set as Startup Project
 3. Right click on PubNub-x, select properties
 4. Click the Application Tab
 5. Set Target Framework to 3.5 or 4
