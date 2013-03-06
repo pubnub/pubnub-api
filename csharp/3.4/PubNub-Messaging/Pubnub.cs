@@ -1300,7 +1300,7 @@ namespace PubNubMessaging.Core
 
                 return true;
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 return false;
             }
@@ -2065,7 +2065,7 @@ namespace PubNubMessaging.Core
         /// </summary>
         /// <param name="type"></param>
         /// <param name="jsonString"></param>
-        /// <param name="channelName"></param>
+        /// <param name="channels"></param>
         /// <param name="reconnect"></param>
         /// <returns></returns>
         private List<object> WrapResultBasedOnResponseType(ResponseType type, string jsonString, string[] channels, bool reconnect, long lastTimetoken)
@@ -2225,7 +2225,7 @@ namespace PubNubMessaging.Core
         {
             string encodedUri = "";
             StringBuilder o = new StringBuilder();
-            foreach (char ch in s.ToCharArray())
+            foreach (char ch in s)
             {
                 if (IsUnsafe(ch,ignoreComma))
                 {
