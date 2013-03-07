@@ -1,19 +1,21 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="PubNubTest/PubnubUnitTest.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub-Console/Pubnub.cs">
     <Files>
-      <File FileName="PubNub-Console/Pubnub.cs" Line="2569" Column="14" />
-      <File FileName="PubNubTest/WhenSubscribedToAChannel.cs" Line="360" Column="29" />
-      <File FileName="PubNubTest/PubnubUnitTest.cs" Line="10" Column="6" />
-      <File FileName="PubNubTest/WhenDetailedHistoryIsRequested.cs" Line="43" Column="14" />
+      <File FileName="PubNub-Console/Pubnub.cs" Line="4049" Column="16" />
+      <File FileName="PubNubTest/WhenAClientIsPresented.cs" Line="142" Column="10" />
+      <File FileName="PubNubTest/PubnubUnitTest.cs" Line="21" Column="16" />
+      <File FileName="PubNub-Console/PubnubExample.cs" Line="223" Column="6" />
+      <File FileName="PubNubTest/Common.cs" Line="37" Column="47" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="PubNub-Messaging" expanded="True" />
+          <Node name="PubNub-Messaging" expanded="True">
+            <Node name="Pubnub.cs" selected="True" />
+          </Node>
           <Node name="PubNub-Messaging.Tests" expanded="True">
             <Node name="References" expanded="True" />
-            <Node name="PubnubUnitTest.cs" selected="True" />
           </Node>
         </State>
       </Pad>
@@ -42,12 +44,12 @@
           <Node name="PubNub-Messaging.Tests" expanded="True">
             <Node name="PubNubMessaging" expanded="True">
               <Node name="Tests" expanded="True">
-                <Node name="WhenAClientIsPresented" expanded="True" />
+                <Node name="WhenAClientIsPresented" expanded="True">
+                  <Node name="ThenPresenceShouldReturnCustomUUID" selected="True" />
+                </Node>
                 <Node name="WhenAMessageIsPublished" expanded="True" />
-                <Node name="WhenDetailedHistoryIsRequested" selected="True" />
-                <Node name="WhenGetRequestServerTime" expanded="True" />
+                <Node name="WhenDetailedHistoryIsRequested" expanded="True" />
                 <Node name="WhenSubscribedToAChannel" expanded="True" />
-                <Node name="WhenUnsubscribedToAChannel" expanded="True" />
               </Node>
             </Node>
           </Node>
@@ -59,7 +61,11 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="1301" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/Common.cs" line="29" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="1504" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="PubNub-Messaging/Pubnub.cs" line="549" offsetX="648" offsetY="6960" expression="result" liveUpdate="False" />

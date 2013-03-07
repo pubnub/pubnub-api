@@ -471,12 +471,14 @@ namespace PubNubMessaging.Tests
             data.Add("/subscribe/demo/hello_world/0/13559006802662768", "[[\"f7wNXpx8Ys8pVJNR5ZHT9g==\"],\"13559014566792816\"]");
             data.Add("/subscribe/demo/hello_world/0/13559014566792816", "[[],\"13559014566792816\"]");              
           #else
-              data.Add("/subscribe/demo/hello_world-pnpres/0/0", "[[],\"13559007117760880\"]");
-              data.Add("/subscribe/demo/hello_world-pnpres,hello_world/0/0", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"CustomSessionUUIDTest\", \"occupancy\": 1}],\"13559011560379628\"]");
-              data.Add("/subscribe/demo/hello_world-pnpres/0/13559011560379628", "[[],\"13559011560379628\"]");
-              data.Add("/subscribe/demo/hello_world/0/0", "[[],\"13559006802662768\"]");
-              data.Add("/subscribe/demo/hello_world/0/13559006802662768", "[[\"demo test for stubs\"],\"13559014566792816\"]");
-              data.Add("/subscribe/demo/hello_world/0/13559014566792816", "[[],\"13559014566792816\"]");
+                data.Add("/subscribe/demo/hello_world-pnpres/0/0", "[[],\"13559007117760880\"]");
+                data.Add("/v2/presence/sub_key/demo/channel/hello_world", "{\"uuids\":[\"1b31e299-0c55-4e0b-b1da-04243dd1b4aa\",\"CustomSessionUUIDTest\"],\"occupancy\":2}");
+                data.Add("/subscribe/demo/hello_world/0/0", "[[],\"13559011560379628\"]");
+                data.Add("/subscribe/demo/hello_world/0/13559011560379628", "[[],\"13559014566792816\"]");              
+                data.Add("/subscribe/demo/hello_world/0/13559007117760880", "[[{\"action\": \"join\", \"timestamp\": 1355929955, \"uuid\": \"CustomSessionUUIDTest\", \"occupancy\": 1}],\"13559011560379628\"]");
+                data.Add("/subscribe/demo/hello_world/0/13559006802662768", "[[\"f7wNXpx8Ys8pVJNR5ZHT9g==\"],\"13559014566792816\"]");
+                data.Add("/subscribe/demo/hello_world/0/13559014566792816", "[[],\"13559014566792816\"]");              
+
           #endif
               data.Add("/v2/presence/sub_key/demo/channel/hello_world/leave", "{\"action\": \"leave\"}");
           return data;

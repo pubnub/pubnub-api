@@ -1,4 +1,4 @@
-//Build Date: Feb 18, 2013
+//Build Date: March 07, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -122,7 +122,9 @@ namespace PubNubMessaging.Core
         
         // Pubnub Core API implementation
         private string origin = "pubsub.pubnub.com";
+#if (__MonoCS__)
         private string domainName = "pubsub.pubnub.com";
+#endif
         private string publishKey = "";
         private string subscribeKey = "";
         private string secretKey = "";
@@ -1304,7 +1306,7 @@ namespace PubNubMessaging.Core
                 
                 return true;
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 return false;
             }
@@ -1363,6 +1365,8 @@ namespace PubNubMessaging.Core
 #endif
                 }
                 LoggingMethod.WriteToLog(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
+                
+                
 #if (__MonoCS__)
                 if((pubnubRequestState.Type == ResponseType.Publish) && (RequestIsUnsafe(requestUri)))
                 {
@@ -1393,17 +1397,21 @@ namespace PubNubMessaging.Core
             }
         }
         
-        bool RequestIsUnsafe (Uri requestUri)
+#if (__MonoCS__)
+        bool RequestIsUnsafe(Uri requestUri)
         {
             bool isUnsafe = false;
-            StringBuilder requestMessage = new StringBuilder ();
-            if (requestUri.Segments.Length > 7) {
-                for (int i = 7; i< requestUri.Segments.Length; i++) {
-                    requestMessage.Append (requestUri.Segments [i]);
+            StringBuilder requestMessage = new StringBuilder();
+            if (requestUri.Segments.Length > 7)
+            {
+                for (int i = 7; i < requestUri.Segments.Length; i++)
+                {
+                    requestMessage.Append(requestUri.Segments[i]);
                 }
             }
-            foreach (char ch in requestMessage.ToString().ToCharArray()) {
-                if(" ~`!@#$^&*()+=[]\\{}|;':\"./<>?".IndexOf(ch) >= 0)
+            foreach (char ch in requestMessage.ToString().ToCharArray())
+            {
+                if (" ~`!@#$^&*()+=[]\\{}|;':\"./<>?".IndexOf(ch) >= 0)
                 {
                     isUnsafe = true;
                     break;
@@ -1412,117 +1420,131 @@ namespace PubNubMessaging.Core
             return isUnsafe;
         }
         
-        
-        string CreateRequest (Uri requestUri)
+        string CreateRequest(Uri requestUri)
         {
-            StringBuilder requestBuilder = new StringBuilder ();
-            requestBuilder.Append ("GET ");
-            requestBuilder.Append (requestUri.OriginalString);
+            StringBuilder requestBuilder = new StringBuilder();
+            requestBuilder.Append("GET ");
+            requestBuilder.Append(requestUri.OriginalString);
             
-            if (ssl) {
-                requestBuilder.Append (string.Format (" HTTP/1.1\r\nConnection: close\r\nHost: {0}:443\r\n\r\n", this.domainName));
-            } else {
-                requestBuilder.Append (string.Format (" HTTP/1.1\r\nConnection: close\r\nHost: {0}:80\r\n\r\n", this.domainName));
+            if (ssl)
+            {
+                requestBuilder.Append(string.Format(" HTTP/1.1\r\nConnection: close\r\nHost: {0}:443\r\n\r\n", this.domainName));
+            }
+            else
+            {
+                requestBuilder.Append(string.Format(" HTTP/1.1\r\nConnection: close\r\nHost: {0}:80\r\n\r\n", this.domainName));
             }
             return requestBuilder.ToString();
         }
         
-        void ConnectToHostAndSendRequest<T> (bool sslEnabled, TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
+        void ConnectToHostAndSendRequest<T>(bool sslEnabled, TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
         {
-            NetworkStream stream = tcpClient.GetStream ();
+            NetworkStream stream = tcpClient.GetStream();
             
-            string proxyAuth = string.Format ("{0}:{1}", _pubnubProxy.ProxyUserName, _pubnubProxy.ProxyPassword);
-            byte[] proxyAuthBytes = Encoding.UTF8.GetBytes (proxyAuth);
+            string proxyAuth = string.Format("{0}:{1}", _pubnubProxy.ProxyUserName, _pubnubProxy.ProxyPassword);
+            byte[] proxyAuthBytes = Encoding.UTF8.GetBytes(proxyAuth);
             
             //Proxy-Authenticate: authentication mode Basic, Digest and NTLM
             string connectRequest = "";
-            if (sslEnabled) {
-                connectRequest = string.Format ("CONNECT {0}:443  HTTP/1.1\r\nProxy-Authorization: Basic {1}\r\nHost: {0}\r\n\r\n", this.domainName, Convert.ToBase64String (proxyAuthBytes));
-            } else {
-                connectRequest = string.Format ("CONNECT {0}:80  HTTP/1.1\r\nProxy-Authorization: Basic {1}\r\nHost: {0}\r\n\r\n", this.domainName, Convert.ToBase64String (proxyAuthBytes));
+            if (sslEnabled)
+            {
+                connectRequest = string.Format("CONNECT {0}:443  HTTP/1.1\r\nProxy-Authorization: Basic {1}\r\nHost: {0}\r\n\r\n", this.domainName, Convert.ToBase64String(proxyAuthBytes));
+            }
+            else
+            {
+                connectRequest = string.Format("CONNECT {0}:80  HTTP/1.1\r\nProxy-Authorization: Basic {1}\r\nHost: {0}\r\n\r\n", this.domainName, Convert.ToBase64String(proxyAuthBytes));
             }
             
-            byte[] tunnelRequest = Encoding.UTF8.GetBytes (connectRequest);
-            stream.Write (tunnelRequest, 0, tunnelRequest.Length);
-            stream.Flush ();
+            byte[] tunnelRequest = Encoding.UTF8.GetBytes(connectRequest);
+            stream.Write(tunnelRequest, 0, tunnelRequest.Length);
+            stream.Flush();
             
             stream.ReadTimeout = pubnubRequestState.Request.Timeout * 5;
             
             StateObject<T> state = new StateObject<T>();
-            state.tcpClient =tcpClient;
+            state.tcpClient = tcpClient;
             state.RequestState = pubnubRequestState;
             state.requestString = requestString;
             state.netStream = stream;
             
             //stream.BeginRead(state.buffer, 0, state.buffer.Length, new AsyncCallback(ConnectToHostAndSendRequestCallback<T>), state);
             
-            StringBuilder response = new StringBuilder ();
+            StringBuilder response = new StringBuilder();
             var responseStream = new StreamReader(stream);
             
             char[] buffer = new char[2048];
             
-            int charsRead = responseStream.Read (buffer, 0, buffer.Length); 
-            bool connEstablished= false;
-            while (charsRead > 0) {             
-                response.Append (buffer); 
-                if ((response.ToString ().IndexOf ("200 Connection established") > 0) || (response.ToString ().IndexOf ("200 OK") > 0))
+            int charsRead = responseStream.Read(buffer, 0, buffer.Length);
+            bool connEstablished = false;
+            while (charsRead > 0)
+            {
+                response.Append(buffer);
+                if ((response.ToString().IndexOf("200 Connection established") > 0) || (response.ToString().IndexOf("200 OK") > 0))
                 {
                     connEstablished = true;
                     break;
                 }
-                charsRead = responseStream.Read (buffer, 0, buffer.Length); 
+                charsRead = responseStream.Read(buffer, 0, buffer.Length);
             }
             
-            if (connEstablished) {
-                if (sslEnabled) {
-                    SendSslRequest<T> (stream, tcpClient, pubnubRequestState, requestString);
-                } else {
+            if (connEstablished)
+            {
+                if (sslEnabled)
+                {
+                    SendSslRequest<T>(stream, tcpClient, pubnubRequestState, requestString);
+                }
+                else
+                {
                     SendRequest<T>(tcpClient, pubnubRequestState, requestString);
                 }
                 
-            } else if(response.ToString ().IndexOf("407 Proxy Authentication Required") >0 )
+            }
+            else if (response.ToString().IndexOf("407 Proxy Authentication Required") > 0)
             {
-                int pos = response.ToString().IndexOf("Proxy-Authenticate"); 
+                int pos = response.ToString().IndexOf("Proxy-Authenticate");
                 string desc = "";
-                if(pos >0)
+                if (pos > 0)
                 {
                     desc = response.ToString().Substring(pos, response.ToString().IndexOf("\r\n", pos) - pos);
                 }
-                throw new WebException (string.Format("Proxy Authentication Required. Desc: {0}", desc));
+                throw new WebException(string.Format("Proxy Authentication Required. Desc: {0}", desc));
             }
-            else{
-                throw new WebException ("Couldn't connect to the server");
+            else
+            {
+                throw new WebException("Couldn't connect to the server");
             }
         }
         
-        private void ConnectToHostAndSendRequestCallback<T> (IAsyncResult asynchronousResult)
+        private void ConnectToHostAndSendRequestCallback<T>(IAsyncResult asynchronousResult)
         {
             StateObject<T> asynchStateObject = asynchronousResult.AsyncState as StateObject<T>;
             RequestState<T> asynchRequestState = asynchStateObject.RequestState;
             
-            string channel="";
+            string channel = "";
             if (asynchRequestState != null && asynchRequestState.Channels != null)
             {
                 channel = string.Join(",", asynchRequestState.Channels);
             }
             
-            try{
+            try
+            {
                 string requestString = asynchStateObject.requestString;
                 TcpClient tcpClient = asynchStateObject.tcpClient;
                 
                 NetworkStream netStream = asynchStateObject.netStream;
                 int bytesRead = netStream.EndRead(asynchronousResult);
                 
-                if (bytesRead > 0) {
-                    asynchStateObject.sb.Append(Encoding.ASCII.GetString(asynchStateObject.buffer,0,bytesRead));
+                if (bytesRead > 0)
+                {
+                    asynchStateObject.sb.Append(Encoding.ASCII.GetString(asynchStateObject.buffer, 0, bytesRead));
                     
                     netStream.BeginRead(asynchStateObject.buffer, 0, StateObject<T>.BufferSize,
                                         new AsyncCallback(ConnectToHostAndSendRequestCallback<T>), asynchStateObject);
-                } 
+                }
                 else
                 {
                     string resp = asynchStateObject.sb.ToString();
-                    if(resp.IndexOf("200 Connection established") > 0)
+                    if (resp.IndexOf("200 Connection established") > 0)
                     {
                         SendSslRequest<T>(netStream, tcpClient, asynchRequestState, requestString);
                     }
@@ -1542,7 +1564,7 @@ namespace PubNubMessaging.Core
             }
         }
         
-        void SendSslRequest<T> (NetworkStream netStream, TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
+        void SendSslRequest<T>(NetworkStream netStream, TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
         {
             //NetworkStream netStream = tcpClient.GetStream();
             
@@ -1550,44 +1572,45 @@ namespace PubNubMessaging.Core
             
             sslStream.AuthenticateAsClient(this.domainName);
             StateObject<T> state = new StateObject<T>();
-            state.tcpClient =tcpClient;
+            state.tcpClient = tcpClient;
             state.sslns = sslStream;
             state.RequestState = pubnubRequestState;
             
             byte[] sendBuffer = UTF8Encoding.UTF8.GetBytes(requestString);
             
-            sslStream.Write(sendBuffer);        
+            sslStream.Write(sendBuffer);
             sslStream.Flush();
             sslStream.ReadTimeout = pubnubRequestState.Request.Timeout;
             sslStream.BeginRead(state.buffer, 0, state.buffer.Length, new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
         }
         
-        void SendRequest<T> (TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
+        void SendRequest<T>(TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
         {
             NetworkStream netStream = tcpClient.GetStream();
             
             StateObject<T> state = new StateObject<T>();
-            state.tcpClient =tcpClient;
+            state.tcpClient = tcpClient;
             state.netStream = netStream;
             state.RequestState = pubnubRequestState;
             
             System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(netStream);
-            streamWriter.Write (requestString);
-            streamWriter.Flush ();
+            streamWriter.Write(requestString);
+            streamWriter.Flush();
             netStream.ReadTimeout = pubnubRequestState.Request.Timeout;
             netStream.BeginRead(state.buffer, 0, state.buffer.Length, new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
             
         }
         
-        private void SendRequestUsingTcpClient<T> (Uri requestUri, RequestState<T> pubnubRequestState)
+        private void SendRequestUsingTcpClient<T>(Uri requestUri, RequestState<T> pubnubRequestState)
         {
-            TcpClient tcpClient = new TcpClient ();
+            TcpClient tcpClient = new TcpClient();
             tcpClient.NoDelay = false;
             tcpClient.SendTimeout = pubnubRequestState.Request.Timeout;
             
             string requestString = CreateRequest(requestUri);
             
-            if (ssl) {
+            if (ssl)
+            {
                 if (pubnubEnableProxyConfig && _pubnubProxy != null)
                 {
                     tcpClient.Connect(_pubnubProxy.ProxyServer, _pubnubProxy.ProxyPort);
@@ -1600,8 +1623,8 @@ namespace PubNubMessaging.Core
                     NetworkStream netStream = tcpClient.GetStream();
                     SendSslRequest<T>(netStream, tcpClient, pubnubRequestState, requestString);
                 }
-            } 
-            else 
+            }
+            else
             {
                 if (pubnubEnableProxyConfig && _pubnubProxy != null)
                 {
@@ -1617,22 +1640,25 @@ namespace PubNubMessaging.Core
             }
         }
         
-        private void SendRequestUsingTcpClientCallback<T> (IAsyncResult asynchronousResult)
+        private void SendRequestUsingTcpClientCallback<T>(IAsyncResult asynchronousResult)
         {
             StateObject<T> state = asynchronousResult.AsyncState as StateObject<T>;
             RequestState<T> asynchRequestState = state.RequestState;
-            string channel="";
+            string channel = "";
             if (asynchRequestState != null && asynchRequestState.Channels != null)
             {
                 channel = string.Join(",", asynchRequestState.Channels);
             }
-            try {
+            try
+            {
                 //StateObject<T> state = (StateObject<T>) asynchronousResult.AsyncState;
-                if (ssl) {
+                if (ssl)
+                {
                     SslStream sslns = state.sslns;
                     int bytesRead = sslns.EndRead(asynchronousResult);
                     
-                    if (bytesRead > 0) {
+                    if (bytesRead > 0)
+                    {
                         Decoder decoder = Encoding.UTF8.GetDecoder();
                         char[] chars = new char[decoder.GetCharCount(state.buffer, 0, bytesRead)];
                         decoder.GetChars(state.buffer, 0, bytesRead, chars, 0);
@@ -1640,21 +1666,24 @@ namespace PubNubMessaging.Core
                         
                         sslns.BeginRead(state.buffer, 0, StateObject<T>.BufferSize,
                                         new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
-                    } 
+                    }
                     else
                     {
                         HandleTcpClientResponse(state, asynchRequestState, channel, asynchronousResult);
                     }
-                } else {
+                }
+                else
+                {
                     NetworkStream netStream = state.netStream;
                     int bytesRead = netStream.EndRead(asynchronousResult);
                     
-                    if (bytesRead > 0) {
-                        state.sb.Append(Encoding.ASCII.GetString(state.buffer,0,bytesRead));
+                    if (bytesRead > 0)
+                    {
+                        state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
                         
                         netStream.BeginRead(state.buffer, 0, StateObject<T>.BufferSize,
                                             new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
-                    } 
+                    }
                     else
                     {
                         HandleTcpClientResponse(state, asynchRequestState, channel, asynchronousResult);
@@ -1671,7 +1700,44 @@ namespace PubNubMessaging.Core
             }
         }
         
-        void ProcessResponseCallbackExceptionHandler<T> (Exception ex, RequestState<T> asynchRequestState)
+        void HandleTcpClientResponse<T>(StateObject<T> state, RequestState<T> asynchRequestState, string channel, IAsyncResult asynchronousResult)
+        {
+            List<object> result = new List<object>();
+            if (state.sb.Length > 1)
+            {
+                string jsonString = ParseResponse<T>(state.sb.ToString(), asynchronousResult);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channel, asynchRequestState.Type.ToString(), jsonString), LoggingMethod.LevelInfo);
+                
+                if (overrideTcpKeepAlive)
+                {
+                    TerminateHeartbeatTimer(state.RequestState.Request.RequestUri);
+                }
+                
+                if (!string.IsNullOrWhiteSpace(jsonString))
+                {
+                    result = WrapResultBasedOnResponseType(asynchRequestState.Type, jsonString, asynchRequestState.Channels, asynchRequestState.Reconnect, asynchRequestState.Timetoken);
+                }
+                
+                ProcessResponseCallbacks<T>(result, asynchRequestState);
+            }
+            if (state.tcpClient != null)
+                state.tcpClient.Close();
+        }
+        
+        string ParseResponse<T>(string responseString, IAsyncResult asynchronousResult)
+        {
+            string json = "";
+            int pos = responseString.LastIndexOf('\n');
+            if ((responseString.StartsWith("HTTP/1.1 200 OK") || (responseString.StartsWith("HTTP/1.0 200 OK")) && (pos != -1)))
+            {
+                json = responseString.Substring(pos + 1);
+            }
+            return json;
+        }
+        
+#endif
+        
+        void ProcessResponseCallbackExceptionHandler<T>(Exception ex, RequestState<T> asynchRequestState)
         {
             //common Exception handler
             if (asynchRequestState.Response != null)
@@ -1681,7 +1747,7 @@ namespace PubNubMessaging.Core
             UrlRequestCommonExceptionHandler<T>(asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.Timeout, asynchRequestState.UserCallback, asynchRequestState.ConnectCallback, false);
         }
         
-        void ProcessResponseCallbackWebExceptionHandler<T> (WebException webEx, RequestState<T> asynchRequestState, string channel)
+        void ProcessResponseCallbackWebExceptionHandler<T>(WebException webEx, RequestState<T> asynchRequestState, string channel)
         {
             bool reconnect = false;
             LoggingMethod.WriteToLog(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.ToString(), asynchRequestState.Request.RequestUri.ToString()), LoggingMethod.LevelError);
@@ -1712,7 +1778,7 @@ namespace PubNubMessaging.Core
                     else
                     {
                         _channelInternetRetry.AddOrUpdate(channel, 1, (key, oldValue) => oldValue + 1);
-                        LoggingMethod.WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), asynchRequestState.Type, string.Join(",",asynchRequestState.Channels), _channelInternetRetry[channel], pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), asynchRequestState.Type, string.Join(",", asynchRequestState.Channels), _channelInternetRetry[channel], pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
                     }
                     _channelInternetStatus[channel] = false;
                     
@@ -1724,49 +1790,13 @@ namespace PubNubMessaging.Core
                                                 asynchRequestState.UserCallback, asynchRequestState.ConnectCallback, reconnect);
         }
         
-        void ProcessResponseCallbacks<T> (List<object> result, RequestState<T> asynchRequestState)
+        void ProcessResponseCallbacks<T>(List<object> result, RequestState<T> asynchRequestState)
         {
             if (result != null && result.Count >= 1 && asynchRequestState.UserCallback != null)
             {
                 ResponseToConnectCallback<T>(result, asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.ConnectCallback);
                 ResponseToUserCallback<T>(result, asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.UserCallback);
             }
-        }
-        
-        
-        void HandleTcpClientResponse<T> (StateObject<T> state, RequestState<T> asynchRequestState, string channel, IAsyncResult asynchronousResult)
-        {
-            List<object> result = new List<object>();
-            if (state.sb.Length > 1) 
-            {
-                string jsonString = ParseResponse<T>(state.sb.ToString(), asynchronousResult);
-                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channel, asynchRequestState.Type.ToString(), jsonString), LoggingMethod.LevelInfo);
-                
-                if (overrideTcpKeepAlive)
-                {
-                    TerminateHeartbeatTimer(state.RequestState.Request.RequestUri);
-                }
-                
-                if(!string.IsNullOrWhiteSpace(jsonString))
-                {
-                    result = WrapResultBasedOnResponseType(asynchRequestState.Type, jsonString, asynchRequestState.Channels, asynchRequestState.Reconnect, asynchRequestState.Timetoken);
-                }
-                
-                ProcessResponseCallbacks<T>(result, asynchRequestState);
-            }
-            if(state.tcpClient != null)
-                state.tcpClient.Close();
-        }
-        
-        string ParseResponse<T>(string responseString, IAsyncResult asynchronousResult)
-        {
-            string json ="";
-            int pos = responseString.LastIndexOf('\n');
-            if ((responseString.StartsWith("HTTP/1.1 200 OK") || (responseString.StartsWith("HTTP/1.0 200 OK")) && (pos != -1)))
-            {
-                json = responseString.Substring(pos+1);
-            }
-            return json;
         }
         
         private void UrlProcessResponseCallback<T>(IAsyncResult asynchronousResult)
@@ -2405,7 +2435,7 @@ namespace PubNubMessaging.Core
         /// </summary>
         /// <param name="type"></param>
         /// <param name="jsonString"></param>
-        /// <param name="channelName"></param>
+        /// <param name="channels"></param>
         /// <param name="reconnect"></param>
         /// <returns></returns>
         private List<object> WrapResultBasedOnResponseType(ResponseType type, string jsonString, string[] channels, bool reconnect, long lastTimetoken)
@@ -2565,7 +2595,7 @@ namespace PubNubMessaging.Core
         {
             string encodedUri = "";
             StringBuilder o = new StringBuilder();
-            foreach (char ch in s.ToCharArray())
+            foreach (char ch in s)
             {
                 if (IsUnsafe(ch,ignoreComma))
                 {
@@ -4023,9 +4053,11 @@ namespace PubNubMessaging.Core
         }
     }
     
+#if (__MonoCS__)
     class StateObject<T>
     {
-        public RequestState<T> RequestState {
+        public RequestState<T> RequestState
+        {
             get;
             set;
         }
@@ -4038,4 +4070,5 @@ namespace PubNubMessaging.Core
         public StringBuilder sb = new StringBuilder();
         public string requestString = null;
     }
+#endif
 }

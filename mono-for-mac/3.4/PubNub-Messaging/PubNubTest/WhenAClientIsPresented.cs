@@ -141,41 +141,33 @@ namespace PubNubMessaging.Tests
         {
           Pubnub pubnub = new Pubnub("demo", "demo", "", "", false);
           
-          Common common = new Common();
-          common.DeliveryStatus = false;
-          common.Response = null;
+          Common commonHereNow = new Common();
+          commonHereNow.DeliveryStatus = false;
+          commonHereNow.Response = null;
 
-          pubnub.PubnubUnitTest = common.CreateUnitTestInstance("WhenAClientIsPresented", "ThenPresenceShouldReturnCustomUUID");;
+          Common commonSubscribe = new Common();
+          commonSubscribe.DeliveryStatus = false;
+          commonSubscribe.Response = null;
+
+          pubnub.PubnubUnitTest = commonHereNow.CreateUnitTestInstance("WhenAClientIsPresented", "ThenPresenceShouldReturnCustomUUID");;
           pubnub.SessionUUID = "CustomSessionUUIDTest";
           
           string channel = "hello_world";
 
-          pubnub.Presence(channel, common.DisplayReturnMessageDummy, common.DisplayReturnMessageDummy);
-          
-          pubnub.Subscribe(channel, common.DisplayReturnMessage, common.DisplayReturnMessageDummy);
+          pubnub.Subscribe(channel, commonSubscribe.DisplayReturnMessageDummy, commonSubscribe.DisplayReturnMessage);
+            
+          while (!commonSubscribe.DeliveryStatus);
 
-          while (!common.DeliveryStatus) ;
-          
-          string response = "";
-          if (common.Response.Equals (null)) {
+          pubnub.HereNow<string>(channel, commonHereNow.DisplayReturnMessage);
+
+          while (!commonHereNow.DeliveryStatus);
+
+          if (commonHereNow.Response == null) {
             Assert.Fail("Null response");
           }
           else
           {
-            IList<object> responseFields = common.Response as IList<object>;
-            if(responseFields != null)
-            {
-                foreach (object item in responseFields)
-                {
-                  response = item.ToString();
-                  Console.WriteLine("Response:" + response);
-                }
-                Assert.True((responseFields[0].ToString()).Contains(pubnub.SessionUUID));
-            }
-            else
-            {
-                Assert.Fail("null response");
-            }
+            Assert.True(commonHereNow.Response.ToString().Contains(pubnub.SessionUUID));
           }          
         }
     }

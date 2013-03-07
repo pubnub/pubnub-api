@@ -8,7 +8,6 @@ using System.Net;
 using System.IO;
 using System.Diagnostics;
 using System.Text;
-using Mono.Mozilla;
 using System.Net.Sockets;
 
 namespace PubNubMessaging.Tests
