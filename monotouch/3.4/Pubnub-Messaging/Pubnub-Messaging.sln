@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pubnub-Messaging", "Pubnub-Messaging\Pubnub-Messaging.csproj", "{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pubnub-Messaging.Tests", "Pubnub-Messaging.Tests\Pubnub-Messaging.Tests.csproj", "{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newtonsoft.Json.MonoTouch", "Newtonsoft.Json\Newtonsoft.Json.MonoTouch.csproj", "{12448CD5-D860-4C1C-8B9F-139F3794B9BC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+		Ad-Hoc|iPhone = Ad-Hoc|iPhone
+		AppStore|iPhone = AppStore|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Release|iPhone.Build.0 = Release|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{12448CD5-D860-4C1C-8B9F-139F3794B9BC}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Debug|iPhone.Build.0 = Debug|iPhone
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Release|iPhone.ActiveCfg = Release|iPhone
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Release|iPhone.Build.0 = Release|iPhone
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{DAF3F1BC-9CB3-4950-85B5-A38F8742AA78}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Debug|iPhone.Build.0 = Debug|iPhone
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Release|iPhone.ActiveCfg = Release|iPhone
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Release|iPhone.Build.0 = Release|iPhone
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{E7D70D5E-9E41-4CDA-BB19-E56018F430CE}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Pubnub-Messaging\Pubnub-Messaging.csproj
+	EndGlobalSection
+EndGlobal

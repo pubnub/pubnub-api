@@ -14,42 +14,42 @@ namespace PubNubMessaging.Tests
         public void ThenItShouldReturnReceivedMessage()
         {
             Pubnub pubnub = new Pubnub(
-                "demo",
-                "demo",
-                "",
-                "",
-                false
-            );
+              "demo",
+              "demo",
+              "",
+              "",
+              false
+              );
             string channel = "hello_world";
             Common commonPresence = new Common();
             commonPresence.DeliveryStatus = false;
             commonPresence.Response = null;
-
+            
             pubnub.PubnubUnitTest = commonPresence.CreateUnitTestInstance("WhenAClientIsPresented", "ThenPresenceShouldReturnReceivedMessage");
-
-            pubnub.Presence(channel, commonPresence.DisplayReturnMessage, commonPresence.DisplayReturnMessageDummy);
-
+            
+            pubnub.Presence(channel, commonPresence.DisplayReturnMessageDummy, commonPresence.DisplayReturnMessageDummy);
+            
             Common commonSubscribe = new Common();
             commonSubscribe.DeliveryStatus = false;
             commonSubscribe.Response = null;
-      
-            pubnub.Subscribe(channel, commonSubscribe.DisplayReturnMessage, commonPresence.DisplayReturnMessageDummy);
+            
+            pubnub.Subscribe(channel, commonSubscribe.DisplayReturnMessageDummy, commonSubscribe.DisplayReturnMessage);
             while (!commonSubscribe.DeliveryStatus) ;
-
+            
             string response = "";
-            if (commonPresence.Response.Equals (null)) {
-                Assert.Fail("Null response");
+            if (commonSubscribe.Response == null) {
+              Assert.Fail("Null response");
             }
             else
             {
-                IList<object> responseFields = commonPresence.Response as IList<object>;
-                foreach (object item in responseFields)
-                {
-                    response = item.ToString();
-                    Console.WriteLine("Response:" + response);
-                    //Assert.IsNotEmpty(strResponse);
-                }
-                Assert.AreEqual("hello_world", responseFields[2]);
+              IList<object> responseFields = commonSubscribe.Response as IList<object>;
+              foreach (object item in responseFields)
+              {
+                response = item.ToString();
+                Console.WriteLine("Response:" + response);
+                //Assert.IsNotEmpty(strResponse);
+              }
+              Assert.AreEqual("hello_world", responseFields[2]);
             }
         }
 
