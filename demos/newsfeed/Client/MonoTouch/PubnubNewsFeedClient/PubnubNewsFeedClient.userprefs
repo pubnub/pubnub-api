@@ -3,7 +3,7 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="PubnubNewsFeedClient/NewsFeedMain.cs">
     <Files>
       <File FileName="PubnubNewsFeedClient/AppDelegate.cs" Line="42" Column="6" />
-      <File FileName="PubnubNewsFeedClient/NewsFeedMain.cs" Line="29" Column="63" />
+      <File FileName="PubnubNewsFeedClient/NewsFeedMain.cs" Line="79" Column="32" />
       <File FileName="PubnubNewsFeedClient/Rss.cs" Line="26" Column="1" />
       <File FileName="PubnubNewsFeedClient/Pubnub.cs" Line="1388" Column="1" />
       <File FileName="PubnubNewsFeedClient/NewsElement.cs" Line="158" Column="1" />

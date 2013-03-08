@@ -1,10 +1,10 @@
-﻿<Properties>
+﻿<Properties MonoDevelop.MonoMac.LastXamMacNagTime="03/08/2013 04:42:50">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="PubnubNewsFeedAdmin/PubNubMessagingClass.cs">
     <Files>
       <File FileName="PubnubNewsFeedAdmin/MainWindowController.cs" Line="110" Column="1" />
       <File FileName="PubnubNewsFeedAdmin/RssReader.cs" Line="69" Column="3" />
-      <File FileName="PubnubNewsFeedAdmin/PubNubMessagingClass.cs" Line="113" Column="1" />
+      <File FileName="PubnubNewsFeedAdmin/PubNubMessagingClass.cs" Line="29" Column="40" />
       <File FileName="../MonoTouch/Pubnub-Messaging/Pubnub-Messaging.Tests/WhenAClientIsPresented.cs" Line="94" Column="1" />
       <File FileName="PubnubNewsFeedAdmin/Pubnub.cs" Line="1784" Column="1" />
     </Files>

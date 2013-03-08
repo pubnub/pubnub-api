@@ -151,10 +151,23 @@ namespace PubnubNewsFeedClient
 					//this.Animating = false;
 					if(secOutput.Count > 30)
 					{
-						secOutput.RemoveRange(0, secOutput.Count - 30);
+						secOutput.RemoveRange(30, secOutput.Count-1);
 					}
+
 					if (secOutput.Count > 0) {
-						secOutput.Insert (secOutput.Count, newsElement);					}
+						//secOutput.Insert (secOutput.Count, newsElement);					
+
+                        int count=0;
+                        foreach(NewsElement element in secOutput)
+                        {
+                            if(element.Date <= newsElement.Date)
+                            {
+                                break;
+                            }
+                            count++;
+                        }
+                        secOutput.Insert (count, newsElement);                    
+                    }
 					else
 					{
 						secOutput.Add (newsElement);

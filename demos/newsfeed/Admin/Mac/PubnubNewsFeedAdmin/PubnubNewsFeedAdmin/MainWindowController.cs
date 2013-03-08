@@ -54,7 +54,7 @@ namespace PubnubNewsFeedAdmin
 			channelList.Add(channel0);
 			Channel channel1 = new Channel("Sports", "https://news.google.com/news/feeds?pz=1&cf=all&ned=us&hl=en&topic=s&output=rss", true);
 			channelList.Add(channel1);
-			Channel channel2 = new Channel("Super Bowl", "https://news.google.com/news/feeds?pz=1&cf=all&ned=us&hl=en&q=Super+Bowl+Halftime+Show+2012&output=rss", true);
+            Channel channel2 = new Channel("Technology", "https://news.google.com/news/feeds?pz=1&cf=all&ned=us&hl=en&topic=tc&output=rss", true);
 			channelList.Add(channel2);
 
 			

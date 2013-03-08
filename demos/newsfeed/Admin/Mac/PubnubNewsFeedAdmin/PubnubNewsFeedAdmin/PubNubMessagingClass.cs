@@ -72,7 +72,6 @@ namespace PubnubNewsFeedAdmin
 
 		void HereNowHandler (object result)
 		{
-			string response = "";
 			IList<object> responseFields = result as IList<object>;
 			if ((responseFields [0] != null) && (responseFields [0].ToString() != "0"))
 			{
