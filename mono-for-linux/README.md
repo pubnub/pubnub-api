@@ -12,6 +12,12 @@ OVERRIDE_TCP_KEEP_ALIVE = true;
 
 In the app.config both the projects the value of the key "initializeData" should be full path with rw access default value="/tmp/pubnub-messaging.log".
 
+If you encounter an issue where SSL connections throw an exception, you need to import the root certificates using the command
+mozroots --import --ask-remove
+
+For more details please see:
+http://www.mono-project.com/FAQ%3a_Security#Secure_Socket_Layer_.28SSL.29_.2F_Transport_Layer_Security_.28TLS.29
+
 Dev environment setup:
 - ubuntu 12.04
 - Mono Develop 2.8.6.3+dfsg-2 or higher 

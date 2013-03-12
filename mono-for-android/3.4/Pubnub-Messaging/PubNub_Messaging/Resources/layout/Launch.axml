@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="*">
+    <TableRow>
+        <TextView
+            android:layout_column="0"
+            android:text="@string/channel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </TableRow>
+    <TableRow>
+        <EditText
+            android:layout_column="0"
+            android:layout_span="2"
+            android:id="@+id/txtChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:layout_column="0"
+            android:text="@string/enablessl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <ToggleButton
+            android:id="@+id/tbSsl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="@string/sslOn"
+            android:textOff="@string/sslOff" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:layout_column="0"
+            android:layout_span="2"
+            android:text="@string/cipher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </TableRow>
+    <TableRow>
+        <EditText
+            android:layout_column="0"
+            android:layout_span="2"
+            android:id="@+id/txtCipher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:layout_column="0"
+            android:layout_span="2"
+            android:text="@string/customUuid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </TableRow>
+    <TableRow>
+        <EditText
+            android:layout_column="0"
+            android:layout_span="2"
+            android:id="@+id/txtCustomUuid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:layout_column="0"
+            android:text="@string/proxy"
+            android:id="@+id/tvProxy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <Button
+            android:gravity="center_horizontal"
+            android:layout_span="1"
+            android:layout_column="1"
+            android:padding="2dip"
+            android:id="@+id/btnProxy"
+            android:layout_height="30dp"
+            android:text="@string/setProxy" />
+    </TableRow>
+    <TableRow>
+        <View
+            android:layout_span="2"
+            android:layout_height="2dip" />
+    </TableRow>
+    <TableRow>
+        <Button
+            android:gravity="center_horizontal"
+            android:layout_span="1"
+            android:padding="2dip"
+            android:id="@+id/btnLaunch"
+            android:layout_height="30dp"
+            android:text="@string/launch"
+            android:layout_width="311.3dp" />
+    </TableRow>
+</TableLayout>
