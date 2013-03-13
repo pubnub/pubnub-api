@@ -28,6 +28,7 @@ namespace PubNubMessaging.Core
 
             Console.WriteLine("Enable SSL? ENTER Y for Yes, else N");
             string enableSSL = Console.ReadLine();
+            Console.ForegroundColor = ConsoleColor.Blue;
             if (enableSSL.Trim().ToLower() == "y")
             {
                 Console.WriteLine("SSL Enabled");
@@ -36,11 +37,13 @@ namespace PubNubMessaging.Core
             {
                 Console.WriteLine("SSL NOT Enabled");
             }
+            Console.ResetColor();
             Console.WriteLine();
 
             Console.WriteLine("ENTER cipher key for encryption feature.");
             Console.WriteLine("If you don't want to avail at this time, press ENTER.");
             string cipheryKey = Console.ReadLine();
+            Console.ForegroundColor = ConsoleColor.Blue;
             if (cipheryKey.Trim().Length > 0)
             {
                 Console.WriteLine("Cipher key provided.");
@@ -49,6 +52,7 @@ namespace PubNubMessaging.Core
             {
                 Console.WriteLine("No Cipher key provided");
             }
+            Console.ResetColor();
             Console.WriteLine();
 
             pubnub = new Pubnub("demo", "demo", "", cipheryKey,
@@ -61,15 +65,119 @@ namespace PubNubMessaging.Core
                 Console.WriteLine("ENTER Session UUID.");
                 string sessionUUID = Console.ReadLine();
                 pubnub.SessionUUID = sessionUUID;
+                Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("Accepted Custom Session UUID.");
+                Console.ResetColor();
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("Default Session UUID opted.");
+                Console.ResetColor();
             }
             Console.WriteLine();
 
-            
+            Console.WriteLine("By default Resume On Reconnect is enabled. Do you want to disable it? ENTER Y for Yes, else N");
+            string disableResumeOnReconnect = Console.ReadLine();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            if (disableResumeOnReconnect.Trim().ToLower() == "y")
+            {
+                Console.WriteLine("Resume On Reconnect Disabled");
+                pubnub.EnableResumeOnReconnect = false;
+            }
+            else
+            {
+                Console.WriteLine("Resume On Reconnect Enabled by default");
+                pubnub.EnableResumeOnReconnect = true;
+            }
+            Console.ResetColor();
+            Console.WriteLine();
+
+            Console.WriteLine("Subscribe Timeout = 310 seconds (default). Enter the value to change, else press ENTER");
+            string subscribeTimeoutEntry = Console.ReadLine();
+            int subscribeTimeout;
+            Int32.TryParse(subscribeTimeoutEntry, out subscribeTimeout);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            if (subscribeTimeout > 0)
+            {
+                Console.WriteLine("Subscribe Timeout = {0}",subscribeTimeout);
+                pubnub.SubscribeTimeout = subscribeTimeout;
+            }
+            else
+            {
+                Console.WriteLine("Subscribe Timeout = {0} (default)", pubnub.SubscribeTimeout);
+            }
+            Console.ResetColor();
+            Console.WriteLine();
+
+            Console.WriteLine("Non Subscribe Timeout = 15 seconds (default). Enter the value to change, else press ENTER");
+            string nonSubscribeTimeoutEntry = Console.ReadLine();
+            int nonSubscribeTimeout;
+            Int32.TryParse(nonSubscribeTimeoutEntry, out nonSubscribeTimeout);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            if (nonSubscribeTimeout > 0)
+            {
+                Console.WriteLine("Non Subscribe Timeout = {0}", nonSubscribeTimeout);
+                pubnub.NonSubscribeTimeout = nonSubscribeTimeout;
+            }
+            else
+            {
+                Console.WriteLine("Non Subscribe Timeout = {0} (default)", pubnub.NonSubscribeTimeout);
+            }
+            Console.ResetColor();
+            Console.WriteLine();
+
+            Console.WriteLine("Network Check MAX retries = 50 (default). Enter the value to change, else press ENTER");
+            string networkCheckMaxRetriesEntry = Console.ReadLine();
+            int networkCheckMaxRetries;
+            Int32.TryParse(networkCheckMaxRetriesEntry, out networkCheckMaxRetries);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            if (networkCheckMaxRetries > 0)
+            {
+                Console.WriteLine("Network Check MAX retries = {0}", networkCheckMaxRetries);
+                pubnub.NetworkCheckMaxRetries = networkCheckMaxRetries;
+            }
+            else
+            {
+                Console.WriteLine("Network Check MAX retries = {0} (default)", pubnub.NetworkCheckMaxRetries);
+            }
+            Console.ResetColor();
+            Console.WriteLine();
+
+            Console.WriteLine("Network Check Retry Interval = 10 seconds (default). Enter the value to change, else press ENTER");
+            string networkCheckRetryIntervalEntry = Console.ReadLine();
+            int networkCheckRetryInterval;
+            Int32.TryParse(networkCheckRetryIntervalEntry, out networkCheckRetryInterval);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            if (networkCheckRetryInterval > 0)
+            {
+                Console.WriteLine("Network Check Retry Interval = {0} seconds", networkCheckRetryInterval);
+                pubnub.NetworkCheckRetryInterval = networkCheckRetryInterval;
+            }
+            else
+            {
+                Console.WriteLine("Network Check Retry Interval = {0} seconds (default)", pubnub.NetworkCheckRetryInterval);
+            }
+            Console.ResetColor();
+            Console.WriteLine();
+
+            Console.WriteLine("Heartbeat Interval = 15 seconds (default). Enter the value to change, else press ENTER");
+            string heartbeatIntervalEntry = Console.ReadLine();
+            int heartbeatInterval;
+            Int32.TryParse(heartbeatIntervalEntry, out heartbeatInterval);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            if (heartbeatInterval > 0)
+            {
+                Console.WriteLine("Heartbeat Interval = {0} seconds", heartbeatInterval);
+                pubnub.HeartbeatInterval = heartbeatInterval;
+            }
+            else
+            {
+                Console.WriteLine("Heartbeat Interval = {0} seconds (default)", pubnub.HeartbeatInterval);
+            }
+            Console.ResetColor();
+            Console.WriteLine();
+
             Console.WriteLine("Proxy Server exists? ENTER Y for Yes, else N");
             string enableProxy = Console.ReadLine();
             if (enableProxy.Trim().ToLower() == "y")
@@ -93,22 +201,27 @@ namespace PubNubMessaging.Core
                     proxy.ProxyPort = port;
                     proxy.ProxyUserName = proxyUsername;
                     proxy.ProxyPassword = proxyPassword;
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     try
                     {
                         pubnub.Proxy = proxy;
                         proxyAccepted = true;
                         Console.WriteLine("Proxy details accepted");
+                        Console.ResetColor();
                     }
                     catch (MissingFieldException mse)
                     {
                         Console.WriteLine(mse.Message);
                         Console.WriteLine("Please RE-ENTER Proxy Server details.");
                     }
+                    Console.ResetColor();
                 }
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("No Proxy");
+                Console.ResetColor();
             }
             Console.WriteLine();
 
@@ -121,7 +234,10 @@ namespace PubNubMessaging.Core
             Console.WriteLine("ENTER 6 FOR Unsubscribe");
             Console.WriteLine("ENTER 7 FOR Presence-Unsubscribe");
             Console.WriteLine("ENTER 8 FOR Time");
-            Console.WriteLine("ENTER 0 FOR EXIT OR QUIT");
+            Console.WriteLine("ENTER 9 FOR Disconnect/Reconnect existing Subscriber(s) (when internet is available)");
+            Console.WriteLine("ENTER 10 TO Disable Network Connection (no internet)");
+            Console.WriteLine("ENTER 11 TO Enable Network Connection (yes internet)");
+            Console.WriteLine("ENTER 99 FOR EXIT OR QUIT");
 
             bool exitFlag = false;
             string channel="";
@@ -132,7 +248,7 @@ namespace PubNubMessaging.Core
                 string userinput = Console.ReadLine();
                 switch (userinput)
                 {
-                    case "0":
+                    case "99":
                         exitFlag = true;
                         pubnub.EndPendingRequests();
                         break;
@@ -140,7 +256,9 @@ namespace PubNubMessaging.Core
                         Console.WriteLine("Enter CHANNEL name for subscribe. Use comma to enter multiple channels.");
                         channel = Console.ReadLine();
 
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(string.Format("Channel = {0}",channel));
+                        Console.ResetColor();
                         Console.WriteLine();
 
                         Console.WriteLine("Running subscribe()");
@@ -150,6 +268,10 @@ namespace PubNubMessaging.Core
                     case "2":
                         Console.WriteLine("Enter CHANNEL name for publish.");
                         channel = Console.ReadLine();
+
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine(string.Format("Channel = {0}",channel));
+                        Console.ResetColor();
 
                         Console.WriteLine("Enter the message for publish. To exit loop, enter QUIT");
                         string publishMsg = Console.ReadLine();
@@ -195,7 +317,9 @@ namespace PubNubMessaging.Core
                         Console.WriteLine("Enter CHANNEL name for presence. Use comma to enter multiple channels.");
                         channel = Console.ReadLine();
 
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(string.Format("Presence Channel = {0}",channel));
+                        Console.ResetColor();
                         Console.WriteLine();
 
                         Console.WriteLine("Running presence()");
@@ -206,7 +330,9 @@ namespace PubNubMessaging.Core
                         Console.WriteLine("Enter CHANNEL name for Detailed History");
                         channel = Console.ReadLine();
 
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(string.Format("Channel = {0}",channel));
+                        Console.ResetColor();
                         Console.WriteLine();
 
                         Console.WriteLine("Running detailed history()");
@@ -216,7 +342,9 @@ namespace PubNubMessaging.Core
                         Console.WriteLine("Enter CHANNEL name for HereNow");
                         channel = Console.ReadLine();
 
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(string.Format("Channel = {0}",channel));
+                        Console.ResetColor();
                         Console.WriteLine();
 
                         Console.WriteLine("Running Here_Now()");
@@ -226,7 +354,9 @@ namespace PubNubMessaging.Core
                         Console.WriteLine("Enter CHANNEL name for Unsubscribe. Use comma to enter multiple channels.");
                         channel = Console.ReadLine();
 
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(string.Format("Channel = {0}",channel));
+                        Console.ResetColor();
                         Console.WriteLine();
 
                         Console.WriteLine("Running unsubscribe()");
@@ -236,7 +366,9 @@ namespace PubNubMessaging.Core
                         Console.WriteLine("Enter CHANNEL name for Presence Unsubscribe. Use comma to enter multiple channels.");
                         channel = Console.ReadLine();
 
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(string.Format("Channel = {0}",channel));
+                        Console.ResetColor();
                         Console.WriteLine();
 
                         Console.WriteLine("Running presence-unsubscribe()");
@@ -246,8 +378,29 @@ namespace PubNubMessaging.Core
                         Console.WriteLine("Running time()");
                         pubnub.Time<string>(DisplayReturnMessage);
                         break;
+                    case "9":
+                        Console.WriteLine("Running Disconnect/auto-Reconnect Subscriber Request Connection");
+                        pubnub.TerminateCurrentSubscriberRequest();
+                        break;
+                    case "10":
+                        Console.WriteLine("Disabling Network Connection (no internet)");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Initiating Simulation of Internet non-availability");
+                        Console.WriteLine("Until Choice=11 is entered, no operations will occur");
+                        Console.WriteLine("NOTE: Publish from other pubnub clients can occur and those will be ");
+                        Console.WriteLine("      captured upon choice=11 is entered provided resume on reconnect is enabled.");
+                        Console.ResetColor();
+                        pubnub.EnableSimulateNetworkFailForTestingOnly();
+                        break;
+                    case "11":
+                        Console.WriteLine("Enabling Network Connection (yes internet)");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Stopping Simulation of Internet non-availability");
+                        Console.ResetColor();
+                        pubnub.DisableSimulateNetworkFailForTestingOnly();
+                        break;
                     default:
-                        Console.WriteLine("INVALID CHOICE.");
+                        Console.WriteLine("INVALID CHOICE. ENTER 99 FOR EXIT OR QUIT");
                         break;
                 }
             }
