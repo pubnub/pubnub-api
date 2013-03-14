@@ -31,6 +31,13 @@ using System.IO.IsolatedStorage;
 using System.Net.Security;
 #endif
 
+#if(MONODROID)
+using Android.Runtime;
+using Javax.Net.Ssl;
+using System.Security.Cryptography.X509Certificates;
+#endif
+
+
 namespace PubNubMessaging.Core
 {
     // INotifyPropertyChanged provides a standard event for objects to notify clients that one of its properties has changed
@@ -1591,6 +1598,56 @@ namespace PubNubMessaging.Core
             }
         }
 
+#if(MONODROID)      
+        /// <summary>
+        /// Workaround for the bug described here 
+        /// https://bugzilla.xamarin.com/show_bug.cgi?id=6501
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="certificate">Certificate.</param>
+        /// <param name="chain">Chain.</param>
+        /// <param name="sslPolicyErrors">Ssl policy errors.</param>
+        static bool Validator (object sender,
+                               System.Security.Cryptography.X509Certificates.X509Certificate
+                               certificate,
+                               System.Security.Cryptography.X509Certificates.X509Chain chain,
+                               System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        {
+            var sslTrustManager = (IX509TrustManager) typeof (AndroidEnvironment)
+                .GetField ("sslTrustManager",
+                           System.Reflection.BindingFlags.NonPublic |
+                           System.Reflection.BindingFlags.Static)
+                    .GetValue (null);
+            
+            Func<Java.Security.Cert.CertificateFactory,
+            System.Security.Cryptography.X509Certificates.X509Certificate,
+            Java.Security.Cert.X509Certificate> c = (f, v) =>
+                f.GenerateCertificate (
+                    new System.IO.MemoryStream (v.GetRawCertData ()))
+                    .JavaCast<Java.Security.Cert.X509Certificate>();
+            var cFactory = Java.Security.Cert.CertificateFactory.GetInstance (Javax.Net.Ssl.TrustManagerFactory.DefaultAlgorithm);
+            var certs = new List<Java.Security.Cert.X509Certificate>(
+                chain.ChainElements.Count + 1);
+            certs.Add (c (cFactory, certificate));
+            foreach (var ce in chain.ChainElements) {
+                if (certificate.Equals (ce.Certificate))
+                    continue;
+                certificate = ce.Certificate;
+                certs.Add (c (cFactory, certificate));
+            }
+            try {
+                //had to comment this out as sslTrustManager was returning null
+                //working on the fix or a workaround
+                //sslTrustManager.CheckServerTrusted (certs.ToArray (),
+                //                                  Javax.Net.Ssl.TrustManagerFactory.DefaultAlgorithm);
+                return true;
+            }
+            catch (Exception e) {
+                throw new Exception("SSL error");
+            }
+        }
+#endif
+
         private void ConnectToHostAndSendRequestCallback<T>(IAsyncResult asynchronousResult)
         {
             StateObject<T> asynchStateObject = asynchronousResult.AsyncState as StateObject<T>;
@@ -1642,22 +1699,53 @@ namespace PubNubMessaging.Core
 
         void SendSslRequest<T>(NetworkStream netStream, TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
         {
-            //NetworkStream netStream = tcpClient.GetStream();
-
+#if(MONODROID)
+            SslStream sslStream = new SslStream(netStream, true, Validator, null);
+#else
             SslStream sslStream = new SslStream(netStream);
-
-            sslStream.AuthenticateAsClient(this.domainName);
+#endif
             StateObject<T> state = new StateObject<T>();
             state.tcpClient = tcpClient;
             state.sslns = sslStream;
             state.RequestState = pubnubRequestState;
-
-            byte[] sendBuffer = UTF8Encoding.UTF8.GetBytes(requestString);
-
+            state.requestString = requestString;
+            sslStream.AuthenticateAsClient(this.domainName);
+            AfterAuthentication(state);
+        }
+        
+        void AfterAuthentication<T> (StateObject<T> state)
+        {
+            SslStream sslStream = state.sslns;
+            byte[] sendBuffer = UTF8Encoding.UTF8.GetBytes(state.requestString);
+            
             sslStream.Write(sendBuffer);
             sslStream.Flush();
-            sslStream.ReadTimeout = pubnubRequestState.Request.Timeout;
+#if(!MONODROID)         
+            sslStream.ReadTimeout = state.RequestState.Request.Timeout;
+#endif
             sslStream.BeginRead(state.buffer, 0, state.buffer.Length, new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
+        }
+
+        private void SendSslRequestAuthenticationCallback<T>(IAsyncResult asynchronousResult)
+        {
+            StateObject<T> state = asynchronousResult.AsyncState as StateObject<T>;
+            RequestState<T> asynchRequestState = state.RequestState;
+            string channel = "";
+            if (asynchRequestState != null && asynchRequestState.Channels != null)
+            {
+                channel = string.Join(",", asynchRequestState.Channels);
+            }
+            try{
+                AfterAuthentication(state);
+            }
+            catch (WebException webEx)
+            {
+                ProcessResponseCallbackWebExceptionHandler<T>(webEx, asynchRequestState, channel);
+            }
+            catch (Exception ex)
+            {
+                ProcessResponseCallbackExceptionHandler<T>(ex, asynchRequestState);
+            }
         }
 
         void SendRequest<T>(TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
@@ -1672,7 +1760,9 @@ namespace PubNubMessaging.Core
             System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(netStream);
             streamWriter.Write(requestString);
             streamWriter.Flush();
+#if(!MONODROID)
             netStream.ReadTimeout = pubnubRequestState.Request.Timeout;
+#endif
             netStream.BeginRead(state.buffer, 0, state.buffer.Length, new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
 
         }
@@ -1681,7 +1771,9 @@ namespace PubNubMessaging.Core
         {
             TcpClient tcpClient = new TcpClient();
             tcpClient.NoDelay = false;
+#if(!MONODROID)
             tcpClient.SendTimeout = pubnubRequestState.Request.Timeout;
+#endif          
 
             string requestString = CreateRequest(requestUri);
 
