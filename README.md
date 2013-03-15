@@ -190,7 +190,7 @@ PUBNUB.subscribe({
 ##Connect, disconnect, reconnect callback lifecycles
 Each time the PubNub client subscribes to a channel, a “subscription-based connection” is established to the PubNub cloud. During the lifecycle of this “subscription-based connection”:
 
-1. the callback event will fire each time a message is received.
+1. the connect event will fire each time a message is received.
 1. the disconnect event will fire only once, if and when the connection is lost.
 1. the reconnect event will fire only once, if and when the connection is re-established after a disconnect event.
 
