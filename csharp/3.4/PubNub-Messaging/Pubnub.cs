@@ -1,4 +1,4 @@
-﻿//Build Date: March 14, 2013
+﻿//Build Date: March 16, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -2185,22 +2185,28 @@ namespace PubNubMessaging.Core
                                   select channel.Key;
                 foreach (string channel in newChannels)
                 {
-                    if (!IsPresenceChannel(channel))
-                    {
+                    string jsonString = "";
+                    List<object> connectResult = new List<object>();
+                    //if (!IsPresenceChannel(channel))
+                    //{
                         switch (type)
                         {
                             case ResponseType.Subscribe:
-                                string jsonString = "";
-                                List<object> connectResult = new List<object>();
                                 jsonString = string.Format("[1, \"Connected\"]");
                                 connectResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                                 connectResult.Add(channel);
                                 GoToCallback<T>(connectResult, connectCallback);
                                 break;
+                            case ResponseType.Presence:
+                                jsonString = string.Format("[1, \"Presence Connected\"]");
+                                connectResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                                connectResult.Add(channel.Replace("-pnpres", ""));
+                                GoToCallback<T>(connectResult, connectCallback);
+                                break;
                             default:
                                 break;
                         }
-                    }
+                    //}
                 }
             }
 
@@ -2528,18 +2534,38 @@ namespace PubNubMessaging.Core
                 string[] activeChannels = _multiChannelSubscribe.Keys.ToArray<string>();
                 MultiChannelUnSubscribeInit<T>(ResponseType.Unsubscribe, string.Join(",", activeChannels), null, null, null);
 
-                List<object> errorResult = new List<object>();
-                string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
-                errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
-                string activeMultiChannel = string.Join(",", activeChannels).Replace("-pnpres", "");
-                errorResult.Add(activeMultiChannel.Split(','));
+                string[] subscribeChannels = activeChannels.Where(filterChannel => !filterChannel.Contains("-pnpres")).ToArray();
+                string[] presenceChannels = activeChannels.Where(filterChannel => filterChannel.Contains("-pnpres")).ToArray();
 
-                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
-
-                if (userCallback != null)
+                if (subscribeChannels != null && subscribeChannels.Length > 0)
                 {
-                    GoToCallback<T>(errorResult, userCallback);
+                    List<object> errorResult = new List<object>();
+                    string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
+                    errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                    string activeMultiChannel = string.Join(",", subscribeChannels);
+                    errorResult.Add(activeMultiChannel.Split(','));
+
+                    if (userCallback != null)
+                    {
+                        GoToCallback<T>(errorResult, userCallback);
+                    }
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 }
+                if (presenceChannels != null && presenceChannels.Length > 0)
+                {
+                    List<object> errorResult = new List<object>();
+                    string jsonString = string.Format("[0, \"Presence Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
+                    errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                    string activeMultiChannel = string.Join(",", presenceChannels).Replace("-pnpres", "");
+                    errorResult.Add(activeMultiChannel.Split(','));
+
+                    if (userCallback != null)
+                    {
+                        GoToCallback<T>(errorResult, userCallback);
+                    }
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Presence-Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
+                }
+
             }
             else
             {

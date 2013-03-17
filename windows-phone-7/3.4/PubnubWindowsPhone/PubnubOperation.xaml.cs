@@ -166,7 +166,7 @@ namespace PubnubWindowsPhone
         private void btnPresence_Click(object sender, RoutedEventArgs e)
         {
             channel = txtChannel.Text;
-            pubnub.Presence<string>(channel, PubnubCallbackResult, null);
+            pubnub.Presence<string>(channel, PubnubCallbackResult, PubnubConnectCallbackResult);
         }
 
         private void btnDetailedHistory_Click(object sender, RoutedEventArgs e)

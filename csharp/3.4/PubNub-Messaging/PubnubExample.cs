@@ -323,7 +323,7 @@ namespace PubNubMessaging.Core
                         Console.WriteLine();
 
                         Console.WriteLine("Running presence()");
-                        pubnub.Presence<string>(channel, DisplayReturnMessage, null);
+                        pubnub.Presence<string>(channel, DisplayReturnMessage, DisplayConnectStatusMessage);
 
                         break;
                     case "4":

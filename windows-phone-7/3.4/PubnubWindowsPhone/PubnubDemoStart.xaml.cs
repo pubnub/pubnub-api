@@ -31,5 +31,6 @@ namespace PubnubWindowsPhone
             Uri nextPage = new Uri(string.Format("/PubnubOperation.xaml?ssl={0}&cipherkey={1}&secretkey={2}&uuid={3}", ssl, cipherKey, secretKey,sessionUUID), UriKind.Relative);
             NavigationService.Navigate(nextPage);
         }
+
     }
 }

@@ -1,4 +1,4 @@
-﻿//Build Date: Feb 18, 2013
+﻿//Build Date: March 16, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -27,18 +27,28 @@ using System.Windows.Threading;
 using System.IO.IsolatedStorage;
 
 #endif
+#if (__MonoCS__)
+using System.Net.Security;
+#endif
+
+#if(MONODROID)
+using Android.Runtime;
+using Javax.Net.Ssl;
+using System.Security.Cryptography.X509Certificates;
+#endif
+
 
 namespace PubNubMessaging.Core
 {
     // INotifyPropertyChanged provides a standard event for objects to notify clients that one of its properties has changed
     public class Pubnub : INotifyPropertyChanged
     {
-        const int pubnubWebRequestCallbackIntervalInSeconds = 310;
-        const int pubnubOperationTimeoutIntervalInSeconds = 15;
-        const int pubnubNetworkTcpCheckIntervalInSeconds = 15;
-        const int pubnubNetworkCheckRetries = 50;
-        const int pubnubWebRequestRetryIntervalInSeconds = 10;
-        bool enableResumeOnReconnect = true;
+        int _pubnubWebRequestCallbackIntervalInSeconds = 310;
+        int _pubnubOperationTimeoutIntervalInSeconds = 15;
+        int _pubnubNetworkTcpCheckIntervalInSeconds = 15;
+        int _pubnubNetworkCheckRetries = 50;
+        int _pubnubWebRequestRetryIntervalInSeconds = 10;
+        bool _enableResumeOnReconnect = true;
         bool overrideTcpKeepAlive = true;
         const LoggingMethod.Level pubnubLogLevel = LoggingMethod.Level.Error;
 
@@ -65,6 +75,83 @@ namespace PubNubMessaging.Core
         ConcurrentDictionary<string, int> _channelInternetRetry = new ConcurrentDictionary<string, int>();
         ConcurrentDictionary<string, Timer> _channelReconnectTimer = new ConcurrentDictionary<string, Timer>();
         ConcurrentDictionary<Uri, Timer> _channelHeartbeatTimer = new ConcurrentDictionary<Uri, Timer>();
+
+        internal int SubscribeTimeout
+        {
+            get
+            {
+                return _pubnubWebRequestCallbackIntervalInSeconds;
+            }
+
+            set
+            {
+                _pubnubWebRequestCallbackIntervalInSeconds = value;
+            }
+        }
+
+        internal int NonSubscribeTimeout
+        {
+            get
+            {
+                return _pubnubOperationTimeoutIntervalInSeconds;
+            }
+
+            set
+            {
+                _pubnubOperationTimeoutIntervalInSeconds = value;
+            }
+        }
+
+        internal int NetworkCheckMaxRetries
+        {
+            get
+            {
+                return _pubnubNetworkCheckRetries;
+            }
+
+            set
+            {
+                _pubnubNetworkCheckRetries = value;
+            }
+        }
+
+        internal int NetworkCheckRetryInterval
+        {
+            get
+            {
+                return _pubnubWebRequestRetryIntervalInSeconds;
+            }
+
+            set
+            {
+                _pubnubWebRequestRetryIntervalInSeconds = value;
+            }
+        }
+
+        internal int HeartbeatInterval
+        {
+            get
+            {
+                return _pubnubNetworkTcpCheckIntervalInSeconds;
+            }
+
+            set
+            {
+                _pubnubNetworkTcpCheckIntervalInSeconds = value;
+            }
+        }
+
+        internal bool EnableResumeOnReconnect
+        {
+            get
+            {
+                return _enableResumeOnReconnect;
+            }
+            set
+            {
+                _enableResumeOnReconnect = value;
+            }
+        }
 
         private IPubnubUnitTest _pubnubUnitTest;
         public IPubnubUnitTest PubnubUnitTest
@@ -119,6 +206,9 @@ namespace PubNubMessaging.Core
 
         // Pubnub Core API implementation
         private string origin = "pubsub.pubnub.com";
+#if (__MonoCS__)
+        private string domainName = "pubsub.pubnub.com";
+#endif
         private string publishKey = "";
         private string subscribeKey = "";
         private string secretKey = "";
@@ -184,7 +274,7 @@ namespace PubNubMessaging.Core
 
         private void ReconnectNetwork<T>(ReconnectState<T> netState)
         {
-            System.Threading.Timer timer = new Timer(new TimerCallback(ReconnectNetworkCallback<T>), netState, 0, pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+            System.Threading.Timer timer = new Timer(new TimerCallback(ReconnectNetworkCallback<T>), netState, 0, _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
             _channelReconnectTimer.AddOrUpdate(string.Join(",",netState.Channels), timer, (key, oldState) => timer);
         }
 
@@ -209,7 +299,7 @@ namespace PubNubMessaging.Core
                         else
                         {
                             _channelInternetRetry.AddOrUpdate(channel, 1, (key, oldValue) => oldValue + 1);
-                            LoggingMethod.WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Retry {3} of {4}", DateTime.Now.ToString(), channel, netState.Type, _channelInternetRetry[channel], pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Retry {3} of {4}", DateTime.Now.ToString(), channel, netState.Type, _channelInternetRetry[channel], _pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
                         }
                     }
 
@@ -232,7 +322,7 @@ namespace PubNubMessaging.Core
                                 break;
                         }
                     }
-                    else if (_channelInternetRetry[channel] >= pubnubNetworkCheckRetries)
+                    else if (_channelInternetRetry[channel] >= _pubnubNetworkCheckRetries)
                     {
                         if (_channelReconnectTimer.ContainsKey(channel))
                         {
@@ -303,8 +393,8 @@ namespace PubNubMessaging.Core
                 if (overrideTcpKeepAlive)
                 {
                     heartBeatTimer.Change(
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000,
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000,
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
                 }
 
                 LoggingMethod.WriteToLog(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
@@ -1063,7 +1153,7 @@ namespace PubNubMessaging.Core
 
             if (_channelInternetStatus.ContainsKey(multiChannel) && (!_channelInternetStatus[multiChannel]) && _pubnetSystemActive)
             {
-                if (_channelInternetRetry.ContainsKey(multiChannel) && (_channelInternetRetry[multiChannel] >= pubnubNetworkCheckRetries))
+                if (_channelInternetRetry.ContainsKey(multiChannel) && (_channelInternetRetry[multiChannel] >= _pubnubNetworkCheckRetries))
                 {
                     LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe channel={1} - No internet connection. MAXed retries for internet ", DateTime.Now.ToString(), multiChannel), LoggingMethod.LevelInfo);
                     MultiplexExceptionHandler<T>(type,channels, userCallback, connectCallback, true, false);
@@ -1108,7 +1198,6 @@ namespace PubNubMessaging.Core
                         lastTimetoken = lastSubscribeTimetoken;
                     }
                 }
-
                 LoggingMethod.WriteToLog(string.Format("DateTime {0}, Building request for channel(s)={1} with timetoken={2}", DateTime.Now.ToString(), string.Join(",",channels),lastTimetoken), LoggingMethod.LevelInfo);
                 // Build URL
                 Uri requestUrl = BuildMultiChannelSubscribeRequest(channels, (Convert.ToInt64(timetoken.ToString()) == 0) ? Convert.ToInt64(timetoken.ToString()) : lastTimetoken);
@@ -1300,7 +1389,7 @@ namespace PubNubMessaging.Core
 
                 return true;
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 return false;
             }
@@ -1349,28 +1438,36 @@ namespace PubNubMessaging.Core
                     //Eventhough heart-beat is disabled, run one time to check internet connection by setting dueTime=0
                     heartBeatTimer = new System.Threading.Timer(
                         new TimerCallback(OnPubnubHeartBeatTimeoutCallback<T>), pubnubRequestState, 0,
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? Timeout.Infinite : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? Timeout.Infinite : _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
                     _channelHeartbeatTimer.AddOrUpdate(requestUri, heartBeatTimer, (key, oldState) => heartBeatTimer);
                 }
                 else
                 {
 #if ((!__MonoCS__) && (!SILVERLIGHT) && !WINDOWS_PHONE)
-                    request.ServicePoint.SetTcpKeepAlive(true, pubnubNetworkTcpCheckIntervalInSeconds * 1000, 1000);
+                    request.ServicePoint.SetTcpKeepAlive(true, _pubnubNetworkTcpCheckIntervalInSeconds * 1000, 1000);
 #endif
                 }
                 LoggingMethod.WriteToLog(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
 
-                // Make request with the following Asynchronous callback
-                IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback(UrlProcessResponseCallback<T>), pubnubRequestState);
 
 #if (__MonoCS__)
+                if((pubnubRequestState.Type == ResponseType.Publish) && (RequestIsUnsafe(requestUri)))
+                {
+                    SendRequestUsingTcpClient<T>(requestUri, pubnubRequestState);
+                }
+                else
+                {
+                    IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback(UrlProcessResponseCallback<T>), pubnubRequestState);
                     if (!asyncResult.AsyncWaitHandle.WaitOne(GetTimeoutInSecondsForResponseType(pubnubRequestState.Type) * 1000))
                     {
                         OnPubnubWebRequestTimeout<T>(pubnubRequestState, true);
                     }
+                }
 #elif (SILVERLIGHT || WINDOWS_PHONE)
+                IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback(UrlProcessResponseCallback<T>), pubnubRequestState);
                 Timer webRequestTimer = new Timer(OnPubnubWebRequestTimeout<T>, pubnubRequestState, GetTimeoutInSecondsForResponseType(pubnubRequestState.Type) * 1000, Timeout.Infinite);
 #else
+                IAsyncResult asyncResult = request.BeginGetResponse(new AsyncCallback(UrlProcessResponseCallback<T>), pubnubRequestState);
                 ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, new WaitOrTimerCallback(OnPubnubWebRequestTimeout<T>), pubnubRequestState, GetTimeoutInSecondsForResponseType(pubnubRequestState.Type) * 1000, true);
 #endif
                 return true;
@@ -1380,6 +1477,493 @@ namespace PubNubMessaging.Core
                 LoggingMethod.WriteToLog(string.Format("DateTime {0} Exception={1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelError);
                 UrlRequestCommonExceptionHandler<T>(pubnubRequestState.Type, pubnubRequestState.Channels, false, pubnubRequestState.UserCallback, pubnubRequestState.ConnectCallback, false);
                 return false;
+            }
+        }
+
+#if (__MonoCS__)
+        bool RequestIsUnsafe(Uri requestUri)
+        {
+            bool isUnsafe = false;
+            StringBuilder requestMessage = new StringBuilder();
+            if (requestUri.Segments.Length > 7)
+            {
+                for (int i = 7; i < requestUri.Segments.Length; i++)
+                {
+                    requestMessage.Append(requestUri.Segments[i]);
+                }
+            }
+            foreach (char ch in requestMessage.ToString().ToCharArray())
+            {
+                if (" ~`!@#$^&*()+=[]\\{}|;':\"./<>?".IndexOf(ch) >= 0)
+                {
+                    isUnsafe = true;
+                    break;
+                }
+            }
+            return isUnsafe;
+        }
+
+        string CreateRequest(Uri requestUri)
+        {
+            StringBuilder requestBuilder = new StringBuilder();
+            requestBuilder.Append("GET ");
+            requestBuilder.Append(requestUri.OriginalString);
+
+            if (ssl)
+            {
+                requestBuilder.Append(string.Format(" HTTP/1.1\r\nConnection: close\r\nHost: {0}:443\r\n\r\n", this.domainName));
+            }
+            else
+            {
+                requestBuilder.Append(string.Format(" HTTP/1.1\r\nConnection: close\r\nHost: {0}:80\r\n\r\n", this.domainName));
+            }
+            return requestBuilder.ToString();
+        }
+
+        void ConnectToHostAndSendRequest<T>(bool sslEnabled, TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
+        {
+            NetworkStream stream = tcpClient.GetStream();
+
+            string proxyAuth = string.Format("{0}:{1}", _pubnubProxy.ProxyUserName, _pubnubProxy.ProxyPassword);
+            byte[] proxyAuthBytes = Encoding.UTF8.GetBytes(proxyAuth);
+
+            //Proxy-Authenticate: authentication mode Basic, Digest and NTLM
+            string connectRequest = "";
+            if (sslEnabled)
+            {
+                connectRequest = string.Format("CONNECT {0}:443  HTTP/1.1\r\nProxy-Authorization: Basic {1}\r\nHost: {0}\r\n\r\n", this.domainName, Convert.ToBase64String(proxyAuthBytes));
+            }
+            else
+            {
+                connectRequest = string.Format("CONNECT {0}:80  HTTP/1.1\r\nProxy-Authorization: Basic {1}\r\nHost: {0}\r\n\r\n", this.domainName, Convert.ToBase64String(proxyAuthBytes));
+            }
+
+            byte[] tunnelRequest = Encoding.UTF8.GetBytes(connectRequest);
+            stream.Write(tunnelRequest, 0, tunnelRequest.Length);
+            stream.Flush();
+
+            stream.ReadTimeout = pubnubRequestState.Request.Timeout * 5;
+
+            StateObject<T> state = new StateObject<T>();
+            state.tcpClient = tcpClient;
+            state.RequestState = pubnubRequestState;
+            state.requestString = requestString;
+            state.netStream = stream;
+
+            //stream.BeginRead(state.buffer, 0, state.buffer.Length, new AsyncCallback(ConnectToHostAndSendRequestCallback<T>), state);
+
+            StringBuilder response = new StringBuilder();
+            var responseStream = new StreamReader(stream);
+
+            char[] buffer = new char[2048];
+
+            int charsRead = responseStream.Read(buffer, 0, buffer.Length);
+            bool connEstablished = false;
+            while (charsRead > 0)
+            {
+                response.Append(buffer);
+                if ((response.ToString().IndexOf("200 Connection established") > 0) || (response.ToString().IndexOf("200 OK") > 0))
+                {
+                    connEstablished = true;
+                    break;
+                }
+                charsRead = responseStream.Read(buffer, 0, buffer.Length);
+            }
+
+            if (connEstablished)
+            {
+                if (sslEnabled)
+                {
+                    SendSslRequest<T>(stream, tcpClient, pubnubRequestState, requestString);
+                }
+                else
+                {
+                    SendRequest<T>(tcpClient, pubnubRequestState, requestString);
+                }
+
+            }
+            else if (response.ToString().IndexOf("407 Proxy Authentication Required") > 0)
+            {
+                int pos = response.ToString().IndexOf("Proxy-Authenticate");
+                string desc = "";
+                if (pos > 0)
+                {
+                    desc = response.ToString().Substring(pos, response.ToString().IndexOf("\r\n", pos) - pos);
+                }
+                throw new WebException(string.Format("Proxy Authentication Required. Desc: {0}", desc));
+            }
+            else
+            {
+                throw new WebException("Couldn't connect to the server");
+            }
+        }
+
+#if(MONODROID)      
+        /// <summary>
+        /// Workaround for the bug described here 
+        /// https://bugzilla.xamarin.com/show_bug.cgi?id=6501
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="certificate">Certificate.</param>
+        /// <param name="chain">Chain.</param>
+        /// <param name="sslPolicyErrors">Ssl policy errors.</param>
+        static bool Validator (object sender,
+                               System.Security.Cryptography.X509Certificates.X509Certificate
+                               certificate,
+                               System.Security.Cryptography.X509Certificates.X509Chain chain,
+                               System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        {
+            var sslTrustManager = (IX509TrustManager) typeof (AndroidEnvironment)
+                .GetField ("sslTrustManager",
+                           System.Reflection.BindingFlags.NonPublic |
+                           System.Reflection.BindingFlags.Static)
+                    .GetValue (null);
+            
+            Func<Java.Security.Cert.CertificateFactory,
+            System.Security.Cryptography.X509Certificates.X509Certificate,
+            Java.Security.Cert.X509Certificate> c = (f, v) =>
+                f.GenerateCertificate (
+                    new System.IO.MemoryStream (v.GetRawCertData ()))
+                    .JavaCast<Java.Security.Cert.X509Certificate>();
+            var cFactory = Java.Security.Cert.CertificateFactory.GetInstance (Javax.Net.Ssl.TrustManagerFactory.DefaultAlgorithm);
+            var certs = new List<Java.Security.Cert.X509Certificate>(
+                chain.ChainElements.Count + 1);
+            certs.Add (c (cFactory, certificate));
+            foreach (var ce in chain.ChainElements) {
+                if (certificate.Equals (ce.Certificate))
+                    continue;
+                certificate = ce.Certificate;
+                certs.Add (c (cFactory, certificate));
+            }
+            try {
+                //had to comment this out as sslTrustManager was returning null
+                //working on the fix or a workaround
+                //sslTrustManager.CheckServerTrusted (certs.ToArray (),
+                //                                  Javax.Net.Ssl.TrustManagerFactory.DefaultAlgorithm);
+                return true;
+            }
+            catch (Exception e) {
+                throw new Exception("SSL error");
+            }
+        }
+#endif
+
+        private void ConnectToHostAndSendRequestCallback<T>(IAsyncResult asynchronousResult)
+        {
+            StateObject<T> asynchStateObject = asynchronousResult.AsyncState as StateObject<T>;
+            RequestState<T> asynchRequestState = asynchStateObject.RequestState;
+
+            string channel = "";
+            if (asynchRequestState != null && asynchRequestState.Channels != null)
+            {
+                channel = string.Join(",", asynchRequestState.Channels);
+            }
+
+            try
+            {
+                string requestString = asynchStateObject.requestString;
+                TcpClient tcpClient = asynchStateObject.tcpClient;
+
+                NetworkStream netStream = asynchStateObject.netStream;
+                int bytesRead = netStream.EndRead(asynchronousResult);
+
+                if (bytesRead > 0)
+                {
+                    asynchStateObject.sb.Append(Encoding.ASCII.GetString(asynchStateObject.buffer, 0, bytesRead));
+
+                    netStream.BeginRead(asynchStateObject.buffer, 0, StateObject<T>.BufferSize,
+                                 new AsyncCallback(ConnectToHostAndSendRequestCallback<T>), asynchStateObject);
+                }
+                else
+                {
+                    string resp = asynchStateObject.sb.ToString();
+                    if (resp.IndexOf("200 Connection established") > 0)
+                    {
+                        SendSslRequest<T>(netStream, tcpClient, asynchRequestState, requestString);
+                    }
+                    else
+                    {
+                        throw new WebException("Couldn't connect to the server");
+                    }
+                }
+            }
+            catch (WebException webEx)
+            {
+                ProcessResponseCallbackWebExceptionHandler<T>(webEx, asynchRequestState, channel);
+            }
+            catch (Exception ex)
+            {
+                ProcessResponseCallbackExceptionHandler<T>(ex, asynchRequestState);
+            }
+        }
+
+        void SendSslRequest<T>(NetworkStream netStream, TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
+        {
+#if(MONODROID)
+            SslStream sslStream = new SslStream(netStream, true, Validator, null);
+#else
+            SslStream sslStream = new SslStream(netStream);
+#endif
+            StateObject<T> state = new StateObject<T>();
+            state.tcpClient = tcpClient;
+            state.sslns = sslStream;
+            state.RequestState = pubnubRequestState;
+            state.requestString = requestString;
+            sslStream.AuthenticateAsClient(this.domainName);
+            AfterAuthentication(state);
+        }
+        
+        void AfterAuthentication<T> (StateObject<T> state)
+        {
+            SslStream sslStream = state.sslns;
+            byte[] sendBuffer = UTF8Encoding.UTF8.GetBytes(state.requestString);
+            
+            sslStream.Write(sendBuffer);
+            sslStream.Flush();
+#if(!MONODROID)         
+            sslStream.ReadTimeout = state.RequestState.Request.Timeout;
+#endif
+            sslStream.BeginRead(state.buffer, 0, state.buffer.Length, new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
+        }
+
+        private void SendSslRequestAuthenticationCallback<T>(IAsyncResult asynchronousResult)
+        {
+            StateObject<T> state = asynchronousResult.AsyncState as StateObject<T>;
+            RequestState<T> asynchRequestState = state.RequestState;
+            string channel = "";
+            if (asynchRequestState != null && asynchRequestState.Channels != null)
+            {
+                channel = string.Join(",", asynchRequestState.Channels);
+            }
+            try{
+                AfterAuthentication(state);
+            }
+            catch (WebException webEx)
+            {
+                ProcessResponseCallbackWebExceptionHandler<T>(webEx, asynchRequestState, channel);
+            }
+            catch (Exception ex)
+            {
+                ProcessResponseCallbackExceptionHandler<T>(ex, asynchRequestState);
+            }
+        }
+
+        void SendRequest<T>(TcpClient tcpClient, RequestState<T> pubnubRequestState, string requestString)
+        {
+            NetworkStream netStream = tcpClient.GetStream();
+
+            StateObject<T> state = new StateObject<T>();
+            state.tcpClient = tcpClient;
+            state.netStream = netStream;
+            state.RequestState = pubnubRequestState;
+
+            System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(netStream);
+            streamWriter.Write(requestString);
+            streamWriter.Flush();
+#if(!MONODROID)
+            netStream.ReadTimeout = pubnubRequestState.Request.Timeout;
+#endif
+            netStream.BeginRead(state.buffer, 0, state.buffer.Length, new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
+
+        }
+
+        private void SendRequestUsingTcpClient<T>(Uri requestUri, RequestState<T> pubnubRequestState)
+        {
+            TcpClient tcpClient = new TcpClient();
+            tcpClient.NoDelay = false;
+#if(!MONODROID)
+            tcpClient.SendTimeout = pubnubRequestState.Request.Timeout;
+#endif          
+
+            string requestString = CreateRequest(requestUri);
+
+            if (ssl)
+            {
+                if (pubnubEnableProxyConfig && _pubnubProxy != null)
+                {
+                    tcpClient.Connect(_pubnubProxy.ProxyServer, _pubnubProxy.ProxyPort);
+
+                    ConnectToHostAndSendRequest<T>(ssl, tcpClient, pubnubRequestState, requestString);
+                }
+                else
+                {
+                    tcpClient.Connect(this.domainName, 443);
+                    NetworkStream netStream = tcpClient.GetStream();
+                    SendSslRequest<T>(netStream, tcpClient, pubnubRequestState, requestString);
+                }
+            }
+            else
+            {
+                if (pubnubEnableProxyConfig && _pubnubProxy != null)
+                {
+                    tcpClient.Connect(_pubnubProxy.ProxyServer, _pubnubProxy.ProxyPort);
+
+                    ConnectToHostAndSendRequest(ssl, tcpClient, pubnubRequestState, requestString);
+                }
+                else
+                {
+                    tcpClient.Connect(this.domainName, 80);
+                    SendRequest<T>(tcpClient, pubnubRequestState, requestString);
+                }
+            }
+        }
+
+        private void SendRequestUsingTcpClientCallback<T>(IAsyncResult asynchronousResult)
+        {
+            StateObject<T> state = asynchronousResult.AsyncState as StateObject<T>;
+            RequestState<T> asynchRequestState = state.RequestState;
+            string channel = "";
+            if (asynchRequestState != null && asynchRequestState.Channels != null)
+            {
+                channel = string.Join(",", asynchRequestState.Channels);
+            }
+            try
+            {
+                //StateObject<T> state = (StateObject<T>) asynchronousResult.AsyncState;
+                if (ssl)
+                {
+                    SslStream sslns = state.sslns;
+                    int bytesRead = sslns.EndRead(asynchronousResult);
+
+                    if (bytesRead > 0)
+                    {
+                        Decoder decoder = Encoding.UTF8.GetDecoder();
+                        char[] chars = new char[decoder.GetCharCount(state.buffer, 0, bytesRead)];
+                        decoder.GetChars(state.buffer, 0, bytesRead, chars, 0);
+                        state.sb.Append(chars);
+
+                        sslns.BeginRead(state.buffer, 0, StateObject<T>.BufferSize,
+                                        new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
+                    }
+                    else
+                    {
+                        HandleTcpClientResponse(state, asynchRequestState, channel, asynchronousResult);
+                    }
+                }
+                else
+                {
+                    NetworkStream netStream = state.netStream;
+                    int bytesRead = netStream.EndRead(asynchronousResult);
+
+                    if (bytesRead > 0)
+                    {
+                        state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+
+                        netStream.BeginRead(state.buffer, 0, StateObject<T>.BufferSize,
+                                     new AsyncCallback(SendRequestUsingTcpClientCallback<T>), state);
+                    }
+                    else
+                    {
+                        HandleTcpClientResponse(state, asynchRequestState, channel, asynchronousResult);
+                    }
+                }
+            }
+            catch (WebException webEx)
+            {
+                ProcessResponseCallbackWebExceptionHandler<T>(webEx, asynchRequestState, channel);
+            }
+            catch (Exception ex)
+            {
+                ProcessResponseCallbackExceptionHandler<T>(ex, asynchRequestState);
+            }
+        }
+
+        void HandleTcpClientResponse<T>(StateObject<T> state, RequestState<T> asynchRequestState, string channel, IAsyncResult asynchronousResult)
+        {
+            List<object> result = new List<object>();
+            if (state.sb.Length > 1)
+            {
+                string jsonString = ParseResponse<T>(state.sb.ToString(), asynchronousResult);
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, JSON for channel={1} ({2}) ={3}", DateTime.Now.ToString(), channel, asynchRequestState.Type.ToString(), jsonString), LoggingMethod.LevelInfo);
+
+                if (overrideTcpKeepAlive)
+                {
+                    TerminateHeartbeatTimer(state.RequestState.Request.RequestUri);
+                }
+
+                if (!string.IsNullOrWhiteSpace(jsonString))
+                {
+                    result = WrapResultBasedOnResponseType(asynchRequestState.Type, jsonString, asynchRequestState.Channels, asynchRequestState.Reconnect, asynchRequestState.Timetoken);
+                }
+
+                ProcessResponseCallbacks<T>(result, asynchRequestState);
+            }
+            if (state.tcpClient != null)
+                state.tcpClient.Close();
+        }
+
+        string ParseResponse<T>(string responseString, IAsyncResult asynchronousResult)
+        {
+            string json = "";
+            int pos = responseString.LastIndexOf('\n');
+            if ((responseString.StartsWith("HTTP/1.1 200 OK") || (responseString.StartsWith("HTTP/1.0 200 OK")) && (pos != -1)))
+            {
+                json = responseString.Substring(pos + 1);
+            }
+            return json;
+        }
+
+#endif
+
+        void ProcessResponseCallbackExceptionHandler<T>(Exception ex, RequestState<T> asynchRequestState)
+        {
+            //common Exception handler
+            if (asynchRequestState.Response != null)
+                asynchRequestState.Response.Close();
+
+            LoggingMethod.WriteToLog(string.Format("DateTime {0} Exception= {1} for URL: {2}", DateTime.Now.ToString(), ex.ToString(), asynchRequestState.Request.RequestUri.ToString()), LoggingMethod.LevelError);
+            UrlRequestCommonExceptionHandler<T>(asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.Timeout, asynchRequestState.UserCallback, asynchRequestState.ConnectCallback, false);
+        }
+
+        void ProcessResponseCallbackWebExceptionHandler<T>(WebException webEx, RequestState<T> asynchRequestState, string channel)
+        {
+            bool reconnect = false;
+            LoggingMethod.WriteToLog(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.ToString(), asynchRequestState.Request.RequestUri.ToString()), LoggingMethod.LevelError);
+
+            if (asynchRequestState.Response != null) asynchRequestState.Response.Close();
+            if (asynchRequestState.Request != null) asynchRequestState.Request.Abort();
+
+#if (!SILVERLIGHT)
+            if ((webEx.Status == WebExceptionStatus.NameResolutionFailure //No network
+                 || webEx.Status == WebExceptionStatus.ConnectFailure //Sending Keep-alive packet failed (No network)/Server is down.
+                 || webEx.Status == WebExceptionStatus.ServerProtocolViolation//Problem with proxy or ISP
+                 || webEx.Status == WebExceptionStatus.ProtocolError
+                 ) && (!overrideTcpKeepAlive))
+            {
+                //internet connection problem.
+                LoggingMethod.WriteToLog(string.Format("DateTime {0}, _urlRequest - Internet connection problem", DateTime.Now.ToString()), LoggingMethod.LevelError);
+
+                if (_channelInternetStatus.ContainsKey(channel)
+                    && (asynchRequestState.Type == ResponseType.Subscribe || asynchRequestState.Type == ResponseType.Presence))
+                {
+                    reconnect = true;
+
+                    if (_channelInternetStatus[channel])
+                    {
+                        //Reset Retry if previous state is true
+                        _channelInternetRetry.AddOrUpdate(channel, 0, (key, oldValue) => 0);
+                    }
+                    else
+                    {
+                        _channelInternetRetry.AddOrUpdate(channel, 1, (key, oldValue) => oldValue + 1);
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), asynchRequestState.Type, string.Join(",", asynchRequestState.Channels), _channelInternetRetry[channel], _pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
+                    }
+                    _channelInternetStatus[channel] = false;
+
+                    Thread.Sleep(_pubnubWebRequestRetryIntervalInSeconds * 1000);
+                }
+            }
+#endif
+            UrlRequestCommonExceptionHandler<T>(asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.Timeout,
+                                                asynchRequestState.UserCallback, asynchRequestState.ConnectCallback, reconnect);
+        }
+
+        void ProcessResponseCallbacks<T>(List<object> result, RequestState<T> asynchRequestState)
+        {
+            if (result != null && result.Count >= 1 && asynchRequestState.UserCallback != null)
+            {
+                ResponseToConnectCallback<T>(result, asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.ConnectCallback);
+                ResponseToUserCallback<T>(result, asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.UserCallback);
             }
         }
 
@@ -1433,11 +2017,7 @@ namespace PubNubMessaging.Core
                     LoggingMethod.WriteToLog(string.Format("DateTime {0}, Request aborted for channel={1}", DateTime.Now.ToString(), asynchRequestState.Channels), LoggingMethod.LevelInfo);
                 }
 
-                if (result != null && result.Count >= 1 && asynchRequestState.UserCallback != null)
-                {
-                    ResponseToConnectCallback<T>(result, asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.ConnectCallback);
-                    ResponseToUserCallback<T>(result, asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.UserCallback);
-                }
+                ProcessResponseCallbacks<T>(result, asynchRequestState);
 
                 if (asynchRequestState.Type == ResponseType.Subscribe || asynchRequestState.Type == ResponseType.Presence)
                 {
@@ -1459,53 +2039,11 @@ namespace PubNubMessaging.Core
             }
             catch (WebException webEx)
             {
-                bool reconnect = false;
-                LoggingMethod.WriteToLog(string.Format("DateTime {0}, WebException: {1} for URL: {2}", DateTime.Now.ToString(), webEx.ToString(), asynchRequestState.Request.RequestUri.ToString()), LoggingMethod.LevelError);
-
-                if (asynchRequestState.Response != null) asynchRequestState.Response.Close();
-                if (asynchRequestState.Request != null) asynchRequestState.Request.Abort();
-
-#if (!SILVERLIGHT)
-                if ((webEx.Status == WebExceptionStatus.NameResolutionFailure //No network
-                    || webEx.Status == WebExceptionStatus.ConnectFailure //Sending Keep-alive packet failed (No network)/Server is down.
-                    || webEx.Status == WebExceptionStatus.ServerProtocolViolation//Problem with proxy or ISP
-                    || webEx.Status == WebExceptionStatus.ProtocolError
-                    ) && (!overrideTcpKeepAlive))
-                {
-                    //internet connection problem.
-                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, _urlRequest - Internet connection problem", DateTime.Now.ToString()), LoggingMethod.LevelError);
-
-                    if (_channelInternetStatus.ContainsKey(channel)
-                        && (asynchRequestState.Type == ResponseType.Subscribe || asynchRequestState.Type == ResponseType.Presence))
-                    {
-                        reconnect = true;
-
-                        if (_channelInternetStatus[channel])
-                        {
-                            //Reset Retry if previous state is true
-                            _channelInternetRetry.AddOrUpdate(channel, 0, (key, oldValue) => 0);
-                        }
-                        else
-                        {
-                            _channelInternetRetry.AddOrUpdate(channel, 1, (key, oldValue) => oldValue + 1);
-                            LoggingMethod.WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), asynchRequestState.Type, string.Join(",",asynchRequestState.Channels), _channelInternetRetry[channel], pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
-                        }
-                        _channelInternetStatus[channel] = false;
-                        
-                        Thread.Sleep(pubnubWebRequestRetryIntervalInSeconds * 1000);
-                    }
-                }
-#endif
-                UrlRequestCommonExceptionHandler<T>(asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.Timeout,
-                    asynchRequestState.UserCallback, asynchRequestState.ConnectCallback, reconnect);
+                ProcessResponseCallbackWebExceptionHandler<T>(webEx, asynchRequestState, channel);
             }
             catch (Exception ex)
             {
-                if (asynchRequestState.Response != null)
-                    asynchRequestState.Response.Close();
-
-                LoggingMethod.WriteToLog(string.Format("DateTime {0} Exception= {1} for URL: {2}", DateTime.Now.ToString(), ex.ToString(), asynchRequestState.Request.RequestUri.ToString()), LoggingMethod.LevelError);
-                UrlRequestCommonExceptionHandler<T>(asynchRequestState.Type, asynchRequestState.Channels, asynchRequestState.Timeout, asynchRequestState.UserCallback, asynchRequestState.ConnectCallback, false);
+                ProcessResponseCallbackExceptionHandler<T>(ex, asynchRequestState);
             }
         }
 
@@ -1522,11 +2060,11 @@ namespace PubNubMessaging.Core
             int timeout;
             if (type == ResponseType.Subscribe || type == ResponseType.Presence)
             {
-                timeout = pubnubWebRequestCallbackIntervalInSeconds;
+                timeout = _pubnubWebRequestCallbackIntervalInSeconds;
             }
             else
             {
-                timeout = pubnubOperationTimeoutIntervalInSeconds;
+                timeout = _pubnubOperationTimeoutIntervalInSeconds;
             }
             return timeout;
         }
@@ -1548,8 +2086,8 @@ namespace PubNubMessaging.Core
                         try
                         {
                             requestHeatbeatTimer.Change(
-                                (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000,
-                                (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                                (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000,
+                                (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
                             requestHeatbeatTimer.Dispose();
                         }
                         catch (ObjectDisposedException ex)
@@ -1604,8 +2142,8 @@ namespace PubNubMessaging.Core
                 {
                     Timer channelReconnectTimer = _channelReconnectTimer[channelName];
                     channelReconnectTimer.Change(
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000,
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000,
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
                     channelReconnectTimer.Dispose();
                     Timer removedTimer = null;
                     bool removed = _channelReconnectTimer.TryRemove(channelName, out removedTimer);
@@ -1647,22 +2185,28 @@ namespace PubNubMessaging.Core
                                   select channel.Key;
                 foreach (string channel in newChannels)
                 {
-                    if (!IsPresenceChannel(channel))
-                    {
+                    string jsonString = "";
+                    List<object> connectResult = new List<object>();
+                    //if (!IsPresenceChannel(channel))
+                    //{
                         switch (type)
                         {
                             case ResponseType.Subscribe:
-                                string jsonString = "";
-                                List<object> connectResult = new List<object>();
                                 jsonString = string.Format("[1, \"Connected\"]");
                                 connectResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                                 connectResult.Add(channel);
                                 GoToCallback<T>(connectResult, connectCallback);
                                 break;
+                            case ResponseType.Presence:
+                                jsonString = string.Format("[1, \"Presence Connected\"]");
+                                connectResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                                connectResult.Add(channel.Replace("-pnpres", ""));
+                                GoToCallback<T>(connectResult, connectCallback);
+                                break;
                             default:
                                 break;
                         }
-                    }
+                    //}
                 }
             }
 
@@ -1990,18 +2534,38 @@ namespace PubNubMessaging.Core
                 string[] activeChannels = _multiChannelSubscribe.Keys.ToArray<string>();
                 MultiChannelUnSubscribeInit<T>(ResponseType.Unsubscribe, string.Join(",", activeChannels), null, null, null);
 
-                List<object> errorResult = new List<object>();
-                string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", pubnubNetworkCheckRetries);
-                errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
-                string activeMultiChannel = string.Join(",", activeChannels).Replace("-pnpres", "");
-                errorResult.Add(activeMultiChannel.Split(','));
+                string[] subscribeChannels = activeChannels.Where(filterChannel => !filterChannel.Contains("-pnpres")).ToArray();
+                string[] presenceChannels = activeChannels.Where(filterChannel => filterChannel.Contains("-pnpres")).ToArray();
 
-                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
-
-                if (userCallback != null)
+                if (subscribeChannels != null && subscribeChannels.Length > 0)
                 {
-                    GoToCallback<T>(errorResult, userCallback);
+                    List<object> errorResult = new List<object>();
+                    string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
+                    errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                    string activeMultiChannel = string.Join(",", subscribeChannels);
+                    errorResult.Add(activeMultiChannel.Split(','));
+
+                    if (userCallback != null)
+                    {
+                        GoToCallback<T>(errorResult, userCallback);
+                    }
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 }
+                if (presenceChannels != null && presenceChannels.Length > 0)
+                {
+                    List<object> errorResult = new List<object>();
+                    string jsonString = string.Format("[0, \"Presence Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
+                    errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                    string activeMultiChannel = string.Join(",", presenceChannels).Replace("-pnpres", "");
+                    errorResult.Add(activeMultiChannel.Split(','));
+
+                    if (userCallback != null)
+                    {
+                        GoToCallback<T>(errorResult, userCallback);
+                    }
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Presence-Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
+                }
+
             }
             else
             {
@@ -2065,7 +2629,7 @@ namespace PubNubMessaging.Core
         /// </summary>
         /// <param name="type"></param>
         /// <param name="jsonString"></param>
-        /// <param name="channelName"></param>
+        /// <param name="channels"></param>
         /// <param name="reconnect"></param>
         /// <returns></returns>
         private List<object> WrapResultBasedOnResponseType(ResponseType type, string jsonString, string[] channels, bool reconnect, long lastTimetoken)
@@ -2117,19 +2681,21 @@ namespace PubNubMessaging.Core
                 case ResponseType.Subscribe:
                 case ResponseType.Presence:
                     result.Add(string.Join(",",channels));
+                    long receivedTimetoken = Convert.ToInt64(result[1].ToString());
                     long minimumTimetoken = (_multiChannelSubscribe.Count > 0) ? _multiChannelSubscribe.Min(token => token.Value) : 0;
                     long maximumTimetoken = (_multiChannelSubscribe.Count > 0) ? _multiChannelSubscribe.Max(token => token.Value) : 0;
+
                     if (minimumTimetoken == 0 || lastTimetoken == 0) 
                     {
                         if (maximumTimetoken == 0)
                         {
-                            lastSubscribeTimetoken = Convert.ToInt64(result[1].ToString());
+                            lastSubscribeTimetoken = receivedTimetoken;
                         }
                         else
                         {
-                            if (!enableResumeOnReconnect)
+                            if (!_enableResumeOnReconnect)
                             {
-                                lastSubscribeTimetoken = Convert.ToInt64(result[1].ToString());
+                                lastSubscribeTimetoken = receivedTimetoken;
                             }
                             else
                             {
@@ -2139,7 +2705,21 @@ namespace PubNubMessaging.Core
                     }
                     else
                     {
-                        lastSubscribeTimetoken = Convert.ToInt64(result[1].ToString());
+                        if (reconnect)
+                        {
+                            if (_enableResumeOnReconnect)
+                            {
+                                //do nothing. keep last subscribe token
+                            }
+                            else
+                            {
+                                lastSubscribeTimetoken = receivedTimetoken;
+                            }
+                        }
+                        else
+                        {
+                            lastSubscribeTimetoken = receivedTimetoken;
+                        }
                     }
                     break;
                 case ResponseType.Leave:
@@ -2225,7 +2805,7 @@ namespace PubNubMessaging.Core
         {
             string encodedUri = "";
             StringBuilder o = new StringBuilder();
-            foreach (char ch in s.ToCharArray())
+            foreach (char ch in s)
             {
                 if (IsUnsafe(ch,ignoreComma))
                 {
@@ -2309,6 +2889,44 @@ namespace PubNubMessaging.Core
             TerminateReconnectTimer();
         }
 
+        public void TerminateCurrentSubscriberRequest()
+        {
+            string[] channels = GetCurrentSubscriberChannels();
+            if (channels != null)
+            {
+                string multiChannel = string.Join(",", channels);
+                PubnubWebRequest request = (_channelRequest.ContainsKey(multiChannel)) ? _channelRequest[multiChannel] : null;
+                if (request != null)
+                {
+                    request.Abort();
+
+                    //TerminateHeartbeatTimer(request.RequestUri);
+
+                    //TerminateReconnectTimer(multiChannel);
+
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminateCurrentSubsciberRequest {1}", DateTime.Now.ToString(), request.RequestUri.ToString()), LoggingMethod.LevelInfo);
+                }
+            }
+        }
+
+        /// <summary>
+        /// FOR TESTING ONLY - To Enable Simulation of Network Non-Availability
+        /// </summary>
+        public void EnableSimulateNetworkFailForTestingOnly()
+        {
+            ClientNetworkStatus.SimulateNetworkFailForTesting = true;
+            PubnubWebRequest.SimulateNetworkFailForTesting = true;
+        }
+
+        /// <summary>
+        /// FOR TESTING ONLY - To Disable Simulation of Network Non-Availability
+        /// </summary>
+        public void DisableSimulateNetworkFailForTestingOnly()
+        {
+            ClientNetworkStatus.SimulateNetworkFailForTesting = false;
+            PubnubWebRequest.SimulateNetworkFailForTesting = false;
+        }
+
         private bool IsPresenceChannel(string channel)
         {
             if (channel.LastIndexOf("-pnpres") > 0)
@@ -2319,6 +2937,17 @@ namespace PubNubMessaging.Core
             {
                 return false;
             }
+        }
+
+        private string[] GetCurrentSubscriberChannels()
+        {
+            string[] channels = null;
+            if (_multiChannelSubscribe != null && _multiChannelSubscribe.Keys.Count > 0)
+            {
+                channels = _multiChannelSubscribe.Keys.ToArray<string>();
+            }
+
+            return channels;
         }
     }
 
@@ -3118,6 +3747,7 @@ namespace PubNubMessaging.Core
     internal class ClientNetworkStatus
     {
         private static bool _status = true;
+        private static bool _failClientNetworkForTesting = false;
 
 #if (SILVERLIGHT  || WINDOWS_PHONE)
         private static ManualResetEvent mres = new ManualResetEvent(false);
@@ -3125,32 +3755,32 @@ namespace PubNubMessaging.Core
 #else
         private static ManualResetEventSlim mres = new ManualResetEventSlim(false);
 #endif
-        internal static void CheckInternetStatus(bool systemActive, Action<bool> Callback)
+        internal static bool SimulateNetworkFailForTesting
         {
-            if (Callback != null)
+            get
             {
-                try
-                {
-                    if (systemActive)
-                    {
-                        CheckClientNetworkAvailability(Callback);
-                    }
-                    else
-                    {
-                        Callback(false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelVerbose);
-                }
+                return _failClientNetworkForTesting;
             }
+
+            set
+            {
+                _failClientNetworkForTesting = value;
+            }
+
         }
 
         internal static bool CheckInternetStatus(bool systemActive)
         {
-            CheckClientNetworkAvailability(CallbackClientNetworkStatus);
-            return _status;
+            if (_failClientNetworkForTesting)
+            {
+                //Only to simulate network fail
+                return false;
+            }
+            else
+            {
+                CheckClientNetworkAvailability(CallbackClientNetworkStatus);
+                return _status;
+            }
         }
 
 
@@ -3348,8 +3978,21 @@ namespace PubNubMessaging.Core
     internal class PubnubWebRequest : WebRequest
     {
         private IPubnubUnitTest pubnubUnitTest = null;
+        private static bool simulateNetworkFailForTesting = false;
 
         HttpWebRequest request;
+
+        internal static bool SimulateNetworkFailForTesting
+        {
+            get
+            {
+                return simulateNetworkFailForTesting;
+            }
+            set
+            {
+                simulateNetworkFailForTesting = value;
+            }
+        }
 
 #if (!SILVERLIGHT && !WINDOWS_PHONE)
         private int _timeout;
@@ -3498,6 +4141,11 @@ namespace PubNubMessaging.Core
             {
                 string stubResponse = pubnubUnitTest.GetStubResponse(request.RequestUri);
                 return new PubnubWebResponse(new MemoryStream(Encoding.UTF8.GetBytes(stubResponse)));
+            }
+            else if (simulateNetworkFailForTesting)
+            {
+                WebException simulateException = new WebException("For simulating network fail, the remote name could not be resolved", WebExceptionStatus.ConnectFailure);
+                throw simulateException;
             }
             else
             {
@@ -3683,4 +4331,22 @@ namespace PubNubMessaging.Core
         }
     }
 
+#if (__MonoCS__)
+    class StateObject<T>
+    {
+        public RequestState<T> RequestState
+        {
+            get;
+            set;
+        }
+
+        public TcpClient tcpClient = null;
+        public NetworkStream netStream = null;
+        public SslStream sslns = null;
+        public const int BufferSize = 2048;
+        public byte[] buffer = new byte[BufferSize];
+        public StringBuilder sb = new StringBuilder();
+        public string requestString = null;
+    }
+#endif
 }
