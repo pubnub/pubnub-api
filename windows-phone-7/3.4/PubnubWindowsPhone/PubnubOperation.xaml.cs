@@ -24,6 +24,13 @@ namespace PubnubWindowsPhone
         string secretKey = "";
         string cipherKey = "";
         string uuid = "";
+        bool resumeOnReconnect = false;
+
+        int subscribeTimeoutInSeconds;
+        int operationTimeoutInSeconds;
+        int networkMaxRetries;
+        int networkRetryIntervalInSeconds;
+        int heartbeatIntervalInSeconds;
 
         Popup publishPopup = null;
 
@@ -36,16 +43,28 @@ namespace PubnubWindowsPhone
         {
             pubnub = new Pubnub("demo", "demo", secretKey, cipherKey, ssl);
             pubnub.SessionUUID = uuid;
+            pubnub.SubscribeTimeout = subscribeTimeoutInSeconds;
+            pubnub.NonSubscribeTimeout = operationTimeoutInSeconds;
+            pubnub.NetworkCheckMaxRetries = networkMaxRetries;
+            pubnub.NetworkCheckRetryInterval = networkRetryIntervalInSeconds;
+            pubnub.HeartbeatInterval = heartbeatIntervalInSeconds;
+            pubnub.EnableResumeOnReconnect = resumeOnReconnect;
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            //channel = NavigationContext.QueryString["channel"].ToString();
             ssl = Boolean.Parse(NavigationContext.QueryString["ssl"].ToString());
             cipherKey = NavigationContext.QueryString["cipherkey"].ToString();
             secretKey = NavigationContext.QueryString["secretkey"].ToString();
             uuid = NavigationContext.QueryString["uuid"].ToString();
+
+            subscribeTimeoutInSeconds = Convert.ToInt32(NavigationContext.QueryString["subtimeout"]);
+            operationTimeoutInSeconds = Convert.ToInt32(NavigationContext.QueryString["optimeout"]);
+            networkMaxRetries = Convert.ToInt32(NavigationContext.QueryString["retries"]);
+            networkRetryIntervalInSeconds = Convert.ToInt32(NavigationContext.QueryString["retryinterval"]);
+            heartbeatIntervalInSeconds = Convert.ToInt32(NavigationContext.QueryString["beatinterval"]);
+            resumeOnReconnect = Boolean.Parse(NavigationContext.QueryString["resumeOnReconnect"].ToString());
         }
 
         protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
@@ -200,6 +219,21 @@ namespace PubnubWindowsPhone
         {
             channel = txtChannel.Text;
             pubnub.Subscribe<string>(channel, PubnubCallbackResult, PubnubConnectCallbackResult);
+        }
+
+        private void btnDisableNetwork_Click(object sender, RoutedEventArgs e)
+        {
+            pubnub.EnableSimulateNetworkFailForTestingOnly();
+        }
+
+        private void btnEnableNetwork_Click(object sender, RoutedEventArgs e)
+        {
+            pubnub.DisableSimulateNetworkFailForTestingOnly();
+        }
+
+        private void btnDisconnectRetry_Click(object sender, RoutedEventArgs e)
+        {
+            pubnub.TerminateCurrentSubscriberRequest();
         }
 
     }

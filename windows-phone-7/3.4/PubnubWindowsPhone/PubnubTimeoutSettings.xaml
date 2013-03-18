@@ -1,5 +1,5 @@
 ﻿<phone:PhoneApplicationPage 
-    x:Class="PubnubWindowsPhone.DemoStart"
+    x:Class="PubnubWindowsPhone.PubnubTimeoutSettings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
@@ -9,7 +9,7 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
+    SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
     shell:SystemTray.IsVisible="True">
 
@@ -19,40 +19,42 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
+        
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
             <TextBlock x:Name="ApplicationTitle" Text="PubNub C# Windows Phone" Style="{StaticResource PhoneTextNormalStyle}"/>
-            
             <TextBlock x:Name="PageTitle" Text="Demo" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
-
+        
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Margin="12,142,12,0" Grid.RowSpan="2">
             <StackPanel Orientation="Horizontal" Margin="20,3,19,0" Name="spnlInput1" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="72">
-                <CheckBox Content="SSL" Height="65" Name="chkSSL" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-                <Line Name="separatorCheck" X1="0" Y1="45" StrokeThickness="3" Stroke="White" VerticalAlignment="Center"></Line>
-                <CheckBox Content="Resume On Reconnect" Height="65" Name="chkResumeOnReconnect" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsChecked="True" />
+                <TextBlock Name="lblSettings" VerticalAlignment="Center" Text="Timeout/Interval Settings" FontSize="32"></TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="20,78,19,0" Name="spnlInput2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Name="lblCipher" VerticalAlignment="Center" Text="Cipher Key"></TextBlock>
-                <TextBox Name="txtCipher" Text="" Width="236"></TextBox>
+                <TextBlock Name="lblSubscribeTimeout" VerticalAlignment="Center" Text="Subscribe Timeout (in sec)" TextWrapping="Wrap"></TextBlock>
+                <TextBox Name="txtSubscribeTimeout" Text="310" Width="109"></TextBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="20,152,19,0" Name="spnlInput3" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Name="lblSecret" VerticalAlignment="Center" Text="Secret Key"></TextBlock>
-                <TextBox Name="txtSecret" Text="" Width="236"></TextBox>
+                <TextBlock Name="lblNonSubscribeTimeout" Text="Non Subscribe Timeout (in sec)" VerticalAlignment="Center" />
+                <TextBox Name="txtNonSubscribeTimeout" Text="15" Width="104" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="20,228,19,0" Name="spnlInput4" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Name="lblUUID" VerticalAlignment="Center" Text="Session UUID"></TextBlock>
-                <TextBox Name="txtUUID" Text="" Width="236"></TextBox>
+                <TextBlock Name="lblNetworkMaxRetries" Text="Number of MAX retries" VerticalAlignment="Center" TextWrapping="NoWrap" Width="220" />
+                <TextBox Name="txtNetworkMaxRetries" Text="50" Width="91" />
             </StackPanel>
-            <!--<StackPanel Orientation="Horizontal" Margin="20,304,19,0" Name="spnlInput5" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="70">
+            <StackPanel Orientation="Horizontal" Margin="20,304,19,0" Name="spnlInput5" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="70">
+                <TextBlock Name="lblRetryInterval" Text="Retry Interval (in sec)" VerticalAlignment="Center" TextWrapping="NoWrap" Width="201" />
+                <TextBox Name="txtRetryInterval" Text="10" Width="91" />
             </StackPanel>
             <StackPanel Height="65" HorizontalAlignment="Stretch" Margin="20,376,19,0" Name="spnlInput6" Orientation="Horizontal" VerticalAlignment="Top">
+                <TextBlock Name="lblHeartbeatInterval" Text="Heartbeat Interval (in sec)" VerticalAlignment="Center" TextWrapping="NoWrap" Width="240" />
+                <TextBox Name="txtHeartbeatInterval" Text="10" Width="91" />
             </StackPanel>
             <StackPanel Height="65" HorizontalAlignment="Stretch" Margin="20,444,19,0" Name="spnlInput7" Orientation="Horizontal" VerticalAlignment="Top">
-            </StackPanel>-->
-            <Button Content="Continue" Height="72" HorizontalAlignment="Stretch" Margin="277,337,19,0" Name="btnContinue" VerticalAlignment="Top" Width="160" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" Click="btnContinue_Click" />
+                
+            </StackPanel>
+            <Button Content="Continue" Height="72" HorizontalAlignment="Stretch" Margin="290,515,6,0" Name="btnContinue" VerticalAlignment="Top" Width="160" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" Click="btnContinue_Click" />
         </Grid>
     </Grid>
 

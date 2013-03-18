@@ -27,19 +27,28 @@
         </StackPanel>
         
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+        <Grid x:Name="ContentPanel" Margin="21,127,3,34" Grid.RowSpan="2">
             <TextBlock Height="39" HorizontalAlignment="Left" Margin="34,16,0,0" Name="lblChannel" Text="Channel =" VerticalAlignment="Top" Width="124" FontSize="22" />
             <TextBox Height="72" HorizontalAlignment="Left" Margin="150,0,0,0" Name="txtChannel" Text="my/channel" VerticalAlignment="Top" Width="281" />
 
-            <Button Content="Time" Height="72" HorizontalAlignment="Left" Margin="249,245,0,0" Name="btnTime" VerticalAlignment="Top" Width="147" Click="btnTime_Click" FontSize="22" />
-            <Button Content="Publish" Height="72" HorizontalAlignment="Left" Margin="249,122,0,0" Name="btnPublish" VerticalAlignment="Top" Width="160" Click="btnPublish_Click" FontSize="22" />
-            <Button Content="Here_Now" Height="72" HorizontalAlignment="Left" Margin="249,184,0,0" Name="btnHereNow" VerticalAlignment="Top" Width="193" Click="btnHereNow_Click" FontSize="22" />
-            <Button Content="Presence" Height="72" HorizontalAlignment="Left" Margin="251,61,0,0" Name="btnPresence" VerticalAlignment="Top" Width="160" Click="btnPresence_Click" FontSize="22" />
-            <Button Content="Subscribe" Height="72" HorizontalAlignment="Left" Margin="15,61,0,0" Name="btnSubscribeConnect" VerticalAlignment="Top" Width="160" Click="btnSubscribe_Click" FontSize="22" />
-            <Button Content="Detailed History" Height="72" HorizontalAlignment="Left" Margin="13,122,0,0" Name="btnDetailedHistory" VerticalAlignment="Top" Width="240" Click="btnDetailedHistory_Click" FontSize="22" />
-            <Button Content="Unsubscribe" Height="72" HorizontalAlignment="Left" Margin="13,184,0,0" Name="btnUnsubscribe" VerticalAlignment="Top" Width="237" Click="btnUnsubscribe_Click" FontSize="22" />
-            <Button Content="Presence-Unsub" Height="72" HorizontalAlignment="Left" Margin="10,245,0,0" Name="btnPresenceUnsub" VerticalAlignment="Top" Width="240" Click="btnPresenceUnsub_Click" FontSize="22" />
-            <ScrollViewer Height="260" HorizontalAlignment="Stretch" Margin="0,320,0,0" Name="scrollViewerResult" VerticalAlignment="Top" Width="420" Background="#FFCCC6C6" BorderThickness="2" Foreground="#FF0D0D0D" ManipulationMode="Control" UseLayoutRounding="False" BorderBrush="SteelBlue" VerticalScrollBarVisibility="Visible" DoubleTap="scrollViewerResult_DoubleTap">
+            <Button Content="Subscribe" Height="72" HorizontalAlignment="Left" Margin="15,55,0,0" Name="btnSubscribeConnect" VerticalAlignment="Top" Width="160" Click="btnSubscribe_Click" FontSize="22" />
+            <Button Content="Presence" Height="72" HorizontalAlignment="Left" Margin="251,55,0,0" Name="btnPresence" VerticalAlignment="Top" Width="160" Click="btnPresence_Click" FontSize="22" />
+            
+            <Button Content="Detailed History" Height="72" HorizontalAlignment="Left" Margin="13,110,0,0" Name="btnDetailedHistory" VerticalAlignment="Top" Width="240" Click="btnDetailedHistory_Click" FontSize="22" />
+            <Button Content="Publish" Height="72" HorizontalAlignment="Left" Margin="249,110,0,0" Name="btnPublish" VerticalAlignment="Top" Width="160" Click="btnPublish_Click" FontSize="22" />
+
+            <Button Content="Unsubscribe" Height="72" HorizontalAlignment="Left" Margin="13,165,0,0" Name="btnUnsubscribe" VerticalAlignment="Top" Width="237" Click="btnUnsubscribe_Click" FontSize="22" />
+            <Button Content="Here_Now" Height="72" HorizontalAlignment="Left" Margin="249,165,0,0" Name="btnHereNow" VerticalAlignment="Top" Width="193" Click="btnHereNow_Click" FontSize="22" />
+            
+            <Button Content="Presence-Unsub" Height="72" HorizontalAlignment="Left" Margin="10,220,0,0" Name="btnPresenceUnsub" VerticalAlignment="Top" Width="240" Click="btnPresenceUnsub_Click" FontSize="22" />
+            <Button Content="Time" Height="72" HorizontalAlignment="Left" Margin="249,220,0,0" Name="btnTime" VerticalAlignment="Top" Width="147" Click="btnTime_Click" FontSize="22" />
+
+            <Button Content="Disable Network" Height="72" HorizontalAlignment="Left" Margin="10,275,0,0" Name="btnDisableNetwork" VerticalAlignment="Top" Width="240" FontSize="22" Click="btnDisableNetwork_Click" />
+            <Button Content="Enable Network" Height="72" HorizontalAlignment="Left" Margin="249,275,0,0" Name="btnEnableNetwork" VerticalAlignment="Top" Width="207" FontSize="22" Click="btnEnableNetwork_Click" />
+
+            <Button Content="Disconnect/Retry" Height="72" HorizontalAlignment="Left" Margin="10,330,0,0" Name="btnDisconnectRetry" VerticalAlignment="Top" Width="240" FontSize="22" Click="btnDisconnectRetry_Click" />
+
+            <ScrollViewer Height="210" HorizontalAlignment="Stretch" Margin="0,395,0,0" Name="scrollViewerResult" VerticalAlignment="Top" Width="420" Background="#FFCCC6C6" BorderThickness="2" Foreground="#FF0D0D0D" ManipulationMode="Control" UseLayoutRounding="False" BorderBrush="SteelBlue" VerticalScrollBarVisibility="Visible" DoubleTap="scrollViewerResult_DoubleTap">
                 <StackPanel Name="messageStackPanel" Orientation="Vertical"></StackPanel>
             </ScrollViewer>
         </Grid>

@@ -83,6 +83,9 @@
     <Compile Include="PublishMessageUserControl.xaml.cs">
       <DependentUpon>PublishMessageUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PubnubTimeoutSettings.xaml.cs">
+      <DependentUpon>PubnubTimeoutSettings.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -102,6 +105,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PublishMessageUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PubnubTimeoutSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
