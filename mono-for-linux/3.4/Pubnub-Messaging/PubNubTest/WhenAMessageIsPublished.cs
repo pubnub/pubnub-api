@@ -4,7 +4,11 @@ using NUnit.Framework;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-
+using System.Net;
+using System.IO;
+using System.Diagnostics;
+using System.Text;
+using System.Net.Sockets;
 
 namespace PubNubMessaging.Tests
 {
