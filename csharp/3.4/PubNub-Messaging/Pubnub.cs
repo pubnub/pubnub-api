@@ -1,4 +1,4 @@
-﻿//Build Date: March 16, 2013
+﻿//Build Date: March 20, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -300,6 +300,13 @@ namespace PubNubMessaging.Core
                         {
                             _channelInternetRetry.AddOrUpdate(channel, 1, (key, oldValue) => oldValue + 1);
                             LoggingMethod.WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Retry {3} of {4}", DateTime.Now.ToString(), channel, netState.Type, _channelInternetRetry[channel], _pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
+
+
+                            List<object> result = new List<object>();
+                            string jsonString = string.Format("[0, \"Detected internet connection problem. Retrying connection attempt {0} of {1}\"]", _channelInternetRetry[channel], _pubnubNetworkCheckRetries);
+                            result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                            result.Add(string.Join(",", netState.Channels));
+                            GoToCallback<T>(result, netState.ConnectCallback);
                         }
                     }
 
@@ -310,6 +317,12 @@ namespace PubNubMessaging.Core
                             _channelReconnectTimer[channel].Change(Timeout.Infinite, Timeout.Infinite);
                             _channelReconnectTimer[channel].Dispose();
                         }
+
+                        List<object> result = new List<object>();
+                        string jsonString = string.Format("[1, \"Internet connection available\"]");
+                        result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                        result.Add(string.Join(",", netState.Channels));
+                        GoToCallback<T>(result, netState.ConnectCallback);
 
                         LoggingMethod.WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Internet Available : {3}", DateTime.Now.ToString(), channel, netState.Type, _channelInternetStatus[channel]), LoggingMethod.LevelInfo);
                         switch (netState.Type)
@@ -1947,6 +1960,12 @@ namespace PubNubMessaging.Core
                     {
                         _channelInternetRetry.AddOrUpdate(channel, 1, (key, oldValue) => oldValue + 1);
                         LoggingMethod.WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), asynchRequestState.Type, string.Join(",", asynchRequestState.Channels), _channelInternetRetry[channel], _pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
+
+                        List<object> result = new List<object>();
+                        string jsonString = string.Format("[0, \"Detected internet connection problem. Retrying connection attempt {0} of {1}\"]", _channelInternetRetry[channel], _pubnubNetworkCheckRetries);
+                        result = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                        result.Add(string.Join(",", asynchRequestState.Channels));
+                        GoToCallback<T>(result, asynchRequestState.ConnectCallback);
                     }
                     _channelInternetStatus[channel] = false;
 
@@ -1993,6 +2012,15 @@ namespace PubNubMessaging.Core
                         {
                             if (asynchRequestState.Type == ResponseType.Subscribe || asynchRequestState.Type == ResponseType.Presence)
                             {
+                                if (!overrideTcpKeepAlive && _channelInternetStatus.ContainsKey(channel) && !_channelInternetStatus[channel])
+                                {
+                                    List<object> internetStatus = new List<object>();
+                                    string statusJsonString = string.Format("[1, \"Internet connection available\"]");
+                                    internetStatus = (List<object>)JsonConvert.DeserializeObject<List<object>>(statusJsonString);
+                                    internetStatus.Add(channel);
+                                    GoToCallback<T>(internetStatus, asynchRequestState.ConnectCallback);
+                                }
+
                                 _channelInternetStatus.AddOrUpdate(channel, true, (key, oldValue) => true);
                             }
 
@@ -2543,7 +2571,7 @@ namespace PubNubMessaging.Core
                     string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
                     errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                     string activeMultiChannel = string.Join(",", subscribeChannels);
-                    errorResult.Add(activeMultiChannel.Split(','));
+                    errorResult.Add(activeMultiChannel);
 
                     if (userCallback != null)
                     {
@@ -2557,7 +2585,7 @@ namespace PubNubMessaging.Core
                     string jsonString = string.Format("[0, \"Presence Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
                     errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
                     string activeMultiChannel = string.Join(",", presenceChannels).Replace("-pnpres", "");
-                    errorResult.Add(activeMultiChannel.Split(','));
+                    errorResult.Add(activeMultiChannel);
 
                     if (userCallback != null)
                     {
@@ -3824,9 +3852,11 @@ namespace PubNubMessaging.Core
                 using (UdpClient udp = new UdpClient("pubsub.pubnub.com", 80))
                 {
                     IPAddress localAddress = ((IPEndPoint)udp.Client.LocalEndPoint).Address;
+                    EndPoint remotepoint = udp.Client.RemoteEndPoint;
+                    string remoteAddress = (remotepoint != null) ? remotepoint.ToString() : "";
                     udp.Close();
 
-                    LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus LocalIP: {1}", DateTime.Now.ToString(), localAddress.ToString()), LoggingMethod.LevelVerbose);
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus LocalIP: {1}, RemoteEndPoint:{2}", DateTime.Now.ToString(), localAddress.ToString(), remoteAddress), LoggingMethod.LevelVerbose);
                     callback(true);
                 }
 #endif

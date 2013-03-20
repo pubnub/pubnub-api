@@ -178,7 +178,10 @@ namespace PubNubMessaging.Core
             Console.ResetColor();
             Console.WriteLine();
 
-            Console.WriteLine("Proxy Server exists? ENTER Y for Yes, else N");
+            Console.WriteLine("HTTP Proxy Server with NTLM authentication(IP + username/pwd) exists? ENTER Y for Yes, else N");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("NOTE: Pubnub example is being tested with CCProxy 7.3 Demo version");
+            Console.ResetColor();
             string enableProxy = Console.ReadLine();
             if (enableProxy.Trim().ToLower() == "y")
             {
