@@ -1,5 +1,4 @@
-//Build Date: March 07, 2013
-
+//Build Date: March 16, 2013
 #if (__MonoCS__)
 #define TRACE
 #endif
@@ -38,17 +37,18 @@ using Javax.Net.Ssl;
 using System.Security.Cryptography.X509Certificates;
 #endif
 
+
 namespace PubNubMessaging.Core
 {
     // INotifyPropertyChanged provides a standard event for objects to notify clients that one of its properties has changed
     public class Pubnub : INotifyPropertyChanged
     {
-        const int pubnubWebRequestCallbackIntervalInSeconds = 310;
-        const int pubnubOperationTimeoutIntervalInSeconds = 15;
-        const int pubnubNetworkTcpCheckIntervalInSeconds = 15;
-        const int pubnubNetworkCheckRetries = 50;
-        const int pubnubWebRequestRetryIntervalInSeconds = 10;
-        bool enableResumeOnReconnect = true;
+        int _pubnubWebRequestCallbackIntervalInSeconds = 310;
+        int _pubnubOperationTimeoutIntervalInSeconds = 15;
+        int _pubnubNetworkTcpCheckIntervalInSeconds = 15;
+        int _pubnubNetworkCheckRetries = 50;
+        int _pubnubWebRequestRetryIntervalInSeconds = 10;
+        bool _enableResumeOnReconnect = true;
         bool overrideTcpKeepAlive = true;
         const LoggingMethod.Level pubnubLogLevel = LoggingMethod.Level.Error;
         
@@ -75,6 +75,83 @@ namespace PubNubMessaging.Core
         ConcurrentDictionary<string, int> _channelInternetRetry = new ConcurrentDictionary<string, int>();
         ConcurrentDictionary<string, Timer> _channelReconnectTimer = new ConcurrentDictionary<string, Timer>();
         ConcurrentDictionary<Uri, Timer> _channelHeartbeatTimer = new ConcurrentDictionary<Uri, Timer>();
+        
+        internal int SubscribeTimeout
+        {
+            get
+            {
+                return _pubnubWebRequestCallbackIntervalInSeconds;
+            }
+            
+            set
+            {
+                _pubnubWebRequestCallbackIntervalInSeconds = value;
+            }
+        }
+        
+        internal int NonSubscribeTimeout
+        {
+            get
+            {
+                return _pubnubOperationTimeoutIntervalInSeconds;
+            }
+            
+            set
+            {
+                _pubnubOperationTimeoutIntervalInSeconds = value;
+            }
+        }
+        
+        internal int NetworkCheckMaxRetries
+        {
+            get
+            {
+                return _pubnubNetworkCheckRetries;
+            }
+            
+            set
+            {
+                _pubnubNetworkCheckRetries = value;
+            }
+        }
+        
+        internal int NetworkCheckRetryInterval
+        {
+            get
+            {
+                return _pubnubWebRequestRetryIntervalInSeconds;
+            }
+            
+            set
+            {
+                _pubnubWebRequestRetryIntervalInSeconds = value;
+            }
+        }
+        
+        internal int HeartbeatInterval
+        {
+            get
+            {
+                return _pubnubNetworkTcpCheckIntervalInSeconds;
+            }
+            
+            set
+            {
+                _pubnubNetworkTcpCheckIntervalInSeconds = value;
+            }
+        }
+        
+        internal bool EnableResumeOnReconnect
+        {
+            get
+            {
+                return _enableResumeOnReconnect;
+            }
+            set
+            {
+                _enableResumeOnReconnect = value;
+            }
+        }
         
         private IPubnubUnitTest _pubnubUnitTest;
         public IPubnubUnitTest PubnubUnitTest
@@ -197,7 +274,7 @@ namespace PubNubMessaging.Core
         
         private void ReconnectNetwork<T>(ReconnectState<T> netState)
         {
-            System.Threading.Timer timer = new Timer(new TimerCallback(ReconnectNetworkCallback<T>), netState, 0, pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+            System.Threading.Timer timer = new Timer(new TimerCallback(ReconnectNetworkCallback<T>), netState, 0, _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
             _channelReconnectTimer.AddOrUpdate(string.Join(",",netState.Channels), timer, (key, oldState) => timer);
         }
         
@@ -222,7 +299,7 @@ namespace PubNubMessaging.Core
                         else
                         {
                             _channelInternetRetry.AddOrUpdate(channel, 1, (key, oldValue) => oldValue + 1);
-                            LoggingMethod.WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Retry {3} of {4}", DateTime.Now.ToString(), channel, netState.Type, _channelInternetRetry[channel], pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
+                            LoggingMethod.WriteToLog(string.Format("DateTime {0}, {1} {2} reconnectNetworkCallback. Retry {3} of {4}", DateTime.Now.ToString(), channel, netState.Type, _channelInternetRetry[channel], _pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
                         }
                     }
                     
@@ -245,7 +322,7 @@ namespace PubNubMessaging.Core
                             break;
                         }
                     }
-                    else if (_channelInternetRetry[channel] >= pubnubNetworkCheckRetries)
+                    else if (_channelInternetRetry[channel] >= _pubnubNetworkCheckRetries)
                     {
                         if (_channelReconnectTimer.ContainsKey(channel))
                         {
@@ -316,8 +393,8 @@ namespace PubNubMessaging.Core
                 if (overrideTcpKeepAlive)
                 {
                     heartBeatTimer.Change(
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000,
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000,
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
                 }
                 
                 LoggingMethod.WriteToLog(string.Format("DateTime {0}, System entered into Resume/Awake Mode.", DateTime.Now.ToString()), LoggingMethod.LevelInfo);
@@ -1076,7 +1153,7 @@ namespace PubNubMessaging.Core
             
             if (_channelInternetStatus.ContainsKey(multiChannel) && (!_channelInternetStatus[multiChannel]) && _pubnetSystemActive)
             {
-                if (_channelInternetRetry.ContainsKey(multiChannel) && (_channelInternetRetry[multiChannel] >= pubnubNetworkCheckRetries))
+                if (_channelInternetRetry.ContainsKey(multiChannel) && (_channelInternetRetry[multiChannel] >= _pubnubNetworkCheckRetries))
                 {
                     LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe channel={1} - No internet connection. MAXed retries for internet ", DateTime.Now.ToString(), multiChannel), LoggingMethod.LevelInfo);
                     MultiplexExceptionHandler<T>(type,channels, userCallback, connectCallback, true, false);
@@ -1121,7 +1198,6 @@ namespace PubNubMessaging.Core
                         lastTimetoken = lastSubscribeTimetoken;
                     }
                 }
-                
                 LoggingMethod.WriteToLog(string.Format("DateTime {0}, Building request for channel(s)={1} with timetoken={2}", DateTime.Now.ToString(), string.Join(",",channels),lastTimetoken), LoggingMethod.LevelInfo);
                 // Build URL
                 Uri requestUrl = BuildMultiChannelSubscribeRequest(channels, (Convert.ToInt64(timetoken.ToString()) == 0) ? Convert.ToInt64(timetoken.ToString()) : lastTimetoken);
@@ -1362,13 +1438,13 @@ namespace PubNubMessaging.Core
                     //Eventhough heart-beat is disabled, run one time to check internet connection by setting dueTime=0
                     heartBeatTimer = new System.Threading.Timer(
                         new TimerCallback(OnPubnubHeartBeatTimeoutCallback<T>), pubnubRequestState, 0,
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? Timeout.Infinite : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? Timeout.Infinite : _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
                     _channelHeartbeatTimer.AddOrUpdate(requestUri, heartBeatTimer, (key, oldState) => heartBeatTimer);
                 }
                 else
                 {
 #if ((!__MonoCS__) && (!SILVERLIGHT) && !WINDOWS_PHONE)
-                    request.ServicePoint.SetTcpKeepAlive(true, pubnubNetworkTcpCheckIntervalInSeconds * 1000, 1000);
+                    request.ServicePoint.SetTcpKeepAlive(true, _pubnubNetworkTcpCheckIntervalInSeconds * 1000, 1000);
 #endif
                 }
                 LoggingMethod.WriteToLog(string.Format("DateTime {0}, Request={1}", DateTime.Now.ToString(), requestUri.ToString()), LoggingMethod.LevelInfo);
@@ -1570,7 +1646,8 @@ namespace PubNubMessaging.Core
                 throw new Exception("SSL error");
             }
         }
-#endif      
+#endif
+        
         private void ConnectToHostAndSendRequestCallback<T>(IAsyncResult asynchronousResult)
         {
             StateObject<T> asynchStateObject = asynchronousResult.AsyncState as StateObject<T>;
@@ -1694,7 +1771,6 @@ namespace PubNubMessaging.Core
         {
             TcpClient tcpClient = new TcpClient();
             tcpClient.NoDelay = false;
-            
 #if(!MONODROID)
             tcpClient.SendTimeout = pubnubRequestState.Request.Timeout;
 #endif          
@@ -1870,11 +1946,11 @@ namespace PubNubMessaging.Core
                     else
                     {
                         _channelInternetRetry.AddOrUpdate(channel, 1, (key, oldValue) => oldValue + 1);
-                        LoggingMethod.WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), asynchRequestState.Type, string.Join(",", asynchRequestState.Channels), _channelInternetRetry[channel], pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
+                        LoggingMethod.WriteToLog(string.Format("DateTime {0} {1} channel = {2} _urlRequest - Internet connection retry {3} of {4}", DateTime.Now.ToString(), asynchRequestState.Type, string.Join(",", asynchRequestState.Channels), _channelInternetRetry[channel], _pubnubNetworkCheckRetries), LoggingMethod.LevelInfo);
                     }
                     _channelInternetStatus[channel] = false;
                     
-                    Thread.Sleep(pubnubWebRequestRetryIntervalInSeconds * 1000);
+                    Thread.Sleep(_pubnubWebRequestRetryIntervalInSeconds * 1000);
                 }
             }
 #endif
@@ -1984,11 +2060,11 @@ namespace PubNubMessaging.Core
             int timeout;
             if (type == ResponseType.Subscribe || type == ResponseType.Presence)
             {
-                timeout = pubnubWebRequestCallbackIntervalInSeconds;
+                timeout = _pubnubWebRequestCallbackIntervalInSeconds;
             }
             else
             {
-                timeout = pubnubOperationTimeoutIntervalInSeconds;
+                timeout = _pubnubOperationTimeoutIntervalInSeconds;
             }
             return timeout;
         }
@@ -2010,8 +2086,8 @@ namespace PubNubMessaging.Core
                         try
                         {
                             requestHeatbeatTimer.Change(
-                                (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000,
-                                (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                                (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000,
+                                (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
                             requestHeatbeatTimer.Dispose();
                         }
                         catch (ObjectDisposedException ex)
@@ -2066,8 +2142,8 @@ namespace PubNubMessaging.Core
                 {
                     Timer channelReconnectTimer = _channelReconnectTimer[channelName];
                     channelReconnectTimer.Change(
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000,
-                        (-1 == pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : pubnubNetworkTcpCheckIntervalInSeconds * 1000);
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000,
+                        (-1 == _pubnubNetworkTcpCheckIntervalInSeconds) ? -1 : _pubnubNetworkTcpCheckIntervalInSeconds * 1000);
                     channelReconnectTimer.Dispose();
                     Timer removedTimer = null;
                     bool removed = _channelReconnectTimer.TryRemove(channelName, out removedTimer);
@@ -2109,22 +2185,28 @@ namespace PubNubMessaging.Core
                         select channel.Key;
                 foreach (string channel in newChannels)
                 {
-                    if (!IsPresenceChannel(channel))
+                    string jsonString = "";
+                    List<object> connectResult = new List<object>();
+                    //if (!IsPresenceChannel(channel))
+                    //{
+                    switch (type)
                     {
-                        switch (type)
-                        {
-                        case ResponseType.Subscribe:
-                            string jsonString = "";
-                            List<object> connectResult = new List<object>();
-                            jsonString = string.Format("[1, \"Connected\"]");
-                            connectResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
-                            connectResult.Add(channel);
-                            GoToCallback<T>(connectResult, connectCallback);
-                            break;
-                        default:
-                            break;
-                        }
+                    case ResponseType.Subscribe:
+                        jsonString = string.Format("[1, \"Connected\"]");
+                        connectResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                        connectResult.Add(channel);
+                        GoToCallback<T>(connectResult, connectCallback);
+                        break;
+                    case ResponseType.Presence:
+                        jsonString = string.Format("[1, \"Presence Connected\"]");
+                        connectResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                        connectResult.Add(channel.Replace("-pnpres", ""));
+                        GoToCallback<T>(connectResult, connectCallback);
+                        break;
+                    default:
+                        break;
                     }
+                    //}
                 }
             }
             
@@ -2452,18 +2534,38 @@ namespace PubNubMessaging.Core
                 string[] activeChannels = _multiChannelSubscribe.Keys.ToArray<string>();
                 MultiChannelUnSubscribeInit<T>(ResponseType.Unsubscribe, string.Join(",", activeChannels), null, null, null);
                 
-                List<object> errorResult = new List<object>();
-                string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", pubnubNetworkCheckRetries);
-                errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
-                string activeMultiChannel = string.Join(",", activeChannels).Replace("-pnpres", "");
-                errorResult.Add(activeMultiChannel.Split(','));
+                string[] subscribeChannels = activeChannels.Where(filterChannel => !filterChannel.Contains("-pnpres")).ToArray();
+                string[] presenceChannels = activeChannels.Where(filterChannel => filterChannel.Contains("-pnpres")).ToArray();
                 
-                LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
-                
-                if (userCallback != null)
+                if (subscribeChannels != null && subscribeChannels.Length > 0)
                 {
-                    GoToCallback<T>(errorResult, userCallback);
+                    List<object> errorResult = new List<object>();
+                    string jsonString = string.Format("[0, \"Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
+                    errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                    string activeMultiChannel = string.Join(",", subscribeChannels);
+                    errorResult.Add(activeMultiChannel.Split(','));
+                    
+                    if (userCallback != null)
+                    {
+                        GoToCallback<T>(errorResult, userCallback);
+                    }
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
                 }
+                if (presenceChannels != null && presenceChannels.Length > 0)
+                {
+                    List<object> errorResult = new List<object>();
+                    string jsonString = string.Format("[0, \"Presence Unsubscribed after {0} failed retries\"]", _pubnubNetworkCheckRetries);
+                    errorResult = (List<object>)JsonConvert.DeserializeObject<List<object>>(jsonString);
+                    string activeMultiChannel = string.Join(",", presenceChannels).Replace("-pnpres", "");
+                    errorResult.Add(activeMultiChannel.Split(','));
+                    
+                    if (userCallback != null)
+                    {
+                        GoToCallback<T>(errorResult, userCallback);
+                    }
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0}, Presence-Subscribe JSON network error response={1}", DateTime.Now.ToString(), jsonString), LoggingMethod.LevelInfo);
+                }
+                
             }
             else
             {
@@ -2579,19 +2681,21 @@ namespace PubNubMessaging.Core
             case ResponseType.Subscribe:
             case ResponseType.Presence:
                 result.Add(string.Join(",",channels));
+                long receivedTimetoken = Convert.ToInt64(result[1].ToString());
                 long minimumTimetoken = (_multiChannelSubscribe.Count > 0) ? _multiChannelSubscribe.Min(token => token.Value) : 0;
                 long maximumTimetoken = (_multiChannelSubscribe.Count > 0) ? _multiChannelSubscribe.Max(token => token.Value) : 0;
+                
                 if (minimumTimetoken == 0 || lastTimetoken == 0) 
                 {
                     if (maximumTimetoken == 0)
                     {
-                        lastSubscribeTimetoken = Convert.ToInt64(result[1].ToString());
+                        lastSubscribeTimetoken = receivedTimetoken;
                     }
                     else
                     {
-                        if (!enableResumeOnReconnect)
+                        if (!_enableResumeOnReconnect)
                         {
-                            lastSubscribeTimetoken = Convert.ToInt64(result[1].ToString());
+                            lastSubscribeTimetoken = receivedTimetoken;
                         }
                         else
                         {
@@ -2601,7 +2705,21 @@ namespace PubNubMessaging.Core
                 }
                 else
                 {
-                    lastSubscribeTimetoken = Convert.ToInt64(result[1].ToString());
+                    if (reconnect)
+                    {
+                        if (_enableResumeOnReconnect)
+                        {
+                            //do nothing. keep last subscribe token
+                        }
+                        else
+                        {
+                            lastSubscribeTimetoken = receivedTimetoken;
+                        }
+                    }
+                    else
+                    {
+                        lastSubscribeTimetoken = receivedTimetoken;
+                    }
                 }
                 break;
             case ResponseType.Leave:
@@ -2771,6 +2889,44 @@ namespace PubNubMessaging.Core
             TerminateReconnectTimer();
         }
         
+        public void TerminateCurrentSubscriberRequest()
+        {
+            string[] channels = GetCurrentSubscriberChannels();
+            if (channels != null)
+            {
+                string multiChannel = string.Join(",", channels);
+                PubnubWebRequest request = (_channelRequest.ContainsKey(multiChannel)) ? _channelRequest[multiChannel] : null;
+                if (request != null)
+                {
+                    request.Abort();
+                    
+                    //TerminateHeartbeatTimer(request.RequestUri);
+                    
+                    //TerminateReconnectTimer(multiChannel);
+                    
+                    LoggingMethod.WriteToLog(string.Format("DateTime {0} TerminateCurrentSubsciberRequest {1}", DateTime.Now.ToString(), request.RequestUri.ToString()), LoggingMethod.LevelInfo);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// FOR TESTING ONLY - To Enable Simulation of Network Non-Availability
+        /// </summary>
+        public void EnableSimulateNetworkFailForTestingOnly()
+        {
+            ClientNetworkStatus.SimulateNetworkFailForTesting = true;
+            PubnubWebRequest.SimulateNetworkFailForTesting = true;
+        }
+        
+        /// <summary>
+        /// FOR TESTING ONLY - To Disable Simulation of Network Non-Availability
+        /// </summary>
+        public void DisableSimulateNetworkFailForTestingOnly()
+        {
+            ClientNetworkStatus.SimulateNetworkFailForTesting = false;
+            PubnubWebRequest.SimulateNetworkFailForTesting = false;
+        }
+        
         private bool IsPresenceChannel(string channel)
         {
             if (channel.LastIndexOf("-pnpres") > 0)
@@ -2781,6 +2937,17 @@ namespace PubNubMessaging.Core
             {
                 return false;
             }
+        }
+        
+        private string[] GetCurrentSubscriberChannels()
+        {
+            string[] channels = null;
+            if (_multiChannelSubscribe != null && _multiChannelSubscribe.Keys.Count > 0)
+            {
+                channels = _multiChannelSubscribe.Keys.ToArray<string>();
+            }
+            
+            return channels;
         }
     }
     
@@ -3580,6 +3747,7 @@ namespace PubNubMessaging.Core
     internal class ClientNetworkStatus
     {
         private static bool _status = true;
+        private static bool _failClientNetworkForTesting = false;
         
 #if (SILVERLIGHT  || WINDOWS_PHONE)
         private static ManualResetEvent mres = new ManualResetEvent(false);
@@ -3587,32 +3755,32 @@ namespace PubNubMessaging.Core
 #else
         private static ManualResetEventSlim mres = new ManualResetEventSlim(false);
 #endif
-        internal static void CheckInternetStatus(bool systemActive, Action<bool> Callback)
+        internal static bool SimulateNetworkFailForTesting
         {
-            if (Callback != null)
+            get
             {
-                try
-                {
-                    if (systemActive)
-                    {
-                        CheckClientNetworkAvailability(Callback);
-                    }
-                    else
-                    {
-                        Callback(false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LoggingMethod.WriteToLog(string.Format("DateTime {0} checkInternetStatus Error. {1}", DateTime.Now.ToString(), ex.ToString()), LoggingMethod.LevelVerbose);
-                }
+                return _failClientNetworkForTesting;
             }
+            
+            set
+            {
+                _failClientNetworkForTesting = value;
+            }
+            
         }
         
         internal static bool CheckInternetStatus(bool systemActive)
         {
-            CheckClientNetworkAvailability(CallbackClientNetworkStatus);
-            return _status;
+            if (_failClientNetworkForTesting)
+            {
+                //Only to simulate network fail
+                return false;
+            }
+            else
+            {
+                CheckClientNetworkAvailability(CallbackClientNetworkStatus);
+                return _status;
+            }
         }
         
         
@@ -3810,8 +3978,21 @@ namespace PubNubMessaging.Core
     internal class PubnubWebRequest : WebRequest
     {
         private IPubnubUnitTest pubnubUnitTest = null;
+        private static bool simulateNetworkFailForTesting = false;
         
         HttpWebRequest request;
+        
+        internal static bool SimulateNetworkFailForTesting
+        {
+            get
+            {
+                return simulateNetworkFailForTesting;
+            }
+            set
+            {
+                simulateNetworkFailForTesting = value;
+            }
+        }
         
 #if (!SILVERLIGHT && !WINDOWS_PHONE)
         private int _timeout;
@@ -3960,6 +4141,11 @@ namespace PubNubMessaging.Core
             {
                 string stubResponse = pubnubUnitTest.GetStubResponse(request.RequestUri);
                 return new PubnubWebResponse(new MemoryStream(Encoding.UTF8.GetBytes(stubResponse)));
+            }
+            else if (simulateNetworkFailForTesting)
+            {
+                WebException simulateException = new WebException("For simulating network fail, the remote name could not be resolved", WebExceptionStatus.ConnectFailure);
+                throw simulateException;
             }
             else
             {

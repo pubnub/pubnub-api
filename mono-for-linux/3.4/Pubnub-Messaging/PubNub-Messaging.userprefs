@@ -1,22 +1,26 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub-Console/Pubnub.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubNubTest/PubnubUnitTest.cs">
     <Files>
-      <File FileName="PubNub-Console/Pubnub.cs" Line="1" Column="1" />
-      <File FileName="PubNubTest/PubnubUnitTest.cs" Line="10" Column="6" />
+      <File FileName="PubNub-Console/Pubnub.cs" Line="14" Column="25" />
+      <File FileName="PubNubTest/PubnubUnitTest.cs" Line="7" Column="32" />
+      <File FileName="PubNub-Console/PubnubExample.cs" Line="43" Column="75" />
+      <File FileName="PubNubTest/WhenAClientIsPresented.cs" Line="80" Column="7" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="PubNub-Messaging" expanded="True">
-            <Node name="Library" expanded="True" />
-            <Node name="Pubnub.cs" selected="True" />
+          <Node name="PubNub-Messaging" expanded="True" />
+          <Node name="PubNub-Messaging.Tests" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="PubnubUnitTest.cs" selected="True" />
           </Node>
-          <Node name="PubNub-Messaging.Tests" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
+        <State expanded="True" selected="True">
+          <Node name="PubNub-Messaging.Tests" expanded="True" />
+        </State>
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
@@ -30,40 +34,44 @@
           <Value>connected</Value>
           <Value>ip</Value>
           <Value>ipv4</Value>
-          <Value>de</Value>
+          <Value>respDic</Value>
         </State>
       </Pad>
       <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State expanded="True" selected="True" />
+        <State expanded="True">
+          <Node name="PubNub-Messaging.Tests" expanded="True">
+            <Node name="PubNubMessaging" expanded="True">
+              <Node name="Tests" expanded="True">
+                <Node name="WhenGetRequestServerTime" expanded="True" />
+                <Node name="WhenSubscribedToAChannel" expanded="True" selected="True" />
+                <Node name="WhenUnsubscribedToAChannel" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ConnectionManagerPad">
+        <State selected="True" />
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNub-Messaging/Pubnub_Example.cs" line="1347" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNub-Messaging/Pubnub_Example.cs" line="1358" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs" line="1848" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs" line="1867" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs" line="1898" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs" line="1904" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/git/pubnub-api/mono-mac/3.3/PubNub-Messaging/PubNubLib/Pubnub.cs" line="1908" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new/3.3/PubNub-Messaging/PubNub-Console/PubNub-Example2.cs" line="207" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenDetailedHistoryIsRequested.cs" line="122" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenGetRequestHistoryMessages.cs" line="134" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAClientIsPresented.cs" line="28" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAMessageIsPublished.cs" line="56" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAMessageIsPublished.cs" line="131" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAMessageIsPublished.cs" line="60" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenSubscribedToAChannel.cs" line="65" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAClientIsPresented.cs" line="31" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenGetRequestHistoryMessages.cs" line="46" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenSubscribedToAChannel.cs" line="36" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenSubscribedToAChannel.cs" line="78" />
-      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNub-Console/Pubnub.cs" line="1488" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/Common.cs" line="29" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac-new copy/3.3.0.1/PubNub-Messaging/PubNubTest/WhenAClientIsPresented.cs" line="165" />
+      <Breakpoint file="/Volumes/Macintosh/Users/rajatkalsy/Projects/Client/ODesk/pubnub/mono-mac/3.4/PubNub-Messaging/PubNubTest/WhenAClientIsPresented.cs" line="52" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="PubNub-Messaging/Pubnub.cs" line="549" offsetX="648" offsetY="6960" expression="result" liveUpdate="False" />
     <Watch file="PubNub-Console/Pubnub.cs" line="2838" offsetX="591" offsetY="45392" expression="netInterface" liveUpdate="False" />
+    <Watch file="PubNubTest/Common.cs" line="21" offsetX="505" offsetY="320" expression="result" liveUpdate="False" />
+    <Watch file="PubNub-Console/Pubnub.cs" line="1393" offsetX="757" offsetY="20864" expression="requestUri" liveUpdate="False" />
+    <Watch file="PubNub-Console/Pubnub.cs" line="1886" offsetX="454" offsetY="28752" expression="requestUri" liveUpdate="False" />
+    <Watch file="PubNub-Console/Pubnub.cs" line="1536" offsetX="346" offsetY="23152" expression="webEx" liveUpdate="False" />
+    <Watch file="PubNub-Console/Pubnub.cs" line="1831" offsetX="289" offsetY="29280" expression="requestUri" liveUpdate="False" />
+    <Watch file="PubNubTest/WhenAMessageIsPublished.cs" line="214" offsetX="317" offsetY="3408" expression="wex" liveUpdate="False" />
+    <Watch file="PubNubTest/WhenAMessageIsPublished.cs" line="279" offsetX="317" offsetY="4448" expression="wex" liveUpdate="False" />
+    <Watch file="PubNub-Console/Pubnub.cs" line="1842" offsetX="1462" offsetY="27936" expression="asynchRequestState" liveUpdate="False" />
   </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>

@@ -2,8 +2,10 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Pubnub-Messaging/Pubnub.cs">
     <Files>
-      <File FileName="Pubnub-Messaging.Tests/PubnubUnitTest.cs" Line="18" Column="14" />
-      <File FileName="Pubnub-Messaging/Pubnub.cs" Line="4167" Column="1" />
+      <File FileName="Pubnub-Messaging.Tests/PubnubUnitTest.cs" Line="28" Column="10" />
+      <File FileName="Pubnub-Messaging/Pubnub_MessagingMain.cs" Line="179" Column="32" />
+      <File FileName="Pubnub-Messaging.Tests/WhenAClientIsPresented.cs" Line="43" Column="17" />
+      <File FileName="Pubnub-Messaging/Pubnub.cs" Line="4333" Column="5" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">

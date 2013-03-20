@@ -1,23 +1,21 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Andr.Unit-master/Andr.Unit/PubnubUnitTest.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="PubNub_Messaging/Pubnub.cs">
     <Files>
-      <File FileName="PubNub_Messaging/Pubnub.cs" Line="1626" Column="1" />
-      <File FileName="Andr.Unit-master/Andr.Unit/PubnubUnitTest.cs" Line="5" Column="28" />
-      <File FileName="Andr.Unit-master/Android.NUnitLite/AndrRunner/Activities/TestResultActivity.cs" Line="30" Column="40" />
+      <File FileName="PubNub_Messaging/Pubnub.cs" Line="361" Column="60" />
+      <File FileName="Andr.Unit-master/Android.NUnitLite/AndrRunner/Activities/TestResultActivity.cs" Line="1" Column="1" />
+      <File FileName="Andr.Unit-master/Andr.Unit/PubnubUnitTest.cs" Line="16" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Andr.Unit" expanded="True">
-            <Node name="PubnubUnitTest.cs" selected="True" />
-          </Node>
+          <Node name="Andr.Unit" expanded="True" />
           <Node name="Android.NUnitLite" expanded="True">
             <Node name="AndrRunner" expanded="True">
               <Node name="Activities" expanded="True" />
             </Node>
           </Node>
-          <Node name="PubNubMessaging" expanded="True">
+          <Node name="PubNubMessaging" expanded="True" selected="True">
             <Node name="Resources" expanded="True">
               <Node name="drawable" expanded="True" />
               <Node name="layout" expanded="True" />
@@ -46,6 +44,6 @@
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="PubNub_Messaging/Pubnub.cs" line="1526" offsetX="915" offsetY="22880" expression="cert" liveUpdate="False" />
   </MonoDevelop.Ide.DebuggingService.PinnedWatches>
-  <MonoDevelop.Ide.ItemProperties.Andr.Unit AndroidDeviceId-Debug="emulator-5554" />
   <MonoDevelop.Ide.ItemProperties.PubNubMessaging AndroidDeviceId-Debug="emulator-5554" />
+  <MonoDevelop.Ide.ItemProperties.Andr.Unit AndroidDeviceId-Debug="emulator-5554" />
 </Properties>
