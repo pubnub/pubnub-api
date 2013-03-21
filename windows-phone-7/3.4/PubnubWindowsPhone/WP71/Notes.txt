@@ -1,2 +1,0 @@
-﻿System.Threading.Tasks.WP71.dll is obtained from NuGet Package pre-release Task Parallel Library for Silverlight, Windows Phone and .net 3.5.
-version="3.0.2-beta2" targetFramework="sl40-wp71"
