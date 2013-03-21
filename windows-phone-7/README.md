@@ -1,2 +1,2 @@
-##The latest PubNub for Windows Phone 7 files can be found at: 
-https://github.com/pubnub/windows-phone-7
+##The latest PubNub for C# files can be found at: 
+https://github.com/pubnub/c-sharp
