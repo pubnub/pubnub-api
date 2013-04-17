@@ -1,3 +1,2 @@
-PubNub for Sencha
-
-Please see usage in examples directory, and email support at pubnub or file an issue if there are any questions.
+##The latest PubNub for JavaScript files can be found at: 
+https://github.com/pubnub/javascript
