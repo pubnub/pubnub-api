@@ -17,7 +17,7 @@ While larger screens will show the full experience.
 ## Forbidden
 
 jQuery and other JavaScript frameworks are **FORBIDDEN**.
-Prohibited.  You man not use JavaScript.
+Prohibited.  You man not use JavaScript frameworks other than `PUBNUB`.
 
 ## New CSS/HTML5 Requirement Additions:
 
