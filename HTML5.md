@@ -1,6 +1,7 @@
 # PubNub HTML5 Guide
 
-CSS and DOM rendering is the slowest part of a website 900-5000ms depending on speed of system.
+CSS and DOM rendering is the slowest part of a
+website 900-5000ms depending on speed of system.
 And then consider a High DB Access pages,
 which take 1-5 seconds to complete on the server side.
 That's around 10+ seconds in the worst case.  Eeeek.
@@ -12,6 +13,11 @@ Required to auto changing to screen size and mobile devices.
 So for example, Mobile devices will show the content
 that is best for the smaller screens.
 While larger screens will show the full experience.
+
+## Forbidden
+
+jQuery and other JavaScript frameworks are **FORBIDDEN**.
+Prohibited.  You man not use JavaScript.
 
 ## New CSS/HTML5 Requirement Additions:
 
