@@ -248,7 +248,7 @@ If new message(s) are received within this 300 second window, the server will re
  5\. Repeat from Step 3 to retrieve subsequent message updates.
 
 <br>
-#\.presence(options)
+# Presence
 * * *
 Listen for 'Presence' messages on a specified channel, such as 'join' and 'leave' events.
 For any given channel CHANNEL, CHANNEL-pnpres is the 'Presence' channel for CHANNEL.
@@ -258,12 +258,12 @@ For any given channel CHANNEL, CHANNEL-pnpres is the 'Presence' channel for CHAN
 ##Native Client Usage Example
 
 ```javascript
-PUBNUB.presence({
-    channel    : "my-channel",
-    callback   : function(message) { log(message) }
+PUBNUB.subscribe({
+    channel  : "my-channel",
+    callback : function(message) { log(message) },
+    presence : function( message, env, channel ) {}
 })
 ```
-
 ##Connect, disconnect, reconnect callback lifecycles
 presence() is exactly the same as subscribe(), except the string '-pnpres' is appended to the channel name. See above documentation on subscribe() for more information.
 
