@@ -21,7 +21,7 @@ Prohibited.  You man not use JavaScript frameworks other than `PUBNUB`.
 
 ## Cross Browser
 
-Must work in all browsers without `<!--[if IE XX]>` conditional tabs.
+Must work in all browsers without `<!--[if IE XX]>` conditional CSS Comments.
 
 ## New CSS/HTML5 Requirement Additions:
 
