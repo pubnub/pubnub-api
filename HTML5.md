@@ -19,6 +19,10 @@ While larger screens will show the full experience.
 jQuery and other JavaScript frameworks are **FORBIDDEN**.
 Prohibited.  You man not use JavaScript frameworks other than `PUBNUB`.
 
+## Cross Browser
+
+Must work in all browsers without `<!--[if IE XX]>` conditional tabs.
+
 ## New CSS/HTML5 Requirement Additions:
 
  1. All Selectors must use `.class-name` or `#id-name`.
