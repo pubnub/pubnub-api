@@ -284,7 +284,7 @@ An example event message is similar in form to:
 
 #\.unsubscribe(options)
 * * *
-Listen for messages on a specified channel. options contains the channel name.
+Stop listening for messages on a specified channel. `options` contains the channel name.
 >available in version 1+
 
 ##Native ClientUsage Example
