@@ -1,1 +1,1 @@
-../pubnub.lua
+../../pubnub.lua
