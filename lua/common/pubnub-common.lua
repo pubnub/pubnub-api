@@ -1,4 +1,3 @@
--- Version: 3.4.0
 -- www.pubnub.com - PubNub realtime push service in the cloud.
 -- https://github.com/pubnub/pubnub-api/tree/master/lua lua-Corona Push API
 
@@ -7,7 +6,7 @@
 -- http://www.pubnub.com/
 
 -- -----------------------------------
--- PubNub 3.4.0 Real-time Push Cloud API
+-- PubNub VERSION Real-time Push Cloud API
 -- -----------------------------------
 
 require "Json"
@@ -315,51 +314,6 @@ function pubnub.base(init)
 
     self.uuid = self:UUID()
     
-    -- RETURN NEW PUBNUB OBJECT
-    return self
-
-end
-
-function pubnub.new(init)
-    local self          = pubnub.base(init)
-    local subscriptions = {}
-
-    function self:_request(args)
-        -- APPEND PUBNUB CLOUD ORIGIN 
-        table.insert( args.request, 1, self.origin )
-
-        local url = table.concat( args.request, "/" )
-
-        urlParams = ""
-        urlSep = "?"
-
-        if args.query and # args.query then
-            for k,v in pairs(args.query) do
-                urlParams = urlParams .. urlSep .. k .. "=" .. v
-                urlSep = "&"
-            end
-            url = url .. urlParams
-        end
-
-        local params = {}
-        params["V"] = "3.4.0"
-        params["User-Agent"] = "Corona"
-
-        network.request( url, "GET", function(event)
-            if (event.isError) then
-                return args.callback(nil)
-            end
-
-            status, message = pcall( Json.Decode, event.response )
-
-            if status then
-                return args.callback(message)
-            else
-                return args.callback(nil)
-            end
-        end, params)
-    end
-
     -- RETURN NEW PUBNUB OBJECT
     return self
 

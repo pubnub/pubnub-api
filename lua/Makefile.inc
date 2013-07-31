@@ -1,0 +1,9 @@
+REPOS_DIR=..
+VERSION=$(shell cat $(REPOS_DIR)/VERSION)
+COMMON_DIR=$(REPOS_DIR)/common
+ECHO=/bin/echo
+PUBNUB_LUA=pubnub.lua
+PUBNUB_UNASSEMBLED_DIR=unassembled
+PUBNUB_PLATFORM_LUA=$(PUBNUB_UNASSEMBLED_DIR)/platform.lua
+JSON_LUA=$(COMMON_DIR)/Json.lua
+PUBNUB_COMMON_LUA=$(COMMON_DIR)/pubnub-common.lua
