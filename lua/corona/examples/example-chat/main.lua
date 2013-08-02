@@ -3,6 +3,8 @@
 -- This initializes the pubnub networking layer.
 --
 require "pubnub"
+require "PubnubUtil"
+
 chat = pubnub.new({
     publish_key   = "demo",
     subscribe_key = "demo",
@@ -16,36 +18,7 @@ chat = pubnub.new({
 -- 
 CHAT_CHANNEL = 'PubNub-Chat-Channel'
 
--- 
--- TEXT OUT - Quick Print
--- 
-local textoutline = 1
-local function textout( text )
-
-    if textoutline > 22 then textoutline = 1 end
-    if textoutline == 1 then
-        local background = display.newRect(
-            0, 0,
-            display.contentWidth,
-            display.contentHeight
-        )
-        background:setFillColor(254,254,254)
-    end
-
-    local myText = display.newText(
-        text:gsub("^%s*(.-)%s*$", "%1"),
-        0, 0, nil,
-        display.contentWidth/20
-    )
-
-    myText:setTextColor( 200, 200, 180 )
-    myText.x = math.floor(display.contentWidth/2)
-    myText.y = (display.contentWidth/19) * textoutline + 45
-
-    textoutline = textoutline + 1
-    print(text)
-end
-
+local textout = PubnubUtil.textout
 -- 
 -- STARTING WELCOME MESSAGE FOR THIS EXAMPLE
 -- 

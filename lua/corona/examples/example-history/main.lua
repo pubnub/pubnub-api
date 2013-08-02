@@ -3,6 +3,9 @@
 --
 
 require "pubnub"
+require "PubnubUtil"
+
+textout = PubnubUtil.textout
 
 --
 -- INITIALIZE PUBNUB STATE
@@ -14,25 +17,6 @@ pubnub_obj = pubnub.new({
     ssl           = nil,
     origin        = "pubsub.pubnub.com"
 })
-
--- 
--- TEXT OUT - Quick Print
--- 
-local textoutline = 1
-local function textout( text )
-    
-    if textoutline > 24 then textoutline = 1 end
-    if textoutline == 1 then
-        local background = display.newRect(
-            0, 0,
-            display.contentWidth,
-            display.contentHeight
-        )
-        background:setFillColor(254,254,254)
-    end
-
-    print(text)
-end
 
 -- 
 -- HIDE STATUS BAR

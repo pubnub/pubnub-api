@@ -1,4 +1,7 @@
 require "pubnub"
+require "PubnubUtil"
+
+textout = PubnubUtil.textout
 
 multiplayer = pubnub.new({
     publish_key   = "demo",

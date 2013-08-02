@@ -11,7 +11,7 @@
 
 require "Json"
 require "crypto"
-require,"BinDecHex"
+require "BinDecHex"
 pubnub      = {}
 
 function pubnub.base(init)
@@ -283,6 +283,11 @@ function pubnub.base(init)
         return new_array
     end
 
+     local Hex2Dec, BMOr, BMAnd, Dec2Hex
+     if(BinDecHex)then
+        Hex2Dec, BMOr, BMAnd, Dec2Hex = BinDecHex.Hex2Dec, BinDecHex.BMOr, BinDecHex.BMAnd, BinDecHex.Dec2Hex
+     end
+
      function self:UUID()
         local chars = {"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"}
         local uuid = {[9]="-",[14]="-",[15]="4",[19]="-",[24]="-"}
@@ -305,11 +310,6 @@ function pubnub.base(init)
                 end
         end
         return table.concat(uuid)
-     end
-
-     local Hex2Dec, BMOr, BMAnd, Dec2Hex
-     if(BinDecHex)then
-        Hex2Dec, BMOr, BMAnd, Dec2Hex = BinDecHex.Hex2Dec, BinDecHex.BMOr, BinDecHex.BMAnd, BinDecHex.Dec2Hex
      end
 
     self.uuid = self:UUID()

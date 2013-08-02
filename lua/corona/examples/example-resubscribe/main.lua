@@ -3,6 +3,10 @@
 -- This initializes the multiplayer networking layer.
 --
 require "pubnub"
+require "PubnubUtil"
+
+textout = PubnubUtil.textout
+
 multiplayer = pubnub.new({
     publish_key   = "demo",
     subscribe_key = "demo",
@@ -10,32 +14,6 @@ multiplayer = pubnub.new({
     ssl           = nil,
     origin        = "pubsub.pubnub.com"
 })
-
--- 
--- TEXT OUT - Quick Print
--- 
-local textoutline = 1
-local function textout( text )
-
-    if textoutline > 24 then textoutline = 1 end
-    if textoutline == 1 then
-        local background = display.newRect(
-            0, 0,
-            display.contentWidth,
-            display.contentHeight
-        )
-        background:setFillColor(254,254,254)
-    end
-
-    local myText = display.newText( text, 0, 0, nil, display.contentWidth/23 )
-
-    myText:setTextColor(200,200,180)
-    myText.x = math.floor(display.contentWidth/2)
-    myText.y = (display.contentWidth/19) * textoutline - 5
-
-    textoutline = textoutline + 1
-    print(text)
-end
 
 -- 
 -- STARTING WELCOME MESSAGE FOR THIS EXAMPLE
