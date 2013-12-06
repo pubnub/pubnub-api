@@ -14,7 +14,10 @@ except ImportError: import simplejson as json
 
 import time
 import hashlib
-import urllib2
+try:
+    import urllib2
+except ImportError:
+    import urllib3
 import uuid
 
 class Pubnub():
