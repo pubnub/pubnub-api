@@ -1,12 +1,11 @@
 (function(){
 
-
 // ---------------
 // Utility
 // ---------------
 
 var db     = this['localStorage']
-,   PUB    = PUBNUB
+,   PUB    = PUBNUB.init({})
 ,   now    = function(){return+new Date}
 ,   cookie = {
     get : function(key) {
@@ -132,7 +131,7 @@ var players = (function(){
 
 function current_player(ready) {
     function is_ready() {
-        if (player['uuid'] && player['joined']) {
+        if (player && player['uuid'] && player['joined']) {
             players.add(player);
             ready(player)
         }
@@ -140,7 +139,7 @@ function current_player(ready) {
 
     var player = {
         'uuid' : PUB.uuid(function(uuid){
-            player['uuid'] = uuid;
+            //player['uuid'] = uuid;
             is_ready();
         }),
         'joined' : PUB.time(function(time){
